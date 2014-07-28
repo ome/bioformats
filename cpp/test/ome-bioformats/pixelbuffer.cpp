@@ -370,7 +370,7 @@ TYPED_TEST_P(PixelBufferType, StreamInput)
 
   ss.seekg(0, std::ios::beg);
   ss >> buf;
-  EXPECT_TRUE(ss);
+  EXPECT_FALSE(!ss);
 
   typename PixelBuffer<TypeParam>::indices_type idx;
   idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
@@ -397,7 +397,7 @@ TYPED_TEST_P(PixelBufferType, StreamOutput)
 
   buf.assign(v.begin(), v.end());
   ss << buf;
-  EXPECT_TRUE(ss);
+  EXPECT_FALSE(!ss);
   ss.seekg(0, std::ios::beg);
 
   typename PixelBuffer<TypeParam>::indices_type idx;
@@ -411,7 +411,7 @@ TYPED_TEST_P(PixelBufferType, StreamOutput)
             EXPECT_EQ(TypeParam(i), buf.at(idx));
             TypeParam sval;
             ss.read(reinterpret_cast<char *>(&sval), sizeof(TypeParam));
-            EXPECT_TRUE(ss);
+            EXPECT_FALSE(!ss);
             EXPECT_EQ(TypeParam(i), sval);
             ++i;
           }
@@ -649,7 +649,7 @@ TEST_P(VariantPixelBufferTest, StreamInput)
 
   ss.seekg(0, std::ios::beg);
   ss >> buf;
-  EXPECT_TRUE(ss);
+  EXPECT_FALSE(!ss);
 
   VariantPixelBuffer::indices_type idx;
   idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
@@ -679,7 +679,7 @@ TEST_P(VariantPixelBufferTest, StreamOutput)
 
   buf.assign(v.begin(), v.end());
   ss << buf;
-  EXPECT_TRUE(ss);
+  EXPECT_FALSE(!ss);
   ss.seekg(0, std::ios::beg);
 
   VariantPixelBuffer::indices_type idx;
@@ -693,7 +693,7 @@ TEST_P(VariantPixelBufferTest, StreamOutput)
             EXPECT_EQ(i, buf.at<boost::endian::native_uint8_t>(idx));
             boost::endian::native_uint8_t sval;
             ss.read(reinterpret_cast<char *>(&sval), sizeof(boost::endian::native_uint8_t));
-            EXPECT_TRUE(ss);
+            EXPECT_FALSE(!ss);
             EXPECT_EQ(i, sval);
             ++i;
           }
