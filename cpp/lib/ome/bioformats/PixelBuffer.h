@@ -1637,9 +1637,26 @@ namespace ome
        *
        * @returns a pointer to the buffer start address.
        */
+      const raw_type *
+      data() const;
+
+      /**
+       * Get raw buffered data.
+       *
+       * @returns a pointer to the buffer start address.
+       */
       template<typename T>
       T *
       data();
+
+      /**
+       * Get raw buffered data.
+       *
+       * @returns a pointer to the buffer start address.
+       */
+      template<typename T>
+      const T *
+      data() const;
 
       /**
        * Compare a pixel buffer for equality.
@@ -1752,7 +1769,7 @@ namespace ome
 
       /// Find a PixelBuffer data array of a specific pixel type.
       template<typename T>
-      struct PixelBufferArrayVisitor : public boost::static_visitor<>
+      struct PixelBufferArrayVisitor : public boost::static_visitor<T *>
       {
         /**
          * PixelBuffer of correct type.
@@ -1762,11 +1779,11 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         T *
-        operator() (T& v)
+        operator() (std::shared_ptr<PixelBuffer<T> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
-          return v->array.data();
+          return v->data();
         }
 
         /**
@@ -1777,6 +1794,39 @@ namespace ome
          */
         template <typename U>
         T *
+        operator() (U& /* v */) const
+        {
+          throw std::runtime_error("Unsupported pixel type conversion for buffer");
+        }
+      };
+
+      /// Find a PixelBuffer data array of a specific pixel type.
+      template<typename T>
+      struct PixelBufferConstArrayVisitor : public boost::static_visitor<const T *>
+      {
+        /**
+         * PixelBuffer of correct type.
+         *
+         * @param v the value to find.
+         * @returns a pointer to the data array.
+         * @throws if the PixelBuffer is null.
+         */
+        const T *
+        operator() (std::shared_ptr<PixelBuffer<T> >& v) const
+        {
+          if (!v)
+            throw std::runtime_error("Null pixel type");
+          return v->data();
+        }
+
+        /**
+         * PixelBuffer of incorrect type.
+         *
+         * @throws if used.
+         * @returns a pointer to the data array.
+         */
+        template <typename U>
+        const T *
         operator() (U& /* v */) const
         {
           throw std::runtime_error("Unsupported pixel type conversion for buffer");
@@ -1938,11 +1988,17 @@ namespace ome
       return boost::apply_visitor(v, buffer);
     }
 
-    template <typename T>
+    /**
+     * Get a pointer to the underlying raw data.
+     *
+     * @returns a pointer to the data.
+     * @throws if the PixelBuffer is null.
+     */
+    template<typename T>
     inline const T *
-    VariantPixelBuffer::origin() const
+    VariantPixelBuffer::data() const
     {
-      detail::PixelBufferOriginVisitor<T> v;
+      detail::PixelBufferConstArrayVisitor<T> v;
       return boost::apply_visitor(v, buffer);
     }
 

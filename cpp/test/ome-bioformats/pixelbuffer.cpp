@@ -511,24 +511,49 @@ TEST_P(VariantPixelBufferTest, ConstructSize)
   ASSERT_TRUE(buf.data());
 }
 
+/**
+ * Assign buffer and check.
+ */
+struct AssignTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+
+  AssignTestVisitor(VariantPixelBuffer& buf):
+    buf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& v)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    VariantPixelBuffer::size_type size(buf.num_elements());
+    std::vector<value_type> data;
+    for (int i = 0; i < size; ++i)
+      data.push_back(value_type(i));
+    buf.assign(data.begin(), data.end());
+
+    ASSERT_TRUE(buf.data());
+    ASSERT_TRUE(buf.data<value_type>());
+    ASSERT_TRUE(v->data());
+    for (int i = 0; i < size; ++i)
+      {
+        ASSERT_EQ(*(buf.data<value_type>()+i), value_type(i));
+      }
+  }
+};
+
 TEST_P(VariantPixelBufferTest, ConstructRange)
 {
   const VariantPixelBufferTestParameters& params = GetParam();
 
-  std::vector<boost::endian::native_uint8_t> source;
-  for (uint8_t i = 0U; i < 10U; ++i)
-    source.push_back(i);
-
   VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1],
                          params.type, params.endian);
-  buf.assign(source.begin(), source.end());
-
   ASSERT_EQ(buf.num_elements(), 10U);
-  ASSERT_TRUE(buf.data());
-  for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
-    {
-      ASSERT_EQ(*(buf.data()+i), i);
-    }
+
+  AssignTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
 }
 
 TEST_P(VariantPixelBufferTest, ConstructCopy)

@@ -143,12 +143,24 @@ namespace
     {
       if (!v)
         throw std::runtime_error("Null pixel type");
-      return reinterpret_cast<VariantPixelBuffer::raw_type *>(v->array()->data());
+      return reinterpret_cast<VariantPixelBuffer::raw_type *>(v->data());
+    }
+  };
+
+  struct PBConstRawBufferVisitor : public boost::static_visitor<const VariantPixelBuffer::raw_type *>
+  {
+    template <typename T>
+    const VariantPixelBuffer::raw_type *
+    operator() (T& v) const
+    {
+      if (!v)
+        throw std::runtime_error("Null pixel type");
+      return reinterpret_cast<VariantPixelBuffer::raw_type *>(v->data());
     }
   };
 
   template<typename T>
-  struct PBBufferVisitor : public boost::static_visitor<>
+  struct PBBufferVisitor : public boost::static_visitor<T *>
   {
     T *
     operator() (T& v)
@@ -159,7 +171,7 @@ namespace
     }
 
     template <typename U>
-    void
+    T *
     operator() (U& /* v */) const
     {
       throw std::runtime_error("Unsupported pixel type conversion for buffer");
@@ -407,6 +419,13 @@ namespace ome
     VariantPixelBuffer::data()
     {
       PBRawBufferVisitor v;
+      return boost::apply_visitor(v, buffer);
+    }
+
+    const VariantPixelBuffer::raw_type *
+    VariantPixelBuffer::data() const
+    {
+      PBConstRawBufferVisitor v;
       return boost::apply_visitor(v, buffer);
     }
 
