@@ -259,7 +259,7 @@ class Java(Language):
         # use ome implementation
         self.units_implementation_is = "ome"
         self.units_package = "org.unitsofmeasurement"
-        self.units_implementation_imports = "import ome.xml.units.quantity.*;\nimport ome.xml.units.*;"
+        self.units_implementation_imports = "import ome.units.quantity.*;\nimport ome.units.*;"
         self.model_unit_map['UnitsTime'] = 'Time'
 
         # use jscience implementation

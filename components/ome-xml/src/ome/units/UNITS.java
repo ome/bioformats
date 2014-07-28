@@ -29,7 +29,7 @@
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 
-package ome.xml.units;
+package ome.units;
 
 import org.unitsofmeasurement.unit.SystemOfUnits;
 import org.unitsofmeasurement.quantity.*;
@@ -203,7 +203,7 @@ public final class UNITS extends AbstractSystemOfUnits
   public static final org.unitsofmeasurement.unit.Unit<Pressure> PSI =     PASCAL.multiply(6894.75729316836142); // APPROXIMATE
   public static final org.unitsofmeasurement.unit.Unit<Pressure> TORR =    ATM.divide(760); 
   public static final org.unitsofmeasurement.unit.Unit<Pressure> MTORR =   MILLI(TORR);
-  public static final org.unitsofmeasurement.unit.Unit<Pressure> MMHG =    PASCAL.multiply(133.322387415);;
+  public static final org.unitsofmeasurement.unit.Unit<Pressure> MMHG =    PASCAL.multiply(133.322387415);
 
   public static final org.unitsofmeasurement.unit.Unit<Temperature> DEGREEC = KELVIN.add(273.15);
   public static final org.unitsofmeasurement.unit.Unit<Temperature> K =       KELVIN;

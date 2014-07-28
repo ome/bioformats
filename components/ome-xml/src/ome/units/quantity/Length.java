@@ -29,12 +29,12 @@
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 
-package ome.xml.units.quantity;
+package ome.units.quantity;
 
 import org.unitsofmeasurement.quantity.*;
 import org.unitsofmeasurement.unit.Unit;
 
-import ome.xml.units.quantity.Quantity;
+import ome.units.quantity.Quantity;
 
 import org.eclipse.uomo.units.SI;
 
