@@ -172,6 +172,11 @@
       <version>${logback.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>jhdf5</groupId>
+      <artifactId>org.cisd</artifactId>
+      <version>2.9</version>
+    </dependency>
   </dependencies>
 
   <properties>
