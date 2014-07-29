@@ -122,14 +122,14 @@ public class ROIHandler {
             String points = polyline.getPoints();
             int[][] coordinates = parsePoints(points);
             roi = new PolygonRoi(coordinates[0], coordinates[1],
-              coordinates[0].length, Roi.POLYLINE);
+              coordinates[0].length, Roi.POLYLINE);            
           }
           else if (shapeObject instanceof Polygon) {
             Polygon polygon = (Polygon) shapeObject;
             String points = polygon.getPoints();
             int[][] coordinates = parsePoints(points);
             roi = new PolygonRoi(coordinates[0], coordinates[1],
-              coordinates[0].length, Roi.POLYGON);
+              coordinates[0].length, Roi.POLYGON);        
           }
           else if (shapeObject instanceof ome.xml.model.Rectangle) {
             ome.xml.model.Rectangle rectangle =
@@ -148,7 +148,28 @@ public class ROIHandler {
           }
 
           if (roi != null) {
-            Roi.setColor(Color.WHITE);
+            roi.setName(shapeObject.getID());
+            // Localize ROI with channel, zslice and time
+            int c = shapeObject.getTheC().getValue();
+            int z = shapeObject.getTheZ().getValue();
+            int t = shapeObject.getTheT().getValue();
+            roi.setPosition(c, z, t);
+            
+            // Forward stroke color
+            int r = shapeObject.getStrokeColor().getRed();
+            int g = shapeObject.getStrokeColor().getGreen();
+            int b = shapeObject.getStrokeColor().getBlue();
+            int a = shapeObject.getStrokeColor().getAlpha();
+            roi.setStrokeColor(new Color(r,g,b,a));
+            
+            // Set stroke width
+            if (shapeObject.getStrokeWidth()!=null) {
+                roi.setStrokeWidth(shapeObject.getStrokeWidth());
+            }
+            else {
+                roi.setStrokeWidth(1.0);
+            }
+            
             roi.setImage(images[imageNum]);
             manager.add(images[imageNum], roi, nextRoi++);
           }
