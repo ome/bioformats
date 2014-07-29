@@ -899,7 +899,7 @@ namespace ome
           = boost::get<std::shared_ptr<PixelBuffer<T> > >(buffer);
         if (!r)
           throw std::runtime_error("Null pixel type");
-        return (*r->array())(indices);
+        return r->array()(indices);
       }
 
       /**
@@ -920,7 +920,7 @@ namespace ome
           = boost::get<std::shared_ptr<PixelBuffer<T> > >(buffer);
         if (!r)
           throw std::runtime_error("Null pixel type");
-        return (*r->array())(indices);
+        return r->array()(indices);
       }
 
       /**
@@ -961,7 +961,7 @@ namespace ome
 
       /// Find a PixelBuffer data array of a specific pixel type.
       template<typename T>
-      struct PixelBufferArrayVisitor : public boost::static_visitor<T *>
+      struct VariantPixelBufferArrayVisitor : public boost::static_visitor<T *>
       {
         /**
          * PixelBuffer of correct type.
@@ -994,7 +994,7 @@ namespace ome
 
       /// Find a PixelBuffer data array of a specific pixel type.
       template<typename T>
-      struct PixelBufferConstArrayVisitor : public boost::static_visitor<const T *>
+      struct VariantPixelBufferConstArrayVisitor : public boost::static_visitor<const T *>
       {
         /**
          * PixelBuffer of correct type.
@@ -1027,7 +1027,7 @@ namespace ome
 
       /// Assign a PixelBuffer from an input iterator.
       template <typename InputIterator>
-      struct PixelBufferAssignVisitor : public boost::static_visitor<>
+      struct VariantPixelBufferAssignVisitor : public boost::static_visitor<>
       {
         /// Input start.
         InputIterator begin;
@@ -1040,7 +1040,7 @@ namespace ome
          * @param begin the start of input.
          * @param end the end of input.
          */
-        PixelBufferAssignVisitor(InputIterator begin, InputIterator end):
+        VariantPixelBufferAssignVisitor(InputIterator begin, InputIterator end):
           begin(begin), end(end)
         {}
 
@@ -1053,9 +1053,9 @@ namespace ome
         void
         operator() (std::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
         {
-          if (!v || !v->array())
+          if (!v)
             throw std::runtime_error("Null pixel type");
-          v->array()->assign(begin, end);
+          v->array().assign(begin, end);
         }
 
         /**
@@ -1073,7 +1073,7 @@ namespace ome
 
       /// Obtain the origin of a PixelBuffer.
       template <typename T>
-      struct PixelBufferOriginVisitor : public boost::static_visitor<T *>
+      struct VariantPixelBufferOriginVisitor : public boost::static_visitor<T *>
       {
         /**
          * PixelBuffer of correct type.
@@ -1084,9 +1084,9 @@ namespace ome
         void
         operator() (std::shared_ptr<PixelBuffer<T> >& v) const
         {
-          if (!v || !v->array())
+          if (!v)
             throw std::runtime_error("Null pixel type");
-          return v->array()->origin();
+          return v->array().origin();
         }
 
         /**
@@ -1104,7 +1104,7 @@ namespace ome
 
       /// Read data into a PixelBuffer.
       template<class charT, class traits>
-      struct PixelBufferReadVisitor : public boost::static_visitor<>
+      struct VariantPixelBufferReadVisitor : public boost::static_visitor<>
       {
         /// The input stream.
         std::basic_istream<charT,traits>& stream;
@@ -1114,7 +1114,7 @@ namespace ome
          *
          * @param stream the input stream.
          */
-        PixelBufferReadVisitor(std::basic_istream<charT,traits>& stream):
+        VariantPixelBufferReadVisitor(std::basic_istream<charT,traits>& stream):
           stream(stream)
         {}
 
@@ -1127,7 +1127,7 @@ namespace ome
         void
         operator() (T& v) const
         {
-          if (!v || !v->array())
+          if (!v)
             throw std::runtime_error("Null pixel type");
           v->read(stream);
         }
@@ -1135,7 +1135,7 @@ namespace ome
 
       /// Write data from a PixelBuffer.
       template<class charT, class traits>
-      struct PixelBufferWriteVisitor : public boost::static_visitor<>
+      struct VariantPixelBufferWriteVisitor : public boost::static_visitor<>
       {
         /// The output stream.
         std::basic_ostream<charT,traits>& stream;
@@ -1145,7 +1145,7 @@ namespace ome
          *
          * @param stream the output stream.
          */
-        PixelBufferWriteVisitor(std::basic_ostream<charT,traits>& stream):
+        VariantPixelBufferWriteVisitor(std::basic_ostream<charT,traits>& stream):
           stream(stream)
         {}
 
@@ -1158,7 +1158,7 @@ namespace ome
         void
         operator() (const T& v) const
         {
-          if (!v || !v->array())
+          if (!v)
             throw std::runtime_error("Null pixel type");
           v->write(stream);
         }
@@ -1176,7 +1176,7 @@ namespace ome
     inline T *
     VariantPixelBuffer::data()
     {
-      detail::PixelBufferArrayVisitor<T> v;
+      detail::VariantPixelBufferArrayVisitor<T> v;
       return boost::apply_visitor(v, buffer);
     }
 
@@ -1190,7 +1190,7 @@ namespace ome
     inline const T *
     VariantPixelBuffer::data() const
     {
-      detail::PixelBufferConstArrayVisitor<T> v;
+      detail::VariantPixelBufferConstArrayVisitor<T> v;
       return boost::apply_visitor(v, buffer);
     }
 
@@ -1206,7 +1206,7 @@ namespace ome
     VariantPixelBuffer::assign(InputIterator begin,
                                InputIterator end)
     {
-      detail::PixelBufferAssignVisitor<InputIterator> v(begin, end);
+      detail::VariantPixelBufferAssignVisitor<InputIterator> v(begin, end);
       boost::apply_visitor(v, buffer);
     }
 
@@ -1214,7 +1214,7 @@ namespace ome
     inline void
     VariantPixelBuffer::read(std::basic_istream<charT,traits>& stream)
     {
-      detail::PixelBufferReadVisitor<charT, traits> v(stream);
+      detail::VariantPixelBufferReadVisitor<charT, traits> v(stream);
       boost::apply_visitor(v, buffer);
     }
 
@@ -1222,7 +1222,7 @@ namespace ome
     inline void
     VariantPixelBuffer::write(std::basic_ostream<charT,traits>& stream) const
     {
-      detail::PixelBufferWriteVisitor<charT, traits> v(stream);
+      detail::VariantPixelBufferWriteVisitor<charT, traits> v(stream);
       boost::apply_visitor(v, buffer);
     }
 

@@ -51,6 +51,7 @@
 #include <ome/compat/array.h>
 #include <ome/compat/cstdint.h>
 #include <ome/compat/memory.h>
+#include <ome/compat/variant.h>
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 
@@ -256,8 +257,8 @@ namespace ome
        */
       explicit PixelBuffer():
         PixelBufferBase(::ome::xml::model::enums::PixelType::UINT8, NATIVE),
-        multiarray(new array_type(boost::extents[1][1][1][1][1][1][1][1][1],
-                                  PixelBufferBase::default_storage_order()))
+        multiarray(std::shared_ptr<array_type>(new array_type(boost::extents[1][1][1][1][1][1][1][1][1],
+                                                              PixelBufferBase::default_storage_order())))
       {}
 
       /**
@@ -278,7 +279,7 @@ namespace ome
                   EndianType                          endiantype = NATIVE,
                   const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(new array_type(extents, storage))
+        multiarray(std::shared_ptr<array_type>(new array_type(extents, storage)))
       {}
 
       /**
@@ -303,7 +304,7 @@ namespace ome
                   EndianType                           endiantype = NATIVE,
                   const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(new array_ref_type(pixeldata, extents, storage))
+        multiarray(std::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, extents, storage)))
       {}
 
       /**
@@ -323,7 +324,7 @@ namespace ome
                   EndianType                          endiantype = NATIVE,
                   const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(new array_type(range, storage))
+        multiarray(std::shared_ptr<array_type>(new array_type(range, storage)))
       {}
 
       /**
@@ -347,7 +348,7 @@ namespace ome
                   EndianType                           endiantype = NATIVE,
                   const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(new array_ref_type(pixeldata, range, storage))
+        multiarray(std::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, range, storage)))
       {}
 
       /**
@@ -374,11 +375,8 @@ namespace ome
        * @returns the multidimensional pixel data array; this value
        * will never be null.
        */
-      std::shared_ptr<array_ref_type>
-      array()
-      {
-        return multiarray;
-      }
+      array_ref_type&
+      array();
 
       /**
        * Get the pixel data.
@@ -386,11 +384,8 @@ namespace ome
        * @returns the multidimensional pixel data array; this value
        * will never be null.
        */
-      const std::shared_ptr<array_ref_type>
-      array() const
-      {
-        return multiarray;
-      }
+      const array_ref_type&
+      array() const;
 
       /**
        * Get the raw data.
@@ -403,7 +398,7 @@ namespace ome
       value_type *
       data()
       {
-        return array()->data();
+        return array().data();
       }
 
       /**
@@ -417,7 +412,7 @@ namespace ome
       const value_type *
       data() const
       {
-        return array()->data();
+        return array().data();
       }
 
       /**
@@ -433,7 +428,18 @@ namespace ome
       bool
       valid() const
       {
-        return (multiarray);
+        bool is_valid = true;
+
+        try
+          {
+            array();
+          }
+        catch (const std::runtime_error& e)
+          {
+            is_valid = false;
+          }
+
+        return is_valid;
       }
 
       /**
@@ -446,8 +452,7 @@ namespace ome
       bool
       managed() const
       {
-        std::shared_ptr<array_type> m(std::dynamic_pointer_cast<array_type>(multiarray));
-        return !m;
+        return (boost::get<std::shared_ptr<array_type> >(&multiarray) != 0);
       }
 
       /**
@@ -456,7 +461,7 @@ namespace ome
       size_type
       num_elements() const
       {
-        return array()->num_elements();
+        return array().num_elements();
       }
 
       /**
@@ -465,7 +470,7 @@ namespace ome
       size_type
       num_dimensions() const
       {
-        return array()->num_dimensions();
+        return array().num_dimensions();
       }
 
       /**
@@ -478,7 +483,7 @@ namespace ome
       const size_type *
       shape() const
       {
-        return array()->shape();
+        return array().shape();
       }
 
       /**
@@ -491,7 +496,7 @@ namespace ome
       const boost::multi_array_types::index *
       strides() const
       {
-        return array()->strides();
+        return array().strides();
       }
 
       /**
@@ -505,7 +510,7 @@ namespace ome
       const boost::multi_array_types::index *
       index_bases() const
       {
-        return array()->index_bases();
+        return array().index_bases();
       }
 
       /**
@@ -521,7 +526,7 @@ namespace ome
       const value_type *
       origin() const
       {
-        return array()->origin();
+        return array().origin();
       }
 
       /**
@@ -532,7 +537,7 @@ namespace ome
       const storage_order_type&
       storage_order() const
       {
-        return array()->storage_order();
+        return array().storage_order();
       }
 
       /**
@@ -544,7 +549,7 @@ namespace ome
       bool
       operator == (const PixelBuffer& rhs) const
       {
-        return *multiarray == *(rhs.multiarray);
+        return array() == rhs.array();
       }
 
       /**
@@ -556,7 +561,7 @@ namespace ome
       bool
       operator == (const array_ref_type& rhs) const
       {
-        return *multiarray == rhs;
+        return array() == rhs;
       }
 
       /**
@@ -568,7 +573,7 @@ namespace ome
       bool
       operator != (const PixelBuffer& rhs) const
       {
-        return *multiarray != *(rhs.multiarray);
+        return array() != rhs.array();
       }
 
       /**
@@ -580,7 +585,7 @@ namespace ome
       bool
       operator != (const array_ref_type& rhs) const
       {
-        return *multiarray != rhs;
+        return array() != rhs;
       }
 
       /**
@@ -592,7 +597,7 @@ namespace ome
       bool
       operator < (const PixelBuffer& rhs) const
       {
-        return *multiarray < *(rhs.multiarray);
+        return array() < rhs.array();
       }
 
       /**
@@ -604,7 +609,7 @@ namespace ome
       bool
       operator < (const array_ref_type& rhs) const
       {
-        return *multiarray < rhs;
+        return array() < rhs;
       }
 
       /**
@@ -616,7 +621,7 @@ namespace ome
       bool
       operator <= (const PixelBuffer& rhs) const
       {
-        return *multiarray <= *(rhs.multiarray);
+        return array() <= rhs.array();
       }
 
       /**
@@ -628,7 +633,7 @@ namespace ome
       bool
       operator <= (const array_ref_type& rhs) const
       {
-        return *multiarray <= rhs;
+        return array() <= rhs;
       }
 
       /**
@@ -640,7 +645,7 @@ namespace ome
       bool
       operator > (const PixelBuffer& rhs) const
       {
-        return *multiarray > *(rhs.multiarray);
+        return array() > rhs.array();
       }
 
       /**
@@ -652,7 +657,7 @@ namespace ome
       bool
       operator > (const array_ref_type& rhs) const
       {
-        return *multiarray > rhs;
+        return array() > rhs;
       }
 
       /**
@@ -664,7 +669,7 @@ namespace ome
       bool
       operator >= (const PixelBuffer& rhs) const
       {
-        return *multiarray >= *(rhs.multiarray);
+        return array() >= rhs.array();
       }
 
       /**
@@ -676,7 +681,7 @@ namespace ome
       bool
       operator >= (const array_ref_type& rhs) const
       {
-        return *multiarray >= rhs;
+        return array() >= rhs;
       }
 
       /**
@@ -692,7 +697,7 @@ namespace ome
       assign(InputIterator begin,
              InputIterator end)
       {
-        array()->assign(begin, end);
+        array().assign(begin, end);
       }
 
       /**
@@ -708,7 +713,7 @@ namespace ome
       value_type&
       at(const indices_type& indices)
       {
-        return (*array())(indices);
+        return array()(indices);
       }
 
       /**
@@ -724,7 +729,7 @@ namespace ome
       const value_type&
       at(const indices_type& indices) const
       {
-        return (*array())(indices);
+        return array()(indices);
       }
 
       /**
@@ -839,20 +844,84 @@ namespace ome
 
     private:
       /**
-       * Multi-dimensional pixel array.  This may be a view on the
-       * accompanying @c data member, or an external buffer.  If
-       * using an external buffer, the lifetime of the buffer must
-       * exceed that of this class instance.
+       * Multi-dimensional pixel array.  This may be either a @c
+       * multi_array containing the data directly, or a @c
+       * multi_array_ref using an external buffer.  If using an
+       * external buffer, the lifetime of the buffer must exceed that
+       * of this class instance.
        *
-       * Note that a @c shared_ptr is used here in order that a @c
-       * multi_array or @c multi_array_ref may be used
-       * interchangeably, and also so that it is possible to resize
-       * the array by replacing the existing array.  It also permits
-       * efficient shallow copying in the absence of a C++11 move
-       * constructor for @c MultiArray types.
+       * Note that a @c boost::variant is used here because it's not
+       * possible to safely reference the common base or cast between
+       * them.  A @c shared_ptr is used here so that it is possible to
+       * resize the array by replacing the existing array and avoid
+       * the overhead of large array copies during assignment.  It
+       * also permits efficient shallow copying in the absence of a
+       * C++11 move constructor for @c MultiArray types.
        */
-      std::shared_ptr<array_ref_type> multiarray;
+      boost::variant<std::shared_ptr<array_type>,
+                     std::shared_ptr<array_ref_type> > multiarray;
     };
+
+    namespace detail
+    {
+
+      /// Find a PixelBuffer data array of a specific pixel type.
+      template<typename T>
+      struct PixelBufferArrayVisitor : public boost::static_visitor<typename PixelBuffer<T>::array_ref_type&>
+      {
+        /**
+         * PixelBuffer of any type.
+         *
+         * @throws if used.
+         * @returns a pointer to the data array.
+         */
+        template <typename U>
+        typename PixelBuffer<T>::array_ref_type&
+        operator() (U& v) const
+        {
+          if (!v)
+            throw std::runtime_error("Null array type");
+          return *v;
+        }
+      };
+
+      /// Find a PixelBuffer data array of a specific pixel type.
+      template<typename T>
+      struct PixelBufferConstArrayVisitor : public boost::static_visitor<const typename PixelBuffer<T>::array_ref_type&>
+      {
+        /**
+         * PixelBuffer of any type.
+         *
+         * @throws if used.
+         * @returns a pointer to the data array.
+         */
+        template <typename U>
+        const typename PixelBuffer<T>::array_ref_type&
+        operator() (U& v) const
+        {
+          if (!v)
+            throw std::runtime_error("Null array type");
+          return *v;
+        }
+      };
+
+    }
+
+    template<typename T>
+    typename PixelBuffer<T>::array_ref_type&
+    PixelBuffer<T>::array()
+    {
+      detail::PixelBufferArrayVisitor<T> v;
+      return boost::apply_visitor(v, multiarray);
+    }
+
+    template<typename T>
+    const typename PixelBuffer<T>::array_ref_type&
+    PixelBuffer<T>::array() const
+    {
+      detail::PixelBufferConstArrayVisitor<T> v;
+      return boost::apply_visitor(v, multiarray);
+    }
 
   }
 }

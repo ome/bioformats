@@ -168,7 +168,7 @@ namespace
     {
       if (!v)
         throw std::runtime_error("Null pixel type");
-      return v->array()->data();
+      return v->array().data();
     }
 
     template <typename U>
@@ -192,8 +192,7 @@ namespace
     bool
     operator() (T& lhs, T& rhs) const
     {
-      return lhs && rhs &&
-        *(lhs->array()) == *(rhs->array());
+      return lhs && rhs && lhs->array() == rhs->array();
     }
   };
 

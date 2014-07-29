@@ -293,6 +293,53 @@ TYPED_TEST_P(PixelBufferType, Operators)
   test_operators(buf1, buf2);
 }
 
+TYPED_TEST_P(PixelBufferType, Array)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  ASSERT_NO_THROW(buf.array());
+  ASSERT_NO_THROW(cbuf.array());
+  ASSERT_EQ(100U, buf.array().num_elements());
+  ASSERT_EQ(100U, cbuf.array().num_elements());
+}
+
+TYPED_TEST_P(PixelBufferType, Data)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  ASSERT_TRUE(buf.data());
+  ASSERT_TRUE(cbuf.data());
+  ASSERT_EQ(buf.array().data(), buf.data());
+  ASSERT_EQ(cbuf.array().data(), cbuf.data());
+}
+
+TYPED_TEST_P(PixelBufferType, Valid)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  ASSERT_TRUE(buf.valid());
+  ASSERT_TRUE(cbuf.valid());
+}
+
+TYPED_TEST_P(PixelBufferType, Managed)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  EXPECT_TRUE(buf.managed());
+  EXPECT_TRUE(cbuf.managed());
+
+  TypeParam *backing = 0;
+  PixelBuffer<TypeParam> mbuf(backing, boost::extents[10][10][1][1][1][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cmbuf(mbuf);
+
+  EXPECT_FALSE(mbuf.managed());
+  EXPECT_FALSE(cmbuf.managed());
+}
+
 TYPED_TEST_P(PixelBufferType, GetIndex)
 {
   std::vector<TypeParam> source;
@@ -424,6 +471,10 @@ REGISTER_TYPED_TEST_CASE_P(PixelBufferType,
                            ConstructRange,
                            ConstructCopy,
                            Operators,
+                           Array,
+                           Data,
+                           Valid,
+                           Managed,
                            GetIndex,
                            SetIndex,
                            SetIndexDeathTest,
