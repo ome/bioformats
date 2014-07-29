@@ -1370,7 +1370,10 @@ public class FormatReaderTest {
 
         int maxFiles = (int) Math.min(base.length, 100);
 
-        if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+        if (DataTools.indexOf(
+	  reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0 ||
+	  file.toLowerCase().endsWith(".czi"))
+	{
           maxFiles = (int) Math.min(maxFiles, 10);
         }
 
@@ -1436,9 +1439,8 @@ public class FormatReaderTest {
             continue;
           }
 
-          // multi-file Zeiss CZI datasets are only detected when the
-          // "master" file is chosen
-          if (reader.getFormat().equals("Zeiss CZI")) {
+          // pattern datasets can only be detected with the pattern file
+          if (reader.getFormat().equals("File pattern")) {
             continue;
           }
 
@@ -2042,6 +2044,13 @@ public class FormatReaderTest {
             // the Hamamatsu VMS reader only picks up its .vms file
             if (!result && !used[i].toLowerCase().endsWith(".vms") &&
               r instanceof HamamatsuVMSReader)
+            {
+              continue;
+            }
+
+            // the pattern reader only picks up pattern files
+            if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
+              r instanceof FilePatternReader)
             {
               continue;
             }

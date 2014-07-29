@@ -657,7 +657,13 @@ public class ScanrReader extends FormatReader {
             store.setPlaneTheT(new NonNegativeInteger(0), i, image);
             store.setPlanePositionX(fieldPositionX[field], i, image);
             store.setPlanePositionY(fieldPositionY[field], i, image);
-            store.setPlaneExposureTime(exposures.get(c), i, image);
+
+            // exposure time is stored in milliseconds
+            // convert to seconds before populating MetadataStore
+            Double time = exposures.get(c);
+            time /= 1000;
+
+            store.setPlaneExposureTime(time, i, image);
             if (deltaT != null) {
               store.setPlaneDeltaT(deltaT, i, image);
             }

@@ -416,6 +416,7 @@ public abstract class FormatReader extends FormatHandler
       if (v instanceof Vector) {
         Vector list = (Vector) v;
         int digits = String.valueOf(list.size()).length();
+        
         for (int i=0; i<list.size(); i++) {
           String index = String.valueOf(i + 1);
           while (index.length() < digits) {
@@ -423,7 +424,8 @@ public abstract class FormatReader extends FormatHandler
           }
           meta.put(key + " #" + index, list.get(i));
         }
-        meta.remove(key);
+
+        meta.remove(key); 
       }
     }
   }

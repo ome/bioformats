@@ -79,11 +79,11 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.meta;
+package ${lang.metadata_package};
 
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import ${lang.omexml_model_package}.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
 
 import java.util.Map;
 
@@ -105,7 +105,7 @@ import java.util.Map;
  * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
  * reduces the need to cast between object types.
  *
- * <p>See {@link ome.xml.meta.OMEXMLMetadata} for an example
+ * <p>See {@link ${lang.omexml_metadata_package}.OMEXMLMetadata} for an example
  * implementation.
  *
  * <p><b>Important note:</b> It is strongly recommended that applications
@@ -118,7 +118,7 @@ import java.util.Map;
  * <code>imageIndex</code>, an inner loop should iterate across
  * <code>pixelsIndex</code>, and an innermost loop should handle
  * <code>planeIndex</code>. For an illustration of the ideal traversal order,
- * see {@link ome.xml.meta.MetadataConverter#convertMetadata}.</p>
+ * see {@link loci.formats.meta.MetadataConverter#convertMetadata}.</p>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu

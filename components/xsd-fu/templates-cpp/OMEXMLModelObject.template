@@ -137,7 +137,7 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} ():
-        ::ome::xml::model::OMEModelObject(),
+        ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}()
@@ -180,7 +180,7 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} (const ${klass.name}& copy):
-        ::ome::xml::model::OMEModelObject(),
+        ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}(copy)
@@ -224,10 +224,10 @@ namespace ome
          * @throws EnumerationException if there is an error
          * instantiating an enumeration during model object creation.
          */
-        ${klass.name} (xerces::dom::Element& element, ::ome::xml::model::OMEModel& model);
+        ${klass.name} (xerces::dom::Element& element, ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${klass.name}::${klass.name} (xerces::dom::Element& element, ::ome::xml::model::OMEModel& model):
+      ${klass.name}::${klass.name} (xerces::dom::Element& element, ${lang.omexml_model_package}::OMEModel& model):
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}()
@@ -290,16 +290,16 @@ ${customContent}\
 
         // -- OMEModelObject API methods --
 
-        /// @copydoc ome::xml::model::OMEModelObject::update
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::update
         virtual void
         update(const xerces::dom::Element&  element,
-               ::ome::xml::model::OMEModel& model);
+               ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 
       void
       ${klass.name}::update(const xerces::dom::Element&  element,
-                            ::ome::xml::model::OMEModel& model)
+                            ${lang.omexml_model_package}::OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
 {% if klass.langBaseType is not None %}\
@@ -352,7 +352,7 @@ ${customUpdatePropertyContent[prop.name]}
             std::shared_ptr<${prop.name}> rcptr(std::make_shared< ${prop.name}>());
             rcptr->setID(elem->getAttribute("ID"));
             std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
-            std::shared_ptr< ::ome::xml::model::OMEModelObject> optr(this);
+            std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(this);
             model.addReference(optr, rptr);
           }
 {% end %}\
@@ -385,7 +385,7 @@ ${customUpdatePropertyContent[prop.name]}
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
-             std::shared_ptr< ::ome::xml::model::OMEModelObject> thisptr(shared_from_this());
+             std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(shared_from_this());
              model.addModelObject(getID(), thisptr);
            }
 {% end %}\
@@ -555,15 +555,15 @@ ${customUpdatePropertyContent[prop.name]}
       public:
         // -- ${klass.name} API methods --
 
-        /// @copydoc ome::xml::model::OMEModelObject::link
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::link
         bool
-        link (std::shared_ptr<Reference>&                          reference,
-              std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+        link (std::shared_ptr<Reference>& reference,
+              std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link (std::shared_ptr<Reference>&                          reference,
-                           std::shared_ptr< ::ome::xml::model::OMEModelObject>& object)
+      ${klass.name}::link (std::shared_ptr<Reference>& reference,
+                           std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object)
       {
         if (${klass.parentName}::link(reference, object))
           {
@@ -1096,7 +1096,7 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        /// @copydoc ome::xml::model::OMEModelObject::asXMLElement
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
         virtual xerces::dom::Element&
         asXMLElement (xerces::dom::Document& document) const;
 {% end header %}\
