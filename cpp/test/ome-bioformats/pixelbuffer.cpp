@@ -40,6 +40,8 @@
 #include <stdexcept>
 #include <iostream>
 
+#include <boost/container/vector.hpp>
+
 #include <ome/bioformats/PixelBuffer.h>
 
 #include <gtest/gtest.h>
@@ -203,6 +205,12 @@ class PixelBufferType : public ::testing::Test
 
 TYPED_TEST_CASE_P(PixelBufferType);
 
+/**
+ * Note that the PixelType and EndianType enum values used in the
+ * following tests are incorrect; the tests are testing the type
+ * variants and are not using these values.
+ */
+
 TYPED_TEST_P(PixelBufferType, DefaultConstruct)
 {
   ASSERT_NO_THROW(PixelBuffer<TypeParam> buf);
@@ -213,9 +221,72 @@ TYPED_TEST_P(PixelBufferType, ConstructSize)
   ASSERT_NO_THROW(PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]));
 }
 
+TYPED_TEST_P(PixelBufferType, ConstructExtent)
+{
+  std::vector<TypeParam> source;
+  for (int i = 0; i < 10; ++i)
+    source.push_back(pixel_value<TypeParam>(i));
+
+  std::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
+  extents[0] = 5;
+  extents[1] = 2;
+  extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
+
+  PixelBuffer<TypeParam> buf(extents);
+  buf.assign(source.begin(), source.end());
+
+  ASSERT_EQ(buf.num_elements(), 10U);
+  ASSERT_TRUE(buf.data());
+  for (int i = 0; i < 10; ++i)
+    {
+      ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
+    }
+}
+
+TYPED_TEST_P(PixelBufferType, ConstructExtentRef)
+{
+  // For correct vector<bool>
+  boost::container::vector<TypeParam> source;
+  for (int i = 0; i < 10; ++i)
+    source.push_back(pixel_value<TypeParam>(i));
+
+  std::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
+  extents[0] = 5;
+  extents[1] = 2;
+  extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
+
+  PixelBuffer<TypeParam> buf(&*source.begin(),
+                             extents);
+
+  ASSERT_EQ(buf.num_elements(), 10U);
+  ASSERT_TRUE(buf.data());
+  for (int i = 0; i < 10; ++i)
+    {
+      ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
+    }
+}
+
 TYPED_TEST_P(PixelBufferType, ConstructRange)
 {
   std::vector<TypeParam> source;
+  for (int i = 0; i < 10; ++i)
+    source.push_back(pixel_value<TypeParam>(i));
+
+  PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf.assign(source.begin(), source.end());
+
+  ASSERT_EQ(buf.num_elements(), 10U);
+  ASSERT_TRUE(buf.data());
+  for (int i = 0; i < 10; ++i)
+    {
+      ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
+    }
+}
+
+TYPED_TEST_P(PixelBufferType, ConstructRangeRef)
+{
+  // For correct vector<bool>
+  boost::container::vector<TypeParam> source;
   for (int i = 0; i < 10; ++i)
     source.push_back(pixel_value<TypeParam>(i));
 
@@ -576,7 +647,10 @@ TYPED_TEST_P(PixelBufferType, StreamOutput)
 REGISTER_TYPED_TEST_CASE_P(PixelBufferType,
                            DefaultConstruct,
                            ConstructSize,
+                           ConstructExtent,
+                           ConstructExtentRef,
                            ConstructRange,
+                           ConstructRangeRef,
                            ConstructCopy,
                            Operators,
                            Array,
