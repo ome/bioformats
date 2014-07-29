@@ -45,10 +45,17 @@
 #include <gtest/gtest.h>
 #include <gtest/gtest-death-test.h>
 
+#include "pixel.h"
+
 using ome::bioformats::EndianType;
 using ome::bioformats::PixelBuffer;
 using ome::bioformats::VariantPixelBuffer;
 typedef ome::xml::model::enums::PixelType PT;
+
+/*
+ * NOTE: Update equivalent tests in pixelbuffer.cpp when making
+ * changes.
+ */
 
 class VariantPixelBufferTestParameters
 {
@@ -114,7 +121,7 @@ struct AssignTestVisitor : public boost::static_visitor<>
     VariantPixelBuffer::size_type size(buf.num_elements());
     std::vector<value_type> data;
     for (int i = 0; i < size; ++i)
-      data.push_back(value_type(i));
+      data.push_back(pixel_value<value_type>(i));
     buf.assign(data.begin(), data.end());
 
     ASSERT_TRUE(buf.data());
@@ -122,7 +129,7 @@ struct AssignTestVisitor : public boost::static_visitor<>
     ASSERT_TRUE(v->data());
     for (int i = 0; i < size; ++i)
       {
-        ASSERT_EQ(*(buf.data<value_type>()+i), value_type(i));
+        ASSERT_EQ(*(buf.data<value_type>()+i), pixel_value<value_type>(i));
       }
   }
 };
@@ -142,7 +149,7 @@ struct GetIndexTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& v)
+  operator() (const T& /* v */)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -156,7 +163,7 @@ struct GetIndexTestVisitor : public boost::static_visitor<>
           idx[1] = j;
           idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
 
-          value_type val = value_type((j * 10) + i);
+          value_type val = pixel_value<value_type>((j * 10) + i);
 
           EXPECT_EQ(val, buf.at<value_type>(idx));
           EXPECT_EQ(val, cbuf.at<value_type>(idx));
@@ -179,7 +186,7 @@ struct SetIndexTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& v)
+  operator() (const T& /* v */)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -191,7 +198,7 @@ struct SetIndexTestVisitor : public boost::static_visitor<>
           idx[1] = j;
           idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
 
-          value_type val = value_type(i + j + j);
+          value_type val = pixel_value<value_type>(i + j + j);
 
           buf.at<value_type>(idx) = val;
 
@@ -245,7 +252,7 @@ struct StreamInputTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& v)
+  operator() (const T& /* v */)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -254,7 +261,7 @@ struct StreamInputTestVisitor : public boost::static_visitor<>
 
     for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
       {
-        value_type val = value_type(i);
+        value_type val = pixel_value<value_type>(i);
         ss.write(reinterpret_cast<const char *>(&val), sizeof(value_type));
       }
 
@@ -269,7 +276,7 @@ struct StreamInputTestVisitor : public boost::static_visitor<>
       for (idx[2] = 0; idx[2] < 3; ++idx[2])
         for (idx[1] = 0; idx[1] < 2; ++idx[1])
           for (idx[0] = 0; idx[0] < 2; ++idx[0])
-            EXPECT_EQ(value_type(i++), buf.at<value_type>(idx));
+            EXPECT_EQ(pixel_value<value_type>(i++), buf.at<value_type>(idx));
   }
 };
 
@@ -288,7 +295,7 @@ struct StreamOutputTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& v)
+  operator() (const T& /* v */)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -298,7 +305,7 @@ struct StreamOutputTestVisitor : public boost::static_visitor<>
     std::vector<value_type> vec;
     for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
       {
-        value_type val = value_type(i);
+        value_type val = pixel_value<value_type>(i);
         vec.push_back(val);
       }
 
@@ -315,11 +322,11 @@ struct StreamOutputTestVisitor : public boost::static_visitor<>
         for (idx[1] = 0; idx[1] < 2; ++idx[1])
           for (idx[0] = 0; idx[0] < 2; ++idx[0])
             {
-              EXPECT_EQ(value_type(i), buf.at<value_type>(idx));
+              EXPECT_EQ(pixel_value<value_type>(i), buf.at<value_type>(idx));
               value_type sval;
               ss.read(reinterpret_cast<char *>(&sval), sizeof(value_type));
               EXPECT_FALSE(!ss);
-              EXPECT_EQ(sval, value_type(i));
+              EXPECT_EQ(sval, pixel_value<value_type>(i));
               ++i;
             }
   }

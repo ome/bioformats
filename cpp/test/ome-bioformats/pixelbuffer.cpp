@@ -45,12 +45,19 @@
 #include <gtest/gtest.h>
 #include <gtest/gtest-death-test.h>
 
+#include "pixel.h"
+
 using ome::bioformats::Dimensions;
 using ome::bioformats::PixelEndianProperties;
 using ome::bioformats::PixelBufferBase;
 using ome::bioformats::PixelBuffer;
 typedef ome::xml::model::enums::DimensionOrder DO;
 typedef ome::xml::model::enums::PixelType PT;
+
+/*
+ * NOTE: Update equivalent tests in variantpixelbuffer.cpp when making
+ * changes.
+ */
 
 class DimensionOrderTestParameters
 {
@@ -210,7 +217,7 @@ TYPED_TEST_P(PixelBufferType, ConstructRange)
 {
   std::vector<TypeParam> source;
   for (int i = 0; i < 10; ++i)
-    source.push_back(TypeParam(i));
+    source.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]);
   buf.assign(source.begin(), source.end());
@@ -219,7 +226,7 @@ TYPED_TEST_P(PixelBufferType, ConstructRange)
   ASSERT_TRUE(buf.data());
   for (int i = 0; i < 10; ++i)
     {
-      ASSERT_EQ(TypeParam(i), *(buf.data()+i));
+      ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
     }
 }
 
@@ -227,11 +234,11 @@ TYPED_TEST_P(PixelBufferType, ConstructCopy)
 {
   std::vector<TypeParam> source1;
   for (int i = 0; i < 10; ++i)
-    source1.push_back(TypeParam(i));
+    source1.push_back(pixel_value<TypeParam>(i));
 
   std::vector<TypeParam> source2;
   for (int i = 10U; i < 20U; ++i)
-    source2.push_back(TypeParam(i));
+    source2.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
   buf1.assign(source1.begin(), source1.end());
@@ -269,11 +276,11 @@ TYPED_TEST_P(PixelBufferType, Operators)
 {
   std::vector<TypeParam> source1;
   for (int i = 0; i < 10; ++i)
-    source1.push_back(TypeParam(i));
+    source1.push_back(pixel_value<TypeParam>(i));
 
   std::vector<TypeParam> source2;
   for (int i = 100U; i < 120U; ++i)
-    source2.push_back(TypeParam(i));
+    source2.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
   buf1.assign(source1.begin(), source1.end());
@@ -290,7 +297,7 @@ TYPED_TEST_P(PixelBufferType, GetIndex)
 {
   std::vector<TypeParam> source;
   for (int i = 0; i < 100; ++i)
-    source.push_back(TypeParam(i));
+    source.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
   buf.assign(source.begin(), source.end());
@@ -305,8 +312,8 @@ TYPED_TEST_P(PixelBufferType, GetIndex)
         idx[0] = i;
         idx[1] = j;
         idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
-        EXPECT_EQ(TypeParam((j * 10) + i), buf.at(idx));
-        EXPECT_EQ(TypeParam((j * 10) + i), cbuf.at(idx));
+        EXPECT_EQ(pixel_value<TypeParam>((j * 10) + i), buf.at(idx));
+        EXPECT_EQ(pixel_value<TypeParam>((j * 10) + i), cbuf.at(idx));
       }
 }
 
@@ -325,7 +332,7 @@ TYPED_TEST_P(PixelBufferType, SetIndex)
         idx[1] = j;
         idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
 
-        TypeParam val(i + j + j);
+        TypeParam val = pixel_value<TypeParam>(i + j + j);
 
         buf.at(idx) = val;
 
@@ -358,7 +365,7 @@ TYPED_TEST_P(PixelBufferType, StreamInput)
 
   for (typename PixelBuffer<TypeParam>::size_type i = 0; i < size; ++i)
     {
-      TypeParam val(i);
+      TypeParam val = pixel_value<TypeParam>(i);
       ss.write(reinterpret_cast<const char *>(&val), sizeof(TypeParam));
     }
 
@@ -373,7 +380,7 @@ TYPED_TEST_P(PixelBufferType, StreamInput)
     for (idx[2] = 0; idx[2] < 3; ++idx[2])
       for (idx[1] = 0; idx[1] < 2; ++idx[1])
         for (idx[0] = 0; idx[0] < 2; ++idx[0])
-          EXPECT_EQ(TypeParam(i++), buf.at(idx));
+          EXPECT_EQ(pixel_value<TypeParam>(i++), buf.at(idx));
 }
 
 TYPED_TEST_P(PixelBufferType, StreamOutput)
@@ -385,7 +392,7 @@ TYPED_TEST_P(PixelBufferType, StreamOutput)
   std::vector<TypeParam> v;
   for (typename PixelBuffer<TypeParam>::size_type i = 0; i < size; ++i)
     {
-      TypeParam val(i);
+      TypeParam val = pixel_value<TypeParam>(i);
       v.push_back(val);
     }
 
@@ -402,11 +409,11 @@ TYPED_TEST_P(PixelBufferType, StreamOutput)
       for (idx[1] = 0; idx[1] < 2; ++idx[1])
         for (idx[0] = 0; idx[0] < 2; ++idx[0])
           {
-            EXPECT_EQ(TypeParam(i), buf.at(idx));
+            EXPECT_EQ(pixel_value<TypeParam>(i), buf.at(idx));
             TypeParam sval;
             ss.read(reinterpret_cast<char *>(&sval), sizeof(TypeParam));
             EXPECT_FALSE(!ss);
-            EXPECT_EQ(TypeParam(i), sval);
+            EXPECT_EQ(pixel_value<TypeParam>(i), sval);
             ++i;
           }
 }
