@@ -340,6 +340,114 @@ TYPED_TEST_P(PixelBufferType, Managed)
   EXPECT_FALSE(cmbuf.managed());
 }
 
+TYPED_TEST_P(PixelBufferType, NumElements)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][10][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  ASSERT_EQ(1000U, buf.num_elements());
+  ASSERT_EQ(1000U, cbuf.num_elements());
+}
+
+TYPED_TEST_P(PixelBufferType, NumDimensions)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][10][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  ASSERT_EQ(9U, buf.num_dimensions());
+  ASSERT_EQ(9U, cbuf.num_dimensions());
+}
+
+TYPED_TEST_P(PixelBufferType, Shape)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][3][1][1][10][1][4][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  const typename PixelBuffer<TypeParam>::size_type *shape = cbuf.shape();
+  EXPECT_EQ(10U, *(shape+0));
+  EXPECT_EQ( 3U, *(shape+1));
+  EXPECT_EQ( 1U, *(shape+2));
+  EXPECT_EQ( 1U, *(shape+3));
+  EXPECT_EQ(10U, *(shape+4));
+  EXPECT_EQ( 1U, *(shape+5));
+  EXPECT_EQ( 4U, *(shape+6));
+  EXPECT_EQ( 1U, *(shape+7));
+  EXPECT_EQ( 1U, *(shape+8));
+}
+
+TYPED_TEST_P(PixelBufferType, Strides)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][3][1][1][10][1][4][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  const boost::multi_array_types::index *strides = cbuf.strides();
+  EXPECT_EQ(  1U, *(strides+0));
+  EXPECT_EQ( 10U, *(strides+1));
+  EXPECT_EQ(120U, *(strides+2));
+  EXPECT_EQ(120U, *(strides+3));
+  EXPECT_EQ(120U, *(strides+4));
+  EXPECT_EQ(  1U, *(strides+5));
+  EXPECT_EQ( 30U, *(strides+6));
+  EXPECT_EQ(120U, *(strides+7));
+  EXPECT_EQ(120U, *(strides+8));
+}
+
+TYPED_TEST_P(PixelBufferType, IndexBases)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][3][1][1][10][1][4][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  const boost::multi_array_types::index *bases = cbuf.index_bases();
+  EXPECT_EQ(0U, *(bases+0));
+  EXPECT_EQ(0U, *(bases+1));
+  EXPECT_EQ(0U, *(bases+2));
+  EXPECT_EQ(0U, *(bases+3));
+  EXPECT_EQ(0U, *(bases+4));
+  EXPECT_EQ(0U, *(bases+5));
+  EXPECT_EQ(0U, *(bases+6));
+  EXPECT_EQ(0U, *(bases+7));
+  EXPECT_EQ(0U, *(bases+8));
+}
+
+TYPED_TEST_P(PixelBufferType, Origin)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][3][1][1][10][1][4][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  const TypeParam *origin = cbuf.origin();
+  EXPECT_EQ(cbuf.data(), origin);
+}
+
+TYPED_TEST_P(PixelBufferType, StorageOrder)
+{
+  {
+    PixelBuffer<TypeParam> buf(boost::extents[10][3][1][1][10][1][4][1][1]);
+    const PixelBuffer<TypeParam>& cbuf(buf);
+
+    const typename PixelBuffer<TypeParam>::storage_order_type& order = cbuf.storage_order();
+
+    EXPECT_EQ(5, order.ordering(0));
+    EXPECT_EQ(0, order.ordering(1));
+    EXPECT_EQ(1, order.ordering(2));
+    EXPECT_EQ(6, order.ordering(3));
+    EXPECT_EQ(2, order.ordering(4));
+    EXPECT_EQ(7, order.ordering(5));
+    EXPECT_EQ(3, order.ordering(6));
+    EXPECT_EQ(8, order.ordering(7));
+    EXPECT_EQ(4, order.ordering(8));
+
+    EXPECT_TRUE(order.ascending(0));
+    EXPECT_TRUE(order.ascending(1));
+    EXPECT_TRUE(order.ascending(2));
+    EXPECT_TRUE(order.ascending(3));
+    EXPECT_TRUE(order.ascending(4));
+    EXPECT_TRUE(order.ascending(5));
+    EXPECT_TRUE(order.ascending(6));
+    EXPECT_TRUE(order.ascending(7));
+    EXPECT_TRUE(order.ascending(8));
+  }
+}
+
 TYPED_TEST_P(PixelBufferType, GetIndex)
 {
   std::vector<TypeParam> source;
@@ -475,6 +583,13 @@ REGISTER_TYPED_TEST_CASE_P(PixelBufferType,
                            Data,
                            Valid,
                            Managed,
+                           NumElements,
+                           NumDimensions,
+                           Shape,
+                           Strides,
+                           IndexBases,
+                           Origin,
+                           StorageOrder,
                            GetIndex,
                            SetIndex,
                            SetIndexDeathTest,
