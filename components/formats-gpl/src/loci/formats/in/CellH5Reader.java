@@ -35,6 +35,7 @@ import java.util.zip.Inflater;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import loci.common.DataTools;
 import loci.common.Location;
@@ -352,7 +353,11 @@ public class CellH5Reader extends FormatReader {
         // Series. This is why they only will be loaded if the CellH5 contains
         // a single image / series
         if (seriesCount == 1) {
-            parseROIs();
+            int dialogButton = JOptionPane.YES_NO_OPTION;
+            int dialogResult = JOptionPane.showConfirmDialog (null, "Would you like to read segmentation ROIs?","CellH5 reader", dialogButton);
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                parseROIs();
+            }
         }
     }
 
