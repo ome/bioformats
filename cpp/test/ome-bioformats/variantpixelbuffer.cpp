@@ -135,6 +135,128 @@ struct AssignTestVisitor : public boost::static_visitor<>
 };
 
 /*
+ * Array test.
+ */
+struct ArrayTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  ArrayTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& /* v */)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    ASSERT_NO_THROW(buf.array<value_type>());
+    ASSERT_NO_THROW(cbuf.array<value_type>());
+    ASSERT_EQ(100U, buf.array<value_type>().num_elements());
+    ASSERT_EQ(100U, cbuf.array<value_type>().num_elements());
+  }
+};
+
+/*
+ * Data test.
+ */
+struct DataTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  DataTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& /* v */)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    ASSERT_TRUE(buf.data());
+    ASSERT_TRUE(cbuf.data());
+    ASSERT_TRUE(buf.data<value_type>());
+    ASSERT_TRUE(cbuf.data<value_type>());
+    ASSERT_EQ(buf.array<value_type>().data(), reinterpret_cast<value_type *>(buf.data()));
+    ASSERT_EQ(cbuf.array<value_type>().data(), reinterpret_cast<const value_type *>(cbuf.data()));
+    ASSERT_EQ(buf.array<value_type>().data(), buf.data<value_type>());
+    ASSERT_EQ(cbuf.array<value_type>().data(), cbuf.data<value_type>());
+  }
+};
+
+/*
+ * Managed test.
+ */
+struct ManagedTestVisitor : public boost::static_visitor<>
+{
+  const VariantPixelBufferTestParameters& params;
+
+  ManagedTestVisitor(const VariantPixelBufferTestParameters& params):
+    params(params)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& /* v */)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    {
+      // VariantPixelBuffer with managed backing store.
+      VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                             params.type, params.endian);
+      const VariantPixelBuffer& cbuf(buf);
+
+      EXPECT_TRUE(buf.managed());
+      EXPECT_TRUE(cbuf.managed());
+    }
+
+    {
+      // VariantPixelBuffer with unmanaged backing store.
+      value_type *backing = 0;
+      std::shared_ptr<PixelBuffer<value_type> > buf
+        (new PixelBuffer<value_type>(backing, boost::extents[10][10][1][1][1][1][1][1][1]));
+         VariantPixelBuffer mbuf(buf);
+         const VariantPixelBuffer& cmbuf(mbuf);
+
+         EXPECT_FALSE(mbuf.managed());
+         EXPECT_FALSE(cmbuf.managed());
+         }
+  }
+};
+
+/*
+ * Origin test.
+ */
+struct OriginTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  OriginTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& /* v */)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    const value_type *origin = cbuf.origin<value_type>();
+    EXPECT_EQ(reinterpret_cast<const value_type *>(cbuf.data()), origin);
+    EXPECT_EQ(cbuf.data<value_type>(), origin);
+  }
+};
+
+/*
  * Get index.
  */
 struct GetIndexTestVisitor : public boost::static_visitor<>
@@ -376,6 +498,180 @@ TEST_P(VariantPixelBufferTest, ConstructCopy)
   ASSERT_EQ(buf2, buf3);
   ASSERT_NE(buf1, buf2);
 }
+
+TEST_P(VariantPixelBufferTest, Array)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                         params.type, params.endian);
+
+  ArrayTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
+}
+
+TEST_P(VariantPixelBufferTest, Data)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                         params.type, params.endian);
+
+  DataTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
+}
+
+TEST_P(VariantPixelBufferTest, Valid)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                         params.type, params.endian);
+  const VariantPixelBuffer& cbuf(buf);
+
+  ASSERT_TRUE(buf.valid());
+  ASSERT_TRUE(cbuf.valid());
+}
+
+TEST_P(VariantPixelBufferTest, Managed)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                         params.type, params.endian);
+
+  ManagedTestVisitor v(GetParam());
+  boost::apply_visitor(v, buf.vbuffer());
+}
+
+TEST_P(VariantPixelBufferTest, NumElements)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][10][1][1][1][1],
+                         params.type, params.endian);
+  const VariantPixelBuffer& cbuf(buf);
+
+  ASSERT_EQ(1000U, buf.num_elements());
+  ASSERT_EQ(1000U, cbuf.num_elements());
+}
+
+TEST_P(VariantPixelBufferTest, NumDimensions)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][10][1][1][1][1],
+                         params.type, params.endian);
+  const VariantPixelBuffer& cbuf(buf);
+
+  ASSERT_EQ(9U, buf.num_dimensions());
+  ASSERT_EQ(9U, cbuf.num_dimensions());
+}
+
+TEST_P(VariantPixelBufferTest, Shape)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][3][1][1][10][1][4][1][1],
+                         params.type, params.endian);
+  const VariantPixelBuffer& cbuf(buf);
+
+  const VariantPixelBuffer::size_type *shape = cbuf.shape();
+  EXPECT_EQ(10U, *(shape+0));
+  EXPECT_EQ( 3U, *(shape+1));
+  EXPECT_EQ( 1U, *(shape+2));
+  EXPECT_EQ( 1U, *(shape+3));
+  EXPECT_EQ(10U, *(shape+4));
+  EXPECT_EQ( 1U, *(shape+5));
+  EXPECT_EQ( 4U, *(shape+6));
+  EXPECT_EQ( 1U, *(shape+7));
+  EXPECT_EQ( 1U, *(shape+8));
+}
+
+TEST_P(VariantPixelBufferTest, Strides)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][3][1][1][10][1][4][1][1],
+                         params.type, params.endian);
+  const VariantPixelBuffer& cbuf(buf);
+
+  const boost::multi_array_types::index *strides = cbuf.strides();
+  EXPECT_EQ(  1U, *(strides+0));
+  EXPECT_EQ( 10U, *(strides+1));
+  EXPECT_EQ(120U, *(strides+2));
+  EXPECT_EQ(120U, *(strides+3));
+  EXPECT_EQ(120U, *(strides+4));
+  EXPECT_EQ(  1U, *(strides+5));
+  EXPECT_EQ( 30U, *(strides+6));
+  EXPECT_EQ(120U, *(strides+7));
+  EXPECT_EQ(120U, *(strides+8));
+}
+
+TEST_P(VariantPixelBufferTest, IndexBases)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][3][1][1][10][1][4][1][1],
+                         params.type, params.endian);
+  const VariantPixelBuffer& cbuf(buf);
+
+  const boost::multi_array_types::index *bases = cbuf.index_bases();
+  EXPECT_EQ(0U, *(bases+0));
+  EXPECT_EQ(0U, *(bases+1));
+  EXPECT_EQ(0U, *(bases+2));
+  EXPECT_EQ(0U, *(bases+3));
+  EXPECT_EQ(0U, *(bases+4));
+  EXPECT_EQ(0U, *(bases+5));
+  EXPECT_EQ(0U, *(bases+6));
+  EXPECT_EQ(0U, *(bases+7));
+  EXPECT_EQ(0U, *(bases+8));
+}
+
+TEST_P(VariantPixelBufferTest, Origin)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][3][1][1][10][1][4][1][1],
+                         params.type, params.endian);
+
+  OriginTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
+}
+
+TEST_P(VariantPixelBufferTest, StorageOrder)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  {
+    VariantPixelBuffer buf(boost::extents[10][3][1][1][10][1][4][1][1],
+                           params.type, params.endian);
+    const VariantPixelBuffer& cbuf(buf);
+
+    const typename VariantPixelBuffer::storage_order_type& order = cbuf.storage_order();
+
+    EXPECT_EQ(5, order.ordering(0));
+    EXPECT_EQ(0, order.ordering(1));
+    EXPECT_EQ(1, order.ordering(2));
+    EXPECT_EQ(6, order.ordering(3));
+    EXPECT_EQ(2, order.ordering(4));
+    EXPECT_EQ(7, order.ordering(5));
+    EXPECT_EQ(3, order.ordering(6));
+    EXPECT_EQ(8, order.ordering(7));
+    EXPECT_EQ(4, order.ordering(8));
+
+    EXPECT_TRUE(order.ascending(0));
+    EXPECT_TRUE(order.ascending(1));
+    EXPECT_TRUE(order.ascending(2));
+    EXPECT_TRUE(order.ascending(3));
+    EXPECT_TRUE(order.ascending(4));
+    EXPECT_TRUE(order.ascending(5));
+    EXPECT_TRUE(order.ascending(6));
+    EXPECT_TRUE(order.ascending(7));
+    EXPECT_TRUE(order.ascending(8));
+  }
+}
+
 
 TEST_P(VariantPixelBufferTest, GetIndex)
 {

@@ -64,6 +64,30 @@ namespace
     }
   };
 
+  struct PBValidVisitor : public boost::static_visitor<bool>
+  {
+    template <typename T>
+    bool
+    operator() (const T& v)
+    {
+      if (!v)
+        throw std::runtime_error("Null pixel type");
+      return v->valid();
+    }
+  };
+
+  struct PBManagedVisitor : public boost::static_visitor<bool>
+  {
+    template <typename T>
+    bool
+    operator() (const T& v)
+    {
+      if (!v)
+        throw std::runtime_error("Null pixel type");
+      return v->managed();
+    }
+  };
+
   struct PBNumElementsVisitor : public boost::static_visitor<boost::multi_array_types::size_type>
   {
     template <typename T>
@@ -266,6 +290,20 @@ namespace ome
       boost::apply_visitor(v, buffer.buffer);
     }
 
+    bool
+    VariantPixelBuffer::valid() const
+    {
+      PBValidVisitor v;
+      return boost::apply_visitor(v, buffer);
+    }
+
+    bool
+    VariantPixelBuffer::managed() const
+    {
+      PBManagedVisitor v;
+      return boost::apply_visitor(v, buffer);
+    }
+
     boost::multi_array_types::size_type
     VariantPixelBuffer::num_elements() const
     {
@@ -297,7 +335,7 @@ namespace ome
     const boost::multi_array_types::index *
     VariantPixelBuffer::index_bases() const
     {
-      PBStridesVisitor v;
+      PBIndexBasesVisitor v;
       return boost::apply_visitor(v, buffer);
     }
 
