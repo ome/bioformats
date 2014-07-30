@@ -357,13 +357,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -371,13 +371,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -385,13 +385,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -399,13 +399,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -413,13 +413,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -427,13 +427,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -441,13 +441,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -455,13 +455,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -469,13 +469,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -483,13 +483,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -497,13 +497,13 @@ namespace ome
             switch(endiantype)
               {
               case BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, BIG>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, BIG>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, LITTLE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, LITTLE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               case NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, NATIVE>::type> >(extents, storage, pixeltype, endiantype);
+                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, NATIVE>::type>(extents, storage, pixeltype, endiantype);
                 break;
               }
             break;
@@ -709,7 +709,7 @@ namespace ome
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        */
-      template<class T, class ExtentList>
+      template<class ExtentList>
       void
       setBuffer(const ExtentList&                   extents,
                 ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
