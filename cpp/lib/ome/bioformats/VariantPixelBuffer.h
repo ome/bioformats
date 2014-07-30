@@ -1016,7 +1016,7 @@ namespace ome
 
       /// Find a PixelBuffer data array of a specific pixel type.
       template<typename T>
-      struct VariantPixelBufferArrayVisitor : public boost::static_visitor<PixelBuffer<T>&>
+      struct VariantPixelBufferVisitor : public boost::static_visitor<PixelBuffer<T>&>
       {
         /**
          * PixelBuffer of correct type.
@@ -1049,7 +1049,7 @@ namespace ome
 
       /// Find a PixelBuffer data array of a specific pixel type.
       template<typename T>
-      struct VariantPixelBufferConstArrayVisitor : public boost::static_visitor<const PixelBuffer<T>&>
+      struct VariantPixelBufferConstVisitor : public boost::static_visitor<const PixelBuffer<T>&>
       {
         /**
          * PixelBuffer of correct type.
@@ -1194,7 +1194,7 @@ namespace ome
     inline typename PixelBuffer<T>::array_ref_type&
     VariantPixelBuffer::array()
     {
-      detail::VariantPixelBufferArrayVisitor<T> v;
+      detail::VariantPixelBufferVisitor<T> v;
       return boost::apply_visitor(v, buffer).array();
     }
 
@@ -1202,7 +1202,7 @@ namespace ome
     inline const typename PixelBuffer<T>::array_ref_type&
     VariantPixelBuffer::array() const
     {
-      detail::VariantPixelBufferConstArrayVisitor<T> v;
+      detail::VariantPixelBufferConstVisitor<T> v;
       return boost::apply_visitor(v, buffer).array();
     }
 
@@ -1210,7 +1210,7 @@ namespace ome
     inline T *
     VariantPixelBuffer::data()
     {
-      detail::VariantPixelBufferArrayVisitor<T> v;
+      detail::VariantPixelBufferVisitor<T> v;
       return boost::apply_visitor(v, buffer).data();
     }
 
@@ -1218,7 +1218,7 @@ namespace ome
     inline const T *
     VariantPixelBuffer::data() const
     {
-      detail::VariantPixelBufferConstArrayVisitor<T> v;
+      detail::VariantPixelBufferConstVisitor<T> v;
       return boost::apply_visitor(v, buffer).data();
     }
 
@@ -1226,7 +1226,7 @@ namespace ome
     inline const T *
     VariantPixelBuffer::origin() const
     {
-      detail::VariantPixelBufferConstArrayVisitor<T> v;
+      detail::VariantPixelBufferConstVisitor<T> v;
       return boost::apply_visitor(v, buffer).origin();
     }
 
