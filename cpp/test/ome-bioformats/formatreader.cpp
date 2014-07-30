@@ -52,6 +52,8 @@
 
 #include <gtest/gtest.h>
 
+#include "pixel.h"
+
 using ome::bioformats::CoreMetadata;
 using ome::bioformats::FormatReader;
 using ome::bioformats::VariantPixelBuffer;
@@ -801,19 +803,61 @@ TEST_F(FormatReaderTest, DefaultPixels)
   EXPECT_THROW(r.openThumbBytes(0, buf), std::logic_error);
 }
 
+namespace
+{
+
+  struct FlatPixelsTest : public boost::static_visitor<>
+  {
+    FormatReaderCustom& reader;
+    VariantPixelBuffer &buf;
+
+    FlatPixelsTest(FormatReaderCustom& reader,
+                   VariantPixelBuffer& buf):
+      reader(reader),
+      buf(buf)
+    {}
+
+    template<typename T>
+    void
+    operator()(T& /* v */) const
+    {
+      typedef typename T::element_type::value_type value_type;
+
+      std::stringstream ss;
+      for (int x = 0; x < 512; ++x)
+        for (int y = 0; y < 512; ++y)
+          {
+            value_type val(pixel_value<value_type>(x*y));
+            ss.write(reinterpret_cast<char *>(&val), sizeof(val));
+          }
+
+      VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
+                             reader.getPixelType(),
+                             reader.isLittleEndian() ? ome::bioformats::LITTLE : ome::bioformats::BIG);
+
+      ss.seekg(0, std::ios::beg);
+      EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512));
+      ss.seekg(0, std::ios::beg);
+      EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512, 0));
+
+      EXPECT_NO_THROW(reader.openBytes(0, buf));
+      EXPECT_NO_THROW(reader.openBytes(0, buf, 0, 0, 512, 512));
+      EXPECT_THROW(reader.openThumbBytes(0, buf), std::runtime_error);
+    }
+  };
+
+}
+
 TEST_F(FormatReaderTest, FlatPixels)
 {
   r.setId("flat");
 
+  VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
+                         r.getPixelType(),
+                         r.isLittleEndian() ? ome::bioformats::LITTLE : ome::bioformats::BIG);
+
+  FlatPixelsTest v(r, buf);
+  boost::apply_visitor(v, buf.vbuffer());
+
   /// @todo Add tests for readPlane from stream for all variants.
-
-  std::istringstream is("");
-  VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1], PixelType::FLOAT);
-
-  EXPECT_NO_THROW(r.readPlane(is, buf, 0, 0, 512, 512));
-  EXPECT_NO_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0));
-
-  EXPECT_NO_THROW(r.openBytes(0, buf));
-  EXPECT_NO_THROW(r.openBytes(0, buf, 0, 0, 512, 512));
-  EXPECT_THROW(r.openThumbBytes(0, buf), std::runtime_error);
 }
