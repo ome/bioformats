@@ -161,6 +161,60 @@ struct ArrayTestVisitor : public boost::static_visitor<>
 };
 
 /*
+ * Construct unmanaged buffer with extents.
+ */
+struct ConstructExtentRefTestVisitor : public boost::static_visitor<>
+{
+  template<typename T>
+  void
+  operator() (const T& /* v */)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    std::array<typename PixelBuffer<value_type>::size_type, 9> extents;
+    extents[0] = 5;
+    extents[1] = 2;
+    extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
+
+    // VariantPixelBuffer with unmanaged backing store.
+    value_type backing[10];
+    std::shared_ptr<PixelBuffer<value_type> > buf
+      (new PixelBuffer<value_type>(&backing[0], extents));
+    VariantPixelBuffer mbuf(buf);
+
+    ASSERT_EQ(10U, mbuf.num_elements());
+
+    AssignTestVisitor av(mbuf);
+    boost::apply_visitor(av, mbuf.vbuffer());
+  }
+};
+
+/*
+ * Construct unmanaged buffer with ranges.
+ */
+struct ConstructRangeRefTestVisitor : public boost::static_visitor<>
+{
+  template<typename T>
+  void
+  operator() (const T& /* v */)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    // VariantPixelBuffer with unmanaged backing store.
+    value_type backing[100];
+    std::shared_ptr<PixelBuffer<value_type> > buf
+      (new PixelBuffer<value_type>(&backing[0],
+                                   boost::extents[10][10][1][1][1][1][1][1][1]));
+    VariantPixelBuffer mbuf(buf);
+
+    ASSERT_EQ(100U, mbuf.num_elements());
+
+    AssignTestVisitor av(mbuf);
+    boost::apply_visitor(av, mbuf.vbuffer());
+  }
+};
+
+/*
  * Data test.
  */
 struct DataTestVisitor : public boost::static_visitor<>
@@ -219,9 +273,10 @@ struct ManagedTestVisitor : public boost::static_visitor<>
 
     {
       // VariantPixelBuffer with unmanaged backing store.
-      value_type *backing = 0;
+      value_type backing[100];
       std::shared_ptr<PixelBuffer<value_type> > buf
-        (new PixelBuffer<value_type>(backing, boost::extents[10][10][1][1][1][1][1][1][1]));
+        (new PixelBuffer<value_type>(&backing[0],
+                                     boost::extents[10][10][1][1][1][1][1][1][1]));
          VariantPixelBuffer mbuf(buf);
          const VariantPixelBuffer& cmbuf(mbuf);
 
@@ -454,6 +509,34 @@ struct StreamOutputTestVisitor : public boost::static_visitor<>
   }
 };
 
+TEST_P(VariantPixelBufferTest, ConstructExtent)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  std::array<VariantPixelBuffer::size_type, 9> extents;
+  extents[0] = 5;
+  extents[1] = 2;
+  extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
+
+  VariantPixelBuffer buf(extents, params.type, params.endian);
+  ASSERT_EQ(buf.num_elements(), 10U);
+
+  AssignTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
+}
+
+TEST_P(VariantPixelBufferTest, ConstructExtentRef)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  // Dummy, for type selection.
+  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1],
+                         params.type, params.endian);
+
+  ConstructExtentRefTestVisitor v;
+  boost::apply_visitor(v, buf.vbuffer());
+}
+
 TEST_P(VariantPixelBufferTest, ConstructRange)
 {
   const VariantPixelBufferTestParameters& params = GetParam();
@@ -463,6 +546,18 @@ TEST_P(VariantPixelBufferTest, ConstructRange)
   ASSERT_EQ(buf.num_elements(), 10U);
 
   AssignTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
+}
+
+TEST_P(VariantPixelBufferTest, ConstructRangeRef)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  // Dummy, for type selection.
+  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1],
+                         params.type, params.endian);
+
+  ConstructRangeRefTestVisitor v;
   boost::apply_visitor(v, buf.vbuffer());
 }
 
