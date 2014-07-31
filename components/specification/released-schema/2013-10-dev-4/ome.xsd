@@ -1956,14 +1956,8 @@
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector (e.g. PMT voltage) as a float. {used:PMT}
-								Units are set by VoltageUnit.
+								The Voltage of the detector (e.g. PMT voltage) as a float. volts[V] {used:PMT}
 							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsVoltage">
-						<xsd:annotation>
-							<xsd:documentation>The units of the Voltage - default:volts[V].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
@@ -2825,15 +2819,7 @@
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector. {used:PMT}
-								Units are set by VoltageUnit.
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsVoltage">
-						<xsd:annotation>
-							<xsd:documentation>
-								The units of the Voltage of the detector - default:volts[V]
+								The Voltage of the detector. volts[V] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
