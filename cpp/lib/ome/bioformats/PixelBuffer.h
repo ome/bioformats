@@ -746,45 +746,8 @@ namespace ome
       inline void
       read(std::basic_istream<charT,traits>& stream)
       {
-        const size_type * extents = shape();
-        const storage_order_type order = storage_order();
-        indices_type idx;
-
-        /**
-         * This initial naïve implementation likely has much room for
-         * optimisation and generalisation to different dimension
-         * numbers for subsetting.
-         */
-        for (idx[order.ordering(8)] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
-             order.ascending(8) ? idx[order.ordering(8)] < extents[order.ordering(8)] : idx[order.ordering(8)] >= 0;
-             order.ascending(8) ? ++idx[order.ordering(8)] : --idx[order.ordering(8)])
-          for (idx[order.ordering(7)] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
-               order.ascending(7) ? idx[order.ordering(7)] < extents[order.ordering(7)] : idx[order.ordering(7)] >= 0;
-               order.ascending(7) ? ++idx[order.ordering(7)] : --idx[order.ordering(7)])
-            for (idx[order.ordering(6)] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
-                 order.ascending(6) ? idx[order.ordering(6)] < extents[order.ordering(6)] : idx[order.ordering(6)] >= 0;
-                 order.ascending(6) ? ++idx[order.ordering(6)] : --idx[order.ordering(6)])
-              for (idx[order.ordering(5)] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
-                   order.ascending(5) ? idx[order.ordering(5)] < extents[order.ordering(5)] : idx[order.ordering(5)] >= 0;
-                   order.ascending(5) ? ++idx[order.ordering(5)] : --idx[order.ordering(5)])
-                for (idx[order.ordering(4)] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
-                     order.ascending(4) ? idx[order.ordering(4)] < extents[order.ordering(4)] : idx[order.ordering(4)] >= 0;
-                     order.ascending(4) ? ++idx[order.ordering(4)] : --idx[order.ordering(4)])
-                  for (idx[order.ordering(3)] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
-                       order.ascending(3) ? idx[order.ordering(3)] < extents[order.ordering(3)] : idx[order.ordering(3)] >= 0;
-                       order.ascending(3) ? ++idx[order.ordering(3)] : --idx[order.ordering(3)])
-                    for (idx[order.ordering(2)] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
-                         order.ascending(2) ? idx[order.ordering(2)] < extents[order.ordering(2)] : idx[order.ordering(2)] >= 0;
-                         order.ascending(2) ? ++idx[order.ordering(2)] : --idx[order.ordering(2)])
-                      for (idx[order.ordering(1)] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
-                           order.ascending(1) ? idx[order.ordering(1)] < extents[order.ordering(1)] : idx[order.ordering(1)] >= 0;
-                           order.ascending(1) ? ++idx[order.ordering(1)] : --idx[order.ordering(1)])
-                        for (idx[order.ordering(0)] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
-                             order.ascending(0) ? idx[order.ordering(0)] < extents[order.ordering(0)] : idx[order.ordering(0)] >= 0;
-                             order.ascending(0) ? ++idx[order.ordering(0)] : --idx[order.ordering(0)])
-                          {
-                            stream.read(reinterpret_cast<char *>(&at(idx)), sizeof(value_type));
-                          }
+        stream.read(reinterpret_cast<char *>(data()),
+                    static_cast<std::streamsize>(num_elements() * sizeof(value_type)));
       }
 
       /**
@@ -801,45 +764,8 @@ namespace ome
       inline void
       write(std::basic_ostream<charT,traits>& stream) const
       {
-        const size_type * extents = shape();
-        const storage_order_type order = storage_order();
-        indices_type idx;
-
-        /**
-         * This initial naïve implementation likely has much room for
-         * optimisation and generalisation to different dimension
-         * numbers for subsetting.
-         */
-        for (idx[order.ordering(8)] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
-             order.ascending(8) ? idx[order.ordering(8)] < extents[order.ordering(8)] : idx[order.ordering(8)] >= 0;
-             order.ascending(8) ? ++idx[order.ordering(8)] : --idx[order.ordering(8)])
-          for (idx[order.ordering(7)] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
-               order.ascending(7) ? idx[order.ordering(7)] < extents[order.ordering(7)] : idx[order.ordering(7)] >= 0;
-               order.ascending(7) ? ++idx[order.ordering(7)] : --idx[order.ordering(7)])
-            for (idx[order.ordering(6)] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
-                 order.ascending(6) ? idx[order.ordering(6)] < extents[order.ordering(6)] : idx[order.ordering(6)] >= 0;
-                 order.ascending(6) ? ++idx[order.ordering(6)] : --idx[order.ordering(6)])
-              for (idx[order.ordering(5)] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
-                   order.ascending(5) ? idx[order.ordering(5)] < extents[order.ordering(5)] : idx[order.ordering(5)] >= 0;
-                   order.ascending(5) ? ++idx[order.ordering(5)] : --idx[order.ordering(5)])
-                for (idx[order.ordering(4)] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
-                     order.ascending(4) ? idx[order.ordering(4)] < extents[order.ordering(4)] : idx[order.ordering(4)] >= 0;
-                     order.ascending(4) ? ++idx[order.ordering(4)] : --idx[order.ordering(4)])
-                  for (idx[order.ordering(3)] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
-                       order.ascending(3) ? idx[order.ordering(3)] < extents[order.ordering(3)] : idx[order.ordering(3)] >= 0;
-                       order.ascending(3) ? ++idx[order.ordering(3)] : --idx[order.ordering(3)])
-                    for (idx[order.ordering(2)] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
-                         order.ascending(2) ? idx[order.ordering(2)] < extents[order.ordering(2)] : idx[order.ordering(2)] >= 0;
-                         order.ascending(2) ? ++idx[order.ordering(2)] : --idx[order.ordering(2)])
-                      for (idx[order.ordering(1)] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
-                           order.ascending(1) ? idx[order.ordering(1)] < extents[order.ordering(1)] : idx[order.ordering(1)] >= 0;
-                           order.ascending(1) ? ++idx[order.ordering(1)] : --idx[order.ordering(1)])
-                        for (idx[order.ordering(0)] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
-                             order.ascending(0) ? idx[order.ordering(0)] < extents[order.ordering(0)] : idx[order.ordering(0)] >= 0;
-                             order.ascending(0) ? ++idx[order.ordering(0)] : --idx[order.ordering(0)])
-                          {
-                            stream.write(reinterpret_cast<const char *>(&at(idx)), sizeof(value_type));
-                          }
+        stream.write(reinterpret_cast<const char *>(data()),
+                     static_cast<std::streamsize>(num_elements() * sizeof(value_type)));
       }
 
     private:
