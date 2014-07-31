@@ -2423,13 +2423,7 @@
 					<xsd:documentation>
 						The is the rate in Hz at which the laser pulses if
 						the Pulse type is 'Repetitive'. hertz[Hz]
-						Units are set by RepetitionRateUnit.
 					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="RepetitionRateUnit" use="optional" default="Hz" type="UnitsFrequency">
-				<xsd:annotation>
-					<xsd:documentation>The units of the RepetitionRate - default:hertz[Hz].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -2834,15 +2828,9 @@
 						<xsd:annotation>
 							<xsd:documentation>
 								The speed at which the detector can count pixels.  {used:CCD,EMCCD}
-								This is the bytes per second that
-								can be read from the detector (like a baud rate).
-								Units are set by ReadOutRateUnit.
+								Units of ReadOutRate is MHz. This is the bytes per second that
+								can be read from the detector (like a baud rate). megahertz[MHz]
 							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="ReadOutRateUnit" use="optional" default="MHz" type="UnitsFrequency">
-						<xsd:annotation>
-							<xsd:documentation>The units of the ReadOutRate - default:megahertz[Hz].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Binning" use="optional">
