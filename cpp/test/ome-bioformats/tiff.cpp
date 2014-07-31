@@ -490,5 +490,5 @@ TEST(TIFFTest, FieldCount)
   std::string name;
   bool count = ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION).passCount();
 
-  ASSERT_EQ(false, count);
+  ASSERT_FALSE(count);
 }

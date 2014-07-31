@@ -39,23 +39,27 @@
 #ifndef TEST_PIXEL_H
 #define TEST_PIXEL_H
 
+#include <ome/compat/cstdint.h>
+
+/// Helpers to create pixel values of all supported types from integers.
+
 template<typename P>
 P
-pixel_value(int value)
+pixel_value(uint32_t value)
 {
   return static_cast<P>(value);
 }
 
 template<>
 std::complex<float>
-pixel_value<std::complex<float> >(int value)
+pixel_value<std::complex<float> >(uint32_t value)
 {
   return static_cast<float>(value);
 }
 
 template<>
 std::complex<double>
-pixel_value<std::complex<double> >(int value)
+pixel_value<std::complex<double> >(uint32_t value)
 {
   return static_cast<double>(value);
 }

@@ -62,14 +62,14 @@ TYPED_TEST_CASE_P(PixelPropertiesType);
 TYPED_TEST_P(PixelPropertiesType, DefaultConstruct)
 {
   ASSERT_NO_THROW(typename PixelProperties<TypeParam::type>::native_type tn);
-  ASSERT_NO_THROW(typename PixelProperties<TypeParam::type>::big_type tb);
+  ASSERT_NO_THROW(typename PixelProperties<TypeParam::type>::big_type    tb);
   ASSERT_NO_THROW(typename PixelProperties<TypeParam::type>::little_type tl);
 }
 
 TYPED_TEST_P(PixelPropertiesType, NativeSize)
 {
   typename PixelProperties<TypeParam::type>::native_type tn;
-  typename PixelProperties<TypeParam::type>::big_type tb;
+  typename PixelProperties<TypeParam::type>::big_type    tb;
   typename PixelProperties<TypeParam::type>::little_type tl;
 
   ASSERT_EQ(sizeof(tn), sizeof(typename TypeParam::expected));

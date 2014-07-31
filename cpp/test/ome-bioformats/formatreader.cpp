@@ -869,8 +869,8 @@ namespace
       typedef typename T::element_type::value_type value_type;
 
       std::stringstream ss;
-      for (int x = 0; x < 512; ++x)
-        for (int y = 0; y < 512; ++y)
+      for (uint32_t x = 0; x < 512; ++x)
+        for (uint32_t y = 0; y < 512; ++y)
           {
             value_type val(pixel_value<value_type>(x*y));
             ss.write(reinterpret_cast<char *>(&val), sizeof(val));

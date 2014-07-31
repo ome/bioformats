@@ -224,7 +224,7 @@ TYPED_TEST_P(PixelBufferType, ConstructSize)
 TYPED_TEST_P(PixelBufferType, ConstructExtent)
 {
   std::vector<TypeParam> source;
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     source.push_back(pixel_value<TypeParam>(i));
 
   std::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
@@ -237,7 +237,7 @@ TYPED_TEST_P(PixelBufferType, ConstructExtent)
 
   ASSERT_EQ(buf.num_elements(), 10U);
   ASSERT_TRUE(buf.data());
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     {
       ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
     }
@@ -247,7 +247,7 @@ TYPED_TEST_P(PixelBufferType, ConstructExtentRef)
 {
   // For correct vector<bool>
   boost::container::vector<TypeParam> source;
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     source.push_back(pixel_value<TypeParam>(i));
 
   std::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
@@ -260,7 +260,7 @@ TYPED_TEST_P(PixelBufferType, ConstructExtentRef)
 
   ASSERT_EQ(buf.num_elements(), 10U);
   ASSERT_TRUE(buf.data());
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     {
       ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
     }
@@ -269,7 +269,7 @@ TYPED_TEST_P(PixelBufferType, ConstructExtentRef)
 TYPED_TEST_P(PixelBufferType, ConstructRange)
 {
   std::vector<TypeParam> source;
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     source.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]);
@@ -277,7 +277,7 @@ TYPED_TEST_P(PixelBufferType, ConstructRange)
 
   ASSERT_EQ(buf.num_elements(), 10U);
   ASSERT_TRUE(buf.data());
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     {
       ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
     }
@@ -287,7 +287,7 @@ TYPED_TEST_P(PixelBufferType, ConstructRangeRef)
 {
   // For correct vector<bool>
   boost::container::vector<TypeParam> source;
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     source.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]);
@@ -295,7 +295,7 @@ TYPED_TEST_P(PixelBufferType, ConstructRangeRef)
 
   ASSERT_EQ(buf.num_elements(), 10U);
   ASSERT_TRUE(buf.data());
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     {
       ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
     }
@@ -304,11 +304,11 @@ TYPED_TEST_P(PixelBufferType, ConstructRangeRef)
 TYPED_TEST_P(PixelBufferType, ConstructCopy)
 {
   std::vector<TypeParam> source1;
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     source1.push_back(pixel_value<TypeParam>(i));
 
   std::vector<TypeParam> source2;
-  for (int i = 10U; i < 20U; ++i)
+  for (uint32_t i = 10; i < 20; ++i)
     source2.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
@@ -346,11 +346,11 @@ void test_operators(const PixelBuffer<std::complex<T> >& /* buf1 */,
 TYPED_TEST_P(PixelBufferType, Operators)
 {
   std::vector<TypeParam> source1;
-  for (int i = 0; i < 10; ++i)
+  for (uint32_t i = 0; i < 10; ++i)
     source1.push_back(pixel_value<TypeParam>(i));
 
   std::vector<TypeParam> source2;
-  for (int i = 100U; i < 120U; ++i)
+  for (uint32_t i = 100; i < 120; ++i)
     source2.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
@@ -522,7 +522,7 @@ TYPED_TEST_P(PixelBufferType, StorageOrder)
 TYPED_TEST_P(PixelBufferType, GetIndex)
 {
   std::vector<TypeParam> source;
-  for (int i = 0; i < 100; ++i)
+  for (uint32_t i = 0; i < 100; ++i)
     source.push_back(pixel_value<TypeParam>(i));
 
   PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
@@ -531,8 +531,8 @@ TYPED_TEST_P(PixelBufferType, GetIndex)
 
   ASSERT_EQ(buf.num_elements(), 100U);
   ASSERT_TRUE(buf.data());
-  for (int i = 0; i < 10; ++i)
-    for (int j = 0; j < 10; ++j)
+  for (uint32_t i = 0; i < 10; ++i)
+    for (uint32_t j = 0; j < 10; ++j)
       {
         typename PixelBuffer<TypeParam>::indices_type idx;
         idx[0] = i;
@@ -550,8 +550,8 @@ TYPED_TEST_P(PixelBufferType, SetIndex)
 
   ASSERT_EQ(buf.num_elements(), 100U);
   ASSERT_TRUE(buf.data());
-  for (int i = 0; i < 10; ++i)
-    for (int j = 0; j < 10; ++j)
+  for (uint32_t i = 0; i < 10; ++i)
+    for (uint32_t j = 0; j < 10; ++j)
       {
         typename PixelBuffer<TypeParam>::indices_type idx;
         idx[0] = i;
