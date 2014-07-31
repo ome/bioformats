@@ -277,12 +277,12 @@ struct ManagedTestVisitor : public boost::static_visitor<>
       std::shared_ptr<PixelBuffer<value_type> > buf
         (new PixelBuffer<value_type>(&backing[0],
                                      boost::extents[10][10][1][1][1][1][1][1][1]));
-         VariantPixelBuffer mbuf(buf);
-         const VariantPixelBuffer& cmbuf(mbuf);
+      VariantPixelBuffer mbuf(buf);
+      const VariantPixelBuffer& cmbuf(mbuf);
 
-         EXPECT_FALSE(mbuf.managed());
-         EXPECT_FALSE(cmbuf.managed());
-         }
+      EXPECT_FALSE(mbuf.managed());
+      EXPECT_FALSE(cmbuf.managed());
+    }
   }
 };
 

@@ -73,18 +73,18 @@ namespace ome
      * even if unused.  Future model changes may remove this
      * requirement.
      */
-     enum Dimensions
-     {
-       DIM_SPATIAL_X  = 0, ///< Spatial x dimension (X).
-       DIM_SPATIAL_Y  = 1, ///< Spatial y dimension (Y).
-       DIM_SPATIAL_Z  = 2, ///< Spatial z dimension (Z).
-       DIM_TEMPORAL_T = 3, ///< Temporal t dimension (T).
-       DIM_CHANNEL    = 4, ///< Logical channel (typically detectors of specific wavelengths) (C).
-       DIM_SUBCHANNEL = 5, ///< Logical sub-channel (typically used for RGB channel sub-components) (S).
-       DIM_MODULO_Z   = 6, ///< Logical subdivision of the spatial z dimension (z).
-       DIM_MODULO_T   = 7, ///< Logical subdivision of the temporal t dimension (t).
-       DIM_MODULO_C   = 8  ///< Logical subdivision of the logical channel dimension (c).
-     };
+    enum Dimensions
+      {
+        DIM_SPATIAL_X  = 0, ///< Spatial x dimension (X).
+        DIM_SPATIAL_Y  = 1, ///< Spatial y dimension (Y).
+        DIM_SPATIAL_Z  = 2, ///< Spatial z dimension (Z).
+        DIM_TEMPORAL_T = 3, ///< Temporal t dimension (T).
+        DIM_CHANNEL    = 4, ///< Logical channel (typically detectors of specific wavelengths) (C).
+        DIM_SUBCHANNEL = 5, ///< Logical sub-channel (typically used for RGB channel sub-components) (S).
+        DIM_MODULO_Z   = 6, ///< Logical subdivision of the spatial z dimension (z).
+        DIM_MODULO_T   = 7, ///< Logical subdivision of the temporal t dimension (t).
+        DIM_MODULO_C   = 8  ///< Logical subdivision of the logical channel dimension (c).
+      };
 
     /**
      * Base class for all PixelBuffer types.
@@ -872,8 +872,8 @@ namespace ome
         /**
          * PixelBuffer of any type.
          *
-         * @throws if used.
-         * @returns a pointer to the data array.
+         * @param v the MultiArray variant.
+         * @returns a reference to the data array.
          */
         template <typename U>
         typename PixelBuffer<T>::array_ref_type&
@@ -892,8 +892,8 @@ namespace ome
         /**
          * PixelBuffer of any type.
          *
-         * @throws if used.
-         * @returns a pointer to the data array.
+         * @param v the MultiArray variant.
+         * @returns a const reference to the data array.
          */
         template <typename U>
         const typename PixelBuffer<T>::array_ref_type&

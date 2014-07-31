@@ -301,9 +301,9 @@ TEST_P(FormatReaderTest, IsThisType)
   EXPECT_FALSE(r.isThisType("valid.test", false));
 
   EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*content.begin()),
-                             reinterpret_cast<uint8_t *>(&*content.end())));
+                            reinterpret_cast<uint8_t *>(&*content.end())));
   EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*content.begin()),
-                             content.size()));
+                            content.size()));
   EXPECT_FALSE(r.isThisType(content));
 }
 
@@ -776,7 +776,7 @@ TEST_P(FormatReaderTest, FlatFile)
   EXPECT_FALSE(r.isUsedFile("unused-nonexistent-file"));
 
   // Valid but unused file
- EXPECT_FALSE(r.isUsedFile(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome"));
+  EXPECT_FALSE(r.isUsedFile(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome"));
 }
 
 TEST_P(FormatReaderTest, DefaultMetadata)

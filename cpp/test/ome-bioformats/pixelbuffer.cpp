@@ -564,7 +564,7 @@ TYPED_TEST_P(PixelBufferType, SetIndex)
 
         ASSERT_EQ(val, buf.at(idx));
         ASSERT_EQ(val, cbuf.at(idx));
-    }
+      }
 }
 
 TYPED_TEST_P(PixelBufferType, SetIndexDeathTest)
@@ -706,5 +706,13 @@ typedef ::testing::Types<
   PixelEndianProperties<PT::DOUBLECOMPLEX, ome::bioformats::NATIVE>::type> TestTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(PixelBufferTypeTest, PixelBufferType, TestTypes);
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#endif
 
 INSTANTIATE_TEST_CASE_P(DimensionOrderVariants, DimensionOrderTest, ::testing::ValuesIn(dimension_params));

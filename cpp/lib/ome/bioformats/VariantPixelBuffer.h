@@ -235,7 +235,7 @@ namespace ome
        *
        * @param buffer the buffer to copy.
        */
-       explicit
+      explicit
       VariantPixelBuffer(const VariantPixelBuffer& buffer);
 
       /**
@@ -322,9 +322,9 @@ namespace ome
         return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, endiantype, storage));
       }
 
-    // No switch default to avoid -Wunreachable-code errors.
-    // However, this then makes -Wswitch-default complain.  Disable
-    // temporarily.
+      // No switch default to avoid -Wunreachable-code errors.
+      // However, this then makes -Wswitch-default complain.  Disable
+      // temporarily.
 #ifdef __GNUC__
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wswitch-default"
