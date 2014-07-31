@@ -55,6 +55,7 @@
 #include "pixel.h"
 
 using ome::bioformats::CoreMetadata;
+using ome::bioformats::EndianType;
 using ome::bioformats::FormatReader;
 using ome::bioformats::VariantPixelBuffer;
 using ome::bioformats::detail::ReaderProperties;
@@ -65,7 +66,29 @@ using ome::xml::meta::MetadataStore;
 using ome::xml::meta::OMEXMLMetadata;
 using ome::xml::model::enums::PixelType;
 
+typedef ome::xml::model::enums::PixelType PT;
 typedef std::array<dimension_size_type, 3> dim;
+
+class FormatReaderTestParameters
+{
+public:
+  PT         type;
+  EndianType endian;
+
+  FormatReaderTestParameters(PT         type,
+                             EndianType endian):
+    type(type),
+    endian(endian)
+  {}
+};
+
+template<class charT, class traits>
+inline std::basic_ostream<charT,traits>&
+operator<< (std::basic_ostream<charT,traits>& os,
+            const FormatReaderTestParameters& params)
+{
+  return os << PT(params.type) << '/'<< params.endian;
+}
 
 namespace
 {
@@ -88,6 +111,26 @@ namespace
 
   const ReaderProperties props(test_properties());
 
+}
+
+class FormatReaderCustom : public ::ome::bioformats::detail::FormatReader
+{
+private:
+  const FormatReaderTestParameters& test_params;
+
+public:
+  FormatReaderCustom(const FormatReaderTestParameters& test_params):
+    ::ome::bioformats::detail::FormatReader(props),
+    test_params(test_params)
+  {
+    domains.push_back("Test domain");
+  }
+
+  virtual ~FormatReaderCustom()
+  {
+  }
+
+private:
   std::shared_ptr<CoreMetadata>
   makeCore()
   {
@@ -98,11 +141,11 @@ namespace
     c->sizeZ = 20;
     c->sizeT = 4;
     c->sizeC = 2;
-    c->pixelType = PixelType::FLOAT;
+    c->pixelType = test_params.type;
     c->imageCount = c->sizeZ * c->sizeT * c->sizeC;
     c->orderCertain = true;
     c->rgb = false;
-    c->littleEndian = false;
+    c->littleEndian = test_params.endian == ::ome::bioformats::LITTLE;
     c->interleaved = false;
     c->indexed = false;
     c->falseColor = true;
@@ -112,21 +155,8 @@ namespace
 
     return c;
   }
-}
 
-class FormatReaderCustom : public ::ome::bioformats::detail::FormatReader
-{
 public:
-  FormatReaderCustom():
-    ::ome::bioformats::detail::FormatReader(props)
-  {
-    domains.push_back("Test domain");
-  }
-
-  virtual ~FormatReaderCustom()
-  {
-  }
-
   void
   openBytes(dimension_size_type no,
             VariantPixelBuffer& buf) const
@@ -225,15 +255,15 @@ public:
 
 };
 
-class FormatReaderTest : public ::testing::Test
+class FormatReaderTest : public ::testing::TestWithParam<FormatReaderTestParameters>
 {
 public:
   FormatReaderCustom r;
   const FormatReader& cr;
 
   FormatReaderTest():
-    ::testing::Test(),
-    r(),
+    ::testing::TestWithParam<FormatReaderTestParameters>(),
+    r(GetParam()),
     cr(r)
   {
   }
@@ -243,12 +273,12 @@ public:
   }
 };
 
-TEST_F(FormatReaderTest, DefaultConstruct)
+TEST_P(FormatReaderTest, DefaultConstruct)
 {
-  FormatReaderCustom r;
+  FormatReaderCustom r(GetParam());
 }
 
-TEST_F(FormatReaderTest, ReaderProperties)
+TEST_P(FormatReaderTest, ReaderProperties)
 {
   r.setId("test");
   ASSERT_EQ(props.name, r.getFormat());
@@ -257,7 +287,7 @@ TEST_F(FormatReaderTest, ReaderProperties)
   ASSERT_EQ(props.compression_suffixes, r.getCompressionSuffixes());
 }
 
-TEST_F(FormatReaderTest, IsThisType)
+TEST_P(FormatReaderTest, IsThisType)
 {
   std::string content("Invalid file content");
   std::istringstream iscontent(content);
@@ -277,18 +307,18 @@ TEST_F(FormatReaderTest, IsThisType)
   EXPECT_FALSE(r.isThisType(content));
 }
 
-TEST_F(FormatReaderTest, DefaultClose)
+TEST_P(FormatReaderTest, DefaultClose)
 {
   EXPECT_NO_THROW(r.close());
 }
 
-TEST_F(FormatReaderTest, FlatClose)
+TEST_P(FormatReaderTest, FlatClose)
 {
   r.setId("flat");
   EXPECT_NO_THROW(r.close());
 }
 
-TEST_F(FormatReaderTest, DefaultCoreMetadata)
+TEST_P(FormatReaderTest, DefaultCoreMetadata)
 {
   EXPECT_THROW(r.getImageCount(), std::logic_error);
   EXPECT_THROW(r.isRGB(), std::logic_error);
@@ -320,8 +350,10 @@ TEST_F(FormatReaderTest, DefaultCoreMetadata)
   EXPECT_THROW(r.getResolutionCount(), std::logic_error);
 }
 
-TEST_F(FormatReaderTest, FlatCoreMetadata)
+TEST_P(FormatReaderTest, FlatCoreMetadata)
 {
+  const FormatReaderTestParameters& params(GetParam());
+
   r.setId("flat");
 
   EXPECT_EQ(160U, r.getImageCount());
@@ -331,8 +363,8 @@ TEST_F(FormatReaderTest, FlatCoreMetadata)
   EXPECT_EQ(20U, r.getSizeZ());
   EXPECT_EQ(4U, r.getSizeT());
   EXPECT_EQ(2U, r.getSizeC());
-  EXPECT_EQ(PixelType::FLOAT, r.getPixelType());
-  EXPECT_EQ(32U, r.getBitsPerPixel());
+  EXPECT_EQ(params.type, r.getPixelType());
+  EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
   EXPECT_EQ(1U, r.getRGBChannelCount());
   EXPECT_EQ(false, r.isIndexed());
@@ -342,7 +374,7 @@ TEST_F(FormatReaderTest, FlatCoreMetadata)
   EXPECT_NO_THROW(r.getModuloC());
   EXPECT_EQ(1U, r.getThumbSizeX());
   EXPECT_EQ(1U, r.getThumbSizeY());
-  EXPECT_EQ(false, r.isLittleEndian());
+  EXPECT_EQ(params.endian == ::ome::bioformats::LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_EQ(true, r.isOrderCertain());
   EXPECT_EQ(false, r.isThumbnailSeries());
@@ -350,12 +382,16 @@ TEST_F(FormatReaderTest, FlatCoreMetadata)
   EXPECT_EQ(false, r.isInterleaved(0));
   EXPECT_EQ(false, r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth());
-  EXPECT_EQ(512U, r.getOptimalTileHeight());
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
+                     1024U),
+            r.getOptimalTileHeight());
   EXPECT_EQ(1U, r.getResolutionCount());
 }
 
-TEST_F(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
+TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
 {
+  const FormatReaderTestParameters& params(GetParam());
+
   EXPECT_NO_THROW(r.setFlattenedResolutions(true));
   r.setId("subres");
 
@@ -366,8 +402,8 @@ TEST_F(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_EQ(20U, r.getSizeZ());
   EXPECT_EQ(4U, r.getSizeT());
   EXPECT_EQ(2U, r.getSizeC());
-  EXPECT_EQ(PixelType::FLOAT, r.getPixelType());
-  EXPECT_EQ(32U, r.getBitsPerPixel());
+  EXPECT_EQ(params.type, r.getPixelType());
+  EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
   EXPECT_EQ(1U, r.getRGBChannelCount());
   EXPECT_EQ(false, r.isIndexed());
@@ -377,7 +413,7 @@ TEST_F(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloC());
   EXPECT_EQ(1U, r.getThumbSizeX());
   EXPECT_EQ(1U, r.getThumbSizeY());
-  EXPECT_EQ(false, r.isLittleEndian());
+  EXPECT_EQ(params.endian == ::ome::bioformats::LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_EQ(true, r.isOrderCertain());
   EXPECT_EQ(false, r.isThumbnailSeries());
@@ -385,12 +421,16 @@ TEST_F(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_EQ(false, r.isInterleaved(0));
   EXPECT_EQ(false, r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth());
-  EXPECT_EQ(512U, r.getOptimalTileHeight());
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
+                     1024U),
+            r.getOptimalTileHeight());
   EXPECT_EQ(1U, r.getResolutionCount());
 }
 
-TEST_F(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
+TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
 {
+  const FormatReaderTestParameters& params(GetParam());
+
   EXPECT_NO_THROW(r.setFlattenedResolutions(false));
   r.setId("subres");
 
@@ -401,8 +441,8 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_EQ(20U, r.getSizeZ());
   EXPECT_EQ(4U, r.getSizeT());
   EXPECT_EQ(2U, r.getSizeC());
-  EXPECT_EQ(PixelType::FLOAT, r.getPixelType());
-  EXPECT_EQ(32U, r.getBitsPerPixel());
+  EXPECT_EQ(params.type, r.getPixelType());
+  EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
   EXPECT_EQ(1U, r.getRGBChannelCount());
   EXPECT_EQ(false, r.isIndexed());
@@ -412,7 +452,7 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloC());
   EXPECT_EQ(1U, r.getThumbSizeX());
   EXPECT_EQ(1U, r.getThumbSizeY());
-  EXPECT_EQ(false, r.isLittleEndian());
+  EXPECT_EQ(params.endian == ::ome::bioformats::LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_EQ(true, r.isOrderCertain());
   EXPECT_EQ(false, r.isThumbnailSeries());
@@ -420,11 +460,13 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_EQ(false, r.isInterleaved(0));
   EXPECT_EQ(false, r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth());
-  EXPECT_EQ(512U, r.getOptimalTileHeight());
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
+                     1024U),
+            r.getOptimalTileHeight());
   EXPECT_EQ(3U, r.getResolutionCount());
 }
 
-TEST_F(FormatReaderTest, DefaultLUT)
+TEST_P(FormatReaderTest, DefaultLUT)
 {
   VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
   EXPECT_THROW(r.get8BitLookupTable(buf8), std::runtime_error);
@@ -432,7 +474,7 @@ TEST_F(FormatReaderTest, DefaultLUT)
   EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
 }
 
-TEST_F(FormatReaderTest, FlatLUT)
+TEST_P(FormatReaderTest, FlatLUT)
 {
   r.setId("flat");
 
@@ -442,7 +484,7 @@ TEST_F(FormatReaderTest, FlatLUT)
   EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
 }
 
-TEST_F(FormatReaderTest, DefaultSeries)
+TEST_P(FormatReaderTest, DefaultSeries)
 {
   EXPECT_THROW(r.getSeriesCount(), std::logic_error);
   EXPECT_THROW(r.setSeries(0), std::logic_error);
@@ -481,7 +523,7 @@ struct dims
   }
 };
 
-TEST_F(FormatReaderTest, FlatSeries)
+TEST_P(FormatReaderTest, FlatSeries)
 {
   r.setId("flat");
 
@@ -530,7 +572,7 @@ TEST_F(FormatReaderTest, FlatSeries)
     }
 }
 
-TEST_F(FormatReaderTest, SubresolutionFlattenedSeries)
+TEST_P(FormatReaderTest, SubresolutionFlattenedSeries)
 {
   EXPECT_NO_THROW(r.setFlattenedResolutions(true));
   r.setId("subres");
@@ -556,7 +598,7 @@ TEST_F(FormatReaderTest, SubresolutionFlattenedSeries)
   EXPECT_TRUE(coords == ncoords);
 }
 
-TEST_F(FormatReaderTest, SubresolutionUnflattenedSeries)
+TEST_P(FormatReaderTest, SubresolutionUnflattenedSeries)
 {
   EXPECT_NO_THROW(r.setFlattenedResolutions(false));
   r.setId("subres");
@@ -582,7 +624,7 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedSeries)
   EXPECT_TRUE(coords == ncoords);
 }
 
-TEST_F(FormatReaderTest, DefaultGroupFiles)
+TEST_P(FormatReaderTest, DefaultGroupFiles)
 {
   EXPECT_TRUE(r.isGroupFiles());
   EXPECT_NO_THROW(r.setGroupFiles(false));
@@ -590,7 +632,7 @@ TEST_F(FormatReaderTest, DefaultGroupFiles)
   EXPECT_EQ(FormatReader::CANNOT_GROUP, r.fileGroupOption("id"));
 }
 
-TEST_F(FormatReaderTest, DefaultFlatGroupFiles)
+TEST_P(FormatReaderTest, DefaultFlatGroupFiles)
 {
   EXPECT_TRUE(r.isGroupFiles());
   EXPECT_NO_THROW(r.setGroupFiles(false));
@@ -598,7 +640,7 @@ TEST_F(FormatReaderTest, DefaultFlatGroupFiles)
   EXPECT_EQ(FormatReader::CANNOT_GROUP, r.fileGroupOption("id"));
 }
 
-TEST_F(FormatReaderTest, DefaultProperties)
+TEST_P(FormatReaderTest, DefaultProperties)
 {
   EXPECT_FALSE(r.isNormalized());
   EXPECT_NO_THROW(r.setNormalized(true));
@@ -621,7 +663,7 @@ TEST_F(FormatReaderTest, DefaultProperties)
   EXPECT_FALSE(r.hasFlattenedResolutions());
 }
 
-TEST_F(FormatReaderTest, FlatProperties)
+TEST_P(FormatReaderTest, FlatProperties)
 {
   r.setId("flat");
 
@@ -645,7 +687,7 @@ TEST_F(FormatReaderTest, FlatProperties)
   EXPECT_TRUE(r.hasFlattenedResolutions());
 }
 
-TEST_F(FormatReaderTest, SubresolutionFlattenedProperties)
+TEST_P(FormatReaderTest, SubresolutionFlattenedProperties)
 {
   EXPECT_NO_THROW(r.setNormalized(true));
   EXPECT_NO_THROW(r.setOriginalMetadataPopulated(true));
@@ -665,7 +707,7 @@ TEST_F(FormatReaderTest, SubresolutionFlattenedProperties)
   EXPECT_TRUE(r.hasFlattenedResolutions());
 }
 
-TEST_F(FormatReaderTest, SubresolutionUnflattenedProperties)
+TEST_P(FormatReaderTest, SubresolutionUnflattenedProperties)
 {
   EXPECT_NO_THROW(r.setNormalized(false));
   EXPECT_NO_THROW(r.setOriginalMetadataPopulated(false));
@@ -685,7 +727,7 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedProperties)
   EXPECT_FALSE(r.hasFlattenedResolutions());
 }
 
-TEST_F(FormatReaderTest, UsedFiles)
+TEST_P(FormatReaderTest, UsedFiles)
 {
   EXPECT_THROW(r.getUsedFiles(), std::logic_error);
   EXPECT_THROW(r.getUsedFiles(true), std::logic_error);
@@ -701,7 +743,7 @@ TEST_F(FormatReaderTest, UsedFiles)
   EXPECT_TRUE(r.getAdvancedSeriesUsedFiles(false).empty());
 }
 
-TEST_F(FormatReaderTest, DefaultFile)
+TEST_P(FormatReaderTest, DefaultFile)
 {
   EXPECT_FALSE(r.getCurrentFile());
 
@@ -718,7 +760,7 @@ TEST_F(FormatReaderTest, DefaultFile)
   EXPECT_THROW(r.isUsedFile(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome"), std::logic_error);
 }
 
-TEST_F(FormatReaderTest, FlatFile)
+TEST_P(FormatReaderTest, FlatFile)
 {
   r.setId("flat");
 
@@ -737,7 +779,7 @@ TEST_F(FormatReaderTest, FlatFile)
  EXPECT_FALSE(r.isUsedFile(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome"));
 }
 
-TEST_F(FormatReaderTest, DefaultMetadata)
+TEST_P(FormatReaderTest, DefaultMetadata)
 {
   EXPECT_THROW(r.getMetadataValue("Key"), boost::bad_get);
   EXPECT_THROW(r.getSeriesMetadataValue("Key"), std::logic_error);
@@ -750,7 +792,7 @@ TEST_F(FormatReaderTest, DefaultMetadata)
   EXPECT_TRUE(r.isMetadataFiltered());
 }
 
-TEST_F(FormatReaderTest, FlatMetadata)
+TEST_P(FormatReaderTest, FlatMetadata)
 {
   EXPECT_NO_THROW(r.setMetadataFiltered(true));
   r.setId("flat");
@@ -768,7 +810,7 @@ TEST_F(FormatReaderTest, FlatMetadata)
   EXPECT_TRUE(r.isMetadataFiltered());
 }
 
-TEST_F(FormatReaderTest, DefaultMetadataStore)
+TEST_P(FormatReaderTest, DefaultMetadataStore)
 {
   std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
 
@@ -776,7 +818,7 @@ TEST_F(FormatReaderTest, DefaultMetadataStore)
   EXPECT_EQ(store, std::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
 }
 
-TEST_F(FormatReaderTest, FlatMetadataStore)
+TEST_P(FormatReaderTest, FlatMetadataStore)
 {
   r.setId("flat");
 
@@ -785,15 +827,18 @@ TEST_F(FormatReaderTest, FlatMetadataStore)
   EXPECT_THROW(r.setMetadataStore(store), std::logic_error);
 }
 
-TEST_F(FormatReaderTest, Readers)
+TEST_P(FormatReaderTest, Readers)
 {
   EXPECT_TRUE(r.getUnderlyingReaders().empty());
 }
 
-TEST_F(FormatReaderTest, DefaultPixels)
+TEST_P(FormatReaderTest, DefaultPixels)
 {
+  const FormatReaderTestParameters& params(GetParam());
+
   std::istringstream is("");
-  VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1], PixelType::FLOAT);
+  VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
+                         params.type, params.endian);
 
   EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512), std::logic_error);
   EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0), std::logic_error);
@@ -809,7 +854,7 @@ namespace
   struct FlatPixelsTest : public boost::static_visitor<>
   {
     FormatReaderCustom& reader;
-    VariantPixelBuffer &buf;
+    VariantPixelBuffer& buf;
 
     FlatPixelsTest(FormatReaderCustom& reader,
                    VariantPixelBuffer& buf):
@@ -848,7 +893,7 @@ namespace
 
 }
 
-TEST_F(FormatReaderTest, FlatPixels)
+TEST_P(FormatReaderTest, FlatPixels)
 {
   r.setId("flat");
 
@@ -861,3 +906,49 @@ TEST_F(FormatReaderTest, FlatPixels)
 
   /// @todo Add tests for readPlane from stream for all variants.
 }
+
+FormatReaderTestParameters variant_params[] =
+  { //                               PixelType          EndianType
+    FormatReaderTestParameters(PT::INT8,          ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::INT8,          ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::INT16,         ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::INT16,         ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::INT32,         ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::INT32,         ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::UINT8,         ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::UINT8,         ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::UINT16,        ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::UINT16,        ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::UINT32,        ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::UINT32,        ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::FLOAT,         ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::FLOAT,         ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::DOUBLE,        ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::DOUBLE,        ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::BIT,           ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::BIT,           ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::COMPLEX,       ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::COMPLEX,       ome::bioformats::LITTLE),
+
+    FormatReaderTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::BIG),
+    FormatReaderTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::LITTLE),
+  };
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#endif
+
+INSTANTIATE_TEST_CASE_P(FormatReaderVariants, FormatReaderTest, ::testing::ValuesIn(variant_params));
