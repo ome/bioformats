@@ -54,7 +54,7 @@ public class PQBinReader extends FormatReader {
 
   // -- Constants --
 
-  public static final int HEADER_SIZE = 16;
+  public static final int HEADER_SIZE = 20;
 
   // -- Fields --
   
@@ -72,11 +72,30 @@ public class PQBinReader extends FormatReader {
 
   /** Constructs a new UBM reader. */
   public PQBinReader() {
-    super("PicoQuant", "bin");
+    super("PicoQuant Bin", "bin");
     domains = new String[] {FormatTools.FLIM_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+  
+   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    long fileLength = stream.length();
+    int bpp = FormatTools.getBytesPerPixel(FormatTools.UINT32);
+    stream.order(true);
+    // Header
+    int sizeX = stream.readInt();
+    int sizeY = stream.readInt();
+    float pixResol = stream.readFloat();  // resolution of time axis of every Decay (in ns)
+    int sizeT = stream.readInt();     
+    if (( sizeX * sizeY * sizeT * bpp) + HEADER_SIZE  == fileLength)  {
+      return true;
+    }
+    else  {
+      return false;
+    } 
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -134,15 +153,12 @@ public class PQBinReader extends FormatReader {
     int input = (binSize * timeBin) + (y * iLineSize) + (x * bpp);
     int output = 0;
     
-
     for (int row = 0; row < h; row++) {
       System.arraycopy(dataStore, input, buf, output, oLineSize);
       input += iLineSize;
       output += oLineSize;
     }
-    
- 
-
+   
     return buf;
   }
 
