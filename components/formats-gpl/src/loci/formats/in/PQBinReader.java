@@ -86,7 +86,7 @@ public class PQBinReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     
-   
+    
     int sizeX = getSizeX();
     int sizeY = getSizeY();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -105,7 +105,7 @@ public class PQBinReader extends FormatReader {
       // to allow different sub-plane sizes to be used for different timebins
       dataStore = new byte[planeSize];
       in.seek(HEADER_SIZE);
-
+      
       for (int row = 0; row < sizeY; row++) {
         in.read(rowBuf);
 
@@ -133,12 +133,15 @@ public class PQBinReader extends FormatReader {
     // offset to correct timebin yth line and xth pixel
     int input = (binSize * timeBin) + (y * iLineSize) + (x * bpp);
     int output = 0;
+    
 
     for (int row = 0; row < h; row++) {
       System.arraycopy(dataStore, input, buf, output, oLineSize);
       input += iLineSize;
       output += oLineSize;
     }
+    
+ 
 
     return buf;
   }
@@ -159,25 +162,36 @@ public class PQBinReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    in.order(true);
+    
     CoreMetadata m = core.get(0);
 
     m.littleEndian = true;
     in.order(isLittleEndian());
 
+    LOGGER.info("Reading header PQBin");
+    
     // Header
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
     float pixResol = in.readFloat();  // resolution of time axis of every Decay (in ns)
     m.sizeT = in.readInt();          // Number of DataPoints per Decay
+    
     float timeResol = in.readFloat();   // resolution of time axis of every Decay (in ns)
     
     timeBins = m.sizeT;
 
-    m.pixelType = FormatTools.UINT32;
     m.sizeZ = 1;
     m.sizeC = 1;
-    m.imageCount = 1;
     m.dimensionOrder = "XYZCT";
+    
+    m.pixelType = FormatTools.UINT32;
+    m.rgb = false;
+    m.littleEndian = true;
+    m.imageCount = m.sizeT;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     m.moduloT.type = FormatTools.LIFETIME;
     m.moduloT.parentType = FormatTools.SPECTRA;
@@ -189,6 +203,7 @@ public class PQBinReader extends FormatReader {
     m.moduloT.step = timeBase / timeBins;
     m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
     m.moduloT.unit = "ps";
+    
     
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
