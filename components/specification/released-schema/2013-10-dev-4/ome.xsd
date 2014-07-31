@@ -1070,14 +1070,7 @@
 			<xsd:attribute name="AirPressure" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						AirPressure is the define units.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="AirPressureUnit" use="optional" default="mbar" type="UnitsPressure">
-				<xsd:annotation>
-					<xsd:documentation>
-						The units the AirPressure is in - default:millibars[mbar].
+						AirPressure is in millibars[mbar].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
