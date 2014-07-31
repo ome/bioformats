@@ -771,7 +771,11 @@ public class ND2Handler extends BaseHandler {
           }
         }
       }
-      else if (key.startsWith("Dimensions")) {
+      // full versions of Elements allow the user to choose a language,
+      // though it's not clear what all of the choices are
+      // some keys are always recorded in English, but some are recorded
+      // in the language specified by the user
+      else if (key.startsWith("Dimensions") || key.startsWith("Abmessungen")) {
         String[] dims = value.split(" x ");
 
         if (ms0.sizeZ == 0) ms0.sizeZ = 1;
