@@ -256,7 +256,7 @@ namespace ome
        * The desired size should be set after construction.
        */
       explicit PixelBuffer():
-        PixelBufferBase(::ome::xml::model::enums::PixelType::UINT8, NATIVE),
+        PixelBufferBase(::ome::xml::model::enums::PixelType::UINT8, ENDIAN_NATIVE),
         multiarray(std::shared_ptr<array_type>(new array_type(boost::extents[1][1][1][1][1][1][1][1][1],
                                                               PixelBufferBase::default_storage_order())))
       {}
@@ -276,7 +276,7 @@ namespace ome
       explicit
       PixelBuffer(const ExtentList&                   extents,
                   ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                  EndianType                          endiantype = NATIVE,
+                  EndianType                          endiantype = ENDIAN_NATIVE,
                   const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(std::shared_ptr<array_type>(new array_type(extents, storage)))
@@ -301,7 +301,7 @@ namespace ome
       PixelBuffer(value_type                          *pixeldata,
                   const ExtentList&                    extents,
                   ::ome::xml::model::enums::PixelType  pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                  EndianType                           endiantype = NATIVE,
+                  EndianType                           endiantype = ENDIAN_NATIVE,
                   const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(std::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, extents, storage)))
@@ -321,7 +321,7 @@ namespace ome
       explicit
       PixelBuffer(const range_type&                   range,
                   ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                  EndianType                          endiantype = NATIVE,
+                  EndianType                          endiantype = ENDIAN_NATIVE,
                   const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(std::shared_ptr<array_type>(new array_type(range, storage)))
@@ -345,7 +345,7 @@ namespace ome
       PixelBuffer(value_type                          *pixeldata,
                   const range_type&                    range,
                   ::ome::xml::model::enums::PixelType  pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                  EndianType                           endiantype = NATIVE,
+                  EndianType                           endiantype = ENDIAN_NATIVE,
                   const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(std::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, range, storage)))

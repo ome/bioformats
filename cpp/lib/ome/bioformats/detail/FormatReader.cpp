@@ -357,7 +357,7 @@ namespace ome
           (PixelBufferBase::make_storage_order(order, interleaved));
 
         const ome::xml::model::enums::PixelType type(getPixelType());
-        EndianType endian = isLittleEndian() ? LITTLE : BIG;
+        EndianType endian = isLittleEndian() ? ENDIAN_LITTLE : ENDIAN_BIG;
 
         // If the buffer is incorrectly sized, ordered or typed, reset
         // to the correct buffer size, order and type.

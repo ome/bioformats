@@ -145,7 +145,7 @@ private:
     c->imageCount = c->sizeZ * c->sizeT * c->sizeC;
     c->orderCertain = true;
     c->rgb = false;
-    c->littleEndian = test_params.endian == ::ome::bioformats::LITTLE;
+    c->littleEndian = test_params.endian == ::ome::bioformats::ENDIAN_LITTLE;
     c->interleaved = false;
     c->indexed = false;
     c->falseColor = true;
@@ -374,7 +374,7 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_NO_THROW(r.getModuloC());
   EXPECT_EQ(1U, r.getThumbSizeX());
   EXPECT_EQ(1U, r.getThumbSizeY());
-  EXPECT_EQ(params.endian == ::ome::bioformats::LITTLE, r.isLittleEndian());
+  EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_EQ(true, r.isOrderCertain());
   EXPECT_EQ(false, r.isThumbnailSeries());
@@ -413,7 +413,7 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloC());
   EXPECT_EQ(1U, r.getThumbSizeX());
   EXPECT_EQ(1U, r.getThumbSizeY());
-  EXPECT_EQ(params.endian == ::ome::bioformats::LITTLE, r.isLittleEndian());
+  EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_EQ(true, r.isOrderCertain());
   EXPECT_EQ(false, r.isThumbnailSeries());
@@ -452,7 +452,7 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloC());
   EXPECT_EQ(1U, r.getThumbSizeX());
   EXPECT_EQ(1U, r.getThumbSizeY());
-  EXPECT_EQ(params.endian == ::ome::bioformats::LITTLE, r.isLittleEndian());
+  EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_EQ(true, r.isOrderCertain());
   EXPECT_EQ(false, r.isThumbnailSeries());
@@ -878,7 +878,7 @@ namespace
 
       VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
                              reader.getPixelType(),
-                             reader.isLittleEndian() ? ome::bioformats::LITTLE : ome::bioformats::BIG);
+                             reader.isLittleEndian() ? ome::bioformats::ENDIAN_LITTLE : ome::bioformats::ENDIAN_BIG);
 
       ss.seekg(0, std::ios::beg);
       EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512));
@@ -899,7 +899,7 @@ TEST_P(FormatReaderTest, FlatPixels)
 
   VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
                          r.getPixelType(),
-                         r.isLittleEndian() ? ome::bioformats::LITTLE : ome::bioformats::BIG);
+                         r.isLittleEndian() ? ome::bioformats::ENDIAN_LITTLE : ome::bioformats::ENDIAN_BIG);
 
   FlatPixelsTest v(r, buf);
   boost::apply_visitor(v, buf.vbuffer());
@@ -909,38 +909,38 @@ TEST_P(FormatReaderTest, FlatPixels)
 
 FormatReaderTestParameters variant_params[] =
   { //                               PixelType          EndianType
-    FormatReaderTestParameters(PT::INT8,          ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::INT8,          ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::INT8,          ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::INT8,          ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::INT16,         ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::INT16,         ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::INT16,         ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::INT16,         ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::INT32,         ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::INT32,         ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::INT32,         ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::INT32,         ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::UINT8,         ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::UINT8,         ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::UINT8,         ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::UINT8,         ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::UINT16,        ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::UINT16,        ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::UINT16,        ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::UINT16,        ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::UINT32,        ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::UINT32,        ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::UINT32,        ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::UINT32,        ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::FLOAT,         ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::FLOAT,         ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::FLOAT,         ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::FLOAT,         ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::DOUBLE,        ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::DOUBLE,        ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::DOUBLE,        ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::DOUBLE,        ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::BIT,           ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::BIT,           ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::BIT,           ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::BIT,           ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::COMPLEX,       ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::COMPLEX,       ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::COMPLEX,       ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::COMPLEX,       ome::bioformats::ENDIAN_LITTLE),
 
-    FormatReaderTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::BIG),
-    FormatReaderTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::LITTLE),
+    FormatReaderTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::ENDIAN_BIG),
+    FormatReaderTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::ENDIAN_LITTLE),
   };
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;

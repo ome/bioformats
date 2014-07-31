@@ -318,9 +318,9 @@ namespace ome
     /// Endianness.
     enum EndianType
       {
-        BIG,    ///< Big endian.
-        LITTLE, ///< Little endian.
-        NATIVE  ///< Native endian.
+        ENDIAN_BIG,    ///< Big endian.
+        ENDIAN_LITTLE, ///< Little endian.
+        ENDIAN_NATIVE  ///< Native endian.
       };
 
     /**
@@ -332,7 +332,7 @@ namespace ome
 
     /// Properties of big endian pixels.
     template<int P>
-    struct PixelEndianProperties<P, BIG>
+    struct PixelEndianProperties<P, ENDIAN_BIG>
     {
       /// Pixel type (big endian).
       typedef typename PixelProperties<P>::big_type type;
@@ -340,7 +340,7 @@ namespace ome
 
     /// Properties of little endian pixels.
     template<int P>
-    struct PixelEndianProperties<P, LITTLE>
+    struct PixelEndianProperties<P, ENDIAN_LITTLE>
     {
       /// Pixel type (little endian).
       typedef typename PixelProperties<P>::little_type type;
@@ -348,7 +348,7 @@ namespace ome
 
     /// Properties of native endian pixels.
     template<int P>
-    struct PixelEndianProperties<P, NATIVE>
+    struct PixelEndianProperties<P, ENDIAN_NATIVE>
     {
       /// Pixel type (native endian).
       typedef typename PixelProperties<P>::native_type type;

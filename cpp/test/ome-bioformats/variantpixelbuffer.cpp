@@ -833,49 +833,49 @@ TEST_P(VariantPixelBufferTest, StreamOutput)
 
 VariantPixelBufferTestParameters variant_params[] =
   { //                               PixelType          EndianType
-    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::NATIVE),
+    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::ENDIAN_NATIVE),
 
-    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::BIG),
-    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::LITTLE),
-    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::NATIVE)
+    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::ENDIAN_BIG),
+    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::ENDIAN_LITTLE),
+    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::ENDIAN_NATIVE)
   };
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
