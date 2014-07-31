@@ -155,7 +155,7 @@ public class FakeReaderTest {
   @Test
   public void testGetSizeCWithFakeFile() throws Exception {
     reader.setId(fake.getAbsolutePath());
-    int expectedChannelCount = 1;
+    int expectedChannelCount = 3;
     assertEquals(reader.getSizeC(), expectedChannelCount);
   }
 
