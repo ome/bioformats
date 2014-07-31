@@ -126,21 +126,7 @@
 					</xsd:annotation>
 				</xsd:element>
 			</xsd:sequence>
-			<xsd:attribute name="PhysicalXUnit" use="optional" default="pixel" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>
-						The units used for the X dimension of the shape. [UnitsLength]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="PhysicalYUnit" use="optional" default="pixel" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>
-						The units used for the Y dimensions of the shape. [UnitsLength]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="FillColor" use="optional" type="OME:Color"> 
+			<xsd:attribute name="FillColor" use="optional" type="OME:Color">
 				<xsd:annotation>
 					<xsd:documentation>
 						The color of the fill - encoded as RGBA
@@ -175,14 +161,7 @@
 			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The width of the stroke. Units are set by StrokeWidthUnit.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="StrokeWidthUnit" use="optional" default="pixel" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>
-						The units used for the stroke width.
+						The width of the stroke [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -231,14 +210,7 @@
 			<xsd:attribute name="FontSize" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						Size of the font. Units are set by FontSizeUnit.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="FontSizeUnit" use="optional" default="pt" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>
-						The units used for the font size.
+						Size of the font [units points]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -321,28 +293,28 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X value of the left edge or the rectangle. Units are set by PhysicalXUnit on the Shape.
+								The X value of the left edge or the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The y value of the top edge or the rectangle. Units are set by PhysicalYUnit on the Shape.
+								The y value of the top edge or the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Width" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The width of the rectangle. Units are set by PhysicalXUnit on the Shape.
+								The width of the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Height" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The height of the rectangle. Units are set by PhysicalYUnit on the Shape.
+								The height of the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -366,14 +338,14 @@
 			<xsd:attribute name="X" use="required" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X coordinate of the left side of the image. Units are set by PhysicalXUnit on the Shape.
+						The X coordinate of the left side of the image. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y" use="required" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y coordinate of the top side of the image. Units are set by PhysicalYUnit on the Shape.
+						The Y coordinate of the top side of the image. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -402,14 +374,14 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X coordinate of the point. Units are set by PhysicalXUnit on the Shape.
+								The X coordinate of the point. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Y coordinate of the point. Units are set by PhysicalYUnit on the Shape.
+								The Y coordinate of the point. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -428,28 +400,28 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X coordinate of the center of the ellipse. Units are set by PhysicalXUnit on the Shape.
+								The X coordinate of the center of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Y coordinate of the center of the ellipse. Units are set by PhysicalYUnit on the Shape.
+								The Y coordinate of the center of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="RadiusX" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The horizontal radius of the ellipse. Units are set by PhysicalXUnit on the Shape.
+								The horizontal radius of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="RadiusY" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The vertical radius of the ellipse. Units are set by PhysicalYUnit on the Shape.
+								The vertical radius of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -466,25 +438,25 @@
 		<xsd:complexType>
 			<xsd:attribute name="X1" use="required" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation> The X coordinate of the start of the line. Units are set by PhysicalXUnit on the Shape.
+					<xsd:documentation> The X coordinate of the start of the line. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y1" use="required" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation> The Y coordinate of the start of the line. Units are set by PhysicalYUnit on the Shape.
+					<xsd:documentation> The Y coordinate of the start of the line. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="X2" use="required" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation> The X coordinate of the end of the line. Units are set by PhysicalXUnit on the Shape.
+					<xsd:documentation> The X coordinate of the end of the line. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y2" use="required" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation> The Y coordinate of the end of the line. Units are set by PhysicalYUnit on the Shape.
+					<xsd:documentation> The Y coordinate of the end of the line. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -507,9 +479,7 @@
 				<xsd:annotation>
 					<xsd:documentation> The points of the polyline are defined as a list of comma
 						separated x,y coordinates seperated by spaces like "x1,y1 x2,y2 x3,y3" e.g.
-						"0,0 1,2 3,5" 
-						Units are set by PhysicalXUnit and PhysicalYUnit on the Shape.
-					</xsd:documentation>
+						"0,0 1,2 3,5" </xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
@@ -549,15 +519,13 @@
 			<xsd:attribute name="X" use="required" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation> This defines the X coordinate of the current text position
-						of the first character in the string. Units are set by PhysicalXUnit on the Shape.
-					</xsd:documentation>
+						of the first character in the string. [units pixels] </xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y" use="required" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation> This defines the Y coordinate of the current text position
-						of the first character in the string. Units are set by PhysicalYUnit on the Shape.
-					</xsd:documentation>
+						of the first character in the string. [units pixels] </xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>

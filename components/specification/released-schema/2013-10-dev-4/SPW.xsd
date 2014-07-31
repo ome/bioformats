@@ -134,16 +134,11 @@
 						fields (individual images) taken in a well. It is used
 						with the X in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
-						in the plate has the same well origin. Units are set by WellOriginXUnit.
+						in the plate has the same well origin. [units:none]
 
 						In the OMERO clients by convention we display the WellOrigin
 						in the center of the view.
 					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="WellOriginXUnit" use="optional" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>The units of the well origin in X - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="WellOriginY" use="optional" type="xsd:float">
@@ -153,16 +148,11 @@
 						fields (individual images) taken in a well. It is used
 						with the Y in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
-						in the plate has the same well origin.  Units are set by WellOriginYUnit.
+						in the plate has the same well origin. [units:none]
 
 						In the OMERO clients by convention we display the WellOrigin
 						in the center of the view.
 					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="WellOriginYUnit" use="optional" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>The units of the well origin in Y - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Rows" use="optional" type="OME:PositiveInt">
@@ -578,26 +568,16 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The X position of the field (image) within the well relative to
-						the well origin defined on the Plate. Units are set by PositionXUnit.
+						the well origin defined on the Plate.
 					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="PositionXUnit" use="optional" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>The units of the position in X - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
 						The Y position of the field (image) within the well relative to
-						the well origin defined on the Plate. Units are set by PositionYUnit.
+						the well origin defined on the Plate.
 					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="PositionYUnit" use="optional" type="OME:UnitsLength">
-				<xsd:annotation>
-					<xsd:documentation>The units of the position in Y - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Timepoint" use="optional" type="xsd:dateTime">
