@@ -494,7 +494,7 @@ public class ND2Handler extends BaseHandler {
           LOGGER.warn("Could not set the pixel type", e);
         }
       }
-      else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
+      else if (qName.equals("uiWidthBytes") || qName.startsWith("uiBpc")) {
         int div = qName.equals("uiWidthBytes") ? ms0.sizeX : 8;
         if (div > 0) {
           int bytes = Integer.parseInt(value) / div;
