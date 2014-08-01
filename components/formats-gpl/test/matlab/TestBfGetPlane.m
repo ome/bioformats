@@ -27,8 +27,6 @@
 classdef TestBfGetPlane < TestBfMatlab
     
     properties
-        sizeX
-        sizeY
         iPlane = 1
         x
         y
@@ -46,8 +44,6 @@ classdef TestBfGetPlane < TestBfMatlab
             bfCheckJavaPath();
             self.reader = loci.formats.in.FakeReader();
             self.reader.setId('test.fake');
-            self.sizeX = self.reader.DEFAULT_SIZE_X;
-            self.sizeY = self.reader.DEFAULT_SIZE_Y;
             self.x = 1;
             self.y = 1;
             self.width = self.sizeX;

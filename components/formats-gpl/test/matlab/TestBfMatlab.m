@@ -29,6 +29,11 @@ classdef TestBfMatlab < TestCase
     properties
         jarPath
         reader
+        sizeX = loci.formats.in.FakeReader.DEFAULT_SIZE_X
+        sizeY = loci.formats.in.FakeReader.DEFAULT_SIZE_X
+        sizeZ = loci.formats.in.FakeReader.DEFAULT_SIZE_Z
+        sizeC = loci.formats.in.FakeReader.DEFAULT_SIZE_C
+        sizeT = loci.formats.in.FakeReader.DEFAULT_SIZE_T
     end
     
     methods

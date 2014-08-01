@@ -30,9 +30,6 @@ classdef TestBfopen < TestBfMatlab
         filepath
         data
         nSeries = 1
-        sizeZ = 1
-        sizeC = 1
-        sizeT = 1
     end
     
     methods
