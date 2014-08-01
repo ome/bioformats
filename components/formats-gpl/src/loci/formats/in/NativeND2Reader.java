@@ -352,7 +352,7 @@ public class NativeND2Reader extends FormatReader {
       ArrayList<int[]> imageLengths = new ArrayList<int[]>();
       ArrayList<Long> customDataOffsets = new ArrayList<Long>();
       ArrayList<int[]> customDataLengths = new ArrayList<int[]>();
-      ArrayList<String> textStrings = new ArrayList<String>();
+      Hashtable<String, Boolean> textStrings = new Hashtable<String, Boolean>();
 
       ByteArrayHandle xml = new ByteArrayHandle();
       StringBuffer name = new StringBuffer();
@@ -360,6 +360,7 @@ public class NativeND2Reader extends FormatReader {
       int extraZDataCount = 0;
       boolean foundMetadata = false;
       boolean useLastText = false;
+      int blockCount = 0;
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
@@ -425,6 +426,7 @@ public class NativeND2Reader extends FormatReader {
 
         int percent = (int) (100 * fp / in.length());
         LOGGER.info("Parsing block '{}' {}%", blockType, percent);
+        blockCount++;
 
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
@@ -498,7 +500,7 @@ public class NativeND2Reader extends FormatReader {
           in.seek(startFP - 1);
 
           String textString = DataTools.stripString(in.readString(lenTwo));
-          textStrings.add(textString);
+          textStrings.put(textString, blockCount > 2);
 
           if (!textString.startsWith("<")) {
             skip = 0;
@@ -707,8 +709,8 @@ public class NativeND2Reader extends FormatReader {
 
       // parse text blocks
 
-      for (int i=useLastText ? textStrings.size() - 1 : 0; i<textStrings.size(); i++) {
-        parseText(textStrings.get(i), imageOffsets.size());
+      for (String text : textStrings.keySet()) {
+        parseText(text, imageOffsets.size(), textStrings.get(text));
       }
 
       // parse XML blocks
@@ -1940,7 +1942,7 @@ public class NativeND2Reader extends FormatReader {
     return scanlinePad;
   }
 
-  private void parseText(String textString, int offsetCount) {
+  private void parseText(String textString, int offsetCount, boolean useDimensions) {
     try {
       ND2Handler handler = new ND2Handler(core, offsetCount);
       String xmlString = XMLTools.sanitizeXML(textString);
@@ -1975,14 +1977,19 @@ public class NativeND2Reader extends FormatReader {
         if (separator >= 0) {
           String key = line.substring(0, separator).trim();
           String value = line.substring(separator + 1).trim();
-          handler.parseKeyAndValue(key, value, null);
 
-          if (key.equals("Dimensions")) {
+          if (useDimensions) {
+            handler.parseKeyAndValue(key, value, null);
+          }
+
+          if (handler.isDimensions(key)) {
             textData = true;
           }
         }
       }
-      core = handler.getCoreMetadataList();
+      if (useDimensions) {
+        core = handler.getCoreMetadataList();
+      }
 
       // only accept the Z and T sizes from the text annotations
       // if both values were set
@@ -2019,8 +2026,14 @@ public class NativeND2Reader extends FormatReader {
         value = value.trim();
 
         if (key.startsWith("- Step")) {
-          value = key.substring(8, key.indexOf(" ", 8));
-          key = key.substring(0, 8);
+          int end = key.indexOf(" ", 8);
+          if (end < 0) {
+            end = key.length();
+          }
+          if (end >= 8) {
+            value = key.substring(8, end);
+            key = key.substring(0, 8);
+          }
           trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
         }
         else if (key.equals("Name")) {

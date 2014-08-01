@@ -774,11 +774,7 @@ public class ND2Handler extends BaseHandler {
           }
         }
       }
-      // full versions of Elements allow the user to choose a language,
-      // though it's not clear what all of the choices are
-      // some keys are always recorded in English, but some are recorded
-      // in the language specified by the user
-      else if (key.startsWith("Dimensions") || key.startsWith("Abmessungen")) {
+      else if (isDimensions(key)) {
         String[] dims = value.split(" x ");
 
         if (ms0.sizeZ == 0) ms0.sizeZ = 1;
@@ -931,6 +927,18 @@ public class ND2Handler extends BaseHandler {
     catch (NumberFormatException exc) {
       LOGGER.warn("Could not parse {} value: {}", key, value);
     }
+  }
+
+
+  /**
+   * Returns whether or not the specified key is denotes dimensions.
+   * Full versions of Elements allow the user to choose a language,
+   * though it's not clear what all of the choices are.
+   * Most keys are always recorded in English, but some are recorded
+   * in the language specified by the user.
+   */
+  public boolean isDimensions(String key) {
+     return key.startsWith("Dimensions") || key.startsWith("Abmessungen");
   }
 
 }
