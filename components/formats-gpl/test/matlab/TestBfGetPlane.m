@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -27,8 +27,6 @@
 classdef TestBfGetPlane < TestBfMatlab
     
     properties
-        sizeX
-        sizeY
         iPlane = 1
         x
         y
@@ -46,8 +44,6 @@ classdef TestBfGetPlane < TestBfMatlab
             bfCheckJavaPath();
             self.reader = loci.formats.in.FakeReader();
             self.reader.setId('test.fake');
-            self.sizeX = self.reader.DEFAULT_SIZE_X;
-            self.sizeY = self.reader.DEFAULT_SIZE_Y;
             self.x = 1;
             self.y = 1;
             self.width = self.sizeX;
