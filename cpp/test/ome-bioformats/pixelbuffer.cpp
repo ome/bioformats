@@ -239,7 +239,7 @@ TYPED_TEST_P(PixelBufferType, ConstructExtent)
   ASSERT_TRUE(buf.data());
   for (uint32_t i = 0; i < 10; ++i)
     {
-      ASSERT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
+      EXPECT_EQ(pixel_value<TypeParam>(i), *(buf.data()+i));
     }
 }
 

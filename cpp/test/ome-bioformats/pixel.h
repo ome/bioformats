@@ -39,6 +39,8 @@
 #ifndef TEST_PIXEL_H
 #define TEST_PIXEL_H
 
+#include <ome/bioformats/PixelProperties.h>
+
 #include <ome/compat/cstdint.h>
 
 /// Helpers to create pixel values of all supported types from integers.
@@ -50,19 +52,74 @@ pixel_value(uint32_t value)
   return static_cast<P>(value);
 }
 
-template<>
-std::complex<float>
-pixel_value<std::complex<float> >(uint32_t value)
+template<typename C>
+C
+pixel_value_complex(uint32_t value)
 {
-  return static_cast<float>(value);
+  return C(typename C::value_type(value),
+           typename C::value_type(0.0f));
 }
 
 template<>
-std::complex<double>
-pixel_value<std::complex<double> >(uint32_t value)
+::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                          ::ome::bioformats::ENDIAN_BIG>::type
+pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                                       ::ome::bioformats::ENDIAN_BIG>::type>(uint32_t value)
 {
-  return static_cast<double>(value);
+  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                                                        ::ome::bioformats::ENDIAN_BIG>::type>(value);
 }
+
+template<>
+::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                          ::ome::bioformats::ENDIAN_LITTLE>::type
+pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                                       ::ome::bioformats::ENDIAN_LITTLE>::type>(uint32_t value)
+{
+  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                                                        ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
+}
+
+template<>
+::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                          ::ome::bioformats::ENDIAN_NATIVE>::type
+pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                                       ::ome::bioformats::ENDIAN_NATIVE>::type>(uint32_t value)
+{
+  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
+                                                                        ::ome::bioformats::ENDIAN_NATIVE>::type>(value);
+}
+
+template<>
+::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                          ::ome::bioformats::ENDIAN_BIG>::type
+pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                                       ::ome::bioformats::ENDIAN_BIG>::type>(uint32_t value)
+{
+  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                                                        ::ome::bioformats::ENDIAN_BIG>::type>(value);
+}
+
+template<>
+::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                          ::ome::bioformats::ENDIAN_LITTLE>::type
+pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                                       ::ome::bioformats::ENDIAN_LITTLE>::type>(uint32_t value)
+{
+  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                                                        ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
+}
+
+template<>
+::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                          ::ome::bioformats::ENDIAN_NATIVE>::type
+pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                                       ::ome::bioformats::ENDIAN_NATIVE>::type>(uint32_t value)
+{
+  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
+                                                                        ::ome::bioformats::ENDIAN_NATIVE>::type>(value);
+}
+
 
 #endif // TEST_PIXEL_H
 

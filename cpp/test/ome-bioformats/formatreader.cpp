@@ -357,7 +357,7 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   r.setId("flat");
 
   EXPECT_EQ(160U, r.getImageCount());
-  EXPECT_EQ(false, r.isRGB());
+  EXPECT_FALSE(r.isRGB());
   EXPECT_EQ(512U, r.getSizeX());
   EXPECT_EQ(1024U, r.getSizeY());
   EXPECT_EQ(20U, r.getSizeZ());
@@ -367,8 +367,8 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
   EXPECT_EQ(1U, r.getRGBChannelCount());
-  EXPECT_EQ(false, r.isIndexed());
-  EXPECT_EQ(true, r.isFalseColor());
+  EXPECT_FALSE(r.isIndexed());
+  EXPECT_TRUE(r.isFalseColor());
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
@@ -376,11 +376,11 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_EQ(1U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
-  EXPECT_EQ(true, r.isOrderCertain());
-  EXPECT_EQ(false, r.isThumbnailSeries());
-  EXPECT_EQ(false, r.isInterleaved());
-  EXPECT_EQ(false, r.isInterleaved(0));
-  EXPECT_EQ(false, r.isMetadataComplete());
+  EXPECT_TRUE(r.isOrderCertain());
+  EXPECT_FALSE(r.isThumbnailSeries());
+  EXPECT_FALSE(r.isInterleaved());
+  EXPECT_FALSE(r.isInterleaved(0));
+  EXPECT_FALSE(r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth());
   EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
                      1024U),
@@ -396,7 +396,7 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   r.setId("subres");
 
   EXPECT_EQ(160U, r.getImageCount());
-  EXPECT_EQ(false, r.isRGB());
+  EXPECT_FALSE(r.isRGB());
   EXPECT_EQ(512U, r.getSizeX());
   EXPECT_EQ(1024U, r.getSizeY());
   EXPECT_EQ(20U, r.getSizeZ());
@@ -406,8 +406,8 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
   EXPECT_EQ(1U, r.getRGBChannelCount());
-  EXPECT_EQ(false, r.isIndexed());
-  EXPECT_EQ(true, r.isFalseColor());
+  EXPECT_FALSE(r.isIndexed());
+  EXPECT_TRUE(r.isFalseColor());
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
@@ -415,11 +415,11 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_EQ(1U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
-  EXPECT_EQ(true, r.isOrderCertain());
-  EXPECT_EQ(false, r.isThumbnailSeries());
-  EXPECT_EQ(false, r.isInterleaved());
-  EXPECT_EQ(false, r.isInterleaved(0));
-  EXPECT_EQ(false, r.isMetadataComplete());
+  EXPECT_TRUE(r.isOrderCertain());
+  EXPECT_FALSE(r.isThumbnailSeries());
+  EXPECT_FALSE(r.isInterleaved());
+  EXPECT_FALSE(r.isInterleaved(0));
+  EXPECT_FALSE(r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth());
   EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
                      1024U),
@@ -435,7 +435,7 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   r.setId("subres");
 
   EXPECT_EQ(160U, r.getImageCount());
-  EXPECT_EQ(false, r.isRGB());
+  EXPECT_FALSE(r.isRGB());
   EXPECT_EQ(512U, r.getSizeX());
   EXPECT_EQ(1024U, r.getSizeY());
   EXPECT_EQ(20U, r.getSizeZ());
@@ -445,8 +445,8 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
   EXPECT_EQ(1U, r.getRGBChannelCount());
-  EXPECT_EQ(false, r.isIndexed());
-  EXPECT_EQ(true, r.isFalseColor());
+  EXPECT_FALSE(r.isIndexed());
+  EXPECT_TRUE(r.isFalseColor());
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
@@ -454,11 +454,11 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_EQ(1U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
-  EXPECT_EQ(true, r.isOrderCertain());
-  EXPECT_EQ(false, r.isThumbnailSeries());
-  EXPECT_EQ(false, r.isInterleaved());
-  EXPECT_EQ(false, r.isInterleaved(0));
-  EXPECT_EQ(false, r.isMetadataComplete());
+  EXPECT_TRUE(r.isOrderCertain());
+  EXPECT_FALSE(r.isThumbnailSeries());
+  EXPECT_FALSE(r.isInterleaved());
+  EXPECT_FALSE(r.isInterleaved(0));
+  EXPECT_FALSE(r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth());
   EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
                      1024U),

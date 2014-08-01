@@ -743,7 +743,7 @@ TEST_P(VariantPixelBufferTest, StorageOrder)
                            params.type, params.endian);
     const VariantPixelBuffer& cbuf(buf);
 
-    const typename VariantPixelBuffer::storage_order_type& order = cbuf.storage_order();
+    const VariantPixelBuffer::storage_order_type& order = cbuf.storage_order();
 
     EXPECT_EQ(5, order.ordering(0));
     EXPECT_EQ(0, order.ordering(1));
