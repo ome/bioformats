@@ -79,7 +79,7 @@ public class PQBinReader extends FormatReader {
 
   // -- IFormatReader API methods --
   
-   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     long fileLength = stream.length();
     int bpp = FormatTools.getBytesPerPixel(FormatTools.UINT32);
@@ -118,9 +118,9 @@ public class PQBinReader extends FormatReader {
 
     int binSize = sizeX * sizeY  * bpp;  // size in Bytes of a single 2D timebin.
       
-    if (dataStore == null  )
+    if (dataStore == null)
     {
-        // The whole plane (all timebins) is  copied into storage
+      // The whole plane (all timebins) is  copied into storage
       // to allow different sub-plane sizes to be used for different timebins
       dataStore = new byte[planeSize];
       in.seek(HEADER_SIZE);
@@ -190,8 +190,8 @@ public class PQBinReader extends FormatReader {
     // Header
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
-    float pixResol = in.readFloat();  // resolution of time axis of every Decay (in ns)
-    m.sizeT = in.readInt();          // Number of DataPoints per Decay
+    float pixResol = in.readFloat();    // resolution of time axis of every Decay (in ns)
+    m.sizeT = in.readInt();             // Number of DataPoints per Decay
     
     float timeResol = in.readFloat();   // resolution of time axis of every Decay (in ns)
     
