@@ -359,6 +359,7 @@ public class NativeND2Reader extends FormatReader {
 
       int extraZDataCount = 0;
       boolean foundMetadata = false;
+      boolean useLastText = false;
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
@@ -475,9 +476,9 @@ public class NativeND2Reader extends FormatReader {
             imageLengths.clear();
             customDataOffsets.clear();
             customDataLengths.clear();
-            textStrings.clear();
             foundMetadata = false;
             extraZDataCount = 0;
+            useLastText = true;
           }
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo, getSizeX() * getSizeY()});
@@ -706,8 +707,8 @@ public class NativeND2Reader extends FormatReader {
 
       // parse text blocks
 
-      for (String text : textStrings) {
-        parseText(text, imageOffsets.size());
+      for (int i=useLastText ? textStrings.size() - 1 : 0; i<textStrings.size(); i++) {
+        parseText(textStrings.get(i), imageOffsets.size());
       }
 
       // parse XML blocks
@@ -2017,7 +2018,9 @@ public class NativeND2Reader extends FormatReader {
         key = key.substring(0, key.length() - 1);
         value = value.trim();
 
-        if (key.equals("- Step")) {
+        if (key.startsWith("- Step")) {
+          value = key.substring(8, key.indexOf(" ", 8));
+          key = key.substring(0, 8);
           trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
         }
         else if (key.equals("Name")) {
