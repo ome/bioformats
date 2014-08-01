@@ -497,13 +497,16 @@ public class ND2Handler extends BaseHandler {
       else if (qName.equals("uiWidthBytes") || qName.startsWith("uiBpc")) {
         int div = qName.equals("uiWidthBytes") ? ms0.sizeX : 8;
         if (div > 0) {
-          int bytes = Integer.parseInt(value) / div;
+          int bits = Integer.parseInt(value);
+          int bytes = bits / div;
 
-          try {
-            ms0.pixelType =
-              FormatTools.pixelTypeFromBytes(bytes, false, false);
+          if (bytes * div == bits) {
+            try {
+              ms0.pixelType =
+                FormatTools.pixelTypeFromBytes(bytes, false, false);
+            }
+            catch (FormatException e) { }
           }
-          catch (FormatException e) { }
           parseKeyAndValue(qName, value, prevRuntype);
         }
       }
