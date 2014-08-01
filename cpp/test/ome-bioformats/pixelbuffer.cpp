@@ -40,8 +40,6 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <boost/container/vector.hpp>
-
 #include <ome/bioformats/PixelBuffer.h>
 
 #include <gtest/gtest.h>
@@ -245,10 +243,9 @@ TYPED_TEST_P(PixelBufferType, ConstructExtent)
 
 TYPED_TEST_P(PixelBufferType, ConstructExtentRef)
 {
-  // For correct vector<bool>
-  boost::container::vector<TypeParam> source;
+  std::array<TypeParam, 10> source;
   for (uint32_t i = 0; i < 10; ++i)
-    source.push_back(pixel_value<TypeParam>(i));
+    source[i] = pixel_value<TypeParam>(i);
 
   std::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
   extents[0] = 5;
@@ -285,10 +282,9 @@ TYPED_TEST_P(PixelBufferType, ConstructRange)
 
 TYPED_TEST_P(PixelBufferType, ConstructRangeRef)
 {
-  // For correct vector<bool>
-  boost::container::vector<TypeParam> source;
+  std::array<TypeParam, 10> source;
   for (uint32_t i = 0; i < 10; ++i)
-    source.push_back(pixel_value<TypeParam>(i));
+    source[i] = pixel_value<TypeParam>(i);
 
   PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]);
   buf.assign(source.begin(), source.end());
