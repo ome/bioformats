@@ -24,7 +24,7 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetPlane < TestBfMatlab
+classdef TestBfGetPlane < ReaderTest
     
     properties
         iPlane = 1
@@ -36,13 +36,12 @@ classdef TestBfGetPlane < TestBfMatlab
     
     methods
         function self = TestBfGetPlane(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
         end
         
         function setUp(self)
-            setUp@TestBfMatlab(self)
+            setUp@ReaderTest(self)
             bfCheckJavaPath();
-            self.reader = loci.formats.in.FakeReader();
             self.reader.setId('test.fake');
             self.x = 1;
             self.y = 1;
