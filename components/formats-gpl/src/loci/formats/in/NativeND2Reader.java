@@ -940,8 +940,13 @@ public class NativeND2Reader extends FormatReader {
           core.get(0).rgb = true;
         }
       }
-      else if (getSizeC() == 2 && getPixelType() == FormatTools.INT8) {
+      else if (getSizeC() == 2 && getPixelType() == FormatTools.INT8 &&
+        availableBytes >= planeSize * 2)
+      {
         core.get(0).pixelType = FormatTools.UINT16;
+      }
+      else if (getPixelType() == FormatTools.INT8) {
+        core.get(0).pixelType = FormatTools.UINT8;
       }
 
       if (getSizeX() == 0) {
