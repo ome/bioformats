@@ -352,7 +352,11 @@ public class NativeND2Reader extends FormatReader {
       ArrayList<int[]> imageLengths = new ArrayList<int[]>();
       ArrayList<Long> customDataOffsets = new ArrayList<Long>();
       ArrayList<int[]> customDataLengths = new ArrayList<int[]>();
-      Hashtable<String, Boolean> textStrings = new Hashtable<String, Boolean>();
+
+      // order matters when working with the text blocks, which is
+      // why two ArrayLists are used instead of a HashMap
+      ArrayList<String> textStrings = new ArrayList<String>();
+      ArrayList<Boolean> validDimensions = new ArrayList<Boolean>();
 
       ByteArrayHandle xml = new ByteArrayHandle();
       StringBuffer name = new StringBuffer();
@@ -500,7 +504,8 @@ public class NativeND2Reader extends FormatReader {
           in.seek(startFP - 1);
 
           String textString = DataTools.stripString(in.readString(lenTwo));
-          textStrings.put(textString, blockCount > 2);
+          textStrings.add(textString);
+          validDimensions.add(blockCount > 2);
 
           if (!textString.startsWith("<")) {
             skip = 0;
@@ -709,8 +714,9 @@ public class NativeND2Reader extends FormatReader {
 
       // parse text blocks
 
-      for (String text : textStrings.keySet()) {
-        parseText(text, imageOffsets.size(), textStrings.get(text));
+      for (int i=0; i<textStrings.size(); i++) {
+        parseText(textStrings.get(i), imageOffsets.size(),
+          validDimensions.get(i));
       }
 
       // parse XML blocks
