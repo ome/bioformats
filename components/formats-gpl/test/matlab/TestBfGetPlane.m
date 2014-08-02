@@ -41,7 +41,6 @@ classdef TestBfGetPlane < ReaderTest
         
         function setUp(self)
             setUp@ReaderTest(self)
-            bfCheckJavaPath();
             self.reader.setId('test.fake');
             self.x = 1;
             self.y = 1;
