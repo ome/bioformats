@@ -49,6 +49,7 @@ classdef ReaderTest < TestBfMatlab
             self.sizeZ = self.reader.DEFAULT_SIZE_Z;
             self.sizeC = self.reader.DEFAULT_SIZE_C;
             self.sizeT = self.reader.DEFAULT_SIZE_T;
+            loci.common.DebugTools.enableLogging('ERROR');
         end
         
         function tearDown(self)
