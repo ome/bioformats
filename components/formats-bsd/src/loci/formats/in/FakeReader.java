@@ -92,7 +92,7 @@ public class FakeReader extends FormatReader {
   public static final int DEFAULT_SIZE_X = 512;
   public static final int DEFAULT_SIZE_Y = 512;
   public static final int DEFAULT_SIZE_Z = 1;
-  public static final int DEFAULT_SIZE_C = 3;
+  public static final int DEFAULT_SIZE_C = 1;
   public static final int DEFAULT_SIZE_T = 1;
   public static final int DEFAULT_PIXEL_TYPE = FormatTools.UINT8;
   public static final int DEFAULT_RGB_CHANNEL_COUNT = 1;
