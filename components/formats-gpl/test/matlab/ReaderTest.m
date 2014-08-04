@@ -45,7 +45,7 @@ classdef ReaderTest < TestBfMatlab
             javaaddpath(self.jarPath);
             self.reader = loci.formats.in.FakeReader();
             self.sizeX = self.reader.DEFAULT_SIZE_X;
-            self.sizeY = self.reader.DEFAULT_SIZE_X;
+            self.sizeY = self.reader.DEFAULT_SIZE_Y;
             self.sizeZ = self.reader.DEFAULT_SIZE_Z;
             self.sizeC = self.reader.DEFAULT_SIZE_C;
             self.sizeT = self.reader.DEFAULT_SIZE_T;
