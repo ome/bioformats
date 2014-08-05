@@ -363,6 +363,17 @@ public abstract class FormatReader extends FormatHandler
   protected Object getGlobalMeta(String key) {
     return metadata.get(key);
   }
+  
+  protected String getGlobalMetaAsString(String key) {
+	  
+	  Object value = metadata.get(key);
+	  
+	  if (null == value)
+		  return "";
+	  
+	  return value.toString();
+	  
+  }
 
   protected void addGlobalMetaList(String key, Object value) {
     Vector list = (Vector) metadata.get(key);

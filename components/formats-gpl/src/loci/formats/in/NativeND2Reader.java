@@ -392,17 +392,19 @@ public class NativeND2Reader extends FormatReader {
         int nameLength = in.readInt();         // Length of the block name
         Long dataLength = in.readLong();       // Length of the data
         String nameAttri = in.readString(nameLength).trim();  // Read the name
+      
         Long stop = helper + (dataLength + nameLength); // Where this block ends
 
         boolean seq = false; // Only 1 MetadataSeq is needed
 
         // Send to iteration
-        // (we are interested only in xxxxLV - LV = light variant)
+        // (we are interested only in xxxxLV - LV = lite variant)
         if (nameAttri.contains("MetadataLV") ||
-          nameAttri.contains("CalibrationLV") ||
-          (nameAttri.contains("MetadataSeqLV") && !seq))
-        {
-          iterateIn(in, stop);
+           nameAttri.contains("CalibrationLV") ||
+           nameAttri.contains("TextInfoLV") ||
+          (nameAttri.contains("MetadataSeqLV") && !seq)) { 
+          long liteVariantBegins = in.getFilePointer();
+          iterateIn(in, stop, liteVariantBegins);
         }
 
         // Only 1 MetadataSeq is needed
@@ -410,7 +412,8 @@ public class NativeND2Reader extends FormatReader {
         if (nameAttri.contains("MetadataSeqLV")) {
           seq = true;
         }
-
+         
+        
         in.seek(helper);  // Return to starting position
 
         int lenOne = in.readInt();
@@ -808,7 +811,12 @@ public class NativeND2Reader extends FormatReader {
 
       ND2Handler handler =
         new ND2Handler(core, getSizeX() == 0, imageOffsets.size());
-      XMLTools.parseXML(xmlString, handler);
+      
+      // Add useful metadata from binary read
+      parseUsefulMetada (handler);
+      parseTextInfo (handler);
+      
+      XMLTools.parseXML(xmlString, handler);  
       xmlString = null;
 
       channelColors = handler.getChannelColors();
@@ -1479,28 +1487,93 @@ public class NativeND2Reader extends FormatReader {
         }
       }
     }
-
+   
     populateMetadataStore(handler);
   }
+  
+  protected void parseUsefulMetada(ND2Handler handler) {	  
+	  String numericalAperture = getGlobalMetaAsString("Numerical Aperture");
+	  handler.parseKeyAndValue("Numerical Aperture", numericalAperture, ""); 
+  }
+  
+  protected void parseTextInfo(ND2Handler handler) {
+	  // Some useful data are in global metadata
+	  
+	    String imageId = getGlobalMetaAsString("TextInfoItem_0");
+	    handler.parseKeyAndValue("TextInfoItem_0", imageId, "");
 
-  // -- Helper methods --
+	    // *** Type field
+	    String typeField = getGlobalMetaAsString("TextInfoItem_1");
+	    handler.parseKeyAndValue("TextInfoItem_1", typeField, "");
 
+	    // *** Group field
+	    String group  = getGlobalMetaAsString("TextInfoItem_2");
+	    handler.parseKeyAndValue("TextInfoItem_2", group, "");
+
+	    // *** SampleID field
+	    String imageIdField = getGlobalMetaAsString("TextInfoItem_3");
+	    handler.parseKeyAndValue("TextInfoItem_3", imageIdField, "");
+
+	    // *** Author field
+	    String author = getGlobalMetaAsString("TextInfoItem_4");
+	    handler.parseKeyAndValue("TextInfoItem_4", author, "");
+
+	    // *** Description field
+	    String description = getGlobalMetaAsString("TextInfoItem_5");
+	    handler.parseKeyAndValue("TextInfoItem_5", description, "");
+
+	    // *** Capturing field
+	    String capturing = getGlobalMetaAsString("TextInfoItem_6");
+	    handler.parseKeyAndValue("TextInfoItem_6", capturing, "");
+
+	    // *** Type Sampling
+	    String typeSampling = getGlobalMetaAsString("TextInfoItem_7");
+	    handler.parseKeyAndValue("TextInfoItem_7", typeSampling, "");
+
+	    // *** Type Location
+	    String typeLocation = getGlobalMetaAsString("TextInfoItem_8");
+	    handler.parseKeyAndValue("TextInfoItem_8", typeLocation, "");
+
+	    // *** Date field
+	    String date = getGlobalMetaAsString("TextInfoItem_9");
+	    handler.parseKeyAndValue("TextInfoItem_9", date, "");
+
+	    // *** Conclusion field
+	    String conclusion  = getGlobalMetaAsString("TextInfoItem_10");
+	    handler.parseKeyAndValue("TextInfoItem_10", conclusion, "");
+
+	    // *** Info1 field
+	    String info1 = getGlobalMetaAsString("TextInfoItem_11");
+	    handler.parseKeyAndValue("TextInfoItem_11", info1, "");
+
+	    // *** Info2 field
+	    String info2 = getGlobalMetaAsString("TextInfoItem_12");
+	    handler.parseKeyAndValue("TextInfoItem_12", info2, "");
+
+	    // *** Optics field
+	    String optics = getGlobalMetaAsString("TextInfoItem_13");
+	    handler.parseKeyAndValue("TextInfoItem_13", optics, "");
+	  
+  }
+
+  // -- Helper methods -- 
   /**
    * Function for iterating through ND2 metaAttributes
    * @param in    stream of bytes from file
    * @param stop position where to stop
    */
-  private void iterateIn(RandomAccessInputStream in, Long stop) {
+  private void iterateIn(RandomAccessInputStream in, Long stop, long liteVariantStart) {
     Object value; // We don't know if attribute will be int, double, string....
 
     try {
       while (in.getFilePointer() < stop) {
+
+      	  long elementStartPosition = in.getFilePointer();
         int type = in.read();        // @See switch
         int letters = in.read();        // Letters in the Attribute name
 
         // Attribute name
         String name = DataTools.stripString(in.readString(letters*2));
-
         int numberOfItems; // Number of items in level (see level)
         Long off;           // Offset to index (see level)
 
@@ -1529,7 +1602,7 @@ public class NativeND2Reader extends FormatReader {
           case (8): // String
             //in.read(); // size of string
             long start = in.getFilePointer();
-            value = in.readCString();
+            value =  DataTools.stripString(in.findString("\0\0"));
             long end = in.getFilePointer();
             if ((end - start) % 2 != 0) {
               in.skipBytes(1);
@@ -1546,39 +1619,27 @@ public class NativeND2Reader extends FormatReader {
             value = java.util.Arrays.toString(data); // todo
             break;
           case (10): // deprecated
-            // Its like LEVEL but offset is pointing absolutely not relatively
-
+            // Its like LEVEL but offset is pointing absolutely to the liteVariantStart
             numberOfItems = in.readInt();   // number of level atributes
-
-            // offset to index (absolute number - current position -
-            //   numberOfItems(4B) - type (1B) - nameLength (1B) - name
-            off = in.readLong() - in.getFilePointer() - 4 - 2 - letters * 2;
+            off = in.readLong(); 
             value = "LEVEL";
 
             // Iterate
-            iterateIn(in, off + in.getFilePointer());
+            iterateIn(in, off + liteVariantStart, liteVariantStart);
 
-            // Last 4 bytes in level is some kind of point table
-
-            if (off < 0) {
-              break;
-            }
-            in.seek(off + in.getFilePointer());
+            in.seek(off + liteVariantStart);
             in.skipBytes(numberOfItems * 8);
-            value = in.readLong();
             break;
           case (11): // level
             numberOfItems = in.readInt(); // number of level attributes
+            value = "LEVEL";       
             off = in.readLong();         // offset to index
-            value = "LEVEL";
 
-            // Iterate
-            iterateIn(in, off + in.getFilePointer());
+            // Iterate            
+            iterateIn(in, off + elementStartPosition, liteVariantStart);
 
-            // Last 4 bytes in level is some kind of point table
-
-            in.seek(off + in.getFilePointer());
-            /* ***** Index is pointer. NumberofItemes*8B ***** */
+            in.seek(off + elementStartPosition);
+            /* ***** Index is pointer +  NumberofItemes*8B ***** */
             in.skipBytes(numberOfItems * 8);
             break;
           default: // Shall not happen :-)
@@ -1811,7 +1872,8 @@ public class NativeND2Reader extends FormatReader {
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Double value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          PositiveFloat emission = FormatTools.getEmissionWavelength(value);
+          PositiveInteger emission = 
+        		  new PositiveInteger(FormatTools.getEmissionWavelength(value).getValue().intValue());
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);
           }
@@ -1820,8 +1882,8 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          PositiveFloat excitation =
-            FormatTools.getExcitationWavelength(exWave.get(index));
+          PositiveInteger excitation = 
+        		  new PositiveInteger(FormatTools.getExcitationWavelength(exWave.get(index)).getValue().intValue());
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);
           }

@@ -613,6 +613,7 @@ public class ND2Handler extends BaseHandler {
   public void parseKeyAndValue(String key, String value, String runtype) {
     if (key == null || value == null) return;
     CoreMetadata ms0 = core.get(0);
+     
     metadata.put(key, value);
 
     try {
@@ -636,6 +637,9 @@ public class ND2Handler extends BaseHandler {
         mag = new Double(DataTools.sanitizeDouble(value));
       }
       else if (key.endsWith("dObjectiveNA")) {
+        na = new Double(DataTools.sanitizeDouble(value));
+      }
+      else if (key.endsWith("Numerical Aperture")) {
         na = new Double(DataTools.sanitizeDouble(value));
       }
       else if (key.endsWith("dRefractIndex1")) {
