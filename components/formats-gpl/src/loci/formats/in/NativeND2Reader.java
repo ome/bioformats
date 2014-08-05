@@ -328,7 +328,9 @@ public class NativeND2Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    in = new RandomAccessInputStream(id);
+    // using a 32KB buffer instead of the default 1MB gives
+    // better performance with the seek/skip pattern used here
+    in = new RandomAccessInputStream(id, 32 * 1024);
 
     channelColors = new Hashtable<String, Integer>();
 
@@ -353,6 +355,7 @@ public class NativeND2Reader extends FormatReader {
 
       int extraZDataCount = 0;
       boolean textData = false;
+      boolean foundMetadata = false;
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
@@ -463,6 +466,14 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (blockType.startsWith("ImageDataSeq")) {
+          if (foundMetadata) {
+            imageOffsets.clear();
+            imageNames.clear();
+            imageLengths.clear();
+            customDataOffsets.clear();
+            customDataLengths.clear();
+            foundMetadata = false;
+          }
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
@@ -474,6 +485,7 @@ public class NativeND2Reader extends FormatReader {
           name = name.delete(0, name.length());
         }
         else if (blockType.startsWith("ImageText")) {
+          foundMetadata = true;
           in.skipBytes(6);
           while (in.read() == 0);
           long startFP = in.getFilePointer();
@@ -598,6 +610,7 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
         {
+          foundMetadata = true;
           if (blockType.equals("ImageAttribu")) {
             in.skipBytes(6);
             long endFP = in.getFilePointer() + lenOne + lenTwo - 18;
@@ -1079,7 +1092,7 @@ public class NativeND2Reader extends FormatReader {
         imageOffsets.size() / getSeriesCount())
       {
         int count = imageOffsets.size() / getSeriesCount();
-        if (!split) {
+        if (!split && count >= getSizeC()) {
           count /= getSizeC();
         }
 
@@ -1091,17 +1104,18 @@ public class NativeND2Reader extends FormatReader {
           core.get(0).sizeZ = 1;
           core.get(0).sizeT = count;
         }
-        else if (useZ != null && !useZ) {
+        else {
+          core.get(0).sizeT = 1;
+          core.get(0).sizeZ = count;
+        }
+
+        if (useZ != null && !useZ) {
           CoreMetadata original = core.get(0);
           int nSeries = imageOffsets.size() / (getSizeZ() * getSizeT());
           for (int i=1; i<nSeries; i++) {
             core.add(original);
           }
           numSeries = core.size();
-        }
-        else {
-          core.get(0).sizeT = 1;
-          core.get(0).sizeZ = count;
         }
 
         if (getSizeZ() * getSizeT() * (split ? 1 : getSizeC()) <
