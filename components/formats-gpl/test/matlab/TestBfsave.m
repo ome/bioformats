@@ -29,6 +29,7 @@ classdef TestBfsave < TestBfMatlab
     properties
         path
         I
+        dimensionOrder = 'XYZCT'
     end
     
     methods
@@ -51,47 +52,70 @@ classdef TestBfsave < TestBfMatlab
             tearDown@TestBfMatlab(self);
         end
         
-        % Dimension order tests
-        function checkDimensionOrder(self, dimensionOrder)
-            self.I = zeros(2, 3, 4, 5, 6);
-            d = size(self.I);
-            bfsave(self.I, self.path, dimensionOrder);
-            
+        function checkMinimalMetadata(self)
             % Check dimensions of saved ome-tiff
-            reader = bfGetReader(self.path);
-            assertEqual(reader.getSizeX, d(2));
-            assertEqual(reader.getSizeY, d(1));
-            assertEqual(reader.getSizeZ, d(dimensionOrder=='Z'));
-            assertEqual(reader.getSizeC, d(dimensionOrder=='C'));
-            assertEqual(reader.getSizeT, d(dimensionOrder=='T'));
-            reader.close();
+            self.reader = bfGetReader(self.path);
+            d = size(self.I);
+            assertEqual(self.reader.getSizeX(), d(2));
+            assertEqual(self.reader.getSizeY(), d(1));
+            assertEqual(self.reader.getSizeZ(), d(self.dimensionOrder=='Z'));
+            assertEqual(self.reader.getSizeC(), d(self.dimensionOrder=='C'));
+            assertEqual(self.reader.getSizeT(), d(self.dimensionOrder=='T'));
+            assertEqual(char(self.reader.getDimensionOrder()), self.dimensionOrder);
+            metadataStore = self.reader.getMetadataStore();
+            assertEqual(char(metadataStore.getImageID(0)), 'Image:0');
+            assertEqual(char(metadataStore.getPixelsID(0)), 'Pixels:0');
+            for i = 1 : d(self.dimensionOrder=='C')
+                assertEqual(char(metadataStore.getChannelID(0, i - 1)),...
+                    sprintf('Channel:0:%g', i - 1));
+            end
+
         end
         
+        % Dimension order tests
         function testDimensionOrderXYZCT(self)
-            self.checkDimensionOrder('XYZCT')
+            self.dimensionOrder = 'XYZCT';
+            self.I = zeros(2, 3, 4, 5, 6);
+            bfsave(self.I, self.path, self.dimensionOrder);
+            self.checkMinimalMetadata();
         end
         
         function testDimensionOrderXYZTC(self)
-            self.checkDimensionOrder('XYZTC')
+            self.dimensionOrder = 'XYZTC';
+            self.I = zeros(2, 3, 4, 5, 6);
+            bfsave(self.I, self.path, self.dimensionOrder);
+            self.checkMinimalMetadata();
         end
         
         function testDimensionOrderXYCZT(self)
-            self.checkDimensionOrder('XYCZT')
+            self.dimensionOrder = 'XYCZT';
+            self.I = zeros(2, 3, 4, 5, 6);
+            bfsave(self.I, self.path, self.dimensionOrder);
+            self.checkMinimalMetadata();
         end
         
         function testDimensionOrderXYCTZ(self)
-            self.checkDimensionOrder('XYCTZ')
+            self.dimensionOrder = 'XYCTZ';
+            self.I = zeros(2, 3, 4, 5, 6);
+            bfsave(self.I, self.path, self.dimensionOrder);
+            self.checkMinimalMetadata();
         end
         
         function testDimensionOrderXYTCZ(self)
-            self.checkDimensionOrder('XYTCZ')
+            self.dimensionOrder = 'XYTCZ';
+            self.I = zeros(2, 3, 4, 5, 6);
+            bfsave(self.I, self.path, self.dimensionOrder);
+            self.checkMinimalMetadata();
         end
         
         function testDimensionOrderXYTZC(self)
-            self.checkDimensionOrder('XYTZC')
+            self.dimensionOrder = 'XYTZC';
+            self.I = zeros(2, 3, 4, 5, 6);
+            bfsave(self.I, self.path, self.dimensionOrder);
+            self.checkMinimalMetadata();
         end
         
-        % Data type tests
+        % Pixel type tests
         function checkPixelType(self, type)
             self.I = zeros(100, 100, type);
             bfsave(self.I, self.path);
@@ -138,16 +162,16 @@ classdef TestBfsave < TestBfMatlab
         end
         
         function testSinglePlane(self)
-            r = bfGetReader('plane.fake');
-            self.I = bfGetPlane(r, 1);
+            self.reader = bfGetReader('plane.fake');
+            self.I = bfGetPlane(self.reader, 1);
             bfsave(self.I, self.path);
             assertEqual(imread(self.path), self.I);
         end
         
         % Compression type tests
         function checkCompression(self, type, nonlossy)
-            r = bfGetReader('plane.fake');
-            self.I = bfGetPlane(r, 1);
+            self.reader = bfGetReader('plane.fake');
+            self.I = bfGetPlane(self.reader, 1);
             bfsave(self.I, self.path, 'Compression', type);
             if nonlossy
                 assertEqual(imread(self.path), self.I);
@@ -181,5 +205,22 @@ classdef TestBfsave < TestBfMatlab
             assertEqual(imread(self.path), self.I);
         end
         
+        % Metadata test
+        function testCreateMinimalOMEXMLMetadata(self)
+            self.I = zeros(2, 3, 4, 5, 6);
+            metadata = createMinimalOMEXMLMetadata(self.I);
+            bfsave(self.I, self.path, 'metadata', metadata);
+            self.checkMinimalMetadata();
+        end
+        
+        function testAdditionalOMEXMLMetadata(self)
+            self.I = zeros(2, 3, 4, 5, 6);
+            metadata = createMinimalOMEXMLMetadata(self.I);
+            metadata.setImageDescription('description',0);
+            bfsave(self.I, self.path, 'metadata', metadata);
+            self.checkMinimalMetadata();
+            d = self.reader.getMetadataStore().getImageDescription(0);
+            assertEqual(char(d), 'description');
+        end
     end
 end

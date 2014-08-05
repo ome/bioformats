@@ -4,7 +4,7 @@
 MNG (Multiple-image Network Graphics)
 ===============================================================================
 
-Extensions: .mng 
+Extensions: .mng
 
 Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
 

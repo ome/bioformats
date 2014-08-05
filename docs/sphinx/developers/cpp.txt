@@ -19,9 +19,11 @@ to be installed:
 +------------+-----------+------------------+----------------+----------+
 | Boost      | >= 1.42¹  | libboost-all-dev | boost-devel    | boost    |
 +------------+-----------+------------------+----------------+----------+
+| TIFF       | >= 4.0²   | libtiff5-dev     | libtiff4-devel | libtiff  |
++------------+-----------+------------------+----------------+----------+
 | Xerces-C   | 3.x       | libxerces-c-dev  | xerces-c-devel | xerces-c |
 +------------+-----------+------------------+----------------+----------+
-| GTest†     | >= 1.5    | libgtest-dev     | gtest-devel    | N/A²     |
+| GTest†     | >= 1.5    | libgtest-dev     | gtest-devel    | N/A³     |
 +------------+-----------+------------------+----------------+----------+
 | Doxygen‡   | >= 1.6    | doxygen          | doxygen        | doxygen  |
 +------------+-----------+------------------+----------------+----------+
@@ -29,7 +31,8 @@ to be installed:
 +------------+-----------+------------------+----------------+----------+
 
 1. 1.41 is known to not work nicely with :program:`cmake`; 1.5x or later recommended
-2. `gtest not available in homebrew <http://answers.ros.org/question/42335/mac-os-x-install-error-no-available-formula-for-gtest/>`_
+2. 4.0.2 and earlier do not have TIFFField accessor functions; 4.0.3 or later recommended
+3. `gtest not available in homebrew <http://answers.ros.org/question/42335/mac-os-x-install-error-no-available-formula-for-gtest/>`_
 
 †
   Optional, needed to run the unit tests
@@ -116,8 +119,22 @@ Run :program:`cmake` from the temporary build directory::
 Run ``cmake -LH`` to see the configurable project options.  The
 following basic options are supported:
 
+cxxstd-autodetect=(ON|OFF)
+  Enable (default) or disable C++ compiler standard autodetection.  If
+  enabled, the compiler will be put into C++11 mode if available,
+  otherwise falling back to C++03 or C++98.  If disabled, it is the
+  responsibility of the user to add the appropriate compiler options
+  to build using the required standard.  This is useful if
+  autodetection fails or a compiler is buggy in certain modes (e.g. GCC
+  4.4 or 4.6 require ``-std=gnu++98`` or else ``stdarg`` support is
+  broken).
 doxygen=(ON|OFF)
   Enable doxygen documentation
+extra-warnings=(ON|OFF)
+  Enable or disable additional compiler warnings in addition to the
+  default set.  These are disabled by default since they trigger a large
+  number of false positives, particularly in third-party libraries
+  outside our control.
 test=(ON|OFF)
   Enable unit tests
 

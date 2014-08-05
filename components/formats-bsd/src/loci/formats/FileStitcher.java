@@ -129,6 +129,7 @@ public class FileStitcher extends ReaderWrapper {
    *   patterns rather than single file paths.
    */
   public FileStitcher(IFormatReader r, boolean patternIds) {
+    super(r);
     if (r.getClass().getPackage().getName().equals("loci.formats.in")) {
       ClassList<IFormatReader> classes =
         new ClassList<IFormatReader>(IFormatReader.class);

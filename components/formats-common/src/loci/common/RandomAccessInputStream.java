@@ -102,6 +102,15 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     this(Location.getHandle(file), file);
   }
 
+  /**
+   * Constructs a hybrid RandomAccessFile/DataInputStream
+   * around the given file.
+   */
+  public RandomAccessInputStream(String file, int bufferSize) throws IOException
+  {
+    this(Location.getHandle(file, false, true, bufferSize), file);
+  }
+
   /** Constructs a random access stream around the given handle. */
   public RandomAccessInputStream(IRandomAccess handle) throws IOException {
     this(handle, null);

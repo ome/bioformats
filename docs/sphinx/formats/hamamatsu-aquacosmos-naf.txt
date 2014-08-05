@@ -4,7 +4,7 @@
 Hamamatsu Aquacosmos NAF
 ===============================================================================
 
-Extensions: .naf 
+Extensions: .naf
 
 Developer: `Hamamatsu <http://www.hamamatsu.com/>`_
 

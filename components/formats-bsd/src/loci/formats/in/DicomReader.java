@@ -217,10 +217,21 @@ public class DicomReader extends FormatReader {
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
     Vector<String> files = fileList.get(keys[getSeries()]);
-    for (String f : companionFiles) {
-      files.add(f);
+    if (files == null) {
+      return null;
     }
-    return files == null ? null : files.toArray(new String[files.size()]);
+    Vector<String> uniqueFiles = new Vector<String>();
+    for (String f : files) {
+      if (!uniqueFiles.contains(f)) {
+        uniqueFiles.add(f);
+      }
+    }
+    for (String f : companionFiles) {
+      if (!uniqueFiles.contains(f)) {
+        uniqueFiles.add(f);
+      }
+    }
+    return uniqueFiles.toArray(new String[uniqueFiles.size()]);
   }
 
   public int fileGroupOption(String id) throws FormatException, IOException {
@@ -719,8 +730,10 @@ public class DicomReader extends FormatReader {
       for (int i=0; i<core.size(); i++) {
         store.setImageDescription(imageType, i);
 
+        // all physical sizes were stored in mm, so must be converted to um
         if (pixelSizeX != null) {
           Double sizeX = new Double(pixelSizeX);
+          sizeX *= 1000;
           PositiveFloat x = FormatTools.getPhysicalSizeX(sizeX);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, i);
@@ -728,14 +741,18 @@ public class DicomReader extends FormatReader {
         }
         if (pixelSizeY != null) {
           Double sizeY = new Double(pixelSizeY);
+          sizeY *= 1000;
           PositiveFloat y = FormatTools.getPhysicalSizeY(sizeY);
           if (y != null) {
             store.setPixelsPhysicalSizeY(y, i);
           }
         }
-        PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ);
-        if (z != null) {
-          store.setPixelsPhysicalSizeZ(z, i);
+        if (pixelSizeZ != null) {
+          pixelSizeZ *= 1000;
+          PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+          if (z != null) {
+            store.setPixelsPhysicalSizeZ(z, i);
+          }
         }
       }
     }
@@ -1041,7 +1058,9 @@ public class DicomReader extends FormatReader {
 
     // "Undefined" element length.
     // This is a sort of bracket that encloses a sequence of elements.
-    if (elementLength == -1) {
+    if (elementLength == -1 || (tag != 0x00180020 && TYPES.containsKey(tag) &&
+      TYPES.get(tag).endsWith("Sequence")))
+    {
       elementLength = 0;
       inSequence = true;
     }
@@ -1118,6 +1137,14 @@ public class DicomReader extends FormatReader {
     String[] patternFiles = pattern.getFiles();
     if (patternFiles == null) patternFiles = new String[0];
     Arrays.sort(patternFiles);
+
+    // make sure that the file names are normalized
+    // this prevents files from being missed on Windows if the
+    // path separator normalization is inconsistent
+    for (int i=0; i<patternFiles.length; i++) {
+      patternFiles[i] = new Location(patternFiles[i]).getAbsolutePath();
+    }
+
     String[] files = dir.list(true);
     if (files == null) return;
     Arrays.sort(files);
