@@ -12,6 +12,7 @@
 # serve to show the default.
 
 import sys, os
+sys.path.insert(0, os.path.abspath('../sphinx/_ext'))
 import re
 import subprocess
 from datetime import datetime
@@ -38,10 +39,15 @@ def popen(args, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.)
-extensions = ['sphinx.ext.extlinks']
+extensions = ['sphinx.ext.extlinks', 'edit_on_github']
+
+## Configuration for the edit_on_github extension
+edit_on_github_project = 'openmicroscopy/bioformats'
+edit_on_github_branch = 'dev_5_0'
+edit_on_github_prefix = 'docs/sphinx'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['../sphinx/_templates']
 
 # The suffix of source filenames.
 source_suffix = '.txt'

@@ -730,8 +730,10 @@ public class DicomReader extends FormatReader {
       for (int i=0; i<core.size(); i++) {
         store.setImageDescription(imageType, i);
 
+        // all physical sizes were stored in mm, so must be converted to um
         if (pixelSizeX != null) {
           Double sizeX = new Double(pixelSizeX);
+          sizeX *= 1000;
           PositiveFloat x = FormatTools.getPhysicalSizeX(sizeX);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, i);
@@ -739,14 +741,18 @@ public class DicomReader extends FormatReader {
         }
         if (pixelSizeY != null) {
           Double sizeY = new Double(pixelSizeY);
+          sizeY *= 1000;
           PositiveFloat y = FormatTools.getPhysicalSizeY(sizeY);
           if (y != null) {
             store.setPixelsPhysicalSizeY(y, i);
           }
         }
-        PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ);
-        if (z != null) {
-          store.setPixelsPhysicalSizeZ(z, i);
+        if (pixelSizeZ != null) {
+          pixelSizeZ *= 1000;
+          PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+          if (z != null) {
+            store.setPixelsPhysicalSizeZ(z, i);
+          }
         }
       }
     }

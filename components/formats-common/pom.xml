@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.2</version>
+    <version>5.0.3</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -175,6 +175,12 @@
 
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
+    <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+    </repository>
     <repository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>

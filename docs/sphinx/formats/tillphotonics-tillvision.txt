@@ -4,7 +4,7 @@
 TillPhotonics TillVision
 ===============================================================================
 
-Extensions: .vws 
+Extensions: .vws
 
 Developer: `TILL Photonics <http://www.till-photonics.com/>`_
 

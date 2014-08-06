@@ -4,7 +4,7 @@
 Olympus SIS TIFF
 ===============================================================================
 
-Extensions: .tiff 
+Extensions: .tiff
 
 Developer: `Olympus <http://www.olympus-sis.com/>`_
 

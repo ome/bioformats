@@ -54,20 +54,25 @@ status = bfCheckJavaPath();
 assert(status, ['Missing Bio-Formats library. Either add bioformats_package.jar '...
     'to the static Java path or add it to the Matlab path.']);
 
-% Prompt for a file if not input
-isFile = exist(id, 'file') == 2;
-isFake = ischar(id) && strcmp(id(end-3:end), 'fake');
-if nargin == 0 || (~isFile && ~isFake)
+% Check if input is a fake string
+isFake = strcmp(id(max(1, end - 4):end), '.fake');
+
+if ~isFake
+    % Check file existence using fileattrib
+    [status, f] = fileattrib(id);
+    isFile = status && f.directory == 0;
+    if isFile, id = f.Name; end
+end
+
+% Prompt for a file via the UI
+if (~isFake && ~isFile)
     [file, path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
     id = [path file];
     if isequal(path, 0) || isequal(file, 0), return; end
-elseif isFile && ~verLessThan('matlab', '7.9')
-    [~, f] = fileattrib(id);
-    id = f.Name;
 end
 
 % set LuraWave license code, if available
-if exist('lurawaveLicense')
+if exist('lurawaveLicense', 'var')
     path = fullfile(fileparts(mfilename('fullpath')), 'lwf_jsdk2.6.jar');
     javaaddpath(path);
     java.lang.System.setProperty('lurawave.license', lurawaveLicense);

@@ -146,7 +146,7 @@ public class Memoizer extends ReaderWrapper {
         try {
           fis.close();
         } catch (IOException e) {
-          LOGGER.debug("failed to close KryoDeser.fis");
+          LOGGER.error("failed to close KryoDeser.fis", e);
         }
         fis = null;
       }
@@ -184,7 +184,7 @@ public class Memoizer extends ReaderWrapper {
           fos.close();
           fos = null;
         } catch (IOException e) {
-          LOGGER.debug("failed to close KryoDeser.fis");
+          LOGGER.error("failed to close KryoDeser.fis", e);
         }
       }
     }
@@ -314,7 +314,7 @@ public class Memoizer extends ReaderWrapper {
    */
   private final File directory;
 
-  private transient Deser ser;
+  protected transient Deser ser;
 
   private transient OMEXMLService service;
 
@@ -416,6 +416,48 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
+   * Returns true if the version of the memo file as returned by
+   * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
+   * do not match the current version as specified by {@link FormatTools#VERSION}
+   * and {@link FormatTools#VCS_REVISION}, respectively.
+   */
+  public boolean versionMismatch() throws IOException {
+
+      final String releaseVersion = ser.loadReleaseVersion();
+      final String revision = ser.loadRevision();
+
+      if (!isVersionChecking()) {
+        return false;
+      }
+
+      String minor = releaseVersion;
+      int firstDot = minor.indexOf(".");
+      if (firstDot >= 0) {
+        int secondDot = minor.indexOf(".", firstDot + 1);
+        if (secondDot >= 0) {
+          minor = minor.substring(0, secondDot);
+        }
+      }
+
+      String currentMinor = FormatTools.VERSION.substring(0,
+        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
+      if (!currentMinor.equals(minor)) {
+        LOGGER.info("Different release version: {} not {}",
+          releaseVersion, FormatTools.VERSION);
+        return true;
+      }
+
+      // REVISION NUMBER
+      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
+        LOGGER.info("Different Git version: {} not {}",
+          revision, FormatTools.VCS_REVISION);
+        return true;
+      }
+
+      return false;
+  }
+
+  /**
    * Set whether version checking is done based upon major/minor version
    * numbers.
    * If 'true' is passed in, then a mismatch between the major/minor version
@@ -491,7 +533,7 @@ public class Memoizer extends ReaderWrapper {
         reader = memo;
       }
     } catch (ServiceException e) {
-      LOGGER.debug("Could not create OMEXMLMetadata", e);
+      LOGGER.error("Could not create OMEXMLMetadata", e);
     } finally {
       sw.stop("loci.formats.Memoizer.setId");
     }
@@ -557,7 +599,7 @@ public class Memoizer extends ReaderWrapper {
         return null;
     } else {
       if (!directory.exists() || !directory.canWrite()) {
-        LOGGER.debug("skipping memo: directory not writeable - {}", directory);
+        LOGGER.warn("skipping memo: directory not writeable - {}", directory);
         return null;
       }
 
@@ -614,43 +656,33 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // RELEASE VERSION NUMBER
-      String releaseVersion = ser.loadReleaseVersion();
-
-      String minor = releaseVersion;
-      int firstDot = minor.indexOf(".");
-      if (firstDot >= 0) {
-        int secondDot = minor.indexOf(".", firstDot + 1);
-        if (secondDot >= 0) {
-          minor = minor.substring(0, secondDot);
-        }
-      }
-
-      String currentMinor = FormatTools.VERSION.substring(0,
-        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
-      if (!currentMinor.equals(minor)) {
-        LOGGER.info("Different release version: {} not {}",
-          releaseVersion, FormatTools.VERSION);
-        return null;
-      }
-
-      // REVISION NUMBER
-      String revision = ser.loadRevision();
-      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
-        LOGGER.info("Different Git version: {} not {}",
-          revision, FormatTools.VCS_REVISION);
-        return null;
-      }
+       if (versionMismatch()) {
+         // Logging done in versionMismatch
+         return null;
+       }
 
       // CLASS & COPY
       try {
         copy = ser.loadReader();
       } catch (ClassNotFoundException e) {
-        LOGGER.debug("unknown reader type: {}", e);
+        LOGGER.warn("unknown reader type: {}", e);
         return null;
       }
 
-      if (!FormatTools.equalReaders(reader, copy)) {
-          return null;
+      boolean equal = false;
+      try {
+        equal = FormatTools.equalReaders(reader, copy);
+      } catch (RuntimeException rt) {
+        copy.close();
+        throw rt;
+      } catch (Error err) {
+        copy.close();
+        throw err;
+      }
+
+      if (!equal) {
+        copy.close();
+        return null;
       }
 
       copy = handleMetadataStore(copy);
@@ -667,7 +699,7 @@ public class Memoizer extends ReaderWrapper {
       return copy;
     } catch (KryoException e) {
       memoFile.delete();
-      LOGGER.trace("deleted invalid memo file: {}", memoFile);
+      LOGGER.warn("deleted invalid memo file: {}", memoFile, e);
       return null;
     } finally {
       ser.loadStop();
@@ -704,7 +736,7 @@ public class Memoizer extends ReaderWrapper {
     } catch (Throwable t) {
 
       // Any exception should be ignored, and false returned.
-      LOGGER.debug(String.format("failed to save memo file: %s", memoFile), t);
+      LOGGER.warn(String.format("failed to save memo file: %s", memoFile), t);
       rv = false;
 
     } finally {
@@ -714,7 +746,7 @@ public class Memoizer extends ReaderWrapper {
         ser.saveStop();
         sw.stop("loci.formats.Memoizer.saveMemo");
       } catch (Throwable t) {
-        LOGGER.debug("output close failed", t);
+        LOGGER.error("output close failed", t);
       }
 
       // Rename temporary file if successful.
@@ -723,11 +755,11 @@ public class Memoizer extends ReaderWrapper {
       // resources can lead to segfaults
       if (rv) {
         if (!tempFile.renameTo(memoFile)) {
-          LOGGER.debug("temp file rename returned false: {}", tempFile);
+          LOGGER.error("temp file rename returned false: {}", tempFile);
+        } else {
+          LOGGER.debug("saved memo file: {} ({} bytes)",
+            memoFile, memoFile.length());
         }
-
-        LOGGER.debug("saved memo file: {} ({} bytes)",
-                memoFile, memoFile.length());
       }
 
       // Delete the tempFile quietly.
@@ -737,7 +769,7 @@ public class Memoizer extends ReaderWrapper {
           tempFile = null;
         }
       } catch (Throwable t) {
-        LOGGER.debug("temp file deletion faled", t);
+        LOGGER.error("temp file deletion faled", t);
       }
     }
     return rv;
@@ -745,7 +777,8 @@ public class Memoizer extends ReaderWrapper {
 
 
   /**
-:
+   * Return the {@link IFormatReader} instance that is passed in or null if
+   * it has been invalidated, which will include the instance being closed.
    *
    * <ul>
    *  <li><em>Serialization:</em> If an unknown {@link MetadataStore}
@@ -804,5 +837,42 @@ public class Memoizer extends ReaderWrapper {
     return memo;
   }
 
+  public static void main(String[] args) throws Exception {
+    if (args.length == 0 || args.length > 2) {
+      System.err.println("Usage: memoizer file [tmpdir]");
+      System.exit(2);
+    }
+
+    File tmp = new File(System.getProperty("java.io.tmpdir"));
+    if (args.length == 2) {
+      tmp = new File(args[1]);
+    }
+
+    System.out.println("First load of " + args[0]);
+    load(args[0], tmp, true); // initial
+    System.out.println("Second load of " + args[0]);
+    load(args[0], tmp, false); // reload
+  }
+
+  private static void load(String id, File tmp, boolean delete) throws Exception {
+    Memoizer m = new Memoizer(0L, tmp);
+
+    File memo = m.getMemoFile(id);
+    if (delete && memo != null && memo.exists()) {
+        System.out.println("Deleting " + memo);
+        memo.delete();
+    }
+
+    m.setVersionChecking(false);
+    try {
+      m.setId(id);
+      m.openBytes(0);
+      IFormatReader r = m.getReader();
+      r = ((ImageReader) r).getReader();
+      System.out.println(r);
+    } finally {
+      m.close();
+    }
+  }
 
 }

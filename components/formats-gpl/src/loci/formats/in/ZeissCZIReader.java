@@ -741,7 +741,7 @@ public class ZeissCZIReader extends FormatReader {
 
     for (int i=0; i<planes.size(); i++) {
       SubBlock p = planes.get(i);
-      Coordinate c = new Coordinate(p.seriesIndex, p.planeIndex);
+      Coordinate c = new Coordinate(p.seriesIndex, p.planeIndex, getImageCount());
       ArrayList<Integer> indices = new ArrayList<Integer>();
       if (indexIntoPlanes.containsKey(c)) {
         indices = indexIntoPlanes.get(c);
@@ -827,7 +827,7 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       for (int plane=0; plane<getImageCount(); plane++) {
-        Coordinate coordinate = new Coordinate(i, plane);
+        Coordinate coordinate = new Coordinate(i, plane, getImageCount());
         ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
         if (index == null) {
           continue;
@@ -2157,9 +2157,21 @@ public class ZeissCZIReader extends FormatReader {
         String y = position.getAttribute("Y");
         String z = position.getAttribute("Z");
 
-        Double xPos = x == null ? null : new Double(x);
-        Double yPos = y == null ? null : new Double(y);
-        Double zPos = z == null ? null : new Double(z);
+        Double xPos = null;
+        try {
+          xPos = new Double(x);
+        }
+        catch (NumberFormatException e) { }
+        Double yPos = null;
+        try {
+          yPos = new Double(y);
+        }
+        catch (NumberFormatException e) { }
+        Double zPos = null;
+        try {
+          zPos = new Double(z);
+        }
+        catch (NumberFormatException e) { }
 
         for (int tile=0; tile<tilesX * tilesY; tile++) {
           int index = i * tilesX * tilesY + tile;
@@ -2187,9 +2199,12 @@ public class ZeissCZIReader extends FormatReader {
               String y = getFirstNode(region, "Y").getTextContent();
               String z = getFirstNode(region, "Z").getTextContent();
 
-              positionsX[i] = x == null ? null : new Double(x);
-              positionsY[i] = y == null ? null : new Double(y);
-              positionsZ[i] = z == null ? null : new Double(z);
+              // safe to assume all 3 arrays have the same length
+              if (i < positionsX.length) {
+                positionsX[i] = x == null ? null : new Double(x);
+                positionsY[i] = y == null ? null : new Double(y);
+                positionsZ[i] = z == null ? null : new Double(z);
+              }
             }
           }
         }
@@ -2332,7 +2347,11 @@ public class ZeissCZIReader extends FormatReader {
     if (root.getChildNodes().getLength() == 1) {
       String value = root.getTextContent();
       if (value != null && key.length() > 0) {
-        addGlobalMetaList(key.toString(), value);
+    	String s = key.toString();
+    	if (s.endsWith("|")){
+    	  s = s.substring(0, s.length() - 1);
+    	}
+        addGlobalMetaList(s, value);
 
         if (key.toString().endsWith("|Rotations|")) {
           rotationLabels = value.split(" ");
@@ -2351,8 +2370,16 @@ public class ZeissCZIReader extends FormatReader {
 
       String attrName = attr.getNodeName();
       String attrValue = attr.getNodeValue();
+      
+      String keyString = key.toString();
+      if (attrName.endsWith("|")){
+        attrName = attrName.substring(0, attrName.length() - 1);
+      }
+      else if(attrName.length() == 0 && keyString.endsWith("|")) {
+    	  keyString = keyString.substring(0, keyString.length() - 1);
+      }
 
-      addGlobalMeta(key + attrName, attrValue);
+      addGlobalMetaList(keyString + attrName, attrValue);
     }
 
     NodeList children = root.getChildNodes();
@@ -2762,7 +2789,6 @@ public class ZeissCZIReader extends FormatReader {
     // -- SubBlock API methods --
 
     public byte[] readPixelData() throws FormatException, IOException {
-      byte[] data = new byte[(int) dataSize];
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
       try {
         return readPixelData(s);
@@ -3058,7 +3084,7 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  class DimensionEntry {
+  static class DimensionEntry {
     public String dimension;
     public int start;
     public int size;
@@ -3074,7 +3100,7 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  class AttachmentEntry {
+  static class AttachmentEntry {
     public String schemaType;
     public long filePosition;
     public int filePart;
@@ -3093,7 +3119,7 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  class Channel {
+  static class Channel {
     public String name;
     public String color;
     public IlluminationType illumination;
@@ -3107,13 +3133,15 @@ public class ZeissCZIReader extends FormatReader {
     public String filterSetRef;
   }
 
-  class Coordinate {
+  static class Coordinate {
     public int series;
     public int plane;
+    private int imageCount;
 
-    public Coordinate(int series, int plane) {
+    public Coordinate(int series, int plane, int imageCount) {
       this.series = series;
       this.plane = plane;
+      this.imageCount = imageCount;
     }
 
     public boolean equals(Object o) {
@@ -3125,7 +3153,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     public int hashCode() {
-      return series * getImageCount() + plane;
+      return series * imageCount + plane;
     }
 
     public String toString() {

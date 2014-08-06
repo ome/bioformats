@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.0.2</version>
+  <version>5.0.3</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -47,7 +47,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.0.2</release.version>
+    <release.version>5.0.3</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2014</year>
     <project.rootdir>${basedir}</project.rootdir>
@@ -668,6 +668,12 @@
   </repositories>
 
   <pluginRepositories>
+    <pluginRepository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+    </pluginRepository>
     <pluginRepository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
