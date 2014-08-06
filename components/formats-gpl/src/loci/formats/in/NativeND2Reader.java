@@ -1958,7 +1958,7 @@ public class NativeND2Reader extends FormatReader {
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Double value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-        PositiveFloat emission = FormatTools.getEmissionWavelength(value);
+          PositiveFloat emission = FormatTools.getEmissionWavelength(value);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);
           }
@@ -1967,7 +1967,7 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-         PositiveFloat excitation =
+          PositiveFloat excitation =
             FormatTools.getExcitationWavelength(exWave.get(index));
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);
