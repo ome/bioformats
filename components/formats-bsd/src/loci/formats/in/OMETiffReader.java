@@ -200,7 +200,7 @@ public class OMETiffReader extends FormatReader {
       IMetadata meta = service.createOMEXMLMetadata(comment);
 
       try {
-        String metadataFile = meta.getBinaryOnlyMetadataFile(0);
+        String metadataFile = meta.getBinaryOnlyMetadataFile();
         if (metadataFile != null) {
           return !checkSuffix(metadataFile, "tif") && !checkSuffix(metadataFile, "tiff");
         }
@@ -414,7 +414,7 @@ public class OMETiffReader extends FormatReader {
 
     String metadataPath = null;
     try {
-      metadataPath = meta.getBinaryOnlyMetadataFile(0);
+      metadataPath = meta.getBinaryOnlyMetadataFile();
       if (checkSuffix(metadataPath, "tif") || checkSuffix(metadataPath, "tiff")) {
         metadataPath = null;
       }
