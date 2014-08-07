@@ -2055,7 +2055,7 @@ public class NativeND2Reader extends FormatReader {
             int first = key.lastIndexOf(":") + 1;
             int last = key.lastIndexOf(";");
             textEmissionWavelengths.add(
-              new Integer(key.substring(first, last)) + 20);
+              new Double(key.substring(first, last)) + 20);
           }
         }
 
