@@ -21,9 +21,6 @@ Officially Supported Versions:
 Supported Metadata Fields: :doc:`Volocity <volocity-metadata>`
 
 
-Sample Datasets:
-
-- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 
 We currently have:
 
