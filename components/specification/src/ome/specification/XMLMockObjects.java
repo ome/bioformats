@@ -218,7 +218,7 @@ public class XMLMockObjects
   public static final Integer SIZE_Z = 1;
 
   /** The default number of channels. */
-  public static final Integer SIZE_C = 3;
+  public static final Integer SIZE_C = 1;
 
   /** The default number of time-points. */
   public static final Integer SIZE_T = 1;
