@@ -2245,7 +2245,7 @@ extensions = .mvd2
 developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 bsd = no
 export = no
-samples = `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+samples = `PerkinElmer Downloads <http://cellularimaging.perkinelmer.com/downloads/>`_
 weHave = * many example Volocity datasets
 weWant = * an official specification document \n
 * any Volocity datasets that do not open correctly
