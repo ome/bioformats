@@ -53,13 +53,23 @@ namespace ome
   {
 
     /**
-     * Map a given PixelPropertiesType enum to the corresponding language type.
+     * Map a given PixelPropertiesType enum to the corresponding language types.
      */
     template<int>
     struct PixelProperties;
 
     /**
      * Properties common to all pixel types.
+     *
+     * Note that is_signed, is_integer and is_complex are equivalent
+     * to the same members of std::numeric_limits, where present.
+     * They are duplicated here due to lack of std::numeric_limits
+     * support in Boost.Endian for some of its types, including native
+     * types.  They can be removed entirely once std::numeric_limits
+     * support is present.
+     *
+     * @note Java uses isFloatingPoint, which is equivalent to
+     * @c !is_integer.
      */
     template<class P>
     struct PixelPropertiesBase
@@ -96,6 +106,13 @@ namespace ome
       typedef boost::endian::little_int8_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_int8_t native_type;
+
+      /// This pixel type is signed.
+      static const bool is_signed = true;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of INT16 pixels.
@@ -109,6 +126,13 @@ namespace ome
       typedef boost::endian::little_int16_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_int16_t native_type;
+
+      /// This pixel type is signed.
+      static const bool is_signed = true;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of INT32 pixels.
@@ -122,6 +146,13 @@ namespace ome
       typedef boost::endian::little_int32_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_int32_t native_type;
+
+      /// This pixel type is signed.
+      static const bool is_signed = true;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of UINT8 pixels.
@@ -135,6 +166,13 @@ namespace ome
       typedef boost::endian::little_uint8_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_uint8_t native_type;
+
+      /// This pixel type is not signed.
+      static const bool is_signed = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of UINT16 pixels.
@@ -148,6 +186,13 @@ namespace ome
       typedef boost::endian::little_uint16_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_uint16_t native_type;
+
+      /// This pixel type is not signed.
+      static const bool is_signed = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of UINT32 pixels.
@@ -161,6 +206,13 @@ namespace ome
       typedef boost::endian::little_uint32_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_uint32_t native_type;
+
+      /// This pixel type is not signed.
+      static const bool is_signed = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of FLOAT pixels.
@@ -174,6 +226,13 @@ namespace ome
       typedef boost::endian::little_float32_t little_type;
       /// Pixel type (native endian).
       typedef float native_type;
+
+      /// This pixel type is signed.
+      static const bool is_signed = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of DOUBLE pixels.
@@ -187,6 +246,13 @@ namespace ome
       typedef boost::endian::little_float64_t little_type;
       /// Pixel type (native endian).
       typedef double native_type;
+
+      /// This pixel type is signed.
+      static const bool is_signed = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of BIT pixels.
@@ -200,6 +266,13 @@ namespace ome
       typedef bool little_type;
       /// Pixel type (native endian).
       typedef bool native_type;
+
+      /// This pixel type is not signed.
+      static const bool is_signed = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
+      /// This pixel type is not complex.
+      static const bool is_complex = false;
     };
 
     /// Properties of COMPLEX pixels.
@@ -213,6 +286,13 @@ namespace ome
       typedef std::complex<boost::endian::little_float32_t> little_type;
       /// Pixel type (native endian).
       typedef std::complex<float> native_type;
+
+      /// This pixel type is signed.
+      static const bool is_signed = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
+      /// This pixel type is complex.
+      static const bool is_complex = true;
     };
 
     /// Properties of DOUBLECOMPLEX pixels.
@@ -226,6 +306,52 @@ namespace ome
       typedef std::complex<boost::endian::little_float64_t> little_type;
       /// Pixel type (native endian).
       typedef std::complex<double> native_type;
+
+      /// This pixel type is signed.
+      static const bool is_signed = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
+      /// This pixel type is complex.
+      static const bool is_complex = true;
+    };
+
+    /// Endianness.
+    enum EndianType
+      {
+        ENDIAN_BIG,    ///< Big endian.
+        ENDIAN_LITTLE, ///< Little endian.
+        ENDIAN_NATIVE  ///< Native endian.
+      };
+
+    /**
+     * Map the given PixelPropertiesType and Endian enums to the
+     * corresponding endian-specific language type.
+     */
+    template<int, int>
+    struct PixelEndianProperties;
+
+    /// Properties of big endian pixels.
+    template<int P>
+    struct PixelEndianProperties<P, ENDIAN_BIG>
+    {
+      /// Pixel type (big endian).
+      typedef typename PixelProperties<P>::big_type type;
+    };
+
+    /// Properties of little endian pixels.
+    template<int P>
+    struct PixelEndianProperties<P, ENDIAN_LITTLE>
+    {
+      /// Pixel type (little endian).
+      typedef typename PixelProperties<P>::little_type type;
+    };
+
+    /// Properties of native endian pixels.
+    template<int P>
+    struct PixelEndianProperties<P, ENDIAN_NATIVE>
+    {
+      /// Pixel type (native endian).
+      typedef typename PixelProperties<P>::native_type type;
     };
 
     // No switch default to avoid -Wunreachable-code errors.
@@ -243,50 +369,8 @@ namespace ome
      *
      * @returns the size, in bytes
      */
-    inline pixel_size_type
-    bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype)
-    {
-      pixel_size_type size = 0;
-
-      switch(pixeltype)
-        {
-        case ::ome::xml::model::enums::PixelType::INT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::FLOAT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLE:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::BIT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::COMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_byte_size();
-          break;
-        }
-
-      return size;
-    }
+    pixel_size_type
+    bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype);
 
     /**
      * Get the size of a PixelType, in bits.
@@ -295,54 +379,90 @@ namespace ome
      *
      * @returns the size, in bits
      */
-    inline pixel_size_type
-    bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype)
-    {
-      pixel_size_type size = 0;
+    pixel_size_type
+    bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype);
 
-      switch(pixeltype)
-        {
-        case ::ome::xml::model::enums::PixelType::INT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::FLOAT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLE:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::BIT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::COMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_bit_size();
-          break;
-        }
+    /**
+     * Check whether a PixelType is signed.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns @c true if signed, @c false otherwise.
+     */
+    bool
+    isSigned(::ome::xml::model::enums::PixelType pixeltype);
 
-      return size;
-    }
+    /**
+     * Check whether a PixelType is integer.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns @c true if integer, @c false otherwise.
+     */
+    bool
+    isInteger(::ome::xml::model::enums::PixelType pixeltype);
 
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
+    /**
+     * Check whether a PixelType is floating point.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @note Equivalent to @c !isInteger().
+     *
+     * @returns @c true if floating point, @c false otherwise.
+     */
+    bool
+    isFloatingPoint(::ome::xml::model::enums::PixelType pixeltype);
+
+    /**
+     * Check whether a PixelType is complex.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns @c true if complex, @c false otherwise.
+     */
+    bool
+    isComplex(::ome::xml::model::enums::PixelType pixeltype);
+
+    /**
+     * Determine a likely pixel type from its the storage size in bytes.
+     *
+     * Note that the BIT type will never be returned due to having the
+     * same storage size as other types.
+     *
+     * @param bytes the storage size in bytes.
+     * @param is_signed @c true if signed, @c false if unsigned.
+     * @param is_integer @c true if integer, @c false otherwise.
+     * @param is_complex :c true if complex, @c false otherwise.
+     * @returns the corresponding pixel type.
+     * @throws if no pixel type was identified or the parameters are
+     * invalid.
+     */
+    ::ome::xml::model::enums::PixelType
+    pixelTypeFromBytes(pixel_size_type bytes,
+                       bool            is_signed = false,
+                       bool            is_integer = true,
+                       bool            is_complex = false);
+
+    /**
+     * Determine a likely pixel type from its the storage size in bits.
+     *
+     * Note that the BIT type will never be returned due to having the
+     * same storage size as other types.
+     *
+     * @param bytes the storage size in bits.
+     * @param is_signed @c true if signed, @c false if unsigned.
+     * @param is_integer @c true if integer, @c false otherwise.
+     * @param is_complex :c true if complex, @c false otherwise.
+     * @returns the corresponding pixel type.
+     * @throws if no pixel type was identified or the parameters are
+     * invalid.
+     */
+    ::ome::xml::model::enums::PixelType
+    pixelTypeFromBits(pixel_size_type bytes,
+                      bool            is_signed = false,
+                      bool            is_integer = true,
+                      bool            is_complex = false);
 
   }
 }

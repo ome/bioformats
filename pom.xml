@@ -670,6 +670,12 @@
 
   <pluginRepositories>
     <pluginRepository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+    </pluginRepository>
+    <pluginRepository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </pluginRepository>
