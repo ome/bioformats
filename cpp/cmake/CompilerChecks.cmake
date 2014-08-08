@@ -63,12 +63,33 @@ int main() {
 }"
 "${var}_STDARG")
 
+  if("${var}" STREQUAL "CXX_FLAG_CXX11")
+    check_cxx_source_compiles("#include <type_traits>
+
+// overloads are enabled via the return type
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+test(T t)
+{
+  return t;
+}
+
+int main()
+{
+  test(2.4);
+}"
+"${var}_ENABLE_IF")
+  endif("${var}" STREQUAL "CXX_FLAG_CXX11")
+
   if("${var}_CSTDARG" OR "${var}_STDARG")
     set(${var} ${${var}} PARENT_SCOPE)
   else("${var}_CSTDARG" OR "${var}_STDARG")
     set(${var} FALSE PARENT_SCOPE)
   endif("${var}_CSTDARG" OR "${var}_STDARG")
 
+  if(${var} AND NOT "${var}_ENABLE_IF")
+    set(${var} FALSE PARENT_SCOPE)
+  endif(${var} AND NOT "${var}_ENABLE_IF")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
