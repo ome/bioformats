@@ -2140,7 +2140,6 @@ public class StdEntropyDecoder extends EntropyDecoder
                                 // Sample that became significant is in
                                 // bottom half of column => jump to bottom
                                 // half
-                                //break top_half;
                                 broken = true;
                             }
                             // Otherwise sample that became significant is in
@@ -2199,7 +2198,6 @@ public class StdEntropyDecoder extends EntropyDecoder
                             // column
                             j += sscanw;
                             csj = state[j];
-                            //break top_half;
                             broken = true;
                         }
                     }

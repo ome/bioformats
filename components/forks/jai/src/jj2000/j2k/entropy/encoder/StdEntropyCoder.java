@@ -2962,7 +2962,6 @@ public class StdEntropyCoder extends EntropyCoder
                             if ((rlclen>>1) != 0) {
                                 // Sample that became significant is in bottom
                                 // half of column => jump to bottom half
-                                //break top_half;
                                 broken = true;
                             }
                             // Otherwise sample that became significant is in
@@ -3019,7 +3018,6 @@ public class StdEntropyCoder extends EntropyCoder
                             // column
                             j += sscanw;
                             csj = state[j];
-                            //break top_half;
                             broken = true;
                         }
                     }
