@@ -1,4 +1,5 @@
 /*
+
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
@@ -27,7 +28,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.regex.Pattern;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -46,10 +49,9 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-
+import ome.xml.model.Channel;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.
@@ -113,6 +115,90 @@ public class NativeND2Reader extends FormatReader {
   private ArrayList<String> textChannelNames = new ArrayList<String>();
   private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
 
+  /** *********** CHANNELS ************** */
+  public class NDChannel extends Channel 
+  {
+		// ExcitationWavelength property
+		protected ArrayList<Double> excitationWavelengths = new ArrayList<Double>();
+		
+		// EmissionWavelength property
+		protected ArrayList<Double> emissionWavelengths = new ArrayList<Double>();
+		
+		
+		/**
+		 * @return the excitationWavelengths
+		 */
+		public ArrayList<Double> getExcitationWavelengths() {
+			return excitationWavelengths;
+		}
+
+		/**
+		 * @param excitationWavelengths the excitationWavelengths to set
+		 */
+		public void setExcitationWavelengths(ArrayList<Double> excitationWavelengths) {
+			this.excitationWavelengths = excitationWavelengths;
+		}
+
+		/**
+		 * @return the emissionWavelengths
+		 */
+		public ArrayList<Double> getEmissionWavelengths() {
+			return emissionWavelengths;
+		}
+
+		/**
+		 * @param emissionWavelengths the emissionWavelengths to set
+		 */
+		public void setEmissionWavelengths(ArrayList<Double> emissionWavelengths) {
+			this.emissionWavelengths = emissionWavelengths;
+		}
+
+		public void addExcitationWaveLength(Double length)
+		{
+			excitationWavelengths.add(length);
+		}
+  
+		public void addEmissionWaveLength(Double length)
+		{
+			emissionWavelengths.add(length);
+		}
+		/**
+		 * @override
+		 */
+		public PositiveFloat getExcitationWavelength()
+		{
+			return this.getMean(excitationWavelengths);
+		}
+		/**
+		 * @override
+		 */
+		public PositiveFloat getEmissionWavelength()
+		{
+			return this.getMean(emissionWavelengths);
+		}
+		 
+		private PositiveFloat getMean( ArrayList<Double> wave)
+		{
+			int size = wave.size();
+			Double waveToReturn = 0.0;
+			
+			if (0 < size)
+			{
+				for (Double pf:wave)
+					waveToReturn += pf;
+				
+				waveToReturn /= size;
+			}
+			
+			return new PositiveFloat(waveToReturn);
+		}
+  }
+  
+  private static final String channelPatternName = "[a]{1}[0-9]+";
+  private static final String unknownChannelName = "a999";
+  private ArrayList<String>  LEVELS =  new ArrayList<String>();
+  private HashMap<String, NDChannel> channels = new  HashMap<String, NDChannel>();
+  
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -1587,7 +1673,7 @@ public class NativeND2Reader extends FormatReader {
   
   protected void parseUsefulMetada(ND2Handler handler) {	  
 	  String numericalAperture = getGlobalMetaAsString("Numerical Aperture");
-	  handler.parseKeyAndValue("Numerical Aperture", numericalAperture, ""); 
+	  handler.parseKeyAndValue("Numerical Aperture", numericalAperture, "");
   }
   
   protected void parseTextInfo(ND2Handler handler) {
@@ -1732,9 +1818,16 @@ public class NativeND2Reader extends FormatReader {
             value = "LEVEL";       
             off = in.readLong();         // offset to index
 
-            // Iterate            
+            // Wee need to know the current position
+            // Add level - move bot (in)
+            LEVELS.add(name);
+            
+            // Iterate
             iterateIn(in, off + elementStartPosition, liteVariantStart);
-
+            
+            // Leave level - move top (out)
+            LEVELS.remove(name);
+            
             in.seek(off + elementStartPosition);
             /* ***** Index is pointer +  NumberofItemes*8B ***** */
             in.skipBytes(numberOfItems * 8);
@@ -1748,6 +1841,28 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
+        	
+        	// NDChannels are in @see isChannelSetting. This will set them
+        	if (  isChannelSetting())
+        	{
+        		 
+        		// Channel name
+        		if (name.equalsIgnoreCase("sDescription")
+        			&& isLastLevelChannel())
+        		{
+        			assignValueOnChannel(getActualChannelName(), "name", value);
+        		}
+        		// Wavelength
+        		else if (name.equalsIgnoreCase("dWaveLength"))
+        		{
+        			if (isExcitationWaveLengthLevel())
+        			  assignValueOnChannel(getActualChannelName(), "ExX", value);
+        			
+        			if (isEmisionnWaveLengthLevel())				
+          			  assignValueOnChannel(getActualChannelName(), "EmX", value);
+        		} 
+        	}
+        	         	
           addGlobalMeta(name, value);
         }
       }
@@ -1755,6 +1870,79 @@ public class NativeND2Reader extends FormatReader {
     catch (Exception e) {
       LOGGER.debug("", e);
     }
+  }
+  
+  
+  
+  private void assignValueOnChannel(String channelName, String memberName, Object value)
+  {
+	  NDChannel actualChannel;	  
+	  // Channels are dynamically created
+	  actualChannel = channels.containsKey(channelName) ?  channels.get(channelName) : new NDChannel();
+	 	  
+	  if (null == value)
+		  value = "";
+	  
+	  // Java 1.6
+	  if (memberName.equals("name"))
+		  actualChannel.setName(value.toString());
+	  
+	  if (memberName.equals("ExX"))
+		  actualChannel.addExcitationWaveLength(new Double(value.toString()));
+
+	  if (memberName.equals("EmX"))
+		  actualChannel.addEmissionWaveLength(new Double(value.toString()));	
+	  
+	 
+
+	  channels.put(channelName, actualChannel);
+  }
+  
+  private String getActualChannelName()
+  {
+	  
+	 for (String levelName : LEVELS)
+	 {
+		 if (isChannelName(levelName) )
+			 return levelName;
+     }
+		   
+	 return unknownChannelName;
+  }
+  
+  private boolean isChannelName(String possibleName)
+  {
+	  Pattern p = Pattern.compile(channelPatternName);
+	  
+	  return p.matcher(possibleName).matches();
+  }
+  
+  private boolean isChannelSetting()
+  {
+	  return ( LEVELS.contains("SLxPictureMetadata") &&
+			   LEVELS.contains("sPicturePlanes") &&
+			   LEVELS.contains("sPlaneNew")
+			  );	   
+  }
+  
+  private boolean isLastLevelChannel()
+  {
+	 if (0 == LEVELS.size())
+		 return false;
+	 
+	 String lastLevelName = LEVELS.get(LEVELS.size()-1);
+	  
+	 return isChannelName(lastLevelName);
+  }
+
+  private boolean isExcitationWaveLengthLevel()
+  {
+	  return LEVELS.contains("m_ExcitationSpectrum");
+  }
+  
+  private boolean isEmisionnWaveLengthLevel()
+  {
+	  return LEVELS.contains("m_EmissionSpectrum");
   }
 
   private void populateMetadataStore(ND2Handler handler) throws FormatException
@@ -1929,6 +2117,22 @@ public class NativeND2Reader extends FormatReader {
     store.setDetectorModel(handler.getCameraModel(), 0, 0);
     store.setDetectorType(getDetectorType("Other"), 0, 0);
 
+    // Channels are already present @see IterateIn
+    if (0 < channels.size())
+    {
+    	 String nameBeginning = "a";
+    	 int channelIndex = 0;
+    	 String actualKey = nameBeginning + Integer.toString(channelIndex);
+    	 while (channels.containsKey(actualKey))
+    	{
+    		 Channel ch = channels.get(actualKey);
+    		 addGlobalMeta("Channel_" + Integer.toString(channelIndex), ch);
+    		 
+    		 channelIndex++;
+    		 actualKey = nameBeginning + Integer.toString(channelIndex);    		 
+    	}
+    }
+    
     ArrayList<String> modality = handler.getModalities();
     ArrayList<String> binning = handler.getBinnings();
     ArrayList<Double> speed = handler.getSpeeds();

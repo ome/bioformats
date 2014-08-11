@@ -888,11 +888,11 @@ public class ND2Handler extends BaseHandler {
           parseKeyAndValue(nextKey, nextValue, runtype);
         }
       }
-      else if (key.equalsIgnoreCase("Emission wavelength")) {
+      else if (key.equalsIgnoreCase("Emission wavelength") || key.contains("EmWavelength")) {
         String[] v = value.split(" ");
         emWave.add(new Double(v[0]));
       }
-      else if (key.equalsIgnoreCase("Excitation wavelength")) {
+      else if (key.equalsIgnoreCase("Excitation wavelength") || key.contains("ExWavelength")) {
         String[] v = value.split(" ");
         exWave.add(new Double(v[0]));
       }
@@ -925,6 +925,8 @@ public class ND2Handler extends BaseHandler {
         }
       }
     }
+    
+    
     catch (NumberFormatException exc) {
       LOGGER.warn("Could not parse {} value: {}", key, value);
     }
