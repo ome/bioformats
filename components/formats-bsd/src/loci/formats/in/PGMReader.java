@@ -173,7 +173,7 @@ public class PGMReader extends FormatReader {
     m.rgb = getSizeC() == 3;
     m.dimensionOrder = "XYCZT";
     m.littleEndian = true;
-    m.interleaved = false;
+    m.interleaved = true;
     m.sizeZ = 1;
     m.sizeT = 1;
     m.imageCount = 1;
