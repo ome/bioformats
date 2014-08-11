@@ -195,10 +195,16 @@ public class PGMReader extends FormatReader {
     m.interleaved = true;
     m.sizeZ = 1;
     m.sizeT = 1;
-    m.imageCount = 1;
     m.indexed = false;
     m.falseColor = false;
-    m.metadataComplete = true;
+
+    // This may not be true. Multiple images were added to the netpbm
+    // formats in July 2000.
+    m.imageCount = 1;
+
+    // 1. the comments are being ignored;
+    // 2. we may be missing some images (allowed in raw)
+    m.metadataComplete = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
