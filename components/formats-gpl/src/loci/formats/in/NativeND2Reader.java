@@ -1820,6 +1820,9 @@ public class NativeND2Reader extends FormatReader {
 
             // Wee need to know the current position
             // Add level - move bot (in)
+            
+            if (0 < name.length())
+            {
             LEVELS.add(name);
             
             // Iterate
@@ -1827,7 +1830,7 @@ public class NativeND2Reader extends FormatReader {
             
             // Leave level - move top (out)
             LEVELS.remove(name);
-            
+            }
             in.seek(off + elementStartPosition);
             /* ***** Index is pointer +  NumberofItemes*8B ***** */
             in.skipBytes(numberOfItems * 8);
@@ -1861,8 +1864,7 @@ public class NativeND2Reader extends FormatReader {
         			if (isEmisionnWaveLengthLevel())				
           			  assignValueOnChannel(getActualChannelName(), "EmX", value);
         		} 
-        	}
-        	         	
+        	} 
           addGlobalMeta(name, value);
         }
       }
