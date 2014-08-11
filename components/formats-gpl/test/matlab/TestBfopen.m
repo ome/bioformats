@@ -24,26 +24,23 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfopen < TestBfMatlab
+classdef TestBfopen < ReaderTest
     
     properties
         filepath
         data
         nSeries = 1
-        sizeZ = 1
-        sizeC = 1
-        sizeT = 1
     end
     
     methods
         function self = TestBfopen(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
         end
         
         function tearDown(self)
             if exist(self.filepath,'file') == 2, delete(self.filepath); end
             self.data = [];
-            tearDown@TestBfMatlab(self);
+            tearDown@ReaderTest(self);
         end
         
         function checkFake(self, fakefilename)
