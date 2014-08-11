@@ -113,6 +113,8 @@ public class NativeND2Reader extends FormatReader {
   private ArrayList<String> textChannelNames = new ArrayList<String>();
   private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
 
+  private boolean textData = false;
+
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -319,6 +321,7 @@ public class NativeND2Reader extends FormatReader {
       textChannelNames.clear();
       textEmissionWavelengths.clear();
       useZ = null;
+      textData = false;
     }
   }
 
@@ -350,12 +353,18 @@ public class NativeND2Reader extends FormatReader {
       ArrayList<Long> customDataOffsets = new ArrayList<Long>();
       ArrayList<int[]> customDataLengths = new ArrayList<int[]>();
 
+      // order matters when working with the text blocks, which is
+      // why two ArrayLists are used instead of a HashMap
+      ArrayList<String> textStrings = new ArrayList<String>();
+      ArrayList<Boolean> validDimensions = new ArrayList<Boolean>();
+
       ByteArrayHandle xml = new ByteArrayHandle();
       StringBuffer name = new StringBuffer();
 
       int extraZDataCount = 0;
-      boolean textData = false;
       boolean foundMetadata = false;
+      boolean useLastText = false;
+      int blockCount = 0;
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
@@ -421,6 +430,7 @@ public class NativeND2Reader extends FormatReader {
 
         int percent = (int) (100 * fp / in.length());
         LOGGER.info("Parsing block '{}' {}%", blockType, percent);
+        blockCount++;
 
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
@@ -473,6 +483,8 @@ public class NativeND2Reader extends FormatReader {
             customDataOffsets.clear();
             customDataLengths.clear();
             foundMetadata = false;
+            extraZDataCount = 0;
+            useLastText = true;
           }
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo, getSizeX() * getSizeY()});
@@ -492,118 +504,10 @@ public class NativeND2Reader extends FormatReader {
           in.seek(startFP - 1);
 
           String textString = DataTools.stripString(in.readString(lenTwo));
+          textStrings.add(textString);
+          validDimensions.add(blockCount > 2);
 
-          try {
-            ND2Handler handler = new ND2Handler(core, imageOffsets.size());
-            String xmlString = XMLTools.sanitizeXML(textString);
-            int start = xmlString.indexOf("<");
-            int end = xmlString.lastIndexOf(">");
-            if (start >= 0 && end >= 0 && end >= start) {
-              xmlString = xmlString.substring(start, end + 1);
-            }
-
-            XMLTools.parseXML(xmlString, handler);
-            xmlString = null;
-            textString = null;
-            core = handler.getCoreMetadataList();
-            if (backupHandler == null ||
-              backupHandler.getChannelNames().size() == 0)
-            {
-              backupHandler = handler;
-            }
-
-            Hashtable<String, Object> globalMetadata = handler.getMetadata();
-            for (String key : globalMetadata.keySet()) {
-              addGlobalMeta(key, globalMetadata.get(key));
-            }
-          }
-          catch (IOException e) {
-            LOGGER.debug("Could not parse XML", e);
-
-            String[] lines = textString.split("\n");
-            ND2Handler handler = new ND2Handler(core, imageOffsets.size());
-            for (String line : lines) {
-              int separator = line.indexOf(":");
-              if (separator >= 0) {
-                String key = line.substring(0, separator).trim();
-                String value = line.substring(separator + 1).trim();
-                handler.parseKeyAndValue(key, value, null);
-
-                if (key.equals("Dimensions")) {
-                  textData = true;
-                }
-              }
-            }
-            core = handler.getCoreMetadataList();
-
-            // only accept the Z and T sizes from the text annotations
-            // if both values were set
-            if (core.get(0).sizeZ == 0 && getSizeT() != imageOffsets.size()) {
-              core.get(0).sizeT = 0;
-            }
-
-            textString = sanitizeControl(textString);
-
-            lines = textString.split(" ");
-            for (int i=0; i<lines.length; i++) {
-              String key = lines[i++];
-              while (!key.endsWith(":") && key.indexOf("_") < 0 &&
-                i < lines.length)
-              {
-                key += " " + lines[i++];
-                if (i >= lines.length) {
-                  break;
-                }
-              }
-
-              if (i >= lines.length) {
-                break;
-              }
-
-              String value = lines[i++];
-              while (i < lines.length && lines[i].trim().length() > 0) {
-                value += " " + lines[i++];
-                if (i >= lines.length) {
-                  break;
-                }
-              }
-
-              key = key.trim();
-              key = key.substring(0, key.length() - 1);
-              value = value.trim();
-
-              if (key.equals("- Step")) {
-                trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
-              }
-              else if (key.equals("Name")) {
-                textChannelNames.add(value);
-              }
-              else if (key.startsWith("Line:")) {
-                if (value.endsWith("Active")) {
-                  int first = key.lastIndexOf(":") + 1;
-                  int last = key.lastIndexOf(";");
-                  textEmissionWavelengths.add(
-                    new Double(key.substring(first, last)) + 20);
-                }
-              }
-
-              if (metadata.containsKey(key)) {
-                Object oldValue = metadata.get(key);
-                metadata.put(key + " #1", oldValue);
-                metadata.put(key + " #2", value);
-                metadata.remove(key);
-              }
-              else if (metadata.containsKey(key + " #1")) {
-                int index = 1;
-                while (metadata.containsKey(key + " #" + index)) {
-                  index++;
-                }
-                metadata.put(key + " #" + index, value);
-              }
-              else {
-                metadata.put(key, value);
-              }
-            }
+          if (!textString.startsWith("<")) {
             skip = 0;
           }
         }
@@ -806,6 +710,13 @@ public class NativeND2Reader extends FormatReader {
         if (skip > 0 && skip + in.getFilePointer() <= in.length()) {
           in.skipBytes(skip);
         }
+      }
+
+      // parse text blocks
+
+      for (int i=0; i<textStrings.size(); i++) {
+        parseText(textStrings.get(i), imageOffsets.size(),
+          validDimensions.get(i));
       }
 
       // parse XML blocks
@@ -1029,8 +940,13 @@ public class NativeND2Reader extends FormatReader {
           core.get(0).rgb = true;
         }
       }
-      else if (getSizeC() == 2 && getPixelType() == FormatTools.INT8) {
+      else if (getSizeC() == 2 && getPixelType() == FormatTools.INT8 &&
+        availableBytes >= planeSize * 2)
+      {
         core.get(0).pixelType = FormatTools.UINT16;
+      }
+      else if (getPixelType() == FormatTools.INT8) {
+        core.get(0).pixelType = FormatTools.UINT8;
       }
 
       if (getSizeX() == 0) {
@@ -2035,6 +1951,132 @@ public class NativeND2Reader extends FormatReader {
       }
     }
     return scanlinePad;
+  }
+
+  private void parseText(String textString, int offsetCount, boolean useDimensions) {
+    try {
+      ND2Handler handler = new ND2Handler(core, offsetCount);
+      String xmlString = XMLTools.sanitizeXML(textString);
+      int start = xmlString.indexOf("<");
+      int end = xmlString.lastIndexOf(">");
+      if (start >= 0 && end >= 0 && end >= start) {
+        xmlString = xmlString.substring(start, end + 1);
+      }
+
+      XMLTools.parseXML(xmlString, handler);
+      xmlString = null;
+      textString = null;
+      core = handler.getCoreMetadataList();
+      if (backupHandler == null ||
+        backupHandler.getChannelNames().size() == 0)
+      {
+        backupHandler = handler;
+      }
+
+      Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      for (String key : globalMetadata.keySet()) {
+        addGlobalMeta(key, globalMetadata.get(key));
+      }
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not parse XML", e);
+
+      String[] lines = textString.split("\n");
+      ND2Handler handler = new ND2Handler(core, offsetCount);
+      for (String line : lines) {
+        int separator = line.indexOf(":");
+        if (separator >= 0) {
+          String key = line.substring(0, separator).trim();
+          String value = line.substring(separator + 1).trim();
+
+          if (useDimensions) {
+            handler.parseKeyAndValue(key, value, null);
+          }
+
+          if (handler.isDimensions(key)) {
+            textData = true;
+          }
+        }
+      }
+      if (useDimensions) {
+        core = handler.getCoreMetadataList();
+      }
+
+      // only accept the Z and T sizes from the text annotations
+      // if both values were set
+      if (core.get(0).sizeZ == 0 && getSizeT() != offsetCount) {
+        core.get(0).sizeT = 0;
+      }
+
+      textString = sanitizeControl(textString);
+
+      lines = textString.split(" ");
+      for (int i=0; i<lines.length; i++) {
+        String key = lines[i++];
+        while (!key.endsWith(":") && key.indexOf("_") < 0 && i < lines.length) {
+          key += " " + lines[i++];
+          if (i >= lines.length) {
+            break;
+          }
+        }
+
+        if (i >= lines.length) {
+          break;
+        }
+
+        String value = lines[i++];
+        while (i < lines.length && lines[i].trim().length() > 0) {
+          value += " " + lines[i++];
+          if (i >= lines.length) {
+            break;
+          }
+        }
+
+        key = key.trim();
+        key = key.substring(0, key.length() - 1);
+        value = value.trim();
+
+        if (key.startsWith("- Step")) {
+          int end = key.indexOf(" ", 8);
+          if (end < 0) {
+            end = key.length();
+          }
+          if (end >= 8) {
+            value = key.substring(8, end);
+            key = key.substring(0, 8);
+          }
+          trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+        }
+        else if (key.equals("Name")) {
+          textChannelNames.add(value);
+        }
+        else if (key.startsWith("Line:")) {
+          if (value.endsWith("Active")) {
+            int first = key.lastIndexOf(":") + 1;
+            int last = key.lastIndexOf(";");
+            textEmissionWavelengths.add(
+              new Double(key.substring(first, last)) + 20);
+          }
+        }
+
+        if (metadata.containsKey(key)) {
+          Object oldValue = metadata.get(key);
+          metadata.put(key + " #1", oldValue);
+          metadata.put(key + " #2", value);
+          metadata.remove(key);
+        }
+        else if (metadata.containsKey(key + " #1")) {
+          int index = 1;
+          while (metadata.containsKey(key + " #" + index)) {
+            index++;
+          }
+          metadata.put(key + " #" + index, value);
+        }
+        else {
+          metadata.put(key, value);
+        }
+      }
+    }
   }
 
 }
