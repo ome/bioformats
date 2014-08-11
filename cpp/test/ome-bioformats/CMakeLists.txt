@@ -82,6 +82,12 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/tiff tiff)
 
+  add_executable(variantpixelbuffer variantpixelbuffer.cpp)
+  target_link_libraries(variantpixelbuffer ome-bioformats)
+  target_link_libraries(variantpixelbuffer ome-test)
+
+  add_test(ome-bioformats/variantpixelbuffer variantpixelbuffer)
+
   add_executable(version version.cpp)
   target_link_libraries(version ome-bioformats)
   target_link_libraries(version ome-test)

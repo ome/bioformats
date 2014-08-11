@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,10 +40,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.UUID;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -64,6 +63,7 @@ import ome.specification.XMLMockObjects;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.OME;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * FakeReader is the file format reader for faking input data.
@@ -407,6 +407,8 @@ public class FakeReader extends FormatReader {
     int seriesCount = 1;
     int lutLength = 3;
 
+    String acquisitionDate = null;
+
     int plates = 0;
     int plateRows = 0;
     int plateCols = 0;
@@ -504,6 +506,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
       else if (key.equals("exposureTime")) exposureTime = (float) doubleValue;
+      else if (key.equals("acquisitionDate")) acquisitionDate = value;
       else if (key.equals("plates")) plates = intValue;
       else if (key.equals("plateRows")) plateRows = intValue;
       else if (key.equals("plateCols")) plateCols = intValue;
@@ -610,6 +613,11 @@ public class FakeReader extends FormatReader {
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
+      if (acquisitionDate != null) {
+        if(DateTools.getTime(acquisitionDate, DateTools.FILENAME_FORMAT) != -1) {
+          store.setImageAcquisitionDate(new Timestamp(DateTools.formatDate(acquisitionDate, DateTools.FILENAME_FORMAT)), currentImageIndex);
+        }
+      }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         Color channel = defaultColor == null ? null: new Color(defaultColor);

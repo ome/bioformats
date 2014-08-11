@@ -146,7 +146,7 @@ public class Memoizer extends ReaderWrapper {
         try {
           fis.close();
         } catch (IOException e) {
-          LOGGER.debug("failed to close KryoDeser.fis");
+          LOGGER.error("failed to close KryoDeser.fis", e);
         }
         fis = null;
       }
@@ -184,7 +184,7 @@ public class Memoizer extends ReaderWrapper {
           fos.close();
           fos = null;
         } catch (IOException e) {
-          LOGGER.debug("failed to close KryoDeser.fis");
+          LOGGER.error("failed to close KryoDeser.fis", e);
         }
       }
     }
@@ -533,7 +533,7 @@ public class Memoizer extends ReaderWrapper {
         reader = memo;
       }
     } catch (ServiceException e) {
-      LOGGER.debug("Could not create OMEXMLMetadata", e);
+      LOGGER.error("Could not create OMEXMLMetadata", e);
     } finally {
       sw.stop("loci.formats.Memoizer.setId");
     }
@@ -599,7 +599,7 @@ public class Memoizer extends ReaderWrapper {
         return null;
     } else {
       if (!directory.exists() || !directory.canWrite()) {
-        LOGGER.debug("skipping memo: directory not writeable - {}", directory);
+        LOGGER.warn("skipping memo: directory not writeable - {}", directory);
         return null;
       }
 
@@ -665,7 +665,7 @@ public class Memoizer extends ReaderWrapper {
       try {
         copy = ser.loadReader();
       } catch (ClassNotFoundException e) {
-        LOGGER.debug("unknown reader type: {}", e);
+        LOGGER.warn("unknown reader type: {}", e);
         return null;
       }
 
@@ -746,7 +746,7 @@ public class Memoizer extends ReaderWrapper {
         ser.saveStop();
         sw.stop("loci.formats.Memoizer.saveMemo");
       } catch (Throwable t) {
-        LOGGER.debug("output close failed", t);
+        LOGGER.error("output close failed", t);
       }
 
       // Rename temporary file if successful.
@@ -755,11 +755,11 @@ public class Memoizer extends ReaderWrapper {
       // resources can lead to segfaults
       if (rv) {
         if (!tempFile.renameTo(memoFile)) {
-          LOGGER.debug("temp file rename returned false: {}", tempFile);
+          LOGGER.error("temp file rename returned false: {}", tempFile);
+        } else {
+          LOGGER.debug("saved memo file: {} ({} bytes)",
+            memoFile, memoFile.length());
         }
-
-        LOGGER.debug("saved memo file: {} ({} bytes)",
-                memoFile, memoFile.length());
       }
 
       // Delete the tempFile quietly.
@@ -769,7 +769,7 @@ public class Memoizer extends ReaderWrapper {
           tempFile = null;
         }
       } catch (Throwable t) {
-        LOGGER.debug("temp file deletion faled", t);
+        LOGGER.error("temp file deletion faled", t);
       }
     }
     return rv;
