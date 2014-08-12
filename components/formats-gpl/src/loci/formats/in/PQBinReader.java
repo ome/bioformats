@@ -204,7 +204,6 @@ public class PQBinReader extends FormatReader {
     
     m.pixelType = FormatTools.UINT32;
     m.rgb = false;
-    m.littleEndian = true;
     m.imageCount = m.sizeT;
     m.indexed = false;
     m.falseColor = false;
