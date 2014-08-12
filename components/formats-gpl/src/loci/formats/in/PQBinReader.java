@@ -179,7 +179,6 @@ public class PQBinReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    in.order(true);
     
     CoreMetadata m = core.get(0);
 
