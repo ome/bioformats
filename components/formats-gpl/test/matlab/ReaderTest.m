@@ -1,11 +1,11 @@
-% Abstract class for the Bio-Formats Matlab unit tests
+% Abstract class for the Bio-Formats Matlab unit tests using readers
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2013-2014 Open Microscopy Environment:
+% Copyright (C) 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,33 +24,40 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfMatlab < TestCase
+classdef ReaderTest < TestBfMatlab
     
     properties
-        jarPath
+        reader
+        sizeX
+        sizeY
+        sizeZ
+        sizeC
+        sizeT
     end
     
     methods
-        function self = TestBfMatlab(name)
-            self = self@TestCase(name);
+        function self = ReaderTest(name)
+            self = self@TestBfMatlab(name);
         end
         
         function setUp(self)
-            % Get path to Bio-Formats JAR file (assuming it is in Matlab path)
-            self.jarPath = which('bioformats_package.jar');
-            assert(~isempty(self.jarPath));
-            
-            % Remove Bio-Formats JAR file from dynamic class path
-            if ismember(self.jarPath,javaclasspath('-dynamic'))
-                javarmpath(self.jarPath);
-            end
+            setUp@TestBfMatlab(self)
+            javaaddpath(self.jarPath);
+            self.reader = loci.formats.in.FakeReader();
+            self.sizeX = self.reader.DEFAULT_SIZE_X;
+            self.sizeY = self.reader.DEFAULT_SIZE_Y;
+            self.sizeZ = self.reader.DEFAULT_SIZE_Z;
+            self.sizeC = self.reader.DEFAULT_SIZE_C;
+            self.sizeT = self.reader.DEFAULT_SIZE_T;
+            loci.common.DebugTools.enableLogging('ERROR');
         end
         
         function tearDown(self)
-            % Remove  Bio-Formats JAR file from dynamic class path
-            if ismember(self.jarPath,javaclasspath('-dynamic'))
-                javarmpath(self.jarPath);
+            if ~isempty(self.reader),
+                self.reader.close();
+                self.reader = [];
             end
+            tearDown@TestBfMatlab(self)
         end
     end
 end

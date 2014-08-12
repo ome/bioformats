@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2013 Open Microscopy Environment:
+% Copyright (C) 2013-2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,11 +24,11 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetReader < TestBfMatlab
+classdef TestBfGetReader < ReaderTest
     
     methods
         function self = TestBfGetReader(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
         end
         
         % Pixel type tests
