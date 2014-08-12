@@ -70,7 +70,7 @@ public class PQBinReader extends FormatReader {
 
   // -- Constructor --
 
-  /** Constructs a new UBM reader. */
+  /** Constructs a new PQBin reader. */
   public PQBinReader() {
     super("PicoQuant Bin", "bin");
     domains = new String[] {FormatTools.FLIM_DOMAIN};
