@@ -114,7 +114,7 @@ public class PQBinReader extends FormatReader {
     int planeSize = sizeX * sizeY * timeBins * bpp;
     int timeBin = no;
     
-    byte[] rowBuf = new byte[bpp * timeBins * sizeX];
+    
 
     int binSize = sizeX * sizeY  * bpp;  // size in Bytes of a single 2D timebin.
       
@@ -123,6 +123,7 @@ public class PQBinReader extends FormatReader {
       // The whole plane (all timebins) is  copied into storage
       // to allow different sub-plane sizes to be used for different timebins
       dataStore = new byte[planeSize];
+      byte[] rowBuf = new byte[bpp * timeBins * sizeX];
       in.seek(HEADER_SIZE);
       
       for (int row = 0; row < sizeY; row++) {
