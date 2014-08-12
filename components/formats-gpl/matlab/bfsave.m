@@ -1,4 +1,4 @@
-function bfsave(I, outputPath, varargin)
+function bfsave(varargin)
 % BFSAVE Save a 5D matrix into an OME-TIFF using Bio-Formats library
 %
 %    bfsave(I, outputPath) writes the input 5D matrix into a new file
@@ -32,7 +32,7 @@ function bfsave(I, outputPath, varargin)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -57,21 +57,20 @@ bfCheckJavaMemory();
 % Check for required jars in the Java path
 bfCheckJavaPath();
 
-% Not using the inputParser for first argument as it copies data
-assert(isnumeric(I), 'First argument must be numeric');
-
 % Input check
 ip = inputParser;
+ip.addRequired('I', @isnumeric);
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
 ip.addParamValue('metadata', [], @(x) isa(x, 'loci.formats.ome.OMEXMLMetadata'));
 ip.addParamValue('Compression', '',  @(x) ismember(x, getCompressionTypes()));
 ip.addParamValue('BigTiff', false , @islogical);
-ip.parse(outputPath, varargin{:});
+ip.parse(varargin{:});
 
 % Create metadata
 if isempty(ip.Results.metadata)
-    metadata = createMinimalOMEXMLMetadata(I, ip.Results.dimensionOrder);
+    metadata = createMinimalOMEXMLMetadata(ip.Results.I,...
+        ip.Results.dimensionOrder);
 else
     metadata = ip.Results.metadata;
 end
@@ -81,15 +80,15 @@ writer = loci.formats.ImageWriter();
 writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
-    writer.setCompression(ip.Results.Compression)
+    writer.setCompression(ip.Results.Compression);
 end
 if ip.Results.BigTiff
-    writer.getWriter(outputPath).setBigTiff(ip.Results.BigTiff)
+    writer.getWriter(ip.Results.outputPath).setBigTiff(ip.Results.BigTiff);
 end
-writer.setId(outputPath);
+writer.setId(ip.Results.outputPath);
 
 % Load conversion tools for saving planes
-switch class(I)
+switch class(ip.Results.I)
     case {'int8', 'uint8'}
         getBytes = @(x) x(:);
     case {'uint16','int16'}
@@ -106,9 +105,11 @@ end
 nPlanes = metadata.getPixelsSizeZ(0).getValue() *...
     metadata.getPixelsSizeC(0).getValue() *...
     metadata.getPixelsSizeT(0).getValue();
+zctCoord = [size(ip.Results.I, 3) size(ip.Results.I, 4)...
+    size(ip.Results.I, 5)];
 for index = 1 : nPlanes
-    [i, j, k] = ind2sub([size(I, 3) size(I, 4) size(I, 5)],index);
-    plane = I(:, :, i, j, k)';
+    [i, j, k] = ind2sub(zctCoord, index);
+    plane = ip.Results.I(:, :, i, j, k)';
     writer.saveBytes(index-1, getBytes(plane));
 end
 writer.close();
