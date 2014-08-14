@@ -87,7 +87,7 @@ public class PQBinReader extends FormatReader {
   
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-     LOGGER.info("isThisType PQBin");
+    
     long fileLength = stream.length();
     int bpp = FormatTools.getBytesPerPixel(FormatTools.UINT32);
     stream.order(true);
@@ -168,10 +168,10 @@ public class PQBinReader extends FormatReader {
       }
     }    // endif preLoad
     else  {   // load each plane individually for large data
+          
+      byte[] rowBuf = new byte[bpp * timeBins * w];
       
-      byte[] rowBuf = new byte[bpp * timeBins * sizeX];
-      
-      in.seek(HEADER_SIZE + (no * planeSize) + (y * sizeX * bpp * timeBins));
+      in.seek(HEADER_SIZE +  (y * sizeX * bpp * timeBins));
 
       for (int row = 0; row < h; row++) {
         in.skipBytes(x * bpp * timeBins);
@@ -187,7 +187,7 @@ public class PQBinReader extends FormatReader {
 
         in.skipBytes(bpp * timeBins * (sizeX - x - w));
       }
-    }
+    }  // end else
    
     return buf;
   }
@@ -215,7 +215,7 @@ public class PQBinReader extends FormatReader {
     in.order(isLittleEndian());
 
     LOGGER.info("Reading header PQBin");
-    
+   
     // Header
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
@@ -249,7 +249,8 @@ public class PQBinReader extends FormatReader {
     m.moduloT.unit = "ps";
     
     // disable pre-load mode for very large files
-    if ( m.sizeX * m.sizeY * m.sizeT  >  100)  {
+    // threshold is set to the size of the largest test file currently available
+    if ( m.sizeX * m.sizeY * m.sizeT  >  (1288 * 200 * 200))  {
       preLoad = false;
     }
     else  {
@@ -260,8 +261,8 @@ public class PQBinReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     
     PositiveFloat pRpf = new PositiveFloat((double)pixResol);
-    //store.setPixelsPhysicalSizeX(pRpf, 0);
-    //store.setPixelsPhysicalSizeY(pRpf, 0);
+    store.setPixelsPhysicalSizeX(pRpf, 0);
+    store.setPixelsPhysicalSizeY(pRpf, 0);
     
   }
 
