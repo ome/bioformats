@@ -71,6 +71,30 @@ classdef TestBfsave < ReaderTest
 
         end
         
+        % Input check tests
+        function testNoInput(self)
+            assertExceptionThrown(@() bfsave(),...
+                'MATLAB:InputParser:notEnoughInputs');
+        end
+        
+        function testNoOutputPath(self)
+            self.I = 1;
+            assertExceptionThrown(@() bfsave(self.I),...
+                'MATLAB:InputParser:notEnoughInputs');
+        end
+        
+        function testInvalidI(self)
+            self.I = 'a';
+            assertExceptionThrown(@() bfsave(self.I, self.path),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testInvalidDimensionOrder(self)
+            self.I = 1;
+            assertExceptionThrown(@() bfsave(self.I, self.path, 'XY'),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
         % Dimension order tests
         function testDimensionOrderXYZCT(self)
             self.dimensionOrder = 'XYZCT';
