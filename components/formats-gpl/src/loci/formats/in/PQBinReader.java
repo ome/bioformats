@@ -199,6 +199,7 @@ public class PQBinReader extends FormatReader {
       // init preLoading
       dataStore = null;
       timeBins = 0;
+      preLoad = true;
     }
   }
 
