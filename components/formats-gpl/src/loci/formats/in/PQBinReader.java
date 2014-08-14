@@ -250,8 +250,8 @@ public class PQBinReader extends FormatReader {
     m.moduloT.unit = "ps";
     
     // disable pre-load mode for very large files
-    // threshold is set to the size of the largest test file currently available
-    if ( m.sizeX * m.sizeY * m.sizeT  >  (1288 * 200 * 200))  {
+    // threshold is set to smaller than the  size of the largest test file currently available
+    if ( m.sizeX * m.sizeY * m.sizeT  >  (900 * 200 * 200))  {
       preLoad = false;
     }
     else  {
