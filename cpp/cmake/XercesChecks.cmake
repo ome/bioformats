@@ -34,11 +34,16 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+find_package(Xerces 3.0.0 REQUIRED)
+
 include(CheckCXXSourceRuns)
 
 # Xerces-C
+set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Xerces_INCLUDE_DIR})
 set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
-set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} xerces-c)
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Xerces_LIBRARIES})
+
 check_cxx_source_runs(
 "#include <xercesc/util/PlatformUtils.hpp>
 
@@ -53,3 +58,6 @@ if(XERCES_LINK)
 else(XERCES_LINK)
   message(FATAL_ERROR "Xerces-C library not found, but is required by Bio-Formats")
 endif(XERCES_LINK)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLDUES_SAVE})
