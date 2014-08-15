@@ -55,6 +55,11 @@ classdef TestBfGetReader < ReaderTest
             assertEqual(char(self.reader.getCurrentFile()), 'test.fake');
         end
         
+        function testNonExistingInput(self)
+            assertExceptionThrown(@() bfGetReader('nonexistingfile'),...
+                'bfGetReader:FileNotFound');
+        end
+        
         function testFileInput(self)
             % Create fake file
             if isunix,

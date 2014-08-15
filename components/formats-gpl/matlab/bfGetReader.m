@@ -57,12 +57,9 @@ isFake = strcmp(id(max(1, end - 4):end), '.fake');
 if ~isempty(id) && ~isFake
     % Check file existence using fileattrib
     [status, f] = fileattrib(id);
-    isFile = status && f.directory == 0;
-    if isFile
-        id = f.Name;
-    else
-        id = [];
-    end
+    assert(status && f.directory == 0, 'bfGetReader:FileNotFound',...
+        'No such file: %s', id);
+    id = f.Name;
 end
 
 % set LuraWave license code, if available
