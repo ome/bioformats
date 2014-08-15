@@ -49,9 +49,24 @@ classdef TestBfGetPlane < ReaderTest
         end
         
         % Input check tests
+        function testNoInput(self)
+            assertExceptionThrown(@() bfGetPlane(), 'MATLAB:minrhs');
+        end
+        
         function testReaderClass(self)
-            assertExceptionThrown(@() bfGetPlane(0, self.iPlane),...
+            assertExceptionThrown(@() bfGetPlane([]),...
                 'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testInvalidReader(self)
+            self.reader.close();
+            assertExceptionThrown(@() bfGetPlane(self.reader),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testNoInputPlane(self)
+            f = @() bfGetPlane(self.reader);
+            assertExceptionThrown(f, 'MATLAB:InputParser:notEnoughInputs');
         end
         
         function checkInvalidInput(self)
@@ -59,25 +74,21 @@ classdef TestBfGetPlane < ReaderTest
             assertExceptionThrown(f,...
                 'MATLAB:InputParser:ArgumentFailedValidation');
         end
-
-        function testInvalidReader(self)
-            self.reader.close();
-            self.checkInvalidInput();
-        end
         
         function testZeroPlane(self)
-            self.iPlane = 0;
-            self.checkInvalidInput();
+            assertExceptionThrown(@() bfGetPlane(self.reader, 0),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         function testOversizedPlaneIndex(self)
-            self.iPlane = self.reader.getImageCount()+1;
-            self.checkInvalidInput();
+            nmax = self.reader.getImageCount();
+            assertExceptionThrown(@() bfGetPlane(self.reader, nmax + 1),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         function testPlaneIndexArray(self)
-            self.iPlane = [1 1];
-            self.checkInvalidInput();
+            assertExceptionThrown(@() bfGetPlane(self.reader, [1 1]),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         %% Tile input tests
@@ -138,7 +149,7 @@ classdef TestBfGetPlane < ReaderTest
             self.height = self.sizeY;
             self.checkInvalidTileInput(self.x, self.y, self.width, self.height);
         end
-
+        
         % Pixel type tests
         function checkPixelsType(self, pixelsType)
             self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
@@ -247,7 +258,6 @@ classdef TestBfGetPlane < ReaderTest
             self.width = 1;
             self.height = 100;
             self.checkTile()
-        end
-
+        end        
     end
 end

@@ -192,13 +192,12 @@ extlinks = {
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
     'faq_plone' : (oo_site_root + '/support/faq/%s', ''),
-    'bf_doc' : (oo_site_root + '/support/bio-formats5/%s', ''),
     'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
-    'downloads' : (downloads_root + '/latest/bio-formats5/%s', ''),
-    'javadoc' : (downloads_root + '/latest/bio-formats5/api/%s', ''),
-    'doxygen' : (downloads_root + '/latest/bio-formats5/doxygen/%s', ''),
+    'downloads' : (downloads_root + '/latest/bio-formats5.1/%s', ''),
+    'javadoc' : (downloads_root + '/latest/bio-formats5.1/api/%s', ''),
+    'doxygen' : (downloads_root + '/latest/bio-formats5.1/doxygen/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')

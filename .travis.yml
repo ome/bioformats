@@ -23,7 +23,7 @@ before_install:
   - if [[ $BUILD != 'sphinx' ]]; then sudo apt-get install -qq python-genshi; fi
   - if [[ $BUILD == 'cpp' ]] || [[ $BUILD == 'cppwrap' ]]; then sudo apt-get install -qq build-essential cmake libboost-all-dev; fi
   - if [[ $BUILD == 'cpp' ]]; then sudo apt-get install -qq libgtest-dev libxerces-c-dev libtiff5-dev doxygen graphviz; fi
-  - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get install -qq python-sphinx; fi
+  - if [[ $BUILD == 'sphinx' ]]; then sudo pip install Sphinx; fi
   - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get -y install texlive-latex-base texlive-latex-recommended texlive-xetex; fi
   - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get -y install texlive-latex-extra texlive-fonts-recommended fonts-texgyre; fi
   - if [[ $BUILD == 'sphinx' ]]; then sudo fc-cache -rsfv; fi
