@@ -1225,22 +1225,40 @@ public class NativeND2Reader extends FormatReader {
           setSeries(0);
         }
 
+        int uniqueX = 0, uniqueY = 0;
         if (posX.size() == 0 && xOffset != 0) {
           in.seek(xOffset);
           for (int i=0; i<imageOffsets.size(); i++) {
-            posX.add(new Double(in.readDouble()));
+            Double x = new Double(in.readDouble());
+            if (!posX.contains(x)) {
+              uniqueX++;
+            }
+            posX.add(x);
           }
         }
         if (posY.size() == 0 && yOffset != 0) {
           in.seek(yOffset);
           for (int i=0; i<imageOffsets.size(); i++) {
-            posY.add(new Double(in.readDouble()));
+            Double y = new Double(in.readDouble());
+            if (!posY.contains(y)) {
+              uniqueY++;
+            }
+            posY.add(y);
           }
         }
         if (posZ.size() == 0 && zOffset != 0) {
           in.seek(zOffset);
           for (int i=0; i<imageOffsets.size(); i++) {
             posZ.add(new Double(in.readDouble()));
+          }
+        }
+
+        if (core.size() == 1 && uniqueX == getSizeT() && uniqueY == getSizeT()) {
+          core.get(0).imageCount /= getSizeT();
+          core.get(0).sizeT = 1;
+
+          for (int i=1; i<uniqueX; i++) {
+            core.add(core.get(0));
           }
         }
       }
