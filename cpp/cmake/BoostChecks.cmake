@@ -40,6 +40,9 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem system iostreams pro
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
 
+set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
+
 check_include_file_cxx(boost/array.hpp OME_HAVE_BOOST_ARRAY)
 check_include_file_cxx(boost/format.hpp OME_HAVE_BOOST_FORMAT)
 check_include_file_cxx(boost/shared_ptr.hpp OME_HAVE_BOOST_SHARED_PTR)
@@ -211,3 +214,5 @@ int main() {
   set(s25());
 }"
 OME_VARIANT_LIMIT)
+
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLDUES_SAVE})
