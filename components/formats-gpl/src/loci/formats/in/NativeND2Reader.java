@@ -115,6 +115,7 @@ public class NativeND2Reader extends FormatReader {
   private ArrayList<String> textChannelNames = new ArrayList<String>();
   private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
 
+ 
   /** *********** CHANNELS ************** */
   public class NDChannel extends Channel 
   {
@@ -198,7 +199,7 @@ public class NativeND2Reader extends FormatReader {
   private static final String unknownChannelName = "a999";
   private ArrayList<String>  LEVELS =  new ArrayList<String>();
   private HashMap<String, NDChannel> channels = new  HashMap<String, NDChannel>();
-  
+   
   private boolean textData = false;
 
   // -- Constructor --
