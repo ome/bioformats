@@ -639,7 +639,6 @@ public class ND2Handler extends BaseHandler {
   public void parseKeyAndValue(String key, String value, String runtype) {
     if (key == null || value == null) return;
     CoreMetadata ms0 = core.get(0);
-     
     metadata.put(key, value);
 
     try {
@@ -663,9 +662,6 @@ public class ND2Handler extends BaseHandler {
         mag = new Double(DataTools.sanitizeDouble(value));
       }
       else if (key.endsWith("dObjectiveNA")) {
-        na = new Double(DataTools.sanitizeDouble(value));
-      }
-      else if (key.endsWith("Numerical Aperture")) {
         na = new Double(DataTools.sanitizeDouble(value));
       }
       else if (key.endsWith("dRefractIndex1")) {
@@ -891,11 +887,11 @@ public class ND2Handler extends BaseHandler {
           parseKeyAndValue(nextKey, nextValue, runtype);
         }
       }
-      else if (key.equalsIgnoreCase("Emission wavelength") || key.contains("EmWavelength")) {
+      else if (key.equalsIgnoreCase("Emission wavelength")) {
         String[] v = value.split(" ");
         emWave.add(new Double(v[0]));
       }
-      else if (key.equalsIgnoreCase("Excitation wavelength") || key.contains("ExWavelength")) {
+      else if (key.equalsIgnoreCase("Excitation wavelength")) {
         String[] v = value.split(" ");
         exWave.add(new Double(v[0]));
       }
@@ -928,8 +924,6 @@ public class ND2Handler extends BaseHandler {
         }
       }
     }
-    
-    
     catch (NumberFormatException exc) {
       LOGGER.warn("Could not parse {} value: {}", key, value);
     }

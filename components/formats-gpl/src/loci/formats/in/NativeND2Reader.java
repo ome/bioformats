@@ -1,5 +1,4 @@
 /*
-
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
@@ -28,9 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.regex.Pattern;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -49,9 +46,10 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.Channel;
+
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.
@@ -115,91 +113,6 @@ public class NativeND2Reader extends FormatReader {
   private ArrayList<String> textChannelNames = new ArrayList<String>();
   private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
 
- 
-  /** *********** CHANNELS ************** */
-  public class NDChannel extends Channel 
-  {
-		// ExcitationWavelength property
-		protected ArrayList<Double> excitationWavelengths = new ArrayList<Double>();
-		
-		// EmissionWavelength property
-		protected ArrayList<Double> emissionWavelengths = new ArrayList<Double>();
-		
-		
-		/**
-		 * @return the excitationWavelengths
-		 */
-		public ArrayList<Double> getExcitationWavelengths() {
-			return excitationWavelengths;
-		}
-
-		/**
-		 * @param excitationWavelengths the excitationWavelengths to set
-		 */
-		public void setExcitationWavelengths(ArrayList<Double> excitationWavelengths) {
-			this.excitationWavelengths = excitationWavelengths;
-		}
-
-		/**
-		 * @return the emissionWavelengths
-		 */
-		public ArrayList<Double> getEmissionWavelengths() {
-			return emissionWavelengths;
-		}
-
-		/**
-		 * @param emissionWavelengths the emissionWavelengths to set
-		 */
-		public void setEmissionWavelengths(ArrayList<Double> emissionWavelengths) {
-			this.emissionWavelengths = emissionWavelengths;
-		}
-
-		public void addExcitationWaveLength(Double length)
-		{
-			excitationWavelengths.add(length);
-		}
-  
-		public void addEmissionWaveLength(Double length)
-		{
-			emissionWavelengths.add(length);
-		}
-		/**
-		 * @override
-		 */
-		public PositiveFloat getExcitationWavelength()
-		{
-			return this.getMean(excitationWavelengths);
-		}
-		/**
-		 * @override
-		 */
-		public PositiveFloat getEmissionWavelength()
-		{
-			return this.getMean(emissionWavelengths);
-		}
-		 
-		private PositiveFloat getMean( ArrayList<Double> wave)
-		{
-			int size = wave.size();
-			Double waveToReturn = 0.0;
-			
-			if (0 < size)
-			{
-				for (Double pf:wave)
-					waveToReturn += pf;
-				
-				waveToReturn /= size;
-			}
-			
-			return new PositiveFloat(waveToReturn);
-		}
-  }
-  
-  private static final String channelPatternName = "[a]{1}[0-9]+";
-  private static final String unknownChannelName = "a999";
-  private ArrayList<String>  LEVELS =  new ArrayList<String>();
-  private HashMap<String, NDChannel> channels = new  HashMap<String, NDChannel>();
-   
   private boolean textData = false;
 
   // -- Constructor --
@@ -486,19 +399,17 @@ public class NativeND2Reader extends FormatReader {
         int nameLength = in.readInt();         // Length of the block name
         Long dataLength = in.readLong();       // Length of the data
         String nameAttri = in.readString(nameLength).trim();  // Read the name
-      
         Long stop = helper + (dataLength + nameLength); // Where this block ends
 
         boolean seq = false; // Only 1 MetadataSeq is needed
 
         // Send to iteration
-        // (we are interested only in xxxxLV - LV = lite variant)
+        // (we are interested only in xxxxLV - LV = light variant)
         if (nameAttri.contains("MetadataLV") ||
-           nameAttri.contains("CalibrationLV") ||
-           nameAttri.contains("TextInfoLV") ||
-          (nameAttri.contains("MetadataSeqLV") && !seq)) { 
-          long liteVariantBegins = in.getFilePointer();
-          iterateIn(in, stop, liteVariantBegins);
+          nameAttri.contains("CalibrationLV") ||
+          (nameAttri.contains("MetadataSeqLV") && !seq))
+        {
+          iterateIn(in, stop);
         }
 
         // Only 1 MetadataSeq is needed
@@ -506,8 +417,7 @@ public class NativeND2Reader extends FormatReader {
         if (nameAttri.contains("MetadataSeqLV")) {
           seq = true;
         }
-         
-        
+
         in.seek(helper);  // Return to starting position
 
         int lenOne = in.readInt();
@@ -821,12 +731,7 @@ public class NativeND2Reader extends FormatReader {
       core.get(0).dimensionOrder = "";
       ND2Handler handler =
         new ND2Handler(core, getSizeX() == 0, imageOffsets.size());
-      
-      // Add useful metadata from binary read
-      parseUsefulMetada (handler);
-      parseTextInfo (handler);
-      
-      XMLTools.parseXML(xmlString, handler);  
+      XMLTools.parseXML(xmlString, handler);
       xmlString = null;
 
       channelColors = handler.getChannelColors();
@@ -1584,93 +1489,28 @@ public class NativeND2Reader extends FormatReader {
         }
       }
     }
-   
+
     populateMetadataStore(handler);
   }
-  
-  protected void parseUsefulMetada(ND2Handler handler) {	  
-	  String numericalAperture = getGlobalMetaAsString("Numerical Aperture");
-	  handler.parseKeyAndValue("Numerical Aperture", numericalAperture, "");
-  }
-  
-  protected void parseTextInfo(ND2Handler handler) {
-	  // Some useful data are in global metadata
-	  
-	    String imageId = getGlobalMetaAsString("TextInfoItem_0");
-	    handler.parseKeyAndValue("TextInfoItem_0", imageId, "");
 
-	    // *** Type field
-	    String typeField = getGlobalMetaAsString("TextInfoItem_1");
-	    handler.parseKeyAndValue("TextInfoItem_1", typeField, "");
+  // -- Helper methods --
 
-	    // *** Group field
-	    String group  = getGlobalMetaAsString("TextInfoItem_2");
-	    handler.parseKeyAndValue("TextInfoItem_2", group, "");
-
-	    // *** SampleID field
-	    String imageIdField = getGlobalMetaAsString("TextInfoItem_3");
-	    handler.parseKeyAndValue("TextInfoItem_3", imageIdField, "");
-
-	    // *** Author field
-	    String author = getGlobalMetaAsString("TextInfoItem_4");
-	    handler.parseKeyAndValue("TextInfoItem_4", author, "");
-
-	    // *** Description field
-	    String description = getGlobalMetaAsString("TextInfoItem_5");
-	    handler.parseKeyAndValue("TextInfoItem_5", description, "");
-
-	    // *** Capturing field
-	    String capturing = getGlobalMetaAsString("TextInfoItem_6");
-	    handler.parseKeyAndValue("TextInfoItem_6", capturing, "");
-
-	    // *** Type Sampling
-	    String typeSampling = getGlobalMetaAsString("TextInfoItem_7");
-	    handler.parseKeyAndValue("TextInfoItem_7", typeSampling, "");
-
-	    // *** Type Location
-	    String typeLocation = getGlobalMetaAsString("TextInfoItem_8");
-	    handler.parseKeyAndValue("TextInfoItem_8", typeLocation, "");
-
-	    // *** Date field
-	    String date = getGlobalMetaAsString("TextInfoItem_9");
-	    handler.parseKeyAndValue("TextInfoItem_9", date, "");
-
-	    // *** Conclusion field
-	    String conclusion  = getGlobalMetaAsString("TextInfoItem_10");
-	    handler.parseKeyAndValue("TextInfoItem_10", conclusion, "");
-
-	    // *** Info1 field
-	    String info1 = getGlobalMetaAsString("TextInfoItem_11");
-	    handler.parseKeyAndValue("TextInfoItem_11", info1, "");
-
-	    // *** Info2 field
-	    String info2 = getGlobalMetaAsString("TextInfoItem_12");
-	    handler.parseKeyAndValue("TextInfoItem_12", info2, "");
-
-	    // *** Optics field
-	    String optics = getGlobalMetaAsString("TextInfoItem_13");
-	    handler.parseKeyAndValue("TextInfoItem_13", optics, "");
-	  
-  }
-
-  // -- Helper methods -- 
   /**
    * Function for iterating through ND2 metaAttributes
    * @param in    stream of bytes from file
    * @param stop position where to stop
    */
-  private void iterateIn(RandomAccessInputStream in, Long stop, long liteVariantStart) {
+  private void iterateIn(RandomAccessInputStream in, Long stop) {
     Object value; // We don't know if attribute will be int, double, string....
 
     try {
       while (in.getFilePointer() < stop) {
-
-      	  long elementStartPosition = in.getFilePointer();
         int type = in.read();        // @See switch
         int letters = in.read();        // Letters in the Attribute name
 
         // Attribute name
         String name = DataTools.stripString(in.readString(letters*2));
+
         int numberOfItems; // Number of items in level (see level)
         Long off;           // Offset to index (see level)
 
@@ -1699,7 +1539,7 @@ public class NativeND2Reader extends FormatReader {
           case (8): // String
             //in.read(); // size of string
             long start = in.getFilePointer();
-            value =  DataTools.stripString(in.findString("\0\0"));
+            value = in.readCString();
             long end = in.getFilePointer();
             if ((end - start) % 2 != 0) {
               in.skipBytes(1);
@@ -1719,37 +1559,39 @@ public class NativeND2Reader extends FormatReader {
             value = java.util.Arrays.toString(data); // todo
             break;
           case (10): // deprecated
-            // Its like LEVEL but offset is pointing absolutely to the liteVariantStart
+            // Its like LEVEL but offset is pointing absolutely not relatively
+
             numberOfItems = in.readInt();   // number of level atributes
-            off = in.readLong(); 
+
+            // offset to index (absolute number - current position -
+            //   numberOfItems(4B) - type (1B) - nameLength (1B) - name
+            off = in.readLong() - in.getFilePointer() - 4 - 2 - letters * 2;
             value = "LEVEL";
 
             // Iterate
-            iterateIn(in, off + liteVariantStart, liteVariantStart);
+            iterateIn(in, off + in.getFilePointer());
 
-            in.seek(off + liteVariantStart);
+            // Last 4 bytes in level is some kind of point table
+
+            if (off < 0) {
+              break;
+            }
+            in.seek(off + in.getFilePointer());
             in.skipBytes(numberOfItems * 8);
+            value = in.readLong();
             break;
           case (11): // level
             numberOfItems = in.readInt(); // number of level attributes
-            value = "LEVEL";       
             off = in.readLong();         // offset to index
+            value = "LEVEL";
 
-            // Wee need to know the current position
-            // Add level - move bot (in)
-            
-            if (0 < name.length())
-            {
-            LEVELS.add(name);
-            
             // Iterate
-            iterateIn(in, off + elementStartPosition, liteVariantStart);
-            
-            // Leave level - move top (out)
-            LEVELS.remove(name);
-            }
-            in.seek(off + elementStartPosition);
-            /* ***** Index is pointer +  NumberofItemes*8B ***** */
+            iterateIn(in, off + in.getFilePointer());
+
+            // Last 4 bytes in level is some kind of point table
+
+            in.seek(off + in.getFilePointer());
+            /* ***** Index is pointer. NumberofItemes*8B ***** */
             in.skipBytes(numberOfItems * 8);
             break;
           default: // Shall not happen :-)
@@ -1761,27 +1603,6 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
-        	
-        	// NDChannels are in @see isChannelSetting. This will set them
-        	if (  isChannelSetting())
-        	{
-        		 
-        		// Channel name
-        		if (name.equalsIgnoreCase("sDescription")
-        			&& isLastLevelChannel())
-        		{
-        			assignValueOnChannel(getActualChannelName(), "name", value);
-        		}
-        		// Wavelength
-        		else if (name.equalsIgnoreCase("dWaveLength"))
-        		{
-        			if (isExcitationWaveLengthLevel())
-        			  assignValueOnChannel(getActualChannelName(), "ExX", value);
-        			
-        			if (isEmisionnWaveLengthLevel())				
-          			  assignValueOnChannel(getActualChannelName(), "EmX", value);
-        		} 
-        	} 
           addGlobalMeta(name, value);
         }
       }
@@ -1789,79 +1610,6 @@ public class NativeND2Reader extends FormatReader {
     catch (Exception e) {
       LOGGER.debug("", e);
     }
-  }
-  
-  
-  
-  private void assignValueOnChannel(String channelName, String memberName, Object value)
-  {
-	  NDChannel actualChannel;	  
-	  // Channels are dynamically created
-	  actualChannel = channels.containsKey(channelName) ?  channels.get(channelName) : new NDChannel();
-	 	  
-	  if (null == value)
-		  value = "";
-	  
-	  // Java 1.6
-	  if (memberName.equals("name"))
-		  actualChannel.setName(value.toString());
-	  
-	  if (memberName.equals("ExX"))
-		  actualChannel.addExcitationWaveLength(new Double(value.toString()));
-
-	  if (memberName.equals("EmX"))
-		  actualChannel.addEmissionWaveLength(new Double(value.toString()));	
-	  
-	 
-
-	  channels.put(channelName, actualChannel);
-  }
-  
-  private String getActualChannelName()
-  {
-	  
-	 for (String levelName : LEVELS)
-	 {
-		 if (isChannelName(levelName) )
-			 return levelName;
-     }
-		   
-	 return unknownChannelName;
-  }
-  
-  private boolean isChannelName(String possibleName)
-  {
-	  Pattern p = Pattern.compile(channelPatternName);
-	  
-	  return p.matcher(possibleName).matches();
-  }
-  
-  private boolean isChannelSetting()
-  {
-	  return ( LEVELS.contains("SLxPictureMetadata") &&
-			   LEVELS.contains("sPicturePlanes") &&
-			   LEVELS.contains("sPlaneNew")
-			  );	   
-  }
-  
-  private boolean isLastLevelChannel()
-  {
-	 if (0 == LEVELS.size())
-		 return false;
-	 
-	 String lastLevelName = LEVELS.get(LEVELS.size()-1);
-	  
-	 return isChannelName(lastLevelName);
-  }
-
-  private boolean isExcitationWaveLengthLevel()
-  {
-	  return LEVELS.contains("m_ExcitationSpectrum");
-  }
-  
-  private boolean isEmisionnWaveLengthLevel()
-  {
-	  return LEVELS.contains("m_EmissionSpectrum");
   }
 
   private void populateMetadataStore(ND2Handler handler) throws FormatException
@@ -2036,22 +1784,6 @@ public class NativeND2Reader extends FormatReader {
     store.setDetectorModel(handler.getCameraModel(), 0, 0);
     store.setDetectorType(getDetectorType("Other"), 0, 0);
 
-    // Channels are already present @see IterateIn
-    if (0 < channels.size())
-    {
-    	 String nameBeginning = "a";
-    	 int channelIndex = 0;
-    	 String actualKey = nameBeginning + Integer.toString(channelIndex);
-    	 while (channels.containsKey(actualKey))
-    	{
-    		 Channel ch = channels.get(actualKey);
-    		 addGlobalMeta("Channel_" + Integer.toString(channelIndex), ch);
-    		 
-    		 channelIndex++;
-    		 actualKey = nameBeginning + Integer.toString(channelIndex);    		 
-    	}
-    }
-    
     ArrayList<String> modality = handler.getModalities();
     ArrayList<String> binning = handler.getBinnings();
     ArrayList<Double> speed = handler.getSpeeds();
