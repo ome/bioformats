@@ -7,11 +7,10 @@ function r = bfGetReader(varargin)
 %   r = bfGetReader(id) where id is a path to an existing file creates and
 %   initializes a reader for the input file.
 %
-%
 % Examples
 %
-%    r = bfGetReader() % First plane of the series
-%    I = bfGetReader(path_to_file) % Last plane of the series
+%    r = bfGetReader()
+%    I = bfGetReader(path_to_file)
 %
 %
 % See also: BFGETPLANE
@@ -73,13 +72,16 @@ if exist('lurawaveLicense', 'var')
     java.lang.System.setProperty('lurawave.license', lurawaveLicense);
 end
 
+% Create a loci.formats.ReaderWrapper object
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
 if ip.Results.stitchFiles
     r = loci.formats.FileStitcher(r);
 end
 
+% Initialize the metadata store
 OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
 r.setMetadataStore(OMEXMLService.createOMEXMLMetadata());
 
+% Initialize the reader
 if ~isempty(id), r.setId(id); end
