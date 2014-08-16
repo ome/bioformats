@@ -51,10 +51,11 @@ namespace ome
      * Buffer for all pixel types.
      *
      * The purpose of this class is to allow transfer of pixel data of
-     * any type and endianness, and of any dimensionality.
+     * any type and of any dimensionality.
      *
      * This class uses Boost.Variant to support specialisations of
-     * PixelBuffer for all combinations of pixel type and endianness.
+     * PixelBuffer for all combinations of pixel type (excluding
+     * endian variants).
      *
      * While direct access to the pixel data is possible using this
      * class, please be aware that this will not provide high
@@ -108,57 +109,29 @@ namespace ome
       typedef boost::mpl::joint_view<integer_pixel_types,
                                      float_pixel_types>::type basic_pixel_types_view;
 
-      /// Convert T into a big-endian buffer.
+      /// Convert T into a buffer.
       template<typename T>
-      struct make_big_endian_buffer
+      struct make_buffer
       {
         /// Buffer type.
-        typedef std::shared_ptr<PixelBuffer<typename T::big_type> > type;
+        typedef std::shared_ptr<PixelBuffer<typename T::std_type> > type;
       };
-
-      /// Convert T into a little-endian buffer.
-      template<typename T>
-      struct make_little_endian_buffer
-      {
-        /// Buffer type.
-        typedef std::shared_ptr<PixelBuffer<typename T::little_type> > type;
-      };
-
-      /// Convert T into a native-endian buffer.
-      template<typename T>
-      struct make_native_endian_buffer
-      {
-        /// Buffer type.
-        typedef std::shared_ptr<PixelBuffer<typename T::native_type> > type;
-      };
-
-      /// Aggregate view of all big-endian buffer types.
-      typedef boost::mpl::transform_view<basic_pixel_types_view, make_big_endian_buffer<boost::mpl::_1> >::type big_endian_pixel_buffer_types_view;
-
-      /// Aggregate view of all little-endian buffer types.
-      typedef boost::mpl::transform_view<basic_pixel_types_view, make_little_endian_buffer<boost::mpl::_1> >::type little_endian_pixel_buffer_types_view;
-
-      /// Aggregate view of all native-endian buffer types.
-      typedef boost::mpl::transform_view<basic_pixel_types_view, make_native_endian_buffer<boost::mpl::_1> >::type native_endian_pixel_buffer_types_view;
-
-      /// Aggregate view of all big-endian and little-endian buffer types.
-      typedef boost::mpl::joint_view<big_endian_pixel_buffer_types_view, little_endian_pixel_buffer_types_view> big_little_endian_pixel_buffer_types_view;
 
       /// Aggregate view of all buffer types.
-      typedef boost::mpl::joint_view<native_endian_pixel_buffer_types_view, big_little_endian_pixel_buffer_types_view> all_endian_pixel_buffer_types_view;
+      typedef boost::mpl::transform_view<basic_pixel_types_view, make_buffer<boost::mpl::_1> >::type pixel_buffer_types_view;
 
       /// Empty vector placeholder.
       typedef boost::mpl::vector<> empty_types;
 
-      /// List of all pixel buffer types (big, little and native endian).
-      typedef boost::mpl::insert_range<empty_types, boost::mpl::end<empty_types>::type, all_endian_pixel_buffer_types_view>::type pixel_buffer_types;
+      /// List of all pixel buffer types.
+      typedef boost::mpl::insert_range<empty_types, boost::mpl::end<empty_types>::type, pixel_buffer_types_view>::type pixel_buffer_types;
 
     public:
       /// Buffer type, allowing assignment of all buffer types.
       typedef boost::make_variant_over<pixel_buffer_types>::type variant_buffer_type;
 
       /// Raw pixel type used in public interfaces.
-      typedef PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::native_type raw_type;
+      typedef PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type raw_type;
 
       /// Size type.
       typedef boost::multi_array_types::size_type size_type;
@@ -195,15 +168,13 @@ namespace ome
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        */
       template<class ExtentList>
       explicit
       VariantPixelBuffer(const ExtentList&                   extents,
                          ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                         EndianType                          endiantype = ENDIAN_NATIVE,
                          const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
-        buffer(createBuffer(extents, pixeltype, endiantype, storage))
+        buffer(createBuffer(extents, pixeltype, storage))
       {
       }
 
@@ -216,14 +187,12 @@ namespace ome
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        */
       explicit
       VariantPixelBuffer(const range_type&                   range,
                          ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                         EndianType                          endiantype = ENDIAN_NATIVE,
                          const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
-        buffer(createBuffer(range, pixeltype, endiantype, storage))
+        buffer(createBuffer(range, pixeltype, storage))
       {
       }
 
@@ -287,17 +256,15 @@ namespace ome
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        * @returns the new buffer contained in a variant.
        */
       template<class T, class ExtentList>
       static variant_buffer_type
       makeBuffer(const ExtentList&                   extents,
                  const storage_order_type&           storage,
-                 ::ome::xml::model::enums::PixelType pixeltype,
-                 EndianType                          endiantype)
+                 ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, endiantype, storage));
+        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage));
       }
 
       /**
@@ -309,17 +276,15 @@ namespace ome
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        * @returns the new buffer contained in a variant.
        */
       template<class T>
       static variant_buffer_type
       makeBuffer(const range_type&                   range,
                  const storage_order_type&           storage,
-                 ::ome::xml::model::enums::PixelType pixeltype,
-                 EndianType                          endiantype)
+                 ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, endiantype, storage));
+        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage));
       }
 
       // No switch default to avoid -Wunreachable-code errors.
@@ -337,7 +302,6 @@ namespace ome
        *
        * @param extents the extent of each dimension.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        * @returns the new buffer contained in a variant.
@@ -346,7 +310,6 @@ namespace ome
       static variant_buffer_type
       createBuffer(const ExtentList&                   extents,
                    ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                   EndianType                          endiantype = ENDIAN_NATIVE,
                    const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
         variant_buffer_type buf;
@@ -354,158 +317,37 @@ namespace ome
         switch(pixeltype)
           {
           case ::ome::xml::model::enums::PixelType::INT8:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT16:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT32:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT8:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT16:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::std_type>(extents, storage, pixeltype);
             break;
           case :: ome::xml::model::enums::PixelType::UINT32:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::FLOAT:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLE:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::BIT:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::COMPLEX:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ENDIAN_BIG>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ENDIAN_LITTLE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ENDIAN_NATIVE>::type>(extents, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::std_type>(extents, storage, pixeltype);
             break;
           }
 
@@ -519,7 +361,6 @@ namespace ome
        *
        * @param range the range of each dimension.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        * @returns the new buffer contained in a variant.
@@ -527,7 +368,6 @@ namespace ome
       static variant_buffer_type
       createBuffer(const range_type&                   range,
                    ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                   EndianType                          endiantype = ENDIAN_NATIVE,
                    const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
         variant_buffer_type buf;
@@ -535,158 +375,37 @@ namespace ome
         switch(pixeltype)
           {
           case ::ome::xml::model::enums::PixelType::INT8:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT16:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT32:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT8:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT16:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::std_type>(range, storage, pixeltype);
             break;
           case :: ome::xml::model::enums::PixelType::UINT32:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::FLOAT:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLE:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::BIT:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::COMPLEX:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-            switch(endiantype)
-              {
-              case ENDIAN_BIG:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ENDIAN_BIG>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_LITTLE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ENDIAN_LITTLE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              case ENDIAN_NATIVE:
-                buf = makeBuffer<PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ENDIAN_NATIVE>::type>(range, storage, pixeltype, endiantype);
-                break;
-              }
+            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::std_type>(range, storage, pixeltype);
             break;
           }
 
@@ -705,7 +424,6 @@ namespace ome
        *
        * @param extents the extent of each dimension.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        */
@@ -713,10 +431,9 @@ namespace ome
       void
       setBuffer(const ExtentList&                   extents,
                 ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                EndianType                          endiantype = ENDIAN_NATIVE,
                 const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
-        buffer = createBuffer(extents, pixeltype, endiantype, storage);
+        buffer = createBuffer(extents, pixeltype, storage);
       }
 
       /**
@@ -726,17 +443,15 @@ namespace ome
        *
        * @param range the range of each dimension.
        * @param pixeltype the pixel type to store.
-       * @param endiantype the required endianness of the pixel type.
        * @param storage the storage ordering, defaulting to C array
        * storage ordering.
        */
       void
       setBuffer(const range_type&                   range,
                 ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                EndianType                          endiantype = ENDIAN_NATIVE,
                 const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
-        buffer = createBuffer(range, pixeltype, endiantype, storage);
+        buffer = createBuffer(range, pixeltype, storage);
       }
 
       /**
