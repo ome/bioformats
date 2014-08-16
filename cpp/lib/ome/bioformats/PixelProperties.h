@@ -225,7 +225,7 @@ namespace ome
       /// Pixel type (little endian).
       typedef boost::endian::little_float32_t little_type;
       /// Pixel type (native endian).
-      typedef float native_type;
+      typedef boost::endian::native_float32_t native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
@@ -245,7 +245,7 @@ namespace ome
       /// Pixel type (little endian).
       typedef boost::endian::little_float64_t little_type;
       /// Pixel type (native endian).
-      typedef double native_type;
+      typedef boost::endian::native_float64_t native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
@@ -285,7 +285,7 @@ namespace ome
       /// Pixel type (little endian).
       typedef std::complex<boost::endian::little_float32_t> little_type;
       /// Pixel type (native endian).
-      typedef std::complex<float> native_type;
+      typedef std::complex<boost::endian::native_float32_t> native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
@@ -305,7 +305,7 @@ namespace ome
       /// Pixel type (little endian).
       typedef std::complex<boost::endian::little_float64_t> little_type;
       /// Pixel type (native endian).
-      typedef std::complex<double> native_type;
+      typedef std::complex<boost::endian::native_float64_t> native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
