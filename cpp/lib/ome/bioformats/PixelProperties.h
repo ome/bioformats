@@ -464,6 +464,48 @@ namespace ome
                       bool            is_integer = true,
                       bool            is_complex = false);
 
+    /**
+     * Byteswap value to switch endianness.
+     *
+     * @param value the value to swap.
+     */
+    template<typename T>
+    inline void
+    byteswap(T& value)
+    {
+      boost::endian::reverse(value);
+    }
+
+    /**
+     * Byteswap value to switch endianness.
+     *
+     * @param value the value to swap.
+     */
+    template<>
+    inline void
+    byteswap(std::complex<float>& value)
+    {
+      // For pre-C++11 compatibility, it's not possible to byteswap in
+      // place.
+      value = std::complex<float>(reverse_value(value.real()),
+                                  reverse_value(value.imag()));
+    }
+
+    /**
+     * Byteswap value to switch endianness.
+     *
+     * @param value the value to swap.
+     */
+    template<>
+    inline void
+    byteswap(std::complex<double>& value)
+    {
+      // For pre-C++11 compatibility, it's not possible to byteswap in
+      // place.
+      value = std::complex<double>(reverse_value(value.real()),
+                                   reverse_value(value.imag()));
+    }
+
   }
 }
 
