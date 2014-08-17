@@ -35,7 +35,7 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Xerces_INCLUDE_DIR})
+                    ${Xerces_INCLUDE_DIRS})
 
 set(ome_xerces_sources
     ErrorReporter.cpp)

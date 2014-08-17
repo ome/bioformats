@@ -15,13 +15,13 @@
 #
 #   Xerces_VERSION - Xerces release version
 #   Xerces_FOUND - true if the main programs and libraries were found
-#   Xerces_LIBRARIES - component libraries to be linked
-#   Xerces_INCLUDE_DIR - the directory containing the Xerces headers
-#   Xerces_LIBRARY_DIR - the directory containing the Xerces libraries
+#   Xerces_INCLUDE_DIRS - the directory containing the Xerces headers
+#   Xerces_LIBRARIES - Xerces libraries to be linked
 #
 # The following cache variables may also be set::
 #
-#   XERCES_INCLUDE_DIR - the directory containing the Xerces headers
+#   Xerces_INCLUDE_DIR - the directory containing the Xerces headers
+#   Xerces_LIBRARY - the Xerces library
 
 # Written by Roger Leigh <rleigh@codelibre.net>
 
@@ -66,30 +66,34 @@ endfunction(_Xerces_GET_VERSION)
 
 function(_Xerces_FIND)
   # Find include directory
-  find_path(XERCES_INCLUDE_DIR
+  find_path(Xerces_INCLUDE_DIR
             NAMES "xercesc/util/PlatformUtils.hpp"
             DOC "Xerces-C++ include directory")
-  mark_as_advanced(XERCES_INCLUDE_DIR)
-  set(Xerces_INCLUDE_DIR "${XERCES_INCLUDE_DIR}" PARENT_SCOPE)
+  mark_as_advanced(Xerces_INCLUDE_DIR)
+  set(Xerces_INCLUDE_DIR "${Xerces_INCLUDE_DIR}" PARENT_SCOPE)
 
   # Find all Xerces libraries
-  find_library(XERCES_LIBRARIES "xerces-c"
+  find_library(Xerces_LIBRARY "xerces-c"
     DOC "Xerces-C++ libraries")
-  mark_as_advanced(XERCES_LIBRARIES)
-  set(Xerces_LIBRARIES "${XERCES_LIBRARIES}" PARENT_SCOPE)
+  mark_as_advanced(Xerces_LIBRARY)
+  set(Xerces_LIBRARY "${Xerces_LIBRARY}" PARENT_SCOPE)
 
-  _Xerces_GET_VERSION(XERCES_VERSION_MAJOR XERCES_VERSION_MINOR XERCES_VERSION_REVISION "${XERCES_INCLUDE_DIR}/xercesc/util/XercesVersion.hpp")
-  set(_XERCES_VERSION "${XERCES_VERSION_MAJOR}.${XERCES_VERSION_MINOR}.${XERCES_VERSION_REVISION}" PARENT_SCOPE)
+  _Xerces_GET_VERSION(Xerces_VERSION_MAJOR Xerces_VERSION_MINOR Xerces_VERSION_REVISION "${Xerces_INCLUDE_DIR}/xercesc/util/XercesVersion.hpp")
+  set(Xerces_VERSION "${Xerces_VERSION_MAJOR}.${Xerces_VERSION_MINOR}.${Xerces_VERSION_REVISION}" PARENT_SCOPE)
 endfunction(_Xerces_FIND)
 
 _Xerces_FIND()
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Xerces
-                                  REQUIRED_VARS Xerces_LIBRARIES
+                                  FOUND_VAR Xerces_FOUND
+                                  REQUIRED_VARS Xerces_LIBRARY
                                                 Xerces_INCLUDE_DIR
-                                                _XERCES_VERSION
-                                  VERSION_VAR _XERCES_VERSION
-                                  FAIL_MESSAGE "Failed to find all Xerces components")
+                                                Xerces_VERSION
+                                  VERSION_VAR Xerces_VERSION
+                                  FAIL_MESSAGE "Failed to find Xerces")
 
-unset(_XERCES_VERSION)
+if(Xerces_FOUND)
+  set(Xerces_INCLUDE_DIRS "${Xerces_INCLUDE_DIR}")
+  set(Xerces_LIBRARIES "${Xerces_LIBRARY}")
+endif(Xerces_FOUND)
