@@ -13,8 +13,11 @@
 # This module reports information about the Xerces installation in
 # several variables.  General variables::
 #
+#   Xerces_FOUND - true if the Xerces headers and libraries were found
 #   Xerces_VERSION - Xerces release version
-#   Xerces_FOUND - true if the main programs and libraries were found
+#   Xerces_MAJOR_VERSION - Xerces major version number
+#   Xerces_MINOR_VERSION - Xerces minor version number
+#   Xerces_PATCH_VERSION - Xerces patch (release) version number
 #   Xerces_INCLUDE_DIRS - the directory containing the Xerces headers
 #   Xerces_LIBRARIES - Xerces libraries to be linked
 #
@@ -60,29 +63,25 @@ function(_Xerces_GET_VERSION _OUT_major _OUT_minor _OUT_revision _xercesversion_
         set("${_OUT_minor}" "${${_OUT_minor}}" PARENT_SCOPE)
         set("${_OUT_revision}" "${${_OUT_revision}}" PARENT_SCOPE)
     else()
-        message(FATAL_ERROR "Include file ${_xercesversion_hdr} does not exist")
+        message(FATAL_ERROR "Include file ${_xercesversion_hdr} does not exist or does not contain expected version information")
     endif()
 endfunction(_Xerces_GET_VERSION)
 
-function(_Xerces_FIND)
-  # Find include directory
-  find_path(Xerces_INCLUDE_DIR
-            NAMES "xercesc/util/PlatformUtils.hpp"
-            DOC "Xerces-C++ include directory")
-  mark_as_advanced(Xerces_INCLUDE_DIR)
-  set(Xerces_INCLUDE_DIR "${Xerces_INCLUDE_DIR}" PARENT_SCOPE)
+# Find include directory
+find_path(Xerces_INCLUDE_DIR
+          NAMES "xercesc/util/PlatformUtils.hpp"
+          DOC "Xerces-C++ include directory")
+mark_as_advanced(Xerces_INCLUDE_DIR)
 
-  # Find all Xerces libraries
-  find_library(Xerces_LIBRARY "xerces-c"
-    DOC "Xerces-C++ libraries")
-  mark_as_advanced(Xerces_LIBRARY)
-  set(Xerces_LIBRARY "${Xerces_LIBRARY}" PARENT_SCOPE)
+# Find all Xerces libraries
+find_library(Xerces_LIBRARY "xerces-c"
+  DOC "Xerces-C++ libraries")
+mark_as_advanced(Xerces_LIBRARY)
 
-  _Xerces_GET_VERSION(Xerces_VERSION_MAJOR Xerces_VERSION_MINOR Xerces_VERSION_REVISION "${Xerces_INCLUDE_DIR}/xercesc/util/XercesVersion.hpp")
-  set(Xerces_VERSION "${Xerces_VERSION_MAJOR}.${Xerces_VERSION_MINOR}.${Xerces_VERSION_REVISION}" PARENT_SCOPE)
-endfunction(_Xerces_FIND)
-
-_Xerces_FIND()
+if(Xerces_INCLUDE_DIR)
+  _Xerces_GET_VERSION(Xerces_VERSION_MAJOR Xerces_VERSION_MINOR Xerces_VERSION_PATCH "${Xerces_INCLUDE_DIR}/xercesc/util/XercesVersion.hpp")
+  set(Xerces_VERSION "${Xerces_VERSION_MAJOR}.${Xerces_VERSION_MINOR}.${Xerces_VERSION_PATCH}")
+endif(Xerces_INCLUDE_DIR)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Xerces
