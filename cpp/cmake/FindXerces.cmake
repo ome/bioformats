@@ -13,7 +13,7 @@
 # This module reports information about the Xerces installation in
 # several variables.  General variables::
 #
-#   Xerces_FOUND - true if the Xerces headers and libraries were found
+#   XERCES_FOUND - true if the Xerces headers and libraries were found
 #   Xerces_VERSION - Xerces release version
 #   Xerces_INCLUDE_DIRS - the directory containing the Xerces headers
 #   Xerces_LIBRARIES - Xerces libraries to be linked
@@ -79,14 +79,13 @@ endif(Xerces_INCLUDE_DIR)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Xerces
-                                  FOUND_VAR Xerces_FOUND
                                   REQUIRED_VARS Xerces_LIBRARY
                                                 Xerces_INCLUDE_DIR
                                                 Xerces_VERSION
                                   VERSION_VAR Xerces_VERSION
                                   FAIL_MESSAGE "Failed to find Xerces")
 
-if(Xerces_FOUND)
+if(XERCES_FOUND)
   set(Xerces_INCLUDE_DIRS "${Xerces_INCLUDE_DIR}")
   set(Xerces_LIBRARIES "${Xerces_LIBRARY}")
-endif(Xerces_FOUND)
+endif(XERCES_FOUND)
