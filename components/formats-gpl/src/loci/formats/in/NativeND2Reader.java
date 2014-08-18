@@ -1234,13 +1234,23 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
+      boolean hasColor = false;
+      for (String ch : channelColors.keySet()) {
+        Integer color = channelColors.get(ch);
+        // look for a color that is neither black nor white
+        if (color != 0xffffff && color != 0) {
+          hasColor = true;
+          break;
+        }
+      }
+
       split = getSizeC() > 1;
       for (int i=0; i<getSeriesCount(); i++) {
         CoreMetadata ms = core.get(i);
         ms.rgb = false;
         ms.littleEndian = true;
         ms.interleaved = false;
-        ms.indexed = channelColors.size() > 0;
+        ms.indexed = channelColors.size() > 0 && hasColor;
         ms.falseColor = true;
         ms.metadataComplete = true;
         ms.imageCount = ms.sizeZ * ms.sizeT * ms.sizeC;
@@ -1866,12 +1876,8 @@ public class NativeND2Reader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        int index = i * getSizeC() + c;
-        if (channelNames.size() == getEffectiveSizeC() ||
-          textEmissionWavelengths.size() == getEffectiveSizeC())
-        {
-          index = c;
-        }
+        int index = c;
+
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
           store.setChannelPinholeSize(pinholeSize, i, c);
