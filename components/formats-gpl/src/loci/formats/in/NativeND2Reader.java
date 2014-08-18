@@ -756,7 +756,7 @@ public class NativeND2Reader extends FormatReader {
         nXFields = 0;
       }
       for (String key : globalMetadata.keySet()) {
-        addGlobalMetaList(key, globalMetadata.get(key));
+        addGlobalMeta(key, globalMetadata.get(key));
         if (key.equals("ChannelCount")) {
           for (int i=0; i<getSeriesCount(); i++) {
             CoreMetadata ms = core.get(i);
