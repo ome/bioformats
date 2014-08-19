@@ -53,7 +53,7 @@ namespace ome
      * The purpose of this class is to allow transfer of pixel data of
      * any type and of any dimensionality.
      *
-     * This class uses Boost.Variant to support specialisations of
+     * This class uses Boost.Variant to support specializations of
      * PixelBuffer for all combinations of pixel type (excluding
      * endian variants).
      *
