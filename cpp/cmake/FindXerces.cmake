@@ -1,6 +1,6 @@
 #.rst:
 # FindXerces
-# -------
+# ----------
 #
 # Find the Apache Xerces-C++ validating XML parser headers and libraries.
 #
