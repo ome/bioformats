@@ -1114,7 +1114,17 @@ public class NativeND2Reader extends FormatReader {
         for (int i=0; i<imageOffsets.size(); i++) {
           Double z = new Double(in.readDouble());
           if (!posZ.contains(z)) {
-            uniqueZ++;
+            boolean unique = true;
+            for (int q=0; q<posZ.size(); q++) {
+              // account for potential stage drift
+              if (Math.abs(z - posZ.get(q)) <= 0.05) {
+                unique = false;
+                break;
+              }
+            }
+            if (unique) {
+              uniqueZ++;
+            }
           }
           posZ.add(z);
         }
