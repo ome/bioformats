@@ -36,6 +36,7 @@
 package loci.formats.out;
 
 import java.io.IOException;
+import loci.common.Constants;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -148,8 +149,8 @@ public class V3DrawWriter extends FormatWriter {
         try {
 //write the header if it's the first time through       
             if (lastPlane == -1) {
-                pixels.write(formatkey.getBytes());             // write 	format key 
-                pixels.write(endianString.getBytes());                   //       	endianness.
+                pixels.write(formatkey.getBytes(Constants.ENCODING));             // write format key
+                pixels.write(endianString.getBytes(Constants.ENCODING));          // endianness.
                 unpackBytes(bytesPerPixel, v2, 0, 2, !bigendian);
                 pixels.write(v2);                                //       	unitSize 
                 for (int d : sz) {
