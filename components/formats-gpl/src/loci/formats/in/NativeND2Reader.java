@@ -591,7 +591,7 @@ public class NativeND2Reader extends FormatReader {
 
               int valueOrLength = in.readInt();
 
-              addGlobalMetaList(attributeName, valueOrLength);
+              addGlobalMeta(attributeName, valueOrLength);
 
               if (attributeName.equals("uiWidth")) {
                 core.get(0).sizeX = valueOrLength;
