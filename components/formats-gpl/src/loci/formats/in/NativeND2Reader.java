@@ -399,7 +399,9 @@ public class NativeND2Reader extends FormatReader {
             System.arraycopy(buf, buf.length - sigBytes.length - 1,
               buf, 0, sigBytes.length);
           }
-          else in.seek(in.getFilePointer() - n + foundIndex);
+          else if (in.getFilePointer() - n + foundIndex < in.length()) {
+            in.seek(in.getFilePointer() - n + foundIndex);
+          }
         }
         if (in.getFilePointer() > in.length() - 24 || foundIndex == -1) {
           break;
