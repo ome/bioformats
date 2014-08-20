@@ -38,7 +38,7 @@
 #include <ome/bioformats/VariantPixelBuffer.h>
 
 using ome::bioformats::PixelBuffer;
-using ome::bioformats::PixelEndianProperties;
+using ome::bioformats::PixelProperties;
 using ome::bioformats::EndianType;
 using ome::bioformats::VariantPixelBuffer;
 using ::ome::xml::model::enums::PixelType;
@@ -236,15 +236,15 @@ namespace
       throw std::runtime_error("Unsupported pixel type conversion for assignment");
     }
 
-    template <int P, int E>
+    template <int P>
     typename boost::enable_if<
       typename boost::is_same<
         typename std::iterator_traits<InputIterator>::value_type,
-        typename PixelEndianProperties<P, E>::type
+        typename PixelProperties<P>::std_type
         >::value,
       void
       >::type
-    operator() (std::shared_ptr<PixelBuffer<typename PixelEndianProperties<P, E>::type> >& lhs) const
+    operator() (std::shared_ptr<PixelBuffer<typename PixelProperties<P>::std_type> >& lhs) const
     {
       if (!lhs)
         throw std::runtime_error("Null pixel type");

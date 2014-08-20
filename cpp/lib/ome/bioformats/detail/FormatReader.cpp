@@ -246,6 +246,9 @@ namespace ome
           void
           operator()(T& v)
           {
+            const ome::xml::model::enums::PixelType type(reader.getPixelType());
+            EndianType endian = reader.isLittleEndian() ? ENDIAN_LITTLE : ENDIAN_BIG;
+
             const uint32_t bpp(bytesPerPixel(reader.getPixelType()));
             const dimension_size_type sizeX(reader.getSizeX());
             const dimension_size_type sizeY(reader.getSizeY());
@@ -325,6 +328,19 @@ namespace ome
               }
             if (!source)
               throw std::runtime_error("readPlane: Error reading bytes from stream");
+
+            // If the endianness of the data doesn't match the
+            // endianness of the machine, byteswap the buffer.
+            if ((endian == ome::bioformats::ENDIAN_BIG &&
+                 boost::endian::order::big != boost::endian::order::native) ||
+                (endian == ome::bioformats::ENDIAN_LITTLE &&
+                 boost::endian::order::little != boost::endian::order::native))
+              {
+                typename T::element_type::value_type *data = v->data();
+                typename T::element_type::size_type num_elements = v->num_elements();
+                for (typename T::element_type::size_type i = 0; i < num_elements; ++i)
+                  byteswap(data[i]);
+              }
           }
         };
 
@@ -357,15 +373,13 @@ namespace ome
           (PixelBufferBase::make_storage_order(order, interleaved));
 
         const ome::xml::model::enums::PixelType type(getPixelType());
-        EndianType endian = isLittleEndian() ? ENDIAN_LITTLE : ENDIAN_BIG;
 
         // If the buffer is incorrectly sized, ordered or typed, reset
         // to the correct buffer size, order and type.
         if (type != dest.pixelType() ||
-            endian != dest.endianType() ||
             !(storage_order == dest.storage_order()) ||
             shape != dest_shape)
-          dest.setBuffer(shape, type, endian, storage_order);
+          dest.setBuffer(shape, type, storage_order);
 
         // Fill the buffer according to its type.
         PlaneVisitor v(source, *this,

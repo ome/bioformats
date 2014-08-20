@@ -81,16 +81,6 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 }
 
 template<>
-::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
-                                          ::ome::bioformats::ENDIAN_NATIVE>::type
-pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
-                                                       ::ome::bioformats::ENDIAN_NATIVE>::type>(uint32_t value)
-{
-  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
-                                                                        ::ome::bioformats::ENDIAN_NATIVE>::type>(value);
-}
-
-template<>
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                           ::ome::bioformats::ENDIAN_BIG>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
@@ -109,17 +99,6 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
   return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                                                         ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
 }
-
-template<>
-::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                          ::ome::bioformats::ENDIAN_NATIVE>::type
-pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                                       ::ome::bioformats::ENDIAN_NATIVE>::type>(uint32_t value)
-{
-  return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                                                        ::ome::bioformats::ENDIAN_NATIVE>::type>(value);
-}
-
 
 #endif // TEST_PIXEL_H
 
