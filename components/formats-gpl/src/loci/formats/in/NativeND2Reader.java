@@ -2062,7 +2062,7 @@ public class NativeND2Reader extends FormatReader {
 
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
       for (String key : globalMetadata.keySet()) {
-        addGlobalMetaList(key, globalMetadata.get(key));
+        addGlobalMeta(key, globalMetadata.get(key));
       }
     }
     catch (IOException e) {
