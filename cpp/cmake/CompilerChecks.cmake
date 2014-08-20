@@ -170,6 +170,9 @@ if (NOT MSVC)
       -Wunused-variable
       -Wwrite-strings
       -fstrict-aliasing)
+else (NOT MSVC)
+  set(test_flags
+      /bigobj)
 endif (NOT MSVC)
 
 # These are annoyingly verbose, produce false positives or don't work
@@ -189,7 +192,8 @@ endif (extra-warnings)
 
 
 foreach(flag ${test_flags})
-  set(test_cxx_flag "CXX_FLAG${flag}")
+  string(REPLACE "/" "_" flag_var "${flag}")
+  set(test_cxx_flag "CXX_FLAG${flag_var}")
   CHECK_CXX_COMPILER_FLAG(${flag} "${test_cxx_flag}")
   if (${test_cxx_flag})
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")

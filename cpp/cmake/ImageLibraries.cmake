@@ -35,12 +35,15 @@
 # #L%
 
 include(CheckCSourceCompiles)
-include(FindTIFF)
+
+find_package(TIFF)
 
 if(NOT TIFF_FOUND)
   message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/)")
 endif(NOT TIFF_FOUND)
 
+set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${TIFF_INCLUDE_DIR})
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 set(CMAKE_REQUIRED_LIBRARIES ${TIFF_LIBRARIES})
 check_c_source_compiles("#include <tiffio.h>
@@ -120,3 +123,4 @@ int main(void)
 " TIFF_HAVE_BIGTIFF)
 
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
