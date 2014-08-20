@@ -71,6 +71,7 @@ public class NativeND2Reader extends FormatReader {
 
   public static final long ND2_MAGIC_BYTES_1 = 0xdacebe0aL;
   public static final long ND2_MAGIC_BYTES_2 = 0x6a502020L;
+  private static final int BUFFER_SIZE = 32 * 1024;
 
   // -- Fields --
 
@@ -116,6 +117,7 @@ public class NativeND2Reader extends FormatReader {
 
   private boolean textData = false;
   private Double refractiveIndex = null;
+  private boolean firstPlane = true;
 
   // -- Constructor --
 
@@ -208,6 +210,12 @@ public class NativeND2Reader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (firstPlane) {
+      in.close();
+      in = new RandomAccessInputStream(currentId);
+      firstPlane = false;
+    }
 
     lastChannel = split ? no % getSizeC() : 0;
     int planeIndex = split ? no / getSizeC() : no;
@@ -326,6 +334,7 @@ public class NativeND2Reader extends FormatReader {
       textData = false;
       refractiveIndex = null;
       exposureTime.clear();
+      firstPlane = true;
     }
   }
 
@@ -337,7 +346,7 @@ public class NativeND2Reader extends FormatReader {
 
     // using a 32KB buffer instead of the default 1MB gives
     // better performance with the seek/skip pattern used here
-    in = new RandomAccessInputStream(id, 32 * 1024);
+    in = new RandomAccessInputStream(id, BUFFER_SIZE);
 
     channelColors = new Hashtable<String, Integer>();
 
@@ -372,9 +381,9 @@ public class NativeND2Reader extends FormatReader {
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
+      byte[] buf = new byte[BUFFER_SIZE];
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
-        byte[] buf = new byte[1024];
         int foundIndex = -1;
         in.read(buf, 0, sigBytes.length);
         while (foundIndex == -1 && in.getFilePointer() < in.length()) {
@@ -392,16 +401,14 @@ public class NativeND2Reader extends FormatReader {
           }
           else in.seek(in.getFilePointer() - n + foundIndex);
         }
-        if (in.getFilePointer() >= in.length() || foundIndex == -1) {
+        if (in.getFilePointer() > in.length() - 24 || foundIndex == -1) {
           break;
         }
-
-        if (in.getFilePointer() > in.length() - 24) break;
 
         Long helper = in.getFilePointer();       // Remember starting position
 
         int nameLength = in.readInt();         // Length of the block name
-        Long dataLength = in.readLong();       // Length of the data
+        long dataLength = in.readLong();       // Length of the data
         String nameAttri = in.readString(nameLength).trim();  // Read the name
         Long stop = helper + (dataLength + nameLength); // Where this block ends
 
@@ -422,12 +429,9 @@ public class NativeND2Reader extends FormatReader {
           seq = true;
         }
 
-        in.seek(helper);  // Return to starting position
+        in.seek(helper + 12);  // Return to starting position
 
-        int lenOne = in.readInt();
-        int lenTwo = in.readInt();
-        int len = lenOne + lenTwo;
-        in.skipBytes(4);
+        int len = (int) (nameLength + dataLength);
 
         long fp = in.getFilePointer();
         String blockType = in.readString(12);
@@ -436,8 +440,8 @@ public class NativeND2Reader extends FormatReader {
         LOGGER.info("Parsing block '{}' {}%", blockType, percent);
         blockCount++;
 
-        int skip = len - 12 - lenOne * 2;
-        if (skip <= 0) skip += lenOne * 2;
+        int skip = len - 12 - nameLength * 2;
+        if (skip <= 0) skip += nameLength * 2;
 
         // Image calibration for newer nd2 files
 
@@ -445,7 +449,7 @@ public class NativeND2Reader extends FormatReader {
           long veryStart = in.getFilePointer();
           in.skipBytes(12); // ImageCalibra|tionLV
 
-          long endFP = in.getFilePointer() + lenOne + lenTwo - 24;
+          long endFP = in.getFilePointer() + len - 24;
           while (in.read() == 0);
 
           while (in.getFilePointer() < endFP) {
@@ -491,7 +495,7 @@ public class NativeND2Reader extends FormatReader {
             useLastText = true;
           }
           imageOffsets.add(new Long(fp));
-          imageLengths.add(new int[] {lenOne, lenTwo, getSizeX() * getSizeY()});
+          imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
           while (b != '!') {
             name.append(b);
@@ -507,7 +511,7 @@ public class NativeND2Reader extends FormatReader {
           long startFP = in.getFilePointer();
           in.seek(startFP - 1);
 
-          String textString = DataTools.stripString(in.readString(lenTwo));
+          String textString = DataTools.stripString(in.readString((int) dataLength));
           textStrings.add(textString);
           validDimensions.add(blockCount > 2);
 
@@ -521,7 +525,7 @@ public class NativeND2Reader extends FormatReader {
           foundMetadata = true;
           if (blockType.equals("ImageAttribu")) {
             in.skipBytes(6);
-            long endFP = in.getFilePointer() + lenOne + lenTwo - 18;
+            long endFP = in.getFilePointer() + len - 18;
             while (in.read() == 0);
 
             boolean canBeLossless = true;
@@ -665,7 +669,7 @@ public class NativeND2Reader extends FormatReader {
             isLossless = isLossless && canBeLossless;
           }
           else {
-            int length = lenOne + lenTwo - 12;
+            int length = len - 12;
             byte[] b = new byte[length];
             in.read(b);
 
@@ -698,19 +702,19 @@ public class NativeND2Reader extends FormatReader {
         {
           if (blockType.startsWith("CustomData|A")) {
             customDataOffsets.add(new Long(fp));
-            customDataLengths.add(new int[] {lenOne, lenTwo});
+            customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
-            int nDoubles = (lenOne + lenTwo) / 8;
+            int nDoubles = len / 8;
             zOffset = fp + 8 * (nDoubles - imageOffsets.size());
             extraZDataCount++;
           }
           else if (blockType.startsWith("CustomData|X")) {
-            int nDoubles = (lenOne + lenTwo) / 8;
+            int nDoubles = len / 8;
             xOffset = fp + 8 * (nDoubles - imageOffsets.size());
           }
           else if (blockType.startsWith("CustomData|Y")) {
-            int nDoubles = (lenOne + lenTwo) / 8;
+            int nDoubles = len / 8;
             yOffset = fp + 8 * (nDoubles - imageOffsets.size());
           }
         }
