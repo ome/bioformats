@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -232,6 +233,19 @@ public class AFIReader extends FormatReader {
         c.resolutionCount = core.size() - EXTRA_IMAGES;
       }
     }
+
+    for (int s=0; s<core.size(); s++) {
+      setCoreIndex(s);
+      core.get(s).seriesMetadata = new Hashtable<String, Object>();
+      for (int i=0; i<reader.length; i++) {
+        reader[i].setCoreIndex(s);
+        Hashtable<String, Object> m = reader[i].getSeriesMetadata();
+        for (String key : m.keySet()) {
+          addSeriesMetaList(key, m.get(key));
+        }
+      }
+    }
+    setCoreIndex(0);
 
     MetadataStore store = makeFilterMetadata();
     boolean minimalMetadata =
