@@ -117,7 +117,6 @@ public class NativeND2Reader extends FormatReader {
 
   private boolean textData = false;
   private Double refractiveIndex = null;
-  private boolean firstPlane = true;
 
   // -- Constructor --
 
@@ -210,12 +209,6 @@ public class NativeND2Reader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    if (firstPlane) {
-      in.close();
-      in = new RandomAccessInputStream(currentId);
-      firstPlane = false;
-    }
 
     lastChannel = split ? no % getSizeC() : 0;
     int planeIndex = split ? no / getSizeC() : no;
@@ -334,7 +327,6 @@ public class NativeND2Reader extends FormatReader {
       textData = false;
       refractiveIndex = null;
       exposureTime.clear();
-      firstPlane = true;
     }
   }
 
@@ -396,8 +388,11 @@ public class NativeND2Reader extends FormatReader {
             if (foundIndex != -1) break;
           }
           if (foundIndex == -1) {
-            System.arraycopy(buf, buf.length - sigBytes.length - 1,
-              buf, 0, sigBytes.length);
+            // likely faster than System.arraycopy
+            buf[0] = buf[buf.length - 4];
+            buf[1] = buf[buf.length - 3];
+            buf[2] = buf[buf.length - 2];
+            buf[3] = buf[buf.length - 1];
           }
           else if (in.getFilePointer() - n + foundIndex < in.length()) {
             in.seek(in.getFilePointer() - n + foundIndex);
@@ -1616,7 +1611,7 @@ public class NativeND2Reader extends FormatReader {
             }
             byte[] data = new byte[(int) length];
             in.read(data);
-            value = java.util.Arrays.toString(data); // todo
+            value = new String(data, Constants.ENCODING);
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively
@@ -1636,8 +1631,7 @@ public class NativeND2Reader extends FormatReader {
             if (off < 0) {
               break;
             }
-            in.seek(off + in.getFilePointer());
-            in.skipBytes(numberOfItems * 8);
+            in.seek(off + in.getFilePointer() + numberOfItems * 8);
             value = in.readLong();
             break;
           case (11): // level
@@ -1650,10 +1644,9 @@ public class NativeND2Reader extends FormatReader {
             iterateIn(in, endOffset);
 
             // Last 4 bytes in level is some kind of point table
-
-            in.seek(endOffset);
             /* ***** Index is pointer. NumberofItemes*8B ***** */
-            in.skipBytes(numberOfItems * 8);
+
+            in.seek(endOffset + numberOfItems * 8);
             break;
           default: // Shall not happen :-)
             continue;
@@ -1681,7 +1674,7 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
-          addGlobalMetaList(name, value);
+          addGlobalMeta(name, value);
         }
       }
     }
