@@ -94,5 +94,8 @@ For example, to convert a .czi image to a .tif, you would use::
 Troubleshooting
 ---------------
 
-Please send any issues, suggestions or requests to the
-`insight users mailing list <http://www.itk.org/ITK/help/mailing.html>`_.
+Please send any issues, suggestions or requests regarding the itkSCIFIOImageIO
+plugin to the `SCIFIO mailing list <mailto:scifio@scif.io>`_.
+
+For other ITK questions, use the `ITK community mailing list
+<http://www.itk.org/ITK/help/mailing.html>`_.
