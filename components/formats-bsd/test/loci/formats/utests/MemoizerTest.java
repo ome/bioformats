@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import loci.common.Location;
 import loci.formats.FormatException;
@@ -136,6 +137,15 @@ public class MemoizerTest {
       File f = memoizer.getMemoFile(id);
       String memoFile =  directory + fileDir + "." + TEST_FILE + ".bfmemo";
       assertEquals(f.getAbsolutePath(), memoFile);
+  }
+
+  @Test
+  public void testGetMemoFileNonExistingDirectory() throws Exception {
+      String uuid = UUID.randomUUID().toString();
+      File directory = new File(System.getProperty("java.io.tmpdir") + uuid);
+      memoizer = new Memoizer(reader, 0, directory);
+      File f = memoizer.getMemoFile(TEST_FILE);
+      assertEquals(f, null);
   }
 
   public static void main(String[] args) throws Exception {
