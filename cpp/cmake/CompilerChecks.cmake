@@ -63,12 +63,33 @@ int main() {
 }"
 "${var}_STDARG")
 
+  if("${var}" STREQUAL "CXX_FLAG_CXX11")
+    check_cxx_source_compiles("#include <type_traits>
+
+// overloads are enabled via the return type
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+test(T t)
+{
+  return t;
+}
+
+int main()
+{
+  test(2.4);
+}"
+"${var}_ENABLE_IF")
+  endif("${var}" STREQUAL "CXX_FLAG_CXX11")
+
   if("${var}_CSTDARG" OR "${var}_STDARG")
     set(${var} ${${var}} PARENT_SCOPE)
   else("${var}_CSTDARG" OR "${var}_STDARG")
     set(${var} FALSE PARENT_SCOPE)
   endif("${var}_CSTDARG" OR "${var}_STDARG")
 
+  if(${var} AND NOT "${var}_ENABLE_IF")
+    set(${var} FALSE PARENT_SCOPE)
+  endif(${var} AND NOT "${var}_ENABLE_IF")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
@@ -149,6 +170,9 @@ if (NOT MSVC)
       -Wunused-variable
       -Wwrite-strings
       -fstrict-aliasing)
+else (NOT MSVC)
+  set(test_flags
+      /bigobj)
 endif (NOT MSVC)
 
 # These are annoyingly verbose, produce false positives or don't work
@@ -168,7 +192,8 @@ endif (extra-warnings)
 
 
 foreach(flag ${test_flags})
-  set(test_cxx_flag "CXX_FLAG${flag}")
+  string(REPLACE "/" "_" flag_var "${flag}")
+  set(test_cxx_flag "CXX_FLAG${flag_var}")
   CHECK_CXX_COMPILER_FLAG(${flag} "${test_cxx_flag}")
   if (${test_cxx_flag})
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")

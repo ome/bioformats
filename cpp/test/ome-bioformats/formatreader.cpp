@@ -838,7 +838,7 @@ TEST_P(FormatReaderTest, DefaultPixels)
 
   std::istringstream is("");
   VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
-                         params.type, params.endian);
+                         params.type);
 
   EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512), std::logic_error);
   EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0), std::logic_error);
@@ -867,23 +867,37 @@ namespace
     operator()(T& /* v */) const
     {
       typedef typename T::element_type::value_type value_type;
+      EndianType endian = reader.isLittleEndian() ? ome::bioformats::ENDIAN_LITTLE : ome::bioformats::ENDIAN_BIG;
 
       std::stringstream ss;
+      std::vector<value_type> expected;
       for (uint32_t x = 0; x < 512; ++x)
         for (uint32_t y = 0; y < 512; ++y)
           {
             value_type val(pixel_value<value_type>(x*y));
+
+            expected.push_back(val);
+
+            if ((endian == ome::bioformats::ENDIAN_BIG &&
+                 boost::endian::order::big != boost::endian::order::native) ||
+                (endian == ome::bioformats::ENDIAN_LITTLE &&
+                 boost::endian::order::little != boost::endian::order::native))
+              ome::bioformats::byteswap(val);
+
             ss.write(reinterpret_cast<char *>(&val), sizeof(val));
           }
 
       VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
-                             reader.getPixelType(),
-                             reader.isLittleEndian() ? ome::bioformats::ENDIAN_LITTLE : ome::bioformats::ENDIAN_BIG);
+                             reader.getPixelType());
 
       ss.seekg(0, std::ios::beg);
       EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512));
       ss.seekg(0, std::ios::beg);
       EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512, 0));
+
+      ASSERT_EQ(expected.size(), buf.num_elements());
+      for (uint32_t i = 0; i < expected.size(); ++i)
+        ASSERT_EQ(expected.at(i), *(buf.data<value_type>()+i));
 
       EXPECT_NO_THROW(reader.openBytes(0, buf));
       EXPECT_NO_THROW(reader.openBytes(0, buf, 0, 0, 512, 512));
@@ -898,17 +912,14 @@ TEST_P(FormatReaderTest, FlatPixels)
   r.setId("flat");
 
   VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
-                         r.getPixelType(),
-                         r.isLittleEndian() ? ome::bioformats::ENDIAN_LITTLE : ome::bioformats::ENDIAN_BIG);
+                         r.getPixelType());
 
   FlatPixelsTest v(r, buf);
   boost::apply_visitor(v, buf.vbuffer());
-
-  /// @todo Add tests for readPlane from stream for all variants.
 }
 
 FormatReaderTestParameters variant_params[] =
-  { //                               PixelType          EndianType
+  { //                         PixelType          EndianType
     FormatReaderTestParameters(PT::INT8,          ome::bioformats::ENDIAN_BIG),
     FormatReaderTestParameters(PT::INT8,          ome::bioformats::ENDIAN_LITTLE),
 

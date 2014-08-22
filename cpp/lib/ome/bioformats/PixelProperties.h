@@ -81,7 +81,7 @@ namespace ome
       static pixel_size_type
       pixel_byte_size()
       {
-        return sizeof(typename P::native_type);
+        return sizeof(typename P::std_type);
       }
 
       /**
@@ -100,6 +100,9 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT8> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT8> >
     {
+      /// Pixel type (standard language type).
+      typedef int8_t std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_int8_t big_type;
       /// Pixel type (little endian).
@@ -120,6 +123,9 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT16> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT16> >
     {
+      /// Pixel type (standard language type).
+      typedef int16_t std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_int16_t big_type;
       /// Pixel type (little endian).
@@ -140,6 +146,9 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT32> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT32> >
     {
+      /// Pixel type (standard language type).
+      typedef int32_t std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_int32_t big_type;
       /// Pixel type (little endian).
@@ -160,6 +169,9 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> >
     {
+      /// Pixel type (standard language type).
+      typedef uint8_t std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_uint8_t big_type;
       /// Pixel type (little endian).
@@ -180,6 +192,9 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> :
       public PixelPropertiesBase<struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> >
     {
+      /// Pixel type (standard language type).
+      typedef uint16_t std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_uint16_t big_type;
       /// Pixel type (little endian).
@@ -200,6 +215,9 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> >
     {
+      /// Pixel type (standard language type).
+      typedef uint32_t std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_uint32_t big_type;
       /// Pixel type (little endian).
@@ -220,12 +238,15 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> >
     {
+      /// Pixel type (standard language type).
+      typedef float std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_float32_t big_type;
       /// Pixel type (little endian).
       typedef boost::endian::little_float32_t little_type;
       /// Pixel type (native endian).
-      typedef float native_type;
+      typedef boost::endian::native_float32_t native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
@@ -240,12 +261,15 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> >
     {
+      /// Pixel type (standard language type).
+      typedef double std_type;
+
       /// Pixel type (big endian).
       typedef boost::endian::big_float64_t big_type;
       /// Pixel type (little endian).
       typedef boost::endian::little_float64_t little_type;
       /// Pixel type (native endian).
-      typedef double native_type;
+      typedef boost::endian::native_float64_t native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
@@ -260,6 +284,9 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::BIT> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::BIT> >
     {
+      /// Pixel type (standard language type).
+      typedef bool std_type;
+
       /// Pixel type (big endian).
       typedef bool big_type;
       /// Pixel type (little endian).
@@ -280,12 +307,15 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> >
     {
+      /// Pixel type (standard language type).
+      typedef std::complex<float> std_type;
+
       /// Pixel type (big endian).
       typedef std::complex<boost::endian::big_float32_t> big_type;
       /// Pixel type (little endian).
       typedef std::complex<boost::endian::little_float32_t> little_type;
       /// Pixel type (native endian).
-      typedef std::complex<float> native_type;
+      typedef std::complex<boost::endian::native_float32_t> native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
@@ -300,12 +330,15 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> >
     {
+      /// Pixel type (standard language type).
+      typedef std::complex<double> std_type;
+
       /// Pixel type (big endian).
       typedef std::complex<boost::endian::big_float64_t> big_type;
       /// Pixel type (little endian).
       typedef std::complex<boost::endian::little_float64_t> little_type;
       /// Pixel type (native endian).
-      typedef std::complex<double> native_type;
+      typedef std::complex<boost::endian::native_float64_t> native_type;
 
       /// This pixel type is signed.
       static const bool is_signed = true;
@@ -463,6 +496,48 @@ namespace ome
                       bool            is_signed = false,
                       bool            is_integer = true,
                       bool            is_complex = false);
+
+    /**
+     * Byteswap value to switch endianness.
+     *
+     * @param value the value to swap.
+     */
+    template<typename T>
+    inline void
+    byteswap(T& value)
+    {
+      boost::endian::reverse(value);
+    }
+
+    /**
+     * Byteswap value to switch endianness.
+     *
+     * @param value the value to swap.
+     */
+    template<>
+    inline void
+    byteswap(std::complex<float>& value)
+    {
+      // For pre-C++11 compatibility, it's not possible to byteswap in
+      // place.
+      value = std::complex<float>(reverse_value(value.real()),
+                                  reverse_value(value.imag()));
+    }
+
+    /**
+     * Byteswap value to switch endianness.
+     *
+     * @param value the value to swap.
+     */
+    template<>
+    inline void
+    byteswap(std::complex<double>& value)
+    {
+      // For pre-C++11 compatibility, it's not possible to byteswap in
+      // place.
+      value = std::complex<double>(reverse_value(value.real()),
+                                   reverse_value(value.imag()));
+    }
 
   }
 }

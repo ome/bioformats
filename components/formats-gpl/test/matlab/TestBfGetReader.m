@@ -31,6 +31,50 @@ classdef TestBfGetReader < ReaderTest
             self = self@ReaderTest(name);
         end
         
+        % Input check tests
+        function testInputClass(self)
+            assertExceptionThrown(@() bfGetReader(0),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testNoInput(self)
+            self.reader = bfGetReader();
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertTrue(isempty(self.reader.getCurrentFile()));
+        end
+        
+        function testEmptyInput(self)
+            self.reader = bfGetReader('');
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertTrue(isempty(self.reader.getCurrentFile()));
+        end
+        
+        function testFakeInput(self)
+            self.reader = bfGetReader('test.fake');
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertEqual(char(self.reader.getCurrentFile()), 'test.fake');
+        end
+        
+        function testNonExistingInput(self)
+            assertExceptionThrown(@() bfGetReader('nonexistingfile'),...
+                'bfGetReader:FileNotFound');
+        end
+        
+        function testFileInput(self)
+            % Create fake file
+            if isunix,
+                filepath = fullfile('/tmp', 'test.fake');
+            else
+                filepath = fullfile('C:', 'test.fake');
+            end
+            fid = fopen(filepath, 'w+');
+            fclose(fid);
+            self.reader = bfGetReader(filepath);
+            delete(filepath);
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertEqual(char(self.reader.getCurrentFile()), filepath);
+        end
+        
         % Pixel type tests
         function checkPixelsType(self, type)
             self.reader = bfGetReader([type '-test&pixelType=' type '.fake']);

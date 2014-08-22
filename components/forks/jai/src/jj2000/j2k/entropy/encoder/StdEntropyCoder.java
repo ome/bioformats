@@ -2857,6 +2857,7 @@ public class StdEntropyCoder extends EntropyCoder
                 // Start column
                 j = sj;
                 csj = state[j];
+                boolean broken = false;
             top_half:
                 {
                     // Check for RLC: if all samples are not significant, not
@@ -2961,7 +2962,7 @@ public class StdEntropyCoder extends EntropyCoder
                             if ((rlclen>>1) != 0) {
                                 // Sample that became significant is in bottom
                                 // half of column => jump to bottom half
-                                break top_half;
+                                broken = true;
                             }
                             // Otherwise sample that became significant is in
                             // top half of column => continue on top half
@@ -3017,9 +3018,11 @@ public class StdEntropyCoder extends EntropyCoder
                             // column
                             j += sscanw;
                             csj = state[j];
-                            break top_half;
+                            broken = true;
                         }
                     }
+                }
+                if (!broken) {
                     // Do half top of column
                     // If any of the two samples is not significant and has
                     // not been visited in the current bit-plane we can not
