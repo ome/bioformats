@@ -132,10 +132,10 @@ public class MemoizerTest {
   public void testGetMemoFileDirectory() throws Exception {
       File directory = new File(System.getProperty("java.io.tmpdir"));
       memoizer = new Memoizer(reader, 0, directory);
-      String fileDir = System.getProperty("java.io.tmpdir");
-      String id = fileDir + TEST_FILE;
+      String idDir = System.getProperty("java.io.tmpdir");
+      String id = idDir + TEST_FILE;
       File f = memoizer.getMemoFile(id);
-      String memoFile =  directory + fileDir + "." + TEST_FILE + ".bfmemo";
+      String memoFile =  directory + idDir + "." + TEST_FILE + ".bfmemo";
       assertEquals(f.getAbsolutePath(), memoFile);
   }
 
@@ -150,13 +150,13 @@ public class MemoizerTest {
 
   @Test
   public void testGetMemoFileSameDirectory() throws Exception {
-      String fileDir = System.getProperty("java.io.tmpdir");
-      String id = fileDir + TEST_FILE;
-      String rootDir = fileDir.substring(0, fileDir.indexOf(File.separator));
-      File directory = new File(rootDir);
-      memoizer = new Memoizer(reader, 0, directory);
+      String idDir = System.getProperty("java.io.tmpdir");
+      String id = idDir + TEST_FILE;
+      String rootPath = idDir.substring(0, idDir.indexOf(File.separator) + 1);
+      memoizer = new Memoizer(reader, 0, new File(rootPath));
       File f = memoizer.getMemoFile(id);
-      assertEquals(f, fileDir + "." + TEST_FILE + ".bfmemo");
+      String memoFile =  idDir + "." + TEST_FILE + ".bfmemo";
+      assertEquals(f.getAbsolutePath(), memoFile);
   }
 
   public static void main(String[] args) throws Exception {

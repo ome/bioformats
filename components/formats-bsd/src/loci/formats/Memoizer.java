@@ -598,7 +598,12 @@ public class Memoizer extends ReaderWrapper {
         LOGGER.debug("skipping memo: no directory given");
         return null;
     } else {
-      if (!directory.exists() || !directory.canWrite()) {
+
+    id = new File(id).getAbsolutePath();
+    String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
+
+    if (!directory.getAbsolutePath().equals(rootPath) &&
+        (!directory.exists() || !directory.canWrite())) {
         LOGGER.warn("skipping memo: directory not writeable - {}", directory);
         return null;
       }
@@ -606,7 +611,6 @@ public class Memoizer extends ReaderWrapper {
       // this serves to strip off the drive letter on Windows
       // since we're using the absolute path, 'id' will either start with
       // File.separator (as on UNIX), or a drive letter (as on Windows)
-      id = new File(id).getAbsolutePath();
       id = id.substring(id.indexOf(File.separator) + 1);
 
       f = new File(directory, id);
