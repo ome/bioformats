@@ -113,6 +113,20 @@ public class MemoizerTest {
       memoizer.close();
   }
 
+  @Test
+  public void testGetMemoFileNoDirectory() throws Exception {
+      memoizer = new Memoizer(reader);
+      File f = memoizer.getMemoFile(TEST_FILE);
+      assertEquals(f, null);
+  }
+
+  @Test
+  public void testGetMemoFileNoDirectory2() throws Exception {
+      memoizer = new Memoizer(reader, 0);
+      File f = memoizer.getMemoFile(TEST_FILE);
+      assertEquals(f, null);
+  }
+
   public static void main(String[] args) throws Exception {
       MemoizerTest t = new MemoizerTest();
       t.setUp();
