@@ -29,7 +29,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
-<suite name="SCIFIO Unit Tests">
+<suite name="Formats-BSD Unit Tests">
     <test name="ServiceTests">
         <groups/>
         <classes>
