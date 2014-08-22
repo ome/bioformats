@@ -62,7 +62,7 @@ public class AFIReader extends FormatReader {
 
   // -- Constants --
 
-  private static final int EXTRA_IMAGES = 2;
+  private static final int EXTRA_IMAGES = 3;
 
   // -- Fields --
 
