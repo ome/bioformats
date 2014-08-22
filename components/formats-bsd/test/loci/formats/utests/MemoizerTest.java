@@ -148,6 +148,17 @@ public class MemoizerTest {
       assertEquals(f, null);
   }
 
+  @Test
+  public void testGetMemoFileSameDirectory() throws Exception {
+      String fileDir = System.getProperty("java.io.tmpdir");
+      String id = fileDir + TEST_FILE;
+      String rootDir = fileDir.substring(0, fileDir.indexOf(File.separator));
+      File directory = new File(rootDir);
+      memoizer = new Memoizer(reader, 0, directory);
+      File f = memoizer.getMemoFile(id);
+      assertEquals(f, fileDir + "." + TEST_FILE + ".bfmemo");
+  }
+
   public static void main(String[] args) throws Exception {
       MemoizerTest t = new MemoizerTest();
       t.setUp();
