@@ -176,6 +176,12 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+    </repository>
+    <repository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>

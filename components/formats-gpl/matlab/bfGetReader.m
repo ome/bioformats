@@ -1,26 +1,23 @@
 function r = bfGetReader(varargin)
 % BFGETREADER return a reader for a microscopy image using Bio-Formats
-% 
-% SYNOPSIS  r = bfGetReader()
-%           r = bfGetReader(path)
 %
-% Input 
+%   r = bfGetReader() creates an empty Bio-Formats reader extending
+%   loci.formats.ReaderWrapper.
 %
-%    id - (Optional - string) A valid path to the microscopy image
+%   r = bfGetReader(id) where id is a path to an existing file creates and
+%   initializes a reader for the input file.
 %
-%    stichFiles (Optional - scalar). Toggle the grouping of similarly
-%    named files into a single dataset based on file numbering.
-%    Default: false;
+% Examples
 %
-% Output
+%    r = bfGetReader()
+%    I = bfGetReader(path_to_file)
 %
-%    r - A reader object of class extending loci.formats.ReaderWrapper
 %
-% Adapted from bfopen.m
+% See also: BFGETPLANE
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -54,31 +51,34 @@ status = bfCheckJavaPath();
 assert(status, ['Missing Bio-Formats library. Either add bioformats_package.jar '...
     'to the static Java path or add it to the Matlab path.']);
 
-% Prompt for a file if not input
-isFile = exist(id, 'file') == 2;
-isFake = ischar(id) && strcmp(id(end-3:end), 'fake');
-if nargin == 0 || (~isFile && ~isFake)
-    [file, path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
-    id = [path file];
-    if isequal(path, 0) || isequal(file, 0), return; end
-elseif isFile && ~verLessThan('matlab', '7.9')
-    [~, f] = fileattrib(id);
+% Check if input is a fake string
+isFake = strcmp(id(max(1, end - 4):end), '.fake');
+
+if ~isempty(id) && ~isFake
+    % Check file existence using fileattrib
+    [status, f] = fileattrib(id);
+    assert(status && f.directory == 0, 'bfGetReader:FileNotFound',...
+        'No such file: %s', id);
     id = f.Name;
 end
 
 % set LuraWave license code, if available
-if exist('lurawaveLicense')
+if exist('lurawaveLicense', 'var')
     path = fullfile(fileparts(mfilename('fullpath')), 'lwf_jsdk2.6.jar');
     javaaddpath(path);
     java.lang.System.setProperty('lurawave.license', lurawaveLicense);
 end
 
+% Create a loci.formats.ReaderWrapper object
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
 if ip.Results.stitchFiles
     r = loci.formats.FileStitcher(r);
 end
 
+% Initialize the metadata store
 OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
 r.setMetadataStore(OMEXMLService.createOMEXMLMetadata());
-r.setId(id);
+
+% Initialize the reader
+if ~isempty(id), r.setId(id); end

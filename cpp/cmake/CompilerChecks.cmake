@@ -63,12 +63,33 @@ int main() {
 }"
 "${var}_STDARG")
 
+  if("${var}" STREQUAL "CXX_FLAG_CXX11")
+    check_cxx_source_compiles("#include <type_traits>
+
+// overloads are enabled via the return type
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+test(T t)
+{
+  return t;
+}
+
+int main()
+{
+  test(2.4);
+}"
+"${var}_ENABLE_IF")
+  endif("${var}" STREQUAL "CXX_FLAG_CXX11")
+
   if("${var}_CSTDARG" OR "${var}_STDARG")
     set(${var} ${${var}} PARENT_SCOPE)
   else("${var}_CSTDARG" OR "${var}_STDARG")
     set(${var} FALSE PARENT_SCOPE)
   endif("${var}_CSTDARG" OR "${var}_STDARG")
 
+  if(${var} AND NOT "${var}_ENABLE_IF")
+    set(${var} FALSE PARENT_SCOPE)
+  endif(${var} AND NOT "${var}_ENABLE_IF")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
@@ -79,88 +100,100 @@ endfunction(cxx_std_check)
 # Boost fallbacks if native implementations are available.
 option(cxxstd-autodetect "Enable C++11 features if possible, otherwise fall back to C++03 and C++98" ON)
 if (cxxstd-autodetect)
-  cxx_std_check(-std=c++11 CXX_FLAG_CXX11)
-  if (CXX_FLAG_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  else(CXX_FLAG_CXX11)
-    cxx_std_check(-std=c++03 CXX_FLAG_CXX03)
-    if (CXX_FLAG_CXX03)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
-    else(CXX_FLAG_CXX03)
-      cxx_std_check(-std=c++98 CXX_FLAG_CXX98)
-      if (CXX_FLAG_CXX98)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-      else(CXX_FLAG_CXX98)
-        cxx_std_check("" CXX_FLAG_NONE)
-        if (NOT CXX_FLAG_NONE)
-          message(ERROR "Failed to detect compiler options for Standard C++")
-        endif (NOT CXX_FLAG_NONE)
-      endif(CXX_FLAG_CXX98)
-    endif(CXX_FLAG_CXX03)
-  endif(CXX_FLAG_CXX11)
+  if (NOT MSVC)
+    cxx_std_check(-std=c++11 CXX_FLAG_CXX11)
+    if (CXX_FLAG_CXX11)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    else(CXX_FLAG_CXX11)
+      cxx_std_check(-std=c++03 CXX_FLAG_CXX03)
+      if (CXX_FLAG_CXX03)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
+      else(CXX_FLAG_CXX03)
+        cxx_std_check(-std=c++98 CXX_FLAG_CXX98)
+        if (CXX_FLAG_CXX98)
+          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+        else(CXX_FLAG_CXX98)
+          cxx_std_check("" CXX_FLAG_NONE)
+          if (NOT CXX_FLAG_NONE)
+            message(ERROR "Failed to detect compiler options for Standard C++")
+          endif (NOT CXX_FLAG_NONE)
+        endif(CXX_FLAG_CXX98)
+      endif(CXX_FLAG_CXX03)
+    endif(CXX_FLAG_CXX11)
+  endif (NOT MSVC)
 endif (cxxstd-autodetect)
 
 # Try to enable the -pedantic flag.  This one needs special casing
 # since it may break building with older compilers where int64_t (long
 # long) isn't available in pedantic mode because it's not part of the
 # C++98 standard.  Newer compilers support long long properly.
-set(flag -pedantic)
-set(test_cxx_flag "CXX_FLAG${flag}")
-CHECK_CXX_COMPILER_FLAG(${flag} "${test_cxx_flag}")
-if (${test_cxx_flag})
-  SET(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
-  check_cxx_source_compiles(
-"int main() {
-  long long l;
-}"
-CXX_PEDANTIC_LONG_LONG)
-  SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
-  if (${CXX_PEDANTIC_LONG_LONG})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
-  endif (${CXX_PEDANTIC_LONG_LONG})
-endif (${test_cxx_flag})
+if (NOT MSVC)
+  set(flag -pedantic)
+  set(test_cxx_flag "CXX_FLAG${flag}")
+  CHECK_CXX_COMPILER_FLAG(${flag} "${test_cxx_flag}")
+  if (${test_cxx_flag})
+    SET(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+    check_cxx_source_compiles(
+  "int main() {
+    long long l;
+  }"
+  CXX_PEDANTIC_LONG_LONG)
+    SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+    if (${CXX_PEDANTIC_LONG_LONG})
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+    endif (${CXX_PEDANTIC_LONG_LONG})
+  endif (${test_cxx_flag})
+endif (NOT MSVC)
 
 # Check if the compiler supports each of the following additional
 # warning flags, and enable them if supported.  This greatly improves
 # the quality of the build by checking for a number of common
 # problems, some of which are quite serious.
-set(test_flags
-    -Wall
-    -Wcast-align
-    -Wcast-qual
-    -Wctor-dtor-privacy
-    -Wextra
-    -Wformat=2
-    -Wimplicit-atomic-properties
-    -Wmissing-declarations
-    -Wnon-virtual-dtor
-    -Wold-style-cast
-    -Woverlength-strings
-    -Woverloaded-virtual
-    -Wredundant-decls
-    -Wreorder
-    -Wswitch-default
-    -Wunused-variable
-    -Wwrite-strings
-    -fstrict-aliasing)
+if (NOT MSVC)
+  set(test_flags
+      -Wall
+      -Wcast-align
+      -Wcast-qual
+      -Wctor-dtor-privacy
+      -Wextra
+      -Wformat=2
+      -Wimplicit-atomic-properties
+      -Wmissing-declarations
+      -Wnon-virtual-dtor
+      -Wold-style-cast
+      -Woverlength-strings
+      -Woverloaded-virtual
+      -Wredundant-decls
+      -Wreorder
+      -Wswitch-default
+      -Wunused-variable
+      -Wwrite-strings
+      -fstrict-aliasing)
+else (NOT MSVC)
+  set(test_flags
+      /bigobj)
+endif (NOT MSVC)
 
 # These are annoyingly verbose, produce false positives or don't work
 # nicely with all supported compiler versions, so are disabled unless
 # explicitly enabled.
 option(extra-warnings "Enable extra compiler warnings" OFF)
 if (extra-warnings)
-list(APPEND test_flags
-    -Wconversion
-    -Wdocumentation
-    -Wfloat-equal
-    -Wmissing-prototypes
-    -Wunreachable-code)
+  if (NOT MSVC)
+  list(APPEND test_flags
+      -Wconversion
+      -Wdocumentation
+      -Wfloat-equal
+      -Wmissing-prototypes
+      -Wunreachable-code)
+  endif (NOT MSVC)
 endif (extra-warnings)
 
 
 foreach(flag ${test_flags})
-  set(test_cxx_flag "CXX_FLAG${flag}")
+  string(REPLACE "/" "_" flag_var "${flag}")
+  set(test_cxx_flag "CXX_FLAG${flag_var}")
   CHECK_CXX_COMPILER_FLAG(${flag} "${test_cxx_flag}")
   if (${test_cxx_flag})
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")

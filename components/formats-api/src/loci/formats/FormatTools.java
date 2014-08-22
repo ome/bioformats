@@ -54,6 +54,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -871,15 +872,22 @@ public final class FormatTools {
 
     filename = filename.replaceAll(CHANNEL_NAME, channelName);
 
-    String date = retrieve.getImageAcquisitionDate(series).getValue();
+    Timestamp timestamp = retrieve.getImageAcquisitionDate(series);
     long stamp = 0;
-    if (retrieve.getPlaneCount(series) > image) {
-      Double deltaT = retrieve.getPlaneDeltaT(series, image);
-      if (deltaT != null) {
-        stamp = (long) (deltaT * 1000);
+    String date = null;
+    if (timestamp != null) {
+      date = timestamp.getValue();
+      if (retrieve.getPlaneCount(series) > image) {
+        Double deltaT = retrieve.getPlaneDeltaT(series, image);
+        if (deltaT != null) {
+          stamp = (long) (deltaT * 1000);
+        }
       }
+      stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
     }
-    stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
+    else {
+      stamp = System.currentTimeMillis();
+    }
     date = DateTools.convertDate(stamp, (int) DateTools.UNIX_EPOCH);
 
     filename = filename.replaceAll(TIMESTAMP, date);

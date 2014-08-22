@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,11 +24,9 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetPlane < TestBfMatlab
+classdef TestBfGetPlane < ReaderTest
     
     properties
-        sizeX
-        sizeY
         iPlane = 1
         x
         y
@@ -38,16 +36,12 @@ classdef TestBfGetPlane < TestBfMatlab
     
     methods
         function self = TestBfGetPlane(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
         end
         
         function setUp(self)
-            setUp@TestBfMatlab(self)
-            bfCheckJavaPath();
-            self.reader = loci.formats.in.FakeReader();
+            setUp@ReaderTest(self)
             self.reader.setId('test.fake');
-            self.sizeX = self.reader.DEFAULT_SIZE_X;
-            self.sizeY = self.reader.DEFAULT_SIZE_Y;
             self.x = 1;
             self.y = 1;
             self.width = self.sizeX;
@@ -55,9 +49,24 @@ classdef TestBfGetPlane < TestBfMatlab
         end
         
         % Input check tests
+        function testNoInput(self)
+            assertExceptionThrown(@() bfGetPlane(), 'MATLAB:minrhs');
+        end
+        
         function testReaderClass(self)
-            assertExceptionThrown(@() bfGetPlane(0, self.iPlane),...
+            assertExceptionThrown(@() bfGetPlane([]),...
                 'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testInvalidReader(self)
+            self.reader.close();
+            assertExceptionThrown(@() bfGetPlane(self.reader),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testNoInputPlane(self)
+            f = @() bfGetPlane(self.reader);
+            assertExceptionThrown(f, 'MATLAB:InputParser:notEnoughInputs');
         end
         
         function checkInvalidInput(self)
@@ -65,25 +74,21 @@ classdef TestBfGetPlane < TestBfMatlab
             assertExceptionThrown(f,...
                 'MATLAB:InputParser:ArgumentFailedValidation');
         end
-
-        function testInvalidReader(self)
-            self.reader.close();
-            self.checkInvalidInput();
-        end
         
         function testZeroPlane(self)
-            self.iPlane = 0;
-            self.checkInvalidInput();
+            assertExceptionThrown(@() bfGetPlane(self.reader, 0),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         function testOversizedPlaneIndex(self)
-            self.iPlane = self.reader.getImageCount()+1;
-            self.checkInvalidInput();
+            nmax = self.reader.getImageCount();
+            assertExceptionThrown(@() bfGetPlane(self.reader, nmax + 1),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         function testPlaneIndexArray(self)
-            self.iPlane = [1 1];
-            self.checkInvalidInput();
+            assertExceptionThrown(@() bfGetPlane(self.reader, [1 1]),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         %% Tile input tests
@@ -144,7 +149,7 @@ classdef TestBfGetPlane < TestBfMatlab
             self.height = self.sizeY;
             self.checkInvalidTileInput(self.x, self.y, self.width, self.height);
         end
-
+        
         % Pixel type tests
         function checkPixelsType(self, pixelsType)
             self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
@@ -253,7 +258,6 @@ classdef TestBfGetPlane < TestBfMatlab
             self.width = 1;
             self.height = 100;
             self.checkTile()
-        end
-
+        end        
     end
 end

@@ -35,6 +35,7 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS}
                     ${TIFF_INCLUDE_DIR})
 
 set(OME_BIOFORMATS_SOURCES
@@ -44,8 +45,11 @@ set(OME_BIOFORMATS_SOURCES
     MetadataConfigurable.cpp
     MetadataOptions.cpp
     Modulo.cpp
+    PixelBuffer.cpp
+    PixelProperties.cpp
     UnknownFormatException.cpp
     UnsupportedCompressionException.cpp
+    VariantPixelBuffer.cpp
     Version.cpp)
 
 set(OME_BIOFORMATS_HEADERS
@@ -64,6 +68,7 @@ set(OME_BIOFORMATS_HEADERS
     Types.h
     UnknownFormatException.h
     UnsupportedCompressionException.h
+    VariantPixelBuffer.h
     Version.h)
 
 set(OME_BIOFORMATS_DETAIL_SOURCES

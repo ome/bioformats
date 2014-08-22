@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2013 Open Microscopy Environment:
+% Copyright (C) 2013-2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,11 +24,55 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetReader < TestBfMatlab
+classdef TestBfGetReader < ReaderTest
     
     methods
         function self = TestBfGetReader(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
+        end
+        
+        % Input check tests
+        function testInputClass(self)
+            assertExceptionThrown(@() bfGetReader(0),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testNoInput(self)
+            self.reader = bfGetReader();
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertTrue(isempty(self.reader.getCurrentFile()));
+        end
+        
+        function testEmptyInput(self)
+            self.reader = bfGetReader('');
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertTrue(isempty(self.reader.getCurrentFile()));
+        end
+        
+        function testFakeInput(self)
+            self.reader = bfGetReader('test.fake');
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertEqual(char(self.reader.getCurrentFile()), 'test.fake');
+        end
+        
+        function testNonExistingInput(self)
+            assertExceptionThrown(@() bfGetReader('nonexistingfile'),...
+                'bfGetReader:FileNotFound');
+        end
+        
+        function testFileInput(self)
+            % Create fake file
+            if isunix,
+                filepath = fullfile('/tmp', 'test.fake');
+            else
+                filepath = fullfile('C:', 'test.fake');
+            end
+            fid = fopen(filepath, 'w+');
+            fclose(fid);
+            self.reader = bfGetReader(filepath);
+            delete(filepath);
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertEqual(char(self.reader.getCurrentFile()), filepath);
         end
         
         % Pixel type tests

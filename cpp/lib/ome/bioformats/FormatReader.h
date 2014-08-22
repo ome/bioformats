@@ -60,8 +60,7 @@ namespace ome
   namespace bioformats
   {
 
-    class PixelBuffer;
-    class PixelBufferRaw;
+    class VariantPixelBuffer;
 
     /**
      * Interface for all biological file format readers.
@@ -356,7 +355,7 @@ namespace ome
        */
       virtual
       void
-      get8BitLookupTable(PixelBufferRaw& buf) const = 0;
+      get8BitLookupTable(VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the 16-bit color lookup table associated with the most
@@ -376,7 +375,7 @@ namespace ome
        */
       virtual
       void
-      get16BitLookupTable(PixelBufferRaw& buf) const = 0;
+      get16BitLookupTable(VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -543,7 +542,7 @@ namespace ome
        * Obtain an image plane.
        *
        * Obtain and copy the image plane from the current file into a
-       * PixelBuffer of size
+       * VariantPixelBuffer of size
        *
        * \code{.cpp}
        * getSizeX * getSizeY * bytesPerPixel * getRGBChannelCount()
@@ -557,13 +556,13 @@ namespace ome
       virtual
       void
       openBytes(dimension_size_type no,
-                PixelBufferRaw&     buf) const = 0;
+                VariantPixelBuffer& buf) const = 0;
 
       /**
        * Obtain a sub-image of an image plane.
        *
        * Obtain and copy the sub-image of an image plane from the
-       * current file into a PixelBuffer of size
+       * current file into a VariantPixelBuffer of size
        *
        * \code{.cpp}
        * w * h * bytesPerPixel * getRGBChannelCount()
@@ -581,7 +580,7 @@ namespace ome
       virtual
       void
       openBytes(dimension_size_type no,
-                PixelBufferRaw&     buf,
+                VariantPixelBuffer& buf,
                 dimension_size_type x,
                 dimension_size_type y,
                 dimension_size_type w,
@@ -591,7 +590,7 @@ namespace ome
        * Obtain a thumbnail of an image plane.
        *
        * Obtail and copy the thumbnail for the specified image plane
-       * from the current file into a PixelBuffer.
+       * from the current file into a VariantPixelBuffer.
        *
        * @param no the image index within the file.
        * @param buf the destination pixel buffer.
@@ -599,7 +598,7 @@ namespace ome
       virtual
       void
       openThumbBytes(dimension_size_type no,
-                     PixelBufferRaw&     buf) const = 0;
+                     VariantPixelBuffer& buf) const = 0;
 
       // Documented in superclass.
       //virtual
