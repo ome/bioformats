@@ -114,4 +114,10 @@
         <class name="loci.formats.utests.FormatToolsTest"/>
       </classes>
     </test>
+    <test name="MemoizerTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.MemoizerTest"/>
+      </classes>
+    </test>
 </suite>
