@@ -59,7 +59,7 @@ public class AFIReader extends FormatReader {
 
   // -- Constants --
 
-  private static final int EXTRA_IMAGES = 3;
+  private static final int EXTRA_IMAGES = 2;
 
   // -- Fields --
 
@@ -110,7 +110,7 @@ public class AFIReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
-      reader[0].setCoreIndex(getCoreIndex());
+      reader[0].setCoreIndex(getCoreIndex() + 1);
       return reader[0].openThumbBytes(no);
     }
 
@@ -132,7 +132,7 @@ public class AFIReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
-      reader[0].setCoreIndex(getCoreIndex());
+      reader[0].setCoreIndex(getCoreIndex() + 1);
       return reader[0].openBytes(no, buf, x, y, w, h);
     }
 
@@ -223,6 +223,7 @@ public class AFIReader extends FormatReader {
     }
 
     core = reader[0].getCoreMetadataList();
+    core.remove(core.size() - EXTRA_IMAGES - 1);
 
     for (int i=0; i<core.size() - EXTRA_IMAGES; i++) {
       CoreMetadata c = core.get(i);
