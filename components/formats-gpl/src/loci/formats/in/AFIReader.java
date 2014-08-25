@@ -95,12 +95,14 @@ public class AFIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   @Override
   public int getOptimalTileWidth() {
+    reader[0].setCoreIndex(getCoreIndex());
     return reader[0].getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
+    reader[0].setCoreIndex(getCoreIndex());
     return reader[0].getOptimalTileHeight();
   }
 
