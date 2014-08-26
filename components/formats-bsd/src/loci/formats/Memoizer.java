@@ -604,7 +604,8 @@ public class Memoizer extends ReaderWrapper {
    */
   public File getMemoFile(String id) {
     File f = null;
-    if (directory == null) {
+    File writeDirectory = null;
+    if (directory == null && !doInPlaceCaching) {
       // Disabling memoization unless specific directory is provided.
       // This prevents random cache files from being unknowingly written.
       LOGGER.debug("skipping memo: no directory given");
@@ -618,18 +619,26 @@ public class Memoizer extends ReaderWrapper {
       id = new File(id).getAbsolutePath();
       String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
 
-      if (!directory.getAbsolutePath().equals(rootPath) &&
-          (!directory.exists() || !directory.canWrite())) {
-        LOGGER.warn("skipping memo: directory not writeable - {}", directory);
+      if (doInPlaceCaching || directory.getAbsolutePath().equals(rootPath)) {
+        f = new File(id);
+        writeDirectory = new File(f.getParent());
+      } else {
+        // this serves to strip off the drive letter on Windows
+        // since we're using the absolute path, 'id' will either start with
+        // File.separator (as on UNIX), or a drive letter (as on Windows)
+        id = id.substring(id.indexOf(File.separator) + 1);
+        f = new File(directory, id);
+        writeDirectory = directory;
+      }
+
+      // Check either the in-place folder or the main memoizer directory
+      // exists and is writeable
+      if (!writeDirectory.exists() || !writeDirectory.canWrite()) {
+        LOGGER.warn("skipping memo: directory not writeable - {}",
+          writeDirectory);
         return null;
       }
 
-      // this serves to strip off the drive letter on Windows
-      // since we're using the absolute path, 'id' will either start with
-      // File.separator (as on UNIX), or a drive letter (as on Windows)
-      id = id.substring(id.indexOf(File.separator) + 1);
-
-      f = new File(directory, id);
       f.getParentFile().mkdirs();
     }
     String p = f.getParent();
