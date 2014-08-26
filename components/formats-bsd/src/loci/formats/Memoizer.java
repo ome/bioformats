@@ -309,10 +309,16 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    * Directory where all memoization files should be created. If this value is
-   * non-null, then all files will be created under it rather than sitting
-   * beside the setId file.
+   * non-null, then all memoization files will be created under it. Can be
+   * overriden by inPlaceCaching.
    */
   private final File directory;
+
+  /**
+   * If True, then all memoization files will be created beside the setId
+   * file.
+   */
+  private boolean doInPlaceCaching = false;
 
   protected transient Deser ser;
 
@@ -397,6 +403,12 @@ public class Memoizer extends ReaderWrapper {
     super(r);
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+  }
+
+  public Memoizer(IFormatReader r, long minimumElapsed,
+                  boolean doInPlaceCaching) {
+    this(r, minimumElapsed, null);
+    this.doInPlaceCaching = doInPlaceCaching;
   }
 
   public boolean isLoadedFromMemo() {
