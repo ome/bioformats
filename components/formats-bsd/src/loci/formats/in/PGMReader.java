@@ -32,6 +32,7 @@
 
 package loci.formats.in;
 
+import java.io.StreamTokenizer;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
@@ -72,7 +73,9 @@ public class PGMReader extends FormatReader {
 
   /** Constructs a new PGMReader. */
   public PGMReader() {
-    super("Portable Gray Map", "pgm");
+    super("Portable Any Map",
+      new String[] {"pbm", "pgm", "ppm"});
+
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
     suffixNecessary = false;
   }
@@ -142,57 +145,71 @@ public class PGMReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-
-    String magic = in.readLine().trim();
-
-    boolean isBlackAndWhite = false;
-
     CoreMetadata m = core.get(0);
 
+    //              Plain     Raw
+    // B&W            P1      P4
+    // Grayscale      P2      P5
+    // RGB            P3      P6
+    final String magic = in.readString(2);
     rawBits = magic.equals("P4") || magic.equals("P5") || magic.equals("P6");
     m.sizeC = (magic.equals("P3") || magic.equals("P6")) ? 3 : 1;
-    isBlackAndWhite = magic.equals("P1") || magic.equals("P4");
+    final boolean isBlackAndWhite = magic.equals("P1") || magic.equals("P4");
 
-    String line = readNextLine();
+    StreamTokenizer st = new StreamTokenizer(in);
+    st.commentChar('#');
 
-    line = line.replaceAll("[^0-9]", " ");
-    int space = line.indexOf(" ");
-    m.sizeX = Integer.parseInt(line.substring(0, space).trim());
-    m.sizeY = Integer.parseInt(line.substring(space + 1).trim());
+    int token;
 
+    token = st.nextToken();
+    m.sizeX = (int) st.nval;
+    token = st.nextToken();
+    m.sizeY = (int) st.nval;
     if (!isBlackAndWhite) {
-      int max = Integer.parseInt(readNextLine());
-      if (max > 255) m.pixelType = FormatTools.UINT16;
-      else m.pixelType = FormatTools.UINT8;
+      token = st.nextToken();
+      final int max = (int) st.nval;
+      if (max > 255)
+        m.pixelType = FormatTools.UINT16;
+      else
+        m.pixelType = FormatTools.UINT8;
     }
 
-    offset = in.getFilePointer();
+    // After reading the 2 or 3 header entries, it is possible that there are
+    // multiple comments before the actual pixel data.
+    Byte c;
+    do {
+      c = in.readByte();
+      if (c == 35) {
+        // Found a # for comment
+        do {
+          c = in.readByte();
+        } while (c != 13 && c != 10); // comment only ends after CR or LF
+      }
+    } while (c == 32 || c == 13 || c == 10 || c == 9 || c == 11 || c == 12);
+    //            space      CR         LF         TAB       VT         FF
+    offset = in.getFilePointer() -1;
 
     addGlobalMeta("Black and white", isBlackAndWhite);
 
     m.rgb = getSizeC() == 3;
     m.dimensionOrder = "XYCZT";
     m.littleEndian = true;
-    m.interleaved = false;
+    m.interleaved = true;
     m.sizeZ = 1;
     m.sizeT = 1;
-    m.imageCount = 1;
     m.indexed = false;
     m.falseColor = false;
-    m.metadataComplete = true;
+
+    // This may not be true. Multiple images were added to the netpbm
+    // formats in July 2000.
+    m.imageCount = 1;
+
+    // 1. the comments are being ignored;
+    // 2. we may be missing some images (allowed in raw)
+    m.metadataComplete = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-  }
-
-  // -- Helper methods --
-
-  private String readNextLine() throws IOException {
-    String line = in.readLine().trim();
-    while (line.startsWith("#") || line.length() == 0) {
-      line = in.readLine().trim();
-    }
-    return line;
   }
 
 }
