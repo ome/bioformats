@@ -593,12 +593,21 @@ public class Memoizer extends ReaderWrapper {
   public File getMemoFile(String id) {
     File f = null;
     if (directory == null) {
-        // Disabling memoization unless specific directory is provided.
-        // This prevents random cache files from being unknowingly written.
-        LOGGER.debug("skipping memo: no directory given");
-        return null;
+      // Disabling memoization unless specific directory is provided.
+      // This prevents random cache files from being unknowingly written.
+      LOGGER.debug("skipping memo: no directory given");
+      return null;
     } else {
-      if (!directory.exists() || !directory.canWrite()) {
+
+      // If the memoizer directory is set to be the root folder, the memo file
+      // will be saved in the same folder as the file specified by id. Since
+      // the root folder will likely not be writeable by the user, we want to
+      // exclude this special case from the test below
+      id = new File(id).getAbsolutePath();
+      String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
+
+      if (!directory.getAbsolutePath().equals(rootPath) &&
+          (!directory.exists() || !directory.canWrite())) {
         LOGGER.warn("skipping memo: directory not writeable - {}", directory);
         return null;
       }
@@ -606,7 +615,6 @@ public class Memoizer extends ReaderWrapper {
       // this serves to strip off the drive letter on Windows
       // since we're using the absolute path, 'id' will either start with
       // File.separator (as on UNIX), or a drive letter (as on Windows)
-      id = new File(id).getAbsolutePath();
       id = id.substring(id.indexOf(File.separator) + 1);
 
       f = new File(directory, id);
