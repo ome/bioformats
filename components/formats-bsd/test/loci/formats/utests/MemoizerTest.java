@@ -60,6 +60,10 @@ public class MemoizerTest {
   private static final String TEST_FILE =
     "test&pixelType=int8&sizeX=20&sizeY=20&sizeC=1&sizeZ=1&sizeT=1.fake";
 
+  private File idDir;
+
+  private String id;
+
   private FakeReader reader;
 
   private Memoizer memoizer;
@@ -81,7 +85,13 @@ public class MemoizerTest {
     // Location.mapId(TEST_FILE, TEST_FILE);
     reader = new FakeReader();
     try {
-      reader.setId(TEST_FILE);
+      String uuid = UUID.randomUUID().toString();
+      idDir = new File(System.getProperty("java.io.tmpdir"), uuid);
+      idDir.mkdirs();
+      File tempFile = new File(idDir, TEST_FILE);
+      tempFile.createNewFile();
+      id = tempFile.getAbsolutePath();
+      reader.setId(id);
       sizeX = reader.getSizeX();
       sizeY = reader.getSizeY();
       bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
@@ -101,30 +111,30 @@ public class MemoizerTest {
   @Test
   public void testSimple() throws Exception {
       memoizer = new Memoizer(reader);
-      File f = memoizer.getMemoFile(TEST_FILE);
+      File f = memoizer.getMemoFile(id);
       if (f != null && f.exists()) {
         f.delete();
       }
       // At this point we're sure that there's no memo file.
-      reader.setId(TEST_FILE);
+      reader.setId(id);
       reader.close();
-      memoizer.setId(TEST_FILE);
+      memoizer.setId(id);
       memoizer.close();
-      memoizer.setId(TEST_FILE);
+      memoizer.setId(id);
       memoizer.close();
   }
 
   @Test
   public void testGetMemoFileNoDirectory() throws Exception {
       memoizer = new Memoizer(reader);
-      File f = memoizer.getMemoFile(TEST_FILE);
+      File f = memoizer.getMemoFile(id);
       assertEquals(f, null);
   }
 
   @Test
   public void testGetMemoFileNoDirectory2() throws Exception {
       memoizer = new Memoizer(reader, 0);
-      File f = memoizer.getMemoFile(TEST_FILE);
+      File f = memoizer.getMemoFile(id);
       assertEquals(f, null);
   }
 
@@ -132,9 +142,8 @@ public class MemoizerTest {
   public void testGetMemoFileDirectory() throws Exception {
       File directory = new File(System.getProperty("java.io.tmpdir"));
       memoizer = new Memoizer(reader, 0, directory);
-      String idDir = System.getProperty("java.io.tmpdir");
-      String id = new File(idDir, TEST_FILE).getAbsolutePath();
-      String memoDir = idDir.substring(idDir.indexOf(File.separator) + 1);
+      String memoDir = idDir.getAbsolutePath();
+      memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
       File memoFile = new File(directory, memoDir);
       memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
       assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
@@ -146,19 +155,16 @@ public class MemoizerTest {
       String uuid = UUID.randomUUID().toString();
       File directory = new File(System.getProperty("java.io.tmpdir") + uuid);
       memoizer = new Memoizer(reader, 0, directory);
-      File f = memoizer.getMemoFile(TEST_FILE);
-      assertEquals(f, null);
+      assertEquals(memoizer.getMemoFile(id), null);
   }
 
   @Test
-  public void testGetMemoFileSameDirectory() throws Exception {
-      String idDir = System.getProperty("java.io.tmpdir");
-      String id = new File(idDir, TEST_FILE).getAbsolutePath();
-      String rootPath = idDir.substring(0, idDir.indexOf(File.separator) + 1);
+  public void testGetMemoFileInPlaceDirectory() throws Exception {
+      String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
       memoizer = new Memoizer(reader, 0, new File(rootPath));
       File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
       assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
-                   memoFile.getAbsolutePath());
+        memoFile.getAbsolutePath());
   }
 
   public static void main(String[] args) throws Exception {
