@@ -56,15 +56,16 @@ import ome.xml.model.enums.NamingConvention;
  */
 public class FileExportSPW {
   
-  private int sizeT = 3;
-  private int rows = 2;
-  private int cols = 2;
+  private final int sizeT = 3;
+  private final int rows = 2;
+  private final int cols = 2;
+  private final int fovPerWell = 2;
 
   /** The file writer. */
   private ImageWriter writer;
 
   /** The name of the output file. */
-  private String outputFile;
+  private final String outputFile;
 
   /**
    * Construct a new FileExport that will save to the specified file.
@@ -83,9 +84,9 @@ public class FileExportSPW {
 
     IMetadata omexml = initializeMetadata(width, height, pixelType);
     
-    int series = 0;
-    int index = 0;
-    int nSeries = rows * cols;
+    int series = 0;  
+    int index;
+    int nSeries = rows * cols *  fovPerWell;
     
     // only save a plane if the file writer was initialized successfully
     boolean initializationSuccess = initializeWriter(omexml);
@@ -125,15 +126,11 @@ public class FileExportSPW {
     try {
       writer.setId(outputFile);
     }
-    catch (FormatException e) {
-      exception = e;
-    }
-    catch (IOException e) {
+    catch (FormatException | IOException e) {
       exception = e;
     }
     if (exception != null) {
       System.err.println("Failed to initialize file writer.");
-      exception.printStackTrace();
     }
     return exception == null;
   }
@@ -154,77 +151,83 @@ public class FileExportSPW {
       OMEXMLMetadata meta = service.createOMEXMLMetadata();
       //IMetadata meta = service.createOMEXMLMetadata();
       meta.createRoot();
-      
-      String suffixStr;
+     
       int plateIndex = 0;
-      int sampleIndex = 0;
-      int series = 0;
+      int series = 0;     // count of images
       int well = 0;
-      
+     
       // Create Minimal 2x2 Plate 
       meta.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-   
+      
       meta.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
       meta.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
-
       meta.setPlateRows(new PositiveInteger(rows), 0);
       meta.setPlateColumns(new PositiveInteger(cols), 0);
       meta.setPlateName("First test Plate", 0);
+      
       PositiveInteger pwidth = new PositiveInteger(width);
       PositiveInteger pheight = new PositiveInteger(height);
       
+      char rowChar = 'A';
       for (int row = 0; row  < rows; row++) {
         for (int column = 0; column < cols; column++) {
-         
-          suffixStr = Integer.toString(series);
-          // Create Image
-          String imageID = MetadataTools.createLSID("Image:" + suffixStr, series);
-          meta.setImageID(imageID, series);
-          meta.setImageName("Image: " + suffixStr, series);
-          meta.setPixelsID("Pixels:0:"+suffixStr, series);
-
-          // specify that the pixel data is stored in big-endian format
-          // change 'TRUE' to 'FALSE' to specify little-endian format
-          meta.setPixelsBinDataBigEndian(Boolean.TRUE,  series, 0);
-
-          // specify that the images are stored in ZCT order
-          meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, series);
-
-          // specify that the pixel type of the images
-          meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), series);
-
-          // specify the dimensions of the images
-          meta.setPixelsSizeX(pwidth, series);
-          meta.setPixelsSizeY(pheight, series);
-          meta.setPixelsSizeZ(new PositiveInteger(1), series);
-          meta.setPixelsSizeC(new PositiveInteger(1), series);
-          meta.setPixelsSizeT(new PositiveInteger(sizeT), series);
-
-          // define each channel and specify the number of samples in the channel
-          // the number of samples is 3 for RGB images and 1 otherwise
-          meta.setChannelID("Channel:0:"+suffixStr, series,0 );
-          meta.setChannelSamplesPerPixel(new PositiveInteger(1), series, 0);
           
-          // set up wells
-          String wellID = MetadataTools.createLSID("Well:" + suffixStr, 0, well);
+          // set up well
+          String wellID = MetadataTools.createLSID("Well:", well);
           meta.setWellID(wellID, plateIndex, well);
           meta.setWellRow(new NonNegativeInteger(row), plateIndex, well);
           meta.setWellColumn(new NonNegativeInteger(column), plateIndex, well); 
           
-          // one sample per well
-          String wellSampleID = MetadataTools.createLSID("WellSample", 0, series, sampleIndex);
-          meta.setWellSampleID(wellSampleID, 0, well, sampleIndex);
-          meta.setWellSampleIndex(new NonNegativeInteger(series), 0, series, sampleIndex);
-          meta.setWellSampleImageRef(imageID, 0, series, sampleIndex);  
+          for(int fov = 0; fov <  fovPerWell ; fov++)  {
+         
+            // Create Image
+            String imageName = rowChar + ":" + Integer.toString(column) + ":FOV:" + Integer.toString(fov);
+            String imageID = MetadataTools.createLSID("Image", well, fov);
+            meta.setImageID(imageID, series);
+            meta.setImageName(imageName, series);
+            
+            String pixelsID = MetadataTools.createLSID("Pixels",row, well, fov);
+            meta.setPixelsID(pixelsID, series);
+            
+            // specify that the pixel data is stored in big-endian format
+            // change 'TRUE' to 'FALSE' to specify little-endian format
+            meta.setPixelsBinDataBigEndian(Boolean.TRUE,  series, 0);
 
-          // add FLIM ModuloAlongT annotation if required 
-          //CoreMetadata modlo = createModuloAnn(meta);
-          //service.addModuloAlong(meta, modlo, series);
+            // specify that the image is stored in ZCT order
+            meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, series);
+
+            // specify the pixel type of the image
+            meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), series);
+
+            // specify the dimensions of the image
+            meta.setPixelsSizeX(pwidth, series);
+            meta.setPixelsSizeY(pheight, series);
+            meta.setPixelsSizeZ(new PositiveInteger(1), series);
+            meta.setPixelsSizeC(new PositiveInteger(1), series);
+            meta.setPixelsSizeT(new PositiveInteger(sizeT), series);
+
+            // define each channel and specify the number of samples in the channel
+            // the number of samples is 3 for RGB images and 1 otherwise
+            String channelID = MetadataTools.createLSID("Channel",well, fov);
+            meta.setChannelID(channelID, series,0 );
+            meta.setChannelSamplesPerPixel(new PositiveInteger(1), series, 0);
            
-          series++;
+            // set sample
+            String wellSampleID = MetadataTools.createLSID("WellSample",well, fov);
+            meta.setWellSampleID(wellSampleID,0,well,fov);
+            // NB sampleIndex here == series ie the image No
+            meta.setWellSampleIndex(new NonNegativeInteger(series), 0, well, fov);
+            meta.setWellSampleImageRef(imageID, 0, well, fov);
+            
+            // add FLIM ModuloAlongT annotation if required 
+            //CoreMetadata modlo = createModuloAnn(meta);
+            //service.addModuloAlong(meta, modlo, series);
+            
+            series++;
+          }  //end of samples  
           well++;
-      
         }
+        rowChar++;
       }
       
       //String dump = meta.dumpXML();
@@ -232,21 +235,10 @@ public class FileExportSPW {
       //System.out.println(dump);
       return meta;
       }
-    
-    
-    catch (ServiceException e) {
+    catch (ServiceException | EnumerationException | DependencyException e) {
       exception = e;
     }
-    catch (EnumerationException e) {
-      exception = e;
-    }
-    catch (DependencyException e) {
-      exception = e;
-    }
-    
-
     System.err.println("Failed to populate OME-XML metadata object.");
-    exception.printStackTrace();
     return null;
       
   }
@@ -287,15 +279,11 @@ public class FileExportSPW {
     try {
       writer.saveBytes(index, plane);
     }
-    catch (FormatException e) {
-      exception = e;
-    }
-    catch (IOException e) {
+    catch (FormatException | IOException e) {
       exception = e;
     }
     if (exception != null) {
       System.err.println("Failed to save plane.");
-      exception.printStackTrace();
     }
   }
 
@@ -339,7 +327,6 @@ public class FileExportSPW {
     }
     catch (IOException e) {
       System.err.println("Failed to close file writer.");
-      e.printStackTrace();
     }
   }
 
@@ -347,6 +334,8 @@ public class FileExportSPW {
    * To export a file to OME-TIFF:
    *
    * $ java FileExport output-file.ome.tiff
+   * @param args
+   * @throws java.lang.Exception
    */
   public static void main(String[] args) throws Exception {
     String fileName  = "SPWFromJava.ome.tiff";
