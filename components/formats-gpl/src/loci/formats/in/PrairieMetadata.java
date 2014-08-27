@@ -216,7 +216,7 @@ public class PrairieMetadata {
     checkElement(pvScan, "PVScan");
 
     // parse acquisition date
-    date = pvScan.getAttribute("date");
+    date = attr(pvScan, "date");
 
     // iterate over all Sequence elements
     final NodeList sequenceNodes = doc.getElementsByTagName("Sequence");
@@ -242,7 +242,7 @@ public class PrairieMetadata {
     final NodeList waitNodes = doc.getElementsByTagName("PVTSeriesElementWait");
     if (waitNodes.getLength() > 0) {
       final Element waitElement = el(waitNodes, 0);
-      waitTime = d(waitElement.getAttribute("waitTime"));
+      waitTime = d(attr(waitElement, "waitTime"));
     }
 
     parseKeys(doc.getDocumentElement(), config);
@@ -258,8 +258,8 @@ public class PrairieMetadata {
     for (int k = 0; k < keyNodes.getLength(); k++) {
       final Element keyElement = el(keyNodes, k);
       if (keyElement == null) continue;
-      final String key = keyElement.getAttribute("key");
-      final String value = keyElement.getAttribute("value");
+      final String key = attr(keyElement, "key");
+      final String value = attr(keyElement, "value");
       map.put(key, value);
     }
   }
@@ -303,6 +303,11 @@ public class PrairieMetadata {
     final Node node = nodes.item(index);
     if (!(node instanceof Element)) return null;
     return (Element) node;
+  }
+
+  /** Gets the attribute value with the given name, or null if not defined. */
+  private String attr(final Element el, final String name) {
+    return el.hasAttribute(name) ? el.getAttribute(name) : null;
   }
 
   /** Converts the given string to a {@code boolean}. */
@@ -401,8 +406,8 @@ public class PrairieMetadata {
     public void parse(final Element sequenceElement) {
       checkElement(sequenceElement, "Sequence");
 
-      type = sequenceElement.getAttribute("type");
-      cycle = i(sequenceElement.getAttribute("cycle"));
+      type = attr(sequenceElement, "type");
+      cycle = i(attr(sequenceElement, "cycle"));
       if (cycle == null) {
         throw new IllegalArgumentException("Sequence missing cycle attribute");
       }
@@ -534,9 +539,9 @@ public class PrairieMetadata {
     public void parse(final Element frameElement) {
       checkElement(frameElement, "Frame");
 
-      relativeTime = d(frameElement.getAttribute("relativeTime"));
-      absoluteTime = d(frameElement.getAttribute("absoluteTime"));
-      index = i(frameElement.getAttribute("index"));
+      relativeTime = d(attr(frameElement, "relativeTime"));
+      absoluteTime = d(attr(frameElement, "absoluteTime"));
+      index = i(attr(frameElement, "index"));
       if (index == null) {
         throw new IllegalArgumentException("Frame missing index attribute");
       }
@@ -723,13 +728,13 @@ public class PrairieMetadata {
     public void parse(final Element fileElement) {
       checkElement(fileElement, "File");
 
-      channel = i(fileElement.getAttribute("channel"));
+      channel = i(attr(fileElement, "channel"));
       if (channel == null) {
         throw new IllegalArgumentException("File missing channel attribute");
       }
 
-      channelName = fileElement.getAttribute("channelName");
-      filename = fileElement.getAttribute("filename");
+      channelName = attr(fileElement, "channelName");
+      filename = attr(fileElement, "filename");
     }
 
     /** Gets the {@code channel} associated with this {@code File}. */
