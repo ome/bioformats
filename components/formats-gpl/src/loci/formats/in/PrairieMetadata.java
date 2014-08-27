@@ -50,6 +50,9 @@ public class PrairieMetadata {
   private final HashMap<Integer, Sequence> sequences =
     new HashMap<Integer, Sequence>();
 
+  /** Table of key/value pairs at the top level. */
+  private final ValueTable scanValues = new ValueTable();
+
   /** The first actual {@code <Sequence>} element. */
   private Sequence firstSequence;
 
@@ -208,12 +211,28 @@ public class PrairieMetadata {
     return frame.getFile(channel);
   }
 
+  /**
+   * Gets the {@code value} of the given {@code key}, at the top-level
+   * {@code <PVScan>} element.
+   */
+  public Value getValue(final String key) {
+    return scanValues.get(key);
+  }
+
+  /** Gets the table of {@code PVScan} key/value pairs. */
+  public ValueTable getValues() {
+    return scanValues;
+  }
+
   // -- Helper methods --
 
   /** Parses metadata from Prairie XML file. */
   private void parseXML(final Document doc) {
     final Element pvScan = doc.getDocumentElement();
     checkElement(pvScan, "PVScan");
+
+    // parse <PVStateShard> key/value block
+    parsePVStateShard(pvScan, scanValues);
 
     // parse acquisition date
     date = attr(pvScan, "date");
@@ -511,6 +530,9 @@ public class PrairieMetadata {
     private final HashMap<Integer, Frame> frames =
       new HashMap<Integer, Frame>();
 
+    /** Table of key/value pairs for this {@code <Sequence>}. */
+    private final ValueTable sequenceValues = new ValueTable();
+
     /** The first actual {@code <Frame>} element for this {@code <Sequence>}. */
     private Frame firstFrame;
 
@@ -536,6 +558,9 @@ public class PrairieMetadata {
     /** Parses metadata from the given {@code Sequence} element. */
     public void parse(final Element sequenceElement) {
       checkElement(sequenceElement, "Sequence");
+
+      // parse <PVStateShard> key/value block
+      parsePVStateShard(sequenceElement, sequenceValues);
 
       type = attr(sequenceElement, "type");
       cycle = i(attr(sequenceElement, "cycle"));
@@ -623,6 +648,20 @@ public class PrairieMetadata {
       return frame.getFile(channel);
     }
 
+    /**
+     * Gets the {@code value} of the given {@code key}, beneath this
+     * {@code Sequence}, inferring the value from the parent {@code <PVScan>}
+     * section as needed.
+     */
+    public Value getValue(final String key) {
+      return sequenceValues.get(key);
+    }
+
+    /** Gets the table of {@code Frame} key/value pairs. */
+    public ValueTable getValues() {
+      return sequenceValues;
+    }
+
   }
 
   /** A Prairie {@code <Frame>}, beneath a {@code <Sequence>}. */
@@ -668,6 +707,9 @@ public class PrairieMetadata {
     /** Parses metadata from the given {@code Frame} element. */
     public void parse(final Element frameElement) {
       checkElement(frameElement, "Frame");
+
+      // parse <PVStateShard> key/value block
+      parsePVStateShard(frameElement, frameValues);
 
       relativeTime = d(attr(frameElement, "relativeTime"));
       absoluteTime = d(attr(frameElement, "absoluteTime"));
