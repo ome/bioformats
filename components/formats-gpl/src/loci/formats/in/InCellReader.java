@@ -204,6 +204,7 @@ public class InCellReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
+    files.add(currentId);
     files.addAll(metadataFiles);
     if (!noPixels && imageFiles != null) {
       int well = getWellFromSeries(getSeries());
@@ -220,9 +221,6 @@ public class InCellReader extends FormatReader {
           }
         }
       }
-    }
-    if (!files.contains(currentId)) {
-      files.add(currentId);
     }
     return files.toArray(new String[files.size()]);
   }
