@@ -413,7 +413,7 @@ public class PrairieMetadata {
         final Element frameElement = el(frameNodes, f);
         if (frameElement == null) continue;
 
-        final Frame frame = new Frame(frameElement);
+        final Frame frame = new Frame(this, frameElement);
         if (firstFrame == null) firstFrame = frame;
 
         final int index = frame.getIndex();
@@ -492,6 +492,9 @@ public class PrairieMetadata {
   /** A Prairie {@code <Frame>}, beneath a {@code <Sequence>}. */
   public class Frame {
 
+    /** The {@code <Sequence>} containing this {@code <Frame>}. */
+    private Sequence sequence;
+
     /**
      * {@code <File>} elements beneath this {@code <Frame>}, keyed on each
      * file's {@code channel}.
@@ -515,11 +518,17 @@ public class PrairieMetadata {
     private Integer index;
 
     /** Creates a new frame by parsing the given {@code <Frame>} element. */
-    public Frame(final Element frameElement) {
+    public Frame(final Sequence sequence, final Element frameElement) {
+      this.sequence = sequence;
       parse(frameElement);
     }
 
     // -- Frame methods --
+
+    /** Gets the {@code <Sequence>} containing this {@code <Frame>}. */
+    public Sequence getSequence() {
+      return sequence;
+    }
 
     /** Parses metadata from the given {@code Frame} element. */
     public void parse(final Element frameElement) {
@@ -538,7 +547,7 @@ public class PrairieMetadata {
         final Element fileElement = el(fileNodes, f);
         if (fileElement == null) continue;
 
-        final PFile file = new PFile(fileElement);
+        final PFile file = new PFile(this, fileElement);
         if (firstFile == null) firstFile = file;
 
         final int channel = file.getChannel();
@@ -685,6 +694,9 @@ public class PrairieMetadata {
    */
   public class PFile {
 
+    /** The {@code <Frame>} containing this {@code <File>}. */
+    private Frame frame;
+
     /** {@code channel} of this {@code <File>}. */
     private Integer channel;
 
@@ -695,11 +707,17 @@ public class PrairieMetadata {
     private String filename;
 
     /** Creates a new file by parsing the given {@code <File>} element. */
-    public PFile(final Element fileElement) {
+    public PFile(final Frame frame, final Element fileElement) {
+      this.frame = frame;
       parse(fileElement);
     }
 
     // -- PFile methods --
+
+    /** Gets the {@code <Frame>} containing this {@code <File>}. */
+    public Frame getFrame() {
+      return frame;
+    }
 
     /** Parses metadata from the given {@code File} element. */
     public void parse(final Element fileElement) {
