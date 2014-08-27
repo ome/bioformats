@@ -92,7 +92,7 @@ public class PrairieMetadata {
   /**
    * Gets the list of active channel indices, in sorted order.
    * <p>
-   * These indices correspond to the configuration's {@code channel_*} keys
+   * These indices correspond to the configuration's {@code channel} keys
    * flagged as {@code True}.
    * </p>
    */
@@ -130,9 +130,9 @@ public class PrairieMetadata {
     return i(value(getConfig("bitDepth")));
   }
 
-  /** Gets the {@code laserPower_0} recorded in the configuration. */
+  /** Gets the first {@code laserPower} recorded in the configuration. */
   public Double getLaserPower() {
-    return d(value(getConfig("laserPower_0")));
+    return d(value(getConfig("laserPower"), 0));
   }
 
   /** Gets the {@code value} of the given configuration {@code key}. */
@@ -261,7 +261,32 @@ public class PrairieMetadata {
       if (keyElement == null) continue;
       final String key = attr(keyElement, "key");
       final String value = attr(keyElement, "value");
-      table.put(key, new ValueItem(value, null));
+      final int underscore = key.indexOf("_");
+      if (underscore < 0) {
+        // single key/value pair
+        table.put(key, new ValueItem(value, null));
+      }
+      else {
+        // table of key/value pairs
+        final String prefix = key.substring(0, underscore);
+        final String index = key.substring(underscore + 1);
+        if (!table.containsKey(prefix)) {
+          table.put(prefix, new ValueTable());
+        }
+        final ValueTable subTable = (ValueTable) table.get(prefix);
+        final String[] tokens = value.split(",");
+        if (tokens.length == 1) {
+          // single value
+          subTable.put(index, new ValueItem(value, null));
+        }
+        else {
+          // sub-table of values
+          final ValueTable subSubTable = new ValueTable();
+          for (int i=0; i<tokens.length; i++) {
+            subSubTable.put("" + i, new ValueItem(tokens[i], null));
+          }
+        }
+      }
     }
   }
 
@@ -270,18 +295,17 @@ public class PrairieMetadata {
    * data structure.
    */
   private void parseChannels() {
-    for (final String key : config.keySet()) {
-      if (!key.matches("channel_[0-9]+")) {
-        // key does not denote a channel activation
-        continue;
-      }
+    final Value channels = config.get("channel");
+    if (!(channels instanceof ValueTable)) return;
+    final ValueTable channelsTable = (ValueTable) channels;
+    for (final String key : channelsTable.keySet()) {
+      final Value value = channelsTable.get(key);
 
       // verify that the channel is active
-      final String value = value(getConfig(key));
-      if (!b(value)) continue; // channel not active
+      if (!b(value(value))) continue; // channel not active
 
       // parse the channel index (converting to a 1-based index!)
-      final int channelIndex = i(key.substring(8)) + 1;
+      final int channelIndex = i(key) + 1;
 
       // add the channel index to the active channels list
       activeChannels.add(channelIndex);
@@ -649,19 +673,19 @@ public class PrairieMetadata {
 
     /** Gets the X stage position associated with this {@code Frame}. */
     public Double getPositionX() {
-      final Double posX = d(value(getValue("positionCurrent_XAxis")));
+      final Double posX = d(value(getValue("positionCurrent"), "XAxis"));
       return posX == null ? null : isInvertX() ? -posX : posX;
     }
 
     /** Gets the Y stage position associated with this {@code Frame}. */
     public Double getPositionY() {
-      final Double posY = d(value(getValue("positionCurrent_YAxis")));
+      final Double posY = d(value(getValue("positionCurrent"), "YAxis"));
       return posY == null ? null : isInvertY() ? -posY : posY;
     }
 
     /** Gets the Z stage position associated with this {@code Frame}. */
     public Double getPositionZ() {
-      return d(value(getValue("positionCurrent_ZAxis")));
+      return d(value(getValue("positionCurrent"), "ZAxis"));
     }
 
     /** Gets the optical zoom associatetd with this {@code Frame}. */
@@ -671,12 +695,12 @@ public class PrairieMetadata {
 
     /** Gets the microns per pixel along X for this {@code Frame}. */
     public Double getMicronsPerPixelX() {
-      return d(value(getValue("micronsPerPixel_XAxis")));
+      return d(value(getValue("micronsPerPixel"), "XAxis"));
     }
 
     /** Gets the microns per pixel along Y for this {@code Frame}. */
     public Double getMicronsPerPixelY() {
-      return d(value(getValue("micronsPerPixel_YAxis")));
+      return d(value(getValue("micronsPerPixel"), "YAxis"));
     }
 
     /**
@@ -685,7 +709,7 @@ public class PrairieMetadata {
      * @param c The 0-based(!) channel index for which to obtain the offset.
      */
     public Double getOffset(final int c) {
-      return d(value(getValue("pmtOffset_" + c)));
+      return d(value(getValue("pmtOffset"), c));
     }
 
     /**
@@ -694,7 +718,7 @@ public class PrairieMetadata {
      * @param c The 0-based(!) channel index for which to obtain the gain.
      */
     public Double getGain(final int c) {
-      return d(value(getValue("pmtGain_" + c)));
+      return d(value(getValue("pmtGain"), c));
     }
 
     /** Gets the imaging device associated with this {@code Frame}. */
