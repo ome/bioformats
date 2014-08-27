@@ -76,7 +76,7 @@ public class FileExportSPW {
     this.outputFile = outputFile;
   }
 
-  /** Save a single  uint16 plane of data. */
+  /** Save a single uint16 plane of data. */
   public void export() {
     int width = 4, height = 4;
     int pixelType = FormatTools.UINT16;
