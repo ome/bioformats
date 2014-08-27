@@ -557,7 +557,7 @@ public class PrairieMetadata {
     private final HashMap<Integer, PFile> files = new HashMap<Integer, PFile>();
 
     /** Table of key/value pairs for this {@code <Frame>}. */
-    private final ValueTable values = new ValueTable();
+    private final ValueTable frameValues = new ValueTable();
 
     /** The first actual {@code <File>} element for this {@code <Frame>}. */
     private PFile firstFile;
@@ -608,7 +608,7 @@ public class PrairieMetadata {
         files.put(channel, file);
       }
 
-      parseKeys(frameElement, values);
+      parseKeys(frameElement, frameValues);
     }
 
     /** Gets the {@code relativeTime} associated with this {@code Frame}. */
@@ -731,12 +731,12 @@ public class PrairieMetadata {
      * {@code Frame}.
      */
     public Value getValue(final String key) {
-      return values.get(key);
+      return frameValues.get(key);
     }
 
     /** Gets the table of {@code Frame} key/value pairs. */
     public ValueTable getValues() {
-      return values;
+      return frameValues;
     }
 
   }
