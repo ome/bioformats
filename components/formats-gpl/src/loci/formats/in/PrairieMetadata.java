@@ -69,7 +69,7 @@ public class PrairieMetadata {
   private final HashSet<Integer> activeChannels = new HashSet<Integer>();
 
   /** Key/value pairs from CFG file. */
-  private final HashMap<String, String> config = new HashMap<String, String>();
+  private final ValueTable config = new ValueTable();
 
   /**
    * Creates a new Prairie metadata by parsing the given XML and CFG documents.
@@ -122,27 +122,27 @@ public class PrairieMetadata {
    * bottom-to-top).
    */
   public boolean isInvertY() {
-    return b(getConfig("xYStageYPositionIncreasesBottomToTop"));
+    return b(value(getConfig("xYStageYPositionIncreasesBottomToTop")));
   }
 
   /** Gets the {@code bitDepth} recorded in the configuration. */
   public Integer getBitDepth() {
-    return i(getConfig("bitDepth"));
+    return i(value(getConfig("bitDepth")));
   }
 
   /** Gets the {@code laserPower_0} recorded in the configuration. */
   public Double getLaserPower() {
-    return d(getConfig("laserPower_0"));
+    return d(value(getConfig("laserPower_0")));
   }
 
-  /** Gets the {@code value} of the given configuration {@code Key}. */
-  public String getConfig(final String key) {
+  /** Gets the {@code value} of the given configuration {@code key}. */
+  public Value getConfig(final String key) {
     return config.get(key);
   }
 
-  /** Gets a read-only map of configuration key/value pairs. */
-  public Map<String, String> getConfig() {
-    return Collections.unmodifiableMap(config);
+  /** Gets the map of configuration key/value pairs. */
+  public ValueTable getConfig() {
+    return config;
   }
 
   /** Gets the date of the acquisition. */
@@ -251,16 +251,17 @@ public class PrairieMetadata {
 
   /**
    * Parses {@code <Key>} elements beneath the given element, into the specified
-   * map.
+   * table. These {@code <Key>} elements are only present in data from
+   * PrairieView versions prior to 5.2.
    */
-  private void parseKeys(final Element el, final HashMap<String, String> map) {
+  private void parseKeys(final Element el, final ValueTable table) {
     final NodeList keyNodes = el.getElementsByTagName("Key");
     for (int k = 0; k < keyNodes.getLength(); k++) {
       final Element keyElement = el(keyNodes, k);
       if (keyElement == null) continue;
       final String key = attr(keyElement, "key");
       final String value = attr(keyElement, "value");
-      map.put(key, value);
+      table.put(key, new ValueItem(value, null));
     }
   }
 
@@ -276,7 +277,7 @@ public class PrairieMetadata {
       }
 
       // verify that the channel is active
-      final String value = config.get(key);
+      final String value = value(getConfig(key));
       if (!b(value)) continue; // channel not active
 
       // parse the channel index (converting to a 1-based index!)
@@ -532,8 +533,7 @@ public class PrairieMetadata {
     private final HashMap<Integer, PFile> files = new HashMap<Integer, PFile>();
 
     /** Table of key/value pairs for this {@code <Frame>}. */
-    private final HashMap<String, String> values =
-      new HashMap<String, String>();
+    private final ValueTable values = new ValueTable();
 
     /** The first actual {@code <File>} element for this {@code <Frame>}. */
     private PFile firstFile;
@@ -614,7 +614,7 @@ public class PrairieMetadata {
 
     /** Gets the objective lens string for this {@code Frame}. */
     public String getObjectiveLens() {
-      return getValue("objectiveLens");
+      return value(getValue("objectiveLens"));
     }
 
     /** Extracts the objective manufacturer from the objective lens string. */
@@ -634,49 +634,49 @@ public class PrairieMetadata {
 
     /** Gets the numerical aperture of the lens for this {@code Frame}. */
     public Double getObjectiveLensNA() {
-      return d(getValue("objectiveLensNA"));
+      return d(value(getValue("objectiveLensNA")));
     }
 
     /** Gets the pixels per line for this {@code Frame}. */
     public Integer getPixelsPerLine() {
-      return i(getValue("pixelsPerLine"));
+      return i(value(getValue("pixelsPerLine")));
     }
 
     /** Gets the lines per frame for this {@code Frame}. */
     public Integer getLinesPerFrame() {
-      return i(getValue("linesPerFrame"));
+      return i(value(getValue("linesPerFrame")));
     }
 
     /** Gets the X stage position associated with this {@code Frame}. */
     public Double getPositionX() {
-      final Double posX = d(getValue("positionCurrent_XAxis"));
+      final Double posX = d(value(getValue("positionCurrent_XAxis")));
       return posX == null ? null : isInvertX() ? -posX : posX;
     }
 
     /** Gets the Y stage position associated with this {@code Frame}. */
     public Double getPositionY() {
-      final Double posY = d(getValue("positionCurrent_YAxis"));
+      final Double posY = d(value(getValue("positionCurrent_YAxis")));
       return posY == null ? null : isInvertY() ? -posY : posY;
     }
 
     /** Gets the Z stage position associated with this {@code Frame}. */
     public Double getPositionZ() {
-      return d(getValue("positionCurrent_ZAxis"));
+      return d(value(getValue("positionCurrent_ZAxis")));
     }
 
     /** Gets the optical zoom associatetd with this {@code Frame}. */
     public Double getOpticalZoom() {
-      return d(getValue("opticalZoom"));
+      return d(value(getValue("opticalZoom")));
     }
 
     /** Gets the microns per pixel along X for this {@code Frame}. */
     public Double getMicronsPerPixelX() {
-      return d(getValue("micronsPerPixel_XAxis"));
+      return d(value(getValue("micronsPerPixel_XAxis")));
     }
 
     /** Gets the microns per pixel along Y for this {@code Frame}. */
     public Double getMicronsPerPixelY() {
-      return d(getValue("micronsPerPixel_YAxis"));
+      return d(value(getValue("micronsPerPixel_YAxis")));
     }
 
     /**
@@ -685,7 +685,7 @@ public class PrairieMetadata {
      * @param c The 0-based(!) channel index for which to obtain the offset.
      */
     public Double getOffset(final int c) {
-      return d(getValue("pmtOffset_" + c));
+      return d(value(getValue("pmtOffset_" + c)));
     }
 
     /**
@@ -694,25 +694,25 @@ public class PrairieMetadata {
      * @param c The 0-based(!) channel index for which to obtain the gain.
      */
     public Double getGain(final int c) {
-      return d(getValue("pmtGain_" + c));
+      return d(value(getValue("pmtGain_" + c)));
     }
 
     /** Gets the imaging device associated with this {@code Frame}. */
     public String getImagingDevice() {
-      return getValue("imagingDevice");
+      return value(getValue("imagingDevice"));
     }
 
     /**
-     * Gets the {@code value} of the given {@code Key}, beneath this
+     * Gets the {@code value} of the given {@code key}, beneath this
      * {@code Frame}.
      */
-    public String getValue(final String key) {
+    public Value getValue(final String key) {
       return values.get(key);
     }
 
-    /** Gets a read-only map of {@code Frame} key/value pairs. */
-    public Map<String, String> getValues() {
-      return Collections.unmodifiableMap(values);
+    /** Gets the table of {@code Frame} key/value pairs. */
+    public ValueTable getValues() {
+      return values;
     }
 
   }
