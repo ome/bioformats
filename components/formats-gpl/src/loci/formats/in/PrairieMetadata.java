@@ -654,7 +654,8 @@ public class PrairieMetadata {
      * section as needed.
      */
     public Value getValue(final String key) {
-      return sequenceValues.get(key);
+      if (sequenceValues.containsKey(key)) return sequenceValues.get(key);
+      return PrairieMetadata.this.getValue(key);
     }
 
     /** Gets the table of {@code Frame} key/value pairs. */
@@ -851,10 +852,12 @@ public class PrairieMetadata {
 
     /**
      * Gets the {@code value} of the given {@code key}, beneath this
-     * {@code Frame}.
+     * {@code Frame}, inferring the value from the parent {@code <Sequence>}
+     * or grandparent {@code <PVScan>} section as needed.
      */
     public Value getValue(final String key) {
-      return frameValues.get(key);
+      if (frameValues.containsKey(key)) return frameValues.get(key);
+      return getSequence().getValue(key);
     }
 
     /** Gets the table of {@code Frame} key/value pairs. */
