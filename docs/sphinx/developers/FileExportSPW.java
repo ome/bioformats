@@ -52,7 +52,7 @@ import ome.xml.model.enums.NamingConvention;
 
 /**
  * Example class that shows how to export raw pixel data to OME-TIFF as a Plate using
- * Bio-Formats version 4.2 or later.
+ * Bio-Formats version 5.0.3 or later.
  */
 public class FileExportSPW {
   
@@ -76,7 +76,7 @@ public class FileExportSPW {
     this.outputFile = outputFile;
   }
 
-  /** Save a single 2x2 uint16 plane of data. */
+  /** Save a single  uint16 plane of data. */
   public void export() {
     int width = 4, height = 4;
     int pixelType = FormatTools.UINT16;
@@ -85,19 +85,15 @@ public class FileExportSPW {
     IMetadata omexml = initializeMetadata(width, height, pixelType);
     
     int series = 0;  
-    int index;
     int nSeries = rows * cols *  fovPerWell;
     
-    // only save a plane if the file writer was initialized successfully
+    // only save data if the file writer was initialized successfully
     boolean initializationSuccess = initializeWriter(omexml);
    
     if (initializationSuccess) {
-    
-    while (series < nSeries) {
-        index = 0;
+      while (series < nSeries) {
         for (int p = 0; p < sizeT; p++) {
-          savePlane(width, height, pixelType, index, series);
-          index++;
+          savePlane(width, height, pixelType, p, series);
         }
         series++;
           try {
@@ -126,11 +122,15 @@ public class FileExportSPW {
     try {
       writer.setId(outputFile);
     }
-    catch (FormatException | IOException e) {
+    catch (FormatException e) {
+      exception = e;
+    }
+    catch (IOException e) {
       exception = e;
     }
     if (exception != null) {
       System.err.println("Failed to initialize file writer.");
+      exception.printStackTrace();
     }
     return exception == null;
   }
@@ -149,7 +149,6 @@ public class FileExportSPW {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
       OMEXMLMetadata meta = service.createOMEXMLMetadata();
-      //IMetadata meta = service.createOMEXMLMetadata();
       meta.createRoot();
      
       int plateIndex = 0;
@@ -186,7 +185,7 @@ public class FileExportSPW {
             meta.setImageID(imageID, series);
             meta.setImageName(imageName, series);
             
-            String pixelsID = MetadataTools.createLSID("Pixels",row, well, fov);
+            String pixelsID = MetadataTools.createLSID("Pixels", row, well, fov);
             meta.setPixelsID(pixelsID, series);
             
             // specify that the pixel data is stored in big-endian format
@@ -208,20 +207,20 @@ public class FileExportSPW {
 
             // define each channel and specify the number of samples in the channel
             // the number of samples is 3 for RGB images and 1 otherwise
-            String channelID = MetadataTools.createLSID("Channel",well, fov);
-            meta.setChannelID(channelID, series,0 );
+            String channelID = MetadataTools.createLSID("Channel", well, fov);
+            meta.setChannelID(channelID, series, 0);
             meta.setChannelSamplesPerPixel(new PositiveInteger(1), series, 0);
            
             // set sample
             String wellSampleID = MetadataTools.createLSID("WellSample",well, fov);
-            meta.setWellSampleID(wellSampleID,0,well,fov);
+            meta.setWellSampleID(wellSampleID, 0, well, fov);
             // NB sampleIndex here == series ie the image No
             meta.setWellSampleIndex(new NonNegativeInteger(series), 0, well, fov);
             meta.setWellSampleImageRef(imageID, 0, well, fov);
             
             // add FLIM ModuloAlongT annotation if required 
-            //CoreMetadata modlo = createModuloAnn(meta);
-            //service.addModuloAlong(meta, modlo, series);
+            //CoreMetadata modlo = createModuloAnn();
+            //meta.addModuloAlong(meta, modlo, series);
             
             series++;
           }  //end of samples  
@@ -234,21 +233,29 @@ public class FileExportSPW {
       //System.out.println("dump = ");
       //System.out.println(dump);
       return meta;
-      }
-    catch (ServiceException | EnumerationException | DependencyException e) {
+    }
+    catch (DependencyException e) {
       exception = e;
     }
+    catch (ServiceException e) {
+      exception = e;
+    }
+    catch (EnumerationException e) {
+      exception = e;
+    }
+
     System.err.println("Failed to populate OME-XML metadata object.");
-    return null;
-      
+    exception.printStackTrace();
+    return null;      
   }
   
   
-   /**
+  /**
    * Add ModuloAlong annotation.
-   */
-  private CoreMetadata createModuloAnn(IMetadata meta) {
-
+  *
+  * @param meta OMEXMLMetadata Object to which Modulo need to be added
+  */
+  private CoreMetadata createModuloAnn() {
     CoreMetadata modlo = new CoreMetadata();
 
     modlo.moduloT.type = loci.formats.FormatTools.LIFETIME;
@@ -266,7 +273,7 @@ public class FileExportSPW {
   }
 
   /**
-   * Generate a  plane of pixel data and save it to the output file.
+   * Generate a plane of pixel data and save it to the output file.
    *
    * @param width the width of the image in pixels
    * @param height the height of the image in pixels
@@ -279,11 +286,15 @@ public class FileExportSPW {
     try {
       writer.saveBytes(index, plane);
     }
-    catch (FormatException | IOException e) {
+    catch (FormatException e) {
+      exception = e;
+    }
+    catch (IOException e) {
       exception = e;
     }
     if (exception != null) {
       System.err.println("Failed to save plane.");
+      exception.printStackTrace();
     }
   }
 
@@ -339,7 +350,7 @@ public class FileExportSPW {
    */
   public static void main(String[] args) throws Exception {
     String fileName  = "SPWFromJava.ome.tiff";
-    
+    Exception exception = null;
     Path path = FileSystems.getDefault().getPath(fileName);
 
     //delete if exists 
@@ -347,10 +358,17 @@ public class FileExportSPW {
     try {
       boolean success = Files.deleteIfExists(path);
       System.out.println("Delete status: " + success);
-    } catch (IOException | SecurityException e) {
-      System.err.println(e);
     }
-    
+    catch (IOException e) {
+      exception = e;
+    }
+    catch (SecurityException e) {
+      exception = e;
+    }
+    if (exception != null) {
+      System.err.println("Failed to save plane.");
+      exception.printStackTrace();
+    }
     FileExportSPW exporter = new FileExportSPW(fileName);
     exporter.export();
   }
