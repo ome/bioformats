@@ -647,6 +647,8 @@ public class PrairieReader extends FormatReader {
   private Document parseDOM(final Location file)
     throws ParserConfigurationException, SAXException, IOException
   {
+    if (file == null) return null;
+
     // NB: The simplest approach here would be to call XMLTools.parseDOM(file)
     // directly, but we cannot do that because Prairie XML files are technically
     // invalid and must be preprocessed in order for Java to parse them.
