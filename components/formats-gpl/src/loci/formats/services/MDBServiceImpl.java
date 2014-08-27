@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
+import loci.common.Location;
 import loci.common.services.AbstractService;
 import mdbtools.jdbc2.File;
 import mdbtools.libmdb.Catalog;
@@ -72,7 +73,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
   public void initialize(String filename) throws IOException {
     boundValues = new Vector<Holder>();
     mem.mdb_init();
-    File dbfile = new File(filename);
+    File dbfile = new File(Location.getMappedId(filename));
     mdb = file.mdb_open(dbfile);
 
     Catalog.mdb_read_catalog(mdb, Constants.MDB_TABLE);
