@@ -754,4 +754,124 @@ public class PrairieMetadata {
 
   }
 
+  /**
+   * A value in a Prairie metadata dictionary.
+   * <p>
+   * Prior to PrairieView 5.2, these were expressed as {@code <Key>} elements:
+   * </p>
+   * 
+   * <pre>
+   * <Key key="linesPerFrame" permissions="Read, Write, Save" value="186" />
+   * <Key key="pmtGain_0" permissions="Write, Save" value="605" />
+   * <Key key="pmtGain_1" permissions="Write, Save" value="604" />
+   * <Key key="pmtGain_2" permissions="Write, Save" value="0" />
+   * <Key key="positionCurrent_XAxis" permissions="Write, Save" value="0.95" />
+   * <Key key="positionCurrent_YAxis" permissions="Write, Save" value="-4.45" />
+   * <Key key="positionCurrent_ZAxis" permissions="Write, Save" value="-9,62.45" />
+   * </pre>
+   * <p>
+   * From 5.2 onwards, they are @{code <PVStateValue>} elements:
+   * </p>
+   * 
+   * <pre>
+   * <PVStateValue key="linesPerFrame" value="186" />
+   * <PVStateValue key="pmtGain">
+   *   <IndexedValue index="0" value="605" description="Ch1 High Voltage" />
+   *   <IndexedValue index="1" value="604" description="Ch2 High Voltage" />
+   *   <IndexedValue index="2" value="0" description="Ch3 High Voltage" />
+   * </PVStateValue>
+   * <PVStateValue key="positionCurrent">
+   *   <SubindexedValues index="XAxis">
+   *     <SubindexedValue subindex="0" value="0.95" />
+   *   </SubindexedValues>
+   *   <SubindexedValues index="YAxis">
+   *     <SubindexedValue subindex="0" value="-4.45" />
+   *   </SubindexedValues>
+   *   <SubindexedValues index="ZAxis">
+   *     <SubindexedValue subindex="0" value="-9" description="Focus" />
+   *     <SubindexedValue subindex="1" value="62.45" description="Piezo" />
+   *   </SubindexedValues>
+   * </PVStateValue>
+   * </pre>
+   */
+  public static interface Value {
+    boolean isTable();
+    Value get(Object key);
+    Value get(int index);
+    String value();
+    String description();
+  }
+
+  /**
+   * A leaf value with an actual {@link #value()} as well as an optional
+   * {@link #description()}.
+   */
+  public static class ValueItem implements Value {
+    private String value;
+    private String description;
+
+    public ValueItem(final String value, final String description) {
+      this.value = value;
+      this.description = description;
+    }
+
+    @Override
+    public boolean isTable() {
+      return false;
+    }
+
+    @Override
+    public Value get(final Object key) {
+      return null;
+    }
+
+    @Override
+    public Value get(final int index) {
+      return null;
+    }
+
+    @Override
+    public String value() {
+      return value;
+    }
+
+    @Override
+    public String description() {
+      return description;
+    }
+
+    @Override
+    public String toString() {
+      return value();
+    }
+  }
+
+  /**
+   * A table of values. Each value may be either a leaf item ({@link ValueItem})
+   * or a sub-table ({@link ValueTable}).
+   */
+  public static class ValueTable extends HashMap<String, Value> implements
+    Value
+  {
+    @Override
+    public boolean isTable() {
+      return true;
+    }
+
+    @Override
+    public Value get(int index) {
+      return get("" + index);
+    }
+
+    @Override
+    public String value() {
+      return null;
+    }
+
+    @Override
+    public String description() {
+      return null;
+    }
+  }
+
 }
