@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -48,6 +47,7 @@ import loci.formats.MetadataTools;
 import loci.formats.in.PrairieMetadata.Frame;
 import loci.formats.in.PrairieMetadata.PFile;
 import loci.formats.in.PrairieMetadata.Sequence;
+import loci.formats.in.PrairieMetadata.ValueTable;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
@@ -464,9 +464,9 @@ public class PrairieReader extends FormatReader {
     addGlobalMeta("waitTime", meta.getWaitTime());
     addGlobalMeta("sequenceCount", sequences.size());
 
-    final Map<String, String> config = meta.getConfig();
+    final ValueTable config = meta.getConfig();
     for (final String key : config.keySet()) {
-      addGlobalMeta(key, config.get(key));
+      addGlobalMeta(key, config.get(key).toString());
     }
 
     addGlobalMeta("meta", meta);
