@@ -291,6 +291,73 @@ public class PrairieMetadata {
   }
 
   /**
+   * Parses the {@code <PVStateShard>} element beneath the given element, into
+   * the specified table. These {@code <PVStateShard>} elements are only present
+   * in data from PrairieView versions 5.2 and later.
+   */
+  private void parsePVStateShard(final Element el, final ValueTable table) {
+    final Element pvStateShard = getFirstChild(el, "PVStateShard");
+    if (pvStateShard == null) return;
+
+    final NodeList svNodes = el.getElementsByTagName("PVStateValue");
+    for (int k = 0; k < svNodes.getLength(); k++) {
+      final Element keyElement = el(svNodes, k);
+      if (keyElement == null) continue;
+      final String key = attr(keyElement, "key");
+      final String value = attr(keyElement, "value");
+      if (value != null) {
+        // E.g.: <PVStateValue key="linesPerFrame" value="186" />
+        table.put(key, new ValueItem(value, attr(keyElement, "description")));
+        continue;
+      }
+
+      // value is itself a table of values
+      final ValueTable subTable = new ValueTable();
+      table.put(key, subTable);
+
+      // process <IndexedValue> elements; e.g.:
+      // <IndexedValue index="0" value="605" description="Ch1 High Voltage" />
+      final NodeList ivNodes = keyElement.getElementsByTagName("IndexedValue");
+      for (int i = 0; i < ivNodes.getLength(); i++) {
+        final Element ivElement = el(ivNodes, i);
+        if (ivElement == null) continue;
+        final String index = attr(ivElement, "index");
+        if (index == null) continue; // invalid <IndexedValue> element
+        final String iValue = attr(ivElement, "value");
+        final String iDescription = attr(ivElement, "description");
+        subTable.put(index, new ValueItem(iValue, iDescription));
+      }
+
+      // process <SubindexedValue> elements; e.g.:
+      // <SubindexedValues index="ZAxis">
+      //   <SubindexedValue subindex="0" value="-9" description="Focus" />
+      //   <SubindexedValue subindex="1" value="62.45" description="Piezo" />
+      // </SubindexedValues>
+      final NodeList sivNodes =
+        keyElement.getElementsByTagName("SubindexedValues");
+      for (int i = 0; i < sivNodes.getLength(); i++) {
+        final Element sivElement = el(sivNodes, i);
+        if (sivElement == null) continue;
+        final String index = attr(sivElement, "index");
+        if (index == null) continue; // invalid <SubindexedValues> element
+        final ValueTable subSubTable = new ValueTable();
+        subTable.put(index, subSubTable);
+        // iterate over <SubindexValue> children
+        final NodeList subNodes =
+          sivElement.getElementsByTagName("SubindexValue");
+        for (int s = 0; s < subNodes.getLength(); s++) {
+          final Element subElement = el(subNodes, i);
+          final String subindex = attr(subElement, "subindex");
+          if (subindex == null) continue; // invalid <SubindexedValue> element
+          final String sValue = attr(subElement, "value");
+          final String sDescription = attr(subElement, "description");
+          subSubTable.put(index, new ValueItem(sValue, sDescription));
+        }
+      }
+    }
+  }
+
+  /**
    * Parses details of the activated channels into the {@link #activeChannels}
    * data structure.
    */
@@ -321,6 +388,20 @@ public class PrairieMetadata {
     if (!el.getNodeName().equals(name)) {
       throw new IllegalArgumentException("Not a " + name + " element");
     }
+  }
+
+  /** Gets the first child element with the given name. */
+  private Element getFirstChild(final Element el, final String name) {
+    // NB: Unfortunately, the Element interface has no API method to obtain
+    // _only_ direct children with a given name; the getElementsByTagName
+    // method returns _all_ descendant elements with the given name.
+    final NodeList nodeList = el.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      final Element child = el(nodeList, i);
+      if (child == null) continue;
+      if (name.equals(child.getNodeName())) return child;
+    }
+    return null;
   }
 
   /** Gets the {@code index}th element from the given list of nodes. */
