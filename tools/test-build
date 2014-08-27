@@ -27,10 +27,10 @@ cpp()
         (
             mkdir gtest
             cd gtest
-            cmake /usr/src/gtest
+            CXX="g++-4.8" cmake /usr/src/gtest
             make
         )
-        CXX="g++ -std=gnu++98" GTEST_ROOT="$(pwd)/gtest" cmake -Dcxxstd-autodetect=OFF ../..
+        CXX="g++-4.8" GTEST_ROOT="$(pwd)/gtest" cmake ../..
         make
         make test
         make DESTDIR=../install install
