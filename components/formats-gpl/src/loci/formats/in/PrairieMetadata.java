@@ -81,6 +81,7 @@ public class PrairieMetadata {
   public PrairieMetadata(final Document xml, final Document cfg) {
     if (xml != null) parseXML(xml);
     if (cfg != null) parseCFG(cfg);
+    parseChannels();
   }
 
   // -- PrairieMetadata methods --
@@ -263,7 +264,6 @@ public class PrairieMetadata {
     }
 
     parseKeys(doc.getDocumentElement(), config);
-    parseChannels();
   }
 
   /**
