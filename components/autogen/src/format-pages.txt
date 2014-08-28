@@ -1743,11 +1743,12 @@ presenceRating = Fair
 utilityRating = Good
 reader = PCORAWReader.java
 
-[PQBin]
+[PicoQuant Bin]
 extensions = .bin
 developer = `PicoQuant <http://www.picoquant.com/>`_
 bsd = no
 export = no
+software = `SymphoTime64 <http://www.picoquant.com/products/category/software/symphotime-64-fluorescence-lifetime-imaging-and-correlation-software>`_
 weHave = * a few example datasets
 pixelsRating = Good
 metadataRating = Fair
