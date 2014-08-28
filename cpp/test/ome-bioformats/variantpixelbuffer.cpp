@@ -405,8 +405,8 @@ struct SetIndexDeathTestVisitor : public boost::static_visitor<>
     badidx[1] = 2;
     badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
 
-    ASSERT_DEATH(buf.at<value_type>(badidx) = value_type(4), "Assertion.*failed");
-    ASSERT_DEATH(value_type obs = cbuf.at<value_type>(badidx), "Assertion.*failed");
+    ASSERT_DEATH_IF_SUPPORTED(buf.at<value_type>(badidx) = value_type(4), "Assertion.*failed");
+    ASSERT_DEATH_IF_SUPPORTED(value_type obs = cbuf.at<value_type>(badidx), "Assertion.*failed");
   }
 };
 

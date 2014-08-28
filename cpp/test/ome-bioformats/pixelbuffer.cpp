@@ -575,8 +575,8 @@ TYPED_TEST_P(PixelBufferType, SetIndexDeathTest)
   badidx[1] = 2;
   badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
 
-  ASSERT_DEATH(buf.at(badidx) = 4U, "Assertion.*failed");
-  ASSERT_DEATH(cbuf.at(badidx), "Assertion.*failed");
+  ASSERT_DEATH_IF_SUPPORTED(buf.at(badidx) = 4U, "Assertion.*failed");
+  ASSERT_DEATH_IF_SUPPORTED(cbuf.at(badidx), "Assertion.*failed");
 }
 
 TYPED_TEST_P(PixelBufferType, StreamInput)
