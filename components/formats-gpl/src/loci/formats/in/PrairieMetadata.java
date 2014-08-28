@@ -810,7 +810,7 @@ public class PrairieMetadata {
       return d(value(getValue("positionCurrent"), "ZAxis"));
     }
 
-    /** Gets the optical zoom associatetd with this {@code Frame}. */
+    /** Gets the optical zoom associated with this {@code Frame}. */
     public Double getOpticalZoom() {
       return d(value(getValue("opticalZoom")));
     }
