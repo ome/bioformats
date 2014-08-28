@@ -32,6 +32,7 @@
 
 package loci.formats.services;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.IOException;
@@ -171,6 +172,8 @@ public class JAIIIOServiceImpl extends AbstractService
     if (options.resolution != null) {
       param.setResolution(options.resolution.intValue());
     }
+    param.setSourceRegion(new Rectangle(options.tileGridXOffset,
+      options.tileGridYOffset, options.tileWidth, options.tileHeight));
     return reader.readRaster(0, param);
   }
 

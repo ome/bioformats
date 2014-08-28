@@ -74,9 +74,6 @@ public class JPEG2000Reader extends FormatReader {
 
   private long pixelsOffset;
 
-  private int lastSeries = -1;
-  private byte[] lastSeriesPlane;
-
   // -- Constructor --
 
   /** Constructs a new JPEG2000Reader. */
@@ -106,6 +103,16 @@ public class JPEG2000Reader extends FormatReader {
     stream.seek(stream.length() - 2);
     boolean validEnd = (stream.readShort() & 0xffff) == 0xffd9;
     return validStart && validEnd;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    return 1024;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    return 1024;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -147,8 +154,6 @@ public class JPEG2000Reader extends FormatReader {
       resolutionLevels = null;
       lut = null;
       pixelsOffset = 0;
-      lastSeries = -1;
-      lastSeriesPlane = null;
     }
   }
 
@@ -160,16 +165,13 @@ public class JPEG2000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (lastSeries == getCoreIndex() && lastSeriesPlane != null) {
-      RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
-      return buf;
-    }
-
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
+    options.tileGridXOffset = x;
+    options.tileGridYOffset = y;
+    options.tileWidth = w;
+    options.tileHeight = h;
     if (resolutionLevels != null) {
       options.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     }
@@ -178,11 +180,7 @@ public class JPEG2000Reader extends FormatReader {
     }
 
     in.seek(pixelsOffset);
-    lastSeriesPlane = new JPEG2000Codec().decompress(in, options);
-    RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
-    lastSeries = getCoreIndex();
+    buf = new JPEG2000Codec().decompress(in, options);
     return buf;
   }
 
