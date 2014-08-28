@@ -1401,20 +1401,25 @@ public class FormatReaderTest {
 
       // map new file names and verify that setId still works
 
+      String newFile = null;
       for (int i=0; i<usedFiles.length; i++) {
         newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
-        LOGGER.warn("{} => {}", newFiles[i], usedFiles[i]);
         Location.mapId(newFiles[i], usedFiles[i]);
+
+        if (usedFiles[i].equals(file)) {
+          newFile = newFiles[i];
+        }
       }
 
       IFormatReader check = new FileStitcher();
       try {
-        check.setId(newFiles[0]);
+        check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
         result(testName, nFiles == usedFiles.length,
           "Found " + nFiles + "; expected " + usedFiles.length);
       }
       catch (Exception e) {
+        LOGGER.info("Initialization failed", e);
         result(testName, false, e.getMessage());
       }
       finally {
