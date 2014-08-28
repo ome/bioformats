@@ -385,6 +385,9 @@ public class PrairieReader extends FormatReader {
     meta = new PrairieMetadata(xml, cfg, env);
     sequences = meta.getSequences();
     channels = meta.getActiveChannels();
+    if (channels == null || channels.length == 0) {
+      throw new FormatException("No active channels found");
+    }
   }
 
   /**
