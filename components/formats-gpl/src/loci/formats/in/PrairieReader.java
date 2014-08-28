@@ -319,17 +319,16 @@ public class PrairieReader extends FormatReader {
 
     if (checkSuffix(id, XML_SUFFIX)) {
       xmlFile = new Location(id);
-      findCFGFile();
+      findMetadataFiles();
     }
     else if (checkSuffix(id, CFG_SUFFIX)) {
       cfgFile = new Location(id);
-      findXMLFile();
+      findMetadataFiles();
     }
     else {
       // we have been given a TIFF file
       if (isGroupFiles()) {
-        findXMLFile();
-        findCFGFile();
+        findMetadataFiles();
       }
       else {
         // NB: File grouping is not allowed, so we enter a special mode,
@@ -350,18 +349,14 @@ public class PrairieReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void findXMLFile() {
-    LOGGER.info("Finding XML file");
-    xmlFile = find(XML_SUFFIX);
-  }
-
-  private void findCFGFile() {
-    LOGGER.info("Finding CFG file");
-    cfgFile = find(CFG_SUFFIX);
+  private void findMetadataFiles() {
+    LOGGER.info("Finding metadata files");
+    if (xmlFile == null) xmlFile = find(XML_SUFFIX);
+    if (cfgFile == null) cfgFile = find(CFG_SUFFIX);
   }
 
   /**
-   * This step parses the Prairie XML and CFG files into the Prairie-specific
+   * This step parses the Prairie metadata files into the Prairie-specific
    * metadata structure, {@link #meta}.
    */
   private void parsePrairieMetadata() throws FormatException, IOException {
