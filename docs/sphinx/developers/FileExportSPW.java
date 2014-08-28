@@ -216,8 +216,7 @@ public class FileExportSPW {
             meta.setPixelsSizeT(new PositiveInteger(sizeT), series);
 
             // define each channel and specify the number of samples in the
-            // channel
-            // the number of samples is 3 for RGB images and 1 otherwise
+            // channel the number of samples is 3 for RGB images and 1 otherwise
             String channelID = MetadataTools.createLSID("Channel", well, fov);
             meta.setChannelID(channelID, series, 0);
             meta.setChannelSamplesPerPixel(new PositiveInteger(1), series, 0);
@@ -242,9 +241,6 @@ public class FileExportSPW {
         rowChar++;
       }
 
-      // String dump = meta.dumpXML();
-      // System.out.println("dump = ");
-      // System.out.println(dump);
       return meta;
     } catch (DependencyException e) {
       exception = e;
