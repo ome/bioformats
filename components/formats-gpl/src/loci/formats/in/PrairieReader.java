@@ -70,8 +70,9 @@ public class PrairieReader extends FormatReader {
   // -- Constants --
 
   public static final String[] CFG_SUFFIX = {"cfg"};
+  public static final String[] ENV_SUFFIX = {"env"};
   public static final String[] XML_SUFFIX = {"xml"};
-  public static final String[] PRAIRIE_SUFFIXES = {"cfg", "xml"};
+  public static final String[] PRAIRIE_SUFFIXES = {"cfg", "env", "xml"};
 
   // Private tags present in Prairie TIFF files
   // IMPORTANT NOTE: these are the same as Metamorph's private tags - therefore,
@@ -89,7 +90,7 @@ public class PrairieReader extends FormatReader {
   private TiffReader tiff;
 
   /** The associated XML files. */
-  private Location xmlFile, cfgFile;
+  private Location xmlFile, cfgFile, envFile;
 
   /** Format-specific metadata. */
   private PrairieMetadata meta;
@@ -126,7 +127,7 @@ public class PrairieReader extends FormatReader {
 
   /** Constructs a new Prairie TIFF reader. */
   public PrairieReader() {
-    super("Prairie TIFF", new String[] {"tif", "tiff", "cfg", "xml"});
+    super("Prairie TIFF", new String[] {"tif", "tiff", "cfg", "env", "xml"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
     datasetDescription = "One .xml file, one .cfg file, and one or more " +
@@ -217,6 +218,7 @@ public class PrairieReader extends FormatReader {
     final ArrayList<String> usedFiles = new ArrayList<String>();
     if (xmlFile != null) usedFiles.add(xmlFile.getAbsolutePath());
     if (cfgFile != null) usedFiles.add(cfgFile.getAbsolutePath());
+    if (envFile != null) usedFiles.add(envFile.getAbsolutePath());
 
     if (!noPixels) {
       // add TIFF files to the used files list
@@ -299,7 +301,7 @@ public class PrairieReader extends FormatReader {
     super.close(fileOnly);
     if (tiff != null) tiff.close(fileOnly);
     if (!fileOnly) {
-      xmlFile = cfgFile = null;
+      xmlFile = cfgFile = envFile = null;
       tiff = null;
       meta = null;
       sequences = null;
@@ -323,6 +325,10 @@ public class PrairieReader extends FormatReader {
     }
     else if (checkSuffix(id, CFG_SUFFIX)) {
       cfgFile = new Location(id);
+      findMetadataFiles();
+    }
+    else if (checkSuffix(id, ENV_SUFFIX)) {
+      envFile = new Location(id);
       findMetadataFiles();
     }
     else {
@@ -353,6 +359,7 @@ public class PrairieReader extends FormatReader {
     LOGGER.info("Finding metadata files");
     if (xmlFile == null) xmlFile = find(XML_SUFFIX);
     if (cfgFile == null) cfgFile = find(CFG_SUFFIX);
+    if (envFile == null) envFile = find(ENV_SUFFIX);
   }
 
   /**
@@ -362,10 +369,11 @@ public class PrairieReader extends FormatReader {
   private void parsePrairieMetadata() throws FormatException, IOException {
     LOGGER.info("Parsing Prairie metadata");
 
-    final Document xml, cfg;
+    final Document xml, cfg, env;
     try {
       xml = parseDOM(xmlFile);
       cfg = parseDOM(cfgFile);
+      env = parseDOM(envFile);
     }
     catch (ParserConfigurationException exc) {
       throw new FormatException(exc);
@@ -374,7 +382,7 @@ public class PrairieReader extends FormatReader {
       throw new FormatException(exc);
     }
 
-    meta = new PrairieMetadata(xml, cfg);
+    meta = new PrairieMetadata(xml, cfg, env);
     sequences = meta.getSequences();
     channels = meta.getActiveChannels();
   }
