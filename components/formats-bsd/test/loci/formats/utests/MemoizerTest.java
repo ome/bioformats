@@ -147,11 +147,16 @@ public class MemoizerTest {
       // Check non-existing memo directory returns null
       assertEquals(memoizer.getMemoFile(id), null);
 
-      // Check existing non-writeable memo directory returns null
+      // Create memoizer directory and memoizer reader
       directory.mkdirs();
-      directory.setWritable(false);
       memoizer = new Memoizer(reader, 0, directory);
-      assertEquals(memoizer.getMemoFile(id), null);
+
+      // Check existing non-writeable memo directory returns null
+      if (File.separator.equals("/")) {
+        // File.setWritable() does not work properly on Windows
+        directory.setWritable(false);
+        assertEquals(memoizer.getMemoFile(id), null);
+      }
 
       // Check existing writeable memo diretory returns a memo file
       directory.setWritable(true);
@@ -169,8 +174,11 @@ public class MemoizerTest {
       memoizer = new Memoizer(reader, 0, new File(rootPath));
 
       // Check non-writeable file directory returns null for in-place caching
-      idDir.setWritable(false);
-      assertEquals(memoizer.getMemoFile(id), null);
+      if (File.separator.equals("/")) {
+        // File.setWritable() does not work properly on Windows
+        idDir.setWritable(false);
+        assertEquals(memoizer.getMemoFile(id), null);
+      }
 
       // Check writeable file directory returns memo file beside file
       idDir.setWritable(true);
@@ -184,9 +192,11 @@ public class MemoizerTest {
       memoizer = new Memoizer(reader, 0, true);
 
       // Check non-writeable file directory returns null for in-place caching
-      idDir.setWritable(false);
-      assertEquals(memoizer.getMemoFile(id), null);
-
+      if (File.separator.equals("/")) {
+        // File.setWritable() does not work properly on Windows
+        idDir.setWritable(false);
+        assertEquals(memoizer.getMemoFile(id), null);
+      }
       // Check writeable file directory returns memo file beside file
       idDir.setWritable(true);
       File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
