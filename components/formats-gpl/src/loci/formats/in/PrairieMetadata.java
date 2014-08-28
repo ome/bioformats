@@ -69,18 +69,23 @@ public class PrairieMetadata {
   /** Set of active channel indices. */
   private final HashSet<Integer> activeChannels = new HashSet<Integer>();
 
-  /** Key/value pairs from CFG file. */
+  /** Key/value pairs from CFG and/or ENV files. */
   private final ValueTable config = new ValueTable();
 
   /**
-   * Creates a new Prairie metadata by parsing the given XML and CFG documents.
+   * Creates a new Prairie metadata by parsing the given XML, CFG and/or ENV
+   * documents.
    * 
    * @param xml The XML document to parse, or null if none available.
    * @param cfg The CFG document to parse, or null if none available.
+   * @param env The ENV document to parse, or null if none available.
    */
-  public PrairieMetadata(final Document xml, final Document cfg) {
+  public PrairieMetadata(final Document xml, final Document cfg,
+    final Document env)
+  {
     if (xml != null) parseXML(xml);
     if (cfg != null) parseCFG(cfg);
+    if (env != null) parseENV(env);
     parseChannels();
   }
 
@@ -253,7 +258,10 @@ public class PrairieMetadata {
     }
   }
 
-  /** Parses metadata from Prairie CFG file. */
+  /**
+   * Parses metadata from Prairie CFG file. This file is only present for
+   * Prairie datasets recorded prior to version 5.2.
+   */
   private void parseCFG(final Document doc) {
     checkElement(doc.getDocumentElement(), "PVConfig");
 
@@ -264,6 +272,16 @@ public class PrairieMetadata {
     }
 
     parseKeys(doc.getDocumentElement(), config);
+  }
+
+  /**
+   * Parses metadata from Prairie ENV file. This file is only present for
+   * Prairie datasets recorded with version 5.2 or later.
+   */
+  private void parseENV(final Document doc) {
+    checkElement(doc.getDocumentElement(), "Environment");
+
+    parsePVStateShard(doc.getDocumentElement(), config);
   }
 
   /**
