@@ -493,15 +493,15 @@ TYPED_TEST_P(PixelBufferType, StorageOrder)
 
     const typename PixelBuffer<TypeParam>::storage_order_type& order = cbuf.storage_order();
 
-    EXPECT_EQ(5, order.ordering(0));
-    EXPECT_EQ(0, order.ordering(1));
-    EXPECT_EQ(1, order.ordering(2));
-    EXPECT_EQ(6, order.ordering(3));
-    EXPECT_EQ(2, order.ordering(4));
-    EXPECT_EQ(7, order.ordering(5));
-    EXPECT_EQ(3, order.ordering(6));
-    EXPECT_EQ(8, order.ordering(7));
-    EXPECT_EQ(4, order.ordering(8));
+    EXPECT_EQ(5U, order.ordering(0));
+    EXPECT_EQ(0U, order.ordering(1));
+    EXPECT_EQ(1U, order.ordering(2));
+    EXPECT_EQ(6U, order.ordering(3));
+    EXPECT_EQ(2U, order.ordering(4));
+    EXPECT_EQ(7U, order.ordering(5));
+    EXPECT_EQ(3U, order.ordering(6));
+    EXPECT_EQ(8U, order.ordering(7));
+    EXPECT_EQ(4U, order.ordering(8));
 
     EXPECT_TRUE(order.ascending(0));
     EXPECT_TRUE(order.ascending(1));
