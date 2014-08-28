@@ -100,6 +100,25 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
                                                                         ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
 }
 
+namespace std
+{
+  template<class charT, class traits>
+  inline std::basic_ostream<charT,traits>&
+  operator<< (std::basic_ostream<charT,traits>& os,
+              const ::ome::bioformats::PixelBufferBase::storage_order_type& order)
+  {
+    os << '(';
+    for (uint16_t i = 0; i < ::ome::bioformats::PixelBufferBase::dimensions; ++i)
+    {
+      os << order.ordering(i) << '/' << order.ascending(i);
+      if (i + 1 != ::ome::bioformats::PixelBufferBase::dimensions)
+        os << ',';
+    }
+    os << ')';
+    return os;
+  }
+}
+
 #endif // TEST_PIXEL_H
 
 /*
