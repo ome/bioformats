@@ -1743,6 +1743,20 @@ presenceRating = Fair
 utilityRating = Good
 reader = PCORAWReader.java
 
+[PicoQuant Bin]
+extensions = .bin
+developer = `PicoQuant <http://www.picoquant.com/>`_
+bsd = no
+export = no
+software = `SymphoTime64 <http://www.picoquant.com/products/category/software/symphotime-64-fluorescence-lifetime-imaging-and-correlation-software>`_
+weHave = * a few example datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Poor
+reader = PQBinReader.java
+
 [Perkin Elmer Densitometer]
 extensions = .pds
 developer = `Perkin Elmer <http://www.perkinelmer.com>`_
