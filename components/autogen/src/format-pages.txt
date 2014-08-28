@@ -1743,6 +1743,19 @@ presenceRating = Fair
 utilityRating = Good
 reader = PCORAWReader.java
 
+[PQBin]
+extensions = .bin
+developer = `PicoQuant <http://www.picoquant.com/>`_
+bsd = no
+export = no
+weHave = * a few example datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Good
+reader = PQBinReader.java
+
 [Perkin Elmer Densitometer]
 extensions = .pds
 developer = `Perkin Elmer <http://www.perkinelmer.com>`_
