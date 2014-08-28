@@ -396,7 +396,7 @@ struct SetIndexDeathTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& v)
+  operator() (const T& /* v */)
   {
     typedef typename T::element_type::value_type value_type;
 
