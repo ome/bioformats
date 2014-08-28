@@ -176,6 +176,8 @@
       <groupId>jhdf5</groupId>
       <artifactId>org.cisd</artifactId>
       <version>2.9</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/../../jar/cisd-jhdf5-batteries_included_lin_win_mac.jar</systemPath>
     </dependency>
   </dependencies>
 
