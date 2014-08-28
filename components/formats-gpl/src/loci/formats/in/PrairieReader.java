@@ -723,21 +723,6 @@ public class PrairieReader extends FormatReader {
   }
 
   /**
-   * Converts the given {@code Integer} to a {@link PositiveInteger}, or
-   * {@code null} if incompatible.
-   */
-  private PositiveInteger pi(final Integer value, final String name) {
-    if (value == null) return null;
-    try {
-      return new PositiveInteger(value);
-    }
-    catch (IllegalArgumentException e) {
-      LOGGER.debug("Expected positive value for {}; got {}", name, value);
-    }
-    return null;
-  }
-
-  /**
    * Converts the given {@code double} to a {@link PositiveFloat}, or
    * {@code null} if incompatible.
    */
