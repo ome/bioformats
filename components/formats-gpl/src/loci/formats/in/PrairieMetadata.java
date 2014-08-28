@@ -1040,7 +1040,37 @@ public class PrairieMetadata {
 
     @Override
     public String value() {
-      return null;
+      // NB: For tables with exactly one entry, we return the value
+      // of the entry directly, when the table's value is requested.
+      // This works around an ambiguity within the pre-5.2 schema,
+      // which made it impossible to distinguish between two cases.
+      // Consider the following pre-5.2 XML fragment:
+      //
+      // <Key key="positionCurrent_XAxis" value="0.95" />
+      //
+      // In terms of the 5.2+ schema, there are two potential ways
+      // to interpret this information:
+      //
+      // <PVStateValue key="positionCurrent">
+      //   <SubindexedValues index="XAxis">
+      //     <SubindexedValue subindex="0" value="0.95" />
+      //   </SubindexedValues>
+      // </PVStateValue>
+      //
+      // And:
+      //
+      // <PVStateValue key="positionCurrent">
+      //   <IndexedValue index="XAxis" value="0.95" />
+      // </PVStateValue>
+      //
+      // In order to maintain consistency when consuming such fields,
+      // we allow "short circuiting" single table indices. So in the
+      // above case, the following statements are equivalent:
+      //
+      // table.get("positionCurrent").get("XAxis").get(0).value();
+      // table.get("positionCurrent").get("XAxis").value();
+      // table.get("positionCurrent").value();
+      return size() == 1 ? values().iterator().next().value() : null;
     }
 
     @Override
