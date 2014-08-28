@@ -100,10 +100,13 @@ public class FileExportSPW {
           savePlane(width, height, pixelType, p, series);
         }
         series++;
-        try {
-          writer.setSeries(series);
-        } catch (FormatException e) {
-          exception = e;
+        if (series < nSeries)  {
+          try {
+            writer.setSeries(series);
+          } catch (FormatException e) {
+            System.err.println("Fatal error unable to select correct image in series! " + e.getMessage());
+            break;
+          }
         }
       } // endwhile
     } // endif
@@ -351,7 +354,7 @@ public class FileExportSPW {
     try {
       writer.close();
     } catch (IOException e) {
-      System.err.println("Failed to close file writer.");
+      System.err.println("Failed to close file writer. " + e.getMessage());
     }
   }
 
