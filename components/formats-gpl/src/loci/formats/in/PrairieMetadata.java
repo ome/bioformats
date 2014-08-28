@@ -40,9 +40,7 @@ import org.w3c.dom.NodeList;
 /**
  * Metadata structure for Prairie Technologies' TIFF-based format.
  * 
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PrairieMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrairieMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
+ * @author Curtis Rueden
  */
 public class PrairieMetadata {
 
