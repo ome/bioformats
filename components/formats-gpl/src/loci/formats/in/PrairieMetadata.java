@@ -310,6 +310,31 @@ public class PrairieMetadata {
     return el.hasAttribute(name) ? el.getAttribute(name) : null;
   }
 
+  /** Returns {@code value.value()}, or null if {@code value} is null. */
+  private String value(final Value value) {
+    return value == null ? null : value.value();
+  }
+
+  /**
+   * Returns {@code value.get(key).value()}, or null if {@code value} or
+   * {@code value.get(key)} is null.
+   */
+  private String value(final Value value, final String key) {
+    if (value == null) return null;
+    final Value v = value.get(key);
+    return v == null ? null : v.value();
+  }
+
+  /**
+   * Returns {@code value.get(index).value()}, or null if {@code value} or
+   * {@code value.get(index)} is null.
+   */
+  private String value(final Value value, final int index) {
+    if (value == null) return null;
+    final Value v = value.get(index);
+    return v == null ? null : v.value();
+  }
+
   /** Converts the given string to a {@code boolean}. */
   private boolean b(final String value) {
     return Boolean.parseBoolean(value);
