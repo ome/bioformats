@@ -46,6 +46,7 @@
 /// Helpers to create pixel values of all supported types from integers.
 
 template<typename P>
+inline
 P
 pixel_value(uint32_t value)
 {
@@ -53,6 +54,7 @@ pixel_value(uint32_t value)
 }
 
 template<typename C>
+inline
 C
 pixel_value_complex(uint32_t value)
 {
@@ -61,6 +63,7 @@ pixel_value_complex(uint32_t value)
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
                                           ::ome::bioformats::ENDIAN_BIG>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
@@ -71,6 +74,7 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
                                           ::ome::bioformats::ENDIAN_LITTLE>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
@@ -81,6 +85,7 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                           ::ome::bioformats::ENDIAN_BIG>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
@@ -91,6 +96,7 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                           ::ome::bioformats::ENDIAN_LITTLE>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
