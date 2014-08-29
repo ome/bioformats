@@ -1390,7 +1390,8 @@ public class FormatReaderTest {
 
       // remove extra directories
 
-      String[] f = commonParent.split(File.separator);
+      String split = File.separatorChar == '\\' ? "\\\\" : File.separator;
+      String[] f = commonParent.split(split);
       StringBuilder toRemove = new StringBuilder();
       for (int i=0; i<f.length - directories - 1; i++) {
         toRemove.append(f[i]);
