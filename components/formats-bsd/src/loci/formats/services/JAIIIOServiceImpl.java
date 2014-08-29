@@ -172,8 +172,10 @@ public class JAIIIOServiceImpl extends AbstractService
     if (options.resolution != null) {
       param.setResolution(options.resolution.intValue());
     }
-    param.setSourceRegion(new Rectangle(options.tileGridXOffset,
-      options.tileGridYOffset, options.tileWidth, options.tileHeight));
+    if (options.tileWidth > 0 && options.tileHeight > 0) {
+      param.setSourceRegion(new Rectangle(options.tileGridXOffset,
+        options.tileGridYOffset, options.tileWidth, options.tileHeight));
+    }
     return reader.readRaster(0, param);
   }
 
