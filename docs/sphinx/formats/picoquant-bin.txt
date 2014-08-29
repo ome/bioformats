@@ -43,7 +43,7 @@ Openness: |Fair|
 
 Presence: |Fair|
 
-Utility: |Good|
+Utility: |Poor|
 
 
 **Additional Information**
