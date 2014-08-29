@@ -1468,7 +1468,7 @@ public class ZeissCZIReader extends FormatReader {
           }
 
           String detectorType = getFirstNodeValue(detector, "Type");
-          if (detectorType != null && detectorType != "") {
+          if (detectorType != null && !detectorType.equals("")) {
             store.setDetectorType(getDetectorType(detectorType), 0, i);
           }
         }
