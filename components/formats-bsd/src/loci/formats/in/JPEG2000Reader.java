@@ -73,6 +73,8 @@ public class JPEG2000Reader extends FormatReader {
   private int[][] lut;
 
   private long pixelsOffset;
+  private byte[] fileBuffer;
+  private int lastSeries = -1;
 
   // -- Constructor --
 
@@ -154,6 +156,8 @@ public class JPEG2000Reader extends FormatReader {
       resolutionLevels = null;
       lut = null;
       pixelsOffset = 0;
+      fileBuffer = null;
+      lastSeries = -1;
     }
   }
 
@@ -179,8 +183,15 @@ public class JPEG2000Reader extends FormatReader {
       options.resolution = getCoreIndex();
     }
 
-    in.seek(pixelsOffset);
-    buf = new JPEG2000Codec().decompress(in, options);
+    // buffer the file in advance, instead of allowing JPEG2000Codec to do it
+    // this reduces the memory required to read tiles from large images
+    if (fileBuffer == null || lastSeries != getCoreIndex()) {
+      in.seek(pixelsOffset);
+      fileBuffer = new byte[(int) (in.length() - pixelsOffset)];
+      in.readFully(fileBuffer);
+      lastSeries = getCoreIndex();
+    }
+    buf = new JPEG2000Codec().decompress(fileBuffer, options);
     return buf;
   }
 
