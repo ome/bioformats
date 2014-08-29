@@ -958,7 +958,7 @@ Supported Formats
      - |Fair|
      - |Fair|
      - |Fair|
-     - |Good|
+     - |Poor|
      - |no|
      - |no|
    * - :doc:`formats/pict-macintosh-picture`
