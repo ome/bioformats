@@ -638,7 +638,7 @@ public class FV1000Reader extends FormatReader {
           }
         }
       }
-      else {
+      else if (!isOIB) {
         file = ptyFile.getAbsolutePath();
       }
 
