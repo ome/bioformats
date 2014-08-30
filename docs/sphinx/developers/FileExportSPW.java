@@ -23,13 +23,11 @@
  * #L%
  */
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -188,9 +186,9 @@ public class FileExportSPW {
 
           for (int fov = 0; fov < fovPerWell; fov++) {
 
-            // Create Image
-            String imageName = rowChar + ":" + Integer.toString(column)
-                + ":FOV:" + Integer.toString(fov);
+            // Create Image 
+            String imageName = rowChar + ":" + Integer.toString(column+1)
+                + ":FOV:" + Integer.toString(fov+1);
             String imageID = MetadataTools.createLSID("Image", well, fov);
             meta.setImageID(imageID, series);
             meta.setImageName(imageName, series);
@@ -367,26 +365,19 @@ public class FileExportSPW {
    * @throws java.lang.Exception
    */
   public static void main(String[] args) throws Exception {
-    String fileName = "SPWFromJava.ome.tiff";
+    
+    String fileName  = args[0]+".ome.tiff";
+    
+    File file = new File(fileName);
     Exception exception = null;
-    Path path = FileSystems.getDefault().getPath(fileName);
+ 
+    // delete file if it exists
+    // NB deleting old files seems to be critical 
+    if (file.exists())  {
+      file.delete();
+    }
 
-    // delete if exists
-    // NB deleting old files seems to be critical when changing size
-    try {
-      boolean success = Files.deleteIfExists(path);
-      System.out.println("Delete status: " + success);
-    } catch (IOException e) {
-      exception = e;
-    } catch (SecurityException e) {
-      exception = e;
-    }
-    if (exception != null) {
-      System.err.println("Failed to save plane.");
-      exception.printStackTrace();
-    }
     FileExportSPW exporter = new FileExportSPW(fileName);
     exporter.export();
   }
-
 }
