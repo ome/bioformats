@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import loci.common.Constants;
@@ -112,7 +113,7 @@ public class AFIReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
-      reader[0].setCoreIndex(getCoreIndex() + 1);
+      reader[0].setCoreIndex(getCoreIndex());
       return reader[0].openThumbBytes(no);
     }
 
@@ -134,7 +135,7 @@ public class AFIReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
-      reader[0].setCoreIndex(getCoreIndex() + 1);
+      reader[0].setCoreIndex(getCoreIndex());
       return reader[0].openBytes(no, buf, x, y, w, h);
     }
 
@@ -143,7 +144,33 @@ public class AFIReader extends FormatReader {
     int index = getIndex(coords[0], 0, coords[2]);
 
     reader[channel].setCoreIndex(getCoreIndex());
-    return reader[channel].openBytes(index, buf, x, y, w, h);
+
+    int srcBytes = FormatTools.getBytesPerPixel(reader[channel].getPixelType());
+    int destBytes = FormatTools.getBytesPerPixel(getPixelType());
+
+    int diff = destBytes - srcBytes;
+
+    if (diff == 0) {
+      return reader[channel].openBytes(index, buf, x, y, w, h);
+    }
+    else if (diff > 0) {
+      Arrays.fill(buf, (byte) 0);
+      byte[] tmp = reader[channel].openBytes(index, x, y, w, h);
+      for (int i=0, dest=0; i<tmp.length; i+=srcBytes, dest+=destBytes) {
+        if (isLittleEndian()) {
+          for (int j=0; j<srcBytes; j++) {
+            buf[dest + j] = tmp[i + j];
+          }
+        }
+        else {
+          for (int j=0; j<srcBytes; j++) {
+            buf[dest + destBytes - j - 1] = tmp[i + srcBytes - j - 1];
+          }
+        }
+      }
+      return buf;
+    }
+    throw new FormatException("Downsampling images is not supported");
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -225,7 +252,6 @@ public class AFIReader extends FormatReader {
     }
 
     core = reader[0].getCoreMetadataList();
-    core.remove(core.size() - EXTRA_IMAGES - 1);
 
     for (int i=0; i<core.size() - EXTRA_IMAGES; i++) {
       CoreMetadata c = core.get(i);
@@ -234,6 +260,9 @@ public class AFIReader extends FormatReader {
       c.rgb = false;
       if (i == 0) {
         c.resolutionCount = core.size() - EXTRA_IMAGES;
+      }
+      else {
+        c.pixelType = core.get(0).pixelType;
       }
     }
 
