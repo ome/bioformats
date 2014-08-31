@@ -283,6 +283,13 @@ public class FileStitcher extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#getRequiredDirectories() */
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return reader.getRequiredDirectories(files);
+  }
+
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);

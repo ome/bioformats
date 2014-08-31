@@ -27,7 +27,6 @@ package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -148,14 +147,19 @@ public class BDReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     Vector<String> files = new Vector<String>();
+    files.add(new Location(currentId).getAbsolutePath());
     for (String file : metadataFiles) {
-      if (file != null) files.add(file);
+      if (file != null && !files.contains(file)) {
+        files.add(file);
+      }
     }
 
     if (!noPixels && tiffs != null) {
       int well = getSeries() / (fieldRows * fieldCols);
       for (int i = 0; i<tiffs[well].length; i++) {
-        files.add(tiffs[well][i]);
+        if (!files.contains(tiffs[well][i])) {
+          files.add(tiffs[well][i]);
+        }
       }
     }
 
@@ -511,7 +515,7 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
-    FileInputStream idStream = new FileInputStream(id);
+    RandomAccessInputStream idStream = new RandomAccessInputStream(id);
     IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
       idStream, Constants.ENCODING)));
     IniList plate = null;
@@ -520,13 +524,13 @@ public class BDReader extends FormatReader {
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
-        FileInputStream stream = new FileInputStream(filename);
+        RandomAccessInputStream stream = new RandomAccessInputStream(filename);
         plate = parser.parseINI(new BufferedReader(new InputStreamReader(
           stream, Constants.ENCODING)));
         stream.close();
       }
       else if (checkSuffix(filename, "xyz")) {
-        FileInputStream stream = new FileInputStream(filename);
+        RandomAccessInputStream stream = new RandomAccessInputStream(filename);
         xyz = parser.parseINI(new BufferedReader(new InputStreamReader(
           stream, Constants.ENCODING)));
         stream.close();
@@ -656,7 +660,8 @@ public class BDReader extends FormatReader {
 
     for (int c=0; c<channelNames.size(); c++) {
       Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
-      FileInputStream stream = new FileInputStream(dyeFile.getAbsolutePath());
+      RandomAccessInputStream stream =
+        new RandomAccessInputStream(dyeFile.getAbsolutePath());
       IniList dye = new IniParser().parseINI(new BufferedReader(
         new InputStreamReader(stream, Constants.ENCODING)));
 
