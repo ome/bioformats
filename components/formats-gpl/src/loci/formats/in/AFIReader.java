@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -167,6 +168,14 @@ public class AFIReader extends FormatReader {
             buf[dest + destBytes - j - 1] = tmp[i + srcBytes - j - 1];
           }
         }
+      }
+      Object s = DataTools.makeDataArray(
+        buf, destBytes, FormatTools.isFloatingPoint(getPixelType()), isLittleEndian());
+      long max = (long) Math.pow(2, destBytes * 8) - 1;
+      for (int i=0; i<Array.getLength(s); i++) {
+        double scale = Array.getDouble(s, i) / 255;
+        DataTools.unpackBytes(
+          (long) (scale * max), buf, i * destBytes, destBytes, isLittleEndian());
       }
       return buf;
     }
