@@ -1411,6 +1411,9 @@ public class FormatReaderTest {
           newFile = newFiles[i];
         }
       }
+      if (newFile == null) {
+        newFile = newFiles[0];
+      }
 
       IFormatReader check = new FileStitcher();
       try {
