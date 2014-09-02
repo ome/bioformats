@@ -280,6 +280,7 @@ public class AnalyzeReader extends FormatReader {
 
     CoreMetadata m = core.get(0);
 
+    m.littleEndian = little;
     m.sizeX = x;
     m.sizeY = y;
     m.sizeZ = z;

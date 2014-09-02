@@ -340,6 +340,15 @@ public class SDTReader extends FormatReader {
     m.indexed = false;
     m.falseColor = false;
     m.metadataComplete = true;
+    
+    // disable pre-load mode for very large files
+    // threshold is set to the size of the largest test file currently available
+    if ( m.sizeX * m.sizeY * m.sizeT  >  (512 * 512 * 512))  {
+      preLoad = false;
+    }
+    else  {
+      preLoad = true;
+    }
 
     if (intensity) {
       m.moduloT.parentType = FormatTools.SPECTRA;
