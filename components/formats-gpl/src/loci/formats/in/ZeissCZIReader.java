@@ -1446,29 +1446,29 @@ public class ZeissCZIReader extends FormatReader {
           if (gain == null) {
             gain = getFirstNodeValue(detector, "Gain");
           }
-          if (gain != null) {
+          if (gain != null && !gain.equals("")) {
             store.setDetectorGain(new Double(gain), 0, i);
           }
 
           String offset = getFirstNodeValue(detector, "Offset");
-          if (offset != null) {
+          if (offset != null && !offset.equals("")) {
             store.setDetectorOffset(new Double(offset), 0, i);
           }
 
           if (zoom == null) {
             zoom = getFirstNodeValue(detector, "Zoom");
           }
-          if (zoom != null) {
+          if (zoom != null && !zoom.equals("")) {
             store.setDetectorZoom(new Double(zoom), 0, i);
           }
 
           String ampGain = getFirstNodeValue(detector, "AmplificationGain");
-          if (ampGain != null) {
+          if (ampGain != null && !ampGain.equals("")) {
             store.setDetectorAmplificationGain(new Double(ampGain), 0, i);
           }
 
           String detectorType = getFirstNodeValue(detector, "Type");
-          if (detectorType != null) {
+          if (detectorType != null && !detectorType.equals("")) {
             store.setDetectorType(getDetectorType(detectorType), 0, i);
           }
         }
