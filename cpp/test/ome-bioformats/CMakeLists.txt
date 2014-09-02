@@ -64,7 +64,20 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/fileinfo fileinfo)
 
-  add_executable(pixelbuffer pixelbuffer.cpp)
+  add_executable(pixelbuffer
+                 pixelbuffer.h
+                 pixelbuffer-order.cpp
+                 pixelbuffer-int8.cpp
+                 pixelbuffer-int16.cpp
+                 pixelbuffer-int32.cpp
+                 pixelbuffer-uint8.cpp
+                 pixelbuffer-uint16.cpp
+                 pixelbuffer-uint32.cpp
+                 pixelbuffer-float.cpp
+                 pixelbuffer-double.cpp
+                 pixelbuffer-bit.cpp
+                 pixelbuffer-complex.cpp
+                 pixelbuffer-doublecomplex.cpp)
   target_link_libraries(pixelbuffer ome-bioformats)
   target_link_libraries(pixelbuffer ome-test)
 
