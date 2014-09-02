@@ -306,9 +306,9 @@ public class AFIReader extends FormatReader {
       }
     }
     else {
-      store.setImageName(fileID, 0);
-      store.setImageName(fileID + " [label image]", 1);
-      store.setImageName(fileID + " [macro image]", 2);
+      store.setImageName("", 0);
+      store.setImageName("label image", 1);
+      store.setImageName("macro image", 2);
     }
 
     if (!minimalMetadata) {
