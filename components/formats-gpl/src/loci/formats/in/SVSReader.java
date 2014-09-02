@@ -78,6 +78,7 @@ public class SVSReader extends BaseTiffReader {
   private Double exposureTime, exposureScale;
   private Double magnification;
   private String date, time;
+  private ArrayList<String> dyeNames = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -212,6 +213,7 @@ public class SVSReader extends BaseTiffReader {
       magnification = null;
       date = null;
       time = null;
+      dyeNames.clear();
     }
   }
 
@@ -309,6 +311,9 @@ public class SVSReader extends BaseTiffReader {
               }
               else if (key.equals("AppMag")) {
                 magnification = DataTools.parseDouble(value);
+              }
+              else if (key.equals("Dye")) {
+                dyeNames.add(value);
               }
             }
           }
@@ -470,6 +475,10 @@ public class SVSReader extends BaseTiffReader {
 
   protected double getMagnification() {
     return magnification;
+  }
+
+  protected ArrayList<String> getDyeNames() {
+    return dyeNames;
   }
 
 }

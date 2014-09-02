@@ -258,6 +258,11 @@ public class AFIReader extends FormatReader {
       reader[i] = new ChannelSeparator(new SVSReader());
       reader[i].setFlattenedResolutions(hasFlattenedResolutions());
       reader[i].setId(pixels.get(i));
+
+      ArrayList<String> dyeNames = ((SVSReader) reader[i].getReader()).getDyeNames();
+      if (dyeNames.size() > 0) {
+        channelNames[i] = dyeNames.get(0);
+      }
     }
 
     core = reader[0].getCoreMetadataList();
@@ -293,10 +298,17 @@ public class AFIReader extends FormatReader {
       getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
     MetadataTools.populatePixels(store, this, !minimalMetadata);
 
-    String fileID = currentId.substring(
-      currentId.lastIndexOf(File.separator) + 1, currentId.lastIndexOf("."));
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(fileID + " - image #" + (i + 1), i);
+    String fileID = currentId.substring(currentId.lastIndexOf(File.separator) + 1);
+
+    if (hasFlattenedResolutions()) {
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageName(fileID + " - image #" + (i + 1), i);
+      }
+    }
+    else {
+      store.setImageName(fileID, 0);
+      store.setImageName(fileID + " [label image]", 1);
+      store.setImageName(fileID + " [macro image]", 2);
     }
 
     if (!minimalMetadata) {
