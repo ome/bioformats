@@ -58,8 +58,8 @@ sphinx()
 {
     (
         export SPHINXOPTS="-W"
-        ant clean-docs-sphinx
-        ant docs-sphinx
+        ant -Dsphinx.opts=$SPHINXOPTS clean-docs-sphinx
+        ant -Dsphinx.opts=$SPHINXOPTS docs-sphinx
     )
 }
 
