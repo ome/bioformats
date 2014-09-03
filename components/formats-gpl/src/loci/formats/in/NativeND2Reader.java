@@ -1671,7 +1671,7 @@ public class NativeND2Reader extends FormatReader {
         }
         else if (name.equals("EmWavelength")) {
           Double wave = Double.parseDouble(value.toString());
-          textEmissionWavelengths.add(wave.intValue());
+          textEmissionWavelengths.add(wave);
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
