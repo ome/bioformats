@@ -53,6 +53,10 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
 
   private IRandomAccess outputFile;
 
+  private int currentBit = 0;
+  private int currentByte = 0;
+  private boolean dirtyByte = false;
+
   // -- Constructor --
 
   /**
@@ -109,6 +113,55 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
   public void writeLine(String s) throws IOException {
     writeBytes(s);
     writeBytes("\n");
+  }
+
+  /** Writes the given value using the given number of bits. */
+  public void writeBits(int value, int numBits) throws IOException {
+    if (numBits <= 0) {
+      return;
+    }
+    byte[] bits = new byte[numBits];
+    for (int i=0; i<numBits; i++) {
+      bits[i] = (byte) (value & 1);
+      value >>= 1;
+    }
+    for (int i=numBits-1; i>=0; i--) {
+      int b = bits[i] << (7 - currentBit);
+      currentByte |= b;
+      dirtyByte = true;
+      currentBit++;
+      if (currentBit > 7) {
+        currentBit = 0;
+        writeByte(currentByte);
+        currentByte = 0;
+        dirtyByte = false;
+      }
+    }
+
+  }
+
+  /**
+   * Writes the bits represented by a bit string to the buffer.
+   *
+   * @throws IllegalArgumentException If any characters other than
+   *   '0' and '1' appear in the string.
+   */
+  public void writeBits(String bitString) throws IOException {
+    if (bitString == null) {
+      throw new IllegalArgumentException("Bit string cannot be null");
+    }
+    for (char c : bitString.toCharArray()) {
+      if (c == '1') {
+        writeBits(1, 1);
+      }
+      else if (c == '0') {
+        writeBits(0, 1);
+      }
+      else {
+        throw new IllegalArgumentException(
+          "Found illegal character '" + c + "'; write terminated");
+      }
+    }
   }
 
   // -- DataOutput API methods --
@@ -206,11 +259,15 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
 
   /* @see java.io.OutputStream#close() */
   public void close() throws IOException {
+    flush();
     outputFile.close();
   }
 
   /* @see java.io.OutputStream#flush() */
   public void flush() throws IOException {
+    if (dirtyByte) {
+      writeByte(currentByte);
+    }
   }
 
 }
