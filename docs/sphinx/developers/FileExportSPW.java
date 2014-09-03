@@ -359,14 +359,14 @@ public class FileExportSPW {
   /**
    * To export a file to OME-TIFF:
    *
-   * $ java FileExport output-file.ome.tiff
+   * $ java FileExportSPW output-file.ome.tiff
    *
    * @param args
    * @throws java.lang.Exception
    */
   public static void main(String[] args) throws Exception {
     
-    String fileName  = args[0]+".ome.tiff";
+    String fileName  = args[0];
     
     File file = new File(fileName);
     Exception exception = null;
