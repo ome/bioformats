@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -218,30 +219,46 @@ public class GatanReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      int index = 0;
       if (pixelSizes.size() >= 3) {
-        int index = pixelSizes.size() - 3;
+        index = pixelSizes.size() - 3;
+      }
+      else if (pixelSizes.size() >= 2) {
+        index = pixelSizes.size() - 2;
+      }
+      if (Math.abs(pixelSizes.get(index + 1) - pixelSizes.get(index + 2)) < Constants.EPSILON) {
+        if (Math.abs(pixelSizes.get(index) - pixelSizes.get(index + 1)) > Constants.EPSILON &&
+          getSizeY() > 1)
+        {
+          index++;
+        }
+      }
+
+      if (index < pixelSizes.size() - 1) {
         Double x = pixelSizes.get(index);
         Double y = pixelSizes.get(index + 1);
-        Double z = pixelSizes.get(index + 2);
         String xUnits = index < units.size() ? units.get(index) : "";
         String yUnits = index + 1 < units.size() ? units.get(index + 1) : "";
-        String zUnits = index + 2 < units.size() ? units.get(index + 2) : "";
-
         x = correctForUnits(x, xUnits);
         y = correctForUnits(y, yUnits);
-        z = correctForUnits(z, zUnits);
-
         PositiveFloat sizeX = FormatTools.getPhysicalSizeX(x);
         PositiveFloat sizeY = FormatTools.getPhysicalSizeY(y);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(z);
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);
         }
         if (sizeY != null) {
           store.setPixelsPhysicalSizeY(sizeY, 0);
         }
-        if (sizeZ != null) {
-          store.setPixelsPhysicalSizeZ(sizeZ, 0);
+
+        if (index < pixelSizes.size() - 2) {
+          Double z = pixelSizes.get(index + 2);
+          String zUnits = index + 2 < units.size() ? units.get(index + 2) : "";
+          z = correctForUnits(z, zUnits);
+          PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(z);
+
+          if (sizeZ != null) {
+            store.setPixelsPhysicalSizeZ(sizeZ, 0);
+          }
         }
       }
 
