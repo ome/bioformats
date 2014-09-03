@@ -241,11 +241,9 @@ public class PQBinReader extends FormatReader {
     m.moduloT.type = FormatTools.LIFETIME;
     m.moduloT.parentType = FormatTools.SPECTRA;
     m.moduloT.typeDescription = "TCSPC";
+      
     m.moduloT.start = 0;
-
-    float timeBase = timeResol * 1000;  // Convert to ps
-
-    m.moduloT.step = timeBase / timeBins;
+    m.moduloT.step = timeResol * 1000;  // Convert to ps
     m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
     m.moduloT.unit = "ps";
     
