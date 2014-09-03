@@ -37,7 +37,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -90,23 +89,20 @@ public class HISReader extends FormatReader {
     else {
       int bits = getBitsPerPixel();
       int bpp = FormatTools.getBytesPerPixel(getPixelType());
-      byte[] b = new byte[(getSizeX() * getSizeY() * getSizeC() * bits) / 8];
-      in.read(b);
-      BitBuffer bb = new BitBuffer(b);
 
-      bb.skipBits(y * getSizeX() * getSizeC() * bits);
+      in.skipBits(y * getSizeX() * getSizeC() * bits);
       for (int row=0; row<h; row++) {
         int rowOffset = row * w * getSizeC() * bpp;
-        bb.skipBits(x * getSizeC() * bits);
+        in.skipBits(x * getSizeC() * bits);
         for (int col=0; col<w; col++) {
           int colOffset = col * getSizeC() * bpp;
           for (int c=0; c<getSizeC(); c++) {
-            int sample = bb.getBits(bits);
+            int sample = in.readBits(bits);
             DataTools.unpackBytes(sample, buf, rowOffset + colOffset + c * bpp,
               bpp, isLittleEndian());
           }
         }
-        bb.skipBits(getSizeC() * bits * (getSizeX() - w - x));
+        in.skipBits(getSizeC() * bits * (getSizeX() - w - x));
       }
     }
     return buf;

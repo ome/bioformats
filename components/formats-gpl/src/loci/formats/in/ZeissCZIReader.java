@@ -36,6 +36,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -48,7 +49,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LZWCodec;
@@ -2925,15 +2925,17 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  private byte[] decode12BitCamera(byte[] data, int maxBytes) {
+  private byte[] decode12BitCamera(byte[] data, int maxBytes) throws IOException {
     byte[] decoded = new byte[maxBytes];
 
-    BitBuffer bb = new BitBuffer(data);
+    RandomAccessInputStream bb = new RandomAccessInputStream(
+      new ByteArrayHandle(data));
     byte[] fourBits = new byte[(maxBytes / 2) * 3];
     int pt = 0;
     while (pt < fourBits.length) {
-      fourBits[pt++] = (byte) bb.getBits(4);
+      fourBits[pt++] = (byte) bb.readBits(4);
     }
+    bb.close();
     for (int index=0; index<fourBits.length-1; index++) {
       if ((index - 3) % 6 == 0) {
         byte middle = fourBits[index];

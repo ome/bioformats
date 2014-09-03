@@ -44,7 +44,6 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.MSRLECodec;
@@ -216,20 +215,16 @@ public class AVIReader extends FormatReader {
       int rawSize = FormatTools.getPlaneSize(this, effectiveWidth, getSizeY());
       rawSize /= (8 / bmpBitsPerPixel);
 
-      byte[] b = new byte[rawSize];
-
       int len = rawSize / getSizeY();
-      in.read(b);
 
-      BitBuffer bb = new BitBuffer(b);
-      bb.skipBits(bmpBitsPerPixel * len * (getSizeY() - h - y));
+      in.skipBits(bmpBitsPerPixel * len * (getSizeY() - h - y));
 
       for (int row=h; row>=y; row--) {
-        bb.skipBits(bmpBitsPerPixel * x);
+        in.skipBits(bmpBitsPerPixel * x);
         for (int col=0; col<len; col++) {
-          buf[(row - y) * len + col] = (byte) bb.getBits(bmpBitsPerPixel);
+          buf[(row - y) * len + col] = (byte) in.readBits(bmpBitsPerPixel);
         }
-        bb.skipBits(bmpBitsPerPixel * (getSizeX() - w - x));
+        in.skipBits(bmpBitsPerPixel * (getSizeX() - w - x));
       }
 
       return buf;

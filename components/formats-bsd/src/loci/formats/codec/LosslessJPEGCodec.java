@@ -35,6 +35,7 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -170,7 +171,9 @@ public class LosslessJPEGCodec extends BaseCodec {
         }
         toDecode = b.toByteArray();
 
-        BitBuffer bb = new BitBuffer(toDecode);
+        RandomAccessInputStream bb = new RandomAccessInputStream(
+          new ByteArrayHandle(toDecode));
+
         HuffmanCodec huffman = new HuffmanCodec();
         HuffmanCodecOptions huffmanOptions = new HuffmanCodecOptions();
         huffmanOptions.bitsPerSample = bitsPerSample;
@@ -248,6 +251,7 @@ public class LosslessJPEGCodec extends BaseCodec {
           }
           nextSample += bytesPerSample;
         }
+        bb.close();
       }
       else {
         length -= 2; // stored length includes length param

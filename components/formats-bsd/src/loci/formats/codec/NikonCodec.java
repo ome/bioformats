@@ -193,10 +193,6 @@ public class NikonCodec extends BaseCodec {
 
     HuffmanCodec huffmanCodec = new HuffmanCodec();
 
-    byte[] pix = new byte[nikon.maxBytes];
-    in.read(pix);
-
-    BitBuffer bb = new BitBuffer(pix);
     BitWriter out = new BitWriter();
 
     int[] hPredictor = new int[2];
@@ -215,7 +211,7 @@ public class NikonCodec extends BaseCodec {
       }
       for (int col=0; col<nikon.width; col++) {
         int cfaIndex = (2 * (row & 1)) + (col & 1);
-        int diff = huffmanCodec.getSample(bb, huffman);
+        int diff = huffmanCodec.getSample(in, huffman);
 
         if (col < 2) {
           nikon.vPredictor[cfaIndex] += diff;

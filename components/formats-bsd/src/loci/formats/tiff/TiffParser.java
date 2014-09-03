@@ -37,13 +37,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 
 import org.slf4j.Logger;
@@ -1018,8 +1018,6 @@ public class TiffParser {
 
     boolean littleEndian = ifd.isLittleEndian();
 
-    BitBuffer bb = new BitBuffer(bytes);
-
     // Hyper optimisation that takes any 8-bit or 16-bit data, where there is
     // only one channel, the source byte buffer's size is less than or equal to
     // that of the destination buffer and for which no special unpacking is
@@ -1066,86 +1064,96 @@ public class TiffParser {
     int block = subX * subY;
     int nTiles = (int) (imageWidth / subX);
 
-    // unpack pixels
-    for (int sample=0; sample<sampleCount; sample++) {
-      int ndx = startIndex + sample;
-      if (ndx >= nSamples) break;
+    try {
+      RandomAccessInputStream bb = new RandomAccessInputStream(
+        new ByteArrayHandle(bytes));
 
-      for (int channel=0; channel<nChannels; channel++) {
-        int index = numBytes * (sample * nChannels + channel);
-        int outputIndex = (channel * nSamples + ndx) * numBytes;
+      // unpack pixels
+      for (int sample=0; sample<sampleCount; sample++) {
+        int ndx = startIndex + sample;
+        if (ndx >= nSamples) break;
 
-        // unpack non-YCbCr samples
-        if (photoInterp != PhotoInterp.Y_CB_CR) {
-          long value = 0;
+        for (int channel=0; channel<nChannels; channel++) {
+          int index = numBytes * (sample * nChannels + channel);
+          int outputIndex = (channel * nSamples + ndx) * numBytes;
 
-          if (noDiv8) {
-            // bits per sample is not a multiple of 8
+          // unpack non-YCbCr samples
+          if (photoInterp != PhotoInterp.Y_CB_CR) {
+            long value = 0;
 
-            if ((channel == 0 && photoInterp == PhotoInterp.RGB_PALETTE) ||
-              (photoInterp != PhotoInterp.CFA_ARRAY &&
-              photoInterp != PhotoInterp.RGB_PALETTE))
+            if (noDiv8) {
+              // bits per sample is not a multiple of 8
+
+              if ((channel == 0 && photoInterp == PhotoInterp.RGB_PALETTE) ||
+                (photoInterp != PhotoInterp.CFA_ARRAY &&
+                photoInterp != PhotoInterp.RGB_PALETTE))
+              {
+                try {
+                  value = bb.readBits(bps0) & 0xffff;
+                }
+                catch (ArrayIndexOutOfBoundsException e) {
+                  // leave the value at 0 if there aren't enough bytes
+                  // to cover the total number of samples
+                }
+                if ((ndx % imageWidth) == imageWidth - 1) {
+                  bb.skipBits(skipBits);
+                }
+              }
+            }
+            else {
+              value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
+            }
+
+            if (photoInterp == PhotoInterp.WHITE_IS_ZERO ||
+              photoInterp == PhotoInterp.CMYK)
             {
-              try {
-                value = bb.getBits(bps0) & 0xffff;
-              }
-              catch (ArrayIndexOutOfBoundsException e) {
-                // leave the value at 0 if there aren't enough bytes
-                // to cover the total number of samples
-              }
-              if ((ndx % imageWidth) == imageWidth - 1) {
-                bb.skipBits(skipBits);
-              }
+              value = maxValue - value;
+            }
+
+            if (outputIndex + numBytes <= samples.length) {
+              DataTools.unpackBytes(value, samples, outputIndex, numBytes,
+                littleEndian);
             }
           }
           else {
-            value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
-          }
+            // unpack YCbCr samples; these need special handling, as each of
+            // the RGB components depends upon two or more of the YCbCr components
+            if (channel == nChannels - 1) {
+              int lumaIndex = sample + (2 * (sample / block));
+              int chromaIndex = (sample / block) * (block + 2) + block;
 
-          if (photoInterp == PhotoInterp.WHITE_IS_ZERO ||
-            photoInterp == PhotoInterp.CMYK)
-          {
-            value = maxValue - value;
-          }
+              if (chromaIndex + 1 >= bytes.length) break;
 
-          if (outputIndex + numBytes <= samples.length) {
-            DataTools.unpackBytes(value, samples, outputIndex, numBytes,
-              littleEndian);
-          }
-        }
-        else {
-          // unpack YCbCr samples; these need special handling, as each of
-          // the RGB components depends upon two or more of the YCbCr components
-          if (channel == nChannels - 1) {
-            int lumaIndex = sample + (2 * (sample / block));
-            int chromaIndex = (sample / block) * (block + 2) + block;
+              int tile = ndx / block;
+              int pixel = ndx % block;
+              long r = subY * (tile / nTiles) + (pixel / subX);
+              long c = subX * (tile % nTiles) + (pixel % subX);
 
-            if (chromaIndex + 1 >= bytes.length) break;
+              int idx = (int) (r * imageWidth + c);
 
-            int tile = ndx / block;
-            int pixel = ndx % block;
-            long r = subY * (tile / nTiles) + (pixel / subX);
-            long c = subX * (tile % nTiles) + (pixel % subX);
+              if (idx < nSamples) {
+                int y = (bytes[lumaIndex] & 0xff) - reference[0];
+                int cb = (bytes[chromaIndex] & 0xff) - reference[2];
+                int cr = (bytes[chromaIndex + 1] & 0xff) - reference[4];
 
-            int idx = (int) (r * imageWidth + c);
+                int red = (int) (cr * (2 - 2 * lumaRed) + y);
+                int blue = (int) (cb * (2 - 2 * lumaBlue) + y);
+                int green = (int)
+                  ((y - lumaBlue * blue - lumaRed * red) / lumaGreen);
 
-            if (idx < nSamples) {
-              int y = (bytes[lumaIndex] & 0xff) - reference[0];
-              int cb = (bytes[chromaIndex] & 0xff) - reference[2];
-              int cr = (bytes[chromaIndex + 1] & 0xff) - reference[4];
-
-              int red = (int) (cr * (2 - 2 * lumaRed) + y);
-              int blue = (int) (cb * (2 - 2 * lumaBlue) + y);
-              int green = (int)
-                ((y - lumaBlue * blue - lumaRed * red) / lumaGreen);
-
-              samples[idx] = (byte) (red & 0xff);
-              samples[nSamples + idx] = (byte) (green & 0xff);
-              samples[2*nSamples + idx] = (byte) (blue & 0xff);
+                samples[idx] = (byte) (red & 0xff);
+                samples[nSamples + idx] = (byte) (green & 0xff);
+                samples[2*nSamples + idx] = (byte) (blue & 0xff);
+              }
             }
           }
         }
       }
+
+      bb.close();
+    }
+    catch (IOException e) {
+      throw new FormatException(e);
     }
   }
 
