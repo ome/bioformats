@@ -47,7 +47,7 @@ if(NOT embedded-gtest)
 endif()
 
 if(NOT GTEST_FOUND)
-  message(STATUS "Using embedded gtest")
+  message(STATUS "Using embedded GTest")
   add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0")
   set(GTEST_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0/include")
   set(GTEST_LIBRARIES gtest)
