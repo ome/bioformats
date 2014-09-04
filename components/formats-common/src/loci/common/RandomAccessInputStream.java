@@ -439,7 +439,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
       if (bitsToRead >= bitsLeft) {
         toStore <<= bitsLeft;
         bitsToRead -= bitsLeft;
-        int cb = read();
+        int cb = readByte();
         if (currentBit == 0) {
           // we can read in a whole byte, so we'll do that.
           toStore += cb & 0xff;
@@ -457,7 +457,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
         // read the appropriate number of bits off the front side of the byte,
         // then push them into the int.
         toStore = toStore << bitsToRead;
-        int cb = read() & 0xff;
+        int cb = readByte() & 0xff;
         seek(getFilePointer() - 1);
         toStore += (cb & (0x00FF - FRONT_MASK[currentBit])) >>
           (bitsLeft - bitsToRead);
