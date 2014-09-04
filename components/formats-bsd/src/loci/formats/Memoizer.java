@@ -315,8 +315,8 @@ public class Memoizer extends ReaderWrapper {
   private final File directory;
 
   /**
-   * If True, then all memoization files will be created beside the setId
-   * file.
+   * If True, then all memoization files will be created in the same directory
+   * as the original file.
    */
   private boolean doInPlaceCaching = false;
 
@@ -448,8 +448,8 @@ public class Memoizer extends ReaderWrapper {
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to super.setId() before a memo file
    *         will be created.
-   *  @param doInPlaceCaching a boolean specifying to create memo files in
-   *         place if true.
+   *  @param doInPlaceCaching a boolean specifying to create memo files in the 
+   *         same directory as the original file if true.
    */
   public Memoizer(IFormatReader r, long minimumElapsed,
                   boolean doInPlaceCaching) {
