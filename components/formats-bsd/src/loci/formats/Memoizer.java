@@ -378,20 +378,34 @@ public class Memoizer extends ReaderWrapper {
     this(DEFAULT_MINIMUM_ELAPSED);
   }
 
-  /** Constructs a memoizer around a new image reader. */
+  /**
+   *  Constructs a memoizer around a new image reader.
+   *
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to super.setId() before a memo file
+   *         will be created.
+   */
   public Memoizer(long minimumElapsed) {
     this(minimumElapsed, null);
   }
 
-  /** Constructs a memoizer around a new image reader. */
+  /**
+   *  Constructs a memoizer around a new image reader.
+   *
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to super.setId() before a memo file
+   *         will be created.
+   *  @param directory a {@link File} specifying the directory where all
+   *         memoization files should be created.
+   */
   public Memoizer(long minimumElapsed, File directory) {
     super();
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
   }
 
-  /** 
-   *  Constructs a memoizer around the given reader. 
+  /**
+   *  Constructs a memoizer around the given reader.
    *
    *  @param r an {@link IFormatReader} instance
    */
@@ -400,11 +414,11 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader. 
+   *  Constructs a memoizer around the given reader.
    *
    *  @param r an {@link IFormatReader} instance
-   *  @param minimumElapsed a long specifying the number of milliseconds which 
-   *         must elapse during the call to {@link #setId} before a memo file 
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
    */
   public Memoizer(IFormatReader r, long minimumElapsed) {
@@ -412,14 +426,14 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader. 
+   *  Constructs a memoizer around the given reader.
    *
    *  @param r an {@link IFormatReader} instance
-   *  @param minimumElapsed a long specifying the number of milliseconds which 
-   *         must elapse during the call to {@link #setId} before a memo file 
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
-   *  @param directory a {@link File} specifying the directory where all 
-   *         memoization files should be created. 
+   *  @param directory a {@link File} specifying the directory where all
+   *         memoization files should be created.
    */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
@@ -428,14 +442,14 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader. 
+   *  Constructs a memoizer around the given reader.
    *
    *  @param r an {@link IFormatReader} instance
-   *  @param minimumElapsed a long specifying the number of milliseconds which 
-   *         must elapse during the call to super.setId() before a memo file 
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to super.setId() before a memo file
    *         will be created.
    *  @param doInPlaceCaching a boolean specifying to create memo files in
-   *         place if true. 
+   *         place if true.
    */
   public Memoizer(IFormatReader r, long minimumElapsed,
                   boolean doInPlaceCaching) {
@@ -444,7 +458,7 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Returns whether the {@link #reader} instance currently active was loaded 
+   *  Returns whether the {@link #reader} instance currently active was loaded
    *  from the memo file during {@link #setId(String)}.
    */
   public boolean isLoadedFromMemo() {
@@ -452,7 +466,7 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Returns whether the {@link #reader} instance currently active was saved 
+   *  Returns whether the {@link #reader} instance currently active was saved
    *  to the memo file during {@link #setId(String)}.
    */
   public boolean isSavedToMemo() {
