@@ -2,7 +2,6 @@ language: java
 
 jdk:
   - oraclejdk8
-  - openjdk7
   - oraclejdk7
   - openjdk6
 
@@ -39,19 +38,13 @@ matrix:
   exclude:
     - jdk: oraclejdk8
       env: BUILD=sphinx
-    - jdk: openjdk7
-      env: BUILD=sphinx
     - jdk: oraclejdk7
       env: BUILD=sphinx
     - jdk: oraclejdk8
       env: BUILD=cpp
-    - jdk: openjdk7
-      env: BUILD=cpp
     - jdk: oraclejdk7
       env: BUILD=cpp
     - jdk: oraclejdk8
-      env: BUILD=cppwrap
-    - jdk: openjdk7
       env: BUILD=cppwrap
     - jdk: oraclejdk7
       env: BUILD=cppwrap
