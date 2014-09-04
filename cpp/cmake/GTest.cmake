@@ -34,13 +34,21 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+enable_testing()
+option(test "Enable unit tests (requires gtest)" ON)
+set(BUILD_TESTS ${test})
+
 # Unit tests
 find_package(Threads REQUIRED)
-find_package(GTest)
-set(BUILD_TESTS OFF)
-if(GTEST_FOUND)
-  set(BUILD_TESTS ON)
-  enable_testing()
-endif(GTEST_FOUND)
-option(test "Enable unit tests (requires gtest)" ${BUILD_TESTS})
-set(BUILD_TESTS ${test})
+
+option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
+if(NOT embedded-gtest)
+  find_package(GTest)
+endif()
+
+if(NOT GTEST_FOUND)
+  message(STATUS "Using embedded gtest")
+  add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0")
+  set(GTEST_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0/include")
+  set(GTEST_LIBRARIES gtest)
+endif()

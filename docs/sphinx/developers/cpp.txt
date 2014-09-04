@@ -129,14 +129,20 @@ cxxstd-autodetect=(ON|OFF)
   4.4 or 4.6 require ``-std=gnu++98`` or else ``stdarg`` support is
   broken).
 doxygen=(ON|OFF)
-  Enable doxygen documentation
+  Enable doxygen documentation.  These will be enabled by default if
+  doxygen is found.
+embedded-gtest=(ON|OFF)
+  Enable the use of an embedded copy of the Google Test (gtest)
+  library.  This is off by default but will be enabled automatically
+  if a system copy is not found.  This may be enabled explicitly to
+  override the autodetection.
 extra-warnings=(ON|OFF)
   Enable or disable additional compiler warnings in addition to the
   default set.  These are disabled by default since they trigger a large
   number of false positives, particularly in third-party libraries
   outside our control.
 test=(ON|OFF)
-  Enable unit tests
+  Enable unit tests.  Tests are enabled by default.
 
 For example, to disable tests, run ``cmake -Dtest=OFF``.  Options will
 typically be enabled by default if the prerequisites are available.
