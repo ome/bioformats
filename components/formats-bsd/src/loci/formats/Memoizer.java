@@ -303,7 +303,7 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    * Minimum number of milliseconds which must elapse during the call to
-   * super.setId() before a memo file will be created.
+   * {@link setId} before a memo file will be created.
    */
   private final long minimumElapsed;
 
@@ -382,7 +382,7 @@ public class Memoizer extends ReaderWrapper {
    *  Constructs a memoizer around a new image reader.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
-   *         must elapse during the call to super.setId() before a memo file
+   *         must elapse during the call to {@link setId} before a memo file
    *         will be created.
    */
   public Memoizer(long minimumElapsed) {
@@ -393,7 +393,7 @@ public class Memoizer extends ReaderWrapper {
    *  Constructs a memoizer around a new image reader.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
-   *         must elapse during the call to super.setId() before a memo file
+   *         must elapse during the call to {@link setId} before a memo file
    *         will be created.
    *  @param directory a {@link File} specifying the directory where all
    *         memoization files should be created.
@@ -446,7 +446,7 @@ public class Memoizer extends ReaderWrapper {
    *
    *  @param r an {@link IFormatReader} instance
    *  @param minimumElapsed a long specifying the number of milliseconds which
-   *         must elapse during the call to super.setId() before a memo file
+   *         must elapse during the call to {@link setId} before a memo file
    *         will be created.
    *  @param doInPlaceCaching a boolean specifying to create memo files in the 
    *         same directory as the original file if true.
