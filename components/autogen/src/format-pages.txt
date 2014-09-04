@@ -1935,9 +1935,9 @@ reader = NativeQTReader.java
 writer = QTWriter.java
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-  * QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
-    installed. \n
-  * Native mode works on systems with no QuickTime (e.g. Linux). \n
+* QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
+  installed (32-bit JVM only, not supported with 64-bit). \n
+* Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
 Bio-Formats can save image stacks as QuickTime movies. \n
 The following table shows supported codecs: \n
