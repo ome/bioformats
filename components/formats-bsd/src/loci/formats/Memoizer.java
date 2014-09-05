@@ -318,7 +318,7 @@ public class Memoizer extends ReaderWrapper {
    * If True, then all memoization files will be created in the same directory
    * as the original file.
    */
-  private boolean doInPlaceCaching = false;
+  private boolean doInPlaceCaching = true;
 
   protected transient Deser ser;
 
@@ -401,6 +401,9 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(long minimumElapsed, File directory) {
     super();
     this.minimumElapsed = minimumElapsed;
+    if (directory != null) {
+      this.doInPlaceCaching = false;
+    }
     this.directory = directory;
   }
 
@@ -438,24 +441,12 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
     this.minimumElapsed = minimumElapsed;
+    if (directory != null) {
+      this.doInPlaceCaching = false;
+    }
     this.directory = directory;
   }
 
-  /**
-   *  Constructs a memoizer around the given reader.
-   *
-   *  @param r an {@link IFormatReader} instance
-   *  @param minimumElapsed a long specifying the number of milliseconds which
-   *         must elapse during the call to {@link setId} before a memo file
-   *         will be created.
-   *  @param doInPlaceCaching a boolean specifying to create memo files in the 
-   *         same directory as the original file if true.
-   */
-  public Memoizer(IFormatReader r, long minimumElapsed,
-                  boolean doInPlaceCaching) {
-    this(r, minimumElapsed, null);
-    this.doInPlaceCaching = doInPlaceCaching;
-  }
 
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded

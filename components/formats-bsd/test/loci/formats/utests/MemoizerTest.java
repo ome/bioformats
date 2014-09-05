@@ -125,21 +125,81 @@ public class MemoizerTest {
   }
 
   @Test
-  public void testGetMemoFileNoTimeElapsed() throws Exception {
+  public void testDefaultConstructor() throws Exception {
+      memoizer = new Memoizer();
+      File f = memoizer.getMemoFile(id);
+      File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
+      assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+  }
+
+  @Test
+  public void testConstructorTimeElapsed() throws Exception {
+      memoizer = new Memoizer(0);
+      File f = memoizer.getMemoFile(id);
+      File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
+      assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+  }
+
+  @Test
+  public void testConstructorReader() throws Exception {
       memoizer = new Memoizer(reader);
       File f = memoizer.getMemoFile(id);
-      assertEquals(f, null);
+      File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
+      assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
   }
 
   @Test
-  public void testGetMemoFileTimeElapsedNoDirectory() throws Exception {
+  public void testConstructorReaderTimeElapsed() throws Exception {
       memoizer = new Memoizer(reader, 0);
       File f = memoizer.getMemoFile(id);
-      assertEquals(f, null);
+      File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
+      assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
   }
 
   @Test
-  public void testGetMemoFileDirectory() throws Exception {
+  public void testConstructorTimeElapsedDirectory() throws Exception {
+
+    String uuid = UUID.randomUUID().toString();
+    File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
+    memoizer = new Memoizer(0, directory);
+
+    // Check non-existing memo directory returns null
+    assertEquals(memoizer.getMemoFile(id), null);
+
+    // Create memoizer directory and memoizer reader
+    directory.mkdirs();
+
+    String memoDir = idDir.getAbsolutePath();
+    memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
+    File memoFile = new File(directory, memoDir);
+    memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
+    File f = memoizer.getMemoFile(id);
+    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+  }
+
+  @Test
+  public void testConstructorReaderTimeElapsedDirectory() throws Exception {
+
+    String uuid = UUID.randomUUID().toString();
+    File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
+    memoizer = new Memoizer(reader, 0, directory);
+
+    // Check non-existing memo directory returns null
+    assertEquals(memoizer.getMemoFile(id), null);
+
+    // Create memoizer directory and memoizer reader
+    directory.mkdirs();
+
+    String memoDir = idDir.getAbsolutePath();
+    memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
+    File memoFile = new File(directory, memoDir);
+    memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
+    File f = memoizer.getMemoFile(id);
+    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+  }
+
+  @Test
+  public void testGetMemoFilePermissionsDirectory() throws Exception {
       String uuid = UUID.randomUUID().toString();
       File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
       memoizer = new Memoizer(reader, 0, directory);
@@ -169,7 +229,7 @@ public class MemoizerTest {
   }
 
   @Test
-  public void testGetMemoFileInPlaceDirectory() throws Exception {
+  public void testGetMemoFilePermissionsInPlaceDirectory() throws Exception {
       String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
       memoizer = new Memoizer(reader, 0, new File(rootPath));
 
@@ -188,8 +248,8 @@ public class MemoizerTest {
   }
 
   @Test
-  public void testGetMemoFileInPlaceBoolean() throws Exception {
-      memoizer = new Memoizer(reader, 0, true);
+  public void testGetMemoFilePermissionsInPlace() throws Exception {
+      memoizer = new Memoizer(reader);
 
       // Check non-writeable file directory returns null for in-place caching
       if (File.separator.equals("/")) {
