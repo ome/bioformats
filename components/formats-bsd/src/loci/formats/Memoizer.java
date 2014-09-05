@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -303,7 +303,7 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    * Minimum number of milliseconds which must elapse during the call to
-   * super.setId() before a memo file will be created.
+   * {@link setId} before a memo file will be created.
    */
   private final long minimumElapsed;
 
@@ -315,8 +315,8 @@ public class Memoizer extends ReaderWrapper {
   private final File directory;
 
   /**
-   * If True, then all memoization files will be created beside the setId
-   * file.
+   * If True, then all memoization files will be created in the same directory
+   * as the original file.
    */
   private boolean doInPlaceCaching = false;
 
@@ -378,43 +378,97 @@ public class Memoizer extends ReaderWrapper {
     this(DEFAULT_MINIMUM_ELAPSED);
   }
 
-  /** Constructs a memoizer around a new image reader. */
+  /**
+   *  Constructs a memoizer around a new image reader.
+   *
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link setId} before a memo file
+   *         will be created.
+   */
   public Memoizer(long minimumElapsed) {
     this(minimumElapsed, null);
   }
 
+  /**
+   *  Constructs a memoizer around a new image reader.
+   *
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link setId} before a memo file
+   *         will be created.
+   *  @param directory a {@link File} specifying the directory where all
+   *         memoization files should be created.
+   */
   public Memoizer(long minimumElapsed, File directory) {
     super();
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
   }
 
-  /** Constructs a memoizer around the given reader. */
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   */
   public Memoizer(IFormatReader r) {
     this(r, DEFAULT_MINIMUM_ELAPSED);
   }
 
-  /** Constructs a memoizer around the given reader. */
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link #setId} before a memo file
+   *         will be created.
+   */
   public Memoizer(IFormatReader r, long minimumElapsed) {
     this(r, minimumElapsed, null);
   }
 
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link #setId} before a memo file
+   *         will be created.
+   *  @param directory a {@link File} specifying the directory where all
+   *         memoization files should be created.
+   */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
   }
 
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link setId} before a memo file
+   *         will be created.
+   *  @param doInPlaceCaching a boolean specifying to create memo files in the 
+   *         same directory as the original file if true.
+   */
   public Memoizer(IFormatReader r, long minimumElapsed,
                   boolean doInPlaceCaching) {
     this(r, minimumElapsed, null);
     this.doInPlaceCaching = doInPlaceCaching;
   }
 
+  /**
+   *  Returns whether the {@link #reader} instance currently active was loaded
+   *  from the memo file during {@link #setId(String)}.
+   */
   public boolean isLoadedFromMemo() {
     return loadedFromMemo;
   }
 
+  /**
+   *  Returns whether the {@link #reader} instance currently active was saved
+   *  to the memo file during {@link #setId(String)}.
+   */
   public boolean isSavedToMemo() {
     return savedToMemo;
   }
@@ -599,8 +653,8 @@ public class Memoizer extends ReaderWrapper {
    * Constructs a {@link File} object from setId string. This method can be
    * modified by consumers, but then existing memo files will not be found.
    *
-   * @param id the path passed to setId
-   * @return a filename with
+   * @param id the path passed to {@link setId}
+   * @return a {@link File} object pointing at the location of the memo file
    */
   public File getMemoFile(String id) {
     File f = null;
