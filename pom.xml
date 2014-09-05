@@ -695,9 +695,9 @@
 
   <distributionManagement>
     <repository>
-      <id>ome.releases</id>
-      <name>OME Releases Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
+      <id>ome.staging</id>
+      <name>OME Staging Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
     </repository>
     <snapshotRepository>
       <id>ome.snapshots</id>
