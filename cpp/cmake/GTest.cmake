@@ -48,6 +48,10 @@ endif()
 
 if(NOT GTEST_FOUND)
   message(STATUS "Using embedded GTest")
+  # VS2012 Faux variadic templates workaround.
+  if(NOT MSVC_VERSION VERSION_LESS 1700 AND MSVC_VERSION VERSION_LESS 1800)
+    add_definitions(-D_VARIADIC_MAX=10)
+  endif()
   add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0")
   set(GTEST_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0/include")
   set(GTEST_LIBRARIES gtest)
