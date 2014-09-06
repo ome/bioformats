@@ -60,6 +60,7 @@ set(OME_BIOFORMATS_HEADERS
     FormatHandler.h
     FormatReader.h
     FormatTools.h
+    FormatWriter.h
     MetadataConfigurable.h
     MetadataOptions.h
     Modulo.h
