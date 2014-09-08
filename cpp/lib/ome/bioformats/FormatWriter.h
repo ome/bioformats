@@ -80,15 +80,6 @@ namespace ome
      */
     class FormatWriter : virtual public FormatHandler
     {
-    public:
-      /// File grouping options.
-      enum FileGroupOption
-        {
-          MUST_GROUP,  ///< Files must be grouped.
-          CAN_GROUP,   ///< Files may be grouped.
-          CANNOT_GROUP ///< Files can not be grouped.
-        };
-
     protected:
       /**
        * Sentry for saving and restoring writer series state.
