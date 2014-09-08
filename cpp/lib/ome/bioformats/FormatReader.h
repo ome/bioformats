@@ -66,9 +66,6 @@ namespace ome
      * Interface for all biological file format readers.
      *
      * @note No IOException in C++.
-     *
-     * @note Metadata values can't be Object in C++; initially
-     * restricted to std::string only.
      */
     class FormatReader : virtual public FormatHandler,
                          virtual public MetadataConfigurable
