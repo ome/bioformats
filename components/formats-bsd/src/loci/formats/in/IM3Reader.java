@@ -83,22 +83,22 @@ public class IM3Reader extends FormatReader {
 	 * int: depth
 	 * data bytes follow
 	 */
+	@SuppressWarnings("unused")
 	private static final int REC_IMAGE = 1;
 	/**
 	 * A nested record of records 
 	 */
+	@SuppressWarnings("unused")
 	private static final int REC_NESTED = 3;
 	/**
 	 * 32-bit integer values 
 	 */
 	private static final int REC_INT = 6;
 	/*
-	 * Numerator/denominator ratio
-	 * long numerator
-	 * long denominator
+	 * Floating point values
 	 */
-	private static final int REC_RATIO = 7;
-	private static final int REC_9 = 9;
+	private static final int REC_FLOAT = 7;
+	private static final int REC_BOOLEAN = 9;
 	/**
 	 * A string
 	 * int: ?
@@ -107,7 +107,7 @@ public class IM3Reader extends FormatReader {
 	 */
 	private static final int REC_STRING=10;
 	/*
-	 * Byte fields.
+	 * Container fields.
 	 */
 	private static final String FIELD_DATA_SET="DataSet";
 	@SuppressWarnings("unused")
@@ -116,8 +116,8 @@ public class IM3Reader extends FormatReader {
 	private static final String FIELD_AUX_FLAGS="AuxFlags";
 	@SuppressWarnings("unused")
 	private static final String FIELD_NUANCE_FLAGS="NuanceFlags";
-	@SuppressWarnings("unused")
 	private static final String FIELD_SPECTRA="Spectra";
+	private static final String FIELD_VALUES="Values";
 	@SuppressWarnings("unused")
 	private static final String FIELD_PROTOCOL="Protocol";
 	@SuppressWarnings("unused")
@@ -130,6 +130,8 @@ public class IM3Reader extends FormatReader {
 	private static final String FIELD_FIXED_FILTER="FixedFilter";
 	@SuppressWarnings("unused")
 	private static final String FIELD_BANDS="Bands";
+	private static final String FIELD_SPECTRAL_LIBRARY="SpectralLibrary";
+	private static final String FIELD_SPECTRUM="Spectrum";
 	/*
 	 * Image fields
 	 */
@@ -151,7 +153,6 @@ public class IM3Reader extends FormatReader {
 	/*
 	 * String fields
 	 */
-	@SuppressWarnings("unused")
 	private static final String FIELD_NAME="Name";
 	@SuppressWarnings("unused")
 	private static final String FIELD_SAMPLE_ID="SampleID";
@@ -166,12 +167,16 @@ public class IM3Reader extends FormatReader {
 	@SuppressWarnings("unused")
 	private static final String FIELD_PART_NUMBER="PartNumber";
 	/*
-	 * Ratio fields
+	 * Float fields
 	 */
 	@SuppressWarnings("unused")
 	private static final String FIELD_MILLIMETERS_PER_PIXEL="MillimetersPerPixel";
 	@SuppressWarnings("unused")
 	private static final String FIELD_EXPOSURE="Exposure";
+	@SuppressWarnings("unused")
+	private static final String FIELD_WAVELENGTH="Wavelength";
+	private static final String FIELD_WAVELENGTHS="Wavelengths";
+	private static final String FIELD_MAGNITUDES="Magnitudes";
 	/*
 	 * Misc fields
 	 */
@@ -185,6 +190,10 @@ public class IM3Reader extends FormatReader {
 	 * Data sets for the current file
 	 */
 	private List<ContainerRecord> dataSets;
+	/*
+	 * Spectrum records for a spectral library
+	 */
+	private List<Spectrum> spectra;
 	
 	/*
 	 * The data from the current series' file.
@@ -260,6 +269,18 @@ public class IM3Reader extends FormatReader {
 		return null;
 	}
 
+	/**
+	 * If a Nuance file is a spectral library set (.csl) file,
+	 * there is a spectral library inside that contains a profile
+	 * of spectral bin magnitudes for each of several measured
+	 * fluorophores (or auto fluorescence). This method finds
+	 * the spectral library and returns the spectra inside.
+	 * 
+	 * @return a list of the Spectrum records contained in the library
+	 */
+	public List<Spectrum> getSpectra() {
+		return spectra;
+	}
 	/* (non-Javadoc)
 	 * @see loci.formats.FormatReader#initFile(java.lang.String)
 	 */
@@ -275,6 +296,7 @@ public class IM3Reader extends FormatReader {
 		long fileLength = is.length();
 		records = new ArrayList<IM3Record>();
 		dataSets = new ArrayList<ContainerRecord>();
+		spectra = new ArrayList<Spectrum>();
 		core = new ArrayList<CoreMetadata>();
 
 		while (is.getFilePointer() < fileLength) {
@@ -331,6 +353,34 @@ public class IM3Reader extends FormatReader {
 									core.add(cm);
 								}
 							}
+						} else if ((subDS instanceof ContainerRecord) && subDS.name.equals(FIELD_SPECTRAL_LIBRARY)) {
+							/*
+							 * SpectralLibrary
+							 *   (unnamed container record)
+							 *       Spectra
+							 *           Keys (integers)
+							 *           Values
+							 *               (unnamed container record for spectrum #1)
+							 *               (unnamed container record for spectrum #2)...
+							 *                
+							 */
+							for (IM3Record slContainer:((ContainerRecord)subDS).parseChunks(is)) { /* unnamed container */
+								if (slContainer instanceof ContainerRecord) {
+									for (IM3Record slSpectra:((ContainerRecord)slContainer).parseChunks(is)) {
+										if ((slSpectra instanceof ContainerRecord) && (slSpectra.name.equals(FIELD_SPECTRA))) {
+											for (IM3Record slRec:((ContainerRecord)slSpectra).parseChunks(is)) {
+												if (slRec.name.equals(FIELD_VALUES) && (slRec instanceof ContainerRecord)) {
+													for (IM3Record spectrumRec:((ContainerRecord)slRec).parseChunks(is)) {
+														if (spectrumRec instanceof ContainerRecord) {
+															spectra.add(new Spectrum(is, (ContainerRecord)spectrumRec));
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -369,14 +419,17 @@ public class IM3Reader extends FormatReader {
 		final int recType = is.readInt();
 		final long offset = is.getFilePointer();
 		is.skipBytes(recLength);
-		if (recType == REC_CONTAINER) {
-			return new ContainerRecord(name, recType, offset, recLength);
-		}
-		if (recType == REC_STRING) {
-			return new StringIM3Record(name, recType, offset, recLength);
-		}
-		if (recType == REC_INT) {
-			return new IntIM3Record(name, recType, offset, recLength);
+		switch(recType) {
+			case REC_CONTAINER:
+				return new ContainerRecord(name, recType, offset, recLength);
+			case REC_STRING:
+				return new StringIM3Record(name, recType, offset, recLength);
+			case REC_INT:
+				return new IntIM3Record(name, recType, offset, recLength);
+			case REC_FLOAT:
+				return new FloatIM3Record(name, recType, offset, recLength);
+			case REC_BOOLEAN:
+				return new BooleanIM3Record(name, recType, offset, recLength);
 		}
 		return new IM3Record(name, recType, offset, recLength);
 	}
@@ -427,7 +480,7 @@ public class IM3Reader extends FormatReader {
 		
 	}
 	/**
-	 * @author leek
+	 * @author Lee Kamentsky
 	 *
 	 * A Container3Record is a nesting container for
 	 * other records. In the IM3 format, records are often grouped
@@ -445,7 +498,6 @@ public class IM3Reader extends FormatReader {
 		 * @return
 		 * @throws IOException
 		 */
-		@SuppressWarnings("unused")
 		List<IM3Record> parseChunks(IRandomAccess is) throws IOException {
 			long oldOffset = is.getFilePointer();
 			is.seek(offset+8);
@@ -527,6 +579,140 @@ public class IM3Reader extends FormatReader {
 	/**
 	 * @author Lee Kamentsky
 	 *
+	 * A 4-byte floating point array record
+	 * 
+	 * The record format is
+	 * int32 - unknown
+	 * int32 - # of floats
+	 * float32s - values
+	 */
+	protected class FloatIM3Record extends IM3Record {
+
+		public FloatIM3Record(String name, int recType, long offset, int recLength) {
+			super(name, recType, offset, recLength);
+		}
+		
+		/**
+		 * Get the # of floating-point values in this record
+		 * 
+		 * @return number of integer values contained in the record
+		 * @throws IOException 
+		 */
+		public int getNumEntries(IRandomAccess is) throws IOException {
+			long oldPos = is.getFilePointer();
+			try {
+				is.seek(offset);
+				if (is.readInt() == 0) return 1;
+				return is.readInt();
+			} finally {
+				is.seek(oldPos);
+			}
+		}
+		
+		/**
+		 * Get the floating-point value at the given index
+		 * 
+		 * @param is the stream for the IM3 file
+		 * @param index the zero-based index of the entry to retrieve
+		 * @return the value stored in the indexed slot of the record
+		 * @throws IOException
+		 */
+		public float getEntry(IRandomAccess is, int index) throws IOException {
+			long oldPos = is.getFilePointer();
+			try {
+				is.seek(offset);
+				if (is.readInt() == 0) return is.readFloat();
+				is.seek(offset+8+index*4);
+				return is.readFloat();
+			} finally {
+				is.seek(oldPos);
+			}
+		}
+		/**
+		 * Return all entries as an array 
+		 * @param is handle to file
+		 * @return an array of the stored values
+		 * @throws IOException 
+		 */
+		public float [] getEntries(IRandomAccess is) throws IOException {
+			final long oldPos = is.getFilePointer();
+			try {
+				float [] values = new float[getNumEntries(is)];
+				is.seek(offset+8);
+				for (int index=0; index < values.length; index++) {
+					values[index] = is.readFloat();
+				}
+				return values;
+			} finally {
+				is.seek(oldPos);
+			}
+			
+		}
+		/* (non-Javadoc)
+		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(java.io.Writer, loci.common.IRandomAccess, java.lang.String)
+		 */
+		public void writeSummary(Writer writer, IRandomAccess is, String indentation) throws IOException {
+			is.seek(offset);
+			writer.write(indentation + toString() + "\n");
+			final int length = getNumEntries(is);
+			for (int i=0; (i < length) && (i < 256); i+=16) {
+				writer.write(indentation + String.format("%02x:", i));
+				for (int j=i; (j<i+16) && (j<length); j++) {
+					writer.write(String.format(" %4.4f", getEntry(is, j)));
+				}
+				writer.write("\n");
+			}
+		}
+	}
+	/**
+	 * A record containing boolean values
+	 * 
+	 * @author Lee Kamentsky
+	 *
+	 */
+	protected class BooleanIM3Record extends IM3Record {
+		public BooleanIM3Record(String name, int recType, long offset, int recLength) {
+			super(name, recType, offset, recLength);
+		}
+		
+		/**
+		 * Get the # of boolean values in this record
+		 * 
+		 * @return number of boolean values contained in the record
+		 * @throws IOException 
+		 */
+		public int getNumEntries(IRandomAccess is) throws IOException {
+			long oldPos = is.getFilePointer();
+			try {
+				is.seek(offset+4);
+				return is.readInt();
+			} finally {
+				is.seek(oldPos);
+			}
+		}
+		
+		/**
+		 * Get the boolean value at the given index
+		 * 
+		 * @param is the stream for the IM3 file
+		 * @param index the zero-based index of the entry to retrieve
+		 * @return the value stored in the indexed slot of the record
+		 * @throws IOException
+		 */
+		public boolean getEntry(IRandomAccess is, int index) throws IOException {
+			long oldPos = is.getFilePointer();
+			try {
+				is.seek(offset+8+index);
+				return (is.readByte() != 0);
+			} finally {
+				is.seek(oldPos);
+			}
+		}
+		
+	}
+	/**
+	 * @author Lee Kamentsky
+	 *
 	 * A record whose value is a string.
 	 */
 	protected class StringIM3Record extends IM3Record {
@@ -559,6 +745,94 @@ public class IM3Reader extends FormatReader {
 				String indentation) throws IOException {
 			writer.write(indentation + toString() + "\n");
 			writer.write(indentation + String.format("Value = %s\n", getValue(is)));
+		}
+		
+	}
+	/**
+	 * @author Lee Kamentsky
+	 * 
+	 * Represents a Spectrum record within a SpectralLibrary
+	 *
+	 */
+	static public class Spectrum {
+		private String name;
+		private float [] wavelengths;
+		private float [] magnitudes;
+		/**
+		 * Construct a spectrum by parsing a Spectrum record
+		 * 
+		 * @param is file handle to the file being parsed
+		 * @param rec the container record grouping the spectrum's record
+		 * @throws IOException 
+		 */
+		Spectrum(IRandomAccess is, ContainerRecord rec) throws IOException {
+			/*
+			 * The record format is a nested container record containing
+			 * 
+			 * Name - the name of the spectrum
+			 * The spectrum container record
+			 *    A nesting record
+			 *        Wavelengths - the wavelengths of the spectral components
+			 *        Magnitudes - the measured signal magnitudes of the fluorophore
+			 *        more stuff like calibration
+			 * Color - a nested record containing the RGB values for display
+			 * Selected - a boolean record that tells whether or not the spectrum is selected
+			 * more stuff like acquisition settings 
+			 */
+			final long oldPos = is.getFilePointer();
+			try {
+				for (IM3Record subRec:rec.parseChunks(is)) {
+					if (subRec.name.equals(FIELD_NAME) && 
+						(subRec instanceof StringIM3Record)	) {
+						name = ((StringIM3Record)subRec).getValue(is);
+					} else if (subRec.name.equals(FIELD_SPECTRUM) &&
+							(subRec instanceof ContainerRecord)) {
+						parseSpectrumRecord(is, (ContainerRecord)subRec);
+					}
+				}
+			} finally {
+				is.seek(oldPos);
+			}
+		}
+		/**
+		 * @return the name of this spectrum or null if unnamed
+		 */
+		public String getName() {
+			return name;
+		}
+		/**
+		 * @return the wavelengths for each of the spectral bins
+		 */
+		public float [] getWavelengths() {
+			return wavelengths;
+		}
+		/**
+		 * @return the magnitudes of the signals for each of the spectral bins
+		 */
+		public float [] getMagnitudes() {
+			return magnitudes;
+		}
+		/**
+		 * Parse the spectrum record
+		 * 
+		 * @param is the file handle
+		 * @param subRec the spectrum container record
+		 * @throws IOException 
+		 */
+		private void parseSpectrumRecord(IRandomAccess is, ContainerRecord rec) throws IOException {
+			for (IM3Record subRec:rec.parseChunks(is)) {
+				if (subRec instanceof ContainerRecord) {
+					for (IM3Record subSubRec:((ContainerRecord)subRec).parseChunks(is)) {
+						if (subSubRec.name.equals(FIELD_WAVELENGTHS) &&
+							(subSubRec instanceof FloatIM3Record)) {
+							wavelengths = ((FloatIM3Record)subSubRec).getEntries(is);
+						} else if (subSubRec.name.equals(FIELD_MAGNITUDES) &&
+								(subSubRec instanceof FloatIM3Record)) {
+							magnitudes = ((FloatIM3Record)subSubRec).getEntries(is);
+						}
+					}
+				}
+			}
 		}
 		
 	}
@@ -601,7 +875,9 @@ public class IM3Reader extends FormatReader {
 		final IM3Reader reader = new IM3Reader();
 		try {
 			reader.setId(args[0]);
-			reader.writeSummary(new OutputStreamWriter(System.out));
+			Writer writer = new OutputStreamWriter(System.out);
+			reader.writeSummary(writer);
+			writer.flush();
 		} catch (FormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
