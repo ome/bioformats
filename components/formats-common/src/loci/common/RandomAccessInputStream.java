@@ -397,7 +397,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
       skipBytes(bytesToSkip);
     }
     currentBit += skipBits;
-    while (currentBit >= 8) {
+    if (currentBit >= 8) {
       skipBytes(1);
       currentBit -= 8;
     }
