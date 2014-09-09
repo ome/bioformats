@@ -213,51 +213,6 @@ namespace ome
       getSeries() const = 0;
 
       /**
-       * Set whether or not the channels are interleaved.
-       *
-       * This method exists because @c X and @c Y must appear first in
-       * the dimension order. For interleaved data,
-       * getDimensionOrder() returns @c XYCTZ or @c XYCZT and this
-       * method returns @c true.
-       *
-       * Note that this flag sets whether or not the data written
-       * by saveBytes() is interleaved.
-       *
-       * @param interleaved @c true if the channels are interleaved,
-       * @c false otherwise.
-       */
-      virtual
-      void
-      setInterleaved(bool interleaved) = 0;
-
-      /**
-       * @copydoc FormatReader::isInterleaved
-       */
-      virtual
-      bool
-      isInterleaved() const = 0;
-
-      /**
-       * Set the number of valid bits per pixel.
-       *
-       * The number of valid bits per pixel is always less than or
-       * equal to the number of bits per pixel for the pixel type in
-       * use.
-       *
-       * @param bits the number of valid bits per pixel.
-       */
-      virtual
-      void
-      setBitsPerPixel(pixel_size_type bits) const = 0;
-
-      /**
-       * @copydoc FormatReader::getBitsPerPixel
-       */
-      virtual
-      pixel_size_type
-      getBitsPerPixel() const = 0;
-
-      /**
        * Get whether or not the writer can save multiple images in a
        * single file.
        *
