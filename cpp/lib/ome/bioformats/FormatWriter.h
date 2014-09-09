@@ -142,6 +142,36 @@ namespace ome
       {}
 
       /**
+       * Set the 8-bit color lookup table associated with the current
+       * series.
+       *
+       * If the pixel type of the current series is anything other
+       * than ome::xml::model::enums::PixelType::UINT8 or
+       * ome::xml::model::enums::PixelType::INT8 this method will
+       * throw an exception.
+       *
+       * @param buf the source pixel buffer.
+       */
+      virtual
+      void
+      set8BitLookupTable(const VariantPixelBuffer& buf) = 0;
+
+      /**
+       * Get the 16-bit color lookup table associated with the current
+       * series.
+       *
+       * If the pixel type of the current series is anything other
+       * than ome::xml::model::enums::PixelType::UINT16 or
+       * ome::xml::model::enums::PixelType::INT16 this method will
+       * throw an exception.
+       *
+       * @param buf the source pixel buffer.
+       */
+      virtual
+      void
+      set16BitLookupTable(const VariantPixelBuffer& buf) = 0;
+
+      /**
        * Save an image plane.
        *
        * Write an image plane from a VariantPixelBuffer
