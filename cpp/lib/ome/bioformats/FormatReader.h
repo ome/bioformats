@@ -359,7 +359,7 @@ namespace ome
        * recently opened image.
        *
        * If no image planes have been opened, or if isIndexed()
-       * returns @c false, then this may throw and exception. Also, if
+       * returns @c false, then this may throw an exception. Also, if
        * getPixelType() returns anything other than
        * ome::xml::model::enums::PixelType::UINT16 or
        * ome::xml::model::enums::PixelType::INT16 this method will
