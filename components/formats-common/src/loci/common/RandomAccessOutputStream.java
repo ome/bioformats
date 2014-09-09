@@ -120,16 +120,13 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
     if (numBits <= 0) {
       return;
     }
-    byte[] bits = new byte[numBits];
-    for (int i=0; i<numBits; i++) {
-      bits[i] = (byte) (value & 1);
-      value >>= 1;
-    }
     for (int i=numBits-1; i>=0; i--) {
-      int b = bits[i] << (7 - currentBit);
+      int b = ((value >> i) & 1) << (7 - currentBit);
+
       currentByte |= b;
       dirtyByte = true;
       currentBit++;
+
       if (currentBit > 7) {
         currentBit = 0;
         flush();

@@ -391,15 +391,11 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
       throw new IllegalArgumentException("Bits to skip cannot be negative");
     }
 
+    bits += currentBit;
     int bytesToSkip = (int) (bits / 8);
-    int skipBits = (int) (bits % 8);
+    currentBit = (int) (bits % 8);
     if (bytesToSkip > 0) {
       skipBytes(bytesToSkip);
-    }
-    currentBit += skipBits;
-    if (currentBit >= 8) {
-      skipBytes(1);
-      currentBit -= 8;
     }
   }
 
