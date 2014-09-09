@@ -1064,10 +1064,10 @@ public class TiffParser {
     int block = subX * subY;
     int nTiles = (int) (imageWidth / subX);
 
-    try {
-      RandomAccessInputStream bb = new RandomAccessInputStream(
-        new ByteArrayHandle(bytes));
 
+    RandomAccessInputStream bb = null;
+    try {
+      bb = new RandomAccessInputStream(new ByteArrayHandle(bytes));
       // unpack pixels
       for (int sample=0; sample<sampleCount; sample++) {
         int ndx = startIndex + sample;
@@ -1149,11 +1149,19 @@ public class TiffParser {
           }
         }
       }
-
-      bb.close();
     }
     catch (IOException e) {
       throw new FormatException(e);
+    }
+    finally {
+      if (bb != null) {
+        try {
+          bb.close();
+        }
+        catch (IOException e) {
+          throw new FormatException(e);
+        }
+      }
     }
   }
 
