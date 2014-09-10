@@ -80,6 +80,10 @@ namespace ome
      */
     class FormatWriter : virtual public FormatHandler
     {
+    public:
+      /// Frame rate type.
+      typedef uint16_t frame_rate_type;
+
     protected:
       /**
        * Sentry for saving and restoring writer series state.
@@ -281,27 +285,21 @@ namespace ome
       getMetadataRetrieve() = 0;
 
       /**
-       * Set the frames per second to use when writing.
+       * Set the frame rate to use when writing.
        *
-       * @param rate the number of frames per second.
-       *
-       * @todo Check if this method is needed; is looks completely
-       * pointless.
+       * @param rate the frame rate (number of frames per second).
        */
       virtual
       void
-      setFramesPerSecond(int rate) = 0;
+      setFramesPerSecond(frame_rate_type rate) = 0;
 
       /**
-       * Get the frames per second to use when writing.
+       * Get the frame rate to use when writing.
        *
-       * @returns the number of frames per second.
-       *
-       * @todo Check if this method is needed; is looks completely
-       * pointless.
+       * @returns the frame rate (number of frames per second).
        */
       virtual
-      int
+      frame_rate_type
       getFramesPerSecond() const = 0;
 
       /**
