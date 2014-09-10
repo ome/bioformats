@@ -11,11 +11,11 @@ There are also certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
 same folder.
 
-.. tabularcolumns:: |p{5cm}|c|c|p{5cm}|
+.. tabularcolumns:: |l|c|c|p{8.5cm}|
 
 .. list-table::
   :header-rows: 1
-  :widths:  30, 10, 20, 30
+  :widths:  10, 10, 10, 40
 
   *
     - Package
@@ -24,30 +24,28 @@ same folder.
     - Notes
 
   *
-    - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, OME fork
+    - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_
     - :downloads:`ome-poi.jar <artifacts/ome-poi.jar>`
     - Apache
-    - For OLE-based formats (zvi, oib, ipw, cxd)
+    - OME fork; for OLE-based formats (zvi, oib, ipw, cxd)
 
   *
-    - `MDB Tools project <http://sourceforge.net/projects/mdbtools>`_ Java
-      port, OME fork
+    - `MDB Tools <http://sourceforge.net/projects/mdbtools>`_
     - :downloads:`mdbtools-java.jar <artifacts/mdbtools-java.jar>`
     - LGPL
-    - For Olympus CellR and Zeiss LSM metadata (mdb)
+    - Java port, OME fork; for Olympus CellR and Zeiss LSM metadata (mdb)
 
   *
-    - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java
-      implementation, OME fork
+    - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_
     - :downloads:`jai_imageio.jar <artifacts/jai_imageio.jar>`
     - BSD
-    - For JPEG2000-based formats (nd2, jp2)
+    - Pure Java implementation, OME fork; for JPEG2000-based formats (nd2, jp2)
 
   *
-    - `NetCDF Java library <http://www.unidata.ucar.edu/software/netcdf-java/>`_
+    - `NetCDF <http://www.unidata.ucar.edu/software/netcdf-java/>`_
     - :downloads:`netcdf-4.3.19.jar <artifacts/netcdf-4.3.19.jar>`
     - LGPL
-    - For HDF5-based formats (Imaris 5.5, MINC MRI)
+    - Java library; for HDF5-based formats (Imaris 5.5, MINC MRI)
 
   *
     - `QuickTime for Java <http://www.apple.com/quicktime/download/standalone.html>`_
