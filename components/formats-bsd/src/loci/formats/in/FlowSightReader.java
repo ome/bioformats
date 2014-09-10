@@ -78,12 +78,6 @@ public class FlowSightReader extends FormatReader {
     CHANNEL_DESCS_TAG
   };
 
-  /**
-   * This stream is opened on the file supplied
-   * via "setId".
-   */
-  private RandomAccessInputStream in;
-
   private TiffParser tiffParser;
   private long [] ifdOffsets;
 
@@ -92,7 +86,6 @@ public class FlowSightReader extends FormatReader {
 
   public FlowSightReader() {
     super("FlowSight format", "cif");
-    saveOriginalMetadata = false;
   }
 
   /* (non-Javadoc)
@@ -179,7 +172,7 @@ public class FlowSightReader extends FormatReader {
       final boolean first=(idxOff == 1);
       final IFD ifd = tiffParser.getIFD(offset);
       tiffParser.fillInIFD(ifd);
-      CoreMetadata ms = first?core.get(0):new CoreMetadata();
+      CoreMetadata ms = first ? core.get(0) : new CoreMetadata();
       ms.rgb = false;
       ms.interleaved = false;
       ms.littleEndian = ifd0.isLittleEndian();
@@ -191,7 +184,7 @@ public class FlowSightReader extends FormatReader {
       ms.indexed = false;
       ms.dimensionOrder = "XYCZT";
       ms.bitsPerPixel = ifd.getIFDIntValue(IFD.BITS_PER_SAMPLE);
-      ms.pixelType = (ms.bitsPerPixel == 8)?FormatTools.UINT8:FormatTools.UINT16;
+      ms.pixelType = (ms.bitsPerPixel == 8) ? FormatTools.UINT8 : FormatTools.UINT16;
       ms.imageCount = channelCount;
       ms.resolutionCount = 1;
       ms.thumbnail = false;
@@ -224,7 +217,6 @@ public class FlowSightReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     tiffParser = null;
-    in = null;
     ifdOffsets = null;
     channelNames = null;
     channelDescs = null;

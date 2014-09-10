@@ -405,7 +405,9 @@ public abstract class FormatReader extends FormatHandler
     updateMetadataLists(metadata);
 
     for (int s=0; s<core.size(); s++) {
-      updateMetadataLists(core.get(s).seriesMetadata);
+      if (core.get(s).seriesMetadata.size() > 0) {
+        updateMetadataLists(core.get(s).seriesMetadata);
+      }
     }
   }
 
@@ -1083,7 +1085,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getSeriesMetadata() */
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
-    flattenHashtables();
+    if (core.get(getCoreIndex()).seriesMetadata.size() > 0) {
+      flattenHashtables();
+    }
     return core.get(getCoreIndex()).seriesMetadata;
   }
 
