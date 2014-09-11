@@ -44,6 +44,7 @@ set(OME_BIOFORMATS_SOURCES
     FormatTools.cpp
     MetadataConfigurable.cpp
     MetadataOptions.cpp
+    MetadataTools.cpp
     Modulo.cpp
     PixelBuffer.cpp
     PixelProperties.cpp
@@ -63,6 +64,7 @@ set(OME_BIOFORMATS_HEADERS
     FormatWriter.h
     MetadataConfigurable.h
     MetadataOptions.h
+    MetadataTools.h
     Modulo.h
     PixelBuffer.h
     PixelProperties.h

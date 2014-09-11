@@ -58,6 +58,12 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/metadatamap metadatamap)
 
+  add_executable(metadatatools metadatatools.cpp)
+  target_link_libraries(metadatatools ome-bioformats)
+  target_link_libraries(metadatatools ome-test)
+
+  add_test(ome-bioformats/metadatatools metadatatools)
+
   add_executable(fileinfo fileinfo.cpp)
   target_link_libraries(fileinfo ome-bioformats)
   target_link_libraries(fileinfo ome-test)
