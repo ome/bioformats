@@ -40,15 +40,16 @@ import org.w3c.dom.NodeList;
 /**
  * Metadata structure for Prairie Technologies' TIFF-based format.
  * 
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PrairieMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrairieMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
+ * @author Curtis Rueden
  */
 public class PrairieMetadata {
 
   /** {@code <Sequence>} elements, keyed on each sequence's {@code cycle}. */
   private final HashMap<Integer, Sequence> sequences =
     new HashMap<Integer, Sequence>();
+
+  /** Table of key/value pairs at the top level. */
+  private final ValueTable scanValues = new ValueTable();
 
   /** The first actual {@code <Sequence>} element. */
   private Sequence firstSequence;
@@ -68,18 +69,24 @@ public class PrairieMetadata {
   /** Set of active channel indices. */
   private final HashSet<Integer> activeChannels = new HashSet<Integer>();
 
-  /** Key/value pairs from CFG file. */
-  private final HashMap<String, String> config = new HashMap<String, String>();
+  /** Key/value pairs from CFG and/or ENV files. */
+  private final ValueTable config = new ValueTable();
 
   /**
-   * Creates a new Prairie metadata by parsing the given XML and CFG documents.
+   * Creates a new Prairie metadata by parsing the given XML, CFG and/or ENV
+   * documents.
    * 
    * @param xml The XML document to parse, or null if none available.
    * @param cfg The CFG document to parse, or null if none available.
+   * @param env The ENV document to parse, or null if none available.
    */
-  public PrairieMetadata(final Document xml, final Document cfg) {
+  public PrairieMetadata(final Document xml, final Document cfg,
+    final Document env)
+  {
     if (xml != null) parseXML(xml);
     if (cfg != null) parseCFG(cfg);
+    if (env != null) parseENV(env);
+    parseChannels();
   }
 
   // -- PrairieMetadata methods --
@@ -92,7 +99,7 @@ public class PrairieMetadata {
   /**
    * Gets the list of active channel indices, in sorted order.
    * <p>
-   * These indices correspond to the configuration's {@code channel_*} keys
+   * These indices correspond to the configuration's {@code channel} keys
    * flagged as {@code True}.
    * </p>
    */
@@ -122,27 +129,27 @@ public class PrairieMetadata {
    * bottom-to-top).
    */
   public boolean isInvertY() {
-    return b(getConfig("xYStageYPositionIncreasesBottomToTop"));
+    return b(value(getConfig("xYStageYPositionIncreasesBottomToTop")));
   }
 
   /** Gets the {@code bitDepth} recorded in the configuration. */
   public Integer getBitDepth() {
-    return i(getConfig("bitDepth"));
+    return i(value(getConfig("bitDepth")));
   }
 
-  /** Gets the {@code laserPower_0} recorded in the configuration. */
+  /** Gets the first {@code laserPower} recorded in the configuration. */
   public Double getLaserPower() {
-    return d(getConfig("laserPower_0"));
+    return d(value(getConfig("laserPower"), 0));
   }
 
-  /** Gets the {@code value} of the given configuration {@code Key}. */
-  public String getConfig(final String key) {
+  /** Gets the {@code value} of the given configuration {@code key}. */
+  public Value getConfig(final String key) {
     return config.get(key);
   }
 
-  /** Gets a read-only map of configuration key/value pairs. */
-  public Map<String, String> getConfig() {
-    return Collections.unmodifiableMap(config);
+  /** Gets the map of configuration key/value pairs. */
+  public ValueTable getConfig() {
+    return config;
   }
 
   /** Gets the date of the acquisition. */
@@ -208,6 +215,19 @@ public class PrairieMetadata {
     return frame.getFile(channel);
   }
 
+  /**
+   * Gets the {@code value} of the given {@code key}, at the top-level
+   * {@code <PVScan>} element.
+   */
+  public Value getValue(final String key) {
+    return scanValues.get(key);
+  }
+
+  /** Gets the table of {@code PVScan} key/value pairs. */
+  public ValueTable getValues() {
+    return scanValues;
+  }
+
   // -- Helper methods --
 
   /** Parses metadata from Prairie XML file. */
@@ -215,8 +235,11 @@ public class PrairieMetadata {
     final Element pvScan = doc.getDocumentElement();
     checkElement(pvScan, "PVScan");
 
+    // parse <PVStateShard> key/value block
+    parsePVStateShard(pvScan, scanValues);
+
     // parse acquisition date
-    date = pvScan.getAttribute("date");
+    date = attr(pvScan, "date");
 
     // iterate over all Sequence elements
     final NodeList sequenceNodes = doc.getElementsByTagName("Sequence");
@@ -235,32 +258,137 @@ public class PrairieMetadata {
     }
   }
 
-  /** Parses metadata from Prairie CFG file. */
+  /**
+   * Parses metadata from Prairie CFG file. This file is only present for
+   * Prairie datasets recorded prior to version 5.2.
+   */
   private void parseCFG(final Document doc) {
     checkElement(doc.getDocumentElement(), "PVConfig");
 
     final NodeList waitNodes = doc.getElementsByTagName("PVTSeriesElementWait");
     if (waitNodes.getLength() > 0) {
       final Element waitElement = el(waitNodes, 0);
-      waitTime = d(waitElement.getAttribute("waitTime"));
+      waitTime = d(attr(waitElement, "waitTime"));
     }
 
     parseKeys(doc.getDocumentElement(), config);
-    parseChannels();
+  }
+
+  /**
+   * Parses metadata from Prairie ENV file. This file is only present for
+   * Prairie datasets recorded with version 5.2 or later.
+   */
+  private void parseENV(final Document doc) {
+    checkElement(doc.getDocumentElement(), "Environment");
+
+    parsePVStateShard(doc.getDocumentElement(), config);
   }
 
   /**
    * Parses {@code <Key>} elements beneath the given element, into the specified
-   * map.
+   * table. These {@code <Key>} elements are only present in data from
+   * PrairieView versions prior to 5.2.
    */
-  private void parseKeys(final Element el, final HashMap<String, String> map) {
+  private void parseKeys(final Element el, final ValueTable table) {
     final NodeList keyNodes = el.getElementsByTagName("Key");
     for (int k = 0; k < keyNodes.getLength(); k++) {
       final Element keyElement = el(keyNodes, k);
       if (keyElement == null) continue;
-      final String key = keyElement.getAttribute("key");
-      final String value = keyElement.getAttribute("value");
-      map.put(key, value);
+      final String key = attr(keyElement, "key");
+      final String value = attr(keyElement, "value");
+      final int underscore = key.indexOf("_");
+      if (underscore < 0) {
+        // single key/value pair
+        table.put(key, new ValueItem(value, null));
+      }
+      else {
+        // table of key/value pairs
+        final String prefix = key.substring(0, underscore);
+        final String index = key.substring(underscore + 1);
+        if (!table.containsKey(prefix)) {
+          table.put(prefix, new ValueTable());
+        }
+        final ValueTable subTable = (ValueTable) table.get(prefix);
+        final String[] tokens = value.split(",");
+        if (tokens.length == 1) {
+          // single value
+          subTable.put(index, new ValueItem(value, null));
+        }
+        else {
+          // sub-table of values
+          final ValueTable subSubTable = new ValueTable();
+          for (int i=0; i<tokens.length; i++) {
+            subSubTable.put("" + i, new ValueItem(tokens[i], null));
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Parses the {@code <PVStateShard>} element beneath the given element, into
+   * the specified table. These {@code <PVStateShard>} elements are only present
+   * in data from PrairieView versions 5.2 and later.
+   */
+  private void parsePVStateShard(final Element el, final ValueTable table) {
+    final Element pvStateShard = getFirstChild(el, "PVStateShard");
+    if (pvStateShard == null) return;
+
+    final NodeList svNodes = el.getElementsByTagName("PVStateValue");
+    for (int k = 0; k < svNodes.getLength(); k++) {
+      final Element keyElement = el(svNodes, k);
+      if (keyElement == null) continue;
+      final String key = attr(keyElement, "key");
+      final String value = attr(keyElement, "value");
+      if (value != null) {
+        // E.g.: <PVStateValue key="linesPerFrame" value="186" />
+        table.put(key, new ValueItem(value, attr(keyElement, "description")));
+        continue;
+      }
+
+      // value is itself a table of values
+      final ValueTable subTable = new ValueTable();
+      table.put(key, subTable);
+
+      // process <IndexedValue> elements; e.g.:
+      // <IndexedValue index="0" value="605" description="Ch1 High Voltage" />
+      final NodeList ivNodes = keyElement.getElementsByTagName("IndexedValue");
+      for (int i = 0; i < ivNodes.getLength(); i++) {
+        final Element ivElement = el(ivNodes, i);
+        if (ivElement == null) continue;
+        final String index = attr(ivElement, "index");
+        if (index == null) continue; // invalid <IndexedValue> element
+        final String iValue = attr(ivElement, "value");
+        final String iDescription = attr(ivElement, "description");
+        subTable.put(index, new ValueItem(iValue, iDescription));
+      }
+
+      // process <SubindexedValue> elements; e.g.:
+      // <SubindexedValues index="ZAxis">
+      //   <SubindexedValue subindex="0" value="-9" description="Focus" />
+      //   <SubindexedValue subindex="1" value="62.45" description="Piezo" />
+      // </SubindexedValues>
+      final NodeList sivNodes =
+        keyElement.getElementsByTagName("SubindexedValues");
+      for (int i = 0; i < sivNodes.getLength(); i++) {
+        final Element sivElement = el(sivNodes, i);
+        if (sivElement == null) continue;
+        final String index = attr(sivElement, "index");
+        if (index == null) continue; // invalid <SubindexedValues> element
+        final ValueTable subSubTable = new ValueTable();
+        subTable.put(index, subSubTable);
+        // iterate over <SubindexValue> children
+        final NodeList subNodes =
+          sivElement.getElementsByTagName("SubindexValue");
+        for (int s = 0; s < subNodes.getLength(); s++) {
+          final Element subElement = el(subNodes, i);
+          final String subindex = attr(subElement, "subindex");
+          if (subindex == null) continue; // invalid <SubindexedValue> element
+          final String sValue = attr(subElement, "value");
+          final String sDescription = attr(subElement, "description");
+          subSubTable.put(index, new ValueItem(sValue, sDescription));
+        }
+      }
     }
   }
 
@@ -269,18 +397,17 @@ public class PrairieMetadata {
    * data structure.
    */
   private void parseChannels() {
-    for (final String key : config.keySet()) {
-      if (!key.matches("channel_[0-9]+")) {
-        // key does not denote a channel activation
-        continue;
-      }
+    final Value channels = config.get("channel");
+    if (!(channels instanceof ValueTable)) return;
+    final ValueTable channelsTable = (ValueTable) channels;
+    for (final String key : channelsTable.keySet()) {
+      final Value value = channelsTable.get(key);
 
       // verify that the channel is active
-      final String value = config.get(key);
-      if (!b(value)) continue; // channel not active
+      if (!b(value(value))) continue; // channel not active
 
       // parse the channel index (converting to a 1-based index!)
-      final int channelIndex = i(key.substring(8)) + 1;
+      final int channelIndex = i(key) + 1;
 
       // add the channel index to the active channels list
       activeChannels.add(channelIndex);
@@ -298,11 +425,55 @@ public class PrairieMetadata {
     }
   }
 
+  /** Gets the first child element with the given name. */
+  private Element getFirstChild(final Element el, final String name) {
+    // NB: Unfortunately, the Element interface has no API method to obtain
+    // _only_ direct children with a given name; the getElementsByTagName
+    // method returns _all_ descendant elements with the given name.
+    final NodeList nodeList = el.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      final Element child = el(nodeList, i);
+      if (child == null) continue;
+      if (name.equals(child.getNodeName())) return child;
+    }
+    return null;
+  }
+
   /** Gets the {@code index}th element from the given list of nodes. */
   private Element el(final NodeList nodes, final int index) {
     final Node node = nodes.item(index);
     if (!(node instanceof Element)) return null;
     return (Element) node;
+  }
+
+  /** Gets the attribute value with the given name, or null if not defined. */
+  private String attr(final Element el, final String name) {
+    return el.hasAttribute(name) ? el.getAttribute(name) : null;
+  }
+
+  /** Returns {@code value.value()}, or null if {@code value} is null. */
+  private String value(final Value value) {
+    return value == null ? null : value.value();
+  }
+
+  /**
+   * Returns {@code value.get(key).value()}, or null if {@code value} or
+   * {@code value.get(key)} is null.
+   */
+  private String value(final Value value, final String key) {
+    if (value == null) return null;
+    final Value v = value.get(key);
+    return v == null ? null : v.value();
+  }
+
+  /**
+   * Returns {@code value.get(index).value()}, or null if {@code value} or
+   * {@code value.get(index)} is null.
+   */
+  private String value(final Value value, final int index) {
+    if (value == null) return null;
+    final Value v = value.get(index);
+    return v == null ? null : v.value();
   }
 
   /** Converts the given string to a {@code boolean}. */
@@ -375,6 +546,9 @@ public class PrairieMetadata {
     private final HashMap<Integer, Frame> frames =
       new HashMap<Integer, Frame>();
 
+    /** Table of key/value pairs for this {@code <Sequence>}. */
+    private final ValueTable sequenceValues = new ValueTable();
+
     /** The first actual {@code <Frame>} element for this {@code <Sequence>}. */
     private Frame firstFrame;
 
@@ -401,8 +575,11 @@ public class PrairieMetadata {
     public void parse(final Element sequenceElement) {
       checkElement(sequenceElement, "Sequence");
 
-      type = sequenceElement.getAttribute("type");
-      cycle = i(sequenceElement.getAttribute("cycle"));
+      // parse <PVStateShard> key/value block
+      parsePVStateShard(sequenceElement, sequenceValues);
+
+      type = attr(sequenceElement, "type");
+      cycle = i(attr(sequenceElement, "cycle"));
       if (cycle == null) {
         throw new IllegalArgumentException("Sequence missing cycle attribute");
       }
@@ -413,7 +590,7 @@ public class PrairieMetadata {
         final Element frameElement = el(frameNodes, f);
         if (frameElement == null) continue;
 
-        final Frame frame = new Frame(frameElement);
+        final Frame frame = new Frame(this, frameElement);
         if (firstFrame == null) firstFrame = frame;
 
         final int index = frame.getIndex();
@@ -487,10 +664,28 @@ public class PrairieMetadata {
       return frame.getFile(channel);
     }
 
+    /**
+     * Gets the {@code value} of the given {@code key}, beneath this
+     * {@code Sequence}, inferring the value from the parent {@code <PVScan>}
+     * section as needed.
+     */
+    public Value getValue(final String key) {
+      if (sequenceValues.containsKey(key)) return sequenceValues.get(key);
+      return PrairieMetadata.this.getValue(key);
+    }
+
+    /** Gets the table of {@code Frame} key/value pairs. */
+    public ValueTable getValues() {
+      return sequenceValues;
+    }
+
   }
 
   /** A Prairie {@code <Frame>}, beneath a {@code <Sequence>}. */
   public class Frame {
+
+    /** The {@code <Sequence>} containing this {@code <Frame>}. */
+    private Sequence sequence;
 
     /**
      * {@code <File>} elements beneath this {@code <Frame>}, keyed on each
@@ -499,8 +694,7 @@ public class PrairieMetadata {
     private final HashMap<Integer, PFile> files = new HashMap<Integer, PFile>();
 
     /** Table of key/value pairs for this {@code <Frame>}. */
-    private final HashMap<String, String> values =
-      new HashMap<String, String>();
+    private final ValueTable frameValues = new ValueTable();
 
     /** The first actual {@code <File>} element for this {@code <Frame>}. */
     private PFile firstFile;
@@ -515,19 +709,28 @@ public class PrairieMetadata {
     private Integer index;
 
     /** Creates a new frame by parsing the given {@code <Frame>} element. */
-    public Frame(final Element frameElement) {
+    public Frame(final Sequence sequence, final Element frameElement) {
+      this.sequence = sequence;
       parse(frameElement);
     }
 
     // -- Frame methods --
 
+    /** Gets the {@code <Sequence>} containing this {@code <Frame>}. */
+    public Sequence getSequence() {
+      return sequence;
+    }
+
     /** Parses metadata from the given {@code Frame} element. */
     public void parse(final Element frameElement) {
       checkElement(frameElement, "Frame");
 
-      relativeTime = d(frameElement.getAttribute("relativeTime"));
-      absoluteTime = d(frameElement.getAttribute("absoluteTime"));
-      index = i(frameElement.getAttribute("index"));
+      // parse <PVStateShard> key/value block
+      parsePVStateShard(frameElement, frameValues);
+
+      relativeTime = d(attr(frameElement, "relativeTime"));
+      absoluteTime = d(attr(frameElement, "absoluteTime"));
+      index = i(attr(frameElement, "index"));
       if (index == null) {
         throw new IllegalArgumentException("Frame missing index attribute");
       }
@@ -538,14 +741,14 @@ public class PrairieMetadata {
         final Element fileElement = el(fileNodes, f);
         if (fileElement == null) continue;
 
-        final PFile file = new PFile(fileElement);
+        final PFile file = new PFile(this, fileElement);
         if (firstFile == null) firstFile = file;
 
         final int channel = file.getChannel();
         files.put(channel, file);
       }
 
-      parseKeys(frameElement, values);
+      parseKeys(frameElement, frameValues);
     }
 
     /** Gets the {@code relativeTime} associated with this {@code Frame}. */
@@ -575,7 +778,7 @@ public class PrairieMetadata {
 
     /** Gets the objective lens string for this {@code Frame}. */
     public String getObjectiveLens() {
-      return getValue("objectiveLens");
+      return value(getValue("objectiveLens"));
     }
 
     /** Extracts the objective manufacturer from the objective lens string. */
@@ -595,49 +798,49 @@ public class PrairieMetadata {
 
     /** Gets the numerical aperture of the lens for this {@code Frame}. */
     public Double getObjectiveLensNA() {
-      return d(getValue("objectiveLensNA"));
+      return d(value(getValue("objectiveLensNA")));
     }
 
     /** Gets the pixels per line for this {@code Frame}. */
     public Integer getPixelsPerLine() {
-      return i(getValue("pixelsPerLine"));
+      return i(value(getValue("pixelsPerLine")));
     }
 
     /** Gets the lines per frame for this {@code Frame}. */
     public Integer getLinesPerFrame() {
-      return i(getValue("linesPerFrame"));
+      return i(value(getValue("linesPerFrame")));
     }
 
     /** Gets the X stage position associated with this {@code Frame}. */
     public Double getPositionX() {
-      final Double posX = d(getValue("positionCurrent_XAxis"));
+      final Double posX = d(value(getValue("positionCurrent"), "XAxis"));
       return posX == null ? null : isInvertX() ? -posX : posX;
     }
 
     /** Gets the Y stage position associated with this {@code Frame}. */
     public Double getPositionY() {
-      final Double posY = d(getValue("positionCurrent_YAxis"));
+      final Double posY = d(value(getValue("positionCurrent"), "YAxis"));
       return posY == null ? null : isInvertY() ? -posY : posY;
     }
 
     /** Gets the Z stage position associated with this {@code Frame}. */
     public Double getPositionZ() {
-      return d(getValue("positionCurrent_ZAxis"));
+      return d(value(getValue("positionCurrent"), "ZAxis"));
     }
 
-    /** Gets the optical zoom associatetd with this {@code Frame}. */
+    /** Gets the optical zoom associated with this {@code Frame}. */
     public Double getOpticalZoom() {
-      return d(getValue("opticalZoom"));
+      return d(value(getValue("opticalZoom")));
     }
 
     /** Gets the microns per pixel along X for this {@code Frame}. */
     public Double getMicronsPerPixelX() {
-      return d(getValue("micronsPerPixel_XAxis"));
+      return d(value(getValue("micronsPerPixel"), "XAxis"));
     }
 
     /** Gets the microns per pixel along Y for this {@code Frame}. */
     public Double getMicronsPerPixelY() {
-      return d(getValue("micronsPerPixel_YAxis"));
+      return d(value(getValue("micronsPerPixel"), "YAxis"));
     }
 
     /**
@@ -646,7 +849,7 @@ public class PrairieMetadata {
      * @param c The 0-based(!) channel index for which to obtain the offset.
      */
     public Double getOffset(final int c) {
-      return d(getValue("pmtOffset_" + c));
+      return d(value(getValue("pmtOffset"), c));
     }
 
     /**
@@ -655,25 +858,27 @@ public class PrairieMetadata {
      * @param c The 0-based(!) channel index for which to obtain the gain.
      */
     public Double getGain(final int c) {
-      return d(getValue("pmtGain_" + c));
+      return d(value(getValue("pmtGain"), c));
     }
 
     /** Gets the imaging device associated with this {@code Frame}. */
     public String getImagingDevice() {
-      return getValue("imagingDevice");
+      return value(getValue("imagingDevice"));
     }
 
     /**
-     * Gets the {@code value} of the given {@code Key}, beneath this
-     * {@code Frame}.
+     * Gets the {@code value} of the given {@code key}, beneath this
+     * {@code Frame}, inferring the value from the parent {@code <Sequence>}
+     * or grandparent {@code <PVScan>} section as needed.
      */
-    public String getValue(final String key) {
-      return values.get(key);
+    public Value getValue(final String key) {
+      if (frameValues.containsKey(key)) return frameValues.get(key);
+      return getSequence().getValue(key);
     }
 
-    /** Gets a read-only map of {@code Frame} key/value pairs. */
-    public Map<String, String> getValues() {
-      return Collections.unmodifiableMap(values);
+    /** Gets the table of {@code Frame} key/value pairs. */
+    public ValueTable getValues() {
+      return frameValues;
     }
 
   }
@@ -685,6 +890,9 @@ public class PrairieMetadata {
    */
   public class PFile {
 
+    /** The {@code <Frame>} containing this {@code <File>}. */
+    private Frame frame;
+
     /** {@code channel} of this {@code <File>}. */
     private Integer channel;
 
@@ -695,23 +903,29 @@ public class PrairieMetadata {
     private String filename;
 
     /** Creates a new file by parsing the given {@code <File>} element. */
-    public PFile(final Element fileElement) {
+    public PFile(final Frame frame, final Element fileElement) {
+      this.frame = frame;
       parse(fileElement);
     }
 
     // -- PFile methods --
 
+    /** Gets the {@code <Frame>} containing this {@code <File>}. */
+    public Frame getFrame() {
+      return frame;
+    }
+
     /** Parses metadata from the given {@code File} element. */
     public void parse(final Element fileElement) {
       checkElement(fileElement, "File");
 
-      channel = i(fileElement.getAttribute("channel"));
+      channel = i(attr(fileElement, "channel"));
       if (channel == null) {
         throw new IllegalArgumentException("File missing channel attribute");
       }
 
-      channelName = fileElement.getAttribute("channelName");
-      filename = fileElement.getAttribute("filename");
+      channelName = attr(fileElement, "channelName");
+      filename = attr(fileElement, "filename");
     }
 
     /** Gets the {@code channel} associated with this {@code File}. */
@@ -729,6 +943,156 @@ public class PrairieMetadata {
       return filename;
     }
 
+  }
+
+  /**
+   * A value in a Prairie metadata dictionary.
+   * <p>
+   * Prior to PrairieView 5.2, these were expressed as {@code <Key>} elements:
+   * </p>
+   * 
+   * <pre>
+   * <Key key="linesPerFrame" permissions="Read, Write, Save" value="186" />
+   * <Key key="pmtGain_0" permissions="Write, Save" value="605" />
+   * <Key key="pmtGain_1" permissions="Write, Save" value="604" />
+   * <Key key="pmtGain_2" permissions="Write, Save" value="0" />
+   * <Key key="positionCurrent_XAxis" permissions="Write, Save" value="0.95" />
+   * <Key key="positionCurrent_YAxis" permissions="Write, Save" value="-4.45" />
+   * <Key key="positionCurrent_ZAxis" permissions="Write, Save" value="-9,62.45" />
+   * </pre>
+   * <p>
+   * From 5.2 onwards, they are @{code <PVStateValue>} elements:
+   * </p>
+   * 
+   * <pre>
+   * <PVStateValue key="linesPerFrame" value="186" />
+   * <PVStateValue key="pmtGain">
+   *   <IndexedValue index="0" value="605" description="Ch1 High Voltage" />
+   *   <IndexedValue index="1" value="604" description="Ch2 High Voltage" />
+   *   <IndexedValue index="2" value="0" description="Ch3 High Voltage" />
+   * </PVStateValue>
+   * <PVStateValue key="positionCurrent">
+   *   <SubindexedValues index="XAxis">
+   *     <SubindexedValue subindex="0" value="0.95" />
+   *   </SubindexedValues>
+   *   <SubindexedValues index="YAxis">
+   *     <SubindexedValue subindex="0" value="-4.45" />
+   *   </SubindexedValues>
+   *   <SubindexedValues index="ZAxis">
+   *     <SubindexedValue subindex="0" value="-9" description="Focus" />
+   *     <SubindexedValue subindex="1" value="62.45" description="Piezo" />
+   *   </SubindexedValues>
+   * </PVStateValue>
+   * </pre>
+   */
+  public static interface Value {
+    boolean isTable();
+    Value get(Object key);
+    Value get(int index);
+    String value();
+    String description();
+  }
+
+  /**
+   * A leaf value with an actual {@link #value()} as well as an optional
+   * {@link #description()}.
+   */
+  public static class ValueItem implements Value {
+    private String value;
+    private String description;
+
+    public ValueItem(final String value, final String description) {
+      this.value = value;
+      this.description = description;
+    }
+
+    @Override
+    public boolean isTable() {
+      return false;
+    }
+
+    @Override
+    public Value get(final Object key) {
+      return null;
+    }
+
+    @Override
+    public Value get(final int index) {
+      return null;
+    }
+
+    @Override
+    public String value() {
+      return value;
+    }
+
+    @Override
+    public String description() {
+      return description;
+    }
+
+    @Override
+    public String toString() {
+      return value();
+    }
+  }
+
+  /**
+   * A table of values. Each value may be either a leaf item ({@link ValueItem})
+   * or a sub-table ({@link ValueTable}).
+   */
+  public static class ValueTable extends HashMap<String, Value> implements
+    Value
+  {
+    @Override
+    public boolean isTable() {
+      return true;
+    }
+
+    @Override
+    public Value get(int index) {
+      return get("" + index);
+    }
+
+    @Override
+    public String value() {
+      // NB: For tables with exactly one entry, we return the value
+      // of the entry directly, when the table's value is requested.
+      // This works around an ambiguity within the pre-5.2 schema,
+      // which made it impossible to distinguish between two cases.
+      // Consider the following pre-5.2 XML fragment:
+      //
+      // <Key key="positionCurrent_XAxis" value="0.95" />
+      //
+      // In terms of the 5.2+ schema, there are two potential ways
+      // to interpret this information:
+      //
+      // <PVStateValue key="positionCurrent">
+      //   <SubindexedValues index="XAxis">
+      //     <SubindexedValue subindex="0" value="0.95" />
+      //   </SubindexedValues>
+      // </PVStateValue>
+      //
+      // And:
+      //
+      // <PVStateValue key="positionCurrent">
+      //   <IndexedValue index="XAxis" value="0.95" />
+      // </PVStateValue>
+      //
+      // In order to maintain consistency when consuming such fields,
+      // we allow "short circuiting" single table indices. So in the
+      // above case, the following statements are equivalent:
+      //
+      // table.get("positionCurrent").get("XAxis").get(0).value();
+      // table.get("positionCurrent").get("XAxis").value();
+      // table.get("positionCurrent").value();
+      return size() == 1 ? values().iterator().next().value() : null;
+    }
+
+    @Override
+    public String description() {
+      return null;
+    }
   }
 
 }
