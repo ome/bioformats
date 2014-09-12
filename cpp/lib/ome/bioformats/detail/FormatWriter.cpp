@@ -253,7 +253,7 @@ namespace ome
       void
       FormatWriter::setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
       {
-        assertId(currentId, true);
+        assertId(currentId, false);
 
         if (!retrieve)
           throw std::logic_error("MetadataStore can not be null");
@@ -264,16 +264,12 @@ namespace ome
       const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve() const
       {
-        assertId(currentId, true);
-
         return metadataRetrieve;
       }
 
       std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve()
       {
-        assertId(currentId, true);
-
         return metadataRetrieve;
       }
 

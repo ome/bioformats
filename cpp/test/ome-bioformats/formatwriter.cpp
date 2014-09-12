@@ -247,21 +247,24 @@ public:
   void
   setId(const std::string& id)
   {
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
-
-    FormatWriter::setId(id);
-
-    if (id == "output.test")
+    if (!currentId)
       {
-        // 4 series
-        makeMetadata(m, 0, makeCore());
-        makeMetadata(m, 1, makeCore());
-        makeMetadata(m, 2, makeCore());
-        makeMetadata(m, 3, makeCore());
-      }
+        std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
 
-    std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
-    setMetadataRetrieve(mr);
+        if (id == "output.test")
+          {
+            // 4 series
+            makeMetadata(m, 0, makeCore());
+            makeMetadata(m, 1, makeCore());
+            makeMetadata(m, 2, makeCore());
+            makeMetadata(m, 3, makeCore());
+          }
+
+        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
+        setMetadataRetrieve(mr);
+
+        FormatWriter::setId(id);
+      }
   }
 };
 
@@ -563,17 +566,29 @@ TEST_P(FormatWriterTest, SupportedPixelTypeByCodec)
 
 TEST_P(FormatWriterTest, DefaultMetadataRetrieve)
 {
-  EXPECT_THROW(w.getMetadataRetrieve(), std::logic_error);
+  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
+  std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
+
+  EXPECT_NO_THROW(w.getMetadataRetrieve());
+  EXPECT_NO_THROW(w.setMetadataRetrieve(mr));
+  EXPECT_NO_THROW(w.getMetadataRetrieve());
+
+  EXPECT_NO_THROW(cw.getMetadataRetrieve());
 }
 
 TEST_P(FormatWriterTest, OutputMetadataRetrieve)
 {
-  w.setId("output.test");
-
   std::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr;
+  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m2(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
+  std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr2(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m2));
+
+  w.setId("output.test");
 
   EXPECT_NO_THROW(mr = w.getMetadataRetrieve());
   ASSERT_EQ(4U, mr->getImageCount());
+  EXPECT_THROW(w.setMetadataRetrieve(mr2), std::logic_error);
+
+  EXPECT_NO_THROW(cw.getMetadataRetrieve());
 }
 
 FormatWriterTestParameters variant_params[] =
