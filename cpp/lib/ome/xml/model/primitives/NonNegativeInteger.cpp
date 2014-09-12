@@ -50,6 +50,9 @@ namespace ome
         template<>
         const std::string NonNegativeInteger::typestr("NonNegativeInteger");
 
+        template<>
+        const NonNegativeInteger::value_type NonNegativeInteger::default_value(0U);
+
       }
     }
   }

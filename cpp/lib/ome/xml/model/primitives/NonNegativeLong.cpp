@@ -50,6 +50,9 @@ namespace ome
         template<>
         const std::string NonNegativeLong::typestr("NonNegativeLong");
 
+        template<>
+        const NonNegativeLong::value_type NonNegativeLong::default_value(0UL);
+
       }
     }
   }

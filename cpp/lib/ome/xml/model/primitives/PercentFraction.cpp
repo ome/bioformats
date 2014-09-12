@@ -50,6 +50,9 @@ namespace ome
         template<>
         const std::string PercentFraction::typestr("PercentFraction");
 
+        template<>
+        const PercentFraction::value_type PercentFraction::default_value(0.0f);
+
       }
     }
   }

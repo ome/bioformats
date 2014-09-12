@@ -50,6 +50,9 @@ namespace ome
         template<>
         const std::string PositiveFloat::typestr("PositiveFloat");
 
+        template<>
+        const PositiveFloat::value_type PositiveFloat::default_value(1.0f);
+
       }
     }
   }

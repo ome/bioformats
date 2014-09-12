@@ -50,6 +50,9 @@ namespace ome
         template<>
         const std::string PositiveLong::typestr("PositiveLong");
 
+        template<>
+        const PositiveLong::value_type PositiveLong::default_value(1UL);
+
       }
     }
   }
