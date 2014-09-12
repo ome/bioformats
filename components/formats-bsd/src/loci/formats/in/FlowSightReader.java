@@ -208,7 +208,8 @@ public class FlowSightReader extends FormatReader {
       String [] descs = isMask ? maskDescs : channelDescs;
       for (int channel=0; channel < channelCount; channel++) {
         store.setChannelName(descs[channel], series, channel);
-        store.setChannelID(channelNames[channel], series, channel);
+        String cid = MetadataTools.createLSID("Channel", series, channel) + ":";
+        store.setChannelID(cid + channelNames[channel], series, channel);
       }
     }
   }
