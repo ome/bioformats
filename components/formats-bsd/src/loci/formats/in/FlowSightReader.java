@@ -85,7 +85,7 @@ public class FlowSightReader extends FormatReader {
   private String [] channelDescs;
 
   public FlowSightReader() {
-    super("FlowSight format", "cif");
+    super("FlowSight", "cif");
   }
 
   /* (non-Javadoc)
