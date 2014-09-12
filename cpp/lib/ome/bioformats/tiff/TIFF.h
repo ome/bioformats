@@ -244,7 +244,7 @@ namespace ome
          * correct type:
          *
          * @verbatim
-         * ::TIFF *tiff = reinterpret_cast<::TIFF *>(myfile.getWrapped());
+         * ::TIFF *tiff = reinterpret_cast< ::TIFF *>(myfile.getWrapped());
          * @endverbatim
          *
          * @returns an opaque pointer to the wrapped @c \::TIFF

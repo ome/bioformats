@@ -249,7 +249,7 @@ public:
   {
     if (!currentId)
       {
-        std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
+        std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
 
         if (id == "output.test")
           {
@@ -566,7 +566,7 @@ TEST_P(FormatWriterTest, SupportedPixelTypeByCodec)
 
 TEST_P(FormatWriterTest, DefaultMetadataRetrieve)
 {
-  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
+  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
   std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
 
   EXPECT_NO_THROW(w.getMetadataRetrieve());
@@ -579,7 +579,7 @@ TEST_P(FormatWriterTest, DefaultMetadataRetrieve)
 TEST_P(FormatWriterTest, OutputMetadataRetrieve)
 {
   std::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr;
-  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m2(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
+  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m2(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
   std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr2(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m2));
 
   w.setId("output.test");
