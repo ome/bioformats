@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_FORMATWRITER_H
 #define OME_BIOFORMATS_FORMATWRITER_H
 
+#include <set>
 #include <string>
 #include <vector>
 #include <map>
@@ -308,7 +309,7 @@ namespace ome
        * @returns the supported pixel types.
        */
       virtual
-      const std::vector<ome::xml::model::enums::PixelType>&
+      const std::set<ome::xml::model::enums::PixelType>&
       getPixelTypes() const = 0;
 
       /**
@@ -318,7 +319,7 @@ namespace ome
        * @returns the supported pixel types.
        */
       virtual
-      const std::vector<ome::xml::model::enums::PixelType>&
+      const std::set<ome::xml::model::enums::PixelType>&
       getPixelTypes(const std::string& codec) const = 0;
 
       /**
@@ -349,7 +350,7 @@ namespace ome
        * @returns the supported compression types.
        */
       virtual
-      const std::vector<std::string>&
+      const std::set<std::string>&
       getCompressionTypes() const  = 0;
 
       /**
@@ -367,7 +368,7 @@ namespace ome
        * @returns the compression type.
        */
       virtual
-      const std::string&
+      const boost::optional<std::string>&
       getCompression() const = 0;
 
       /**
@@ -393,17 +394,13 @@ namespace ome
       setWriteSequentially(bool sequential = true) = 0;
 
       /**
-       * Get all underlying writers.
+       * Check if planes are written sequentially.
        *
-       * @note If there are no underlying writers, the list will be
-       * empty.
-       *
-       * @returns a list of writers.
+       * @returns @c true if sequential, @c false if not.
        */
       virtual
-      std::vector<std::shared_ptr<FormatWriter> >
-      getUnderlyingWriters() const = 0;
-
+      bool
+      getWriteSequentially() const = 0;
     };
 
   }
