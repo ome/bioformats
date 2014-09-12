@@ -417,9 +417,9 @@ TEST_P(FormatWriterTest, OutputPixels)
 
 TEST_P(FormatWriterTest, DefaultSeries)
 {
-  EXPECT_THROW(w.setSeries(0U), std::logic_error);
-  EXPECT_THROW(w.setSeries(2U), std::logic_error);
-  EXPECT_THROW(w.setSeries(4U), std::logic_error);
+  EXPECT_THROW(w.setSeries(0U), std::runtime_error);
+  EXPECT_THROW(w.setSeries(2U), std::runtime_error);
+  EXPECT_THROW(w.setSeries(4U), std::runtime_error);
 }
 
 TEST_P(FormatWriterTest, OutputSeries)

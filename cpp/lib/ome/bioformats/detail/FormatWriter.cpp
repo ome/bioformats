@@ -97,7 +97,34 @@ namespace ome
       FormatWriter::setId(const std::string& id)
       {
         if (!currentId || id != currentId.get())
-          currentId = id;
+          {
+            if (out)
+              out = std::shared_ptr<std::ostream>();
+
+            SaveSeries sentry(*this);
+
+            std::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
+
+            planeInitialized.clear();
+            planeInitialized.resize(mr->getImageCount());
+
+            for (dimension_size_type  s = 0;
+                 s < mr->getImageCount();
+                 ++s)
+              {
+                setSeries(s);
+
+                dimension_size_type z = mr->getPixelsSizeZ(s);
+                dimension_size_type t = mr->getPixelsSizeT(s);
+                dimension_size_type c = mr->getPixelsSizeC(s);
+                c /= mr->getChannelSamplesPerPixel(s, 0);
+                dimension_size_type planes = z * t * c;
+
+                planeInitialized.at(s).resize(planes);
+              }
+
+            currentId = id;
+          }
       }
 
       void
@@ -147,8 +174,6 @@ namespace ome
       void
       FormatWriter::setSeries(dimension_size_type no) const
       {
-        assertId(currentId, true);
-
         if (no >= metadataRetrieve->getImageCount())
           {
             boost::format fmt("Invalid series: %1%");
@@ -161,8 +186,6 @@ namespace ome
       dimension_size_type
       FormatWriter::getSeries() const
       {
-        assertId(currentId, true);
-
         return series;
       }
 
