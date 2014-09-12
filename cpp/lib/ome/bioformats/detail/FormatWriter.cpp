@@ -136,6 +136,7 @@ namespace ome
           {
             currentId = boost::none;
             series = 0;
+            planeInitialized.clear();
           }
       }
 
