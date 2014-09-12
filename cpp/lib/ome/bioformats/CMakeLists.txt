@@ -75,10 +75,12 @@ set(OME_BIOFORMATS_HEADERS
     Version.h)
 
 set(OME_BIOFORMATS_DETAIL_SOURCES
-    detail/FormatReader.cpp)
+    detail/FormatReader.cpp
+    detail/FormatWriter.cpp)
 
 set(OME_BIOFORMATS_DETAIL_HEADERS
-    detail/FormatReader.h)
+    detail/FormatReader.h
+    detail/FormatWriter.h)
 
 set(OME_BIOFORMATS_IN_SOURCES)
 
