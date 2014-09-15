@@ -621,6 +621,30 @@ public class Memoizer extends ReaderWrapper {
   //-- Helper methods --
 
   /**
+   * Attempts to delete an existing file, logging at
+   * warn if the deletion returns false or at error
+   * if an exception is thrown.
+   *
+   * @returns the result from {@link java.io.File#delete}
+   *   or false if an exception is thrown.
+   */
+  protected boolean deleteQuietly(File file) {
+    try {
+      if (file != null && file.exists()) {
+        if (file.delete()) {
+          LOGGER.trace("deleted {}", file);
+          return true;
+        } else {
+          LOGGER.warn("file deletion failed {}", file);
+        }
+      }
+    } catch (Throwable t) {
+      LOGGER.error("file deletion faled: {}", file, t);
+    }
+    return false;
+  }
+
+  /**
    * Returns a configured {@link Kryo} instance. This method can be modified
    * by consumers. The returned instance is not thread-safe.
    *
@@ -788,13 +812,13 @@ public class Memoizer extends ReaderWrapper {
         memoFile, memoFile.length());
       return copy;
     } catch (KryoException e) {
-      memoFile.delete();
-      LOGGER.warn("deleted invalid memo file: {}", memoFile, e);
+      LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      deleteQuietly(memoFile);
       return null;
     } catch (Throwable t) {
-      memoFile.delete();
       // Logging at error since this is unexpected.
-      LOGGER.error("deleted invalid memo file: {}", memoFile, t);
+      LOGGER.error("deleting invalid memo file: {}", memoFile, t);
+      deleteQuietly(memoFile);
       return null;
     } finally {
       ser.loadStop();
@@ -857,15 +881,7 @@ public class Memoizer extends ReaderWrapper {
         }
       }
 
-      // Delete the tempFile quietly.
-      try {
-        if (tempFile != null && tempFile.exists()) {
-          tempFile.delete();
-          tempFile = null;
-        }
-      } catch (Throwable t) {
-        LOGGER.error("temp file deletion faled", t);
-      }
+      deleteQuietly(tempFile);
     }
     return rv;
   }
