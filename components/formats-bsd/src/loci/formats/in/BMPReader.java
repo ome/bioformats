@@ -162,7 +162,14 @@ public class BMPReader extends FormatReader {
         }
       }
       if (row > 0) {
-        in.skipBits((getSizeX() - w - x) * bpp * effectiveC + pad*8);
+        int nBits = (getSizeX() - w - x) * bpp * effectiveC + pad * 8;
+
+        if (in.getFilePointer() + (nBits / 8) < in.length()) {
+          in.skipBits(nBits);
+        }
+        else {
+          break;
+        }
       }
     }
 
