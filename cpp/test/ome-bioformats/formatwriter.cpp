@@ -74,6 +74,47 @@ using ome::xml::model::enums::PixelType;
 using ome::xml::model::primitives::PositiveInteger;
 using ome::xml::model::primitives::Timestamp;
 
+namespace std
+{
+  template<class charT, class traits>
+  inline std::basic_ostream<charT,traits>&
+  operator<< (std::basic_ostream<charT,traits>& os,
+              const std::set<ome::xml::model::enums::PixelType>& set)
+  {
+    os << '(';
+    for (std::set<ome::xml::model::enums::PixelType>::const_iterator i = set.begin();
+         i != set.end();
+         ++i)
+      {
+        os << *i;
+        if (i++ != set.end())
+          os << ", ";
+      }
+    os << ')';
+
+    return os;
+  }
+
+  template<class charT, class traits>
+  inline std::basic_ostream<charT,traits>&
+  operator<< (std::basic_ostream<charT,traits>& os,
+              const std::set<std::string>& set)
+  {
+    os << '(';
+    for (std::set<std::string>::const_iterator i = set.begin();
+         i != set.end();
+         ++i)
+      {
+        os << *i;
+        if (i++ != set.end())
+          os << ", ";
+      }
+    os << ')';
+
+    return os;
+  }
+}
+
 typedef ome::xml::model::enums::PixelType PT;
 typedef std::array<dimension_size_type, 3> dim;
 
