@@ -576,7 +576,7 @@ public class Memoizer extends ReaderWrapper {
         return;
       }
 
-      IFormatReader memo = loadMemo(); // Should never throw.
+      IFormatReader memo = loadMemo(); // Should never throw kryo exceptions
 
       loadedFromMemo = false;
       savedToMemo = false;
@@ -700,6 +700,13 @@ public class Memoizer extends ReaderWrapper {
     return new File(p, "." + n + ".bfmemo");
   }
 
+  /**
+   * Load a memo file if possible, returning a null if not.
+   *
+   * Corrupt memo files will be deleted if possible. Kryo
+   * exceptions should never propagate to the caller. Only
+   * the regular Bio-Formats exceptions should be thrown.
+   */
   public IFormatReader loadMemo() throws IOException, FormatException {
 
     if (skipLoad) {
@@ -783,6 +790,11 @@ public class Memoizer extends ReaderWrapper {
     } catch (KryoException e) {
       memoFile.delete();
       LOGGER.warn("deleted invalid memo file: {}", memoFile, e);
+      return null;
+    } catch (Throwable t) {
+      memoFile.delete();
+      // Logging at error since this is unexpected.
+      LOGGER.error("deleted invalid memo file: {}", memoFile, t);
       return null;
     } finally {
       ser.loadStop();
