@@ -2133,7 +2133,12 @@ public class NativeND2Reader extends FormatReader {
             value = key.substring(8, end);
             key = key.substring(0, 8);
           }
-          trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+          try {
+            trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+          }
+          catch (NumberFormatException nfe) {
+            LOGGER.trace("Could not parse step", nfe);
+          }
         }
         else if (key.equals("Name")) {
           textChannelNames.add(value);
@@ -2142,12 +2147,22 @@ public class NativeND2Reader extends FormatReader {
           if (value.endsWith("Active")) {
             int first = key.lastIndexOf(":") + 1;
             int last = key.lastIndexOf(";");
-            textEmissionWavelengths.add(
-              new Double(key.substring(first, last)) + 20);
+            try {
+              textEmissionWavelengths.add(
+                new Double(key.substring(first, last)) + 20);
+            }
+            catch (NumberFormatException nfe) {
+              LOGGER.trace("Could not parse emission wavelength", nfe);
+            }
           }
         }
         else if (key.equals("Refractive Index")) {
-          refractiveIndex = Double.parseDouble(DataTools.sanitizeDouble(value));
+          try {
+            refractiveIndex = Double.parseDouble(DataTools.sanitizeDouble(value));
+          }
+          catch (NumberFormatException nfe) {
+            LOGGER.trace("Could not parse refractive index", nfe);
+          }
         }
 
         if (metadata.containsKey(key)) {
