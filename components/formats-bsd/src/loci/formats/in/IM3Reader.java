@@ -25,18 +25,16 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.nio.ByteOrder;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel.MapMode;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ome.xml.model.enums.DimensionOrder;
 import loci.common.IRandomAccess;
 import loci.common.Location;
-import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -66,6 +64,10 @@ import loci.formats.FormatTools;
  *
  */
 public class IM3Reader extends FormatReader {
+	/**
+	 *  Logger for outputting summary diagnostics.
+	 */
+	private static final Logger LOGGER = LoggerFactory.getLogger(IM3Reader.class);
 	/**
 	 * First 4 bytes of file is "1985"
 	 */
@@ -210,6 +212,7 @@ public class IM3Reader extends FormatReader {
 	@Override
 	public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
 			throws FormatException, IOException {
+		FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 		if (data == null) {
 			data = openRaw();
 		}
@@ -217,7 +220,6 @@ public class IM3Reader extends FormatReader {
 		
 		final int srcWidth = getSizeX();
 		final int srcChannels = getSizeC();
-		if (buf == null) buf = new byte[w * h * 2];
 		int idx = 0;
 		int offset = ((x + y * srcWidth) * srcChannels + no) * 2;
 		for (int hidx=0; hidx < h; hidx++) {
@@ -252,15 +254,6 @@ public class IM3Reader extends FormatReader {
 				int width = is.readInt();
 				int height = is.readInt();
 				int channels = is.readInt();
-				IRandomAccess iHandle = Location.getHandle(getCurrentFile(), false);
-				if (iHandle instanceof NIOFileHandle) {
-					NIOFileHandle handle = (NIOFileHandle)iHandle;
-					MappedByteBuffer mapping = handle.getFileChannel().map(MapMode.READ_ONLY, is.getFilePointer(), width * height * channels * 2);
-					mapping.load();
-					if (mapping.hasArray()) {
-						return mapping.array();
-					}
-				}
 				final byte [] result = new byte [width * height * channels * 2];
 				is.read(result);
 				return result;
@@ -342,9 +335,9 @@ public class IM3Reader extends FormatReader {
 									for (IM3Record subRec:subRecs){
 										if (subRec.name.equals(FIELD_SHAPE) && (subRec instanceof IntIM3Record)) {
 											final IntIM3Record iRec = (IntIM3Record)subRec;
-											cm.sizeX = iRec.getEntry(is, 2);
-											cm.sizeY = iRec.getEntry(is, 3);
-											cm.sizeC = iRec.getEntry(is, 4);
+											cm.sizeX = iRec.getEntry(is, 0);
+											cm.sizeY = iRec.getEntry(is, 1);
+											cm.sizeC = iRec.getEntry(is, 2);
 											cm.sizeZ = 1;
 											cm.sizeT = 1;
 											cm.imageCount = cm.sizeC;
@@ -401,7 +394,7 @@ public class IM3Reader extends FormatReader {
 		if (nameLength == 0) return EMPTY_STRING;
 		final byte [] buf = new byte [nameLength];
 		is.read(buf);
-		return new String(buf, Charset.forName("UTF-8"));
+		return new String(buf, loci.common.Constants.ENCODING);
 	}
 	
 	/**
@@ -459,15 +452,15 @@ public class IM3Reader extends FormatReader {
 		 * @param is
 		 * @throws IOException 
 		 */
-		public void writeSummary(Writer writer, IRandomAccess is, String indentation) throws IOException {
+		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
-			writer.write(indentation + toString() + "\n");
+			LOGGER.info(indentation + toString());
 			for (int i=0; (i<length) && (i < 256); i+= 32) {
-				writer.write(indentation + String.format("%02x:", i));
+				StringBuilder msg = new StringBuilder(indentation + String.format("%02x:", i));
 				for (int j=i;(j < length) &&(j < i+32); j++) {
-					writer.write(String.format(" %02x", is.readByte()));
+					msg.append(String.format(" %02x", is.readByte()));
 				}
-				writer.write("\n");
+				LOGGER.info(msg.toString());
 			}
 		}
 		/* (non-Javadoc)
@@ -513,13 +506,13 @@ public class IM3Reader extends FormatReader {
 		}
 		
 		/* (non-Javadoc)
-		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(java.io.Writer, loci.common.IRandomAccess, java.lang.String)
+		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(Writer writer, IRandomAccess is, String indentation) throws IOException {
+		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
-			writer.write(indentation + toString() + "\n");
+			LOGGER.info(indentation + toString());
 			for (IM3Record rec:parseChunks(is)) {
-				rec.writeSummary(writer, is, indentation + "  ");
+				rec.writeSummary(is, indentation + "  ");
 			}
 		}
 	}
@@ -536,11 +529,21 @@ public class IM3Reader extends FormatReader {
 		
 		/**
 		 * Get the # of integer values in this record
+		 * @param is 
 		 * 
 		 * @return number of integer values contained in the record
+		 * @throws IOException 
 		 */
-		public int getNumEntries() {
-			return this.length / 4;
+		public int getNumEntries(IRandomAccess is) throws IOException {
+			long oldPos = is.getFilePointer();
+			try {
+				is.seek(offset);
+				final int code = is.readInt();
+				if (code == 0) return 1;
+				return is.readInt();
+			} finally {
+				is.seek(oldPos);
+			}
 		}
 		
 		/**
@@ -554,25 +557,27 @@ public class IM3Reader extends FormatReader {
 		public int getEntry(IRandomAccess is, int index) throws IOException {
 			long oldPos = is.getFilePointer();
 			try {
-				is.seek(offset+index*4);
+				is.seek(offset);
+				if (is.readInt() == 0) return is.readInt();
+				is.seek(offset+index*4+8);
 				return is.readInt();
 			} finally {
 				is.seek(oldPos);
 			}
 		}
 		/* (non-Javadoc)
-		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(java.io.Writer, loci.common.IRandomAccess, java.lang.String)
+		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(Writer writer, IRandomAccess is, String indentation) throws IOException {
+		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
-			writer.write(indentation + toString() + "\n");
-			final int length = getNumEntries();
+			LOGGER.info(indentation + toString());
+			final int length = getNumEntries(is);
 			for (int i=0; (i < length) && (i < 256); i+=16) {
-				writer.write(indentation + String.format("%02x:", i));
+				StringBuilder msg = new StringBuilder(indentation + String.format("%02x:", i));
 				for (int j=i; (j<i+16) && (j<length); j++) {
-					writer.write(String.format(" %7d", getEntry(is, j)));
+					msg.append(String.format(" %7d", getEntry(is, j)));
 				}
-				writer.write("\n");
+				LOGGER.info(msg.toString());
 			}
 		}
 	}
@@ -649,18 +654,18 @@ public class IM3Reader extends FormatReader {
 			
 		}
 		/* (non-Javadoc)
-		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(java.io.Writer, loci.common.IRandomAccess, java.lang.String)
+		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(Writer writer, IRandomAccess is, String indentation) throws IOException {
+		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
-			writer.write(indentation + toString() + "\n");
+			LOGGER.info(indentation + toString());
 			final int length = getNumEntries(is);
 			for (int i=0; (i < length) && (i < 256); i+=16) {
-				writer.write(indentation + String.format("%02x:", i));
+				StringBuilder msg = new StringBuilder(indentation + String.format("%02x:", i));
 				for (int j=i; (j<i+16) && (j<length); j++) {
-					writer.write(String.format(" %4.4f", getEntry(is, j)));
+					msg.append(String.format(" %4.4f", getEntry(is, j)));
 				}
-				writer.write("\n");
+				LOGGER.info(msg.toString());
 			}
 		}
 	}
@@ -738,13 +743,12 @@ public class IM3Reader extends FormatReader {
 		}
 
 		/* (non-Javadoc)
-		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(java.io.Writer, loci.common.IRandomAccess, java.lang.String)
+		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
 		@Override
-		public void writeSummary(Writer writer, IRandomAccess is,
-				String indentation) throws IOException {
-			writer.write(indentation + toString() + "\n");
-			writer.write(indentation + String.format("Value = %s\n", getValue(is)));
+		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
+			LOGGER.info(indentation + toString());
+			LOGGER.info(indentation + String.format("Value = %s", getValue(is)));
 		}
 		
 	}
@@ -846,24 +850,23 @@ public class IM3Reader extends FormatReader {
 	}
 
 	/* (non-Javadoc)
-	 * @see loci.formats.FormatReader#setId(java.lang.String)
+	 * @see loci.formats.FormatReader#close(boolean)
 	 */
 	@Override
-	public void setId(String id) throws FormatException, IOException {
-		super.setId(id);
+	public void close(boolean fileOnly) throws IOException {
+		super.close(fileOnly);
 		data = null;
 	}
-	
+
 	/**
 	 * Write a summary of each field in the IM3 file to the writer
-	 * @param writer
 	 * @throws IOException
 	 */
-	public void writeSummary(Writer writer) throws IOException {
+	public void writeSummary() throws IOException {
 		IRandomAccess is = Location.getHandle(getCurrentFile(), false);
 		is.setOrder(ByteOrder.LITTLE_ENDIAN);
 		for (IM3Record rec: records) {
-			rec.writeSummary(writer, is, "");
+			rec.writeSummary(is, "");
 		}
 	}
 	/**
@@ -875,9 +878,7 @@ public class IM3Reader extends FormatReader {
 		final IM3Reader reader = new IM3Reader();
 		try {
 			reader.setId(args[0]);
-			Writer writer = new OutputStreamWriter(System.out);
-			reader.writeSummary(writer);
-			writer.flush();
+			reader.writeSummary();
 		} catch (FormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
