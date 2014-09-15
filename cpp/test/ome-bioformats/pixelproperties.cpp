@@ -40,6 +40,8 @@
 
 #include <gtest/gtest.h>
 
+#include "pixel.h"
+
 using ome::bioformats::pixel_size_type;
 using ome::bioformats::PixelProperties;
 using ome::bioformats::bytesPerPixel;
@@ -61,9 +63,13 @@ TYPED_TEST_CASE_P(PixelPropertiesType);
 
 TYPED_TEST_P(PixelPropertiesType, DefaultConstruct)
 {
-  ASSERT_NO_THROW(typename PixelProperties<TypeParam::type>::native_type tn);
-  ASSERT_NO_THROW(typename PixelProperties<TypeParam::type>::big_type    tb);
-  ASSERT_NO_THROW(typename PixelProperties<TypeParam::type>::little_type tl);
+  typename PixelProperties<TypeParam::type>::native_type tn;
+  typename PixelProperties<TypeParam::type>::big_type    tb;
+  typename PixelProperties<TypeParam::type>::little_type tl;
+
+  tn = pixel_value<typename PixelProperties<TypeParam::type>::native_type>(0);
+  tb = pixel_value<typename PixelProperties<TypeParam::type>::big_type>(0);
+  tl = pixel_value<typename PixelProperties<TypeParam::type>::little_type>(0);
 }
 
 TYPED_TEST_P(PixelPropertiesType, NativeSize)
