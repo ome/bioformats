@@ -49,6 +49,8 @@
 
 #include <tiffio.h>
 
+using ome::xml::model::enums::PixelType;
+
 namespace ome
 {
   namespace bioformats
@@ -201,7 +203,7 @@ namespace ome
           throw Exception("Error getting field: Tag is not valid");
 
         if (!TIFFVGetField(tiffraw, tag, ap))
-          sentry.error();
+          sentry.error("Error getting field: Tag was not found");
       }
 
       void
@@ -223,6 +225,159 @@ namespace ome
 
         if (!TIFFVSetField(tiffraw, tag, ap))
           sentry.error();
+      }
+
+      ::ome::xml::model::enums::PixelType
+      IFD::getPixelType() const
+      {
+        PixelType pt = PixelType::UINT8;
+
+        SampleFormat fmt;
+        try
+          {
+            getField(SAMPLEFORMAT).get(fmt);
+          }
+        catch(const Exception& e)
+          {
+            // Default to unsigned integer.
+            fmt = UNSIGNED_INT;
+          }
+
+        uint16_t bits;
+        getField(BITSPERSAMPLE).get(bits);
+
+        switch(fmt)
+          {
+          case UNSIGNED_INT:
+            {
+              if (bits == 1)
+                pt = PixelType::BIT;
+              else if (bits == 8)
+                pt = PixelType::UINT8;
+              else if (bits == 16)
+                pt = PixelType::UINT16;
+              else if (bits == 32)
+                pt = PixelType::UINT32;
+              else
+                throw Exception("Unsupported bit depth for unsigned integer pixel type");
+            }
+            break;
+          case SIGNED_INT:
+            {
+              if (bits == 8)
+                pt = PixelType::INT8;
+              else if (bits == 16)
+                pt = PixelType::INT16;
+              else if (bits == 32)
+                pt = PixelType::INT32;
+              else
+                throw Exception("Unsupported bit depth for signed integer pixel type");
+            }
+            break;
+          case FLOAT:
+            {
+              if (bits == 32)
+                pt = PixelType::FLOAT;
+              else if (bits == 64)
+                pt = PixelType::DOUBLE;
+              else
+                throw Exception("Unsupported bit depth for floating point pixel type");
+            }
+            break;
+          case COMPLEX_FLOAT:
+            {
+              if (bits == 64)
+                pt = PixelType::COMPLEX;
+              else if (bits == 12)
+                pt = PixelType::DOUBLECOMPLEX;
+              else
+                throw Exception("Unsupported bit depth for complex floating point pixel type");
+            }
+            break;
+          default:
+            throw Exception("TIFF SampleFormat unsupported by OME data model PixelType");
+            break;
+          }
+
+        return pt;
+      }
+
+      void
+      IFD::setPixelType(::ome::xml::model::enums::PixelType type)
+      {
+        SampleFormat fmt = UNSIGNED_INT;
+
+        switch(type)
+          {
+          case PixelType::BIT:
+          case PixelType::UINT8:
+          case PixelType::UINT16:
+          case PixelType::UINT32:
+            fmt = UNSIGNED_INT;
+            break;
+
+          case PixelType::INT8:
+          case PixelType::INT16:
+          case PixelType::INT32:
+            fmt = SIGNED_INT;
+            break;
+
+          case PixelType::FLOAT:
+          case PixelType::DOUBLE:
+            fmt = FLOAT;
+            break;
+
+          case PixelType::COMPLEX:
+          case PixelType::DOUBLECOMPLEX:
+            fmt = COMPLEX_FLOAT;
+            break;
+
+          default:
+            throw Exception("Unsupported OME data model PixelType");
+            break;
+          }
+
+        getField(SAMPLEFORMAT).set(fmt);
+
+        uint16_t bits = 0;
+
+        switch(type)
+          {
+          case PixelType::BIT:
+            bits = 1;
+            break;
+
+          case PixelType::UINT8:
+          case PixelType::INT8:
+            bits = 8;
+            break;
+
+          case PixelType::UINT16:
+          case PixelType::INT16:
+            bits = 16;
+            break;
+
+          case PixelType::UINT32:
+          case PixelType::INT32:
+          case PixelType::FLOAT:
+            bits = 32;
+            break;
+
+          case PixelType::DOUBLE:
+          case PixelType::COMPLEX:
+            bits = 64;
+            break;
+
+          case PixelType::DOUBLECOMPLEX:
+            bits = 128;
+            break;
+
+          default:
+            throw Exception("Unsupported OME data model PixelType");
+            break;
+          }
+
+        getField(BITSPERSAMPLE).set(bits);
       }
 
       std::shared_ptr<IFD>

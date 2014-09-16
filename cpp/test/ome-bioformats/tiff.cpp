@@ -492,3 +492,12 @@ TEST(TIFFTest, FieldCount)
 
   ASSERT_FALSE(count);
 }
+
+TEST(TIFFTest, PixelType)
+{
+  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+
+  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+
+  ASSERT_EQ(::ome::xml::model::enums::PixelType::UINT8, ifd->getPixelType());
+}

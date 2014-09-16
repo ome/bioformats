@@ -44,6 +44,8 @@
 
 #include <ome/bioformats/tiff/Types.h>
 
+#include <ome/xml/model/enums/PixelType.h>
+
 namespace ome
 {
   namespace bioformats
@@ -187,6 +189,31 @@ namespace ome
         {
           return Field<TagCategory>(const_cast<IFD *>(this)->shared_from_this(), tag);
         }
+
+        /**
+         * Get the OME data model PixelType.
+         *
+         * This is computed based upon the SampleFormat and
+         * BitsPerSample tags for this IFD.
+         *
+         * @returns the PixelType.
+         * @throws an Exception if there is no corresponding PixelType
+         * for the SampleFormat and BitsPerSample in use.
+         */
+        ::ome::xml::model::enums::PixelType
+        getPixelType() const;
+
+        /**
+         * Set the OME data model PixelType.
+         *
+         * This sets the SampleFormat and BitsPerSample tags for this
+         * IFD which correspond to the PixelType in use.
+         *
+         * @param type the PixelType to set.
+         * @throws an Exception if the PixelType is invalid.
+         */
+        void
+        setPixelType(::ome::xml::model::enums::PixelType type);
 
         /**
          * Get next directory.
