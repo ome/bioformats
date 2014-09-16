@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-XML C++ library for working with OME-XML metadata structures.
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,24 +36,56 @@
  * #L%
  */
 
-#include <ome/xml/model/primitives/NonNegativeInteger.h>
+#include <ome/bioformats/MetadataTools.h>
 
-namespace ome
+#include <gtest/gtest.h>
+
+using ome::bioformats::createID;
+
+TEST(MetadataToolsTest, createID1)
 {
-  namespace xml
-  {
-    namespace model
-    {
-      namespace primitives
-      {
+  std::string e1(createID("Instrument", 0));
+  ASSERT_EQ(std::string("Instrument:0"), e1);
 
-        template<>
-        const std::string NonNegativeInteger::typestr("NonNegativeInteger");
+  std::string e2(createID("Instrument", 2));
+  ASSERT_EQ(std::string("Instrument:2"), e2);
 
-        template<>
-        const NonNegativeInteger::value_type NonNegativeInteger::default_value(0U);
+  std::string i1(createID("Image", 4));
+  ASSERT_EQ(std::string("Image:4"), i1);
+}
 
-      }
-    }
-  }
+TEST(MetadataToolsTest, createID2)
+{
+  std::string d1(createID("Detector", 0, 0));
+  ASSERT_EQ(std::string("Detector:0:0"), d1);
+
+  std::string d2(createID("Detector", 2, 5));
+  ASSERT_EQ(std::string("Detector:2:5"), d2);
+
+  std::string i1(createID("Shape", 4, 3));
+  ASSERT_EQ(std::string("Shape:4:3"), i1);
+}
+
+TEST(MetadataToolsTest, createID3)
+{
+  std::string m1(createID("Mask", 0, 0, 0));
+  ASSERT_EQ(std::string("Mask:0:0:0"), m1);
+
+  std::string m2(createID("Mask", 3, 5, 6));
+  ASSERT_EQ(std::string("Mask:3:5:6"), m2);
+
+  std::string m3(createID("Mask", 92, 329, 892));
+  ASSERT_EQ(std::string("Mask:92:329:892"), m3);
+}
+
+TEST(MetadataToolsTest, createID4)
+{
+  std::string u1(createID("Unknown", 0, 0, 0, 0));
+  ASSERT_EQ(std::string("Unknown:0:0:0:0"), u1);
+
+  std::string u2(createID("Unknown", 5, 23, 6, 3));
+  ASSERT_EQ(std::string("Unknown:5:23:6:3"), u2);
+
+  std::string u3(createID("Unknown", 9, 2, 4, 2));
+  ASSERT_EQ(std::string("Unknown:9:2:4:2"), u3);
 }

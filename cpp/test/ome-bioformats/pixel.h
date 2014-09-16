@@ -39,6 +39,7 @@
 #ifndef TEST_PIXEL_H
 #define TEST_PIXEL_H
 
+#include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
 
 #include <ome/compat/cstdint.h>

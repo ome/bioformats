@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-XML C++ library for working with OME-XML metadata structures.
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,24 +35,74 @@
  * #L%
  */
 
-#include <ome/xml/model/primitives/NonNegativeInteger.h>
+#ifndef OME_BIOFORMATS_METADATATOOLS_H
+#define OME_BIOFORMATS_METADATATOOLS_H
+
+#include <string>
+
+#include <boost/format.hpp>
+
+#include <ome/bioformats/MetadataTools.h>
 
 namespace ome
 {
-  namespace xml
+  namespace bioformats
   {
-    namespace model
+
+    std::string
+    createID(std::string const&  type,
+             dimension_size_type idx)
     {
-      namespace primitives
-      {
-
-        template<>
-        const std::string NonNegativeInteger::typestr("NonNegativeInteger");
-
-        template<>
-        const NonNegativeInteger::value_type NonNegativeInteger::default_value(0U);
-
-      }
+      static boost::format fmt("%1%:%2%");
+      fmt.clear();
+      fmt % type % idx;
+      return fmt.str();
     }
+
+    std::string
+    createID(std::string const&  type,
+             dimension_size_type idx1,
+             dimension_size_type idx2)
+    {
+      static boost::format fmt("%1%:%2%:%3%");
+      fmt.clear();
+      fmt % type % idx1 % idx2;
+      return fmt.str();
+    }
+
+    std::string
+    createID(std::string const&  type,
+             dimension_size_type idx1,
+             dimension_size_type idx2,
+             dimension_size_type idx3)
+    {
+      static boost::format fmt("%1%:%2%:%3%:%4%");
+      fmt.clear();
+      fmt % type % idx1 % idx2 % idx3;
+      return fmt.str();
+    }
+
+    std::string
+    createID(std::string const&  type,
+             dimension_size_type idx1,
+             dimension_size_type idx2,
+             dimension_size_type idx3,
+             dimension_size_type idx4)
+    {
+      static boost::format fmt("%1%:%2%:%3%:%4%:%5%");
+      fmt.clear();
+      fmt % type % idx1 % idx2 % idx3 % idx4;
+      return fmt.str();
+    }
+
   }
 }
+
+
+#endif // OME_BIOFORMATS_METADATATOOLS_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
