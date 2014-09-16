@@ -639,7 +639,7 @@ public class Memoizer extends ReaderWrapper {
         }
       }
     } catch (Throwable t) {
-      LOGGER.error("file deletion faled: {}", file, t);
+      LOGGER.error("file deletion failed: {}", file, t);
     }
     return false;
   }
