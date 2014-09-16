@@ -184,8 +184,8 @@ namespace ome
       }
 
       void
-      IFD::getField(tag_type tag,
-                    ...) const
+      IFD::getRawField(tag_type tag,
+                       ...) const
       {
         std::shared_ptr<TIFF>& tiff = getTIFF();
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
@@ -205,8 +205,8 @@ namespace ome
       }
 
       void
-      IFD::setField(tag_type tag,
-                    ...)
+      IFD::setRawField(tag_type tag,
+                       ...)
       {
         std::shared_ptr<TIFF>& tiff = getTIFF();
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());

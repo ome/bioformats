@@ -145,8 +145,8 @@ namespace ome
          * @param ... pointers to variables to store the value(s) in.
          */
         void
-        getField(tag_type tag,
-                 ...) const;
+        getRawField(tag_type tag,
+                    ...) const;
 
         /**
          * Set a field by its tag number.
@@ -159,8 +159,8 @@ namespace ome
          * @param ... variables containing the value(s) to set.
          */
         void
-        setField(tag_type tag,
-                 ...);
+        setRawField(tag_type tag,
+                    ...);
 
         /**
          * Get a Field by its tag enumeration.
