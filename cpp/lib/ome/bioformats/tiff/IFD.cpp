@@ -40,6 +40,8 @@
 #include <cstdarg>
 
 #include <ome/bioformats/tiff/IFD.h>
+#include <ome/bioformats/tiff/Tags.h>
+#include <ome/bioformats/tiff/Field.h>
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
@@ -50,6 +52,68 @@
 #include <tiffio.h>
 
 using ome::xml::model::enums::PixelType;
+
+namespace
+{
+
+  using ::ome::bioformats::tiff::IFD;
+  using ::ome::bioformats::dimension_size_type;
+
+  struct ReadVisitor : public boost::static_visitor<>
+  {
+    const IFD&          ifd;
+    dimension_size_type x;
+    dimension_size_type y;
+    dimension_size_type w;
+    dimension_size_type h;
+
+    ReadVisitor(const IFD&          ifd,
+                dimension_size_type x,
+                dimension_size_type y,
+                dimension_size_type w,
+                dimension_size_type h):
+      ifd(ifd),
+      x(x),
+      y(y),
+      w(w),
+      h(h)
+    {}
+
+    template<typename T>
+    void
+    operator()(T& /* buffer */)
+    {
+    }
+  };
+
+  struct WriteVisitor : public boost::static_visitor<>
+  {
+    IFD&                ifd;
+    dimension_size_type x;
+    dimension_size_type y;
+    dimension_size_type w;
+    dimension_size_type h;
+
+    WriteVisitor(IFD&                ifd,
+                 dimension_size_type x,
+                 dimension_size_type y,
+                 dimension_size_type w,
+                 dimension_size_type h):
+      ifd(ifd),
+      x(x),
+      y(y),
+      w(w),
+      h(h)
+    {}
+
+    template<typename T>
+    void
+    operator()(const T& /* buffer */)
+    {
+    }
+  };
+
+}
 
 namespace ome
 {
@@ -378,6 +442,92 @@ namespace ome
           }
 
         getField(BITSPERSAMPLE).set(bits);
+      }
+
+      void
+      IFD::readImage(VariantPixelBuffer& buf) const
+      {
+        uint32_t w = 0, h = 0;
+        getField(IMAGEWIDTH).get(w);
+        getField(IMAGELENGTH).get(h);
+
+        readImage(buf, 0, 0, w, h);
+      }
+
+      void
+      IFD::readImage(VariantPixelBuffer& dest,
+                     dimension_size_type x,
+                     dimension_size_type y,
+                     dimension_size_type w,
+                     dimension_size_type h) const
+      {
+        PixelType type = getPixelType();
+
+        uint16_t subC;
+        getField(SAMPLESPERPIXEL).get(subC);
+
+        std::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
+        shape[DIM_SPATIAL_X] = w;
+        shape[DIM_SPATIAL_Y] = h;
+        shape[DIM_SUBCHANNEL] = subC;
+        shape[DIM_SPATIAL_Z] = shape[DIM_TEMPORAL_T] = shape[DIM_CHANNEL] =
+          shape[DIM_MODULO_Z] = shape[DIM_MODULO_T] = shape[DIM_MODULO_C] = 1;
+
+        const VariantPixelBuffer::size_type *dest_shape_ptr(dest.shape());
+        std::copy(dest_shape_ptr, dest_shape_ptr + PixelBufferBase::dimensions,
+                  dest_shape.begin());
+
+        if (type != dest.pixelType() ||
+            shape != dest_shape)
+          dest.setBuffer(shape, type, dest.storage_order());
+
+        ReadVisitor v(*this,
+                      x, y, w, h);
+        boost::apply_visitor(v, dest.vbuffer());
+      }
+
+      void
+      IFD::writeImage(const VariantPixelBuffer& buf)
+      {
+        uint32_t w = 0, h = 0;
+        getField(ome::bioformats::tiff::IMAGEWIDTH).get(w);
+        getField(ome::bioformats::tiff::IMAGELENGTH).get(h);
+
+        writeImage(buf, 0, 0, w, h);
+      }
+
+      void
+      IFD::writeImage(const VariantPixelBuffer& source,
+                      dimension_size_type x,
+                      dimension_size_type y,
+                      dimension_size_type w,
+                      dimension_size_type h)
+      {
+        PixelType type = getPixelType();
+
+        uint16_t subC;
+        getField(SAMPLESPERPIXEL).get(subC);
+
+        std::array<VariantPixelBuffer::size_type, 9> shape, source_shape;
+        shape[DIM_SPATIAL_X] = w;
+        shape[DIM_SPATIAL_Y] = h;
+        shape[DIM_SUBCHANNEL] = subC;
+        shape[DIM_SPATIAL_Z] = shape[DIM_TEMPORAL_T] = shape[DIM_CHANNEL] =
+          shape[DIM_MODULO_Z] = shape[DIM_MODULO_T] = shape[DIM_MODULO_C] = 1;
+
+        const VariantPixelBuffer::size_type *source_shape_ptr(source.shape());
+        std::copy(source_shape_ptr, source_shape_ptr + PixelBufferBase::dimensions,
+                  source_shape.begin());
+
+        if (type != source.pixelType())
+          throw Exception("VariantPixelBuffer pixel type is incompatible with TIFF sample format and bit depth");
+
+        if (shape != source_shape)
+          throw Exception("VariantPixelBuffer dimensions incompatible with TIFF image size");
+
+        WriteVisitor v(*this,
+                       x, y, w, h);
+        boost::apply_visitor(v, source.vbuffer());
       }
 
       std::shared_ptr<IFD>

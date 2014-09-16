@@ -43,6 +43,7 @@
 #include <ome/compat/memory.h>
 
 #include <ome/bioformats/tiff/Types.h>
+#include <ome/bioformats/VariantPixelBuffer.h>
 
 #include <ome/xml/model/enums/PixelType.h>
 
@@ -214,6 +215,59 @@ namespace ome
          */
         void
         setPixelType(::ome::xml::model::enums::PixelType type);
+
+        /**
+         * Read a whole image plane into a pixel buffer.
+         *
+         * @param buf the destination pixel buffer.
+         */
+        void
+        readImage(VariantPixelBuffer& buf) const;
+
+        /**
+         * Read a region of an image plane into a pixel buffer.
+         *
+         * If the pixel buffer is of a different size to the region
+         * being read, or is of the incorrect pixel type, it will be
+         * resized using the correct pixel type.  The pixel storage
+         * order will be preserved.
+         *
+         * @param dest the destination pixel buffer.
+         * @param x the @c X coordinate of the upper-left corner of the sub-image.
+         * @param y the @c Y coordinate of the upper-left corner of the sub-image.
+         * @param w the width of the sub-image.
+         * @param h the height of the sub-image.
+         */
+        void
+        readImage(VariantPixelBuffer& dest,
+                  dimension_size_type x,
+                  dimension_size_type y,
+                  dimension_size_type w,
+                  dimension_size_type h) const;
+
+        /**
+         * Write a whole image plane from a pixel buffer.
+         *
+         * @param buf the source pixel buffer.
+         */
+        void
+        writeImage(const VariantPixelBuffer& buf);
+
+        /**
+         * Write a whole image plane from a pixel buffer.
+         *
+         * @param source the source pixel buffer.
+         * @param x the @c X coordinate of the upper-left corner of the sub-image.
+         * @param y the @c Y coordinate of the upper-left corner of the sub-image.
+         * @param w the width of the sub-image.
+         * @param h the height of the sub-image.
+         */
+        void
+        writeImage(const VariantPixelBuffer& source,
+                   dimension_size_type       x,
+                   dimension_size_type       y,
+                   dimension_size_type       w,
+                   dimension_size_type       h);
 
         /**
          * Get next directory.
