@@ -27,7 +27,6 @@
 classdef TestBfopen < ReaderTest
     
     properties
-        filedir
         filepath
         data
         nSeries = 1
