@@ -176,6 +176,19 @@ namespace ome
         }
 
         /**
+         * Get a Field by its tag enumeration.
+         *
+         * @param tag the field identifier.
+         * @returns the Field corresponding to the tag.
+         */
+        template<typename TagCategory>
+        const Field<TagCategory>
+        getField(TagCategory tag) const
+        {
+          return Field<TagCategory>(const_cast<IFD *>(this)->shared_from_this(), tag);
+        }
+
+        /**
          * Get next directory.
          *
          * @returns the next directory, or null if this is the last directory.
