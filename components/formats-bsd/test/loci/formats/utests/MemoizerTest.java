@@ -32,22 +32,16 @@
 
 package loci.formats.utests;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
-import loci.common.Location;
-import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.Memoizer;
-import loci.formats.MinMaxCalculator;
 import loci.formats.in.FakeReader;
-import loci.formats.meta.IMinMaxStore;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -281,6 +275,18 @@ public class MemoizerTest {
       File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
       assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
         memoFile.getAbsolutePath());
+  }
+
+  @Test
+  public void testMultipleSetIdInvocations() throws Exception {
+      Memoizer memo = new Memoizer(reader, 0, true);
+
+      memo.setId(id);
+      assertFalse(memo.isLoadedFromMemo());
+      assertTrue(memo.isSavedToMemo());
+      memo.close();
+      memo.setId(id);
+      memo.close();
   }
 
   public static void main(String[] args) throws Exception {
