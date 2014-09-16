@@ -27,6 +27,7 @@
 classdef TestBfopen < ReaderTest
     
     properties
+        filedir
         filepath
         data
         nSeries = 1
@@ -38,18 +39,15 @@ classdef TestBfopen < ReaderTest
         end
         
         function tearDown(self)
-            if exist(self.filepath,'file') == 2, delete(self.filepath); end
+            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
             self.data = [];
             tearDown@ReaderTest(self);
         end
         
         function checkFake(self, fakefilename)
             % Create fake file
-            if isunix,
-                self.filepath = fullfile('/tmp', fakefilename);
-            else
-                self.filepath = fullfile('C:', fakefilename);
-            end
+            mkdir(self.tmpdir);
+            self.filepath = fullfile(self.tmpdir, fakefilename);
             fid = fopen(self.filepath, 'w+');
             fclose(fid);
             

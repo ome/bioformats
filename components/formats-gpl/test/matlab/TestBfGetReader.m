@@ -62,15 +62,12 @@ classdef TestBfGetReader < ReaderTest
         
         function testFileInput(self)
             % Create fake file
-            if isunix,
-                filepath = fullfile('/tmp', 'test.fake');
-            else
-                filepath = fullfile('C:', 'test.fake');
-            end
+            mkdir(self.tmpdir);
+            filepath = fullfile(self.tmpdir, 'test.fake');
             fid = fopen(filepath, 'w+');
             fclose(fid);
             self.reader = bfGetReader(filepath);
-            delete(filepath);
+            rmdir(self.tmpdir, 's');
             assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
             assertEqual(char(self.reader.getCurrentFile()), filepath);
         end
