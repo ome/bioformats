@@ -119,6 +119,18 @@ public class MemoizerTest {
   }
 
   @Test
+  public void testMultipleSetIdInvocations() throws Exception {
+      memoizer = new Memoizer(reader, 0, true);
+      memoizer.setId(id);
+      assertFalse(memoizer.isLoadedFromMemo());
+      assertTrue(memoizer.isSavedToMemo());
+      memoizer.close();
+      memoizer.setId(id);
+      assertTrue(memoizer.isLoadedFromMemo());
+      assertTrue(memoizer.isSavedToMemo());
+      memoizer.close();
+  }
+
   public void testDefaultConstructor() throws Exception {
       memoizer = new Memoizer();
       File f = memoizer.getMemoFile(id);
@@ -275,18 +287,6 @@ public class MemoizerTest {
       File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
       assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
         memoFile.getAbsolutePath());
-  }
-
-  @Test
-  public void testMultipleSetIdInvocations() throws Exception {
-      Memoizer memo = new Memoizer(reader, 0, true);
-
-      memo.setId(id);
-      assertFalse(memo.isLoadedFromMemo());
-      assertTrue(memo.isSavedToMemo());
-      memo.close();
-      memo.setId(id);
-      memo.close();
   }
 
   public static void main(String[] args) throws Exception {
