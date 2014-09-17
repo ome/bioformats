@@ -120,7 +120,7 @@ public class MemoizerTest {
 
   @Test
   public void testMultipleSetIdInvocations() throws Exception {
-      memoizer = new Memoizer(reader, 0, true);
+      memoizer = new Memoizer(reader, 0);
       memoizer.setId(id);
       assertFalse(memoizer.isLoadedFromMemo());
       assertTrue(memoizer.isSavedToMemo());
