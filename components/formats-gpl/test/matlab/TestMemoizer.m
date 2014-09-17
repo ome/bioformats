@@ -48,7 +48,7 @@ classdef TestMemoizer < ReaderTest
             fclose(fid);
             
             % Create Reader
-            self.reader = loci.formats.Memoizer(bfGetReader(), 0, true);
+            self.reader = loci.formats.Memoizer(bfGetReader(), 0);
             self.reader.setId(self.filepath);
             assertFalse(self.reader.isLoadedFromMemo());
             assertTrue(self.reader.isSavedToMemo());
