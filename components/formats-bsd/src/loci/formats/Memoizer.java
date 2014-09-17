@@ -102,7 +102,8 @@ public class Memoizer extends ReaderWrapper {
 
     final public Kryo kryo = new Kryo();
     {
-      kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+      // See https://github.com/EsotericSoftware/kryo/issues/216
+      ((Kryo.DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
     }
 
     FileInputStream fis;
