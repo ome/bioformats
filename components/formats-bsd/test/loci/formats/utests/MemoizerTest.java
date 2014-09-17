@@ -127,7 +127,7 @@ public class MemoizerTest {
       memoizer.close();
       memoizer.setId(id);
       assertTrue(memoizer.isLoadedFromMemo());
-      assertTrue(memoizer.isSavedToMemo());
+      assertFalse(memoizer.isSavedToMemo());
       memoizer.close();
   }
 

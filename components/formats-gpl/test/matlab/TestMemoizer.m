@@ -55,7 +55,7 @@ classdef TestMemoizer < ReaderTest
             self.reader.close();
             self.reader.setId(self.filepath);
             assertTrue(self.reader.isLoadedFromMemo());
-            assertTrue(self.reader.isSavedToMemo());
+            assertFalse(self.reader.isSavedToMemo());
             self.reader.close();
         end
     end
