@@ -386,6 +386,8 @@ public class DeltavisionReader extends FormatReader {
     // Run through every image and fill in the
     // Extended Header information array for that image
     int offset = HEADER_LENGTH + numIntsPerSection * 4;
+    boolean hasZeroX = false;
+    boolean hasZeroY = false;
     for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
       int z = coords[0];
@@ -398,16 +400,32 @@ public class DeltavisionReader extends FormatReader {
       DVExtHdrFields hdr = new DVExtHdrFields(in);
       extHdrFields[z][w][t] = hdr;
 
-      if (!uniqueTileX.contains(hdr.stageXCoord)) {
+      if (!uniqueTileX.contains(hdr.stageXCoord) && hdr.stageXCoord != 0) {
         uniqueTileX.add(hdr.stageXCoord);
       }
-      if (!uniqueTileY.contains(hdr.stageYCoord)) {
+      else if (hdr.stageXCoord == 0) {
+        hasZeroX = true;
+      }
+
+      if (!uniqueTileY.contains(hdr.stageYCoord) && hdr.stageYCoord != 0) {
         uniqueTileY.add(hdr.stageYCoord);
+      }
+      else if (hdr.stageYCoord == 0) {
+        hasZeroY = true;
       }
     }
 
     xTiles = uniqueTileX.size();
     yTiles = uniqueTileY.size();
+
+    if (xTiles > 1 || yTiles > 1) {
+      if (hasZeroX) {
+        xTiles++;
+      }
+      if (hasZeroY) {
+        yTiles++;
+      }
+    }
 
     if (yTiles > 1) {
       if (uniqueTileY.get(1) < uniqueTileY.get(0)) {

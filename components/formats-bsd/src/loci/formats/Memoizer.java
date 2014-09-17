@@ -59,7 +59,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrategy;
+
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
@@ -563,7 +564,7 @@ public class Memoizer extends ReaderWrapper {
         return;
       }
 
-      IFormatReader memo = loadMemo(); // Should never throw.
+      IFormatReader memo = loadMemo(); // Should never throw kryo exceptions
 
       loadedFromMemo = false;
       savedToMemo = false;
@@ -606,6 +607,30 @@ public class Memoizer extends ReaderWrapper {
   }
 
   //-- Helper methods --
+
+  /**
+   * Attempts to delete an existing file, logging at
+   * warn if the deletion returns false or at error
+   * if an exception is thrown.
+   *
+   * @returns the result from {@link java.io.File#delete}
+   *   or false if an exception is thrown.
+   */
+  protected boolean deleteQuietly(File file) {
+    try {
+      if (file != null && file.exists()) {
+        if (file.delete()) {
+          LOGGER.trace("deleted {}", file);
+          return true;
+        } else {
+          LOGGER.warn("file deletion failed {}", file);
+        }
+      }
+    } catch (Throwable t) {
+      LOGGER.error("file deletion failed: {}", file, t);
+    }
+    return false;
+  }
 
   /**
    * Returns a configured {@link Kryo} instance. This method can be modified
@@ -687,6 +712,13 @@ public class Memoizer extends ReaderWrapper {
     return new File(p, "." + n + ".bfmemo");
   }
 
+  /**
+   * Load a memo file if possible, returning a null if not.
+   *
+   * Corrupt memo files will be deleted if possible. Kryo
+   * exceptions should never propagate to the caller. Only
+   * the regular Bio-Formats exceptions should be thrown.
+   */
   public IFormatReader loadMemo() throws IOException, FormatException {
 
     if (skipLoad) {
@@ -768,8 +800,13 @@ public class Memoizer extends ReaderWrapper {
         memoFile, memoFile.length());
       return copy;
     } catch (KryoException e) {
-      memoFile.delete();
-      LOGGER.warn("deleted invalid memo file: {}", memoFile, e);
+      LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      deleteQuietly(memoFile);
+      return null;
+    } catch (Throwable t) {
+      // Logging at error since this is unexpected.
+      LOGGER.error("deleting invalid memo file: {}", memoFile, t);
+      deleteQuietly(memoFile);
       return null;
     } finally {
       ser.loadStop();
@@ -832,15 +869,7 @@ public class Memoizer extends ReaderWrapper {
         }
       }
 
-      // Delete the tempFile quietly.
-      try {
-        if (tempFile != null && tempFile.exists()) {
-          tempFile.delete();
-          tempFile = null;
-        }
-      } catch (Throwable t) {
-        LOGGER.error("temp file deletion faled", t);
-      }
+      deleteQuietly(tempFile);
     }
     return rv;
   }

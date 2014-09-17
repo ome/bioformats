@@ -34,13 +34,30 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+enable_testing()
+option(test "Enable unit tests (requires gtest)" ON)
+set(BUILD_TESTS ${test})
+
 # Unit tests
 find_package(Threads REQUIRED)
-find_package(GTest)
-set(BUILD_TESTS OFF)
-if(GTEST_FOUND)
-  set(BUILD_TESTS ON)
-  enable_testing()
-endif(GTEST_FOUND)
-option(test "Enable unit tests (requires gtest)" ${BUILD_TESTS})
-set(BUILD_TESTS ${test})
+
+option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
+if(NOT embedded-gtest)
+  find_package(GTest)
+endif()
+
+if(NOT GTEST_FOUND)
+  message(STATUS "Using embedded GTest")
+  # If not using a shared runtime, gtest hardcodes its own (which breaks linking)
+  set(gtest_force_shared_crt ON CACHE BOOL "Force gtest to use shared runtime")
+  set(BUILD_SHARED_LIBS ON CACHE BOOL "Force gtest to use shared libraries")
+  # VS2012 Faux variadic templates workaround.
+  if(NOT MSVC_VERSION VERSION_LESS 1700 AND MSVC_VERSION VERSION_LESS 1800)
+    add_definitions(-D_VARIADIC_MAX=10)
+  endif()
+  add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0")
+  set(GTEST_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0/include")
+  set(GTEST_LIBRARIES gtest)
+  set(GTEST_FOUND ON)
+  set_property(TARGET gtest gtest_main PROPERTY FOLDER "External/Google Test")
+endif()
