@@ -178,6 +178,15 @@ public class MemoizerTest {
   }
 
   @Test
+  public void testConstructorTimeElapsedNull() throws Exception {
+
+    memoizer = new Memoizer(0, null);
+
+    // Check null memo directory returns null
+    assertEquals(memoizer.getMemoFile(id), null);
+  }
+
+  @Test
   public void testConstructorReaderTimeElapsedDirectory() throws Exception {
 
     String uuid = UUID.randomUUID().toString();
@@ -196,6 +205,16 @@ public class MemoizerTest {
     memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
     File f = memoizer.getMemoFile(id);
     assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+  }
+
+
+  @Test
+  public void testConstructorReaderTimeElapsedNull() throws Exception {
+
+    memoizer = new Memoizer(reader, 0, null);
+
+    // Check null memo directory returns null
+    assertEquals(memoizer.getMemoFile(id), null);
   }
 
   @Test
