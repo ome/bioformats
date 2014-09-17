@@ -100,7 +100,7 @@ namespace
 
     p.name = "TestReader";
     p.description = "Reader for unit testing";
-    p.suffixes.push_back(".test");
+    p.suffixes.push_back("test");
     p.compression_suffixes.push_back("gz");
     p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
     p.metadata_levels.insert(MetadataOptions::METADATA_NO_OVERLAYS);
@@ -296,9 +296,9 @@ TEST_P(FormatReaderTest, IsThisType)
   EXPECT_FALSE(r.isThisType("invalid.file", true));
   EXPECT_FALSE(r.isThisType("invalid.file", false));
 
-  EXPECT_FALSE(r.isThisType("valid.test"));
-  EXPECT_FALSE(r.isThisType("valid.test", true));
-  EXPECT_FALSE(r.isThisType("valid.test", false));
+  EXPECT_TRUE(r.isThisType("valid.test"));
+  EXPECT_TRUE(r.isThisType("valid.test", true));
+  EXPECT_TRUE(r.isThisType("valid.test", false));
 
   EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*content.begin()),
                             reinterpret_cast<uint8_t *>(&*content.end())));

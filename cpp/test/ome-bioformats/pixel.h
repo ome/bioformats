@@ -39,6 +39,7 @@
 #ifndef TEST_PIXEL_H
 #define TEST_PIXEL_H
 
+#include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
 
 #include <ome/compat/cstdint.h>
@@ -46,6 +47,7 @@
 /// Helpers to create pixel values of all supported types from integers.
 
 template<typename P>
+inline
 P
 pixel_value(uint32_t value)
 {
@@ -53,6 +55,7 @@ pixel_value(uint32_t value)
 }
 
 template<typename C>
+inline
 C
 pixel_value_complex(uint32_t value)
 {
@@ -61,6 +64,7 @@ pixel_value_complex(uint32_t value)
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
                                           ::ome::bioformats::ENDIAN_BIG>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
@@ -71,6 +75,7 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
                                           ::ome::bioformats::ENDIAN_LITTLE>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,
@@ -81,6 +86,7 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                           ::ome::bioformats::ENDIAN_BIG>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
@@ -91,6 +97,7 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 }
 
 template<>
+inline
 ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                           ::ome::bioformats::ENDIAN_LITTLE>::type
 pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
@@ -98,6 +105,25 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
 {
   return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                                                         ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
+}
+
+namespace std
+{
+  template<class charT, class traits>
+  inline std::basic_ostream<charT,traits>&
+  operator<< (std::basic_ostream<charT,traits>& os,
+              const ::ome::bioformats::PixelBufferBase::storage_order_type& order)
+  {
+    os << '(';
+    for (uint16_t i = 0; i < ::ome::bioformats::PixelBufferBase::dimensions; ++i)
+    {
+      os << order.ordering(i) << '/' << order.ascending(i);
+      if (i + 1 != ::ome::bioformats::PixelBufferBase::dimensions)
+        os << ',';
+    }
+    os << ')';
+    return os;
+  }
 }
 
 #endif // TEST_PIXEL_H

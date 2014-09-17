@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -59,7 +59,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrategy;
+
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
@@ -303,16 +304,22 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    * Minimum number of milliseconds which must elapse during the call to
-   * super.setId() before a memo file will be created.
+   * {@link setId} before a memo file will be created.
    */
   private final long minimumElapsed;
 
   /**
    * Directory where all memoization files should be created. If this value is
-   * non-null, then all files will be created under it rather than sitting
-   * beside the setId file.
+   * non-null, then all memoization files will be created under it. Can be
+   * overriden by inPlaceCaching.
    */
   private final File directory;
+
+  /**
+   * If True, then all memoization files will be created in the same directory
+   * as the original file.
+   */
+  private boolean doInPlaceCaching = false;
 
   protected transient Deser ser;
 
@@ -372,37 +379,97 @@ public class Memoizer extends ReaderWrapper {
     this(DEFAULT_MINIMUM_ELAPSED);
   }
 
-  /** Constructs a memoizer around a new image reader. */
+  /**
+   *  Constructs a memoizer around a new image reader.
+   *
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link setId} before a memo file
+   *         will be created.
+   */
   public Memoizer(long minimumElapsed) {
     this(minimumElapsed, null);
   }
 
+  /**
+   *  Constructs a memoizer around a new image reader.
+   *
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link setId} before a memo file
+   *         will be created.
+   *  @param directory a {@link File} specifying the directory where all
+   *         memoization files should be created.
+   */
   public Memoizer(long minimumElapsed, File directory) {
     super();
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
   }
 
-  /** Constructs a memoizer around the given reader. */
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   */
   public Memoizer(IFormatReader r) {
     this(r, DEFAULT_MINIMUM_ELAPSED);
   }
 
-  /** Constructs a memoizer around the given reader. */
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link #setId} before a memo file
+   *         will be created.
+   */
   public Memoizer(IFormatReader r, long minimumElapsed) {
     this(r, minimumElapsed, null);
   }
 
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link #setId} before a memo file
+   *         will be created.
+   *  @param directory a {@link File} specifying the directory where all
+   *         memoization files should be created.
+   */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
   }
 
+  /**
+   *  Constructs a memoizer around the given reader.
+   *
+   *  @param r an {@link IFormatReader} instance
+   *  @param minimumElapsed a long specifying the number of milliseconds which
+   *         must elapse during the call to {@link setId} before a memo file
+   *         will be created.
+   *  @param doInPlaceCaching a boolean specifying to create memo files in the 
+   *         same directory as the original file if true.
+   */
+  public Memoizer(IFormatReader r, long minimumElapsed,
+                  boolean doInPlaceCaching) {
+    this(r, minimumElapsed, null);
+    this.doInPlaceCaching = doInPlaceCaching;
+  }
+
+  /**
+   *  Returns whether the {@link #reader} instance currently active was loaded
+   *  from the memo file during {@link #setId(String)}.
+   */
   public boolean isLoadedFromMemo() {
     return loadedFromMemo;
   }
 
+  /**
+   *  Returns whether the {@link #reader} instance currently active was saved
+   *  to the memo file during {@link #setId(String)}.
+   */
   public boolean isSavedToMemo() {
     return savedToMemo;
   }
@@ -510,7 +577,7 @@ public class Memoizer extends ReaderWrapper {
         return;
       }
 
-      IFormatReader memo = loadMemo(); // Should never throw.
+      IFormatReader memo = loadMemo(); // Should never throw kryo exceptions
 
       loadedFromMemo = false;
       savedToMemo = false;
@@ -555,6 +622,30 @@ public class Memoizer extends ReaderWrapper {
   //-- Helper methods --
 
   /**
+   * Attempts to delete an existing file, logging at
+   * warn if the deletion returns false or at error
+   * if an exception is thrown.
+   *
+   * @returns the result from {@link java.io.File#delete}
+   *   or false if an exception is thrown.
+   */
+  protected boolean deleteQuietly(File file) {
+    try {
+      if (file != null && file.exists()) {
+        if (file.delete()) {
+          LOGGER.trace("deleted {}", file);
+          return true;
+        } else {
+          LOGGER.warn("file deletion failed {}", file);
+        }
+      }
+    } catch (Throwable t) {
+      LOGGER.error("file deletion failed: {}", file, t);
+    }
+    return false;
+  }
+
+  /**
    * Returns a configured {@link Kryo} instance. This method can be modified
    * by consumers. The returned instance is not thread-safe.
    *
@@ -587,29 +678,46 @@ public class Memoizer extends ReaderWrapper {
    * Constructs a {@link File} object from setId string. This method can be
    * modified by consumers, but then existing memo files will not be found.
    *
-   * @param id the path passed to setId
-   * @return a filename with
+   * @param id the path passed to {@link setId}
+   * @return a {@link File} object pointing at the location of the memo file
    */
   public File getMemoFile(String id) {
     File f = null;
-    if (directory == null) {
-        // Disabling memoization unless specific directory is provided.
-        // This prevents random cache files from being unknowingly written.
-        LOGGER.debug("skipping memo: no directory given");
-        return null;
+    File writeDirectory = null;
+    if (directory == null && !doInPlaceCaching) {
+      // Disabling memoization unless specific directory is provided.
+      // This prevents random cache files from being unknowingly written.
+      LOGGER.debug("skipping memo: no directory given");
+      return null;
     } else {
-      if (!directory.exists() || !directory.canWrite()) {
-        LOGGER.warn("skipping memo: directory not writeable - {}", directory);
+
+      // If the memoizer directory is set to be the root folder, the memo file
+      // will be saved in the same folder as the file specified by id. Since
+      // the root folder will likely not be writeable by the user, we want to
+      // exclude this special case from the test below
+      id = new File(id).getAbsolutePath();
+      String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
+
+      if (doInPlaceCaching || directory.getAbsolutePath().equals(rootPath)) {
+        f = new File(id);
+        writeDirectory = new File(f.getParent());
+      } else {
+        // this serves to strip off the drive letter on Windows
+        // since we're using the absolute path, 'id' will either start with
+        // File.separator (as on UNIX), or a drive letter (as on Windows)
+        id = id.substring(id.indexOf(File.separator) + 1);
+        f = new File(directory, id);
+        writeDirectory = directory;
+      }
+
+      // Check either the in-place folder or the main memoizer directory
+      // exists and is writeable
+      if (!writeDirectory.exists() || !writeDirectory.canWrite()) {
+        LOGGER.warn("skipping memo: directory not writeable - {}",
+          writeDirectory);
         return null;
       }
 
-      // this serves to strip off the drive letter on Windows
-      // since we're using the absolute path, 'id' will either start with
-      // File.separator (as on UNIX), or a drive letter (as on Windows)
-      id = new File(id).getAbsolutePath();
-      id = id.substring(id.indexOf(File.separator) + 1);
-
-      f = new File(directory, id);
       f.getParentFile().mkdirs();
     }
     String p = f.getParent();
@@ -617,6 +725,13 @@ public class Memoizer extends ReaderWrapper {
     return new File(p, "." + n + ".bfmemo");
   }
 
+  /**
+   * Load a memo file if possible, returning a null if not.
+   *
+   * Corrupt memo files will be deleted if possible. Kryo
+   * exceptions should never propagate to the caller. Only
+   * the regular Bio-Formats exceptions should be thrown.
+   */
   public IFormatReader loadMemo() throws IOException, FormatException {
 
     if (skipLoad) {
@@ -698,8 +813,13 @@ public class Memoizer extends ReaderWrapper {
         memoFile, memoFile.length());
       return copy;
     } catch (KryoException e) {
-      memoFile.delete();
-      LOGGER.warn("deleted invalid memo file: {}", memoFile, e);
+      LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      deleteQuietly(memoFile);
+      return null;
+    } catch (Throwable t) {
+      // Logging at error since this is unexpected.
+      LOGGER.error("deleting invalid memo file: {}", memoFile, t);
+      deleteQuietly(memoFile);
       return null;
     } finally {
       ser.loadStop();
@@ -762,15 +882,7 @@ public class Memoizer extends ReaderWrapper {
         }
       }
 
-      // Delete the tempFile quietly.
-      try {
-        if (tempFile != null && tempFile.exists()) {
-          tempFile.delete();
-          tempFile = null;
-        }
-      } catch (Throwable t) {
-        LOGGER.error("temp file deletion faled", t);
-      }
+      deleteQuietly(tempFile);
     }
     return rv;
   }

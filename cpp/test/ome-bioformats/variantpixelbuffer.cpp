@@ -396,7 +396,7 @@ struct SetIndexDeathTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& v)
+  operator() (const T& /* v */)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -405,8 +405,8 @@ struct SetIndexDeathTestVisitor : public boost::static_visitor<>
     badidx[1] = 2;
     badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
 
-    ASSERT_DEATH(buf.at<value_type>(badidx) = value_type(4), "Assertion.*failed");
-    ASSERT_DEATH(value_type obs = cbuf.at<value_type>(badidx), "Assertion.*failed");
+    ASSERT_DEATH_IF_SUPPORTED(buf.at<value_type>(badidx) = value_type(4), "Assertion.*failed");
+    ASSERT_DEATH_IF_SUPPORTED(value_type obs = cbuf.at<value_type>(badidx), "Assertion.*failed");
   }
 };
 
@@ -741,15 +741,15 @@ TEST_P(VariantPixelBufferTest, StorageOrder)
 
     const VariantPixelBuffer::storage_order_type& order = cbuf.storage_order();
 
-    EXPECT_EQ(5, order.ordering(0));
-    EXPECT_EQ(0, order.ordering(1));
-    EXPECT_EQ(1, order.ordering(2));
-    EXPECT_EQ(6, order.ordering(3));
-    EXPECT_EQ(2, order.ordering(4));
-    EXPECT_EQ(7, order.ordering(5));
-    EXPECT_EQ(3, order.ordering(6));
-    EXPECT_EQ(8, order.ordering(7));
-    EXPECT_EQ(4, order.ordering(8));
+    EXPECT_EQ(5U, order.ordering(0));
+    EXPECT_EQ(0U, order.ordering(1));
+    EXPECT_EQ(1U, order.ordering(2));
+    EXPECT_EQ(6U, order.ordering(3));
+    EXPECT_EQ(2U, order.ordering(4));
+    EXPECT_EQ(7U, order.ordering(5));
+    EXPECT_EQ(3U, order.ordering(6));
+    EXPECT_EQ(8U, order.ordering(7));
+    EXPECT_EQ(4U, order.ordering(8));
 
     EXPECT_TRUE(order.ascending(0));
     EXPECT_TRUE(order.ascending(1));

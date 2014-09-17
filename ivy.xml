@@ -28,10 +28,12 @@
     <dependency org="bf-deps" name="bufr" rev="1.1.00"/>
     <dependency org="bf-deps" name="grib" rev="5.1.03"/>
     <dependency org="bf-deps" name="netcdf" rev="4.3.19"/>
-    <dependency org="bf-deps" name="native-lib-loader" rev="2.0.1"/>
+    <dependency org="bf-deps" name="native-lib-loader" rev="2.0.2"/>
     <dependency org="bf-deps" name="assumeng" rev="1.2.4"/>
     <dependency org="bf-deps" name="perf4j" rev="0.9.13"/>
-    <dependency org="bf-deps" name="kryo" rev="2.21-shaded"/>
+    <dependency org="bf-deps" name="kryo" rev="2.24.0"/>
+    <dependency org="bf-deps" name="objenesis" rev="2.1"/>
+    <dependency org="bf-deps" name="minlog" rev="1.2"/>
     <dependency org="bf-deps" name="joda-time" rev="2.2"/>
     <dependency org="bf-deps" name="JWlz" rev="1.4.0"/>
   </dependencies>

@@ -4,12 +4,6 @@
 #
 # Find the Apache Xerces-C++ validating XML parser headers and libraries.
 #
-# Use this module by invoking find_package with the form::
-#
-#   find_package(Xerces
-#     [version] [EXACT]       # Minimum or EXACT version e.g. 3.1.1
-#     [REQUIRED])             # Fail with error if Xerces is not found
-#
 # This module reports information about the Xerces installation in
 # several variables.  General variables::
 #
@@ -38,7 +32,6 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-# Derived from FindGTK2 _GTK2_GET_VERSION, modified for Xerces.
 function(_Xerces_GET_VERSION  version_hdr)
     file(STRINGS ${version_hdr} _contents REGEX "^[ \t]*#define XERCES_VERSION_.*")
     if(_contents)
@@ -46,13 +39,13 @@ function(_Xerces_GET_VERSION  version_hdr)
         string(REGEX REPLACE ".*#define XERCES_VERSION_MINOR[ \t]+([0-9]+).*" "\\1" Xerces_MINOR "${_contents}")
         string(REGEX REPLACE ".*#define XERCES_VERSION_REVISION[ \t]+([0-9]+).*" "\\1" Xerces_PATCH "${_contents}")
 
-        if(NOT ${Xerces_MAJOR} MATCHES "^[0-9]+$")
+        if(NOT Xerces_MAJOR MATCHES "^[0-9]+$")
             message(FATAL_ERROR "Version parsing failed for XERCES_VERSION_MAJOR!")
         endif()
-        if(NOT ${Xerces_MINOR} MATCHES "^[0-9]+$")
+        if(NOT Xerces_MINOR MATCHES "^[0-9]+$")
             message(FATAL_ERROR "Version parsing failed for XERCES_VERSION_MINOR!")
         endif()
-        if(NOT ${Xerces_PATCH} MATCHES "^[0-9]+$")
+        if(NOT Xerces_PATCH MATCHES "^[0-9]+$")
             message(FATAL_ERROR "Version parsing failed for XERCES_VERSION_REVISION!")
         endif()
 
@@ -60,7 +53,7 @@ function(_Xerces_GET_VERSION  version_hdr)
     else()
         message(FATAL_ERROR "Include file ${version_hdr} does not exist or does not contain expected version information")
     endif()
-endfunction(_Xerces_GET_VERSION)
+endfunction()
 
 # Find include directory
 find_path(Xerces_INCLUDE_DIR
@@ -75,7 +68,7 @@ mark_as_advanced(Xerces_LIBRARY)
 
 if(Xerces_INCLUDE_DIR)
   _Xerces_GET_VERSION("${Xerces_INCLUDE_DIR}/xercesc/util/XercesVersion.hpp")
-endif(Xerces_INCLUDE_DIR)
+endif()
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Xerces
@@ -88,4 +81,4 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Xerces
 if(XERCES_FOUND)
   set(Xerces_INCLUDE_DIRS "${Xerces_INCLUDE_DIR}")
   set(Xerces_LIBRARIES "${Xerces_LIBRARY}")
-endif(XERCES_FOUND)
+endif()

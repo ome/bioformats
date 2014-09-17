@@ -71,7 +71,7 @@ namespace ome
         std::string description;
         /// Filename suffixes this format can handle.
         std::vector<std::string> suffixes;
-        /// Compression suffixes this format can handle.
+        /// Filename compression suffixes this format can handle.
         std::vector<std::string> compression_suffixes;
         /// Supported metadata levels.  A typical default is {METADATA_MINIMUM,METADATA_NO_OVERLAYS,METADATA_ALL}.
         std::set<MetadataOptions::MetadataLevel> metadata_levels;
