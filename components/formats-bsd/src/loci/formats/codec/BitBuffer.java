@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/BitBuffer.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
+ * @deprecated Use loci.common.RandomAccessInputStream instead
  */
 public class BitBuffer {
 
@@ -87,6 +88,11 @@ public class BitBuffer {
     currentByte = 0;
     currentBit = 0;
     eofByte = byteBuffer.length;
+  }
+
+  /** Return the backing byte array. */
+  public byte[] getByteBuffer() {
+    return byteBuffer;
   }
 
   /**

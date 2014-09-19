@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/BitWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @deprecated Use loci.common.RandomAccessOutputStream instead
  */
 public class BitWriter {
 

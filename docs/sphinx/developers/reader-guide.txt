@@ -185,11 +185,6 @@ Other useful things
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
   please see :doc:`Bio-Formats metadata processing </about/index>` for further information.
 
-- Utility methods for reading and writing individual bits from a byte array
-  can be found in :source:`loci.formats.codec.BitBuffer
-  <components/formats-bsd/src/loci/formats/codec/BitBuffer.java>` and 
-  :source:`loci.formats.codec.BitWriter <components/formats-bsd/src/loci/formats/codec/BitWriter.java>`.
-
 - Once you have written your file format reader, add a line to the 
   :source:`readers.txt <components/formats-api/src/loci/formats/readers.txt>`
   file with the fully qualified name of the reader, followed by a '#' and the
