@@ -536,7 +536,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end if isAnnotation %}\
 
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ABSTRACT_PROPRIETARY_OVERRIDE) %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
 		if (${prop.instanceVariableName} != null)
 		{
 {% choose %}\
