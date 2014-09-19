@@ -227,10 +227,10 @@ namespace ome
         /**
          * Read a region of an image plane into a pixel buffer.
          *
-         * If the pixel buffer is of a different size to the region
-         * being read, or is of the incorrect pixel type, it will be
-         * resized using the correct pixel type.  The pixel storage
-         * order will be preserved.
+         * If the destination pixel buffer is of a different size to
+         * the region being read, or is of the incorrect pixel type,
+         * or has a different storage order, it will be resized using
+         * the correct pixel type and storage order.
          *
          * @param dest the destination pixel buffer.
          * @param x the @c X coordinate of the upper-left corner of the sub-image.
@@ -255,6 +255,10 @@ namespace ome
 
         /**
          * Write a whole image plane from a pixel buffer.
+         *
+         * The source pixel buffer must match the size of the region
+         * being written, and must also the same pixel type and
+         * storage ordering as the TIFF image.
          *
          * @param source the source pixel buffer.
          * @param x the @c X coordinate of the upper-left corner of the sub-image.

@@ -463,6 +463,9 @@ namespace ome
       {
         PixelType type = getPixelType();
 
+        uint16_t planarconfig;
+        getField(ome::bioformats::tiff::PLANARCONFIG).get(planarconfig);
+
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
 
@@ -477,9 +480,12 @@ namespace ome
         std::copy(dest_shape_ptr, dest_shape_ptr + PixelBufferBase::dimensions,
                   dest_shape.begin());
 
+        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == 2 ? false : true));
+
         if (type != dest.pixelType() ||
-            shape != dest_shape)
-          dest.setBuffer(shape, type, dest.storage_order());
+            shape != dest_shape ||
+            !(order == dest.storage_order()))
+          dest.setBuffer(shape, type, order);
 
         ReadVisitor v(*this,
                       x, y, w, h);
@@ -505,6 +511,9 @@ namespace ome
       {
         PixelType type = getPixelType();
 
+        uint16_t planarconfig;
+        getField(ome::bioformats::tiff::PLANARCONFIG).get(planarconfig);
+
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
 
@@ -519,11 +528,16 @@ namespace ome
         std::copy(source_shape_ptr, source_shape_ptr + PixelBufferBase::dimensions,
                   source_shape.begin());
 
+        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == 2 ? false : true));
+
         if (type != source.pixelType())
           throw Exception("VariantPixelBuffer pixel type is incompatible with TIFF sample format and bit depth");
 
         if (shape != source_shape)
           throw Exception("VariantPixelBuffer dimensions incompatible with TIFF image size");
+
+        if (!(order == source.storage_order()))
+          throw Exception("VariantPixelBuffer storage order incompatible with TIFF planar configuration");
 
         WriteVisitor v(*this,
                        x, y, w, h);
