@@ -34,7 +34,8 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Xerces_INCLUDE_DIRS})
 
 if(BUILD_TESTS)
   add_executable(xerces xerces.cpp)
