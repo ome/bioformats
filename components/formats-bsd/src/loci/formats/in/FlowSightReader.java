@@ -200,7 +200,7 @@ public class FlowSightReader extends FormatReader {
     final MetadataStore store = getMetadataStore();
     String [] maskDescs = new String [channelCount];
     for (int i=0; i<channelCount; i++) {
-      maskDescs[i] = channelDescs[i] + "Mask";
+      maskDescs[i] = channelDescs[i] + " Mask";
     }
     MetadataTools.populatePixels(store, this);
     for (int series=0; series < ifdOffsets.length-1; series++) {
