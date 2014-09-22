@@ -35,7 +35,8 @@
 # #L%
 
 if(BUILD_TESTS)
-  include_directories(${OME_TOPLEVEL_INCLUDES})
+  include_directories(${OME_TOPLEVEL_INCLUDES}
+                      ${Boost_INCLUDE_DIRS})
 
   header_test_from_file(ome-compat ome-compat ome/compat)
   add_test(ome-compat/headers ome-compat-headers)

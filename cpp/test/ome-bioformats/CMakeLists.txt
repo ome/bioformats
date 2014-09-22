@@ -34,7 +34,8 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS})
 
 if(BUILD_TESTS)
   header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
