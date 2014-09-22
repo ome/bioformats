@@ -118,19 +118,6 @@ public class MemoizerTest {
       memoizer.close();
   }
 
-  @Test
-  public void testMultipleSetIdInvocations() throws Exception {
-      memoizer = new Memoizer(reader, 0);
-      memoizer.setId(id);
-      assertFalse(memoizer.isLoadedFromMemo());
-      assertTrue(memoizer.isSavedToMemo());
-      memoizer.close();
-      memoizer.setId(id);
-      assertTrue(memoizer.isLoadedFromMemo());
-      assertFalse(memoizer.isSavedToMemo());
-      memoizer.close();
-  }
-
   public void testDefaultConstructor() throws Exception {
       memoizer = new Memoizer();
       File f = memoizer.getMemoFile(id);
@@ -144,6 +131,16 @@ public class MemoizerTest {
       File f = memoizer.getMemoFile(id);
       File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
       assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+
+      // Test multiple setId invocations
+      memoizer.setId(id);
+      assertFalse(memoizer.isLoadedFromMemo());
+      assertTrue(memoizer.isSavedToMemo());
+      memoizer.close();
+      memoizer.setId(id);
+      assertTrue(memoizer.isLoadedFromMemo());
+      assertFalse(memoizer.isSavedToMemo());
+      memoizer.close();
   }
 
   @Test
@@ -160,6 +157,16 @@ public class MemoizerTest {
       File f = memoizer.getMemoFile(id);
       File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
       assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+
+      // Test multiple setId invocations
+      memoizer.setId(id);
+      assertFalse(memoizer.isLoadedFromMemo());
+      assertTrue(memoizer.isSavedToMemo());
+      memoizer.close();
+      memoizer.setId(id);
+      assertTrue(memoizer.isLoadedFromMemo());
+      assertFalse(memoizer.isSavedToMemo());
+      memoizer.close();
   }
 
   @Test
@@ -181,6 +188,16 @@ public class MemoizerTest {
     memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
     File f = memoizer.getMemoFile(id);
     assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+
+    // Test multiple setId invocations
+    memoizer.setId(id);
+    assertFalse(memoizer.isLoadedFromMemo());
+    assertTrue(memoizer.isSavedToMemo());
+    memoizer.close();
+    memoizer.setId(id);
+    assertTrue(memoizer.isLoadedFromMemo());
+    assertFalse(memoizer.isSavedToMemo());
+    memoizer.close();
   }
 
   @Test
@@ -211,6 +228,16 @@ public class MemoizerTest {
     memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
     File f = memoizer.getMemoFile(id);
     assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+
+    // Test multiple setId invocations
+    memoizer.setId(id);
+    assertFalse(memoizer.isLoadedFromMemo());
+    assertTrue(memoizer.isSavedToMemo());
+    memoizer.close();
+    memoizer.setId(id);
+    assertTrue(memoizer.isLoadedFromMemo());
+    assertFalse(memoizer.isSavedToMemo());
+    memoizer.close();
   }
 
 
