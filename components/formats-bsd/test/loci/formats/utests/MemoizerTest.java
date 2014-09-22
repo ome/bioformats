@@ -207,6 +207,13 @@ public class MemoizerTest {
 
     // Check null memo directory returns null
     assertEquals(memoizer.getMemoFile(id), null);
+
+    // Test setId invocation
+    memoizer.setId(id);
+    assertFalse(memoizer.isLoadedFromMemo());
+    assertFalse(memoizer.isSavedToMemo());
+    memoizer.close();
+
   }
 
   @Test
@@ -248,6 +255,12 @@ public class MemoizerTest {
 
     // Check null memo directory returns null
     assertEquals(memoizer.getMemoFile(id), null);
+
+    // Test setId invocation
+    memoizer.setId(id);
+    assertFalse(memoizer.isLoadedFromMemo());
+    assertFalse(memoizer.isSavedToMemo());
+    memoizer.close();
   }
 
   @Test
