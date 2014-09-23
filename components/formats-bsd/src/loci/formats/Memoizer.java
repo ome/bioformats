@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -310,15 +310,15 @@ public class Memoizer extends ReaderWrapper {
   private final long minimumElapsed;
 
   /**
-   * Directory where all memoization files should be created. If this value is
-   * non-null, then all memoization files will be created under it. Can be
+   * Directory where all memo files should be created. If this value is
+   * non-null, then all memo files will be created under it. Can be
    * overriden by inPlaceCaching.
    */
   private final File directory;
 
   /**
-   * If True, then all memoization files will be created in the same directory
-   * as the original file.
+   * If True, then all memo files will be created in the same directory as the
+   * original file.
    */
   private boolean doInPlaceCaching = false;
 
@@ -375,16 +375,20 @@ public class Memoizer extends ReaderWrapper {
 
   // -- Constructors --
 
-  /** Constructs a memoizer around a new image reader. */
+  /**
+   *  Constructs a memoizer around a new image reader creating memo files
+   *  under the same directory as the original file.
+   */
   public Memoizer() {
     this(DEFAULT_MINIMUM_ELAPSED);
   }
 
   /**
-   *  Constructs a memoizer around a new image reader.
+   *  Constructs a memoizer around a new image reader creating memo files
+   *  under the same directory as the original file.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
-   *         must elapse during the call to {@link setId} before a memo file
+   *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
    */
   public Memoizer(long minimumElapsed) {
@@ -393,13 +397,15 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around a new image reader.
+   *  Constructs a memoizer around a new image reader creating memo files
+   *  under the <code>directory</code> argument.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
-   *         must elapse during the call to {@link setId} before a memo file
+   *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
-   *  @param directory a {@link File} specifying the directory where all
-   *         memoization files should be created.
+   *  @param directory a {@link File} specifying the directory where all memo
+   *         files should be created. If <code>null</code>, disable
+   *         memoization.
    */
   public Memoizer(long minimumElapsed, File directory) {
     super();
@@ -408,7 +414,8 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader.
+   *  Constructs a memoizer around the given reader creating memo files under
+   *  the same directory as the original file.
    *
    *  @param r an {@link IFormatReader} instance
    */
@@ -417,7 +424,8 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader.
+   *  Constructs a memoizer around the given reader creating memo files under
+   *  the same directory as the original file.
    *
    *  @param r an {@link IFormatReader} instance
    *  @param minimumElapsed a long specifying the number of milliseconds which
@@ -430,14 +438,16 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader.
+   *  Constructs a memoizer around the given reader creating memo files under
+   *  the <code>directory</code> argument.
    *
    *  @param r an {@link IFormatReader} instance
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
-   *  @param directory a {@link File} specifying the directory where all
-   *         memoization files should be created.
+   *  @param directory a {@link File} specifying the directory where all memo
+   *         files should be created. If <code>null</code>, disable
+   *         memoization.
    */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
@@ -614,8 +624,8 @@ public class Memoizer extends ReaderWrapper {
    * warn if the deletion returns false or at error
    * if an exception is thrown.
    *
-   * @returns the result from {@link java.io.File#delete}
-   *   or false if an exception is thrown.
+   * @return the result from {@link java.io.File#delete}
+   *   or <code>false</code> if an exception is thrown.
    */
   protected boolean deleteQuietly(File file) {
     try {
@@ -663,10 +673,11 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   * Constructs a {@link File} object from setId string. This method can be
-   * modified by consumers, but then existing memo files will not be found.
+   * Constructs a {@link File} object from <code>id</code> string. This method
+   * can be modified by consumers, but then existing memo files will not be
+   * found.
    *
-   * @param id the path passed to {@link setId}
+   * @param id the path passed to {@link #setId}
    * @return a {@link File} object pointing at the location of the memo file
    */
   public File getMemoFile(String id) {
