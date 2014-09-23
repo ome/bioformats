@@ -208,8 +208,6 @@ TEST(TIFFTest, FieldWrapUInt16)
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::MATTEING).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::MAXSAMPLEVALUE).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::MINSAMPLEVALUE).get(value), ome::bioformats::tiff::Exception);
-  ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::PLANARCONFIG).get(value));
-  ASSERT_EQ(2, value);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::RESOLUTIONUNIT).get(value), ome::bioformats::tiff::Exception);
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::SAMPLESPERPIXEL).get(value));
   ASSERT_EQ(1, value);
@@ -235,6 +233,18 @@ TEST(TIFFTest, FieldWrapOrientation)
   ome::bioformats::tiff::Orientation value;
 
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::ORIENTATION).get(value), ome::bioformats::tiff::Exception);
+}
+
+TEST(TIFFTest, FieldWrapPlanarConfiguration)
+{
+  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+
+  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+
+  ome::bioformats::tiff::PlanarConfiguration value;
+
+  ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::PLANARCONFIG).get(value));
+  ASSERT_EQ(ome::bioformats::tiff::SEPARATE, value);
 }
 
 TEST(TIFFTest, FieldWrapPhotometricInterpretation)

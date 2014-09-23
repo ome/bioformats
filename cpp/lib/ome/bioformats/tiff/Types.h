@@ -123,6 +123,13 @@ namespace ome
           LOGLUV = 32845    ///< CIE log2(L) (u',v').
         };
 
+      /// Planar configuration of samples.
+      enum PlanarConfiguration
+        {
+          CONTIG = 1,  ///< Samples are contiguous (chunky).
+          SEPARATE = 2 ///< Samples are separate (planar).
+        };
+
       /// Prediction scheme.
       enum Predictor
         {
