@@ -37,6 +37,8 @@
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${Boost_INCLUDE_DIRS})
 
+add_subdirectory(data)
+
 if(BUILD_TESTS)
   header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
   add_test(ome-bioformats/headers ome-bioformats-headers)
@@ -105,6 +107,7 @@ if(BUILD_TESTS)
   add_executable(tiff tiff.cpp)
   target_link_libraries(tiff ome-bioformats)
   target_link_libraries(tiff ome-test)
+  add_dependencies(tiff gentestimages)
 
   add_test(ome-bioformats/tiff tiff)
 

@@ -273,6 +273,18 @@ namespace ome
           sentry.error();
       }
 
+      TileInfo
+      IFD::getTileInfo()
+      {
+        return TileInfo(this->shared_from_this());
+      }
+
+      const TileInfo
+      IFD::getTileInfo() const
+      {
+        return TileInfo(const_cast<IFD *>(this)->shared_from_this());
+      }
+
       ::ome::xml::model::enums::PixelType
       IFD::getPixelType() const
       {
@@ -445,8 +457,8 @@ namespace ome
       {
         PixelType type = getPixelType();
 
-        uint16_t planarconfig;
-        getField(ome::bioformats::tiff::PLANARCONFIG).get(planarconfig);
+        PlanarConfiguration planarconfig;
+        getField(PLANARCONFIG).get(planarconfig);
 
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
@@ -462,7 +474,7 @@ namespace ome
         std::copy(dest_shape_ptr, dest_shape_ptr + PixelBufferBase::dimensions,
                   dest_shape.begin());
 
-        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == 2 ? false : true));
+        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == SEPARATE ? false : true));
 
         if (type != dest.pixelType() ||
             shape != dest_shape ||
@@ -492,8 +504,8 @@ namespace ome
       {
         PixelType type = getPixelType();
 
-        uint16_t planarconfig;
-        getField(ome::bioformats::tiff::PLANARCONFIG).get(planarconfig);
+        PlanarConfiguration planarconfig;
+        getField(PLANARCONFIG).get(planarconfig);
 
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
@@ -509,7 +521,7 @@ namespace ome
         std::copy(source_shape_ptr, source_shape_ptr + PixelBufferBase::dimensions,
                   source_shape.begin());
 
-        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == 2 ? false : true));
+        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == SEPARATE ? false : true));
 
         if (type != source.pixelType())
           throw Exception("VariantPixelBuffer pixel type is incompatible with TIFF sample format and bit depth");
