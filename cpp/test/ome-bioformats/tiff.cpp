@@ -52,7 +52,88 @@
 
 using ome::bioformats::tiff::TIFF;
 using ome::bioformats::tiff::IFD;
+using ome::bioformats::tiff::PlaneRegion;
 using ome::bioformats::tiff::directory_index_type;
+
+TEST(TIFFTest, RegionIntersection1)
+{
+  PlaneRegion r1(0, 0, 50, 100);
+  PlaneRegion r2(25, 30, 100, 50);
+  PlaneRegion r3 = r1 & r2;
+  EXPECT_EQ(25, r3.x);
+  EXPECT_EQ(30, r3.y);
+  EXPECT_EQ(25, r3.w);
+  EXPECT_EQ(50, r3.h);
+  PlaneRegion r4 = r2 & r1;
+  EXPECT_EQ(25, r4.x);
+  EXPECT_EQ(30, r4.y);
+  EXPECT_EQ(25, r4.w);
+  EXPECT_EQ(50, r4.h);
+}
+
+TEST(TIFFTest, RegionIntersection2)
+{
+  PlaneRegion r1(0, 0, 100, 100);
+  PlaneRegion r2(25, 25, 25, 25);
+  PlaneRegion r3 = r1 & r2;
+  EXPECT_EQ(25, r3.x);
+  EXPECT_EQ(25, r3.y);
+  EXPECT_EQ(25, r3.w);
+  EXPECT_EQ(25, r3.h);
+  PlaneRegion r4 = r2 & r1;
+  EXPECT_EQ(25, r4.x);
+  EXPECT_EQ(25, r4.y);
+  EXPECT_EQ(25, r4.w);
+  EXPECT_EQ(25, r4.h);
+}
+
+TEST(TIFFTest, RegionIntersection3)
+{
+  PlaneRegion r1(40, 190, 29, 18);
+  PlaneRegion r2(40, 190, 29, 18);
+  PlaneRegion r3 = r1 & r2;
+  EXPECT_EQ(40, r3.x);
+  EXPECT_EQ(190, r3.y);
+  EXPECT_EQ(29, r3.w);
+  EXPECT_EQ(18, r3.h);
+  PlaneRegion r4 = r2 & r1;
+  EXPECT_EQ(40, r4.x);
+  EXPECT_EQ(190, r4.y);
+  EXPECT_EQ(29, r4.w);
+  EXPECT_EQ(18, r4.h);
+}
+
+TEST(TIFFTest, RegionIntersection4)
+{
+  PlaneRegion r1(20, 30, 80, 50);
+  PlaneRegion r2(200, 25, 60, 20);
+  PlaneRegion r3 = r1 & r2;
+  EXPECT_EQ(0, r3.x);
+  EXPECT_EQ(0, r3.y);
+  EXPECT_EQ(0, r3.w);
+  EXPECT_EQ(0, r3.h);
+  PlaneRegion r4 = r2 & r1;
+  EXPECT_EQ(0, r4.x);
+  EXPECT_EQ(0, r4.y);
+  EXPECT_EQ(0, r4.w);
+  EXPECT_EQ(0, r4.h);
+}
+
+TEST(TIFFTest, RegionIntersection5)
+{
+  PlaneRegion r1(20, 400, 80, 50);
+  PlaneRegion r2(30, 25, 60, 45);
+  PlaneRegion r3 = r1 & r2;
+  EXPECT_EQ(0, r3.x);
+  EXPECT_EQ(0, r3.y);
+  EXPECT_EQ(0, r3.w);
+  EXPECT_EQ(0, r3.h);
+  PlaneRegion r4 = r2 & r1;
+  EXPECT_EQ(0, r4.x);
+  EXPECT_EQ(0, r4.y);
+  EXPECT_EQ(0, r4.w);
+  EXPECT_EQ(0, r4.h);
+}
 
 TEST(TIFFTest, Construct)
 {

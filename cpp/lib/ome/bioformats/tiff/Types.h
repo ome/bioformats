@@ -38,6 +38,8 @@
 #ifndef OME_BIOFORMATS_TIFF_TYPES_H
 #define OME_BIOFORMATS_TIFF_TYPES_H
 
+#include <ome/bioformats/Types.h>
+
 #include <ome/compat/cstdint.h>
 
 namespace ome
@@ -163,6 +165,62 @@ namespace ome
           CENTERED = 1, ///< Centered.
           COSITED = 2   ///< Co-sited.
         };
+
+      struct PlaneRegion
+      {
+        dimension_size_type x;
+        dimension_size_type y;
+        dimension_size_type w;
+        dimension_size_type h;
+
+        PlaneRegion():
+          x(0),
+          y(0),
+          w(0),
+          h(0)
+        {}
+
+        PlaneRegion(dimension_size_type x,
+                    dimension_size_type y,
+                    dimension_size_type w,
+                    dimension_size_type h):
+          x(x),
+          y(y),
+          w(w),
+          h(h)
+        {}
+      };
+
+      inline
+      PlaneRegion
+      operator&(const PlaneRegion& a,
+                const PlaneRegion& b)
+      {
+        dimension_size_type l1 = a.x;
+        dimension_size_type r1 = a.x + a.w;
+
+        dimension_size_type l2 = b.x;
+        dimension_size_type r2 = b.x + b.w;
+
+        if (l1 > r2 || l2 > r1)
+          return PlaneRegion();
+
+        dimension_size_type t1 = a.y;
+        dimension_size_type b1 = a.y + a.h;
+
+        dimension_size_type t2 = b.y;
+        dimension_size_type b2 = b.y + b.h;
+
+        if (t1 > b2 || t2 > b1)
+          return PlaneRegion();
+
+        dimension_size_type il = std::max(l1, l2);
+        dimension_size_type ir = std::min(r1, r2);
+        dimension_size_type it = std::max(t1, t2);
+        dimension_size_type ib = std::min(b1, b2);
+
+        return PlaneRegion(il, it, ir-il, ib-it);
+      }
 
     }
   }
