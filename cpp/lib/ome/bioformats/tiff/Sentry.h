@@ -103,6 +103,20 @@ namespace ome
         /**
          * Throw an Exception.
          *
+         * The latest error message will be set as the message.  If no
+         * error message has been set, the provided message will be
+         * used.  This is to cater for the cases where libtiff fails
+         * but does not provide any indication of why.
+         *
+         * @param message the message to set.
+         * @throws an Exception.
+         */
+        void
+        error(const std::string& message) const;
+
+        /**
+         * Throw an Exception.
+         *
          * The latest error message will be set as the message.
          *
          * @throws an Exception.

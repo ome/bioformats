@@ -43,6 +43,9 @@
 #include <ome/compat/memory.h>
 
 #include <ome/bioformats/tiff/Types.h>
+#include <ome/bioformats/VariantPixelBuffer.h>
+
+#include <ome/xml/model/enums/PixelType.h>
 
 namespace ome
 {
@@ -145,8 +148,8 @@ namespace ome
          * @param ... pointers to variables to store the value(s) in.
          */
         void
-        getField(tag_type tag,
-                 ...) const;
+        getRawField(tag_type tag,
+                    ...) const;
 
         /**
          * Set a field by its tag number.
@@ -159,8 +162,8 @@ namespace ome
          * @param ... variables containing the value(s) to set.
          */
         void
-        setField(tag_type tag,
-                 ...);
+        setRawField(tag_type tag,
+                    ...);
 
         /**
          * Get a Field by its tag enumeration.
@@ -174,6 +177,101 @@ namespace ome
         {
           return Field<TagCategory>(this->shared_from_this(), tag);
         }
+
+        /**
+         * Get a Field by its tag enumeration.
+         *
+         * @param tag the field identifier.
+         * @returns the Field corresponding to the tag.
+         */
+        template<typename TagCategory>
+        const Field<TagCategory>
+        getField(TagCategory tag) const
+        {
+          return Field<TagCategory>(const_cast<IFD *>(this)->shared_from_this(), tag);
+        }
+
+        /**
+         * Get the OME data model PixelType.
+         *
+         * This is computed based upon the SampleFormat and
+         * BitsPerSample tags for this IFD.
+         *
+         * @returns the PixelType.
+         * @throws an Exception if there is no corresponding PixelType
+         * for the SampleFormat and BitsPerSample in use.
+         */
+        ::ome::xml::model::enums::PixelType
+        getPixelType() const;
+
+        /**
+         * Set the OME data model PixelType.
+         *
+         * This sets the SampleFormat and BitsPerSample tags for this
+         * IFD which correspond to the PixelType in use.
+         *
+         * @param type the PixelType to set.
+         * @throws an Exception if the PixelType is invalid.
+         */
+        void
+        setPixelType(::ome::xml::model::enums::PixelType type);
+
+        /**
+         * Read a whole image plane into a pixel buffer.
+         *
+         * @param buf the destination pixel buffer.
+         */
+        void
+        readImage(VariantPixelBuffer& buf) const;
+
+        /**
+         * Read a region of an image plane into a pixel buffer.
+         *
+         * If the destination pixel buffer is of a different size to
+         * the region being read, or is of the incorrect pixel type,
+         * or has a different storage order, it will be resized using
+         * the correct pixel type and storage order.
+         *
+         * @param dest the destination pixel buffer.
+         * @param x the @c X coordinate of the upper-left corner of the sub-image.
+         * @param y the @c Y coordinate of the upper-left corner of the sub-image.
+         * @param w the width of the sub-image.
+         * @param h the height of the sub-image.
+         */
+        void
+        readImage(VariantPixelBuffer& dest,
+                  dimension_size_type x,
+                  dimension_size_type y,
+                  dimension_size_type w,
+                  dimension_size_type h) const;
+
+        /**
+         * Write a whole image plane from a pixel buffer.
+         *
+         * @param buf the source pixel buffer.
+         */
+        void
+        writeImage(const VariantPixelBuffer& buf);
+
+        /**
+         * Write a whole image plane from a pixel buffer.
+         *
+         * The source pixel buffer must match the size of the region
+         * being written, and must also the same pixel type and
+         * storage ordering as the TIFF image.
+         *
+         * @param source the source pixel buffer.
+         * @param x the @c X coordinate of the upper-left corner of the sub-image.
+         * @param y the @c Y coordinate of the upper-left corner of the sub-image.
+         * @param w the width of the sub-image.
+         * @param h the height of the sub-image.
+         */
+        void
+        writeImage(const VariantPixelBuffer& source,
+                   dimension_size_type       x,
+                   dimension_size_type       y,
+                   dimension_size_type       w,
+                   dimension_size_type       h);
 
         /**
          * Get next directory.

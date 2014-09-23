@@ -357,7 +357,7 @@ namespace ome
                      int /* readcount */,
                      T& value)
         {
-          ifd->getField(tag, &value);
+          ifd->getRawField(tag, &value);
         }
 
         template<typename T>
@@ -368,7 +368,7 @@ namespace ome
                      int /* writecount */,
                      const T& value)
         {
-          ifd->setField(tag, value);
+          ifd->setRawField(tag, value);
         }
 
         template<typename T>
@@ -379,7 +379,7 @@ namespace ome
                      int /* readcount */,
                      T& value)
         {
-          ifd->getField(tag, &value[0], &value[1]);
+          ifd->getRawField(tag, &value[0], &value[1]);
         }
 
         template<typename T>
@@ -390,7 +390,7 @@ namespace ome
                      int /* writecount */,
                      const T& value)
         {
-          ifd->setField(tag, value[0], value[1]);
+          ifd->setRawField(tag, value[0], value[1]);
         }
 
         template<typename T>
@@ -401,7 +401,7 @@ namespace ome
                      int /* readcount */,
                      T& value)
         {
-          ifd->getField(tag, &value[0], &value[1], &value[2]);
+          ifd->getRawField(tag, &value[0], &value[1], &value[2]);
         }
 
         template<typename T>
@@ -412,7 +412,7 @@ namespace ome
                      int /* writecount */,
                      const T& value)
         {
-          ifd->setField(tag, value[0], value[1], value[2]);
+          ifd->setRawField(tag, value[0], value[1], value[2]);
         }
 
         template<typename T>
@@ -423,7 +423,7 @@ namespace ome
                      int /* readcount */,
                      T& value)
         {
-          ifd->getField(tag, &value[0], &value[1], &value[2], &value[3], &value[4], &value[5]);
+          ifd->getRawField(tag, &value[0], &value[1], &value[2], &value[3], &value[4], &value[5]);
         }
 
         template<typename T>
@@ -434,7 +434,7 @@ namespace ome
                      int /* writecount */,
                      const T& value)
         {
-          ifd->setField(tag, value[0], value[1], value[2], value[3], value[4], value[5]);
+          ifd->setRawField(tag, value[0], value[1], value[2], value[3], value[4], value[5]);
         }
 
         template<typename T>
@@ -495,13 +495,13 @@ namespace ome
                    tag == TIFFTAG_STRIPBYTECOUNTS)
             {
               uint16_t pc;
-              ifd->getField(TIFFTAG_PLANARCONFIG, &pc);
+              ifd->getRawField(TIFFTAG_PLANARCONFIG, &pc);
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
               uint32_t ilen;
-              ifd->getField(TIFFTAG_IMAGELENGTH, &ilen);
+              ifd->getRawField(TIFFTAG_IMAGELENGTH, &ilen);
               uint32_t rps;
-              ifd->getField(TIFFTAG_ROWSPERSTRIP, &rps);
+              ifd->getRawField(TIFFTAG_ROWSPERSTRIP, &rps);
               uint32_t spi = static_cast<uint32_t>(std::floor((static_cast<float>(ilen + rps - 1)) / static_cast<float>(rps)));
               if (pc == PLANARCONFIG_CONTIG)
                 readcount = static_cast<int>(spi);
@@ -512,14 +512,14 @@ namespace ome
                    tag == TIFFTAG_TILEBYTECOUNTS)
             {
               uint16_t pc;
-              ifd->getField(TIFFTAG_PLANARCONFIG, &pc);
+              ifd->getRawField(TIFFTAG_PLANARCONFIG, &pc);
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
               uint32_t ilen, iwid, twid, tlen;
-              ifd->getField(TIFFTAG_IMAGELENGTH, &ilen);
-              ifd->getField(TIFFTAG_IMAGEWIDTH, &iwid);
-              ifd->getField(TIFFTAG_TILELENGTH, &tlen);
-              ifd->getField(TIFFTAG_TILEWIDTH, &twid);
+              ifd->getRawField(TIFFTAG_IMAGELENGTH, &ilen);
+              ifd->getRawField(TIFFTAG_IMAGEWIDTH, &iwid);
+              ifd->getRawField(TIFFTAG_TILELENGTH, &tlen);
+              ifd->getRawField(TIFFTAG_TILEWIDTH, &twid);
               uint32_t tacross = (iwid + twid - 1) / twid;
               uint32_t tdown = (ilen + tlen - 1) / tlen;
               uint32_t tpi = tacross * tdown;
@@ -535,23 +535,23 @@ namespace ome
           if (readcount == TIFF_SPP)
             {
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
-              ifd->getField(tag, &valueptr);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(tag, &valueptr);
               count = static_cast<uint32_t>(spp);
             }
           else if (readcount == TIFF_VARIABLE)
             {
               uint16_t n;
-              ifd->getField(tag, &n, &valueptr);
+              ifd->getRawField(tag, &n, &valueptr);
               count = static_cast<uint32_t>(n);
             }
           else if (readcount == TIFF_VARIABLE2)
             {
-              ifd->getField(tag, &count, &valueptr);
+              ifd->getRawField(tag, &count, &valueptr);
             }
           else
             {
-              ifd->getField(tag, &valueptr);
+              ifd->getRawField(tag, &valueptr);
               count = static_cast<uint32_t>(readcount);
             }
 
@@ -568,27 +568,27 @@ namespace ome
           if (writecount == TIFF_SPP)
             {
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
               if (value.size() != spp)
                 throw Exception("Field array size does not match SamplesPerPixel");
-              ifd->setField(tag, value.data());
+              ifd->setRawField(tag, value.data());
             }
           else if (writecount == TIFF_VARIABLE)
             {
               if (value.size() > std::numeric_limits<uint16_t>::max())
                 throw Exception("Field array size is greater than maximum write count");
               uint16_t n = static_cast<uint16_t>(value.size());
-              ifd->setField(tag, n, value.data());
+              ifd->setRawField(tag, n, value.data());
             }
           else if (writecount == TIFF_VARIABLE2)
             {
               if (value.size() > std::numeric_limits<uint32_t>::max())
                 throw Exception("Field array size is greater than maximum write count");
-              ifd->setField(tag, value.size(), value.data());
+              ifd->setRawField(tag, value.size(), value.data());
             }
           else
             {
-              ifd->setField(tag, value.data());
+              ifd->setRawField(tag, value.data());
             }
         }
 
@@ -608,9 +608,9 @@ namespace ome
               tag == TIFFTAG_TRANSFERFUNCTION)
             {
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
               uint16_t bps;
-              ifd->getField(TIFFTAG_BITSPERSAMPLE, &bps);
+              ifd->getRawField(TIFFTAG_BITSPERSAMPLE, &bps);
               count = 1U << bps;
               if (spp == 1)
                 limit = true;
@@ -619,26 +619,26 @@ namespace ome
           if (readcount == TIFF_SPP)
             {
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
-              ifd->getField(tag, &valueptr0, &valueptr1, &valueptr2);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(tag, &valueptr0, &valueptr1, &valueptr2);
               count = static_cast<uint32_t>(spp);
             }
           else if (readcount == TIFF_VARIABLE)
             {
               uint16_t n;
-              ifd->getField(tag, &n, &valueptr0, &valueptr1, &valueptr2);
+              ifd->getRawField(tag, &n, &valueptr0, &valueptr1, &valueptr2);
               count = static_cast<uint32_t>(n);
             }
           else if (readcount == TIFF_VARIABLE2)
             {
-              ifd->getField(tag, &count, &valueptr0, &valueptr1, &valueptr2);
+              ifd->getRawField(tag, &count, &valueptr0, &valueptr1, &valueptr2);
             }
           else
             {
               if (!limit)
-                ifd->getField(tag, &valueptr0, &valueptr1, &valueptr2);
+                ifd->getRawField(tag, &valueptr0, &valueptr1, &valueptr2);
               else
-                ifd->getField(tag, &valueptr0);
+                ifd->getRawField(tag, &valueptr0);
               count = static_cast<uint32_t>(readcount);
             }
 
@@ -673,7 +673,7 @@ namespace ome
               tag == TIFFTAG_TRANSFERFUNCTION)
             {
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
               if (spp == 1)
                 limit = true;
             }
@@ -681,30 +681,30 @@ namespace ome
           if (writecount == TIFF_SPP)
             {
               uint16_t spp;
-              ifd->getField(TIFFTAG_SAMPLESPERPIXEL, &spp);
+              ifd->getRawField(TIFFTAG_SAMPLESPERPIXEL, &spp);
               if (value.size() != spp)
                 throw Exception("Field array size does not match SamplesPerPixel");
-              ifd->setField(tag, value[0].data(), value[1].data(), value[2].data());
+              ifd->setRawField(tag, value[0].data(), value[1].data(), value[2].data());
             }
           else if (writecount == TIFF_VARIABLE)
             {
               if (value[0].size() > std::numeric_limits<uint16_t>::max())
                 throw Exception("Field array size is greater than maximum write count");
               uint16_t n = static_cast<uint16_t>(value.size());
-              ifd->setField(tag, n, value[0].data(), value[1].data(), value[2].data());
+              ifd->setRawField(tag, n, value[0].data(), value[1].data(), value[2].data());
             }
           else if (writecount == TIFF_VARIABLE2)
             {
               if (value[0].size() > std::numeric_limits<uint32_t>::max())
                 throw Exception("Field array size is greater than maximum write count");
-              ifd->setField(tag, value.size(), value[0].data(), value[1].data(), value[2].data());
+              ifd->setRawField(tag, value.size(), value[0].data(), value[1].data(), value[2].data());
             }
           else
             {
               if (!limit)
-                ifd->setField(tag, value[0].data(), value[1].data(), value[2].data());
+                ifd->setRawField(tag, value[0].data(), value[1].data(), value[2].data());
               else
-                ifd->setField(tag, value[0].data());
+                ifd->setRawField(tag, value[0].data());
             }
         }
 
@@ -759,13 +759,13 @@ namespace ome
         if (rc == TIFF_VARIABLE || rc == TIFF_VARIABLE2)
           {
             char *text;
-            getIFD()->getField(impl->tag, &text);
+            getIFD()->getRawField(impl->tag, &text);
             value = text;
           }
         else
           {
             std::vector<char> text(static_cast<std::vector<char>::size_type>(rc));
-            getIFD()->getField(impl->tag, text.data());
+            getIFD()->getRawField(impl->tag, text.data());
             value = std::string(text.begin(), text.end());
           }
       }
@@ -782,7 +782,7 @@ namespace ome
           throw Exception("FieldInfo mismatch with Field handler");
 #endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
-        getIFD()->setField(impl->tag, value.c_str());
+        getIFD()->setRawField(impl->tag, value.c_str());
       }
 
       /// @copydoc Field::get()
@@ -797,7 +797,7 @@ namespace ome
 #endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         const char *text = 0;
-        getIFD()->getField(impl->tag, text);
+        getIFD()->getRawField(impl->tag, text);
 
         boost::algorithm::split(value, text, boost::is_any_of("\0"), boost::token_compress_on);
       }
@@ -816,7 +816,7 @@ namespace ome
 
         std::string s(boost::algorithm::join(value, "\0"));
         // Split value vector into a null-terminated string.
-        getIFD()->setField(impl->tag, s.c_str());
+        getIFD()->setRawField(impl->tag, s.c_str());
       }
 
       /// @copydoc Field::get()

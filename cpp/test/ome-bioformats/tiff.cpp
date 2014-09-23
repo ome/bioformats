@@ -137,24 +137,24 @@ TEST(TIFFTest, TIFFConstIter2)
     }
 }
 
-TEST(TIFFTest, Field)
+TEST(TIFFTest, RawField)
 {
   std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
 
   std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
 
   char *text;
-  ifd->getField(270, &text);
+  ifd->getRawField(270, &text);
 }
 
-TEST(TIFFTest, Field0)
+TEST(TIFFTest, RawField0)
 {
   std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
 
   std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
 
   char *text;
-  ASSERT_THROW(ifd->getField(0, &text), ome::bioformats::tiff::Exception);
+  ASSERT_THROW(ifd->getRawField(0, &text), ome::bioformats::tiff::Exception);
 }
 
 TEST(TIFFTest, FieldWrapString)
@@ -491,4 +491,13 @@ TEST(TIFFTest, FieldCount)
   bool count = ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION).passCount();
 
   ASSERT_FALSE(count);
+}
+
+TEST(TIFFTest, PixelType)
+{
+  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+
+  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+
+  ASSERT_EQ(::ome::xml::model::enums::PixelType::UINT8, ifd->getPixelType());
 }
