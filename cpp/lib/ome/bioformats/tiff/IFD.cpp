@@ -56,27 +56,18 @@ using ome::xml::model::enums::PixelType;
 namespace
 {
 
-  using ::ome::bioformats::tiff::IFD;
+  using namespace ::ome::bioformats::tiff;
   using ::ome::bioformats::dimension_size_type;
 
   struct ReadVisitor : public boost::static_visitor<>
   {
-    const IFD&          ifd;
-    dimension_size_type x;
-    dimension_size_type y;
-    dimension_size_type w;
-    dimension_size_type h;
+    const IFD&  ifd;
+    PlaneRegion region;
 
-    ReadVisitor(const IFD&          ifd,
-                dimension_size_type x,
-                dimension_size_type y,
-                dimension_size_type w,
-                dimension_size_type h):
+    ReadVisitor(const IFD&  ifd,
+                PlaneRegion region):
       ifd(ifd),
-      x(x),
-      y(y),
-      w(w),
-      h(h)
+      region(region)
     {}
 
     template<typename T>
@@ -88,22 +79,13 @@ namespace
 
   struct WriteVisitor : public boost::static_visitor<>
   {
-    IFD&                ifd;
-    dimension_size_type x;
-    dimension_size_type y;
-    dimension_size_type w;
-    dimension_size_type h;
+    IFD&        ifd;
+    PlaneRegion region;
 
-    WriteVisitor(IFD&                ifd,
-                 dimension_size_type x,
-                 dimension_size_type y,
-                 dimension_size_type w,
-                 dimension_size_type h):
+    WriteVisitor(IFD&        ifd,
+                 PlaneRegion region):
       ifd(ifd),
-      x(x),
-      y(y),
-      w(w),
-      h(h)
+      region(region)
     {}
 
     template<typename T>
@@ -487,8 +469,7 @@ namespace ome
             !(order == dest.storage_order()))
           dest.setBuffer(shape, type, order);
 
-        ReadVisitor v(*this,
-                      x, y, w, h);
+        ReadVisitor v(*this, PlaneRegion(x, y, w, h));
         boost::apply_visitor(v, dest.vbuffer());
       }
 
@@ -539,8 +520,7 @@ namespace ome
         if (!(order == source.storage_order()))
           throw Exception("VariantPixelBuffer storage order incompatible with TIFF planar configuration");
 
-        WriteVisitor v(*this,
-                       x, y, w, h);
+        WriteVisitor v(*this, PlaneRegion(x, y, w, h));
         boost::apply_visitor(v, source.vbuffer());
       }
 
