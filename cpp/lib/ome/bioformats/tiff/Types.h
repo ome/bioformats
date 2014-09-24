@@ -166,13 +166,28 @@ namespace ome
           COSITED = 2   ///< Co-sited.
         };
 
+      /**
+       * A rectangular region.
+       *
+       * The region is specified by top-left (x,y) coordinates plus
+       * width and height.
+       */
       struct PlaneRegion
       {
+        /// The @c X coordinate of the upper-left corner of the region.
         dimension_size_type x;
+        /// The @c Y coordinate of the upper-left corner of the region.
         dimension_size_type y;
+        /// The width of the region.
         dimension_size_type w;
+        /// The height of the region.
         dimension_size_type h;
 
+        /**
+         * Default construct.
+         *
+         * By default the region has zero width and height.
+         */
         PlaneRegion():
           x(0),
           y(0),
@@ -180,10 +195,18 @@ namespace ome
           h(0)
         {}
 
-        PlaneRegion(dimension_size_type x,
-                    dimension_size_type y,
-                    dimension_size_type w,
-                    dimension_size_type h):
+        /**
+         * Construct from coordinates, width and height.
+         *
+         * @param x the @c X coordinate of the upper-left corner of the region.
+         * @param y the @c Y coordinate of the upper-left corner of the region.
+         * @param w the width of the region.
+         * @param h the height of the region.
+         */
+         PlaneRegion(dimension_size_type x,
+                     dimension_size_type y,
+                     dimension_size_type w,
+                     dimension_size_type h):
           x(x),
           y(y),
           w(w),
@@ -191,6 +214,16 @@ namespace ome
         {}
       };
 
+      /**
+       * Intersect two regions.
+       *
+       * If the regions do not intersect, a default-constructed region
+       * of zero size will be returned.
+       *
+       * @param a the first region.
+       * @param b the second region.
+       * @returns the intersection of the two regions.
+       */
       inline
       PlaneRegion
       operator&(const PlaneRegion& a,

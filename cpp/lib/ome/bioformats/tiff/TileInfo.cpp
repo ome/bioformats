@@ -89,7 +89,6 @@ namespace ome
          * Constructor.
          *
          * @param ifd the directory the tile belongs to.
-         * @param tag the tag identifying this tile.
          */
         Impl(std::shared_ptr<IFD>& ifd):
           ifd(ifd),
