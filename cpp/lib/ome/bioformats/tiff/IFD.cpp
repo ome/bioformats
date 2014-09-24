@@ -61,11 +61,11 @@ namespace
 
   struct ReadVisitor : public boost::static_visitor<>
   {
-    const IFD&  ifd;
-    PlaneRegion region;
+    const IFD&         ifd;
+    const PlaneRegion& region;
 
-    ReadVisitor(const IFD&  ifd,
-                PlaneRegion region):
+    ReadVisitor(const IFD&         ifd,
+                const PlaneRegion& region):
       ifd(ifd),
       region(region)
     {}
@@ -79,11 +79,11 @@ namespace
 
   struct WriteVisitor : public boost::static_visitor<>
   {
-    IFD&        ifd;
-    PlaneRegion region;
+    IFD&               ifd;
+    const PlaneRegion& region;
 
-    WriteVisitor(IFD&        ifd,
-                 PlaneRegion region):
+    WriteVisitor(IFD&               ifd,
+                 const PlaneRegion& region):
       ifd(ifd),
       region(region)
     {}
