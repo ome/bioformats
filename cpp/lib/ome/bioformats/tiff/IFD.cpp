@@ -61,13 +61,19 @@ namespace
 
   struct ReadVisitor : public boost::static_visitor<>
   {
-    const IFD&         ifd;
-    const PlaneRegion& region;
+    const IFD&                              ifd;
+    const TileInfo&                         tileinfo;
+    const PlaneRegion&                      region;
+    const std::vector<dimension_size_type>& tiles;
 
-    ReadVisitor(const IFD&         ifd,
-                const PlaneRegion& region):
+    ReadVisitor(const IFD&                       ifd,
+                const TileInfo&                  tileinfo,
+                const PlaneRegion&               region,
+                std::vector<dimension_size_type> tiles):
       ifd(ifd),
-      region(region)
+      tileinfo(tileinfo),
+      region(region),
+      tiles(tiles)
     {}
 
     template<typename T>
@@ -79,13 +85,19 @@ namespace
 
   struct WriteVisitor : public boost::static_visitor<>
   {
-    IFD&               ifd;
-    const PlaneRegion& region;
+    IFD&                                    ifd;
+    const TileInfo&                         tileinfo;
+    const PlaneRegion&                      region;
+    const std::vector<dimension_size_type>& tiles;
 
-    WriteVisitor(IFD&               ifd,
-                 const PlaneRegion& region):
+    WriteVisitor(IFD&                             ifd,
+                const TileInfo&                   tileinfo,
+                 const PlaneRegion&               region,
+                 std::vector<dimension_size_type> tiles):
       ifd(ifd),
-      region(region)
+      tileinfo(tileinfo),
+      region(region),
+      tiles(tiles)
     {}
 
     template<typename T>
@@ -481,7 +493,12 @@ namespace ome
             !(order == dest.storage_order()))
           dest.setBuffer(shape, type, order);
 
-        ReadVisitor v(*this, PlaneRegion(x, y, w, h));
+        TileInfo info = getTileInfo();
+
+        PlaneRegion region(x, y, w, h);
+        std::vector<dimension_size_type> tiles(info.tileCoverage(region));
+
+        ReadVisitor v(*this, info, region, tiles);
         boost::apply_visitor(v, dest.vbuffer());
       }
 
@@ -532,7 +549,12 @@ namespace ome
         if (!(order == source.storage_order()))
           throw Exception("VariantPixelBuffer storage order incompatible with TIFF planar configuration");
 
-        WriteVisitor v(*this, PlaneRegion(x, y, w, h));
+        TileInfo info = getTileInfo();
+
+        PlaneRegion region(x, y, w, h);
+        std::vector<dimension_size_type> tiles(info.tileCoverage(region));
+
+        WriteVisitor v(*this, info, region, tiles);
         boost::apply_visitor(v, source.vbuffer());
       }
 
