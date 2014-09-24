@@ -180,7 +180,7 @@ namespace ome
         tileSample(dimension_size_type index) const;
 
         /**
-         * Get the region covered the given tile index.
+         * Get the region covered by the given tile index.
          *
          * If the tile index is invalid, the region will be of zero
          * size.  The clip region is a bounding box which will be
@@ -189,7 +189,8 @@ namespace ome
          *
          * @note For tiles at the image edges, the region size may
          * differ from the tile size if the image size is not an exact
-         * multiple of the tile size.
+         * multiple of the tile size.  Clip to the full image size to
+         * obtain the usable area.
          *
          * @param index the tile index.
          * @param clip the clip region.
@@ -198,6 +199,24 @@ namespace ome
         PlaneRegion
         tileRegion(dimension_size_type index,
                    const PlaneRegion& clip) const;
+
+        /**
+         * Get the region covered by the given tile index.
+         *
+         * If the tile index is invalid, the region will be of zero
+         * size.
+         *
+         * @note This method does not take into account tiles which
+         * overlap the edge of the image, and will always return the
+         * full tile size including areas outside the image.  Use the
+         * clip variant of this method to clip tiles to the image
+         * edge.
+         *
+         * @param index the tile index.
+         * @returns the region covered.
+         */
+        PlaneRegion
+        tileRegion(dimension_size_type index) const;
 
         /**
          * Get a list of the tiles covering an image region.

@@ -36,6 +36,7 @@
  * #L%
  */
 
+#include <cstdio>
 #include <stdexcept>
 #include <vector>
 
@@ -53,6 +54,10 @@
 
 #include <ome/test/config.h>
 
+#ifdef PNG_FOUND
+#include <png.h>
+#endif // PNG_FOUND
+
 #include <gtest/gtest.h>
 
 using ome::bioformats::tiff::directory_index_type;
@@ -62,6 +67,7 @@ using ome::bioformats::tiff::IFD;
 using ome::bioformats::tiff::PlaneRegion;
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::VariantPixelBuffer;
+using ome::bioformats::PixelBuffer;
 
 using namespace boost::filesystem;
 
@@ -165,6 +171,60 @@ namespace
       }
 
     return params;
+  }
+
+  void
+  dump_image_representation(const VariantPixelBuffer& buf,
+                            std::ostream&             stream)
+  {
+    const VariantPixelBuffer::size_type *shape = buf.shape();
+    VariantPixelBuffer::size_type w = shape[ome::bioformats::DIM_SPATIAL_X];
+    VariantPixelBuffer::size_type h = shape[ome::bioformats::DIM_SPATIAL_X];
+    VariantPixelBuffer::size_type s = shape[ome::bioformats::DIM_SUBCHANNEL];
+
+    typedef typename ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type pixeltype;
+
+    const std::shared_ptr<PixelBuffer<pixeltype> >& rbuf
+      = boost::get<std::shared_ptr<PixelBuffer<pixeltype> > >(buf.vbuffer());
+
+    PixelBuffer<pixeltype>::indices_type idx;
+    idx[ome::bioformats::DIM_SPATIAL_X] = 0;
+    idx[ome::bioformats::DIM_SPATIAL_Y] = 0;
+    idx[ome::bioformats::DIM_SUBCHANNEL] = 0;
+    idx[ome::bioformats::DIM_SPATIAL_Z] = idx[ome::bioformats::DIM_TEMPORAL_T] =
+      idx[ome::bioformats::DIM_CHANNEL] = idx[ome::bioformats::DIM_MODULO_Z] =
+      idx[ome::bioformats::DIM_MODULO_T] = idx[ome::bioformats::DIM_MODULO_C] = 0;
+
+    const char * const shades[] = {" ", "░", "▒", "▓", "█"};
+
+    for (VariantPixelBuffer::size_type y = 0; y < h; ++y)
+      {
+        std::vector<std::string> line(s);
+        for (VariantPixelBuffer::size_type x = 0; x < w; ++x)
+          {
+            for (VariantPixelBuffer::size_type c = 0; c < s; ++c)
+              {
+                idx[ome::bioformats::DIM_SPATIAL_X] = x;
+                idx[ome::bioformats::DIM_SPATIAL_Y] = y;
+                idx[ome::bioformats::DIM_SUBCHANNEL] = c;
+
+                double normval = (static_cast<float>(rbuf->at(idx)) / 255.0f) * 5.0f;
+                uint16_t shadeidx = static_cast<uint16_t>(std::floor(normval));
+                if (shadeidx > 4)
+                  shadeidx = 4;
+                line[c] += shades[shadeidx];
+              }
+          }
+        for (std::vector<std::string>::const_iterator i = line.begin();
+             i != line.end();
+             ++i)
+          {
+            stream << *i;
+            if (i + 1 != line.end())
+              stream << "  ";
+          }
+        stream << '\n';
+      }
   }
 
 }
@@ -714,10 +774,108 @@ class TIFFTileTest : public ::testing::TestWithParam<TileTestParameters>
 public:
   std::shared_ptr<TIFF> tiff;
   std::shared_ptr<IFD> ifd;
-  uint32_t iwid;
+  uint32_t iwidth;
   uint32_t iheight;
   ome::bioformats::tiff::PlanarConfiguration planarconfig;
   uint16_t samples;
+#ifdef PNG_FOUND
+  static VariantPixelBuffer pngdata;
+  static bool pngdata_init;
+#endif // PNG_FOUND
+  static uint32_t pwidth;
+  static uint32_t pheight;
+
+#ifdef PNG_FOUND
+  static void
+  readPNGData()
+  {
+    // Sample image to check validity of TIFF reading.
+    const char * const pngfile = PROJECT_SOURCE_DIR "/cpp/test/ome-bioformats/data/data-layout.png";
+
+    std::FILE *png = std::fopen(pngfile, "rb");
+    ASSERT_TRUE(png);
+    uint8_t header[8];
+    std::fread(header, 1, 8, png);
+    ASSERT_FALSE((png_sig_cmp(header, 0, 8)));
+
+    png_structp pngptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    ASSERT_TRUE(pngptr != 0);
+
+    png_infop infoptr = png_create_info_struct(pngptr);
+    if (!infoptr)
+      png_destroy_read_struct(&pngptr, 0, 0);
+    ASSERT_TRUE(infoptr != 0);
+
+    png_infop endinfoptr = png_create_info_struct(pngptr);
+    if (!endinfoptr)
+      png_destroy_read_struct(&pngptr, 0, 0);
+    ASSERT_TRUE(endinfoptr != 0);
+
+    int result = setjmp(png_jmpbuf(pngptr));
+    ASSERT_FALSE((result));
+
+    png_init_io(pngptr, png);
+    png_set_sig_bytes(pngptr, 8);
+
+    png_read_info(pngptr, infoptr);
+
+    pwidth = png_get_image_width(pngptr, infoptr);
+    pheight = png_get_image_height(pngptr, infoptr);
+    png_byte color_type = png_get_color_type(pngptr, infoptr);
+    ASSERT_EQ(PNG_COLOR_TYPE_RGB, color_type);
+    png_byte bit_depth = png_get_bit_depth(pngptr, infoptr);
+    ASSERT_EQ(8U, bit_depth);
+
+    png_set_interlace_handling(pngptr);
+    png_read_update_info(pngptr, infoptr);
+
+    std::array<VariantPixelBuffer::size_type, 9> shape;
+    shape[::ome::bioformats::DIM_SPATIAL_X] = pwidth;
+    shape[::ome::bioformats::DIM_SPATIAL_Y] = pheight;
+    shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;
+    shape[::ome::bioformats::DIM_SPATIAL_Z] = shape[::ome::bioformats::DIM_TEMPORAL_T] = shape[::ome::bioformats::DIM_CHANNEL] =
+      shape[::ome::bioformats::DIM_MODULO_Z] = shape[::ome::bioformats::DIM_MODULO_T] = shape[::ome::bioformats::DIM_MODULO_C] = 1;
+
+    ::ome::bioformats::PixelBufferBase::storage_order_type order(::ome::bioformats::PixelBufferBase::default_storage_order());
+
+    pngdata.setBuffer(shape, ::ome::xml::model::enums::PixelType::UINT8, order);
+
+    std::vector<png_bytep> row_pointers(pheight);
+    for (dimension_size_type y = 0; y < pheight; ++y)
+      {
+        typename VariantPixelBuffer::indices_type coord;
+        coord[ome::bioformats::DIM_SPATIAL_X] = 0;
+        coord[ome::bioformats::DIM_SPATIAL_Y] = y;
+        coord[ome::bioformats::DIM_SUBCHANNEL] = 0;
+        coord[ome::bioformats::DIM_SPATIAL_Z] = coord[ome::bioformats::DIM_TEMPORAL_T] =
+          coord[ome::bioformats::DIM_CHANNEL] = coord[ome::bioformats::DIM_MODULO_Z] =
+          coord[ome::bioformats::DIM_MODULO_T] = coord[ome::bioformats::DIM_MODULO_C] = 0;
+
+        row_pointers[y] = reinterpret_cast<png_bytep>(&pngdata.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(coord));
+      }
+
+    png_read_image(pngptr, &row_pointers[0]);
+
+    png_read_end(pngptr, infoptr);
+
+    png_destroy_read_struct(&pngptr, &infoptr, &endinfoptr);
+
+    std::fclose(png);
+    png = 0;
+
+    ASSERT_TRUE(pngdata == pngdata);
+
+    pngdata_init = true;
+  }
+
+  const VariantPixelBuffer&
+  getPNGData()
+  {
+    if (!pngdata_init)
+      readPNGData();
+    return pngdata;
+  }
+#endif // PNG_FOUND
 
   virtual void SetUp()
   {
@@ -726,12 +884,20 @@ public:
     tiff = TIFF::open(params.file, "r");
     ifd = tiff->getDirectoryByIndex(0);
 
-    ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::IMAGEWIDTH).get(iwid));
+    ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::IMAGEWIDTH).get(iwidth));
     ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::IMAGELENGTH).get(iheight));
     ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::PLANARCONFIG).get(planarconfig));
     ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::SAMPLESPERPIXEL).get(samples));
   }
+
 };
+
+#ifdef PNG_FOUND
+VariantPixelBuffer TIFFTileTest::pngdata;
+bool TIFFTileTest::pngdata_init = false;
+#endif // PNG_FOUND
+uint32_t TIFFTileTest::pwidth = 0;
+uint32_t TIFFTileTest::pheight = 0;
 
 // Check basic tile metadata
 TEST_P(TIFFTileTest, TileInfo)
@@ -743,8 +909,8 @@ TEST_P(TIFFTileTest, TileInfo)
   EXPECT_EQ(params.tilelength, info.tileHeight());
   EXPECT_NE(0U, info.bufferSize());
 
-  dimension_size_type ecol = iwid / params.tilewidth;
-  if (iwid % params.tilewidth)
+  dimension_size_type ecol = iwidth / params.tilewidth;
+  if (iwidth % params.tilewidth)
     ++ecol;
   dimension_size_type erow = iheight / params.tilelength;
   if (iheight % params.tilelength)
@@ -767,7 +933,7 @@ TEST_P(TIFFTileTest, TilePlaneRegion0)
   const TileTestParameters& params = GetParam();
   TileInfo info = ifd->getTileInfo();
 
-  PlaneRegion full(0, 0, iwid, iheight);
+  PlaneRegion full(0, 0, iwidth, iheight);
 
   PlaneRegion region0 = info.tileRegion(0, full);
   EXPECT_EQ(0, region0.x);
@@ -783,7 +949,7 @@ TEST_P(TIFFTileTest, PlaneArea1)
   const TileTestParameters& params = GetParam();
   TileInfo info = ifd->getTileInfo();
 
-  PlaneRegion full(0, 0, iwid, iheight);
+  PlaneRegion full(0, 0, iwidth, iheight);
   std::vector<dimension_size_type> tiles = info.tileCoverage(full);
   EXPECT_EQ(info.tileCount(), tiles.size());
 
@@ -829,7 +995,7 @@ TEST_P(TIFFTileTest, PlaneArea2)
   const TileTestParameters& params = GetParam();
   TileInfo info = ifd->getTileInfo();
 
-  PlaneRegion partial(16U, 16U, iwid - 32U, iheight - 32U);
+  PlaneRegion partial(16U, 16U, iwidth - 32U, iheight - 32U);
   std::vector<dimension_size_type> tiles = info.tileCoverage(partial);
 
   dimension_size_type area = 0;
@@ -873,7 +1039,7 @@ TEST_P(TIFFTileTest, PlaneArea3)
   const TileTestParameters& params = GetParam();
   TileInfo info = ifd->getTileInfo();
 
-  PlaneRegion partial(19U, 31U, iwid - 39U, iheight - 40U);
+  PlaneRegion partial(19U, 31U, iwidth - 39U, iheight - 40U);
   std::vector<dimension_size_type> tiles = info.tileCoverage(partial);
 
   dimension_size_type area = 0;
@@ -908,6 +1074,26 @@ TEST_P(TIFFTileTest, PlaneArea3)
 
         EXPECT_EQ(0U, overlap.w * overlap.h);
       }
+}
+
+TEST_P(TIFFTileTest, PlaneRead)
+{
+  TileInfo info = ifd->getTileInfo();
+
+  VariantPixelBuffer vb;
+  ifd->readImage(vb);
+
+#ifdef PNG_FOUND
+  VariantPixelBuffer pb(getPNGData());
+  if(pb != vb)
+    {
+      std::cout << "Observed\n";
+      dump_image_representation(vb, std::cout);
+      std::cout << "Expected\n";
+      dump_image_representation(pb, std::cout);
+    }
+  ASSERT_TRUE(pb == vb);
+#endif // PNG_FOUND
 }
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;

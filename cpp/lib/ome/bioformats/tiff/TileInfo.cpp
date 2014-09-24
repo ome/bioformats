@@ -267,8 +267,7 @@ namespace ome
       }
 
       PlaneRegion
-      TileInfo::tileRegion(dimension_size_type index,
-                           const PlaneRegion&  clip) const
+      TileInfo::tileRegion(dimension_size_type index) const
       {
         // Compute origin of tile from its row and column
         dimension_size_type row = tileRow(index);
@@ -277,10 +276,15 @@ namespace ome
         dimension_size_type x = col * impl->tilewidth;
         dimension_size_type y = row * impl->tileheight;
 
-        PlaneRegion r(x, y, impl->tilewidth, impl->tileheight);
+        return PlaneRegion(x, y, impl->tilewidth, impl->tileheight);
+      }
 
-        // Clip to image boundaries
-        return r & clip;
+      PlaneRegion
+      TileInfo::tileRegion(dimension_size_type index,
+                           const PlaneRegion&  clip) const
+      {
+        // Clip to clip region boundaries
+        return tileRegion(index) & clip;
       }
 
       std::vector<dimension_size_type>

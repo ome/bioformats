@@ -35,6 +35,7 @@
  * #L%
  */
 
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <cstdarg>
@@ -65,21 +66,126 @@ namespace
     const TileInfo&                         tileinfo;
     const PlaneRegion&                      region;
     const std::vector<dimension_size_type>& tiles;
+    tsize_t                                 tiffbufsize;
+    tdata_t                                 tiffbuf;
 
-    ReadVisitor(const IFD&                       ifd,
-                const TileInfo&                  tileinfo,
-                const PlaneRegion&               region,
-                std::vector<dimension_size_type> tiles):
+    ReadVisitor(const IFD&                              ifd,
+                const TileInfo&                         tileinfo,
+                const PlaneRegion&                      region,
+                const std::vector<dimension_size_type>& tiles):
       ifd(ifd),
       tileinfo(tileinfo),
       region(region),
-      tiles(tiles)
+      tiles(tiles),
+      tiffbufsize(static_cast<tsize_t>(tileinfo.bufferSize())),
+      tiffbuf(_TIFFmalloc(tiffbufsize))
     {}
+
+    ~ReadVisitor()
+    {
+      _TIFFfree(tiffbuf);
+    }
 
     template<typename T>
     void
-    operator()(T& /* buffer */)
+    operator()(std::shared_ptr<T>& buffer)
     {
+      std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
+      ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
+      TileInfo::TileType type = tileinfo.tileType();
+
+      uint32_t imagewidth;
+      uint32_t imageheight;
+      ifd.getField(IMAGEWIDTH).get(imagewidth);
+      ifd.getField(IMAGELENGTH).get(imageheight);
+
+      uint16_t samples;
+      ifd.getField(SAMPLESPERPIXEL).get(samples);
+      PlanarConfiguration planarconfig;
+      ifd.getField(PLANARCONFIG).get(planarconfig);
+
+      Sentry sentry;
+
+      for(std::vector<dimension_size_type>::const_iterator i = tiles.begin();
+          i != tiles.end();
+          ++i)
+        {
+          tstrile_t tile = *i;
+          PlaneRegion rfull = tileinfo.tileRegion(tile);
+          PlaneRegion rclip = tileinfo.tileRegion(tile, region);
+          dimension_size_type sample = tileinfo.tileSample(tile);
+
+          uint16_t copysamples = samples;
+          dimension_size_type dest_subchannel = 0;
+          if (planarconfig == SEPARATE)
+            {
+              copysamples = 1;
+              dest_subchannel = sample;
+            }
+
+          if (type == TileInfo::TILE)
+            {
+              int bytesread = TIFFReadEncodedTile(tiffraw, tile, tiffbuf, tiffbufsize);
+              if (bytesread < 0)
+                sentry.error("Failed to read encoded tile");
+              if (bytesread != tiffbufsize)
+                sentry.error("Failed to read encoded tile fully");
+            }
+          else
+            {
+              int bytesread = TIFFReadEncodedStrip(tiffraw, tile, tiffbuf, tiffbufsize);
+              if (bytesread < 0)
+                sentry.error("Failed to read encoded strip");
+              if (bytesread < rclip.w * rclip.h * copysamples * sizeof(typename T::value_type))
+                sentry.error("Failed to read encoded strip fully");
+            }
+
+          typename T::indices_type destidx;
+          destidx[ome::bioformats::DIM_SPATIAL_X] = 0;
+          destidx[ome::bioformats::DIM_SPATIAL_Y] = 0;
+          destidx[ome::bioformats::DIM_SUBCHANNEL] = dest_subchannel;
+          destidx[ome::bioformats::DIM_SPATIAL_Z] = destidx[ome::bioformats::DIM_TEMPORAL_T] =
+            destidx[ome::bioformats::DIM_CHANNEL] = destidx[ome::bioformats::DIM_MODULO_Z] =
+            destidx[ome::bioformats::DIM_MODULO_T] = destidx[ome::bioformats::DIM_MODULO_C] = 0;
+
+          if (rclip.w == rfull.w &&
+              rclip.x == region.x &&
+              rclip.w == region.w)
+            {
+              // Transfer contiguous block since the tile spans the
+              // whole region width for both source and destination
+              // buffers.
+
+              destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+              destidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
+
+              typename T::value_type *dest = &buffer->at(destidx);
+              const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tiffbuf);
+              std::copy(src, src + (rclip.w * rclip.h * copysamples), dest);
+            }
+          else
+            {
+              // Transfer discontiguous block.
+
+              dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
+
+              for (dimension_size_type row = rclip.y;
+                   row != rclip.y + rclip.h;
+                   ++row)
+                {
+                  dimension_size_type yoffset = (row - rfull.y) * (rfull.w * copysamples);
+
+                  destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+                  destidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
+
+                  typename T::value_type *dest = &buffer->at(destidx);
+                  const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tiffbuf);
+                  std::copy(src + yoffset + xoffset,
+                            src + yoffset + xoffset + (rclip.w * copysamples),
+                            dest);
+                }
+            }
+        }
     }
   };
 
@@ -90,10 +196,10 @@ namespace
     const PlaneRegion&                      region;
     const std::vector<dimension_size_type>& tiles;
 
-    WriteVisitor(IFD&                             ifd,
-                const TileInfo&                   tileinfo,
-                 const PlaneRegion&               region,
-                 std::vector<dimension_size_type> tiles):
+    WriteVisitor(IFD&                                    ifd,
+                 const TileInfo&                         tileinfo,
+                 const PlaneRegion&                      region,
+                 const std::vector<dimension_size_type>& tiles):
       ifd(ifd),
       tileinfo(tileinfo),
       region(region),
@@ -102,8 +208,14 @@ namespace
 
     template<typename T>
     void
-    operator()(const T& /* buffer */)
+    operator()(const std::shared_ptr<T>& /* buffer */)
     {
+      for(std::vector<dimension_size_type>::const_iterator i = tiles.begin();
+          i != tiles.end();
+          ++i)
+        {
+          PlaneRegion r = tileinfo.tileRegion(*i, region);
+        }
     }
   };
 

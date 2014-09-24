@@ -35,7 +35,8 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS})
+                    ${Boost_INCLUDE_DIRS}
+                    ${PNG_INCLUDE_DIRS})
 
 add_subdirectory(data)
 
@@ -106,7 +107,7 @@ if(BUILD_TESTS)
 
   add_executable(tiff tiff.cpp)
   target_link_libraries(tiff ome-bioformats)
-  target_link_libraries(tiff ome-test)
+  target_link_libraries(tiff ome-test ${PNG_LIBRARIES})
   add_dependencies(tiff gentestimages)
 
   add_test(ome-bioformats/tiff tiff)
