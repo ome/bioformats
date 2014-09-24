@@ -1,6 +1,12 @@
 Version history
 ===============
 
+5.0.5 (2014 September 23)
+-------------------------
+
+* Documentation improvements
+* Support for non-spectral Prairie 5.2 datasets
+
 5.0.4 (2014 September 3)
 ------------------------
 
