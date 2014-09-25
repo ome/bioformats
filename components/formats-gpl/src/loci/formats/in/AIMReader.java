@@ -69,7 +69,7 @@ public class AIMReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset + FormatTools.getPlaneSize(this) * no);
+    in.seek(pixelOffset + FormatTools.getPlaneSize(this) * (long) no);
     readPlane(in, x, y, w, h, buf);
     return buf;
   }

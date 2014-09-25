@@ -42,7 +42,6 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
@@ -147,28 +146,30 @@ public class BMPReader extends FormatReader {
 
     in.skipBytes(rowsToSkip * pad);
 
-    byte[] rawPlane = new byte[planeSize];
-    in.read(rawPlane);
-
-    BitBuffer bb = new BitBuffer(rawPlane);
-
     int effectiveC = palette != null && palette[0].length > 0 ? 1 : getSizeC();
     for (int row=h-1; row>=0; row--) {
       int rowIndex = invertY ? h - 1 - row : row;
-      bb.skipBits(x * bpp * effectiveC);
+      in.skipBits(x * bpp * effectiveC);
       for (int i=0; i<w*effectiveC; i++) {
         if (bpp <= 8) {
-          buf[rowIndex * w * effectiveC + i] = (byte) (bb.getBits(bpp) & 0xff);
+          buf[rowIndex * w * effectiveC + i] = (byte) (in.readBits(bpp) & 0xff);
         }
         else {
           for (int b=0; b<bpp/8; b++) {
             buf[(bpp / 8) * (rowIndex * w * effectiveC + i) + b] =
-              (byte) (bb.getBits(8) & 0xff);
+              (byte) (in.readBits(8) & 0xff);
           }
         }
       }
       if (row > 0) {
-        bb.skipBits((getSizeX() - w - x) * bpp * effectiveC + pad*8);
+        int nBits = (getSizeX() - w - x) * bpp * effectiveC + pad * 8;
+
+        if (in.getFilePointer() + (nBits / 8) < in.length()) {
+          in.skipBits(nBits);
+        }
+        else {
+          break;
+        }
       }
     }
 

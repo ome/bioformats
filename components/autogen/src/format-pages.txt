@@ -1507,7 +1507,7 @@ extensions = .nd2
 developer = `Nikon USA <http://www.nikonusa.com/>`_
 bsd = no
 export = no
-software = `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
+software = `NIS-Elements Viewer from Nikon <http://www.nikoninstruments.com/Products/Software/NIS-Elements-Advanced-Research/NIS-Elements-Viewer>`_
 weHave = * many ND2 datasets
 weWant = * an official specification document
 pixelsRating = Very good
@@ -1743,6 +1743,20 @@ presenceRating = Fair
 utilityRating = Good
 reader = PCORAWReader.java
 
+[PicoQuant Bin]
+extensions = .bin
+developer = `PicoQuant <http://www.picoquant.com/>`_
+bsd = no
+export = no
+software = `SymphoTime64 <http://www.picoquant.com/products/category/software/symphotime-64-fluorescence-lifetime-imaging-and-correlation-software>`_
+weHave = * a few example datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Poor
+reader = PQBinReader.java
+
 [Perkin Elmer Densitometer]
 extensions = .pds
 developer = `Perkin Elmer <http://www.perkinelmer.com>`_
@@ -1921,9 +1935,9 @@ reader = NativeQTReader.java
 writer = QTWriter.java
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-  * QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
-    installed. \n
-  * Native mode works on systems with no QuickTime (e.g. Linux). \n
+* QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
+  installed (32-bit JVM only, not supported with 64-bit). \n
+* Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
 Bio-Formats can save image stacks as QuickTime movies. \n
 The following table shows supported codecs: \n

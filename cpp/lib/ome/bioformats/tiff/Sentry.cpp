@@ -169,12 +169,18 @@ namespace ome
       }
 
       void
-      Sentry::error() const
+      Sentry::error(const std::string& message) const
       {
         if (!this->message.empty())
           throw Exception(this->message);
         else
-          throw Exception("Unknown error (no TIFF error message received)");
+          throw Exception(message);
+      }
+
+      void
+      Sentry::error() const
+      {
+        error("Unknown error (no TIFF error message received)");
       }
 
     }

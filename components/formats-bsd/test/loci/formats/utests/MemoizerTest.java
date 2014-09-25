@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import loci.common.Location;
 import loci.formats.FormatException;
@@ -58,6 +59,10 @@ public class MemoizerTest {
 
   private static final String TEST_FILE =
     "test&pixelType=int8&sizeX=20&sizeY=20&sizeC=1&sizeZ=1&sizeT=1.fake";
+
+  private File idDir;
+
+  private String id;
 
   private FakeReader reader;
 
@@ -80,7 +85,13 @@ public class MemoizerTest {
     // Location.mapId(TEST_FILE, TEST_FILE);
     reader = new FakeReader();
     try {
-      reader.setId(TEST_FILE);
+      String uuid = UUID.randomUUID().toString();
+      idDir = new File(System.getProperty("java.io.tmpdir"), uuid);
+      idDir.mkdirs();
+      File tempFile = new File(idDir, TEST_FILE);
+      tempFile.createNewFile();
+      id = tempFile.getAbsolutePath();
+      reader.setId(id);
       sizeX = reader.getSizeX();
       sizeY = reader.getSizeY();
       bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
@@ -100,17 +111,97 @@ public class MemoizerTest {
   @Test
   public void testSimple() throws Exception {
       memoizer = new Memoizer(reader);
-      File f = memoizer.getMemoFile(TEST_FILE);
-      if (f.exists()) {
+      File f = memoizer.getMemoFile(id);
+      if (f != null && f.exists()) {
         f.delete();
       }
       // At this point we're sure that there's no memo file.
-      reader.setId(TEST_FILE);
+      reader.setId(id);
       reader.close();
-      memoizer.setId(TEST_FILE);
+      memoizer.setId(id);
       memoizer.close();
-      memoizer.setId(TEST_FILE);
+      memoizer.setId(id);
       memoizer.close();
+  }
+
+  @Test
+  public void testGetMemoFileNoTimeElapsed() throws Exception {
+      memoizer = new Memoizer(reader);
+      File f = memoizer.getMemoFile(id);
+      assertEquals(f, null);
+  }
+
+  @Test
+  public void testGetMemoFileTimeElapsedNoDirectory() throws Exception {
+      memoizer = new Memoizer(reader, 0);
+      File f = memoizer.getMemoFile(id);
+      assertEquals(f, null);
+  }
+
+  @Test
+  public void testGetMemoFileDirectory() throws Exception {
+      String uuid = UUID.randomUUID().toString();
+      File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
+      memoizer = new Memoizer(reader, 0, directory);
+
+      // Check non-existing memo directory returns null
+      assertEquals(memoizer.getMemoFile(id), null);
+
+      // Create memoizer directory and memoizer reader
+      directory.mkdirs();
+      memoizer = new Memoizer(reader, 0, directory);
+
+      // Check existing non-writeable memo directory returns null
+      if (File.separator.equals("/")) {
+        // File.setWritable() does not work properly on Windows
+        directory.setWritable(false);
+        assertEquals(memoizer.getMemoFile(id), null);
+      }
+
+      // Check existing writeable memo diretory returns a memo file
+      directory.setWritable(true);
+      String memoDir = idDir.getAbsolutePath();
+      memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
+      File memoFile = new File(directory, memoDir);
+      memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
+      assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
+                   memoFile.getAbsolutePath());
+  }
+
+  @Test
+  public void testGetMemoFileInPlaceDirectory() throws Exception {
+      String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
+      memoizer = new Memoizer(reader, 0, new File(rootPath));
+
+      // Check non-writeable file directory returns null for in-place caching
+      if (File.separator.equals("/")) {
+        // File.setWritable() does not work properly on Windows
+        idDir.setWritable(false);
+        assertEquals(memoizer.getMemoFile(id), null);
+      }
+
+      // Check writeable file directory returns memo file beside file
+      idDir.setWritable(true);
+      File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
+      assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
+        memoFile.getAbsolutePath());
+  }
+
+  @Test
+  public void testGetMemoFileInPlaceBoolean() throws Exception {
+      memoizer = new Memoizer(reader, 0, true);
+
+      // Check non-writeable file directory returns null for in-place caching
+      if (File.separator.equals("/")) {
+        // File.setWritable() does not work properly on Windows
+        idDir.setWritable(false);
+        assertEquals(memoizer.getMemoFile(id), null);
+      }
+      // Check writeable file directory returns memo file beside file
+      idDir.setWritable(true);
+      File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
+      assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
+        memoFile.getAbsolutePath());
   }
 
   public static void main(String[] args) throws Exception {

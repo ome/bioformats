@@ -858,6 +858,10 @@ public class ND2Handler extends BaseHandler {
           if (s.length > 1) {
             if (s[1].equals("ms")) time /= 1000;
           }
+          else {
+            // assume time is in milliseconds
+            time /= 1000;
+          }
           exposureTime.add(new Double(time));
         }
       }

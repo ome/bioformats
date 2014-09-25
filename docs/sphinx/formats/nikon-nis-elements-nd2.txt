@@ -22,7 +22,7 @@ Supported Metadata Fields: :doc:`Nikon NIS-Elements ND2 <nikon-nis-elements-nd2-
 
 Freely Available Software:
 
-- `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
+- `NIS-Elements Viewer from Nikon <http://www.nikoninstruments.com/Products/Software/NIS-Elements-Advanced-Research/NIS-Elements-Viewer>`_
 
 
 We currently have:

@@ -192,7 +192,7 @@ Logback
     License:   EPL v1.0 and LGPL 2.1
 
 Native library loader
-    JAR file:  native-lib-loader-2.0.1.jar
+    JAR file:  native-lib-loader-2.0.2.jar
     URL:       http://github.com/scijava/native-lib-loader
     Notes:     required for loading native libraries
     License:   BSD

@@ -35,9 +35,12 @@ package loci.common.utests;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
+import java.util.Random;
 
+import loci.common.ByteArrayHandle;
 import loci.common.IRandomAccess;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.common.utests.providers.IRandomAccessProvider;
 import loci.common.utests.providers.IRandomAccessProviderFactory;
 
@@ -133,6 +136,47 @@ public class RandomAccessInputStreamTest {
         stream.seek(fp - step);
       }
       assertEquals(PAGE[(int) stream.getFilePointer()], stream.readByte());
+    }
+  }
+
+  @Test
+  public void testBitRead() throws IOException {
+    int count = 50000;
+    int[] nums = new int[count];
+    int[] len = new int[count];
+    ByteArrayHandle handle = new ByteArrayHandle();
+    RandomAccessOutputStream out = new RandomAccessOutputStream(handle);
+    Random r = new Random();
+
+    for (int i=0; i<count; i++) {
+      if (i % 32 == 31) {
+        nums[i] = r.nextInt();
+      }
+      else {
+        nums[i] = r.nextInt(1 << (i % 32));
+      }
+
+      len[i] = Integer.toBinaryString(nums[i]).length();
+      out.writeBits(nums[i], len[i]);
+    }
+    out.close();
+
+    RandomAccessInputStream in = new RandomAccessInputStream(handle);
+    in.seek(0);
+    try {
+      for (int i=0; i<count; i++) {
+        int c = r.nextInt(100);
+        if (c >= 50) {
+          int v = in.readBits(len[i]);
+          assertEquals(v, nums[i]);
+        }
+        else {
+          in.skipBits(len[i]);
+        }
+      }
+    }
+    finally {
+      in.close();
     }
   }
 

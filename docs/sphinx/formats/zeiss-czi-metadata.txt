@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 157 of them (33%).
-  * Of those, Bio-Formats fully or partially converts 157 (100%).
+  * The file format itself supports 158 of them (33%).
+  * Of those, Bio-Formats fully or partially converts 158 (100%).
 
 Supported fields
 ===============================================================================
@@ -26,6 +26,7 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Channel : Color <OME-2013-10-dev-2/ome_xsd.html#Channel_Color>`
   * :schema:`Channel : EmissionWavelength <OME-2013-10-dev-2/ome_xsd.html#Channel_EmissionWavelength>`
   * :schema:`Channel : ExcitationWavelength <OME-2013-10-dev-2/ome_xsd.html#Channel_ExcitationWavelength>`
+  * :schema:`Channel : FilterSetRef <OME-2013-10-dev-2/ome_xsd.html#FilterSetRef_ID>`
   * :schema:`Channel : Fluor <OME-2013-10-dev-2/ome_xsd.html#Channel_Fluor>`
   * :schema:`Channel : ID <OME-2013-10-dev-2/ome_xsd.html#Channel_ID>`
   * :schema:`Channel : IlluminationType <OME-2013-10-dev-2/ome_xsd.html#Channel_IlluminationType>`
@@ -175,6 +176,6 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`TransmittanceRange : CutOutTolerance <OME-2013-10-dev-2/ome_xsd.html#TransmittanceRange_CutOutTolerance>`
   * :schema:`TransmittanceRange : Transmittance <OME-2013-10-dev-2/ome_xsd.html#TransmittanceRange_Transmittance>`
 
-**Total supported: 157**
+**Total supported: 158**
 
-**Total unknown or missing: 318**
+**Total unknown or missing: 317**

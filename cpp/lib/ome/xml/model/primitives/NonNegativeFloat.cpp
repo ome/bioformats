@@ -50,6 +50,9 @@ namespace ome
         template<>
         const std::string NonNegativeFloat::typestr("NonNegativeFloat");
 
+        template<>
+        const NonNegativeFloat::value_type NonNegativeFloat::default_value(0.0f);
+
       }
     }
   }
