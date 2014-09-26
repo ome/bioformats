@@ -1,11 +1,11 @@
-% Abstract class for the Bio-Formats Matlab unit tests
+% Integration tests for the Memoizer reader
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2013-2014 Open Microscopy Environment:
+% Copyright (C) 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,38 +24,39 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfMatlab < TestCase
+classdef TestMemoizer < ReaderTest
     
     properties
-        jarPath
-        tmpdir
+        filepath
     end
     
     methods
-        function self = TestBfMatlab(name)
-            self = self@TestCase(name);
-        end
-        
-        function setUp(self)
-            % Get path to Bio-Formats JAR file (assuming it is in Matlab path)
-            self.jarPath = which('bioformats_package.jar');
-            assert(~isempty(self.jarPath));
-            
-            % Remove Bio-Formats JAR file from dynamic class path
-            if ismember(self.jarPath,javaclasspath('-dynamic'))
-                javarmpath(self.jarPath);
-            end
-            
-            java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
-            uuid = char(java.util.UUID.randomUUID().toString());
-            self.tmpdir = fullfile(java_tmpdir, uuid);
+        function self = TestMemoizer(name)
+            self = self@ReaderTest(name);
         end
         
         function tearDown(self)
-            % Remove  Bio-Formats JAR file from dynamic class path
-            if ismember(self.jarPath,javaclasspath('-dynamic'))
-                javarmpath(self.jarPath);
-            end
+            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
+            tearDown@ReaderTest(self);
+        end
+        
+        function testInPlaceCaching(self)
+            % Create fake file
+            mkdir(self.tmpdir);
+            self.filepath = fullfile(self.tmpdir, 'test.fake');
+            fid = fopen(self.filepath, 'w+');
+            fclose(fid);
+            
+            % Create Reader
+            self.reader = loci.formats.Memoizer(bfGetReader(), 0);
+            self.reader.setId(self.filepath);
+            assertFalse(self.reader.isLoadedFromMemo());
+            assertTrue(self.reader.isSavedToMemo());
+            self.reader.close();
+            self.reader.setId(self.filepath);
+            assertTrue(self.reader.isLoadedFromMemo());
+            assertFalse(self.reader.isSavedToMemo());
+            self.reader.close();
         end
     end
 end

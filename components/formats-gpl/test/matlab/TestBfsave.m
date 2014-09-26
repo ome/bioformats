@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -39,15 +39,12 @@ classdef TestBfsave < ReaderTest
         
         function setUp(self)
             setUp@ReaderTest(self);
-            if isunix,
-                self.path = '/tmp/test.ome.tiff';
-            else
-                self.path = 'C:\test.ome.tiff';
-            end
+            mkdir(self.tmpdir);
+            self.path = fullfile(self.tmpdir, 'test.ome.tif');
         end
         
         function tearDown(self)
-            if exist(self.path,'file')==2, delete(self.path); end
+            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
             tearDown@ReaderTest(self);
         end
         
