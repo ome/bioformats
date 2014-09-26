@@ -56,27 +56,18 @@ using ome::xml::model::enums::PixelType;
 namespace
 {
 
-  using ::ome::bioformats::tiff::IFD;
+  using namespace ::ome::bioformats::tiff;
   using ::ome::bioformats::dimension_size_type;
 
   struct ReadVisitor : public boost::static_visitor<>
   {
-    const IFD&          ifd;
-    dimension_size_type x;
-    dimension_size_type y;
-    dimension_size_type w;
-    dimension_size_type h;
+    const IFD&         ifd;
+    const PlaneRegion& region;
 
-    ReadVisitor(const IFD&          ifd,
-                dimension_size_type x,
-                dimension_size_type y,
-                dimension_size_type w,
-                dimension_size_type h):
+    ReadVisitor(const IFD&         ifd,
+                const PlaneRegion& region):
       ifd(ifd),
-      x(x),
-      y(y),
-      w(w),
-      h(h)
+      region(region)
     {}
 
     template<typename T>
@@ -88,22 +79,13 @@ namespace
 
   struct WriteVisitor : public boost::static_visitor<>
   {
-    IFD&                ifd;
-    dimension_size_type x;
-    dimension_size_type y;
-    dimension_size_type w;
-    dimension_size_type h;
+    IFD&               ifd;
+    const PlaneRegion& region;
 
-    WriteVisitor(IFD&                ifd,
-                 dimension_size_type x,
-                 dimension_size_type y,
-                 dimension_size_type w,
-                 dimension_size_type h):
+    WriteVisitor(IFD&               ifd,
+                 const PlaneRegion& region):
       ifd(ifd),
-      x(x),
-      y(y),
-      w(w),
-      h(h)
+      region(region)
     {}
 
     template<typename T>
@@ -291,6 +273,18 @@ namespace ome
           sentry.error();
       }
 
+      TileInfo
+      IFD::getTileInfo()
+      {
+        return TileInfo(this->shared_from_this());
+      }
+
+      const TileInfo
+      IFD::getTileInfo() const
+      {
+        return TileInfo(const_cast<IFD *>(this)->shared_from_this());
+      }
+
       ::ome::xml::model::enums::PixelType
       IFD::getPixelType() const
       {
@@ -463,8 +457,8 @@ namespace ome
       {
         PixelType type = getPixelType();
 
-        uint16_t planarconfig;
-        getField(ome::bioformats::tiff::PLANARCONFIG).get(planarconfig);
+        PlanarConfiguration planarconfig;
+        getField(PLANARCONFIG).get(planarconfig);
 
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
@@ -480,15 +474,14 @@ namespace ome
         std::copy(dest_shape_ptr, dest_shape_ptr + PixelBufferBase::dimensions,
                   dest_shape.begin());
 
-        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == 2 ? false : true));
+        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == SEPARATE ? false : true));
 
         if (type != dest.pixelType() ||
             shape != dest_shape ||
             !(order == dest.storage_order()))
           dest.setBuffer(shape, type, order);
 
-        ReadVisitor v(*this,
-                      x, y, w, h);
+        ReadVisitor v(*this, PlaneRegion(x, y, w, h));
         boost::apply_visitor(v, dest.vbuffer());
       }
 
@@ -511,8 +504,8 @@ namespace ome
       {
         PixelType type = getPixelType();
 
-        uint16_t planarconfig;
-        getField(ome::bioformats::tiff::PLANARCONFIG).get(planarconfig);
+        PlanarConfiguration planarconfig;
+        getField(PLANARCONFIG).get(planarconfig);
 
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
@@ -528,7 +521,7 @@ namespace ome
         std::copy(source_shape_ptr, source_shape_ptr + PixelBufferBase::dimensions,
                   source_shape.begin());
 
-        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == 2 ? false : true));
+        PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == SEPARATE ? false : true));
 
         if (type != source.pixelType())
           throw Exception("VariantPixelBuffer pixel type is incompatible with TIFF sample format and bit depth");
@@ -539,8 +532,7 @@ namespace ome
         if (!(order == source.storage_order()))
           throw Exception("VariantPixelBuffer storage order incompatible with TIFF planar configuration");
 
-        WriteVisitor v(*this,
-                       x, y, w, h);
+        WriteVisitor v(*this, PlaneRegion(x, y, w, h));
         boost::apply_visitor(v, source.vbuffer());
       }
 
