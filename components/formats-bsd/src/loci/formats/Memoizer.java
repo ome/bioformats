@@ -376,16 +376,20 @@ public class Memoizer extends ReaderWrapper {
   // -- Constructors --
 
   /**
-   *  Constructs a memoizer around a new image reader creating memo files
-   *  under the same directory as the original file.
+   *  Constructs a memoizer around a new {@link ImageReader} creating memo
+   *  files under the same directory as the original file only if the call to
+   *  {@link #setId} takes longer than {@value DEFAULT_MINIMUM_ELAPSED} in
+   *  milliseconds.
    */
   public Memoizer() {
     this(DEFAULT_MINIMUM_ELAPSED);
   }
 
   /**
-   *  Constructs a memoizer around a new image reader creating memo files
-   *  under the same directory as the original file.
+   *  Constructs a memoizer around a new {@link ImageReader} creating memo
+   *  files under the same directory as the original file only if the call to
+   *  {@link #setId} takes longer than <code>minimumElapsed</code> in
+   *  milliseconds.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
@@ -397,8 +401,10 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around a new image reader creating memo files
-   *  under the <code>directory</code> argument.
+   *  Constructs a memoizer around a new {@link ImageReader} creating memo
+   *  files under the <code>directory</code> argument including the full
+   *  path of the original file only if the call to {@link #setId} takes
+   *  longer than <code>minimumElapsed</code> in milliseconds.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
@@ -414,8 +420,10 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader creating memo files under
-   *  the same directory as the original file.
+   *  Constructs a memoizer around the given {@link IFormatReader} creating
+   *  memo files under the same directory as the original file only if the
+   *  call to {@link #setId} takes longer than
+   *  {@value DEFAULT_MINIMUM_ELAPSED} in milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
    */
@@ -424,8 +432,10 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader creating memo files under
-   *  the same directory as the original file.
+   *  Constructs a memoizer around the given {@link IFormatReader} creating
+   *  memo files under the same directory as the original file only if the
+   *  call to {@link #setId} takes longer than <code>minimumElapsed</code>
+   *  in milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
    *  @param minimumElapsed a long specifying the number of milliseconds which
@@ -438,8 +448,10 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around the given reader creating memo files under
-   *  the <code>directory</code> argument.
+   *  Constructs a memoizer around the given {@link IFormatReader} creating
+   *  memo files under the <code>directory</code> argument including the full
+   *  path of the original file only if the call to {@link #setId} takes
+   *  longer than <code>minimumElapsed</code> in milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
    *  @param minimumElapsed a long specifying the number of milliseconds which
