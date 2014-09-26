@@ -158,6 +158,8 @@ namespace
                 std::istringstream srow(found[4]);
                 if (!(srow >> p.tilelength))
                   continue;
+
+                params.push_back(p);
               }
           }
       }
