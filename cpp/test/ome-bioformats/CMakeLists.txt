@@ -105,7 +105,7 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/pixelproperties pixelproperties)
 
-  add_executable(tiff tiff.cpp)
+  add_executable(tiff tiff.cpp tiff-coverage.cpp)
   target_link_libraries(tiff ome-bioformats)
   target_link_libraries(tiff ome-test ${PNG_LIBRARIES})
   add_dependencies(tiff gentestimages)
