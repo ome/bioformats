@@ -421,6 +421,15 @@ TEST(TIFFTest, RegionValid)
   ASSERT_FALSE(!r2.valid());
 }
 
+TEST(TIFFTest, RegionArea)
+{
+  PlaneRegion r1;
+  ASSERT_EQ(0U, r1.area());
+
+  PlaneRegion r2(0, 0, 4, 2);
+  ASSERT_EQ(4U*2U, r2.area());
+}
+
 TEST(TIFFTest, Construct)
 {
   ASSERT_NO_THROW(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));

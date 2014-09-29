@@ -224,6 +224,17 @@ namespace ome
           w(w),
           h(h)
         {}
+
+        /**
+         * Get area.
+         *
+         * @returns the covered area.
+         */
+        dimension_size_type
+        area() const
+        {
+          return w * h;
+        }
       };
 
       /**
