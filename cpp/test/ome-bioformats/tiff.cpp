@@ -311,6 +311,104 @@ TEST(TIFFTest, RegionIntersection5)
   EXPECT_EQ(0, r4.h);
 }
 
+TEST(TIFFTest, RegionUnion1)
+{
+  PlaneRegion r1(0, 0, 16, 16);
+  PlaneRegion r2(16, 0, 16, 16);
+  PlaneRegion r3 = r1 | r2;
+  EXPECT_EQ(0, r3.x);
+  EXPECT_EQ(0, r3.y);
+  EXPECT_EQ(32, r3.w);
+  EXPECT_EQ(16, r3.h);
+  PlaneRegion r4 = r2 | r1;
+  EXPECT_EQ(0, r4.x);
+  EXPECT_EQ(0, r4.y);
+  EXPECT_EQ(32, r4.w);
+  EXPECT_EQ(16, r4.h);
+}
+
+TEST(TIFFTest, RegionUnion2)
+{
+  PlaneRegion r1(0, 0, 16, 16);
+  PlaneRegion r2(0, 16, 16, 16);
+  PlaneRegion r3 = r1 | r2;
+  EXPECT_EQ(0, r3.x);
+  EXPECT_EQ(0, r3.y);
+  EXPECT_EQ(16, r3.w);
+  EXPECT_EQ(32, r3.h);
+  PlaneRegion r4 = r2 | r1;
+  EXPECT_EQ(0, r4.x);
+  EXPECT_EQ(0, r4.y);
+  EXPECT_EQ(16, r4.w);
+  EXPECT_EQ(32, r4.h);
+}
+
+TEST(TIFFTest, RegionUnion3)
+{
+  PlaneRegion r1(43, 23, 12, 15);
+  PlaneRegion r2(55, 23, 44, 15);
+  PlaneRegion r3 = r1 | r2;
+  EXPECT_EQ(43, r3.x);
+  EXPECT_EQ(23, r3.y);
+  EXPECT_EQ(56, r3.w);
+  EXPECT_EQ(15, r3.h);
+  PlaneRegion r4 = r2 | r1;
+  EXPECT_EQ(43, r4.x);
+  EXPECT_EQ(23, r4.y);
+  EXPECT_EQ(56, r4.w);
+  EXPECT_EQ(15, r4.h);
+}
+
+TEST(TIFFTest, RegionUnion4)
+{
+  PlaneRegion r1(22, 19, 27, 80);
+  PlaneRegion r2(22, 99, 27, 11);
+  PlaneRegion r3 = r1 | r2;
+  EXPECT_EQ(22, r3.x);
+  EXPECT_EQ(19, r3.y);
+  EXPECT_EQ(27, r3.w);
+  EXPECT_EQ(91, r3.h);
+  PlaneRegion r4 = r2 | r1;
+  EXPECT_EQ(22, r4.x);
+  EXPECT_EQ(19, r4.y);
+  EXPECT_EQ(27, r4.w);
+  EXPECT_EQ(91, r4.h);
+}
+
+TEST(TIFFTest, RegionUnion5)
+{
+  // No overlap or common edge
+  PlaneRegion r1(43, 23, 12, 15);
+  PlaneRegion r2(95, 83, 43, 15);
+  PlaneRegion r3 = r1 | r2;
+  EXPECT_EQ(0, r3.x);
+  EXPECT_EQ(0, r3.y);
+  EXPECT_EQ(0, r3.w);
+  EXPECT_EQ(0, r3.h);
+  PlaneRegion r4 = r2 | r1;
+  EXPECT_EQ(0, r4.x);
+  EXPECT_EQ(0, r4.y);
+  EXPECT_EQ(0, r4.w);
+  EXPECT_EQ(0, r4.h);
+}
+
+TEST(TIFFTest, RegionUnion6)
+{
+  // Overlap
+  PlaneRegion r1(43, 23, 12, 15);
+  PlaneRegion r2(50, 28, 12, 15);
+  PlaneRegion r3 = r1 | r2;
+  EXPECT_EQ(0, r3.x);
+  EXPECT_EQ(0, r3.y);
+  EXPECT_EQ(0, r3.w);
+  EXPECT_EQ(0, r3.h);
+  PlaneRegion r4 = r2 | r1;
+  EXPECT_EQ(0, r4.x);
+  EXPECT_EQ(0, r4.y);
+  EXPECT_EQ(0, r4.w);
+  EXPECT_EQ(0, r4.h);
+}
+
 TEST(TIFFTest, Construct)
 {
   ASSERT_NO_THROW(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
