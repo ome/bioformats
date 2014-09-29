@@ -46,6 +46,7 @@
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
+#include <ome/bioformats/tiff/TileBuffer.h>
 
 #include <ome/compat/thread.h>
 #include <ome/compat/string.h>
@@ -66,8 +67,7 @@ namespace
     const TileInfo&                         tileinfo;
     const PlaneRegion&                      region;
     const std::vector<dimension_size_type>& tiles;
-    tsize_t                                 tiffbufsize;
-    tdata_t                                 tiffbuf;
+    TileBuffer                              tilebuf;
 
     ReadVisitor(const IFD&                              ifd,
                 const TileInfo&                         tileinfo,
@@ -77,13 +77,11 @@ namespace
       tileinfo(tileinfo),
       region(region),
       tiles(tiles),
-      tiffbufsize(static_cast<tsize_t>(tileinfo.bufferSize())),
-      tiffbuf(_TIFFmalloc(tiffbufsize))
+      tilebuf(tileinfo.bufferSize())
     {}
 
     ~ReadVisitor()
     {
-      _TIFFfree(tiffbuf);
     }
 
     template<typename T>
@@ -122,18 +120,17 @@ namespace
               copysamples = 1;
               dest_subchannel = sample;
             }
-
           if (type == TileInfo::TILE)
             {
-              int bytesread = TIFFReadEncodedTile(tiffraw, tile, tiffbuf, tiffbufsize);
+              int bytesread = TIFFReadEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
               if (bytesread < 0)
                 sentry.error("Failed to read encoded tile");
-              if (bytesread != tiffbufsize)
+              if (bytesread != tilebuf.size())
                 sentry.error("Failed to read encoded tile fully");
             }
           else
             {
-              int bytesread = TIFFReadEncodedStrip(tiffraw, tile, tiffbuf, tiffbufsize);
+              int bytesread = TIFFReadEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
               if (bytesread < 0)
                 sentry.error("Failed to read encoded strip");
               if (bytesread < rclip.w * rclip.h * copysamples * sizeof(typename T::value_type))
@@ -160,7 +157,7 @@ namespace
               destidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
 
               typename T::value_type *dest = &buffer->at(destidx);
-              const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tiffbuf);
+              const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
               std::copy(src, src + (rclip.w * rclip.h * copysamples), dest);
             }
           else
@@ -179,7 +176,7 @@ namespace
                   destidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
 
                   typename T::value_type *dest = &buffer->at(destidx);
-                  const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tiffbuf);
+                  const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
                   std::copy(src + yoffset + xoffset,
                             src + yoffset + xoffset + (rclip.w * copysamples),
                             dest);
