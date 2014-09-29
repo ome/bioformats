@@ -95,12 +95,14 @@ public class VolocityReader extends FormatReader {
 
     ArrayList<String> files = new ArrayList<String>();
     files.addAll(extraFiles);
-    Stack stack = stacks.get(getSeries());
-    for (int c=0; c<getEffectiveSizeC(); c++) {
-      files.add(stack.pixelsFiles[c]);
-    }
-    if (stack.timestampFile != null) {
-      files.add(stack.timestampFile);
+    if (!noPixels) {
+      Stack stack = stacks.get(getSeries());
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        files.add(stack.pixelsFiles[c]);
+      }
+      if (stack.timestampFile != null) {
+        files.add(stack.timestampFile);
+      }
     }
     return files.toArray(new String[files.size()]);
   }

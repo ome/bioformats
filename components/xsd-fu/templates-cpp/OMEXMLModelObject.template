@@ -352,7 +352,7 @@ ${customUpdatePropertyContent[prop.name]}
             std::shared_ptr<${prop.name}> rcptr(std::make_shared< ${prop.name}>());
             rcptr->setID(elem->getAttribute("ID"));
             std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
-            std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(this);
+            std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(std::static_pointer_cast<${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
             model.addReference(optr, rptr);
           }
 {% end %}\
@@ -579,10 +579,10 @@ ${customUpdatePropertyContent[prop.name]}
               {
 {% if not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.type}(std::shared_ptr<${klass.type}>(this));
+                o_casted->link${klass.type}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.type}>(this));
+                o_casted->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
@@ -741,10 +741,10 @@ ${customUpdatePropertyContent[prop.name]}
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->link${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
         if (!contains(this->${prop.instanceVariableName}, ${prop.argumentName}))
@@ -781,10 +781,10 @@ ${customUpdatePropertyContent[prop.name]}
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
         bool found = false;
@@ -979,7 +979,7 @@ ${customUpdatePropertyContent[prop.name]}
                                             ${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
         ${prop.instanceVariableName}.at(index) = ${prop.argumentName};
@@ -1003,7 +1003,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${klass.name}::add${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
         ${prop.instanceVariableName}.push_back(${prop.argumentName});
@@ -1156,7 +1156,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
         {
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\

@@ -34,7 +34,10 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS})
+
+add_subdirectory(data)
 
 if(BUILD_TESTS)
   header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
@@ -52,11 +55,23 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/formattools formattools)
 
+  add_executable(formatwriter formatwriter.cpp)
+  target_link_libraries(formatwriter ome-bioformats)
+  target_link_libraries(formatwriter ome-test)
+
+  add_test(ome-bioformats/formatwriter formatwriter)
+
   add_executable(metadatamap metadatamap.cpp)
   target_link_libraries(metadatamap ome-bioformats)
   target_link_libraries(metadatamap ome-test)
 
   add_test(ome-bioformats/metadatamap metadatamap)
+
+  add_executable(metadatatools metadatatools.cpp)
+  target_link_libraries(metadatatools ome-bioformats)
+  target_link_libraries(metadatatools ome-test)
+
+  add_test(ome-bioformats/metadatatools metadatatools)
 
   add_executable(fileinfo fileinfo.cpp)
   target_link_libraries(fileinfo ome-bioformats)
@@ -64,7 +79,20 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/fileinfo fileinfo)
 
-  add_executable(pixelbuffer pixelbuffer.cpp)
+  add_executable(pixelbuffer
+                 pixelbuffer.h
+                 pixelbuffer-order.cpp
+                 pixelbuffer-int8.cpp
+                 pixelbuffer-int16.cpp
+                 pixelbuffer-int32.cpp
+                 pixelbuffer-uint8.cpp
+                 pixelbuffer-uint16.cpp
+                 pixelbuffer-uint32.cpp
+                 pixelbuffer-float.cpp
+                 pixelbuffer-double.cpp
+                 pixelbuffer-bit.cpp
+                 pixelbuffer-complex.cpp
+                 pixelbuffer-doublecomplex.cpp)
   target_link_libraries(pixelbuffer ome-bioformats)
   target_link_libraries(pixelbuffer ome-test)
 
@@ -79,8 +107,15 @@ if(BUILD_TESTS)
   add_executable(tiff tiff.cpp)
   target_link_libraries(tiff ome-bioformats)
   target_link_libraries(tiff ome-test)
+  add_dependencies(tiff gentestimages)
 
   add_test(ome-bioformats/tiff tiff)
+
+  add_executable(variantpixelbuffer variantpixelbuffer.cpp)
+  target_link_libraries(variantpixelbuffer ome-bioformats)
+  target_link_libraries(variantpixelbuffer ome-test)
+
+  add_test(ome-bioformats/variantpixelbuffer variantpixelbuffer)
 
   add_executable(version version.cpp)
   target_link_libraries(version ome-bioformats)

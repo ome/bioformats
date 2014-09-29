@@ -56,11 +56,11 @@
 # endif
 # ifndef BOOST_MPL_LIMIT_VECTOR_SIZE
 /// MPL vector size limit increase.
-#  define BOOST_MPL_LIMIT_VECTOR_SIZE 30
+#  define BOOST_MPL_LIMIT_VECTOR_SIZE 40
 # endif
 # ifndef BOOST_MPL_LIMIT_LIST_SIZE
 /// MPL list size limit increase.
-#  define BOOST_MPL_LIMIT_LIST_SIZE 30
+#  define BOOST_MPL_LIMIT_LIST_SIZE 40
 # endif
 #endif
 
@@ -70,6 +70,7 @@
 #include <boost/mpl/vector.hpp>
 
 #include <boost/variant/apply_visitor.hpp>
+//#include <boost/variant/multivisitors.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/variant.hpp>
 

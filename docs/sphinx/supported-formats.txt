@@ -952,6 +952,15 @@ Supported Formats
      - |Good|
      - |no|
      - |no|
+   * - :doc:`formats/picoquant-bin`
+     - .bin
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |no|
+     - |no|
    * - :doc:`formats/pict-macintosh-picture`
      - .pict
      - |Very good|
@@ -1241,7 +1250,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **135** formats
+Bio-Formats currently supports **136** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1406,6 +1415,7 @@ Bio-Formats currently supports **135** formats
     formats/pgm
     formats/photoshop-psd
     formats/photoshop-tiff
+    formats/picoquant-bin
     formats/pict-macintosh-picture
     formats/png
     formats/prairie-tech-tiff

@@ -66,7 +66,10 @@ public class PrintTimestamps {
   /** Outputs global timing details. */
   public static void printGlobalTiming(IMetadata meta, int series) {
     String imageName = meta.getImageName(series);
-    String creationDate = meta.getImageAcquisitionDate(series).getValue();
+    String creationDate = null;
+    if (meta.getImageAcquisitionDate(series) != null) {
+      creationDate = meta.getImageAcquisitionDate(series).getValue();
+    }
     Double timeInc = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Global timing information:");

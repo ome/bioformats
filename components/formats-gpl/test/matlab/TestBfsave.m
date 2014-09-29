@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,7 +24,7 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfsave < TestBfMatlab
+classdef TestBfsave < ReaderTest
     
     properties
         path
@@ -34,22 +34,18 @@ classdef TestBfsave < TestBfMatlab
     
     methods
         function self = TestBfsave(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
         end
         
         function setUp(self)
-            setUp@TestBfMatlab(self);
-            bfCheckJavaPath();
-            if isunix,
-                self.path = '/tmp/test.ome.tiff';
-            else
-                self.path = 'C:\test.ome.tiff';
-            end
+            setUp@ReaderTest(self);
+            mkdir(self.tmpdir);
+            self.path = fullfile(self.tmpdir, 'test.ome.tif');
         end
         
         function tearDown(self)
-            if exist(self.path,'file')==2, delete(self.path); end
-            tearDown@TestBfMatlab(self);
+            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
+            tearDown@ReaderTest(self);
         end
         
         function checkMinimalMetadata(self)
@@ -70,6 +66,30 @@ classdef TestBfsave < TestBfMatlab
                     sprintf('Channel:0:%g', i - 1));
             end
 
+        end
+        
+        % Input check tests
+        function testNoInput(self)
+            assertExceptionThrown(@() bfsave(),...
+                'MATLAB:InputParser:notEnoughInputs');
+        end
+        
+        function testNoOutputPath(self)
+            self.I = 1;
+            assertExceptionThrown(@() bfsave(self.I),...
+                'MATLAB:InputParser:notEnoughInputs');
+        end
+        
+        function testInvalidI(self)
+            self.I = 'a';
+            assertExceptionThrown(@() bfsave(self.I, self.path),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testInvalidDimensionOrder(self)
+            self.I = 1;
+            assertExceptionThrown(@() bfsave(self.I, self.path, 'XY'),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         % Dimension order tests

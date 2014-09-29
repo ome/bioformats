@@ -34,7 +34,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -99,10 +98,7 @@ public class MRWReader extends FormatReader {
     if (dataSize == 12) nBytes *= 3;
     else if (dataSize == 16) nBytes *= 4;
 
-    byte[] tmp = new byte[nBytes];
     in.seek(offset);
-    in.read(tmp);
-    BitBuffer bb = new BitBuffer(tmp);
 
     short[] s = new short[getSizeX() * getSizeY() * 3];
 
@@ -110,7 +106,7 @@ public class MRWReader extends FormatReader {
       boolean evenRow = (row % 2) == 0;
       for (int col=0; col<getSizeX(); col++) {
         boolean evenCol = (col % 2) == 0;
-        short val = (short) (bb.getBits(dataSize) & 0xffff);
+        short val = (short) (in.readBits(dataSize) & 0xffff);
 
         int redOffset = row * getSizeX() + col;
         int greenOffset = (getSizeY() + row) * getSizeX() + col;
@@ -141,7 +137,7 @@ public class MRWReader extends FormatReader {
           }
         }
       }
-      bb.skipBits(dataSize * (sensorWidth - getSizeX()));
+      in.skipBits(dataSize * (sensorWidth - getSizeX()));
     }
 
     int[] colorMap = bayerPattern == 1 ? COLOR_MAP_1 : COLOR_MAP_2;

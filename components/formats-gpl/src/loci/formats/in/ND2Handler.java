@@ -494,16 +494,19 @@ public class ND2Handler extends BaseHandler {
           LOGGER.warn("Could not set the pixel type", e);
         }
       }
-      else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
+      else if (qName.equals("uiWidthBytes") || qName.startsWith("uiBpc")) {
         int div = qName.equals("uiWidthBytes") ? ms0.sizeX : 8;
         if (div > 0) {
-          int bytes = Integer.parseInt(value) / div;
+          int bits = Integer.parseInt(value);
+          int bytes = bits / div;
 
-          try {
-            ms0.pixelType =
-              FormatTools.pixelTypeFromBytes(bytes, false, false);
+          if (bytes * div == bits) {
+            try {
+              ms0.pixelType =
+                FormatTools.pixelTypeFromBytes(bytes, false, false);
+            }
+            catch (FormatException e) { }
           }
-          catch (FormatException e) { }
           parseKeyAndValue(qName, value, prevRuntype);
         }
       }
@@ -771,7 +774,7 @@ public class ND2Handler extends BaseHandler {
           }
         }
       }
-      else if (key.startsWith("Dimensions")) {
+      else if (isDimensions(key)) {
         String[] dims = value.split(" x ");
 
         if (ms0.sizeZ == 0) ms0.sizeZ = 1;
@@ -855,6 +858,10 @@ public class ND2Handler extends BaseHandler {
           if (s.length > 1) {
             if (s[1].equals("ms")) time /= 1000;
           }
+          else {
+            // assume time is in milliseconds
+            time /= 1000;
+          }
           exposureTime.add(new Double(time));
         }
       }
@@ -924,6 +931,18 @@ public class ND2Handler extends BaseHandler {
     catch (NumberFormatException exc) {
       LOGGER.warn("Could not parse {} value: {}", key, value);
     }
+  }
+
+
+  /**
+   * Returns whether or not the specified key is denotes dimensions.
+   * Full versions of Elements allow the user to choose a language,
+   * though it's not clear what all of the choices are.
+   * Most keys are always recorded in English, but some are recorded
+   * in the language specified by the user.
+   */
+  public boolean isDimensions(String key) {
+     return key.startsWith("Dimensions") || key.startsWith("Abmessungen");
   }
 
 }

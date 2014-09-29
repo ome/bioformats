@@ -28,7 +28,7 @@ classdef TestBfMatlab < TestCase
     
     properties
         jarPath
-        reader
+        tmpdir
     end
     
     methods
@@ -45,13 +45,13 @@ classdef TestBfMatlab < TestCase
             if ismember(self.jarPath,javaclasspath('-dynamic'))
                 javarmpath(self.jarPath);
             end
+            
+            java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
+            uuid = char(java.util.UUID.randomUUID().toString());
+            self.tmpdir = fullfile(java_tmpdir, uuid);
         end
         
         function tearDown(self)
-            if ~isempty(self.reader),
-                self.reader.close();
-                self.reader = [];
-            end
             % Remove  Bio-Formats JAR file from dynamic class path
             if ismember(self.jarPath,javaclasspath('-dynamic'))
                 javarmpath(self.jarPath);

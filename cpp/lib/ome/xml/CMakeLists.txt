@@ -34,7 +34,8 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS})
 
 xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
 xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)

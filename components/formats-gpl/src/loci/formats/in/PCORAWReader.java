@@ -36,6 +36,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 
 /**
  * PCORAWReader is the file format reader for PCORAW files.
@@ -140,6 +141,33 @@ public class PCORAWReader extends FormatReader {
 
     core = reader.getCoreMetadataList();
     metadata = reader.getGlobalMetadata();
+
+    in = new RandomAccessInputStream(id);
+    try {
+      if (in.length() >= Math.pow(2, 32)) {
+        // even though BigTIFF is likely being used, the offsets
+        // are still recorded as though only 32 bits are available
+
+        long add = 0;
+        long prevOffset = 0;
+        for (IFD ifd : reader.ifds) {
+          long[] offsets = ifd.getStripOffsets();
+          for (int i=0; i<offsets.length; i++) {
+            offsets[i] += add;
+
+            if (offsets[i] < prevOffset) {
+              add += 0x100000000L;
+              offsets[i] += 0x100000000L;
+            }
+            prevOffset = offsets[i];
+          }
+          ifd.put(IFD.STRIP_OFFSETS, offsets);
+        }
+      }
+    }
+    finally {
+      in.close();
+    }
 
     if (paramFile == null) {
       String base = imageFile.substring(0, imageFile.lastIndexOf("."));

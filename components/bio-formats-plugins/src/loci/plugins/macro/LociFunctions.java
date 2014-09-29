@@ -417,7 +417,9 @@ public class LociFunctions extends MacroFunctions {
 
   public void getImageCreationDate(String[] creationDate) {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    creationDate[0] = retrieve.getImageAcquisitionDate(r.getSeries()).getValue();
+    if (retrieve.getImageAcquisitionDate(r.getSeries()) != null) {
+      creationDate[0] = retrieve.getImageAcquisitionDate(r.getSeries()).getValue();
+    }
   }
 
   public void getPlaneTimingDeltaT(Double[] deltaT, Double no) {

@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.Vector;
 import java.util.zip.InflaterInputStream;
 
+import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -45,7 +46,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -528,17 +528,19 @@ public class APNGReader extends FormatReader {
 
     if (getBitsPerPixel() < 8) {
       byte[] expandedImage = new byte[FormatTools.getPlaneSize(this)];
-      BitBuffer bits = new BitBuffer(image);
+      RandomAccessInputStream bits = new RandomAccessInputStream(
+        new ByteArrayHandle(image));
 
       int skipBits = rowLen * 8 - getSizeX() * getBitsPerPixel();
       for (int row=0; row<getSizeY(); row++) {
         for (int col=0; col<getSizeX(); col++) {
           int index = row * getSizeX() + col;
           expandedImage[index] =
-            (byte) (bits.getBits(getBitsPerPixel()) & 0xff);
+            (byte) (bits.readBits(getBitsPerPixel()) & 0xff);
         }
         bits.skipBits(skipBits);
       }
+      bits.close();
 
       image = expandedImage;
     }

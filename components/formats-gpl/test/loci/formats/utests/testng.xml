@@ -36,7 +36,7 @@
             <package name="loci.formats.utests.xml"/>
         </packages>
     </test>
-    <test name="2010-04SchemaModelObjects">
+    <test name="CurrentSchemaModelObjects">
         <groups>
             <run>
                 <exclude name="disabled"/>
@@ -45,10 +45,10 @@
         <parameter name="mockClassName"
                    value="loci.formats.utests.ObjectBasedOMEModelMock"/>
         <classes>
-            <class name="loci.formats.utests.InOut201004Test"/>
+            <class name="loci.formats.utests.InOutCurrentTest"/>
         </classes>
     </test>
-    <test name="2010-04SchemaIMetadata">
+    <test name="CurrentSchemaIMetadata">
         <groups>
             <run>
                 <exclude name="disabled"/>
@@ -57,7 +57,7 @@
         <parameter name="mockClassName"
                    value="loci.formats.utests.IMetadataBasedOMEModelMock"/>
         <classes>
-            <class name="loci.formats.utests.InOut201004Test"/>
+            <class name="loci.formats.utests.InOutCurrentTest"/>
         </classes>
     </test>
     <test name="XMLAnnotation">

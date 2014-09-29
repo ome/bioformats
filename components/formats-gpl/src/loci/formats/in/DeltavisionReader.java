@@ -63,7 +63,7 @@ public class DeltavisionReader extends FormatReader {
   public static final int DV_MAGIC_BYTES_1 = 0xa0c0;
   public static final int DV_MAGIC_BYTES_2 = 0xc0a0;
 
-  public static final String DATE_FORMAT = "EEE MMM  d HH:mm:ss yyyy";
+  public static final String DATE_FORMAT = "E MMM d HH:mm:ss yyyy";
 
   private static final short LITTLE_ENDIAN = -16224;
   private static final int HEADER_LENGTH = 1024;
@@ -386,6 +386,8 @@ public class DeltavisionReader extends FormatReader {
     // Run through every image and fill in the
     // Extended Header information array for that image
     int offset = HEADER_LENGTH + numIntsPerSection * 4;
+    boolean hasZeroX = false;
+    boolean hasZeroY = false;
     for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
       int z = coords[0];
@@ -398,16 +400,32 @@ public class DeltavisionReader extends FormatReader {
       DVExtHdrFields hdr = new DVExtHdrFields(in);
       extHdrFields[z][w][t] = hdr;
 
-      if (!uniqueTileX.contains(hdr.stageXCoord)) {
+      if (!uniqueTileX.contains(hdr.stageXCoord) && hdr.stageXCoord != 0) {
         uniqueTileX.add(hdr.stageXCoord);
       }
-      if (!uniqueTileY.contains(hdr.stageYCoord)) {
+      else if (hdr.stageXCoord == 0) {
+        hasZeroX = true;
+      }
+
+      if (!uniqueTileY.contains(hdr.stageYCoord) && hdr.stageYCoord != 0) {
         uniqueTileY.add(hdr.stageYCoord);
+      }
+      else if (hdr.stageYCoord == 0) {
+        hasZeroY = true;
       }
     }
 
     xTiles = uniqueTileX.size();
     yTiles = uniqueTileY.size();
+
+    if (xTiles > 1 || yTiles > 1) {
+      if (hasZeroX) {
+        xTiles++;
+      }
+      if (hasZeroY) {
+        yTiles++;
+      }
+    }
 
     if (yTiles > 1) {
       if (uniqueTileY.get(1) < uniqueTileY.get(0)) {
@@ -932,12 +950,8 @@ public class DeltavisionReader extends FormatReader {
 
     for (String line : lines) {
       int colon = line.indexOf(":");
-      if (colon != -1) {
-        if (line.startsWith("Created")) {
-          key = "Created";
-          colon = 6;
-        }
-        else key = line.substring(0, colon).trim();
+      if (colon != -1 && !line.startsWith("Created")) {
+        key = line.substring(0, colon).trim();
 
         value = line.substring(colon + 1).trim();
         if (value.equals("") && !key.equals("")) prefix = key;

@@ -38,6 +38,8 @@
 #ifndef OME_BIOFORMATS_TIFF_TYPES_H
 #define OME_BIOFORMATS_TIFF_TYPES_H
 
+#include <ome/bioformats/Types.h>
+
 #include <ome/compat/cstdint.h>
 
 namespace ome
@@ -123,6 +125,13 @@ namespace ome
           LOGLUV = 32845    ///< CIE log2(L) (u',v').
         };
 
+      /// Planar configuration of samples.
+      enum PlanarConfiguration
+        {
+          CONTIG = 1,  ///< Samples are contiguous (chunky).
+          SEPARATE = 2 ///< Samples are separate (planar).
+        };
+
       /// Prediction scheme.
       enum Predictor
         {
@@ -156,6 +165,95 @@ namespace ome
           CENTERED = 1, ///< Centered.
           COSITED = 2   ///< Co-sited.
         };
+
+      /**
+       * A rectangular region.
+       *
+       * The region is specified by top-left (x,y) coordinates plus
+       * width and height.
+       */
+      struct PlaneRegion
+      {
+        /// The @c X coordinate of the upper-left corner of the region.
+        dimension_size_type x;
+        /// The @c Y coordinate of the upper-left corner of the region.
+        dimension_size_type y;
+        /// The width of the region.
+        dimension_size_type w;
+        /// The height of the region.
+        dimension_size_type h;
+
+        /**
+         * Default construct.
+         *
+         * By default the region has zero width and height.
+         */
+        PlaneRegion():
+          x(0),
+          y(0),
+          w(0),
+          h(0)
+        {}
+
+        /**
+         * Construct from coordinates, width and height.
+         *
+         * @param x the @c X coordinate of the upper-left corner of the region.
+         * @param y the @c Y coordinate of the upper-left corner of the region.
+         * @param w the width of the region.
+         * @param h the height of the region.
+         */
+         PlaneRegion(dimension_size_type x,
+                     dimension_size_type y,
+                     dimension_size_type w,
+                     dimension_size_type h):
+          x(x),
+          y(y),
+          w(w),
+          h(h)
+        {}
+      };
+
+      /**
+       * Intersect two regions.
+       *
+       * If the regions do not intersect, a default-constructed region
+       * of zero size will be returned.
+       *
+       * @param a the first region.
+       * @param b the second region.
+       * @returns the intersection of the two regions.
+       */
+      inline
+      PlaneRegion
+      operator&(const PlaneRegion& a,
+                const PlaneRegion& b)
+      {
+        dimension_size_type l1 = a.x;
+        dimension_size_type r1 = a.x + a.w;
+
+        dimension_size_type l2 = b.x;
+        dimension_size_type r2 = b.x + b.w;
+
+        if (l1 > r2 || l2 > r1)
+          return PlaneRegion();
+
+        dimension_size_type t1 = a.y;
+        dimension_size_type b1 = a.y + a.h;
+
+        dimension_size_type t2 = b.y;
+        dimension_size_type b2 = b.y + b.h;
+
+        if (t1 > b2 || t2 > b1)
+          return PlaneRegion();
+
+        dimension_size_type il = std::max(l1, l2);
+        dimension_size_type ir = std::min(r1, r2);
+        dimension_size_type it = std::max(t1, t2);
+        dimension_size_type ib = std::min(b1, b2);
+
+        return PlaneRegion(il, it, ir-il, ib-it);
+      }
 
     }
   }

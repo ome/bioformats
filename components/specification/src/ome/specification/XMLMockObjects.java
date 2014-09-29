@@ -218,7 +218,7 @@ public class XMLMockObjects
   public static final Integer SIZE_Z = 1;
 
   /** The default number of channels. */
-  public static final Integer SIZE_C = 3;
+  public static final Integer SIZE_C = 1;
 
   /** The default number of time-points. */
   public static final Integer SIZE_T = 1;
@@ -1278,41 +1278,6 @@ public class XMLMockObjects
       }
       if (annotation != null) {
         ((Well) object).linkAnnotation(annotation);
-      }
-    } else if (object instanceof WellSample) {
-      if (CommentAnnotation.class.getName().equals(type)) {
-        CommentAnnotation c = new CommentAnnotation();
-        c.setID("WellSampleCommentAnnotation:" + index);
-        c.setValue("WellSample:"+index+" CommentAnnotation.");
-        annotation = c;
-      } else if (BooleanAnnotation.class.getName().equals(type)) {
-        BooleanAnnotation b = new BooleanAnnotation();
-        b.setID("WellSampleBooleanAnnotation:" + index);
-        b.setValue(true);
-        annotation = b;
-      } else if (LongAnnotation.class.getName().equals(type)) {
-        LongAnnotation l = new LongAnnotation();
-        l.setID("WellSampleLongAnnotation:" + index);
-        l.setValue(1L);
-        annotation = l;
-      } else if (TagAnnotation.class.getName().equals(type)) {
-        TagAnnotation tag = new TagAnnotation();
-        tag.setID("WellSampleTagAnnotation:" + index);
-        tag.setValue("WellSample:"+index+" TagAnnotation.");
-        annotation = tag;
-      } else if (TermAnnotation.class.getName().equals(type)) {
-        TermAnnotation term = new TermAnnotation();
-        term.setID("WellSampleTermAnnotation:" + index);
-        term.setValue("WellSample:"+index+" TermAnnotation.");
-        annotation = term;
-      } else if (FileAnnotation.class.getName().equals(type)) {
-        FileAnnotation f = new FileAnnotation();
-        f.setID("WellSampleFileAnnotation:" + index);
-        f.setBinaryFile(createBinaryFile());
-        annotation = f;
-      }
-      if (annotation != null) {
-        ((WellSample) object).linkAnnotation(annotation);
       }
     }
     return annotation;
