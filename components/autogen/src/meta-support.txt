@@ -4371,9 +4371,15 @@ Plane.TheT = Yes
 Plane.TheZ = Yes
 
 [FakeReader]
+BooleanAnnotation.ID = Yes
+BooleanAnnotation.Namespace = Yes
+BooleanAnnotation.Value = Yes
 Channel.Color = Yes
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
+CommentAnnotation.ID = Yes
+CommentAnnotation.Namespace = Yes
+CommentAnnotation.Value = Yes
 DoubleAnnotation.ID = Yes
 DoubleAnnotation.Namespace = Yes
 DoubleAnnotation.Value = Yes
@@ -4402,6 +4408,18 @@ Plane.ExposureTime = Yes
 Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
+TagAnnotation.ID = Yes
+TagAnnotation.Namespace = Yes
+TagAnnotation.Value = Yes
+TermAnnotation.ID = Yes
+TermAnnotation.Namespace = Yes
+TermAnnotation.Value = Yes
+TimestampAnnotation.ID = Yes
+TimestampAnnotation.Namespace = Yes
+TimestampAnnotation.Value = Yes
+XMLAnnotation.ID = Yes
+XMLAnnotation.Namespace = Yes
+XMLAnnotation.Value = Yes
 
 [FilePatternReader]
 Channel.ID = Yes
@@ -4426,6 +4444,28 @@ Plane.TheZ = Yes
 
 [FitsReader]
 Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Pixels.BigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.Interleaved = Yes
+Pixels.SignificantBits = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[FlowSightReader]
+Channel.ID = Yes
+Channel.Name = Yes
 Channel.SamplesPerPixel = Yes
 Image.AcquisitionDate = Yes
 Image.ID = Yes
@@ -4536,6 +4576,27 @@ Plane.ExposureTime = Yes
 Plane.PositionX = Yes
 Plane.PositionY = Yes
 Plane.PositionZ = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[IM3Reader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Pixels.BigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.Interleaved = Yes
+Pixels.SignificantBits = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
 Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
