@@ -53,6 +53,7 @@ public class KodakReader extends FormatReader {
   private static final String MAGIC_STRING = "DTag";
   private static final String PIXELS_STRING = "BSfD";
   private static final String DIMENSIONS_STRING = "GBiH";
+  private static final String FILEINFO_STRING = "DLFi";
 
   private static final String DATE_FORMAT = "HH:mm:ss 'on' MM/dd/yyyy";
 
@@ -129,6 +130,7 @@ public class KodakReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     readExtraMetadata(store);
+    readFileInfoMetadata(store);
   }
 
   // -- Helper methods --
@@ -140,18 +142,18 @@ public class KodakReader extends FormatReader {
     in.read(buf, 0, overlap);
 
     while (in.getFilePointer() < in.length()) {
-      in.read(buf, overlap, buf.length - overlap);
+      int length = in.read(buf, overlap, buf.length - overlap);
 
-      for (int i=0; i<buf.length-overlap; i++) {
+      for (int i=0; i<length; i++) {
         if (marker.equals(
           new String(buf, i, marker.length(), Constants.ENCODING)))
         {
-          in.seek(in.getFilePointer() - buf.length + i);
+          in.seek(in.getFilePointer() - (length + overlap) + i);
           return;
         }
       }
 
-      System.arraycopy(buf, buf.length - overlap, buf, 0, overlap);
+      System.arraycopy(buf, length, buf, 0, overlap);
     }
   }
 
@@ -231,4 +233,35 @@ public class KodakReader extends FormatReader {
     }
   }
 
+  private void readFileInfoMetadata(MetadataStore store) throws IOException {
+    in.seek(0);
+    findString(FILEINFO_STRING);
+
+    int tagLength = FILEINFO_STRING.length();
+
+    if (in.length() - in.getFilePointer() < tagLength + 20) {
+      return;
+    }
+
+    in.skipBytes(tagLength + 16);
+    int dataLength = in.readInt() - tagLength - 20;
+
+    if (in.length() - in.getFilePointer() < dataLength) {
+      return;
+    }
+
+    byte[] data = new byte[dataLength];
+    if (in.read(data) != dataLength) {
+      return;
+    }
+
+    String info = new String(data, Constants.ENCODING);
+    info = info.trim().replaceAll("(\\r|\\n)+", " | ");
+
+    if (info.isEmpty()) {
+      return;
+    }
+
+    addGlobalMeta("FileInfo", info);
+  }
 }
