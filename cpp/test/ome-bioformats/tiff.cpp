@@ -182,7 +182,7 @@ namespace
     VariantPixelBuffer::size_type h = shape[ome::bioformats::DIM_SPATIAL_X];
     VariantPixelBuffer::size_type s = shape[ome::bioformats::DIM_SUBCHANNEL];
 
-    typedef typename ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type pixeltype;
+    typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type pixeltype;
 
     const std::shared_ptr<PixelBuffer<pixeltype> >& rbuf
       = boost::get<std::shared_ptr<PixelBuffer<pixeltype> > >(buf.vbuffer());
@@ -843,7 +843,7 @@ public:
     std::vector<png_bytep> row_pointers(pheight);
     for (dimension_size_type y = 0; y < pheight; ++y)
       {
-        typename VariantPixelBuffer::indices_type coord;
+        VariantPixelBuffer::indices_type coord;
         coord[ome::bioformats::DIM_SPATIAL_X] = 0;
         coord[ome::bioformats::DIM_SPATIAL_Y] = y;
         coord[ome::bioformats::DIM_SUBCHANNEL] = 0;
