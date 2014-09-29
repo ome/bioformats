@@ -183,6 +183,7 @@ namespace ome
         /// The height of the region.
         dimension_size_type h;
 
+      public:
         /**
          * Default construct.
          *
@@ -194,6 +195,17 @@ namespace ome
           w(0),
           h(0)
         {}
+
+        /**
+         * Is the region invalid?
+         *
+         * @returns @c true if the region has a width and height
+         * of zero, @c false otherwise.
+         */
+        bool
+        valid() const {
+          return w && h;
+        }
 
         /**
          * Construct from coordinates, width and height.

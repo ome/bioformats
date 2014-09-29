@@ -409,6 +409,18 @@ TEST(TIFFTest, RegionUnion6)
   EXPECT_EQ(0, r4.h);
 }
 
+TEST(TIFFTest, RegionValid)
+{
+  // Overlap
+  PlaneRegion r1;
+  ASSERT_TRUE(!r1.valid());
+  ASSERT_FALSE(r1.valid());
+
+  PlaneRegion r2(0, 0, 5, 2);
+  ASSERT_TRUE(r2.valid());
+  ASSERT_FALSE(!r2.valid());
+}
+
 TEST(TIFFTest, Construct)
 {
   ASSERT_NO_THROW(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
