@@ -129,7 +129,7 @@ public abstract class FormatReader extends FormatHandler
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
 
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable<String, Object> metadata;
@@ -208,6 +208,14 @@ public abstract class FormatReader extends FormatHandler
   }
 
   // -- Internal FormatReader API methods --
+
+  /** Reinitialize the underlying file handle. */
+  protected void reopenFile() throws IOException {
+    if (in != null) {
+      in.close();
+    }
+    in = new RandomAccessInputStream(currentId);
+  }
 
   /**
    * Initializes the given file (parsing header information, etc.).
