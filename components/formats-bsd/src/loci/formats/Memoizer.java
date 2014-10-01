@@ -608,9 +608,7 @@ public class Memoizer extends ReaderWrapper {
         // loadMemo has already called handleMetadataStore with non-null
         loadedFromMemo = true;
         reader = memo;
-        if (reader instanceof FormatReader) {
-          ((FormatReader) reader).reopenFile();
-        }
+        reader.reopenFile();
       }
     } catch (ServiceException e) {
       LOGGER.error("Could not create OMEXMLMetadata", e);

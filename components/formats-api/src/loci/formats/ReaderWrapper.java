@@ -569,6 +569,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader.setId(id);
   }
 
+  public void reopenFile() throws IOException {
+    reader.reopenFile();
+  }
+
   public void close() throws IOException {
     reader.close();
   }

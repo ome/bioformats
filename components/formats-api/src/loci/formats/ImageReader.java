@@ -753,6 +753,11 @@ public class ImageReader implements IFormatReader {
     currentReader.setId(id);
   }
 
+  /* @see IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    getReader().reopenFile();
+  }
+
   /* @see IFormatHandler#close() */
   public void close() throws IOException { close(false); }
 

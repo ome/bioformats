@@ -209,8 +209,8 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Internal FormatReader API methods --
 
-  /** Reinitialize the underlying file handle. */
-  protected void reopenFile() throws IOException {
+  /* @see IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
     if (in != null) {
       in.close();
     }
@@ -1313,6 +1313,7 @@ public abstract class FormatReader extends FormatHandler
     coreIndex = no;
     series = coreIndexToSeries(no);
   }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

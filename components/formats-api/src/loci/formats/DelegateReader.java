@@ -231,6 +231,16 @@ public abstract class DelegateReader extends FormatReader {
     return nativeReader.getOptimalTileHeight();
   }
 
+  /* @see IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    if (useLegacy) {
+      legacyReader.reopenFile();
+    }
+    else {
+      nativeReader.reopenFile();
+    }
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
