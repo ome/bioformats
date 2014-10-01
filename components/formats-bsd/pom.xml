@@ -312,16 +312,12 @@
       <layout>default</layout>
     </pluginRepository>
     <pluginRepository>
-      <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+      <id>ome.external</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
     <pluginRepository>
       <id>imagej.thirdparty</id>
       <url>http://maven.imagej.net/content/repositories/thirdparty</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>ome.external</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
   </pluginRepositories>
 

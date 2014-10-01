@@ -193,11 +193,6 @@ namespace ome
             ret = TIFFTAG_MINSAMPLEVALUE;
 #endif
             break;
-          case PLANARCONFIG:
-#ifdef TIFFTAG_PLANARCONFIG
-            ret = TIFFTAG_PLANARCONFIG;
-#endif
-            break;
           case RESOLUTIONUNIT:
 #ifdef TIFFTAG_RESOLUTIONUNIT
             ret = TIFFTAG_RESOLUTIONUNIT;
@@ -254,6 +249,22 @@ namespace ome
           case PHOTOMETRIC:
 #ifdef TIFFTAG_PHOTOMETRIC
             ret = TIFFTAG_PHOTOMETRIC;
+#endif
+            break;
+          };
+        return ret;
+      }
+
+      tag_type
+      getWrappedTag(UInt16PlanarConfiguration1 tag)
+      {
+        tag_type ret = 0;
+
+        switch(tag)
+          {
+          case PLANARCONFIG:
+#ifdef TIFFTAG_PLANARCONFIG
+            ret = TIFFTAG_PLANARCONFIG;
 #endif
             break;
           };

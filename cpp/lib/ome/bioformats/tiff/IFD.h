@@ -42,6 +42,7 @@
 
 #include <ome/compat/memory.h>
 
+#include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
 
@@ -190,6 +191,24 @@ namespace ome
         {
           return Field<TagCategory>(const_cast<IFD *>(this)->shared_from_this(), tag);
         }
+
+        /**
+         * Get tiling metadata.
+         *
+         * @returns the TileInfo metadata for this IFD.
+         * @throws an Exception if tiles are not supported.
+         */
+        TileInfo
+        getTileInfo();
+
+        /**
+         * Get tiling metadata.
+         *
+         * @returns the TileInfo metadata for this IFD.
+         * @throws an Exception if tiles are not supported.
+         */
+        const TileInfo
+        getTileInfo() const;
 
         /**
          * Get the OME data model PixelType.
