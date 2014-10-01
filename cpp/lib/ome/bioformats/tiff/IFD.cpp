@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdarg>
+#include <cassert>
 
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
@@ -47,6 +48,7 @@
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
 #include <ome/bioformats/tiff/TileBuffer.h>
+#include <ome/bioformats/tiff/TileCache.h>
 
 #include <ome/compat/thread.h>
 #include <ome/compat/string.h>
@@ -189,15 +191,18 @@ namespace
   struct WriteVisitor : public boost::static_visitor<>
   {
     IFD&                                    ifd;
+    TileCache&                              tilecache;
     const TileInfo&                         tileinfo;
     const PlaneRegion&                      region;
     const std::vector<dimension_size_type>& tiles;
 
     WriteVisitor(IFD&                                    ifd,
+                 TileCache&                              tilecache,
                  const TileInfo&                         tileinfo,
                  const PlaneRegion&                      region,
                  const std::vector<dimension_size_type>& tiles):
       ifd(ifd),
+      tilecache(tilecache),
       tileinfo(tileinfo),
       region(region),
       tiles(tiles)
@@ -205,13 +210,92 @@ namespace
 
     template<typename T>
     void
-    operator()(const std::shared_ptr<T>& /* buffer */)
+    operator()(const std::shared_ptr<T>& buffer)
     {
+      std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
+      ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
+      TileInfo::TileType type = tileinfo.tileType();
+
+      uint32_t imagewidth;
+      uint32_t imageheight;
+      ifd.getField(IMAGEWIDTH).get(imagewidth);
+      ifd.getField(IMAGELENGTH).get(imageheight);
+
+      uint16_t samples;
+      ifd.getField(SAMPLESPERPIXEL).get(samples);
+      PlanarConfiguration planarconfig;
+      ifd.getField(PLANARCONFIG).get(planarconfig);
+
+      Sentry sentry;
       for(std::vector<dimension_size_type>::const_iterator i = tiles.begin();
           i != tiles.end();
           ++i)
         {
-          PlaneRegion r = tileinfo.tileRegion(*i, region);
+          tstrile_t tile = *i;
+          PlaneRegion rfull = tileinfo.tileRegion(tile);
+          PlaneRegion rclip = tileinfo.tileRegion(tile, region);
+          dimension_size_type sample = tileinfo.tileSample(tile);
+
+          uint16_t copysamples = samples;
+          dimension_size_type dest_subchannel = 0;
+          if (planarconfig == SEPARATE)
+            {
+              copysamples = 1;
+              dest_subchannel = sample;
+            }
+
+          if (!tilecache.find(tile))
+            tilecache.insert(tile, std::make_shared<TileBuffer>(tileinfo.bufferSize()));
+          assert(tilecache.find(tile));
+          TileBuffer& tilebuf = *tilecache.find(tile);
+
+          typename T::indices_type srcidx;
+          srcidx[ome::bioformats::DIM_SPATIAL_X] = 0;
+          srcidx[ome::bioformats::DIM_SPATIAL_Y] = 0;
+          srcidx[ome::bioformats::DIM_SUBCHANNEL] = dest_subchannel;
+          srcidx[ome::bioformats::DIM_SPATIAL_Z] = srcidx[ome::bioformats::DIM_TEMPORAL_T] =
+            srcidx[ome::bioformats::DIM_CHANNEL] = srcidx[ome::bioformats::DIM_MODULO_Z] =
+            srcidx[ome::bioformats::DIM_MODULO_T] = srcidx[ome::bioformats::DIM_MODULO_C] = 0;
+
+          if (rclip.w == rfull.w &&
+              rclip.x == region.x &&
+              rclip.w == region.w)
+            {
+              // Transfer contiguous block since the tile spans the
+              // whole region width for both source and destination
+              // buffers.
+
+              srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+              srcidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
+
+              typename T::value_type *dest = &buffer->at(srcidx);
+              const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
+              std::copy(src, src + (rclip.w * rclip.h * copysamples), dest);
+            }
+          else
+            {
+              // Transfer discontiguous block.
+
+              dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
+
+              for (dimension_size_type row = rclip.y;
+                   row != rclip.y + rclip.h;
+                   ++row)
+                {
+                  dimension_size_type yoffset = (row - rfull.y) * (rfull.w * copysamples);
+
+                  srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+                  srcidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
+
+                  typename T::value_type *dest = &buffer->at(srcidx);
+                  const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
+                  std::copy(src + yoffset + xoffset,
+                            src + yoffset + xoffset + (rclip.w * copysamples),
+                            dest);
+                }
+            }
+
+
         }
     }
   };
@@ -255,6 +339,8 @@ namespace ome
         std::shared_ptr<TIFF> tiff;
         /// Offset of this IFD.
         offset_type offset;
+        /// Tile cache (used when writing).
+        TileCache tilecache;
 
         /**
          * Constructor.
@@ -265,7 +351,8 @@ namespace ome
         Impl(std::shared_ptr<TIFF>& tiff,
              offset_type            offset):
           tiff(tiff),
-          offset(offset)
+          offset(offset),
+          tilecache()
         {
         }
 
@@ -663,7 +750,7 @@ namespace ome
         PlaneRegion region(x, y, w, h);
         std::vector<dimension_size_type> tiles(info.tileCoverage(region));
 
-        WriteVisitor v(*this, info, region, tiles);
+        WriteVisitor v(*this, impl->tilecache, info, region, tiles);
         boost::apply_visitor(v, source.vbuffer());
       }
 
