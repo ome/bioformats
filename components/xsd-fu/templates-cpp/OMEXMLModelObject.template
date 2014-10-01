@@ -1054,7 +1054,7 @@ ${customUpdatePropertyContent[prop.name]}
         getLightSourceType() const = 0;
 {% end header %}\
 {% end light source%}\
-{% if klass.parents is not None and "LightSource" in klass.parents.keys() %}\
+{% if klass.name != "AnnotationRef" and klass.parents is not None and "LightSource" in klass.parents.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
         getLightSourceType() const;
@@ -1079,7 +1079,7 @@ ${customUpdatePropertyContent[prop.name]}
         getShapeType() const = 0;
 {% end header %}\
 {% end shape%}\
-{% if klass.parents is not None and "Shape" in klass.parents.keys() %}\
+{% if klass.name != "AnnotationRef" and klass.parents is not None and "Shape" in klass.parents.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
         getShapeType() const;
