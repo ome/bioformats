@@ -166,6 +166,13 @@ namespace ome
           COSITED = 2   ///< Co-sited.
         };
 
+      /// Type of tile.
+      enum TileType
+        {
+          STRIP, ///< Strips.
+          TILE   ///< Tiles.
+        };
+
       /**
        * A rectangular region.
        *

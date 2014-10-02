@@ -59,14 +59,6 @@ namespace ome
        */
       class TileInfo
       {
-      public:
-        /// Type of tile.
-        enum TileType
-          {
-            STRIP, ///< Strips.
-            TILE   ///< Tiles.
-          };
-
       protected:
         friend class IFD;
 

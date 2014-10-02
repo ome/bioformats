@@ -187,7 +187,7 @@ namespace ome
       {
       }
 
-      TileInfo::TileType
+      TileType
       TileInfo::tileType() const
       {
         return impl->type;
