@@ -29,7 +29,7 @@
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 
-package ome.units;
+package ome.units.unit;
 
 import org.unitsofmeasurement.quantity.Quantity;
 import org.unitsofmeasurement.unit.*;
