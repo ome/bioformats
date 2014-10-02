@@ -462,8 +462,13 @@
 					<xsd:documentation>
 						TimeIncrement is used for time series that have a global
 						timing specification instead of per-timepoint timing info.
-						For example in a video stream.  The unit is seconds[s].
+						For example in a video stream. Units are set by TimeIncrementUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TimeIncrementUnit" use="optional" default="s" type="UnitsTime">
+				<xsd:annotation>
+					<xsd:documentation>The units of the TimeIncrement - default:seconds[s].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -521,15 +526,27 @@
 			<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						Units are seconds since the beginning of the experiment [s]
+						Time since the beginning of the experiment.
+						Units are set by DeltaTUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="DeltaTUnit" use="optional" default="s" type="UnitsTime">
+				<xsd:annotation>
+					<xsd:documentation>The units of the DeltaT - default:seconds[s].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="ExposureTime" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						Units are seconds [s]
+						The length of the exposure.
+						Units are set by ExposureTimeUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="ExposureTimeUnit" use="optional" default="s" type="UnitsTime">
+				<xsd:annotation>
+					<xsd:documentation>The units of the ExposureTime - default:seconds[s].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
