@@ -1421,8 +1421,7 @@ public class LeicaReader extends FormatReader {
           store.setFilterID(filterID, series, channel);
 
           int index = activeChannelIndices.indexOf(new Integer(channel));
-          CoreMetadata ms = core.get(series);
-          if (index >= 0 && index < ms.sizeC) {
+          if (index >= 0 && index < getEffectiveSizeC()) {
             if (!filterRefPopulated[series][index]) {
               store.setLightPathEmissionFilterRef(filterID, series, index, 0);
               filterRefPopulated[series][index] = true;
