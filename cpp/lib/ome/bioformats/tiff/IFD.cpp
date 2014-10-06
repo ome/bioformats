@@ -68,34 +68,41 @@ namespace
   // ReadVisitor: Transfer a set of tiles to a destination pixel buffer.
   // WriteVisitor: Transfer source pixel buffer data to a set of tiles.
   //
-  // ┌──────┬──────┬──────┐
-  // │      │      │      │
-  // │      │      │      │
-  // │      │      │      │
-  // │   ╔══╪══════╪════╗ │
-  // │   ║  │      │    ║ │
-  // │   ║  │      │    ║ │
-  // ├───╫──┼──────┼────╫─┤
-  // │   ║  │      │    ║ │
-  // │   ║  │      │ ▓▓ ║ │
-  // │   ║  │      │ ▓▓ ║ │
-  // │   ║  │      │    ║ │
-  // │   ║  │      │    ║ │
-  // │   ║  │      │    ║ │
-  // ├───╫──┼──────┼────╫─┤
-  // │   ║  │▒▒▒▒▒▒│    ║ │
-  // │   ║  │▒▒▒▒▒▒│    ║ │
-  // │   ║  │▒▒▒▒▒▒│    ║ │
-  // │   ╚══╪══════╪════╝ │
-  // │      │      │      │
-  // │      │      │      │
-  // └──────┴──────┴──────┘
+  // ┏━━━━━━┯━━━━━━┯━━━━━━┯━━━┓
+  // ┃      │      │      │░░░┃
+  // ┃      │      │      │░░░┃
+  // ┃      │      │      │░░░┃
+  // ┃   ╔══╪══════╪════╗ │░░░┃
+  // ┃   ║  │      │    ║ │░░░┃
+  // ┃   ║  │      │    ║ │░░░┃
+  // ┠───╫──┼──────┼────╫─┼───┨
+  // ┃   ║  │      │╔══╗║ │░░░┃
+  // ┃   ║  │      │║▓▓║║ │░░░┃
+  // ┃   ║  │      │║▓▓║║ │░░░┃
+  // ┃   ║  │      │╚══╝║ │░░░┃
+  // ┃   ║  │      │    ║ │░░░┃
+  // ┃   ║  │      │    ║ │░░░┃
+  // ┠───╫──┼──────┼────╫─┼───┨
+  // ┃   ║  │▒▒▒▒▒▒│    ║ │░░░┃
+  // ┃   ║  │▒▒▒▒▒▒│    ║ │░░░┃
+  // ┃   ║  │▒▒▒▒▒▒│    ║ │░░░┃
+  // ┃   ╚══╪══════╪════╝ │░░░┃
+  // ┃      │      │      │░░░┃
+  // ┃      │      │      │░░░┃
+  // ┠──────┼──────┼──────┼───┨
+  // ┃░░░░░░│░░░░░░│░░░░░░│░░░┃
+  // ┃░░░░░░│░░░░░░│░░░░░░│░░░┃
+  // ┗━━━━━━┷━━━━━━┷━━━━━━┷━━━┛
   //
+  // ━━━━ Image region
+  // ──── TIFF tile and TileBuffer region
   // ════ VariantPixelBuffer region
-  // ──── TIFF tile buffer region
+  //
+  // ░░░░ Incomplete tiles which overlap the image region
   // ▒▒▒▒ Intersection (clip region) of pixel buffer with tile buffer
   // ▓▓▓▓ Unaligned clip region (of a smaller size than the tile
-  //      intersection with the pixel buffer)
+  //      dimensions)
+  //
   // Both visitors iterate over the tiles partially or fully covered
   // by the pixel buffer, and use the most optimal strategy to copy
   // data between the pixel buffer and tile buffer.
