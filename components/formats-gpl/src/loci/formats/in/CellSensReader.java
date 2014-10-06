@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -803,6 +804,8 @@ public class CellSensReader extends FormatReader {
 
     ms.pixelType = convertPixelType(pixelType);
     if (usePyramid) {
+      int finalResolution = 0;
+      double aspectRatio = (double) ms.sizeX / ms.sizeY;
       for (int i=1; i<maxResolution; i++) {
         CoreMetadata newResolution = new CoreMetadata(ms);
 
@@ -844,11 +847,16 @@ public class CellSensReader extends FormatReader {
 
         newResolution.metadataComplete = true;
         newResolution.dimensionOrder = "XYCZT";
-        core.add(newResolution);
-        fileMap.put(core.size() - 1, file);
+
+        double newAspect = (double) newResolution.sizeX / newResolution.sizeY;
+        if (Math.abs(newAspect - aspectRatio) < Constants.EPSILON) {
+          core.add(newResolution);
+          fileMap.put(core.size() - 1, file);
+          finalResolution = core.size();
+        }
       }
 
-      ms.resolutionCount = maxResolution;
+      ms.resolutionCount = finalResolution;
     }
     etsFile.close();
   }
