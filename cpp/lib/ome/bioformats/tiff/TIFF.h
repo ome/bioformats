@@ -240,6 +240,14 @@ namespace ome
         std::shared_ptr<IFD>
         getCurrentDirectory() const;
 
+        /**
+         * Write the currently active IFD.
+         *
+         * The pixel data accompanying this IFD must have been written
+         * using IFD::writeImage() prior to calling this method, or
+         * else the TIFF tags for strip and tile offsets will be
+         * incomplete and the file will fail to read.
+         */
         void
         writeCurrentDirectory();
 
