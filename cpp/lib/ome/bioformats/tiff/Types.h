@@ -329,6 +329,24 @@ namespace ome
         return PlaneRegion();
       }
 
+        /**
+         * Output PlaneRegion to output stream.
+         *
+         * @param os the output stream.
+         * @param region the PlaneRegion to output.
+         * @returns the output stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_ostream<charT,traits>&
+        operator<< (std::basic_ostream<charT,traits>& os,
+                    const PlaneRegion& region)
+        {
+          return os << "x=" << region.x
+                    << " y=" << region.y
+                    << " w=" << region.w
+                    << " h=" << region.h;
+        }
+
     }
   }
 }
