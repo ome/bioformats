@@ -77,8 +77,8 @@ namespace
   // │   ║  │      │    ║ │
   // ├───╫──┼──────┼────╫─┤
   // │   ║  │      │    ║ │
-  // │   ║  │      │    ║ │
-  // │   ║  │      │    ║ │
+  // │   ║  │      │ ▓▓ ║ │
+  // │   ║  │      │ ▓▓ ║ │
   // │   ║  │      │    ║ │
   // │   ║  │      │    ║ │
   // │   ║  │      │    ║ │
@@ -94,7 +94,8 @@ namespace
   // ════ VariantPixelBuffer region
   // ──── TIFF tile buffer region
   // ▒▒▒▒ Intersection (clip region) of pixel buffer with tile buffer
-  //
+  // ▓▓▓▓ Unaligned clip region (of a smaller size than the tile
+  //      intersection with the pixel buffer)
   // Both visitors iterate over the tiles partially or fully covered
   // by the pixel buffer, and use the most optimal strategy to copy
   // data between the pixel buffer and tile buffer.
