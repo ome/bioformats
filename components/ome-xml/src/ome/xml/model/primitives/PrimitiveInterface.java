@@ -43,50 +43,23 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PrimitiveType.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrimitiveType.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public abstract class PrimitiveType<T> implements PrimitiveInterface<T>{
-
-  /** The delegate value. */
-  T value;
-
-  /**
-   * Default constructor.
-   * @param value The delegate value to use.
-   */
-  PrimitiveType(T value) {
-    this.value = value;
-  }
-
-  /**
-   * Default constructor.
-   * @param value The delegate value to use.
-   */
-  PrimitiveType() {
-  }
+public interface PrimitiveInterface<T>{
 
   /**
    * Retrieves the concrete delegate value.
    * @return See above.
    */
-  public T getValue() {
-    return value;
-  }
+  public abstract T getValue();
 
   /* (non-Javadoc)
    * @see java.lang.Object#toString()
    */
   @Override
-  public String toString() {
-    return value.toString();
-  }
+  public abstract String toString();
 
   /* (non-Javadoc)
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof PrimitiveType<?>) {
-      return value.equals(((PrimitiveType<?>) obj).getValue());
-    }
-    return value.equals(obj);
-  }
+  public abstract boolean equals(Object obj);
 }
