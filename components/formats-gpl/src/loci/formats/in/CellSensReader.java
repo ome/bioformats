@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -49,6 +50,8 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * CellSensReader is the file format reader for cellSens .vsi files.
@@ -120,6 +123,10 @@ public class CellSensReader extends FormatReader {
   private static final int TIFF_IFD = 10;
   private static final int VECTOR_DATA = 11;
 
+  // Tag values
+  private static final int PHYSICAL_SIZE = 20007;
+  private static final int ORIGIN = 20006;
+
   // -- Fields --
 
   private String[] usedFiles;
@@ -146,6 +153,9 @@ public class CellSensReader extends FormatReader {
 
   private HashMap<String, Integer> dimensionOrdering =
     new HashMap<String, Integer>();
+
+  private double physicalSizeX, physicalSizeY;
+  private double originX, originY;
 
   // -- Constructor --
 
@@ -328,6 +338,10 @@ public class CellSensReader extends FormatReader {
       foundChannelTag = false;
       dimensionTag = 0;
       dimensionOrdering.clear();
+      physicalSizeX = 0;
+      physicalSizeY = 0;
+      originX = 0;
+      originY = 0;
     }
   }
 
@@ -459,6 +473,11 @@ public class CellSensReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+
+    if (physicalSizeX > 0 && physicalSizeY > 0) {
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+    }
   }
 
   // -- Helper methods --
@@ -886,6 +905,8 @@ public class CellSensReader extends FormatReader {
         return;
       }
 
+      LOGGER.debug("parsing {} tags from {}", tagCount, vsi.getFilePointer());
+
       for (int i=0; i<tagCount; i++) {
         if (vsi.getFilePointer() + 16 >= vsi.length()) {
           break;
@@ -897,6 +918,9 @@ public class CellSensReader extends FormatReader {
         int tag = vsi.readInt();
         long nextField = vsi.readInt() & 0xffffffffL;
         int dataSize = vsi.readInt();
+
+        LOGGER.debug("tag #{}: fieldType={}, tag={}, nextField={}, dataSize={}",
+          new Object[] {i, fieldType, tag, nextField, dataSize});
 
         boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
         boolean extendedField = ((fieldType & 0x10000000) >> 28) == 1;
@@ -911,6 +935,10 @@ public class CellSensReader extends FormatReader {
         if (extraTag) {
           secondTag = vsi.readInt();
         }
+        LOGGER.debug("  inlineData = {}", inlineData);
+        LOGGER.debug("  extraTag = {}", extraTag);
+        LOGGER.debug("  extendedField = {}", extendedField);
+        LOGGER.debug("  realType = {}", realType);
 
         if (extendedField && realType == NEW_VOLUME_HEADER) {
           if (tag == 2007) {
@@ -931,6 +959,51 @@ public class CellSensReader extends FormatReader {
           if (tag == 2007) {
             inDimensionProperties = false;
             foundChannelTag = false;
+          }
+        }
+        else {
+          if (inlineData) {
+            addGlobalMeta(String.valueOf(tag), dataSize);
+          }
+          else {
+            switch (realType) {
+              case DOUBLE_2:
+                double first = vsi.readDouble();
+                double second = vsi.readDouble();
+
+                String tagName = null;
+                if (tag == PHYSICAL_SIZE) {
+                  physicalSizeX = first;
+                  physicalSizeY = second;
+                  tagName = "Physical pixel size";
+                }
+                else if (tag == ORIGIN) {
+                  originX = first;
+                  originY = second;
+                  tagName = "Origin";
+                }
+
+                if (tagName != null) {
+                  addGlobalMeta(tagName, first + ", " + second);
+                }
+                break;
+              case TCHAR:
+                String value = vsi.readString(dataSize);
+                value = DataTools.stripString(value);
+
+                if (tag == 2011) {
+                  // this puts everything in terms of micrometers
+                  String v = value.substring(0, value.indexOf("m"));
+                  v = v.replaceAll("\\^", "e");
+                  double scale = Double.parseDouble(v);
+                  scale *= 1000000;
+
+                  physicalSizeX *= scale;
+                  physicalSizeY *= scale;
+                  originX *= scale;
+                  originY *= scale;
+                }
+            }
           }
         }
 
