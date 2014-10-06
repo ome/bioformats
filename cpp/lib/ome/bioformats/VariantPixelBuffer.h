@@ -617,6 +617,19 @@ namespace ome
       valid() const;
 
       /**
+       * Assign a pixel buffer.
+       *
+       * The dimension extents must be compatible, but the storage
+       * ordering is not.  The buffer contents will be assigned in the
+       * logical order rather than the storage order.
+       *
+       * @param rhs the pixel buffer to assign.
+       * @returns the assigned buffer.
+       */
+      VariantPixelBuffer&
+      operator = (const VariantPixelBuffer& rhs);
+
+      /**
        * Compare a pixel buffer for equality.
        *
        * @param rhs the pixel buffer to compare with.
