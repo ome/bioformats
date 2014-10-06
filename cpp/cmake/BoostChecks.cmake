@@ -51,6 +51,10 @@ check_include_file_cxx(boost/tuple/tuple.hpp OME_HAVE_BOOST_TUPLE)
 check_include_file_cxx(boost/type_traits.hpp OME_HAVE_BOOST_TYPE_TRAITS_HPP)
 check_include_file_cxx(boost/geometry/index/rtree.hpp OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP)
 
+if(NOT OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP)
+  message(WARNING "Spatial indexes not available with this version of Boost.Geometry; tile coverage lookups will have reduced performance (linear scan replacing quadratic R*Tree)")
+endif()
+
 # Boost library checks could be dropped?
 # boost::program_options::variables_map in -lboost_program_options
 # + BOOST_PROGRAM_OPTIONS_DESCRIPTION_OLD (drop?)
