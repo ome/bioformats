@@ -51,6 +51,7 @@ namespace ome
         bufsize(size),
         buf(reinterpret_cast<uint8_t *>(_TIFFmalloc(bufsize)))
       {
+        _TIFFmemset(buf, 0, bufsize);
       }
 
       TileBuffer::~TileBuffer()
