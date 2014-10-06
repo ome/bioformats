@@ -106,30 +106,25 @@ namespace ome
           ::TIFF *tiff = getTIFF();
 
           // Get basic image metadata.
-          uint32_t imagewidth;
-          uint32_t imageheight;
-          ifd->getField(IMAGEWIDTH).get(imagewidth);
-          ifd->getField(IMAGELENGTH).get(imageheight);
-          ifd->getField(PLANARCONFIG).get(planarconfig);
-          ifd->getField(SAMPLESPERPIXEL).get(samples);
+          uint32_t imagewidth = ifd->getImageWidth();
+          uint32_t imageheight = ifd->getImageHeight();
+          planarconfig = ifd->getPlanarConfiguration();
+          samples = ifd->getSamplesPerPixel();
+          tilewidth = ifd->getTileWidth();
+          tileheight = ifd->getTileHeight();
+          type = ifd->getTileType();
 
           // Get tile-specific metadata, falling back to
           // strip-specific metadata if not present.
-          try
+          if (type == TILE)
             {
-              ifd->getField(TILEWIDTH).get(tilewidth);
-              ifd->getField(TILELENGTH).get(tileheight);
               tilecount = TIFFNumberOfTiles(tiff);
               buffersize = TIFFTileSize(tiff);
-              type = TILE;
             }
-          catch (const Exception& e)
+          else
             {
-              tilewidth = imagewidth;
-              ifd->getField(ROWSPERSTRIP).get(tileheight);
               tilecount = TIFFNumberOfStrips(tiff);
               buffersize = TIFFStripSize(tiff);
-              type = STRIP;
             }
 
           // Compute row and column counts.
