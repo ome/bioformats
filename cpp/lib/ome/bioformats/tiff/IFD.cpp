@@ -321,6 +321,11 @@ namespace ome
           {
           }
 
+          IFDConcrete(std::shared_ptr<TIFF>& tiff):
+            IFD(tiff, 0)
+          {
+          }
+
           virtual
           ~IFDConcrete()
           {
@@ -339,8 +344,28 @@ namespace ome
         std::shared_ptr<TIFF> tiff;
         /// Offset of this IFD.
         offset_type offset;
+        /// Tile coverage cache (used when writing).
+        std::vector<TileCoverage> coverage;
         /// Tile cache (used when writing).
         TileCache tilecache;
+        /// Image width.
+        boost::optional<TileType> tiletype;
+        /// Image width.
+        boost::optional<uint32_t> imagewidth;
+        /// Image height.
+        boost::optional<uint32_t> imageheight;
+        /// Tile width.
+        boost::optional<uint32_t> tilewidth;
+        /// Tile height.
+        boost::optional<uint32_t> tileheight;
+        /// Pixel type.
+        boost::optional<PixelType> pixeltype;
+        /// Samples per pixel.
+        boost::optional<uint16_t> samples;
+        /// Planar configuration.
+        boost::optional<PlanarConfiguration> planarconfig;
+        /// Current tile (for writing).
+        tstrile_t ctile;
 
         /**
          * Constructor.
@@ -352,7 +377,16 @@ namespace ome
              offset_type            offset):
           tiff(tiff),
           offset(offset),
-          tilecache()
+          coverage(),
+          tilecache(),
+          imagewidth(),
+          imageheight(),
+          tilewidth(),
+          tileheight(),
+          pixeltype(),
+          samples(),
+          planarconfig(),
+          ctile(0)
         {
         }
 
@@ -375,6 +409,13 @@ namespace ome
         // Note boost::make_shared makes arguments const, so can't use
         // here.
         impl(std::shared_ptr<Impl>(new Impl(tiff, offset)))
+      {
+      }
+
+      IFD::IFD(std::shared_ptr<TIFF>& tiff):
+        // Note boost::make_shared makes arguments const, so can't use
+        // here.
+        impl(std::shared_ptr<Impl>(new Impl(tiff, 0)))
       {
       }
 
@@ -405,6 +446,14 @@ namespace ome
         // Note boost::make_shared makes arguments const, so can't use
         // here.
         return std::shared_ptr<IFD>(new IFDConcrete(tiff, offset));
+      }
+
+      std::shared_ptr<IFD>
+      IFD::current(std::shared_ptr<TIFF>& tiff)
+      {
+        // Note boost::make_shared makes arguments const, so can't use
+        // here.
+        return std::shared_ptr<IFD>(new IFDConcrete(tiff));
       }
 
       void
@@ -481,6 +530,46 @@ namespace ome
           sentry.error();
       }
 
+      TileType
+      IFD::getTileType() const
+      {
+        if (!impl->tiletype)
+          {
+            uint32_t w, h;
+            try
+              {
+                getField(TILEWIDTH).get(w);
+                getField(TILELENGTH).get(h);
+                impl->tiletype = TILE;
+              }
+            catch (const Exception& e)
+              {
+                getField(ROWSPERSTRIP).get(h);
+                impl->tiletype = STRIP;
+              }
+          }
+
+        return impl->tiletype.get();
+      }
+
+      void
+      IFD::setTileType(TileType type)
+      {
+        impl->tiletype = type;
+      }
+
+      dimension_size_type
+      IFD::getCurrentTile() const
+      {
+        return impl->ctile;
+      }
+
+      void
+      IFD::setCurrentTile(dimension_size_type tile)
+      {
+        impl->ctile = tile;
+      }
+
       TileInfo
       IFD::getTileInfo()
       {
@@ -493,78 +582,202 @@ namespace ome
         return TileInfo(const_cast<IFD *>(this)->shared_from_this());
       }
 
+      std::vector<TileCoverage>&
+      IFD::getTileCoverage()
+      {
+        return impl->coverage;
+      }
+
+      const std::vector<TileCoverage>&
+      IFD::getTileCoverage() const
+      {
+        return impl->coverage;
+      }
+
+      uint32_t
+      IFD::getImageWidth() const
+      {
+        if (!impl->imagewidth)
+          {
+            uint32_t width;
+            getField(IMAGEWIDTH).get(width);
+            impl->imagewidth = width;
+          }
+        return impl->imagewidth.get();
+      }
+
+      void
+      IFD::setImageWidth(uint32_t width)
+      {
+        getField(IMAGEWIDTH).set(width);
+        impl->imagewidth = width;
+      }
+
+      uint32_t
+      IFD::getImageHeight() const
+      {
+        if (!impl->imageheight)
+          {
+            uint32_t height;
+            getField(IMAGELENGTH).get(height);
+            impl->imageheight = height;
+          }
+        return impl->imageheight.get();
+      }
+
+      void
+      IFD::setImageHeight(uint32_t height)
+      {
+        getField(IMAGELENGTH).set(height);
+        impl->imageheight = height;
+      }
+
+      uint32_t
+      IFD::getTileWidth() const
+      {
+        if (!impl->tilewidth)
+          {
+            if (getTileType() == TILE)
+              {
+                uint32_t width;
+                getField(TILEWIDTH).get(width);
+                impl->tilewidth = width;
+              }
+            else // strip
+              {
+                impl->tilewidth = getImageWidth();
+              }
+          }
+        return impl->tilewidth.get();
+      }
+
+      void
+      IFD::setTileWidth(uint32_t width)
+      {
+        if (getTileType() == TILE)
+          {
+            getField(TILEWIDTH).set(width);
+            impl->tilewidth = width;
+          }
+        else
+          {
+            // Do nothing for strips.
+          }
+      }
+
+      uint32_t
+      IFD::getTileHeight() const
+      {
+        if (!impl->tileheight)
+          {
+            if (getTileType() == TILE)
+              {
+                uint32_t height;
+                getField(TILELENGTH).get(height);
+                impl->tileheight = height;
+              }
+            else
+              {
+                uint32_t rows;
+                getField(ROWSPERSTRIP).get(rows);
+                impl->tileheight = rows;
+              }
+          }
+        return impl->tileheight.get();
+      }
+
+      void
+      IFD::setTileHeight(uint32_t height)
+      {
+        if (getTileType() == TILE)
+          {
+            getField(TILELENGTH).set(height);
+          }
+        else // strip
+          {
+            getField(ROWSPERSTRIP).set(height);
+          }
+        impl->tileheight = height;
+      }
+
       ::ome::xml::model::enums::PixelType
       IFD::getPixelType() const
       {
         PixelType pt = PixelType::UINT8;
 
-        SampleFormat fmt;
-        try
+        if (impl->pixeltype)
           {
-            getField(SAMPLEFORMAT).get(fmt);
+            pt = impl->pixeltype.get();
           }
-        catch(const Exception& e)
+        else
           {
-            // Default to unsigned integer.
-            fmt = UNSIGNED_INT;
-          }
+            SampleFormat fmt;
+            try
+              {
+                getField(SAMPLEFORMAT).get(fmt);
+              }
+            catch(const Exception& e)
+              {
+                // Default to unsigned integer.
+                fmt = UNSIGNED_INT;
+              }
 
-        uint16_t bits;
-        getField(BITSPERSAMPLE).get(bits);
+            uint16_t bits;
+            getField(BITSPERSAMPLE).get(bits);
 
-        switch(fmt)
-          {
-          case UNSIGNED_INT:
-            {
-              if (bits == 1)
-                pt = PixelType::BIT;
-              else if (bits == 8)
-                pt = PixelType::UINT8;
-              else if (bits == 16)
-                pt = PixelType::UINT16;
-              else if (bits == 32)
-                pt = PixelType::UINT32;
-              else
-                throw Exception("Unsupported bit depth for unsigned integer pixel type");
-            }
-            break;
-          case SIGNED_INT:
-            {
-              if (bits == 8)
-                pt = PixelType::INT8;
-              else if (bits == 16)
-                pt = PixelType::INT16;
-              else if (bits == 32)
+            switch(fmt)
+              {
+              case UNSIGNED_INT:
+                {
+                  if (bits == 1)
+                    pt = PixelType::BIT;
+                  else if (bits == 8)
+                    pt = PixelType::UINT8;
+                  else if (bits == 16)
+                    pt = PixelType::UINT16;
+                  else if (bits == 32)
+                    pt = PixelType::UINT32;
+                  else
+                    throw Exception("Unsupported bit depth for unsigned integer pixel type");
+                }
+                break;
+              case SIGNED_INT:
+                {
+                  if (bits == 8)
+                    pt = PixelType::INT8;
+                  else if (bits == 16)
+                    pt = PixelType::INT16;
+                  else if (bits == 32)
                 pt = PixelType::INT32;
-              else
-                throw Exception("Unsupported bit depth for signed integer pixel type");
-            }
-            break;
-          case FLOAT:
-            {
-              if (bits == 32)
-                pt = PixelType::FLOAT;
-              else if (bits == 64)
-                pt = PixelType::DOUBLE;
-              else
-                throw Exception("Unsupported bit depth for floating point pixel type");
-            }
-            break;
-          case COMPLEX_FLOAT:
-            {
-              if (bits == 64)
-                pt = PixelType::COMPLEX;
-              else if (bits == 12)
-                pt = PixelType::DOUBLECOMPLEX;
-              else
-                throw Exception("Unsupported bit depth for complex floating point pixel type");
-            }
-            break;
-          default:
-            throw Exception("TIFF SampleFormat unsupported by OME data model PixelType");
-            break;
+                  else
+                    throw Exception("Unsupported bit depth for signed integer pixel type");
+                }
+                break;
+              case FLOAT:
+                {
+                  if (bits == 32)
+                    pt = PixelType::FLOAT;
+                  else if (bits == 64)
+                    pt = PixelType::DOUBLE;
+                  else
+                    throw Exception("Unsupported bit depth for floating point pixel type");
+                }
+                break;
+              case COMPLEX_FLOAT:
+                {
+                  if (bits == 64)
+                    pt = PixelType::COMPLEX;
+                  else if (bits == 12)
+                    pt = PixelType::DOUBLECOMPLEX;
+                  else
+                    throw Exception("Unsupported bit depth for complex floating point pixel type");
+                }
+                break;
+              default:
+                throw Exception("TIFF SampleFormat unsupported by OME data model PixelType");
+                break;
+              }
           }
-
         return pt;
       }
 
@@ -644,16 +857,52 @@ namespace ome
           }
 
         getField(BITSPERSAMPLE).set(bits);
+
+        impl->pixeltype = type;
+      }
+
+      uint16_t
+      IFD::getSamplesPerPixel() const
+      {
+        if (!impl->samples)
+          {
+            uint16_t samples;
+            getField(SAMPLESPERPIXEL).get(samples);
+            impl->samples = samples;
+          }
+        return impl->samples.get();
+      }
+
+      void
+      IFD::setSamplesPerPixel(uint16_t samples)
+      {
+        getField(SAMPLESPERPIXEL).set(samples);
+        impl->samples = samples;
+      }
+
+      PlanarConfiguration
+      IFD::getPlanarConfiguration() const
+      {
+        if (!impl->planarconfig)
+          {
+            PlanarConfiguration config;
+            getField(PLANARCONFIG).get(config);
+            impl->planarconfig = config;
+          }
+        return impl->planarconfig.get();
+      }
+
+      void
+      IFD::setPlanarConfiguration(PlanarConfiguration planarconfig)
+      {
+        getField(PLANARCONFIG).set(planarconfig);
+        impl->planarconfig = planarconfig;
       }
 
       void
       IFD::readImage(VariantPixelBuffer& buf) const
       {
-        uint32_t w = 0, h = 0;
-        getField(IMAGEWIDTH).get(w);
-        getField(IMAGELENGTH).get(h);
-
-        readImage(buf, 0, 0, w, h);
+        readImage(buf, 0, 0, getImageWidth(), getImageHeight());
       }
 
       void
@@ -701,11 +950,7 @@ namespace ome
       void
       IFD::writeImage(const VariantPixelBuffer& buf)
       {
-        uint32_t w = 0, h = 0;
-        getField(ome::bioformats::tiff::IMAGEWIDTH).get(w);
-        getField(ome::bioformats::tiff::IMAGELENGTH).get(h);
-
-        writeImage(buf, 0, 0, w, h);
+        writeImage(buf, 0, 0, getImageWidth(), getImageHeight());
       }
 
       void

@@ -42,6 +42,7 @@
 
 #include <ome/compat/memory.h>
 
+#include <ome/bioformats/tiff/TileCoverage.h>
 #include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
@@ -78,6 +79,9 @@ namespace ome
         IFD(std::shared_ptr<TIFF>& tiff,
             offset_type            offset);
 
+        /// Constructor (not public).
+        IFD(std::shared_ptr<TIFF>& tiff);
+
       private:
         /// Copy constructor (deleted).
         IFD (const IFD&);
@@ -111,6 +115,15 @@ namespace ome
         static std::shared_ptr<IFD>
         openOffset(std::shared_ptr<TIFF>& tiff,
                    offset_type            offset);
+
+        /**
+         * Get the current IFD.
+         *
+         * @param tiff the source TIFF.
+         * @returns the open IFD.
+         */
+        static std::shared_ptr<IFD>
+        current(std::shared_ptr<TIFF>& tiff);
 
         /**
          * Get the source TIFF this descriptor belongs to.
@@ -193,6 +206,46 @@ namespace ome
         }
 
         /**
+         * Get the tile type.
+         *
+         * @returns the tile type.
+         */
+        TileType
+        getTileType() const;
+
+        /**
+         * Set the tile type.
+         *
+         * @param type the tile type.
+         */
+        void
+        setTileType(TileType type);
+
+        /**
+         * Get the current tile being written.
+         *
+         * This is the tile currently being modified pending flush.
+         *
+         * @returns the current tile.
+         */
+        dimension_size_type
+        getCurrentTile() const;
+
+        /**
+         * Set the current tile being written.
+         *
+         * This is the tile currently being modified pending flush.
+         *
+         * @note This should not be set by hand; it will be updated by
+         * the code writing out tile data called internally by
+         * writeImage().
+         *
+         * @param tile the current tile.
+         */
+        void
+        setCurrentTile(dimension_size_type tile);
+
+        /**
          * Get tiling metadata.
          *
          * @returns the TileInfo metadata for this IFD.
@@ -209,6 +262,86 @@ namespace ome
          */
         const TileInfo
         getTileInfo() const;
+
+        /**
+         * Get tile coverage cache.
+         *
+         * @returns the TileCoverage cache for this IFD.
+         */
+        std::vector<TileCoverage>&
+        getTileCoverage();
+
+        /**
+         * Get tile coverage cache.
+         *
+         * @returns the TileCoverage cache for this IFD.
+         */
+        const std::vector<TileCoverage>&
+        getTileCoverage() const;
+
+        /**
+         * Get the image width.
+         *
+         * @returns the image width.
+         */
+        uint32_t
+        getImageWidth() const;
+
+        /**
+         * Set the image width.
+         *
+         * @param width the image width.
+         */
+        void
+        setImageWidth(uint32_t width);
+
+        /**
+         * Get the image height.
+         *
+         * @returns the image height.
+         */
+        uint32_t
+        getImageHeight() const;
+
+        /**
+         * Set the image height.
+         *
+         * @param height the image height.
+         */
+        void
+        setImageHeight(uint32_t height);
+
+        /**
+         * Get the tile width.
+         *
+         * @returns the tile width.
+         */
+        uint32_t
+        getTileWidth() const;
+
+        /**
+         * Set the tile width.
+         *
+         * @param width the tile width.
+         */
+        void
+        setTileWidth(uint32_t width);
+
+        /**
+         * Get the tile height.
+         *
+         * @returns the tile height.
+         */
+        uint32_t
+        getTileHeight() const;
+
+        /**
+         * Set the tile height.
+         *
+         * @param height the tile height.
+         */
+        void
+        setTileHeight(uint32_t height);
 
         /**
          * Get the OME data model PixelType.
@@ -234,6 +367,38 @@ namespace ome
          */
         void
         setPixelType(::ome::xml::model::enums::PixelType type);
+
+        /**
+         * Get samples per pixel.
+         *
+         * @returns the number of samples per pixel.
+         */
+        uint16_t
+        getSamplesPerPixel() const;
+
+        /**
+         * Set samples per pixel.
+         *
+         * @param samples the number of samples per pixel.
+         */
+        void
+        setSamplesPerPixel(uint16_t samples);
+
+        /**
+         * Get planar configuration.
+         *
+         * @returns the number of planar configuration.
+         */
+        PlanarConfiguration
+        getPlanarConfiguration() const;
+
+        /**
+         * Set planar configuration.
+         *
+         * @param planarconfig the number of planar configuration.
+         */
+        void
+        setPlanarConfiguration(PlanarConfiguration planarconfig);
 
         /**
          * Read a whole image plane into a pixel buffer.
