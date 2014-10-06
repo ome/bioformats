@@ -35,7 +35,6 @@
  * #L%
  */
 
-#include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <cstdarg>
@@ -62,6 +61,43 @@ namespace
 
   using namespace ::ome::bioformats::tiff;
   using ::ome::bioformats::dimension_size_type;
+
+  // VariantPixelBuffer tile transfer
+  // ────────────────────────────────
+  //
+  // ReadVisitor: Transfer a set of tiles to a destination pixel buffer.
+  // WriteVisitor: Transfer source pixel buffer data to a set of tiles.
+  //
+  // ┌──────┬──────┬──────┐
+  // │      │      │      │
+  // │      │      │      │
+  // │      │      │      │
+  // │   ╔══╪══════╪════╗ │
+  // │   ║  │      │    ║ │
+  // │   ║  │      │    ║ │
+  // ├───╫──┼──────┼────╫─┤
+  // │   ║  │      │    ║ │
+  // │   ║  │      │    ║ │
+  // │   ║  │      │    ║ │
+  // │   ║  │      │    ║ │
+  // │   ║  │      │    ║ │
+  // │   ║  │      │    ║ │
+  // ├───╫──┼──────┼────╫─┤
+  // │   ║  │▒▒▒▒▒▒│    ║ │
+  // │   ║  │▒▒▒▒▒▒│    ║ │
+  // │   ║  │▒▒▒▒▒▒│    ║ │
+  // │   ╚══╪══════╪════╝ │
+  // │      │      │      │
+  // │      │      │      │
+  // └──────┴──────┴──────┘
+  //
+  // ════ VariantPixelBuffer region
+  // ──── TIFF tile buffer region
+  // ▒▒▒▒ Intersection (clip region) of pixel buffer with tile buffer
+  //
+  // Both visitors iterate over the tiles partially or fully covered
+  // by the pixel buffer, and use the most optimal strategy to copy
+  // data between the pixel buffer and tile buffer.
 
   struct ReadVisitor : public boost::static_visitor<>
   {
@@ -92,17 +128,10 @@ namespace
     {
       std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
       ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
-      TileInfo::TileType type = tileinfo.tileType();
+      TileType type = tileinfo.tileType();
 
-      uint32_t imagewidth;
-      uint32_t imageheight;
-      ifd.getField(IMAGEWIDTH).get(imagewidth);
-      ifd.getField(IMAGELENGTH).get(imageheight);
-
-      uint16_t samples;
-      ifd.getField(SAMPLESPERPIXEL).get(samples);
-      PlanarConfiguration planarconfig;
-      ifd.getField(PLANARCONFIG).get(planarconfig);
+      uint16_t samples = ifd.getSamplesPerPixel();
+      PlanarConfiguration planarconfig = ifd.getPlanarConfiguration();
 
       Sentry sentry;
 
@@ -122,12 +151,13 @@ namespace
               copysamples = 1;
               dest_subchannel = sample;
             }
-          if (type == TileInfo::TILE)
+
+          if (type == TILE)
             {
               int bytesread = TIFFReadEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
               if (bytesread < 0)
                 sentry.error("Failed to read encoded tile");
-              if (bytesread != tilebuf.size())
+              if (static_cast<dimension_size_type>(bytesread) != tilebuf.size())
                 sentry.error("Failed to read encoded tile fully");
             }
           else
@@ -135,7 +165,7 @@ namespace
               int bytesread = TIFFReadEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
               if (bytesread < 0)
                 sentry.error("Failed to read encoded strip");
-              if (bytesread < rclip.w * rclip.h * copysamples * sizeof(typename T::value_type))
+              if (static_cast<dimension_size_type>(bytesread) < rclip.w * rclip.h * copysamples * sizeof(typename T::value_type))
                 sentry.error("Failed to read encoded strip fully");
             }
 
@@ -160,7 +190,9 @@ namespace
 
               typename T::value_type *dest = &buffer->at(destidx);
               const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
-              std::copy(src, src + (rclip.w * rclip.h * copysamples), dest);
+              std::copy(src,
+                        src + (rclip.w * rclip.h * copysamples),
+                        dest);
             }
           else
             {
@@ -191,17 +223,20 @@ namespace
   struct WriteVisitor : public boost::static_visitor<>
   {
     IFD&                                    ifd;
+    std::vector<TileCoverage>&              tilecoverage;
     TileCache&                              tilecache;
     const TileInfo&                         tileinfo;
     const PlaneRegion&                      region;
     const std::vector<dimension_size_type>& tiles;
 
     WriteVisitor(IFD&                                    ifd,
+                 std::vector<TileCoverage>&              tilecoverage,
                  TileCache&                              tilecache,
                  const TileInfo&                         tileinfo,
                  const PlaneRegion&                      region,
                  const std::vector<dimension_size_type>& tiles):
       ifd(ifd),
+      tilecoverage(tilecoverage),
       tilecache(tilecache),
       tileinfo(tileinfo),
       region(region),
@@ -214,17 +249,13 @@ namespace
     {
       std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
       ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
-      TileInfo::TileType type = tileinfo.tileType();
+      TileType type = tileinfo.tileType();
 
-      uint32_t imagewidth;
-      uint32_t imageheight;
-      ifd.getField(IMAGEWIDTH).get(imagewidth);
-      ifd.getField(IMAGELENGTH).get(imageheight);
+      uint16_t samples = ifd.getSamplesPerPixel();
+      PlanarConfiguration planarconfig = ifd.getPlanarConfiguration();
 
-      uint16_t samples;
-      ifd.getField(SAMPLESPERPIXEL).get(samples);
-      PlanarConfiguration planarconfig;
-      ifd.getField(PLANARCONFIG).get(planarconfig);
+      if (tilecoverage.size() != (planarconfig == CONTIG ? 1 : samples))
+        tilecoverage.resize(planarconfig == CONTIG ? 1 : samples);
 
       Sentry sentry;
       for(std::vector<dimension_size_type>::const_iterator i = tiles.begin();
@@ -268,9 +299,11 @@ namespace
               srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
               srcidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
 
-              typename T::value_type *dest = &buffer->at(srcidx);
-              const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
-              std::copy(src, src + (rclip.w * rclip.h * copysamples), dest);
+              typename T::value_type *dest = reinterpret_cast<typename T::value_type *>(tilebuf.data());
+              const typename T::value_type *src = &buffer->at(srcidx);
+              std::copy(src,
+                        src + (rclip.w * rclip.h * copysamples),
+                        dest);
             }
           else
             {
@@ -287,15 +320,50 @@ namespace
                   srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
                   srcidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
 
-                  typename T::value_type *dest = &buffer->at(srcidx);
-                  const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
-                  std::copy(src + yoffset + xoffset,
-                            src + yoffset + xoffset + (rclip.w * copysamples),
-                            dest);
+                  typename T::value_type *dest = reinterpret_cast<typename T::value_type *>(tilebuf.data());
+                  const typename T::value_type *src = &buffer->at(srcidx);
+                  std::copy(src,
+                            src + (rclip.w * copysamples),
+                            dest + yoffset + xoffset);
                 }
             }
+          tilecoverage.at(dest_subchannel).insert(rclip);
+        }
 
+      // Flush covered tiles
+      PlaneRegion rimage(0, 0, ifd.getImageWidth(), ifd.getImageHeight());
+      dimension_size_type tile = ifd.getCurrentTile();
+      while(tile < tileinfo.tileCount())
+        {
+          dimension_size_type tile_subchannel = tileinfo.tileSample(tile);
 
+          PlaneRegion validarea = tileinfo.tileRegion(tile) & rimage;
+          if (!validarea.area())
+            break;
+
+          if (!tilecoverage.at(tile_subchannel).covered(validarea))
+            break;
+
+          assert(tilecache.find(tile));
+          TileBuffer& tilebuf = *tilecache.find(tile);
+          if (type == TILE)
+            {
+              int byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              if (byteswritten < 0)
+                sentry.error("Failed to write encoded tile");
+              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
+                sentry.error("Failed to write encoded tile fully");
+            }
+          else
+            {
+              int byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              if (byteswritten < 0)
+                sentry.error("Failed to write encoded strip");
+              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
+                sentry.error("Failed to write encoded strip fully");
+            }
+          tilecache.erase(tile);
+          ifd.setCurrentTile(++tile);
         }
     }
   };
@@ -995,7 +1063,7 @@ namespace ome
         PlaneRegion region(x, y, w, h);
         std::vector<dimension_size_type> tiles(info.tileCoverage(region));
 
-        WriteVisitor v(*this, impl->tilecache, info, region, tiles);
+        WriteVisitor v(*this, impl->coverage, impl->tilecache, info, region, tiles);
         boost::apply_visitor(v, source.vbuffer());
       }
 
