@@ -171,6 +171,7 @@ namespace ome
               TIFFClose(tiff);
               if (!sentry.getMessage().empty())
                 sentry.error();
+              tiff = 0;
             }
         }
       };
