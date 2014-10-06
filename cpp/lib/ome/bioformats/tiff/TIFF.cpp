@@ -240,6 +240,22 @@ namespace ome
         return IFD::openOffset(t, offset);
       }
 
+      std::shared_ptr<IFD>
+      TIFF::getCurrentDirectory() const
+      {
+        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
+        return IFD::current(t);
+      }
+
+      void
+      TIFF::writeCurrentDirectory()
+      {
+        Sentry sentry;
+
+        if (!TIFFWriteDirectory(impl->tiff))
+          sentry.error("Failed to write current directory");
+      }
+
       TIFF::iterator
       TIFF::begin()
       {

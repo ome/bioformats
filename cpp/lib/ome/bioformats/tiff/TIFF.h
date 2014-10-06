@@ -232,6 +232,18 @@ namespace ome
         getDirectoryByOffset(offset_type offset) const;
 
         /**
+         * Get the currently active IFD.
+         *
+         * @returns the IFD.
+         * @throws an Exception if the IFD could not be accessed.
+         */
+        std::shared_ptr<IFD>
+        getCurrentDirectory() const;
+
+        void
+        writeCurrentDirectory();
+
+        /**
          * Get the underlying libtiff @c \::TIFF instance.
          *
          * If there is any need to use the libtiff C interface to
