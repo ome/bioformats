@@ -28,7 +28,6 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -45,6 +44,7 @@ import loci.formats.MetadataTools;
 import loci.formats.in.PrairieMetadata.Frame;
 import loci.formats.in.PrairieMetadata.PFile;
 import loci.formats.in.PrairieMetadata.Sequence;
+import loci.formats.in.PrairieMetadata.ValueTable;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
@@ -59,17 +59,17 @@ import org.xml.sax.SAXException;
  * PrairieReader is the file format reader for
  * Prairie Technologies' TIFF variant.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PrairieReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrairieReader.java;hb=HEAD">Gitweb</a></dd></dl>
+ * @author Curtis Rueden
+ * @author Melissa Linkert
  */
 public class PrairieReader extends FormatReader {
 
   // -- Constants --
 
   public static final String[] CFG_SUFFIX = {"cfg"};
+  public static final String[] ENV_SUFFIX = {"env"};
   public static final String[] XML_SUFFIX = {"xml"};
-  public static final String[] PRAIRIE_SUFFIXES = {"cfg", "xml"};
+  public static final String[] PRAIRIE_SUFFIXES = {"cfg", "env", "xml"};
 
   // Private tags present in Prairie TIFF files
   // IMPORTANT NOTE: these are the same as Metamorph's private tags - therefore,
@@ -87,7 +87,7 @@ public class PrairieReader extends FormatReader {
   private TiffReader tiff;
 
   /** The associated XML files. */
-  private Location xmlFile, cfgFile;
+  private Location xmlFile, cfgFile, envFile;
 
   /** Format-specific metadata. */
   private PrairieMetadata meta;
@@ -124,7 +124,7 @@ public class PrairieReader extends FormatReader {
 
   /** Constructs a new Prairie TIFF reader. */
   public PrairieReader() {
-    super("Prairie TIFF", new String[] {"tif", "tiff", "cfg", "xml"});
+    super("Prairie TIFF", new String[] {"tif", "tiff", "cfg", "env", "xml"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
     datasetDescription = "One .xml file, one .cfg file, and one or more " +
@@ -215,6 +215,7 @@ public class PrairieReader extends FormatReader {
     final ArrayList<String> usedFiles = new ArrayList<String>();
     if (xmlFile != null) usedFiles.add(xmlFile.getAbsolutePath());
     if (cfgFile != null) usedFiles.add(cfgFile.getAbsolutePath());
+    if (envFile != null) usedFiles.add(envFile.getAbsolutePath());
 
     if (!noPixels) {
       // add TIFF files to the used files list
@@ -297,7 +298,7 @@ public class PrairieReader extends FormatReader {
     super.close(fileOnly);
     if (tiff != null) tiff.close(fileOnly);
     if (!fileOnly) {
-      xmlFile = cfgFile = null;
+      xmlFile = cfgFile = envFile = null;
       tiff = null;
       meta = null;
       sequences = null;
@@ -317,17 +318,20 @@ public class PrairieReader extends FormatReader {
 
     if (checkSuffix(id, XML_SUFFIX)) {
       xmlFile = new Location(id);
-      findCFGFile();
+      findMetadataFiles();
     }
     else if (checkSuffix(id, CFG_SUFFIX)) {
       cfgFile = new Location(id);
-      findXMLFile();
+      findMetadataFiles();
+    }
+    else if (checkSuffix(id, ENV_SUFFIX)) {
+      envFile = new Location(id);
+      findMetadataFiles();
     }
     else {
       // we have been given a TIFF file
       if (isGroupFiles()) {
-        findXMLFile();
-        findCFGFile();
+        findMetadataFiles();
       }
       else {
         // NB: File grouping is not allowed, so we enter a special mode,
@@ -348,27 +352,25 @@ public class PrairieReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void findXMLFile() {
-    LOGGER.info("Finding XML file");
-    xmlFile = find(XML_SUFFIX);
-  }
-
-  private void findCFGFile() {
-    LOGGER.info("Finding CFG file");
-    cfgFile = find(CFG_SUFFIX);
+  private void findMetadataFiles() {
+    LOGGER.info("Finding metadata files");
+    if (xmlFile == null) xmlFile = find(XML_SUFFIX);
+    if (cfgFile == null) cfgFile = find(CFG_SUFFIX);
+    if (envFile == null) envFile = find(ENV_SUFFIX);
   }
 
   /**
-   * This step parses the Prairie XML and CFG files into the Prairie-specific
+   * This step parses the Prairie metadata files into the Prairie-specific
    * metadata structure, {@link #meta}.
    */
   private void parsePrairieMetadata() throws FormatException, IOException {
     LOGGER.info("Parsing Prairie metadata");
 
-    final Document xml, cfg;
+    final Document xml, cfg, env;
     try {
       xml = parseDOM(xmlFile);
       cfg = parseDOM(cfgFile);
+      env = parseDOM(envFile);
     }
     catch (ParserConfigurationException exc) {
       throw new FormatException(exc);
@@ -377,9 +379,12 @@ public class PrairieReader extends FormatReader {
       throw new FormatException(exc);
     }
 
-    meta = new PrairieMetadata(xml, cfg);
+    meta = new PrairieMetadata(xml, cfg, env);
     sequences = meta.getSequences();
     channels = meta.getActiveChannels();
+    if (channels == null || channels.length == 0) {
+      throw new FormatException("No active channels found");
+    }
   }
 
   /**
@@ -461,9 +466,9 @@ public class PrairieReader extends FormatReader {
     addGlobalMeta("waitTime", meta.getWaitTime());
     addGlobalMeta("sequenceCount", sequences.size());
 
-    final Map<String, String> config = meta.getConfig();
+    final ValueTable config = meta.getConfig();
     for (final String key : config.keySet()) {
-      addGlobalMeta(key, config.get(key));
+      addGlobalMeta(key, config.get(key).toString());
     }
 
     addGlobalMeta("meta", meta);
@@ -644,6 +649,8 @@ public class PrairieReader extends FormatReader {
   private Document parseDOM(final Location file)
     throws ParserConfigurationException, SAXException, IOException
   {
+    if (file == null) return null;
+
     // NB: The simplest approach here would be to call XMLTools.parseDOM(file)
     // directly, but we cannot do that because Prairie XML files are technically
     // invalid and must be preprocessed in order for Java to parse them.
@@ -710,21 +717,6 @@ public class PrairieReader extends FormatReader {
     // missing data; return empty plane
     Arrays.fill(buf, (byte) 0);
     return buf;
-  }
-
-  /**
-   * Converts the given {@code Integer} to a {@link PositiveInteger}, or
-   * {@code null} if incompatible.
-   */
-  private PositiveInteger pi(final Integer value, final String name) {
-    if (value == null) return null;
-    try {
-      return new PositiveInteger(value);
-    }
-    catch (IllegalArgumentException e) {
-      LOGGER.debug("Expected positive value for {}; got {}", name, value);
-    }
-    return null;
   }
 
   /**

@@ -316,6 +316,13 @@ operation_test(const Test&                   /* fixture */,
     }
 }
 
+TYPED_TEST_P(NumericTest, DefaultConstruct)
+{
+  TypeParam v1;
+
+  ASSERT_EQ(TypeParam::default_value, v1);
+}
+
 TYPED_TEST_P(NumericTest, Stream)
 {
   for (typename std::vector<typename TestFixture::test_str>::const_iterator i = this->strings.begin();
@@ -501,6 +508,7 @@ TYPED_TEST_P(NumericTest, OperatorModuloAssign)
 }
 
 REGISTER_TYPED_TEST_CASE_P(NumericTest,
+                           DefaultConstruct,
                            Stream,
                            OperatorEqual,
                            OperatorNotEqual,

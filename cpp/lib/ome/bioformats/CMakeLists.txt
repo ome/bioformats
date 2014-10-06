@@ -44,6 +44,7 @@ set(OME_BIOFORMATS_SOURCES
     FormatTools.cpp
     MetadataConfigurable.cpp
     MetadataOptions.cpp
+    MetadataTools.cpp
     Modulo.cpp
     PixelBuffer.cpp
     PixelProperties.cpp
@@ -60,8 +61,10 @@ set(OME_BIOFORMATS_HEADERS
     FormatHandler.h
     FormatReader.h
     FormatTools.h
+    FormatWriter.h
     MetadataConfigurable.h
     MetadataOptions.h
+    MetadataTools.h
     Modulo.h
     PixelBuffer.h
     PixelProperties.h
@@ -72,10 +75,12 @@ set(OME_BIOFORMATS_HEADERS
     Version.h)
 
 set(OME_BIOFORMATS_DETAIL_SOURCES
-    detail/FormatReader.cpp)
+    detail/FormatReader.cpp
+    detail/FormatWriter.cpp)
 
 set(OME_BIOFORMATS_DETAIL_HEADERS
-    detail/FormatReader.h)
+    detail/FormatReader.h
+    detail/FormatWriter.h)
 
 set(OME_BIOFORMATS_IN_SOURCES)
 
@@ -87,7 +92,8 @@ set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/IFD.cpp
     tiff/Sentry.cpp
     tiff/Tags.cpp
-    tiff/TIFF.cpp)
+    tiff/TIFF.cpp
+    tiff/TileInfo.cpp)
 
 set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/Exception.h
@@ -96,6 +102,7 @@ set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/Sentry.h
     tiff/Tags.h
     tiff/TIFF.h
+    tiff/TileInfo.h
     tiff/Types.h)
 
 set(OME_BIOFORMATS_OUT_SOURCES)

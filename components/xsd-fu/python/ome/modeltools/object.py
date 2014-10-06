@@ -324,7 +324,7 @@ class OMEModelObject(OMEModelEntity):
 
         if parents is not None:
             parent = self.model.getObjectByName(parents.keys()[0])
-            if parent is not None and parent.isAbstractProprietary:
+            if parent is not None and parent.isAbstractProprietary and not self.name in config.ANNOTATION_OVERRIDE:
                 name = parent.name
 
         return name

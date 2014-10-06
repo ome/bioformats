@@ -73,8 +73,8 @@ public class LuraWaveServiceImpl extends AbstractService
   public static final String STUB_FIELD = "IS_STUB";
 
   /** LuraWave decoder delegate. */
-  private lwfDecoder delegate;
-  
+  private transient Object delegate;
+
   /** License code. */
   private String license;
 
@@ -124,14 +124,14 @@ public class LuraWaveServiceImpl extends AbstractService
    * @see loci.formats.services.LuraWaveService#getWidth()
    */
   public int getWidth() {
-    return delegate.getWidth();
+    return ((lwfDecoder) delegate).getWidth();
   }
 
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#getHeight()
    */
   public int getHeight() {
-    return delegate.getHeight();
+    return ((lwfDecoder) delegate).getHeight();
   }
 
   /* (non-Javadoc)
@@ -141,7 +141,7 @@ public class LuraWaveServiceImpl extends AbstractService
                                   int quality, int scale)
     throws ServiceException {
     try {
-      delegate.decodeToMemoryGray8(image, limit, quality, scale);
+      ((lwfDecoder) delegate).decodeToMemoryGray8(image, limit, quality, scale);
     }
     catch (SecurityException e) {
       throw new ServiceException(e);
@@ -156,7 +156,7 @@ public class LuraWaveServiceImpl extends AbstractService
       int pdx, int pdy, int clip_x, int clip_y, int clip_w, int clip_h)
     throws ServiceException {
     try {
-      delegate.decodeToMemoryGray16(image, imageoffset, limit, quality, scale,
+      ((lwfDecoder) delegate).decodeToMemoryGray16(image, imageoffset, limit, quality, scale,
                                     pdx, pdy, clip_x, clip_y, clip_w, clip_h);
     }
     catch (SecurityException e) {

@@ -28,7 +28,6 @@ package ome.jxr.parser;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import loci.formats.codec.BitBuffer;
 import ome.jxr.JXRException;
 import ome.jxr.constants.Image;
 import ome.jxr.image.BitDepth;
@@ -118,32 +117,30 @@ public final class DatastreamParser extends Parser {
   }
 
   private void parseImageHeader() throws IOException {
-    BitBuffer bits = streamBytesToBits(4);
-
-    reservedB = bits.getBits(4);
-    hardTilingFlag = (bits.getBits(1) == 1);
+    reservedB = stream.readBits(4);
+    hardTilingFlag = (stream.readBits(1) == 1);
 
     // Skip RESERVED_C in this version of the decoder
-    bits.skipBits(3);
+    stream.skipBits(3);
 
-    tilingFlag = (bits.getBits(1) == 1);
-    frequencyModeCodestreamFlag = (bits.getBits(1) == 1);
-    spatialXfrmSubordinate = bits.getBits(3);
-    indexTablePresentFlag = (bits.getBits(1) == 1);
-    overlapMode = bits.getBits(2);
-    shortHeaderFlag = (bits.getBits(1) == 1);
-    longWordFlag = (bits.getBits(1) == 1);
-    windowingFlag = (bits.getBits(1) == 1);
-    trimFlexbitsFlag = (bits.getBits(1) == 1);
+    tilingFlag = (stream.readBits(1) == 1);
+    frequencyModeCodestreamFlag = (stream.readBits(1) == 1);
+    spatialXfrmSubordinate = stream.readBits(3);
+    indexTablePresentFlag = (stream.readBits(1) == 1);
+    overlapMode = stream.readBits(2);
+    shortHeaderFlag = (stream.readBits(1) == 1);
+    longWordFlag = (stream.readBits(1) == 1);
+    windowingFlag = (stream.readBits(1) == 1);
+    trimFlexbitsFlag = (stream.readBits(1) == 1);
 
     // Skip RESERVED_D in this version of the decoder
-    bits.skipBits(1);
+    stream.skipBits(1);
 
-    redBlueNotSwappedFlag = (bits.getBits(1) == 1);
-    premultipliedAlphaFlag = (bits.getBits(1) == 1);
-    alphaImagePlaneFlag = (bits.getBits(1) == 1);
-    outputClrFmt = OutputColorFormat.findById(bits.getBits(4));
-    outputBitdepth = BitDepth.findById(bits.getBits(4));
+    redBlueNotSwappedFlag = (stream.readBits(1) == 1);
+    premultipliedAlphaFlag = (stream.readBits(1) == 1);
+    alphaImagePlaneFlag = (stream.readBits(1) == 1);
+    outputClrFmt = OutputColorFormat.findById(stream.readBits(4));
+    outputBitdepth = BitDepth.findById(stream.readBits(4));
 
     if (shortHeaderFlag) {
       widthMinus1 = stream.readUnsignedShort();
@@ -154,9 +151,8 @@ public final class DatastreamParser extends Parser {
     }
 
     if (tilingFlag) {
-      bits = streamBytesToBits(3);
-      numVerTilesMinus1 = bits.getBits(12);
-      numHorTilesMinus1 = bits.getBits(12);
+      numVerTilesMinus1 = stream.readBits(12);
+      numHorTilesMinus1 = stream.readBits(12);
 
       tileWidthInMB = new short[numVerTilesMinus1];
       tileHeightInMB = new short[numHorTilesMinus1];
@@ -179,11 +175,10 @@ public final class DatastreamParser extends Parser {
     }
 
     if (windowingFlag) {
-      bits = streamBytesToBits(3);
-      topMargin = bits.getBits(6);
-      leftMargin = bits.getBits(6);
-      bottomMargin = bits.getBits(6);
-      rightMargin = bits.getBits(6);
+      topMargin = stream.readBits(6);
+      leftMargin = stream.readBits(6);
+      bottomMargin = stream.readBits(6);
+      rightMargin = stream.readBits(6);
     }
   }
 
@@ -215,41 +210,37 @@ public final class DatastreamParser extends Parser {
   }
 
   private void parsePrimaryImagePlaneHeader() throws IOException {
-    BitBuffer bits = streamBytesToBits(1);
-
-    internalClrFmt = InternalColorFormat.findById(bits.getBits(3));
-    scaledFlag = (bits.getBits(1) == 1);
-    bandsPresent = FrequencyBand.findById(bits.getBits(4));
+    internalClrFmt = InternalColorFormat.findById(stream.readBits(3));
+    scaledFlag = (stream.readBits(1) == 1);
+    bandsPresent = FrequencyBand.findById(stream.readBits(4));
 
     if (InternalColorFormat.YUV444.equals(internalClrFmt)
         || InternalColorFormat.YUV420.equals(internalClrFmt)
         || InternalColorFormat.YUV422.equals(internalClrFmt)) {
-      bits = streamBytesToBits(1);
       if (InternalColorFormat.YUV420.equals(internalClrFmt)
           || InternalColorFormat.YUV422.equals(internalClrFmt)) {
         // Skip RESERVED_E_BIT in this version of the decoder
-        bits.skipBits(1);
-        chromaCenteringX = bits.getBits(3);
+        stream.skipBits(1);
+        chromaCenteringX = stream.readBits(3);
       } else {
         // Skip RESERVED_F in this version of the decoder
-        bits.skipBits(4);
+        stream.skipBits(4);
       }
       if (InternalColorFormat.YUV420.equals(internalClrFmt)) {
         // Skip RESERVED_G_BIT in this version of the decoder
-        bits.skipBits(1);
-        chromaCenteringY = bits.getBits(3);
+        stream.skipBits(1);
+        chromaCenteringY = stream.readBits(3);
       } else {
         // Skip RESERVED_H in this version of the decoder
-        bits.skipBits(4);
+        stream.skipBits(4);
       }
     } else if (InternalColorFormat.NCOMPONENT.equals(internalClrFmt)) {
-      bits = streamBytesToBits(2);
-      numComponentsMinus1 = bits.getBits(4);
+      numComponentsMinus1 = stream.readBits(4);
       if (numComponentsMinus1 == 0xf) {
-        numComponentsExtendedMinus16 = bits.getBits(12);
+        numComponentsExtendedMinus16 = stream.readBits(12);
       } else {
         // Skip RESERVED_H in this version of the decoder
-        bits.skipBits(4);
+        stream.skipBits(4);
         stream.seek(stream.getFilePointer() - 1);
       }
     }
@@ -273,53 +264,49 @@ public final class DatastreamParser extends Parser {
     if (BitDepth.BD16.equals(outputBitdepth)
         || BitDepth.BD16S.equals(outputBitdepth)
         || BitDepth.BD32S.equals(outputBitdepth)) {
-      bits = streamBytesToBits(1);
-      int shiftBits = bits.getBits(8);
+      int shiftBits = stream.read();
     }
     if (BitDepth.BD32F.equals(outputBitdepth)) {
-      bits = streamBytesToBits(2);
-      lenMantissa = bits.getBits(8);
-      expBias = bits.getBits(8);
+      lenMantissa = stream.read();
+      expBias = stream.read();
     }
 
     // TODO: This needs refactoring with a class allowing
     // for reading bits and bytes. How to skip a bit using
     // a byte pointer?
-    bits = streamBytesToBits(1);
-    boolean dcImagePlaneUniformFlag = (bits.getBits(1) == 1);
+    boolean dcImagePlaneUniformFlag = (stream.readBits(1) == 1);
     if (dcImagePlaneUniformFlag) {
       stream.seek(stream.getFilePointer() - 1);
-      bits = streamBytesToBits(1);
-      bits.skipBits(2);
+      stream.skipBits(2);
       ComponentMode componentMode = ComponentMode.UNIFORM;
       if (numComponents != 1) {
-        componentMode = ComponentMode.findById(bits.getBits(2));
+        componentMode = ComponentMode.findById(stream.readBits(2));
       }
       if (ComponentMode.UNIFORM.equals(componentMode)) {
-        int dcQuant = bits.getBits(8);
+        int dcQuant = stream.readBits(8);
       } else if (ComponentMode.SEPARATE.equals(componentMode)) {
-        int dcQuantLuma = bits.getBits(8);
-        int dcQuantChroma = bits.getBits(8);
+        int dcQuantLuma = stream.readBits(8);
+        int dcQuantChroma = stream.readBits(8);
       } else if (ComponentMode.INDEPENDENT.equals(componentMode)) {
         int[] dcQuantCh = new int[numComponents];
         for (int i = 0; i < numComponents; i++) {
-          dcQuantCh[i] = bits.getBits(8);
+          dcQuantCh[i] = stream.readBits(8);
         }
       }
     }
 
     if (!FrequencyBand.DCONLY.equals(bandsPresent)) {
       // Skip RESERVED_I_BIT in this version of the decoder
-      bits.skipBits(1);
-      lpImagePlaneUniformFlag = (bits.getBits(1) == 1);
+      stream.skipBits(1);
+      lpImagePlaneUniformFlag = (stream.readBits(1) == 1);
       if (lpImagePlaneUniformFlag) {
         // NumLPQPs = 1
         // LP_QP()
       }
       if (!FrequencyBand.NOHIGHPASS.equals(bandsPresent)) {
         // Skip RESERVED_J_BIT in this version of the decoder
-        bits.skipBits(1);
-        hpImagePlaneUniformFlag = (bits.getBits(1) == 1);
+        stream.skipBits(1);
+        hpImagePlaneUniformFlag = (stream.readBits(1) == 1);
         if (hpImagePlaneUniformFlag) {
           // NumHPQPs = 1
           // HP_QP()
@@ -327,8 +314,8 @@ public final class DatastreamParser extends Parser {
       }
     }
 
-    while (!bits.isBitOnByteBoundary()) {
-      bits.skipBits(1);
+    while (!stream.isBitOnByteBoundary()) {
+      stream.skipBits(1);
     }
   }
 
@@ -342,12 +329,6 @@ public final class DatastreamParser extends Parser {
     if (FrequencyBand.RESERVED.equals(bandsPresent)) {
       throw new JXRException("Reserved value of BANDS_PRESENT.");
     }
-  }
-
-  private BitBuffer streamBytesToBits(int numberOfBytes) throws IOException {
-    byte[] bytes = new byte[numberOfBytes];
-    stream.readFully(bytes);
-    return new BitBuffer(bytes);
   }
 
   public void close() throws IOException {

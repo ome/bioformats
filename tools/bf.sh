@@ -38,9 +38,9 @@ then
   java $BF_FLAGS $BF_PROG "$@"
 else
   # Developer environment variable unset; add JAR libraries to classpath.
-  if [ -e "$BF_JAR_DIR/bio-formats.jar" ]
+  if [ -e "$BF_JAR_DIR/formats-gpl.jar" ]
   then
-    BF_CP="$BF_JAR_DIR/bio-formats.jar:$BF_JAR_DIR/bio-formats-tools.jar:$BF_CP"
+    BF_CP="$BF_JAR_DIR/formats-gpl.jar:$BF_JAR_DIR/bio-formats-tools.jar:$BF_CP"
   elif [ -e "$BF_JAR_DIR/bioformats_package.jar" ]
   then
     BF_CP="$BF_JAR_DIR/bioformats_package.jar:$BF_CP"
@@ -52,7 +52,7 @@ else
     echo "Required JAR libraries not found. Please download:"
     echo "  bioformats_package.jar"
     echo "from:"
-    echo "  http://www.openmicroscopy.org/site/products/bio-formats/downloads"
+    echo "  http://downloads.openmicroscopy.org/latest/bio-formats5.1"
     echo "and place in the same directory as the command line tools."
     exit 2
   fi

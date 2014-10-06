@@ -38,8 +38,8 @@ if not "%BF_DEVEL%" == "" (
 )
 
 rem Developer environment variable unset; add JAR libraries to classpath.
-if exist "%BF_JAR_DIR%\bio-formats.jar" (
-  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bio-formats.jar";"%BF_JAR_DIR%\bio-formats-tools.jar"
+if exist "%BF_JAR_DIR%\formats-gpl.jar" (
+  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\formats-gpl.jar";"%BF_JAR_DIR%\bio-formats-tools.jar"
 ) else if exist "%BF_JAR_DIR%\bioformats_package.jar" (
   set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bioformats_package.jar"
 ) else if exist "%BF_JAR_DIR%\loci_tools.jar" (
@@ -49,7 +49,7 @@ if exist "%BF_JAR_DIR%\bio-formats.jar" (
   echo Required JAR libraries not found. Please download:
   echo   bioformats_package.jar
   echo from:
-  echo   http://www.openmicroscopy.org/site/products/bio-formats/downloads
+  echo   http://downloads.openmicroscopy.org/latest/bio-formats5.1
   echo and place in the same directory as the command line tools.
   goto end
 )
