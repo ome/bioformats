@@ -121,6 +121,7 @@ namespace ome
       class TileCoverage::Impl
       {
       public:
+        /// Region coverage stored as box ranges.
 #ifdef OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP
         geomi::rtree<box, geomi::quadratic<16> > rtree;
 #else // ! OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP
