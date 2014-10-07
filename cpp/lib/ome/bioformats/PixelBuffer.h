@@ -544,8 +544,8 @@ namespace ome
        * Assign a pixel buffer.
        *
        * The dimension extents must be compatible, but the storage
-       * ordering is not.  The buffer contents will be assigned in the
-       * logical order rather than the storage order.
+       * ordering does not.  The buffer contents will be assigned in
+       * the logical order rather than the storage order.
        *
        * @param rhs the pixel buffer to assign.
        * @returns the assigned buffer.
