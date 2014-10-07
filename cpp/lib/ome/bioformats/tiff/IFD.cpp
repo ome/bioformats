@@ -424,7 +424,7 @@ namespace ome
         std::vector<TileCoverage> coverage;
         /// Tile cache (used when writing).
         TileCache tilecache;
-        /// Image width.
+        /// Tile type.
         boost::optional<TileType> tiletype;
         /// Image width.
         boost::optional<uint32_t> imagewidth;
