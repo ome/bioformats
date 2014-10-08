@@ -846,7 +846,7 @@ public class CellSensReader extends FormatReader {
 
     ms.pixelType = convertPixelType(pixelType);
     if (usePyramid) {
-      int finalResolution = 0;
+      int finalResolution = 1;
       double aspectRatio = (double) ms.sizeX / ms.sizeY;
       for (int i=1; i<maxResolution; i++) {
         CoreMetadata newResolution = new CoreMetadata(ms);
