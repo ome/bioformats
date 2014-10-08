@@ -104,8 +104,11 @@ namespace
   //      dimensions)
   //
   // Both visitors iterate over the tiles partially or fully covered
-  // by the pixel buffer, and use the most optimal strategy to copy
-  // data between the pixel buffer and tile buffer.
+  // by the pixel buffer, and use the optimal strategy to copy data
+  // between the pixel buffer and tile buffer.  This will typically be
+  // std::copy (usually memmove(3) internally) of whole tiles or tile
+  // chunks where the tile widths are compatible, or individual
+  // scanlines where they are not compatible.
 
   struct ReadVisitor : public boost::static_visitor<>
   {
