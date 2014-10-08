@@ -127,6 +127,7 @@ public class CellSensReader extends FormatReader {
   // Tag values
   private static final int PHYSICAL_SIZE = 20007;
   private static final int ORIGIN = 20006;
+  private static final int MAGNIFICATION = 1073741824;
 
   // -- Fields --
 
@@ -157,6 +158,7 @@ public class CellSensReader extends FormatReader {
 
   private double physicalSizeX, physicalSizeY;
   private double originX, originY;
+  private ArrayList<Double> magnifications = new ArrayList<Double>();
 
   // -- Constructor --
 
@@ -343,6 +345,7 @@ public class CellSensReader extends FormatReader {
       physicalSizeY = 0;
       originX = 0;
       originY = 0;
+      magnifications.clear();
     }
   }
 
@@ -475,9 +478,47 @@ public class CellSensReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
+    // make sure magnification order matches resolution order
+
+    if (magnifications.size() > 1) {
+      HashMap<Integer, Integer> xDims = new HashMap<Integer, Integer>();
+      for (int i=0; i<core.size();) {
+        xDims.put(core.get(i).sizeX, i);
+        if (xDims.size() == magnifications.size()) {
+          break;
+        }
+        i += core.get(i).resolutionCount;
+      }
+
+      Integer[] keys = xDims.keySet().toArray(new Integer[xDims.size()]);
+      Arrays.sort(keys);
+      Double[] newMags = magnifications.toArray(new Double[magnifications.size()]);
+      Arrays.sort(newMags);
+
+      for (int i=0; i<newMags.length; i++) {
+        int magIndex = xDims.get(keys[i]);
+        magnifications.set(magIndex, newMags[i]);
+      }
+    }
+
     if (physicalSizeX > 0 && physicalSizeY > 0) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
       store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+
+      int nextMag = 1;
+      for (int i=core.get(0).resolutionCount; i<core.size();) {
+        if (nextMag < magnifications.size()) {
+          double mult = magnifications.get(nextMag) / magnifications.get(0);
+          int ii = coreIndexToSeries(i);
+          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX * mult), ii);
+          store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY * mult), ii);
+          nextMag++;
+          i += core.get(i).resolutionCount;
+        }
+        else {
+          break;
+        }
+      }
     }
   }
 
@@ -971,7 +1012,7 @@ public class CellSensReader extends FormatReader {
         }
         else {
           if (inlineData) {
-            addGlobalMeta(String.valueOf(tag), dataSize);
+            addGlobalMetaList(String.valueOf(tag), dataSize);
           }
           else {
             switch (realType) {
@@ -992,10 +1033,11 @@ public class CellSensReader extends FormatReader {
                 }
 
                 if (tagName != null) {
-                  addGlobalMeta(tagName, first + ", " + second);
+                  addGlobalMetaList(tagName, first + ", " + second);
                 }
                 break;
               case TCHAR:
+              case UNICODE_TCHAR:
                 String value = vsi.readString(dataSize);
                 value = DataTools.stripString(value);
 
@@ -1011,6 +1053,15 @@ public class CellSensReader extends FormatReader {
                   originX *= scale;
                   originY *= scale;
                 }
+                else if (tag == MAGNIFICATION) {
+                  magnifications.add(
+                    new Double(value.substring(0, value.length() - 1)));
+                  addGlobalMetaList("Magnification", value);
+                }
+                else {
+                  addGlobalMetaList(String.valueOf(tag), value);
+                }
+                break;
             }
           }
         }
