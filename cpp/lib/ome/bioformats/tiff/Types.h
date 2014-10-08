@@ -204,10 +204,10 @@ namespace ome
         {}
 
         /**
-         * Is the region invalid?
+         * Is the region valid?
          *
-         * @returns @c true if the region has a width and height
-         * of zero, @c false otherwise.
+         * @returns @c true if the region has a nonzero width and
+         * height, @c false otherwise.
          */
         bool
         valid() const {
