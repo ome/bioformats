@@ -166,9 +166,9 @@ struct RandomAssignTestVisitor : public boost::static_visitor<>
   }
 
   void
-  operator() (const std::shared_ptr<PixelBuffer<typename PixelProperties<PT::BIT>::std_type> >& v)
+  operator() (const std::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
   {
-    typedef typename PixelProperties<PT::BIT>::std_type value_type;
+    typedef PixelProperties<PT::BIT>::std_type value_type;
 
     VariantPixelBuffer::size_type size(buf.num_elements());
     std::vector<value_type> data;
