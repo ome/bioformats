@@ -843,7 +843,7 @@ namespace ome
                 {
                   if (bits == 64)
                     pt = PixelType::COMPLEX;
-                  else if (bits == 12)
+                  else if (bits == 128)
                     pt = PixelType::DOUBLECOMPLEX;
                   else
                     throw Exception("Unsupported bit depth for complex floating point pixel type");
