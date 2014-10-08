@@ -190,7 +190,8 @@ public class CellSensReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    return usedFiles;
+    // all files contain pixels
+    return noPixels ? null : usedFiles;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
