@@ -50,6 +50,9 @@ import loci.formats.services.MetakitService;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * VolocityReader is the file format reader for Volocity library files.
  *
@@ -772,7 +775,7 @@ public class VolocityReader extends FormatReader {
         }
 
         if (i < timestamps.size() && coords[2] < timestamps.get(i).length) {
-          store.setPlaneDeltaT(timestamps.get(i)[coords[2]], i, img);
+          store.setPlaneDeltaT(new Time(timestamps.get(i)[coords[2]], UNITS.S), i, img);
         }
       }
     }

@@ -58,6 +58,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -690,10 +693,10 @@ public class FlexReader extends FormatReader {
           }
           if (plane - image + c < planeExposureTime.size()) {
             store.setPlaneExposureTime(
-              planeExposureTime.get(plane - image + c), i, image);
+              new Time(planeExposureTime.get(plane - image + c), UNITS.S), i, image);
           }
           if (plane < planeDeltaT.size()) {
-            store.setPlaneDeltaT(planeDeltaT.get(plane), i, image);
+            store.setPlaneDeltaT(new Time(planeDeltaT.get(plane), UNITS.S), i, image);
           }
         }
       }

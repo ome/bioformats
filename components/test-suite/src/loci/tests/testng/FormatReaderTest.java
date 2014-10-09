@@ -62,6 +62,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.SkipException;
@@ -596,8 +599,8 @@ public class FormatReaderTest {
 
         // Z, C and T indices should be populated if PlaneTiming is present
 
-        Double deltaT = null;
-        Double exposure = null;
+        Time deltaT = null;
+        Time exposure = null;
         Integer z = null, c = null, t = null;
 
         if (retrieve.getPlaneCount(i) > 0) {
@@ -982,7 +985,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       Double expectedIncrement = config.getTimeIncrement();
-      Double realIncrement = retrieve.getPixelsTimeIncrement(i);
+      Time realIncrement = retrieve.getPixelsTimeIncrement(i);
 
       if (!(expectedIncrement == null && realIncrement == null) &&
         !expectedIncrement.equals(realIncrement))
@@ -1068,7 +1071,7 @@ public class FormatReaderTest {
           for (int p=0; p<reader.getImageCount(); p++) {
             int[] zct = reader.getZCTCoords(p);
             if (zct[1] == c && p < retrieve.getPlaneCount(i)) {
-              Double planeExposureTime = retrieve.getPlaneExposureTime(i, p);
+              Time planeExposureTime = retrieve.getPlaneExposureTime(i, p);
 
               if (exposureTime == null && planeExposureTime == null) {
                 continue;

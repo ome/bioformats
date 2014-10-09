@@ -44,6 +44,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
  * The strategies employed by this reader are highly suboptimal, as we
@@ -1312,7 +1315,7 @@ public class SlidebookReader extends FormatReader {
             exposureIndex + c >= 0)
           {
             store.setPlaneExposureTime(
-              new Double(exposureTimes.get(exposureIndex + c)), i, plane);
+              new Time(new Double(exposureTimes.get(exposureIndex + c)), UNITS.S), i, plane);
           }
         }
         exposureIndex += getSizeC();

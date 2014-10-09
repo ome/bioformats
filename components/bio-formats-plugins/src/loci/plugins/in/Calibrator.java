@@ -38,6 +38,9 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * Logic for calibrating images.
  *
@@ -73,7 +76,7 @@ public class Calibrator {
     if (yd != null) ycal = yd.getValue();
     PositiveFloat zd = meta.getPixelsPhysicalSizeZ(series);
     if (zd != null) zcal = zd.getValue();
-    Double td = meta.getPixelsTimeIncrement(series);
+    Double td = meta.getPixelsTimeIncrement(series).value(UNITS.S).doubleValue();
     if (td != null) tcal = td.floatValue();
 
     boolean xcalPresent = !Double.isNaN(xcal);
@@ -141,7 +144,7 @@ public class Calibrator {
       // store delta T value at appropriate index
       final int t = theT.getValue();
       if (t >= tSize) continue;
-      final Double deltaT = meta.getPlaneDeltaT(series, p);
+      final Double deltaT = meta.getPlaneDeltaT(series, p).value(UNITS.S).doubleValue();
       if (deltaT == null) continue;
       deltas[t] = deltaT;
     }

@@ -39,6 +39,9 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * KodakReader is the file format reader for Kodak Molecular Imaging .bip files.
  *
@@ -197,7 +200,7 @@ public class KodakReader extends FormatReader {
         }
       }
       else if (key.equals("Exposure Time")) {
-        Double exposure = new Double(value.substring(0, value.indexOf(" ")));
+        Time exposure = new Time(new Double(value.substring(0, value.indexOf(" "))), UNITS.S);
         store.setPlaneExposureTime(exposure, 0, 0);
       }
       else if (key.equals("Vertical Resolution")) {

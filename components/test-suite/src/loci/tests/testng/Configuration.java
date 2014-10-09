@@ -49,6 +49,9 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/Configuration.java">Trac</a>,
@@ -475,7 +478,7 @@ public class Configuration {
       if (physicalZ != null) {
         seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.toString());
       }
-      Double timeIncrement = retrieve.getPixelsTimeIncrement(series);
+      Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
       if (timeIncrement != null) {
         seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
       }

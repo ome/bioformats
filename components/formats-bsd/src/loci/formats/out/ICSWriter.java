@@ -43,6 +43,9 @@ import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * ICSWriter is the file format writer for ICS files.  It writes ICS version 1
  * and 2 files.
@@ -257,7 +260,7 @@ public class ICSWriter extends FormatWriter {
           units.append("micrometers\t");
         }
         else if (dim == 'T') {
-          value = meta.getPixelsTimeIncrement(0);
+          value = meta.getPixelsTimeIncrement(0).value(UNITS.S);
           units.append("seconds\t");
         }
         out.writeBytes(value + "\t");

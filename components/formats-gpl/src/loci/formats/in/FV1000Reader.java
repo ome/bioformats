@@ -60,6 +60,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
  * Fluoview FV 1000 OIF files.
@@ -986,10 +989,10 @@ public class FV1000Reader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(pixelSizeT, i);
+      store.setPixelsTimeIncrement(new Time(pixelSizeT, UNITS.S), i);
 
       for (int p=0; p<core.get(i).imageCount; p++) {
-        store.setPlaneDeltaT(pixelSizeT * p, i, p);
+        store.setPlaneDeltaT(new Time(pixelSizeT * p, UNITS.S), i, p);
       }
 
       // populate LogicalChannel data
@@ -1135,7 +1138,7 @@ public class FV1000Reader extends FormatReader {
     // Populate metadata for the planes
     for (int i=0; i<planes.size(); i++) {
       PlaneData plane = planes.get(i);
-      store.setPlaneDeltaT(plane.deltaT, 0, i);
+      store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.S), 0, i);
       store.setPlanePositionX(plane.positionX, 0, i);
       store.setPlanePositionY(plane.positionY, 0, i);
       store.setPlanePositionZ(plane.positionZ, 0, i);
