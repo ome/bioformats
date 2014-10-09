@@ -242,15 +242,15 @@ TEST(TIFFTest, RegionIntersection1)
   PlaneRegion r1(0, 0, 50, 100);
   PlaneRegion r2(25, 30, 100, 50);
   PlaneRegion r3 = r1 & r2;
-  EXPECT_EQ(25, r3.x);
-  EXPECT_EQ(30, r3.y);
-  EXPECT_EQ(25, r3.w);
-  EXPECT_EQ(50, r3.h);
+  EXPECT_EQ(25U, r3.x);
+  EXPECT_EQ(30U, r3.y);
+  EXPECT_EQ(25U, r3.w);
+  EXPECT_EQ(50U, r3.h);
   PlaneRegion r4 = r2 & r1;
-  EXPECT_EQ(25, r4.x);
-  EXPECT_EQ(30, r4.y);
-  EXPECT_EQ(25, r4.w);
-  EXPECT_EQ(50, r4.h);
+  EXPECT_EQ(25U, r4.x);
+  EXPECT_EQ(30U, r4.y);
+  EXPECT_EQ(25U, r4.w);
+  EXPECT_EQ(50U, r4.h);
 }
 
 TEST(TIFFTest, RegionIntersection2)
@@ -258,15 +258,15 @@ TEST(TIFFTest, RegionIntersection2)
   PlaneRegion r1(0, 0, 100, 100);
   PlaneRegion r2(25, 25, 25, 25);
   PlaneRegion r3 = r1 & r2;
-  EXPECT_EQ(25, r3.x);
-  EXPECT_EQ(25, r3.y);
-  EXPECT_EQ(25, r3.w);
-  EXPECT_EQ(25, r3.h);
+  EXPECT_EQ(25U, r3.x);
+  EXPECT_EQ(25U, r3.y);
+  EXPECT_EQ(25U, r3.w);
+  EXPECT_EQ(25U, r3.h);
   PlaneRegion r4 = r2 & r1;
-  EXPECT_EQ(25, r4.x);
-  EXPECT_EQ(25, r4.y);
-  EXPECT_EQ(25, r4.w);
-  EXPECT_EQ(25, r4.h);
+  EXPECT_EQ(25U, r4.x);
+  EXPECT_EQ(25U, r4.y);
+  EXPECT_EQ(25U, r4.w);
+  EXPECT_EQ(25U, r4.h);
 }
 
 TEST(TIFFTest, RegionIntersection3)
@@ -274,15 +274,15 @@ TEST(TIFFTest, RegionIntersection3)
   PlaneRegion r1(40, 190, 29, 18);
   PlaneRegion r2(40, 190, 29, 18);
   PlaneRegion r3 = r1 & r2;
-  EXPECT_EQ(40, r3.x);
-  EXPECT_EQ(190, r3.y);
-  EXPECT_EQ(29, r3.w);
-  EXPECT_EQ(18, r3.h);
+  EXPECT_EQ(40U, r3.x);
+  EXPECT_EQ(190U, r3.y);
+  EXPECT_EQ(29U, r3.w);
+  EXPECT_EQ(18U, r3.h);
   PlaneRegion r4 = r2 & r1;
-  EXPECT_EQ(40, r4.x);
-  EXPECT_EQ(190, r4.y);
-  EXPECT_EQ(29, r4.w);
-  EXPECT_EQ(18, r4.h);
+  EXPECT_EQ(40U, r4.x);
+  EXPECT_EQ(190U, r4.y);
+  EXPECT_EQ(29U, r4.w);
+  EXPECT_EQ(18U, r4.h);
 }
 
 TEST(TIFFTest, RegionIntersection4)
@@ -290,15 +290,15 @@ TEST(TIFFTest, RegionIntersection4)
   PlaneRegion r1(20, 30, 80, 50);
   PlaneRegion r2(200, 25, 60, 20);
   PlaneRegion r3 = r1 & r2;
-  EXPECT_EQ(0, r3.x);
-  EXPECT_EQ(0, r3.y);
-  EXPECT_EQ(0, r3.w);
-  EXPECT_EQ(0, r3.h);
+  EXPECT_EQ(0U, r3.x);
+  EXPECT_EQ(0U, r3.y);
+  EXPECT_EQ(0U, r3.w);
+  EXPECT_EQ(0U, r3.h);
   PlaneRegion r4 = r2 & r1;
-  EXPECT_EQ(0, r4.x);
-  EXPECT_EQ(0, r4.y);
-  EXPECT_EQ(0, r4.w);
-  EXPECT_EQ(0, r4.h);
+  EXPECT_EQ(0U, r4.x);
+  EXPECT_EQ(0U, r4.y);
+  EXPECT_EQ(0U, r4.w);
+  EXPECT_EQ(0U, r4.h);
 }
 
 TEST(TIFFTest, RegionIntersection5)
@@ -306,15 +306,15 @@ TEST(TIFFTest, RegionIntersection5)
   PlaneRegion r1(20, 400, 80, 50);
   PlaneRegion r2(30, 25, 60, 45);
   PlaneRegion r3 = r1 & r2;
-  EXPECT_EQ(0, r3.x);
-  EXPECT_EQ(0, r3.y);
-  EXPECT_EQ(0, r3.w);
-  EXPECT_EQ(0, r3.h);
+  EXPECT_EQ(0U, r3.x);
+  EXPECT_EQ(0U, r3.y);
+  EXPECT_EQ(0U, r3.w);
+  EXPECT_EQ(0U, r3.h);
   PlaneRegion r4 = r2 & r1;
-  EXPECT_EQ(0, r4.x);
-  EXPECT_EQ(0, r4.y);
-  EXPECT_EQ(0, r4.w);
-  EXPECT_EQ(0, r4.h);
+  EXPECT_EQ(0U, r4.x);
+  EXPECT_EQ(0U, r4.y);
+  EXPECT_EQ(0U, r4.w);
+  EXPECT_EQ(0U, r4.h);
 }
 
 TEST(TIFFTest, RegionUnion1)
@@ -322,15 +322,15 @@ TEST(TIFFTest, RegionUnion1)
   PlaneRegion r1(0, 0, 16, 16);
   PlaneRegion r2(16, 0, 16, 16);
   PlaneRegion r3 = r1 | r2;
-  EXPECT_EQ(0, r3.x);
-  EXPECT_EQ(0, r3.y);
-  EXPECT_EQ(32, r3.w);
-  EXPECT_EQ(16, r3.h);
+  EXPECT_EQ(0U, r3.x);
+  EXPECT_EQ(0U, r3.y);
+  EXPECT_EQ(32U, r3.w);
+  EXPECT_EQ(16U, r3.h);
   PlaneRegion r4 = r2 | r1;
-  EXPECT_EQ(0, r4.x);
-  EXPECT_EQ(0, r4.y);
-  EXPECT_EQ(32, r4.w);
-  EXPECT_EQ(16, r4.h);
+  EXPECT_EQ(0U, r4.x);
+  EXPECT_EQ(0U, r4.y);
+  EXPECT_EQ(32U, r4.w);
+  EXPECT_EQ(16U, r4.h);
 }
 
 TEST(TIFFTest, RegionUnion2)
@@ -338,15 +338,15 @@ TEST(TIFFTest, RegionUnion2)
   PlaneRegion r1(0, 0, 16, 16);
   PlaneRegion r2(0, 16, 16, 16);
   PlaneRegion r3 = r1 | r2;
-  EXPECT_EQ(0, r3.x);
-  EXPECT_EQ(0, r3.y);
-  EXPECT_EQ(16, r3.w);
-  EXPECT_EQ(32, r3.h);
+  EXPECT_EQ(0U, r3.x);
+  EXPECT_EQ(0U, r3.y);
+  EXPECT_EQ(16U, r3.w);
+  EXPECT_EQ(32U, r3.h);
   PlaneRegion r4 = r2 | r1;
-  EXPECT_EQ(0, r4.x);
-  EXPECT_EQ(0, r4.y);
-  EXPECT_EQ(16, r4.w);
-  EXPECT_EQ(32, r4.h);
+  EXPECT_EQ(0U, r4.x);
+  EXPECT_EQ(0U, r4.y);
+  EXPECT_EQ(16U, r4.w);
+  EXPECT_EQ(32U, r4.h);
 }
 
 TEST(TIFFTest, RegionUnion3)
@@ -354,15 +354,15 @@ TEST(TIFFTest, RegionUnion3)
   PlaneRegion r1(43, 23, 12, 15);
   PlaneRegion r2(55, 23, 44, 15);
   PlaneRegion r3 = r1 | r2;
-  EXPECT_EQ(43, r3.x);
-  EXPECT_EQ(23, r3.y);
-  EXPECT_EQ(56, r3.w);
-  EXPECT_EQ(15, r3.h);
+  EXPECT_EQ(43U, r3.x);
+  EXPECT_EQ(23U, r3.y);
+  EXPECT_EQ(56U, r3.w);
+  EXPECT_EQ(15U, r3.h);
   PlaneRegion r4 = r2 | r1;
-  EXPECT_EQ(43, r4.x);
-  EXPECT_EQ(23, r4.y);
-  EXPECT_EQ(56, r4.w);
-  EXPECT_EQ(15, r4.h);
+  EXPECT_EQ(43U, r4.x);
+  EXPECT_EQ(23U, r4.y);
+  EXPECT_EQ(56U, r4.w);
+  EXPECT_EQ(15U, r4.h);
 }
 
 TEST(TIFFTest, RegionUnion4)
@@ -370,15 +370,15 @@ TEST(TIFFTest, RegionUnion4)
   PlaneRegion r1(22, 19, 27, 80);
   PlaneRegion r2(22, 99, 27, 11);
   PlaneRegion r3 = r1 | r2;
-  EXPECT_EQ(22, r3.x);
-  EXPECT_EQ(19, r3.y);
-  EXPECT_EQ(27, r3.w);
-  EXPECT_EQ(91, r3.h);
+  EXPECT_EQ(22U, r3.x);
+  EXPECT_EQ(19U, r3.y);
+  EXPECT_EQ(27U, r3.w);
+  EXPECT_EQ(91U, r3.h);
   PlaneRegion r4 = r2 | r1;
-  EXPECT_EQ(22, r4.x);
-  EXPECT_EQ(19, r4.y);
-  EXPECT_EQ(27, r4.w);
-  EXPECT_EQ(91, r4.h);
+  EXPECT_EQ(22U, r4.x);
+  EXPECT_EQ(19U, r4.y);
+  EXPECT_EQ(27U, r4.w);
+  EXPECT_EQ(91U, r4.h);
 }
 
 TEST(TIFFTest, RegionUnion5)
@@ -387,15 +387,15 @@ TEST(TIFFTest, RegionUnion5)
   PlaneRegion r1(43, 23, 12, 15);
   PlaneRegion r2(95, 83, 43, 15);
   PlaneRegion r3 = r1 | r2;
-  EXPECT_EQ(0, r3.x);
-  EXPECT_EQ(0, r3.y);
-  EXPECT_EQ(0, r3.w);
-  EXPECT_EQ(0, r3.h);
+  EXPECT_EQ(0U, r3.x);
+  EXPECT_EQ(0U, r3.y);
+  EXPECT_EQ(0U, r3.w);
+  EXPECT_EQ(0U, r3.h);
   PlaneRegion r4 = r2 | r1;
-  EXPECT_EQ(0, r4.x);
-  EXPECT_EQ(0, r4.y);
-  EXPECT_EQ(0, r4.w);
-  EXPECT_EQ(0, r4.h);
+  EXPECT_EQ(0U, r4.x);
+  EXPECT_EQ(0U, r4.y);
+  EXPECT_EQ(0U, r4.w);
+  EXPECT_EQ(0U, r4.h);
 }
 
 TEST(TIFFTest, RegionUnion6)
@@ -404,15 +404,15 @@ TEST(TIFFTest, RegionUnion6)
   PlaneRegion r1(43, 23, 12, 15);
   PlaneRegion r2(50, 28, 12, 15);
   PlaneRegion r3 = r1 | r2;
-  EXPECT_EQ(0, r3.x);
-  EXPECT_EQ(0, r3.y);
-  EXPECT_EQ(0, r3.w);
-  EXPECT_EQ(0, r3.h);
+  EXPECT_EQ(0U, r3.x);
+  EXPECT_EQ(0U, r3.y);
+  EXPECT_EQ(0U, r3.w);
+  EXPECT_EQ(0U, r3.h);
   PlaneRegion r4 = r2 | r1;
-  EXPECT_EQ(0, r4.x);
-  EXPECT_EQ(0, r4.y);
-  EXPECT_EQ(0, r4.w);
-  EXPECT_EQ(0, r4.h);
+  EXPECT_EQ(0U, r4.x);
+  EXPECT_EQ(0U, r4.y);
+  EXPECT_EQ(0U, r4.w);
+  EXPECT_EQ(0U, r4.h);
 }
 
 TEST(TIFFTest, RegionValid)
@@ -1074,8 +1074,8 @@ TEST_P(TIFFTileTest, TilePlaneRegion0)
   PlaneRegion full(0, 0, iwidth, iheight);
 
   PlaneRegion region0 = info.tileRegion(0, full);
-  EXPECT_EQ(0, region0.x);
-  EXPECT_EQ(0, region0.y);
+  EXPECT_EQ(0U, region0.x);
+  EXPECT_EQ(0U, region0.y);
   EXPECT_EQ(params.tilewidth, region0.w);
   EXPECT_EQ(params.tilelength, region0.h);
 }
@@ -1103,7 +1103,7 @@ TEST_P(TIFFTileTest, PlaneArea1)
     }
   if (params.imageplanar)
     {
-      EXPECT_EQ(0, area % samples);
+      EXPECT_EQ(0U, area % samples);
       area /= samples;
     }
 
@@ -1148,7 +1148,7 @@ TEST_P(TIFFTileTest, PlaneArea2)
     }
   if (params.imageplanar)
     {
-      EXPECT_EQ(0, area % samples);
+      EXPECT_EQ(0U, area % samples);
       area /= samples;
     }
 
@@ -1192,7 +1192,7 @@ TEST_P(TIFFTileTest, PlaneArea3)
     }
   if (params.imageplanar)
     {
-      EXPECT_EQ(0, area % samples);
+      EXPECT_EQ(0U, area % samples);
       area /= samples;
     }
 
