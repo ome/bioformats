@@ -49,7 +49,7 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class Pressure extends Quantity<org.unitsofmeasurement.quantity.Pressure> implements org.unitsofmeasurement.quantity.Pressure
+public class Pressure extends Quantity
 {
   public Pressure(Double value, 
     Unit<org.unitsofmeasurement.quantity.Pressure> unit)

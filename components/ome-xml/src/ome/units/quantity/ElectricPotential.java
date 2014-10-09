@@ -49,7 +49,7 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class ElectricPotential extends Quantity<org.unitsofmeasurement.quantity.ElectricPotential> implements org.unitsofmeasurement.quantity.ElectricPotential
+public class ElectricPotential extends Quantity
 {
   public ElectricPotential(Double value, 
     Unit<org.unitsofmeasurement.quantity.ElectricPotential> unit)

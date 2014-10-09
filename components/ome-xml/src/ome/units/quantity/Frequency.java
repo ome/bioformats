@@ -49,7 +49,7 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class Frequency extends Quantity<org.unitsofmeasurement.quantity.Frequency> implements org.unitsofmeasurement.quantity.Frequency
+public class Frequency extends Quantity
 {
   public Frequency(Double value, 
     Unit<org.unitsofmeasurement.quantity.Frequency> unit)

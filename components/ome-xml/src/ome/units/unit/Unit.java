@@ -31,11 +31,10 @@
 
 package ome.units.unit;
 
-import org.unitsofmeasurement.quantity.Quantity;
-import org.unitsofmeasurement.unit.*;
-
+import ome.units.quantity.Quantity;
+import java.math.BigInteger;
 /**
- * A wrapper for the Unit class from the units implimintation.
+ * The for the Unit class.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
@@ -45,8 +44,61 @@ import org.unitsofmeasurement.unit.*;
  * </small>
  * @since 5.1
  */
-public abstract class Unit<Q extends Quantity<Q>> 
-  implements org.unitsofmeasurement.unit.Unit<Q>
+public class Unit<Q extends Quantity>
 {
+
+  private final String basename;
+  private String symbol;
+  private Unit(String uniqueName, String uniqueSymbol)
+  {
+    basename = uniqueName;
+    symbol = uniqueSymbol;
+  }
+
+  public Unit<Q> multiply(Integer scalar)
+  {
+    return this;
+  }
+  public Unit<Q> multiply(Double scalar)
+  {
+    return this;
+  }
+  public Unit<Q> divide(Integer scalar)
+  {
+    return this;
+  }
+  public Unit<Q> divide(Double scalar)
+  {
+    return this;
+  }
+  public Unit<Q> add(Integer scalar)
+  {
+    return this;
+  }
+  public Unit<Q> add(Double scalar)
+  {
+    return this;
+  }
+  public Unit<Q> setSymbol(String abbreviation)
+  {
+    symbol = abbreviation;
+    return this;
+  }
+
+  public Unit<Q> prefixSymbol(String prefix)
+  {
+    symbol = prefix + symbol;
+    return this;
+  }
+
+  public String getSymbol()
+  {
+    return symbol;
+  }
+
+  public static <Q extends Quantity> Unit<Q> CreateBaseUnit(String uniqueName, String baseSymbol)
+  {
+    return new Unit<Q>(uniqueName, baseSymbol);
+  }
 
 }

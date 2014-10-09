@@ -49,7 +49,7 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class Length extends Quantity<org.unitsofmeasurement.quantity.Length> implements org.unitsofmeasurement.quantity.Length
+public class Length extends Quantity
 {
   public Length(Double value, 
     Unit<org.unitsofmeasurement.quantity.Length> unit)

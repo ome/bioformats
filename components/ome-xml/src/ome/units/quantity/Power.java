@@ -49,7 +49,7 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class Power extends Quantity<org.unitsofmeasurement.quantity.Power> implements org.unitsofmeasurement.quantity.Power
+public class Power extends Quantity
 {
   public Power(Double value, 
     Unit<org.unitsofmeasurement.quantity.Power> unit)

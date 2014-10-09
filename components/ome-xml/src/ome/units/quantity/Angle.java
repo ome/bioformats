@@ -49,7 +49,7 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class Angle extends Quantity<org.unitsofmeasurement.quantity.Angle> implements org.unitsofmeasurement.quantity.Angle
+public class Angle extends Quantity
 {
   public Angle(Double value, 
     Unit<org.unitsofmeasurement.quantity.Angle> unit)

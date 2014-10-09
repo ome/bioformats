@@ -31,12 +31,10 @@
 
 package ome.units.quantity;
 
-import org.unitsofmeasurement.quantity.*;
-import org.unitsofmeasurement.unit.Unit;
-
 import ome.units.quantity.Quantity;
+import ome.units.unit.Unit;
+import ome.units.UNITS;
 
-import org.eclipse.uomo.units.SI;
 
 /**
  * A wrapper for the Time class from the units implimintation.
@@ -49,19 +47,25 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class Time extends Quantity<org.unitsofmeasurement.quantity.Time> implements org.unitsofmeasurement.quantity.Time
+public class Time extends Quantity
 {
-  public Time(Double value, 
-    Unit<org.unitsofmeasurement.quantity.Time> unit)
+  public Time(Number value,
+    Unit<ome.units.quantity.Time> unit)
   {
   }
-    public Number value()
-    {
-      return 1;
-    }
-    
-    public Unit<org.unitsofmeasurement.quantity.Time> unit()
-    {
-      return org.eclipse.uomo.units.SI.SECOND;
-    }
+
+  public Number value()
+  {
+    return 1;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Time> unit)
+  {
+    return 1;
+  }
+
+  public Unit<ome.units.quantity.Time> unit()
+  {
+    return UNITS.SECOND;
+  }
 }

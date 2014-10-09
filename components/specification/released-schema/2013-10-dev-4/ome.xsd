@@ -1536,7 +1536,7 @@
 			<xsd:enumeration value = "pt"><xsd:annotation><xsd:documentation>The length unit is typography point. This unit should be limited to font sizes.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "pixel"><xsd:annotation><xsd:documentation>The length unit is pixel. This unit should be limited to the ROI objects. It can then be resolved to real units from the PhysicalSize units of the Image the ROI is attached to.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
-			<xsd:enumeration value = "referenceFrame"><xsd:annotation><xsd:documentation>The length unit is referenceFrame.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "reference frame"><xsd:annotation><xsd:documentation>The length unit is reference frame.</xsd:documentation></xsd:annotation></xsd:enumeration>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -1569,7 +1569,7 @@
 			<xsd:enumeration value =  "zs"><xsd:annotation><xsd:documentation>The time unit is zepto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "ys"><xsd:annotation><xsd:documentation>The time unit is yocto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
-			<xsd:enumeration value =   "min"><xsd:annotation><xsd:documentation>The time unit is       minutes.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "min"><xsd:annotation><xsd:documentation>The time unit is       minutes.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =   "h"><xsd:annotation><xsd:documentation>The time unit is         hours.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =   "d"><xsd:annotation><xsd:documentation>The time unit is          days.</xsd:documentation></xsd:annotation></xsd:enumeration>
 		</xsd:restriction>
@@ -1603,6 +1603,7 @@
 			<xsd:enumeration value =  "aPa"><xsd:annotation><xsd:documentation>The pressure unit is  atto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "zPa"><xsd:annotation><xsd:documentation>The pressure unit is zepto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "yPa"><xsd:annotation><xsd:documentation>The pressure unit is yocto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
+<!-- Add bar? -->
 			<xsd:enumeration value =  "Mbar"><xsd:annotation><xsd:documentation>The pressure unit is  mega bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "kbar"><xsd:annotation><xsd:documentation>The pressure unit is  kilo bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "dbar"><xsd:annotation><xsd:documentation>The pressure unit is  deci bar.</xsd:documentation></xsd:annotation></xsd:enumeration>

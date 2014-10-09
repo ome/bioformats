@@ -31,8 +31,6 @@
 
 package ome.units.quantity;
 
-import org.unitsofmeasurement.quantity.*;
-
 /**
  * A wrapper for the Quantity class from the units implimintation.
  *
@@ -44,8 +42,7 @@ import org.unitsofmeasurement.quantity.*;
  * </small>
  * @since 5.1
  */
-public abstract class Quantity<Q extends org.unitsofmeasurement.quantity.Quantity<Q>>
-  implements org.unitsofmeasurement.quantity.Quantity<Q>
+public abstract class Quantity
 {
 
 }

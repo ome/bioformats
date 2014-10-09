@@ -140,7 +140,7 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
   {
     Unit<${klass.model.opts.lang.typeToUnitsType(klass.langType)}> theResult;
     // begin: should be lookup in template
-    theResult= new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(1.0, ${klass.model.opts.lang.typeToDefault(klass.langType)}).unit();
+    theResult = ${klass.model.opts.lang.typeToDefault(klass.langType)};
 {% for value in klass.possibleValues %}\
     if (${klass.langType}.${enum_value_name(value, klass.isUnitsEnumeration).upper()}.equals(inModelUnit))
     {

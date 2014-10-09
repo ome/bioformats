@@ -49,7 +49,7 @@ import org.eclipse.uomo.units.SI;
  * </small>
  * @since 5.1
  */
-public class Temperature extends Quantity<org.unitsofmeasurement.quantity.Temperature> implements org.unitsofmeasurement.quantity.Temperature
+public class Temperature extends Quantity
 {
   public Temperature(Double value, 
     Unit<org.unitsofmeasurement.quantity.Temperature> unit)
