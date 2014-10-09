@@ -323,6 +323,7 @@ public class PrairieMetadata {
           for (int i=0; i<tokens.length; i++) {
             subSubTable.put("" + i, new ValueItem(tokens[i], null));
           }
+          subTable.put(index, subSubTable);
         }
       }
     }
@@ -380,16 +381,16 @@ public class PrairieMetadata {
         if (index == null) continue; // invalid <SubindexedValues> element
         final ValueTable subSubTable = new ValueTable();
         subTable.put(index, subSubTable);
-        // iterate over <SubindexValue> children
+        // iterate over <SubindexedValue> children
         final NodeList subNodes =
-          sivElement.getElementsByTagName("SubindexValue");
+          sivElement.getElementsByTagName("SubindexedValue");
         for (int s = 0; s < subNodes.getLength(); s++) {
-          final Element subElement = el(subNodes, i);
+          final Element subElement = el(subNodes, s);
           final String subindex = attr(subElement, "subindex");
           if (subindex == null) continue; // invalid <SubindexedValue> element
           final String sValue = attr(subElement, "value");
           final String sDescription = attr(subElement, "description");
-          subSubTable.put(index, new ValueItem(sValue, sDescription));
+          subSubTable.put(subindex, new ValueItem(sValue, sDescription));
         }
       }
     }
