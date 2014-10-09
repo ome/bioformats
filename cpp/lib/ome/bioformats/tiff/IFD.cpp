@@ -254,6 +254,46 @@ namespace
       tiles(tiles)
     {}
 
+    // Flush covered tiles.
+    void
+    flush()
+    {
+      PlaneRegion rimage(0, 0, ifd.getImageWidth(), ifd.getImageHeight());
+      dimension_size_type tile = ifd.getCurrentTile();
+      while(tile < tileinfo.tileCount())
+        {
+          dimension_size_type tile_subchannel = tileinfo.tileSample(tile);
+
+          PlaneRegion validarea = tileinfo.tileRegion(tile) & rimage;
+          if (!validarea.area())
+            break;
+
+          if (!tilecoverage.at(tile_subchannel).covered(validarea))
+            break;
+
+          assert(tilecache.find(tile));
+          TileBuffer& tilebuf = *tilecache.find(tile);
+          if (type == TILE)
+            {
+              int byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              if (byteswritten < 0)
+                sentry.error("Failed to write encoded tile");
+              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
+                sentry.error("Failed to write encoded tile fully");
+            }
+          else
+            {
+              int byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              if (byteswritten < 0)
+                sentry.error("Failed to write encoded strip");
+              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
+                sentry.error("Failed to write encoded strip fully");
+            }
+          tilecache.erase(tile);
+          ifd.setCurrentTile(++tile);
+        }
+    }
+
     template<typename T>
     void
     operator()(const std::shared_ptr<T>& buffer)
@@ -342,40 +382,7 @@ namespace
         }
 
       // Flush covered tiles
-      PlaneRegion rimage(0, 0, ifd.getImageWidth(), ifd.getImageHeight());
-      dimension_size_type tile = ifd.getCurrentTile();
-      while(tile < tileinfo.tileCount())
-        {
-          dimension_size_type tile_subchannel = tileinfo.tileSample(tile);
-
-          PlaneRegion validarea = tileinfo.tileRegion(tile) & rimage;
-          if (!validarea.area())
-            break;
-
-          if (!tilecoverage.at(tile_subchannel).covered(validarea))
-            break;
-
-          assert(tilecache.find(tile));
-          TileBuffer& tilebuf = *tilecache.find(tile);
-          if (type == TILE)
-            {
-              int byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
-              if (byteswritten < 0)
-                sentry.error("Failed to write encoded tile");
-              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
-                sentry.error("Failed to write encoded tile fully");
-            }
-          else
-            {
-              int byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
-              if (byteswritten < 0)
-                sentry.error("Failed to write encoded strip");
-              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
-                sentry.error("Failed to write encoded strip fully");
-            }
-          tilecache.erase(tile);
-          ifd.setCurrentTile(++tile);
-        }
+      flush();
     }
   };
 
