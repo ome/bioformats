@@ -33,6 +33,7 @@ package ome.units.unit;
 
 import ome.units.quantity.Quantity;
 import java.math.BigInteger;
+
 /**
  * The for the Unit class.
  *
@@ -46,37 +47,91 @@ import java.math.BigInteger;
  */
 public class Unit<Q extends Quantity>
 {
-
-  private final String basename;
+  private final String measurementSystem;
   private String symbol;
-  private Unit(String uniqueName, String uniqueSymbol)
+  private Double scaleFactor;
+  private Double offset;
+
+  private Unit(String uniqueSystemName, String uniqueSymbol)
   {
-    basename = uniqueName;
+    measurementSystem = uniqueSystemName;
     symbol = uniqueSymbol;
+    scaleFactor = 1.0;
+    offset = 0.0;
   }
 
+  public String getSymbol()
+  {
+    return symbol;
+  }
+
+  public Double getScaleFactor()
+  {
+    return scaleFactor;
+  }
+
+  public Double getOffset()
+  {
+    return offset;
+  }
+
+  public Boolean isConvertible(Unit<Q> inUnit)
+  {
+    return (measurementSystem.equals(inUnit.measurementSystem));
+  }
+
+  public Double convertValue(Number inValue, Unit<Q> inUnit)
+  {
+    if (!isConvertible(inUnit))
+    {
+      throw new ArithmeticException(
+        "Incompatible units are not convertible [" +
+        measurementSystem +
+        "]->[" +
+        inUnit.measurementSystem +
+        "]");
+    }
+    Double theResult = (((inValue.doubleValue()*scaleFactor)+offset)-inUnit.offset)/inUnit.scaleFactor;
+    return theResult;
+  }
+
+  // Begin "protected" functions
+  // These functions should only ever need called from
+  // within the ome.units.UNITS class. I would have made them
+  // protected and ome.units.UNITS a friend if that were possible
+  // in java.
   public Unit<Q> multiply(Integer scalar)
   {
+    scaleFactor = scaleFactor * scalar;
+    offset = offset * scalar;
     return this;
   }
   public Unit<Q> multiply(Double scalar)
   {
+    scaleFactor = scaleFactor * scalar;
+    offset = offset * scalar;
     return this;
   }
   public Unit<Q> divide(Integer scalar)
   {
+    scaleFactor = scaleFactor / scalar;
+    offset = offset / scalar;
     return this;
   }
   public Unit<Q> divide(Double scalar)
   {
+    scaleFactor = scaleFactor / scalar;
+    offset = offset / scalar;
     return this;
   }
   public Unit<Q> add(Integer scalar)
   {
+    offset = offset + scalar;
     return this;
   }
   public Unit<Q> add(Double scalar)
   {
+    offset = offset + scalar;
     return this;
   }
   public Unit<Q> setSymbol(String abbreviation)
@@ -91,14 +146,10 @@ public class Unit<Q extends Quantity>
     return this;
   }
 
-  public String getSymbol()
-  {
-    return symbol;
-  }
-
   public static <Q extends Quantity> Unit<Q> CreateBaseUnit(String uniqueName, String baseSymbol)
   {
     return new Unit<Q>(uniqueName, baseSymbol);
   }
+  // End "protected" functions
 
 }

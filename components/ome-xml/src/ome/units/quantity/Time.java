@@ -49,19 +49,32 @@ import ome.units.UNITS;
  */
 public class Time extends Quantity
 {
-  public Time(Number value,
-    Unit<ome.units.quantity.Time> unit)
+  Number value;
+  Unit<ome.units.quantity.Time> unit;
+
+  public Time(Number inValue,
+    Unit<ome.units.quantity.Time> inUnit)
   {
+    value = inValue;
+    unit = inUnit;
   }
 
   public Number value()
   {
-    return 1;
+    return value;
   }
   
-  public Number value(Unit<ome.units.quantity.Time> unit)
+  public Number value(Unit<ome.units.quantity.Time> inUnit)
   {
-    return 1;
+    if (unit.equals(inUnit))
+    {
+      return value;
+    }
+    if (unit.isConvertible(inUnit))
+    {
+      return unit.convertValue(value, inUnit);
+    }
+    return null;
   }
 
   public Unit<ome.units.quantity.Time> unit()
