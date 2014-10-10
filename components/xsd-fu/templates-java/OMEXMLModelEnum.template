@@ -77,7 +77,7 @@ public enum ${klass.langType} implements Enumeration
       return ${enum_value_name(value, klass.isUnitsEnumeration).upper()};
     }
 {% end %}\
-    String s = String.format("%s not a supported value of %s",
+    String s = String.format("'%s' not a supported value of '%s'",
                              value, ${klass.langType}.class);
     throw new EnumerationException(s);
   }

@@ -36,8 +36,8 @@ package ome.units.utests;
 
 import static org.testng.AssertJUnit.*;
 
-import org.unitsofmeasurement.quantity.Length;
-import org.unitsofmeasurement.unit.Unit;
+import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 
 import ome.units.UNITS;
 

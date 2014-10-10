@@ -35,7 +35,6 @@ import ome.units.quantity.Quantity;
 import ome.units.unit.Unit;
 import ome.units.UNITS;
 
-
 /**
  * A wrapper for the Time class from the units implimintation.
  *

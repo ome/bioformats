@@ -265,8 +265,14 @@ ${customUpdatePropertyContent[prop.name]}
 		if (element.hasAttribute("${prop.name}"))
 		{
 			// Attribute property ${prop.name} with unit companion ${prop.unitsCompanion.name}
-			${prop.unitsCompanion.langType} modelUnit = ${prop.unitsCompanion.langType}.fromString(
-					element.getAttribute("${prop.unitsCompanion.name}"));
+			String unitSymbol = element.getAttribute("${prop.unitsCompanion.name}");
+			if ((unitSymbol == null) || (unitSymbol.isEmpty()))
+			{
+				// Use default value specified in the xsd model
+				unitSymbol = get${prop.unitsCompanion.name}XsdDefault();
+			}
+			${prop.unitsCompanion.langType} modelUnit = 
+				${prop.unitsCompanion.langType}.fromString(unitSymbol);
 			${prop.langType} baseValue = ${prop.langType}.valueOf(
 					element.getAttribute("${prop.name}"));
 			set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
@@ -512,11 +518,16 @@ ${customUpdatePropertyContent[prop.name]}
 		this.${prop.instanceVariableName} = ${prop.argumentName};
 	}
 {% end %}\
-{% when prop.isUnitsEnumeration %}\
+{% when prop.isUnitsEnumeration %}
 {% if debug %}\
 			// MARKER [RRR]
 			// Attribute property which is Units enumeration ${prop.name}
 {% end debug %}\
+	// Property ${prop.name} is a unit companion
+	public String get${prop.methodName}XsdDefault()
+	{
+		return "${prop.defaultXsdValue}";
+	}
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property ${prop.name}

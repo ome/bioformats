@@ -31,12 +31,9 @@
 
 package ome.units.quantity;
 
-import org.unitsofmeasurement.quantity.*;
-import org.unitsofmeasurement.unit.Unit;
-
 import ome.units.quantity.Quantity;
-
-import org.eclipse.uomo.units.SI;
+import ome.units.unit.Unit;
+import ome.units.UNITS;
 
 /**
  * A wrapper for the Length class from the units implimintation.
@@ -52,7 +49,7 @@ import org.eclipse.uomo.units.SI;
 public class Length extends Quantity
 {
   public Length(Double value, 
-    Unit<org.unitsofmeasurement.quantity.Length> unit)
+    Unit<ome.units.quantity.Length> unit)
   {
   }
     public Number value()
@@ -60,8 +57,8 @@ public class Length extends Quantity
       return 1;
     }
     
-    public Unit<org.unitsofmeasurement.quantity.Length> unit()
+    public Unit<ome.units.quantity.Length> unit()
     {
-      return org.eclipse.uomo.units.SI.METRE;
+      return UNITS.METRE;
     }
 }

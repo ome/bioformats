@@ -76,8 +76,8 @@ public class Calibrator {
     if (yd != null) ycal = yd.getValue();
     PositiveFloat zd = meta.getPixelsPhysicalSizeZ(series);
     if (zd != null) zcal = zd.getValue();
-    Double td = meta.getPixelsTimeIncrement(series).value(UNITS.S).doubleValue();
-    if (td != null) tcal = td.floatValue();
+    Time td = meta.getPixelsTimeIncrement(series);
+    if (td != null) tcal = td.value(UNITS.S).floatValue();
 
     boolean xcalPresent = !Double.isNaN(xcal);
     boolean ycalPresent = !Double.isNaN(ycal);

@@ -31,12 +31,9 @@
 
 package ome.units.quantity;
 
-import org.unitsofmeasurement.quantity.*;
-import org.unitsofmeasurement.unit.Unit;
-
 import ome.units.quantity.Quantity;
-
-import org.eclipse.uomo.units.SI;
+import ome.units.unit.Unit;
+import ome.units.UNITS;
 
 /**
  * A wrapper for the ElectricPotential class from the units implimintation.
@@ -52,7 +49,7 @@ import org.eclipse.uomo.units.SI;
 public class ElectricPotential extends Quantity
 {
   public ElectricPotential(Double value, 
-    Unit<org.unitsofmeasurement.quantity.ElectricPotential> unit)
+    Unit<ome.units.quantity.ElectricPotential> unit)
   {
   }
   public Number value()
@@ -60,8 +57,8 @@ public class ElectricPotential extends Quantity
     return 1;
   }
 
-  public Unit<org.unitsofmeasurement.quantity.ElectricPotential> unit()
+  public Unit<ome.units.quantity.ElectricPotential> unit()
   {
-    return org.eclipse.uomo.units.SI.VOLT;
+    return UNITS.VOLT;
   }
 }

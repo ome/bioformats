@@ -31,12 +31,9 @@
 
 package ome.units.quantity;
 
-import org.unitsofmeasurement.quantity.*;
-import org.unitsofmeasurement.unit.Unit;
-
 import ome.units.quantity.Quantity;
-
-import org.eclipse.uomo.units.SI;
+import ome.units.unit.Unit;
+import ome.units.UNITS;
 
 /**
  * A wrapper for the Pressure class from the units implimintation.
@@ -52,7 +49,7 @@ import org.eclipse.uomo.units.SI;
 public class Pressure extends Quantity
 {
   public Pressure(Double value, 
-    Unit<org.unitsofmeasurement.quantity.Pressure> unit)
+    Unit<ome.units.quantity.Pressure> unit)
   {
   }
     public Number value()
@@ -60,8 +57,8 @@ public class Pressure extends Quantity
       return 1;
     }
     
-    public Unit<org.unitsofmeasurement.quantity.Pressure> unit()
+    public Unit<ome.units.quantity.Pressure> unit()
     {
-      return org.eclipse.uomo.units.SI.PASCAL;
+      return UNITS.PASCAL;
     }
 }

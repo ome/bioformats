@@ -60,6 +60,7 @@ public final class UNITS
     return "OME-combined";
   }
   // Definitions of units that others are calculated from
+  public static final ome.units.unit.Unit<Angle>             RADIAN  = ome.units.unit.Unit.<Angle>CreateBaseUnit("SI.RADIAN", "rad");
   public static final ome.units.unit.Unit<ElectricPotential> VOLT    = ome.units.unit.Unit.<ElectricPotential>CreateBaseUnit("SI.VOLT", "V");
   public static final ome.units.unit.Unit<Frequency>         HERTZ   = ome.units.unit.Unit.<Frequency>CreateBaseUnit("SI.HERTZ", "Hz");
   public static final ome.units.unit.Unit<Length>            METRE   = ome.units.unit.Unit.<Length>CreateBaseUnit("SI.METRE", "m");
@@ -263,4 +264,8 @@ public final class UNITS
   public static final ome.units.unit.Unit<ElectricPotential> ZV =     ZEPTO(VOLT);
   public static final ome.units.unit.Unit<ElectricPotential> YV =     YOCTO(VOLT);
 
+  // Angle
+  public static final ome.units.unit.Unit<Angle> DEG = RADIAN.multiply(Math.PI).divide(180).setSymbol("deg");
+  public static final ome.units.unit.Unit<Angle> RAD = RADIAN;
+  public static final ome.units.unit.Unit<Angle> GON = RADIAN.multiply(Math.PI).divide(200).setSymbol("gon");
 }

@@ -44,5 +44,4 @@ package ome.units.quantity;
  */
 public abstract class Quantity
 {
-
 }
