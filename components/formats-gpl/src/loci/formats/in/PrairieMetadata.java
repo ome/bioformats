@@ -923,6 +923,12 @@ public class PrairieMetadata {
     /** {@code filename} attribute of this {@code <File>}. */
     private String filename;
 
+    /** {@code wavelengthMin} attribute of this {@code <File>}. */
+    private Double waveMin;
+
+    /** {@code wavelengthMax} attribute of this {@code <File>}. */
+    private Double waveMax;
+
     /** Creates a new file by parsing the given {@code <File>} element. */
     public PFile(final Frame frame, final Element fileElement) {
       this.frame = frame;
@@ -947,6 +953,9 @@ public class PrairieMetadata {
 
       channelName = attr(fileElement, "channelName");
       filename = attr(fileElement, "filename");
+
+      waveMin = d(attr(fileElement, "wavelengthMin"));
+      waveMax = d(attr(fileElement, "wavelengthMax"));
     }
 
     /** Gets the {@code channel} associated with this {@code File}. */
@@ -962,6 +971,16 @@ public class PrairieMetadata {
     /** Gets the {@code filename} associated with this {@code File}. */
     public String getFilename() {
       return filename;
+    }
+
+    /** Gets the {@code wavelengthMin} associated with this {@code File}. */
+    public Double getWavelengthMin() {
+      return waveMin;
+    }
+
+    /** Gets the {@code wavelengthMax} associated with this {@code File}. */
+    public Double getWavelengthMax() {
+      return waveMax;
     }
 
   }
