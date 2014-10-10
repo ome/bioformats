@@ -108,8 +108,10 @@ public class MicroCTReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     ArrayList<String> files = new ArrayList<String>();
-    for (String file : vffs) {
-      files.add(file);
+    if (!noPixels) {
+      for (String file : vffs) {
+        files.add(file);
+      }
     }
     files.addAll(metadataFiles);
 
