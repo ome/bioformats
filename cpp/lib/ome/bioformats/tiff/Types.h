@@ -166,6 +166,13 @@ namespace ome
           COSITED = 2   ///< Co-sited.
         };
 
+      /// Type of tile.
+      enum TileType
+        {
+          STRIP, ///< Strips.
+          TILE   ///< Tiles.
+        };
+
       /**
        * A rectangular region.
        *
@@ -183,6 +190,7 @@ namespace ome
         /// The height of the region.
         dimension_size_type h;
 
+      public:
         /**
          * Default construct.
          *
@@ -194,6 +202,17 @@ namespace ome
           w(0),
           h(0)
         {}
+
+        /**
+         * Is the region valid?
+         *
+         * @returns @c true if the region has a nonzero width and
+         * height, @c false otherwise.
+         */
+        bool
+        valid() const {
+          return w && h;
+        }
 
         /**
          * Construct from coordinates, width and height.
@@ -212,6 +231,17 @@ namespace ome
           w(w),
           h(h)
         {}
+
+        /**
+         * Get area.
+         *
+         * @returns the covered area.
+         */
+        dimension_size_type
+        area() const
+        {
+          return w * h;
+        }
       };
 
       /**
@@ -254,6 +284,68 @@ namespace ome
 
         return PlaneRegion(il, it, ir-il, ib-it);
       }
+
+      /**
+       * Combine (union) two regions.
+       *
+       * If the regions do not abut about a common edge, a
+       * default-constructed region of zero size will be returned.
+       *
+       * @param a the first region.
+       * @param b the second region.
+       * @returns the union of the two regions.
+       */
+      inline
+      PlaneRegion
+      operator|(const PlaneRegion& a,
+                const PlaneRegion& b)
+      {
+        dimension_size_type l1 = a.x;
+        dimension_size_type r1 = a.x + a.w;
+
+        dimension_size_type l2 = b.x;
+        dimension_size_type r2 = b.x + b.w;
+
+        dimension_size_type t1 = a.y;
+        dimension_size_type b1 = a.y + a.h;
+
+        dimension_size_type t2 = b.y;
+        dimension_size_type b2 = b.y + b.h;
+
+        if (l1 == l2 && r1 == r2 &&
+            (t1 == b2 || t2 == b1)) // union along top or bottom edges
+          {
+            dimension_size_type it = std::min(t1, t2);
+            dimension_size_type ib = std::max(b1, b2);
+            return PlaneRegion(l1, it, r1-l1, ib-it);
+          }
+        else if (t1 == t2 && b1 == b2 &&
+                 (l1 == r2 || l2 == r1)) // union along left or right edges
+          {
+            dimension_size_type il = std::min(l1, l2);
+            dimension_size_type ir = std::max(r1, r2);
+            return PlaneRegion(il, t1, ir-il, b1-t1);
+          }
+        return PlaneRegion();
+      }
+
+        /**
+         * Output PlaneRegion to output stream.
+         *
+         * @param os the output stream.
+         * @param region the PlaneRegion to output.
+         * @returns the output stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_ostream<charT,traits>&
+        operator<< (std::basic_ostream<charT,traits>& os,
+                    const PlaneRegion& region)
+        {
+          return os << "x=" << region.x
+                    << " y=" << region.y
+                    << " w=" << region.w
+                    << " h=" << region.h;
+        }
 
     }
   }

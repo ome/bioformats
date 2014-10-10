@@ -207,16 +207,46 @@ namespace
   {
     template <typename T, typename U>
     bool
-    operator() (T& /* lhs */, U& /* rhs */) const
+    operator() (const T& /* lhs */, const U& /* rhs */) const
     {
       return false;
     }
 
     template <typename T>
     bool
-    operator() (T& lhs, T& rhs) const
+    operator() (const T& lhs, const T& rhs) const
     {
-      return lhs && rhs && lhs->array() == rhs->array();
+      return lhs && rhs && (*lhs == *rhs);
+    }
+  };
+
+  struct PBOperatorAssignVisitor : public boost::static_visitor<>
+  {
+    template <typename T, typename U>
+    void
+    operator() (T& /* lhs */, const U& /* rhs */) const
+    {
+      throw std::runtime_error("Unsupported pixel type conversion for assignment");
+    }
+
+    template <typename T>
+    void
+    operator() (T& lhs, const T& rhs) const
+    {
+      std::array<VariantPixelBuffer::size_type, 9> source_shape, dest_shape;
+
+      const VariantPixelBuffer::size_type *source_shape_ptr(rhs->shape());
+      std::copy(source_shape_ptr, source_shape_ptr + T::element_type::dimensions,
+                source_shape.begin());
+
+      const VariantPixelBuffer::size_type *dest_shape_ptr(lhs->shape());
+      std::copy(dest_shape_ptr, dest_shape_ptr + T::element_type::dimensions,
+                dest_shape.begin());
+
+      if (source_shape != dest_shape)
+        throw std::runtime_error("Buffer dimensions incompatible for assignment");
+
+      *lhs = *rhs;
     }
   };
 
@@ -372,6 +402,13 @@ namespace ome
     {
       PBConstRawBufferVisitor v;
       return boost::apply_visitor(v, buffer);
+    }
+
+    VariantPixelBuffer&
+    VariantPixelBuffer::operator = (const VariantPixelBuffer& rhs)
+    {
+      boost::apply_visitor(PBOperatorAssignVisitor(), buffer, rhs.buffer);
+      return *this;
     }
 
     bool

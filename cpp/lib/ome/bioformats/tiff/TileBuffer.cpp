@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,33 +35,49 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/bioformats/PixelProperties.h>
+#include <ome/bioformats/tiff/TileBuffer.h>
 
-// Configured features
+#include <tiffio.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_THREAD 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_CANONICAL 1
-#cmakedefine OME_HAVE_BOOST_TYPE_TRAITS_HPP 1
-#cmakedefine OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+namespace ome
+{
+  namespace bioformats
+  {
+    namespace tiff
+    {
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+      TileBuffer::TileBuffer(dimension_size_type size):
+        bufsize(size),
+        buf(reinterpret_cast<uint8_t *>(_TIFFmalloc(bufsize)))
+      {
+        _TIFFmemset(buf, 0, bufsize);
+      }
 
-#endif // OME_COMPAT_CONFIG_H
+      TileBuffer::~TileBuffer()
+      {
+        if (buf)
+          _TIFFfree(buf);
+      }
+
+      dimension_size_type
+      TileBuffer::size() const
+      {
+        return bufsize;
+      }
+
+      uint8_t *
+      TileBuffer::data()
+      {
+        return buf;
+      }
+
+      const uint8_t *
+      TileBuffer::data() const
+      {
+        return buf;
+      }
+
+    }
+  }
+}

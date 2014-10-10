@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,33 +35,92 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#ifndef OME_BIOFORMATS_TIFF_TILEBUFFER_H
+#define OME_BIOFORMATS_TIFF_TILEBUFFER_H
 
-// Configured features
+#include <ome/bioformats/Types.h>
+#include <ome/bioformats/tiff/Types.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_THREAD 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_CANONICAL 1
-#cmakedefine OME_HAVE_BOOST_TYPE_TRAITS_HPP 1
-#cmakedefine OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+#include <ome/xml/model/enums/PixelType.h>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+namespace ome
+{
+  namespace bioformats
+  {
+    namespace tiff
+    {
 
-#endif // OME_COMPAT_CONFIG_H
+      class IFD;
+
+      /**
+       * Tile pixel data buffer.
+       *
+       * Pixel data for a single tile.
+       */
+      class TileBuffer
+      {
+      public:
+        /**
+         * Constructor.
+         *
+         * @param size the buffer size (bytes).
+         */
+        TileBuffer(dimension_size_type size);
+
+        /// Destructor.
+        virtual ~TileBuffer();
+
+      private:
+        // To avoid unintentional and expensive copies, copying and
+        // assignment of buffers is prevented.
+
+        /// Copy constructor (deleted).
+        TileBuffer (const TileBuffer&);
+
+        /// Assignment operator (deleted).
+        TileBuffer&
+        operator= (const TileBuffer&);
+
+      public:
+        /**
+         * Get the buffer size.
+         *
+         * @returns the buffer size.
+         */
+        dimension_size_type
+        size() const;
+
+        /**
+         * Get the buffer data.
+         *
+         * @returns a pointer to the data.
+         */
+        uint8_t *
+        data();
+
+        /**
+         * Get the buffer data.
+         *
+         * @returns a pointer to the data.
+         */
+        const uint8_t *
+        data() const;
+
+      private:
+        /// Buffer size (bytes).
+        dimension_size_type bufsize;
+        /// Raw buffer.
+        uint8_t *buf;
+      };
+
+    }
+  }
+}
+
+#endif // OME_BIOFORMATS_TIFF_TILEBUFFER_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

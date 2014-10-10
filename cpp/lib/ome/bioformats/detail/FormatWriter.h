@@ -105,9 +105,6 @@ namespace ome
         /// The compression type to use.
         boost::optional<std::string> compression;
 
-        /// Planes of each series set to true if prepared for writing.
-        std::vector<std::vector<bool> > planeInitialized;
-
         /// Planes are written sequentially.
         bool sequential;
 
