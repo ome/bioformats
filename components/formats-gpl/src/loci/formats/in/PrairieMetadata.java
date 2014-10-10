@@ -398,7 +398,7 @@ public class PrairieMetadata {
 
   /**
    * Parses details of the activated channels into the {@link #activeChannels}
-   * data structure.
+   * data structure from the "channel" entry of the configuration.
    */
   private void parseChannels() {
     final Value channels = config.get("channel");
