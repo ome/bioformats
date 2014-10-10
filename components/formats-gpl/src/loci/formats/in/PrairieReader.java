@@ -562,6 +562,18 @@ public class PrairieReader extends FormatReader {
         final String channelName = file == null ? null : file.getChannelName();
         if (channelName != null) store.setChannelName(channelName, s, c);
 
+        // populate emission wavelength
+        if (file != null) {
+          final Double waveMin = file.getWavelengthMin();
+          final Double waveMax = file.getWavelengthMax();
+          if (waveMin != null && waveMax != null) {
+            final double waveAvg = (waveMin + waveMax) / 2;
+            final Length wavelength =
+              FormatTools.getEmissionWavelength(waveAvg);
+            store.setChannelEmissionWavelength(wavelength, s, c);
+          }
+        }
+
         if (detectorIDs[c] == null) {
           // create a Detector for this channel
           detectorIDs[c] = MetadataTools.createLSID("Detector", 0, c);
