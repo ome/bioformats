@@ -326,6 +326,11 @@ class OMEModelProperty(OMEModelEntity):
     defaultValue = property(_get_defaultValue,
         doc="""If the property is an enumeration, its default value.""")
 
+    def _get_defaultXsdValue(self):
+        return self.delegate.default
+    defaultXsdValue = property(_get_defaultXsdValue,
+        doc="""The default value, if any, that is set on the attribute.""")
+
     def _isShared(self):
         shared = False
 

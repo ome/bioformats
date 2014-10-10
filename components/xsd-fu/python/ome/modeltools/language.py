@@ -61,15 +61,15 @@ class Language(object):
             'PercentFraction': 'PercentFraction',
             'Color': 'Color',
             'Text': 'Text',
-            'UnitsLength':      'UnitsLength',
-            'UnitsTime':        'UnitsTime',
-            'UnitsPressure':    'UnitsPressure',
-            'UnitsAngle':       'UnitsAngle',
-            'UnitsTemperature': 'UnitsTemperature',
-            'UnitsVoltage':     'UnitsVoltage',
-            'UnitsPower':       'UnitsPower',
-            'UnitsFrequency':   'UnitsFrequency',
-            namespace + 'dateTime': 'Timestamp'
+            'UnitsLength':            'UnitsLength',
+            'UnitsTime':              'UnitsTime',
+            'UnitsPressure':          'UnitsPressure',
+            'UnitsAngle':             'UnitsAngle',
+            'UnitsTemperature':       'UnitsTemperature',
+            'UnitsElectricPotential': 'UnitsElectricPotential',
+            'UnitsPower':             'UnitsPower',
+            'UnitsFrequency':         'UnitsFrequency',
+            namespace + 'dateTime':   'Timestamp'
             }
 
         # A global type mapping from XSD Schema elements to language model
@@ -212,7 +212,7 @@ class Java(Language):
         self.model_unit_map['UnitsPressure'] = 'Pressure'
         self.model_unit_map['UnitsAngle'] = 'Angle'
         self.model_unit_map['UnitsTemperature'] = 'Temperature'
-        self.model_unit_map['UnitsVoltage'] = 'ElectricPotential'
+        self.model_unit_map['UnitsElectricPotential'] = 'ElectricPotential'
         self.model_unit_map['UnitsPower'] = 'Power'
         self.model_unit_map['UnitsFrequency'] = 'Frequency'
 
@@ -221,7 +221,7 @@ class Java(Language):
         self.model_unit_default['UnitsPressure'] = 'UNITS.PASCAL'
         self.model_unit_default['UnitsAngle'] = 'UNITS.RADIAN'
         self.model_unit_default['UnitsTemperature'] = 'UNITS.KELVIN'
-        self.model_unit_default['UnitsVoltage'] = 'UNITS.VOLT'
+        self.model_unit_default['UnitsElectricPotential'] = 'UNITS.VOLT'
         self.model_unit_default['UnitsPower'] = 'UNITS.WATT'
         self.model_unit_default['UnitsFrequency'] = 'UNITS.HERTZ'
 

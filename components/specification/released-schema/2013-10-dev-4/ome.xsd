@@ -1648,10 +1648,10 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
-	<xsd:simpleType name="UnitsVoltage">
+	<xsd:simpleType name="UnitsElectricPotential">
 		<xsd:annotation>
 			<xsd:documentation>
-				The units used to represent a voltage
+				The units used to represent an electric potential
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
