@@ -568,6 +568,9 @@ public class PrairieMetadata {
     /** {@code cycle} of this {@code <Sequence>}. */
     private Integer cycle;
 
+    /** {@code SpectralMode} of this {@code <Sequence>}. */
+    private boolean spectralMode;
+
     /**
      * Creates a new sequence by parsing the given {@code <Sequence>} element.
      */
@@ -587,6 +590,7 @@ public class PrairieMetadata {
       if (cycle == null) {
         throw new IllegalArgumentException("Sequence missing cycle attribute");
       }
+      spectralMode = b(attr(sequenceElement, "SpectralMode"));
 
       // iterate over all Frame elements
       final NodeList frameNodes = sequenceElement.getElementsByTagName("Frame");
@@ -620,6 +624,10 @@ public class PrairieMetadata {
     /** Gets the {@code cycle} associated with this {@code Sequence}. */
     public int getCycle() {
       return cycle;
+    }
+
+    public boolean isSpectralMode() {
+      return spectralMode;
     }
 
     /**
