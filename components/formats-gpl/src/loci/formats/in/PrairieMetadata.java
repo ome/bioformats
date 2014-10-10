@@ -950,6 +950,7 @@ public class PrairieMetadata {
       if (channel == null) {
         throw new IllegalArgumentException("File missing channel attribute");
       }
+      activeChannels.add(channel);
 
       channelName = attr(fileElement, "channelName");
       filename = attr(fileElement, "filename");
