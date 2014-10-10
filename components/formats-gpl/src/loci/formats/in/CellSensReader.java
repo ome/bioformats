@@ -500,6 +500,9 @@ public class CellSensReader extends FormatReader {
         int magIndex = xDims.get(keys[i]);
         magnifications.set(magIndex, newMags[i]);
       }
+      for (Double magnification : magnifications) {
+        addGlobalMetaList("Magnification", magnification);
+      }
     }
 
     if (physicalSizeX > 0 && physicalSizeY > 0) {
@@ -1057,7 +1060,6 @@ public class CellSensReader extends FormatReader {
                 else if (tag == MAGNIFICATION) {
                   magnifications.add(
                     new Double(value.substring(0, value.length() - 1)));
-                  addGlobalMetaList("Magnification", value);
                 }
                 else {
                   addGlobalMetaList(String.valueOf(tag), value);
