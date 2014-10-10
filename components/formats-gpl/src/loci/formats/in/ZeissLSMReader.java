@@ -1879,7 +1879,7 @@ public class ZeissLSMReader extends FormatReader {
       String absolutePath = f.getAbsolutePath();
       if (checkSuffix(fileList[i], "mdb") &&
         (!absolutePath.equals(mdbFile) && !fileList[i].equals(mdbFile) &&
-        !f.equals(new Location(mdbFile).getAbsolutePath())))
+        !absolutePath.equals(new Location(mdbFile).getAbsolutePath())))
       {
         if (referencedLSMs.size() > 0) {
           return referencedLSMs.toArray(new String[0]);
