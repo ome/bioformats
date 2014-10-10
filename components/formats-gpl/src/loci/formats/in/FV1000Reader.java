@@ -298,7 +298,9 @@ public class FV1000Reader extends FormatReader {
         String f = file.toLowerCase();
         if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp"))
         {
-          files.add(file);
+          if (!files.contains(file)) {
+            files.add(file);
+          }
         }
       }
     }
@@ -629,12 +631,10 @@ public class FV1000Reader extends FormatReader {
             String realOIFName = new Location(currentId).getName();
             String basePath = tiffFile.getParentFile().getParent();
             Location newFile = new Location(basePath, realOIFName + ".files");
-            if (newFile.exists()) {
-              String realDirectory = newFile.getName();
-              ptyFile = new Location(newFile, ptyFile.getName());
-              file = ptyFile.getAbsolutePath();
-              tiffPath = newFile.getAbsolutePath();
-            }
+            String realDirectory = newFile.getName();
+            ptyFile = new Location(newFile, ptyFile.getName());
+            file = ptyFile.getAbsolutePath();
+            tiffPath = newFile.getAbsolutePath();
           }
         }
       }
@@ -1549,7 +1549,9 @@ public class FV1000Reader extends FormatReader {
       }
       return poi.getDocumentStream(realName);
     }
-    else return new RandomAccessInputStream(name);
+    else {
+      return new RandomAccessInputStream(name);
+    }
   }
 
   private RandomAccessInputStream getPlane(int seriesIndex, int planeIndex) {

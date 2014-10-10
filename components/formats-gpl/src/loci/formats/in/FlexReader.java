@@ -1325,7 +1325,7 @@ public class FlexReader extends FormatReader {
     if (Location.getMappedFile(flexFile) != null) {
       return Location.getMappedFile(flexFile);
     }
-    return new NIOFileHandle(flexFile, "r");
+    return new NIOFileHandle(Location.getMappedId(flexFile), "r");
   }
 
   private FlexFile lookupFile(int wellRow, int wellColumn, int field) {

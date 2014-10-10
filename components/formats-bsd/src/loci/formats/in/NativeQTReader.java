@@ -122,6 +122,7 @@ public class NativeQTReader extends FormatReader {
 
   /** Flag indicating whether the resource and data fork are separated. */
   private boolean separatedFork;
+  private String forkFile;
 
   private boolean flip;
 
@@ -151,6 +152,16 @@ public class NativeQTReader extends FormatReader {
     }
     return s.indexOf("wide") >= 0 ||
       s.indexOf("mdat") >= 0 || s.indexOf("ftypqt") >= 0;
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      return forkFile == null ? null : new String[] {forkFile};
+    }
+    return forkFile == null ? new String[] {currentId} :
+      new String[] {currentId, forkFile};
   }
 
   /**
@@ -272,6 +283,7 @@ public class NativeQTReader extends FormatReader {
       scale = 0;
       chunkSizes = null;
       interlaced = separatedFork = flip = false;
+      forkFile = null;
     }
   }
 
@@ -328,6 +340,7 @@ public class NativeQTReader extends FormatReader {
         LOGGER.debug("\t Found: {}", f);
         if (in != null) in.close();
         in = new RandomAccessInputStream(f.getAbsolutePath());
+        forkFile = f.getAbsolutePath();
 
         stripHeader();
         parse(0, 0, in.length());
@@ -342,6 +355,7 @@ public class NativeQTReader extends FormatReader {
           LOGGER.debug("\t Found: {}", f);
           if (in != null) in.close();
           in = new RandomAccessInputStream(f.getAbsolutePath());
+          forkFile = f.getAbsolutePath();
           stripHeader();
           parse(0, in.getFilePointer(), in.length());
           m.imageCount = offsets.size();
@@ -353,6 +367,7 @@ public class NativeQTReader extends FormatReader {
             LOGGER.debug("\t Found: {}", f);
             if (in != null) in.close();
             in = new RandomAccessInputStream(f.getAbsolutePath());
+            forkFile = f.getAbsolutePath();
             stripHeader();
             parse(0, in.getFilePointer(), in.length());
             m.imageCount = offsets.size();

@@ -904,7 +904,10 @@ public class LeicaReader extends FormatReader {
       // grab the file patterns
       Vector<String> filePatterns = new Vector<String>();
       for (String q : listing) {
-        Location l = new Location(dirPrefix, q).getAbsoluteFile();
+        Location l = new Location(q).getAbsoluteFile();
+        if (!l.exists()) {
+          l = new Location(dirPrefix, q).getAbsoluteFile();
+        }
         FilePattern pattern = new FilePattern(l);
         if (!pattern.isValid()) continue;
 

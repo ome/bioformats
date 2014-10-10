@@ -1508,6 +1508,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // QuickTime resource forks are not detected
+          if (reader.getFormat().equals("QuickTime") && !base[i].equals(file)) {
+            continue;
+          }
+
           // SVS files in AFI datasets are detected as SVS
           if (reader.getFormat().equals("Aperio AFI") &&
             base[i].toLowerCase().endsWith(".svs"))
@@ -2135,6 +2140,11 @@ public class FormatReaderTest {
             if (!result && !used[i].toLowerCase().endsWith(".vms") &&
               r instanceof HamamatsuVMSReader)
             {
+              continue;
+            }
+
+            // QuickTime reader doesn't pick up resource forks
+            if (!result && i > 0 && r instanceof QTReader) {
               continue;
             }
 

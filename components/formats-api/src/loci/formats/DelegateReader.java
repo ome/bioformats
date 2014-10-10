@@ -195,6 +195,14 @@ public abstract class DelegateReader extends FormatReader {
     return nativeReader.get16BitLookupTable();
   }
 
+  /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
+      return legacyReader.getSeriesUsedFiles(noPixels);
+    }
+    return nativeReader.getSeriesUsedFiles(noPixels);
+  }
+
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
