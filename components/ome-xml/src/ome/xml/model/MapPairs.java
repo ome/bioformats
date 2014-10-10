@@ -137,6 +137,7 @@ public class MapPairs implements OMEModelObject {
         return Collections.unmodifiableList(pairs);
     }
 
+    @Override
     public Element asXMLElement(Document document)
     {
         return asXMLElement(document, null);
@@ -163,6 +164,7 @@ public class MapPairs implements OMEModelObject {
         return pairs;
     }
 
+    @Override
     public void update(Element element, OMEModel model) throws EnumerationException
     {
         String tagName = element.getTagName();
@@ -181,6 +183,7 @@ public class MapPairs implements OMEModelObject {
         }
     }
 
+    @Override
     public boolean link(Reference reference, OMEModelObject o)
     {
         return false;

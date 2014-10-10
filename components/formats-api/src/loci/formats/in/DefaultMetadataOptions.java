@@ -51,6 +51,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
   /* (non-Javadoc)
    * @see loci.formats.in.MetadataOptions#getMetadataLevel()
    */
+  @Override
   public MetadataLevel getMetadataLevel() {
     return level;
   }
@@ -58,6 +59,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
   /* (non-Javadoc)
    * @see loci.formats.in.MetadataOptions#setMetadataLevel(loci.formats.in.MetadataLevel)
    */
+  @Override
   public void setMetadataLevel(MetadataLevel level) {
     this.level = level;
   }

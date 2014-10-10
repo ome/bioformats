@@ -251,11 +251,13 @@ public class CBZip2InputStream extends InputStream {
 
   // -- InputStream API --
 
+  @Override
   public int read() throws IOException {
     if (this.in != null) return read0();
     throw new IOException("stream closed");
   }
 
+  @Override
   public int read(final byte[] dest, final int offs, final int len)
     throws IOException
   {
@@ -412,6 +414,7 @@ public class CBZip2InputStream extends InputStream {
     }
   }
 
+  @Override
   public void close() throws IOException {
     InputStream inShadow = this.in;
     if (inShadow != null) {

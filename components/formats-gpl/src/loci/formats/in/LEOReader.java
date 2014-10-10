@@ -72,6 +72,7 @@ public class LEOReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
     parser.setDoCaching(false);
@@ -83,6 +84,7 @@ public class LEOReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -116,6 +118,7 @@ public class LEOReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 

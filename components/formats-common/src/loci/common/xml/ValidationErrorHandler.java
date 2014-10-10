@@ -58,16 +58,19 @@ public class ValidationErrorHandler implements ErrorHandler {
     return errors;
   }
 
+  @Override
   public void error(SAXParseException e) {
     XMLTools.LOGGER.error(e.getMessage());
     errors++;
   }
 
+  @Override
   public void fatalError(SAXParseException e) {
     XMLTools.LOGGER.error(e.getMessage());
     errors++;
   }
 
+  @Override
   public void warning(SAXParseException e) {
     XMLTools.LOGGER.error(e.getMessage());
     errors++;

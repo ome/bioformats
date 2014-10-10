@@ -121,6 +121,7 @@ public class TextReader extends FormatReader {
   // -- IFormatReader methods --
 
   /* @see IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8192;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -195,6 +196,7 @@ public class TextReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

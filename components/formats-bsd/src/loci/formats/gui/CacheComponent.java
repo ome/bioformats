@@ -254,6 +254,7 @@ public class CacheComponent extends JPanel
   // -- ActionListener API methods --
 
   /** Handles combo box changes. */
+  @Override
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if ("source".equals(cmd)) updateSource();
@@ -278,6 +279,7 @@ public class CacheComponent extends JPanel
   // -- CacheListener API methods --
 
   /** Updates GUI to match latest cache state. */
+  @Override
   public void cacheUpdated(CacheEvent e) {
     int type = e.getType();
     ICacheStrategy strategy = cache.getStrategy();
@@ -322,6 +324,7 @@ public class CacheComponent extends JPanel
   // -- ChangeListener API methods --
 
   /** Handles range spinner changes. */
+  @Override
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
     for (int i=0; i<range.length; i++) {

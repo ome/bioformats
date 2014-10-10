@@ -165,6 +165,7 @@ public class MainDialog extends ImporterDialog
   // -- FocusListener methods --
 
   /** Handles information pane updates when component focus changes. */
+  @Override
   public void focusGained(FocusEvent e) {
     Object src = e.getSource();
     String text = infoTable.get(src);
@@ -172,11 +173,13 @@ public class MainDialog extends ImporterDialog
     infoPane.setCaretPosition(0);
   }
 
+  @Override
   public void focusLost(FocusEvent e) { }
 
   // -- ItemListener methods --
 
   /** Handles toggling of mutually exclusive options. */
+  @Override
   public void itemStateChanged(ItemEvent e) {
     Object src = e.getSource();
     verifyOptions(src);
@@ -194,6 +197,7 @@ public class MainDialog extends ImporterDialog
   // -- MouseListener methods --
 
   /** Focuses the component upon mouseover. */
+  @Override
   public void mouseEntered(MouseEvent e) {
     Object src = e.getSource();
     if (src instanceof Component) {
@@ -201,9 +205,13 @@ public class MainDialog extends ImporterDialog
     }
   }
 
+  @Override
   public void mouseClicked(MouseEvent e) { }
+  @Override
   public void mouseExited(MouseEvent e) { }
+  @Override
   public void mousePressed(MouseEvent e) { }
+  @Override
   public void mouseReleased(MouseEvent e) { }
 
   // -- Helper methods --

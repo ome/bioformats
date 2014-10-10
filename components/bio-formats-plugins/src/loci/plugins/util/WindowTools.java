@@ -113,6 +113,7 @@ public final class WindowTools {
 
     // create scroll pane
     ScrollPane scroll = new ScrollPane() {
+      @Override
       public Dimension getPreferredSize() {
         return size;
       }

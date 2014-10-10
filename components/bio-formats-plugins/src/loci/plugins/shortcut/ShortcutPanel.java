@@ -183,6 +183,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     // NB: If we don't run in a separate thread, there are GUI update
     //     problems with the ImageJ status bar and log window.
     new Thread() {
+      @Override
       public void run() {
         try {
           IJ.runPlugIn(className, arg);
@@ -197,6 +198,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   // -- ActionListener API methods --
 
   /** Handles button presses. */
+  @Override
   public void actionPerformed(ActionEvent e) {
     JButton b = (JButton) e.getSource();
     String name = b.getText();
@@ -211,6 +213,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
+  @Override
   public void run(String arg) {
     JFrame frame = new JFrame("Bio-Formats Plugins Shortcut Window");
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

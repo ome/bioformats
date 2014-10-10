@@ -77,6 +77,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
@@ -85,6 +86,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -103,12 +105,14 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels ? null : files;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || lastFile < 0 || lastFile >= readers.length ||
@@ -120,6 +124,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || lastFile < 0 || lastFile >= readers.length ||
@@ -133,6 +138,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -150,6 +156,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -324,6 +331,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();

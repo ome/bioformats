@@ -156,6 +156,7 @@ public class Jpeg2000GrindTest {
   public void testPyramidWriteTiles() throws Exception {
     pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     short tileCount = (short) TestTools.forEachTile(new TileLoopIteration() {
+      @Override
       public void run(int z, int c, int t, int x, int y, int tileWidth,
           int tileHeight, int tileCount) {
         int planeNumber = FormatTools.getIndex(
@@ -255,6 +256,7 @@ public class Jpeg2000GrindTest {
       this.tileNumber = tileNumber;
     }
 
+    @Override
     public void run() {
       byte[] tile = new byte[tileWidth * tileHeight * bytesPerPixel];
       ByteBuffer.wrap(tile).asShortBuffer().put(0, (short) tileNumber);
@@ -288,6 +290,7 @@ public class Jpeg2000GrindTest {
       this.theC = theC;
     }
 
+    @Override
     public void run() {
       final TiffReader reader = new TiffReader();
       try {
@@ -299,6 +302,7 @@ public class Jpeg2000GrindTest {
       assertEquals(reader.getImageCount(), SIZE_Z * SIZE_C * SIZE_T);
       assertEquals(reader.getSeriesCount(), 6);
       short tileCount = (short) TestTools.forEachTile(new TileLoopIteration() {
+        @Override
         public void run(int z, int c, int t, int x, int y, int tileWidth,
             int tileHeight, int tileCount) {
           try {

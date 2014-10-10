@@ -56,6 +56,7 @@ public final class About implements PlugIn {
 
   // -- PlugIn API methods --
 
+  @Override
   public void run(String arg) {
     about();
   }

@@ -66,16 +66,19 @@ public class TiffDelegateWidgets implements IFormatWidgets, ItemListener {
 
   // -- IFormatWidgets API methods --
 
+  @Override
   public String[] getLabels() {
     return labels;
   }
 
+  @Override
   public Component[] getWidgets() {
     return widgets;
   }
 
   // -- ItemListener API methods --
 
+  @Override
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
     Prefs.set(LociPrefs.PREF_TIFF_IMAGEIO, box.isSelected());

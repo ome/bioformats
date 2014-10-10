@@ -81,6 +81,7 @@ public abstract class ImageIOReader extends BIFormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -89,12 +90,14 @@ public abstract class ImageIOReader extends BIFormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
   }
 
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -109,6 +112,7 @@ public abstract class ImageIOReader extends BIFormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     CoreMetadata m = core.get(0);

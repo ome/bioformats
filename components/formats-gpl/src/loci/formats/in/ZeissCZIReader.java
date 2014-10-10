@@ -174,6 +174,7 @@ public class ZeissCZIReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream)
    */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 10;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
@@ -184,6 +185,7 @@ public class ZeissCZIReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean)
    */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (pixels == null || pixels.size() == 0 && noPixels) {
@@ -203,6 +205,7 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     if ((getPixelType() != FormatTools.INT8 &&
       getPixelType() != FormatTools.UINT8) || previousChannel == -1 ||
@@ -239,6 +242,7 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     if ((getPixelType() != FormatTools.INT16 &&
       getPixelType() != FormatTools.UINT16) || previousChannel == -1 ||
@@ -281,6 +285,7 @@ public class ZeissCZIReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -404,6 +409,7 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -462,6 +468,7 @@ public class ZeissCZIReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -2670,6 +2677,7 @@ public class ZeissCZIReader extends FormatReader {
     public boolean updatePending;
     public long attachmentDirectoryPosition;
 
+    @Override
     public void fillInData() throws IOException {
       super.fillInData();
 
@@ -2707,6 +2715,7 @@ public class ZeissCZIReader extends FormatReader {
       super.fillInData();
     }
 
+    @Override
     public void fillInData() throws IOException {
       super.fillInData();
 
@@ -2777,6 +2786,7 @@ public class ZeissCZIReader extends FormatReader {
       this.y = model.y;
     }
 
+    @Override
     public void fillInData() throws IOException {
       super.fillInData();
 
@@ -2992,6 +3002,7 @@ public class ZeissCZIReader extends FormatReader {
   class Directory extends Segment {
     public DirectoryEntry[] entries;
 
+    @Override
     public void fillInData() throws IOException {
       super.fillInData();
 
@@ -3019,6 +3030,7 @@ public class ZeissCZIReader extends FormatReader {
   class AttachmentDirectory extends Segment {
     public AttachmentEntry[] entries;
 
+    @Override
     public void fillInData() throws IOException {
       super.fillInData();
 
@@ -3048,6 +3060,7 @@ public class ZeissCZIReader extends FormatReader {
     public AttachmentEntry attachment;
     public byte[] attachmentData;
 
+    @Override
     public void fillInData() throws IOException {
       super.fillInData();
 
@@ -3169,6 +3182,7 @@ public class ZeissCZIReader extends FormatReader {
       this.imageCount = imageCount;
     }
 
+    @Override
     public boolean equals(Object o) {
       if (o == null || !(o instanceof Coordinate)) {
         return false;
@@ -3177,10 +3191,12 @@ public class ZeissCZIReader extends FormatReader {
         ((Coordinate) o).plane == this.plane;
     }
 
+    @Override
     public int hashCode() {
       return series * imageCount + plane;
     }
 
+    @Override
     public String toString() {
       return "[series = " + series + ", plane = " + plane + "]";
     }

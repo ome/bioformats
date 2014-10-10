@@ -91,22 +91,26 @@ public class FormatEntry implements Comparable<Object> {
 
   // -- Comparable API methods --
 
+  @Override
   public int compareTo(Object o) {
     return toString().compareTo(o.toString());
   }
 
   // -- Object API methods --
 
+  @Override
   public int hashCode() {
     return toString().hashCode();
   }
 
+  @Override
   public boolean equals(Object o) {
     if (o == null) return false;
     if (!(o instanceof FormatEntry)) return false;
     return compareTo(o) == 0;
   }
 
+  @Override
   public String toString() {
     return "<html>" + formatName;
   }

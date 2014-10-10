@@ -40,6 +40,7 @@ public class IJStatusEchoer extends AppenderBase<ILoggingEvent> {
 
   // -- AppenderSkeleton API methods --
 
+  @Override
   protected void append(ILoggingEvent event) {
     if (event.getLevel().isGreaterOrEqual(Level.INFO)) {
       BF.status(false, event.getMessage().toString());

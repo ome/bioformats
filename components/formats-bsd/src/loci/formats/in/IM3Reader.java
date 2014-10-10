@@ -512,7 +512,8 @@ public class IM3Reader extends FormatReader {
 		/* (non-Javadoc)
 		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
+		@Override
+    public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
 			LOGGER.info(indentation + toString());
 			for (IM3Record rec:parseChunks(is)) {
@@ -572,7 +573,8 @@ public class IM3Reader extends FormatReader {
 		/* (non-Javadoc)
 		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
+		@Override
+    public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
 			LOGGER.info(indentation + toString());
 			final int length = getNumEntries(is);
@@ -660,7 +662,8 @@ public class IM3Reader extends FormatReader {
 		/* (non-Javadoc)
 		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
+		@Override
+    public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
 			LOGGER.info(indentation + toString());
 			final int length = getNumEntries(is);

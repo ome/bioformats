@@ -75,16 +75,19 @@ public class TileStitcher extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getSizeX() */
+  @Override
   public int getSizeX() {
     return reader.getSizeX() * tileX;
   }
 
   /* @see IFormatReader#getSizeY() */
+  @Override
   public int getSizeY() {
     return reader.getSizeY() * tileY;
   }
 
   /* @see IFormatReader#getSeriesCount() */
+  @Override
   public int getSeriesCount() {
     if (tileX == 1 && tileY == 1) {
       return reader.getSeriesCount();
@@ -93,11 +96,13 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -105,6 +110,7 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -115,6 +121,7 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -177,6 +184,7 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
@@ -301,6 +309,7 @@ public class TileStitcher extends ReaderWrapper {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return byte[].class;
   }
@@ -311,6 +320,7 @@ public class TileStitcher extends ReaderWrapper {
     public Length x;
     public Length y;
 
+    @Override
     public boolean equals(Object o) {
       if (!(o instanceof TileCoordinate)) {
         return false;

@@ -79,6 +79,7 @@ public class PGMReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 2;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -89,6 +90,7 @@ public class PGMReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -127,6 +129,7 @@ public class PGMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -138,6 +141,7 @@ public class PGMReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);

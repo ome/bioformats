@@ -99,6 +99,7 @@ public class CellWorxReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "pnl") || checkSuffix(name, "htd")) {
       return super.isThisType(name, open);
@@ -123,6 +124,7 @@ public class CellWorxReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -158,6 +160,7 @@ public class CellWorxReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -200,6 +203,7 @@ public class CellWorxReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -223,6 +227,7 @@ public class CellWorxReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // first, make sure that we have the .htd file
 

@@ -65,6 +65,7 @@ public class EPSWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -123,6 +124,7 @@ public class EPSWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8};
   }

@@ -454,18 +454,21 @@ public class ImportProcess implements StatusReporter {
 
   // -- StatusReporter methods --
 
+  @Override
   public void addStatusListener(StatusListener l) {
     synchronized (listeners) {
       listeners.add(l);
     }
   }
 
+  @Override
   public void removeStatusListener(StatusListener l) {
     synchronized (listeners) {
       listeners.remove(l);
     }
   }
 
+  @Override
   public void notifyListeners(StatusEvent e) {
     synchronized (listeners) {
       for (StatusListener l : listeners) l.statusUpdated(e);

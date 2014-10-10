@@ -88,6 +88,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
@@ -98,6 +99,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -115,6 +117,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (delegate != null) delegate.close(fileOnly);
@@ -134,6 +137,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -199,6 +203,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();

@@ -199,6 +199,7 @@ public class EditTiffG extends JFrame implements ActionListener {
 
   // -- ActionListener methods --
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if ("open".equals(cmd)) open();

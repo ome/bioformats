@@ -132,6 +132,7 @@ public class WlzServiceImpl extends AbstractService
     checkClassDependency(WlzObject.class);
   }
 
+  @Override
   protected void checkClassDependency(Class<? extends Object> klass) {
     String v[] = new String[1];
     WlzObject.WlzGetVersion(v);
@@ -141,14 +142,17 @@ public class WlzServiceImpl extends AbstractService
   * Service methods
   */
 
+  @Override
   public String getNoWlzMsg() {
     return(new String(NO_WLZ_MSG));
   }
 
+  @Override
   public String getWlzOrgLabelName() {
     return(new String(WLZ_ORG_LABEL));
   }
 
+  @Override
   public void open(String file, String rw)
     throws FormatException, IOException {
     try {
@@ -170,6 +174,7 @@ public class WlzServiceImpl extends AbstractService
     }
   }
 
+  @Override
   public int	getSizeX() {
     int 	sz;
     if(bBox == null) {
@@ -181,6 +186,7 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
+  @Override
   public int	getSizeY() {
     int         sz;
     if(bBox == null) {
@@ -192,6 +198,7 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
+  @Override
   public int	getSizeZ() {
     int         sz;
     if(bBox == null) {
@@ -203,6 +210,7 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
+  @Override
   public int	getSizeC() {
     int		sz;
     if(objGType == WlzGreyType.WLZ_GREY_RGBA) {
@@ -214,10 +222,12 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
+  @Override
   public int	getSizeT() {
     return(1);
   }
 
+  @Override
   public boolean isRGB() {
     boolean 	rgb;
     if(objGType == WlzGreyType.WLZ_GREY_RGBA) {
@@ -229,6 +239,7 @@ public class WlzServiceImpl extends AbstractService
     return(rgb);
   }
 
+  @Override
   public double	getVoxSzX() {
     double sz;
 
@@ -241,6 +252,7 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
+  @Override
   public double	getVoxSzY() {
     double sz;
 
@@ -253,6 +265,7 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
+  @Override
   public double	getVoxSzZ() {
     double sz;
 
@@ -265,6 +278,7 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
+  @Override
   public double	getOrgX() {
     int og;
 
@@ -277,6 +291,7 @@ public class WlzServiceImpl extends AbstractService
     return(og);
   }
 
+  @Override
   public double	getOrgY() {
     int og;
 
@@ -289,6 +304,7 @@ public class WlzServiceImpl extends AbstractService
     return(og);
   }
 
+  @Override
   public double	getOrgZ() {
     int og;
 
@@ -301,6 +317,7 @@ public class WlzServiceImpl extends AbstractService
     return(og);
   }
 
+  @Override
   public int[] getSupPixelTypes() {
     return new int[] {FormatTools.UINT8,
     		      FormatTools.INT16,
@@ -309,6 +326,7 @@ public class WlzServiceImpl extends AbstractService
                       FormatTools.DOUBLE};
   }
 
+  @Override
   public int	getPixelType() {
     int		pixType;
     switch(objGType) {
@@ -331,6 +349,7 @@ public class WlzServiceImpl extends AbstractService
     return(pixelType);
   }
 
+  @Override
   public void setupWrite(int orgX, int orgY, int orgZ,
 			 int pixSzX, int pixSzY, int pixSzZ,
   			 int pixSzC, int pixSzT, 
@@ -391,6 +410,7 @@ public class WlzServiceImpl extends AbstractService
     }
   }
 
+  @Override
   public void close()
     throws IOException {
     if(wlzObj != null) {
@@ -414,6 +434,7 @@ public class WlzServiceImpl extends AbstractService
     }
   }
 
+  @Override
   public byte[] readBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException {
     if((wlzObj == null) || (state != WLZ_SERVICE_READ)) {
@@ -441,6 +462,7 @@ public class WlzServiceImpl extends AbstractService
     return(buf);
   }
 
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {

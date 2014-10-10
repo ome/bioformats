@@ -82,6 +82,7 @@ public final class CacheConsole {
       new CrosshairStrategy(getLengths(reader)),
       new BufferedImageSource(reader), true);
     CacheListener l = new CacheListener() {
+      @Override
       public void cacheUpdated(CacheEvent e) {
         int type = e.getType();
         int ndx = e.getIndex();

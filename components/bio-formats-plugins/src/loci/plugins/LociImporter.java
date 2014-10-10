@@ -64,6 +64,7 @@ public class LociImporter implements PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
+  @Override
   public void run(String arg) {
     DebugTools.enableLogging("INFO");
     canceled = false;

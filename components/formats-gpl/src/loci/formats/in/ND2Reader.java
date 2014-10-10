@@ -53,6 +53,7 @@ public class ND2Reader extends DelegateReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();

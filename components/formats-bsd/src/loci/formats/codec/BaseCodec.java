@@ -140,6 +140,7 @@ public abstract class BaseCodec implements Codec {
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
+  @Override
   public byte[] compress(byte[][] data, CodecOptions options)
     throws FormatException
   {
@@ -157,16 +158,19 @@ public abstract class BaseCodec implements Codec {
   }
 
   /* @see Codec#decompress(byte[]) */
+  @Override
   public byte[] decompress(byte[] data) throws FormatException {
     return decompress(data, null);
   }
 
   /* @see Codec#decompress(byte[][]) */
+  @Override
   public byte[] decompress(byte[][] data) throws FormatException {
     return decompress(data, null);
   }
 
   /* @see Codec#decompress(byte[], CodecOptions) */
+  @Override
   public byte[] decompress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -182,6 +186,7 @@ public abstract class BaseCodec implements Codec {
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
+  @Override
   public abstract byte[] decompress(RandomAccessInputStream in,
     CodecOptions options) throws FormatException, IOException;
 
@@ -195,6 +200,7 @@ public abstract class BaseCodec implements Codec {
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
+  @Override
   public byte[] decompress(byte[][] data, CodecOptions options)
     throws FormatException
   {

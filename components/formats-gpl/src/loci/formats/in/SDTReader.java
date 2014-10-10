@@ -129,6 +129,7 @@ public class SDTReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
+  @Override
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
     return !intensity && subC == 0;
@@ -137,6 +138,7 @@ public class SDTReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -281,6 +283,7 @@ public class SDTReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -297,6 +300,7 @@ public class SDTReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);

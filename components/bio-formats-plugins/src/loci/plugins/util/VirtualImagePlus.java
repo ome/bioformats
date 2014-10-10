@@ -72,6 +72,7 @@ public class VirtualImagePlus extends ImagePlus {
 
   // -- ImagePlus API methods --
 
+  @Override
   public synchronized void setSlice(int index) {
     super.setSlice(index);
 
@@ -94,6 +95,7 @@ public class VirtualImagePlus extends ImagePlus {
     }
   }
 
+  @Override
   public void close() {
     super.close();
     try {
@@ -102,6 +104,7 @@ public class VirtualImagePlus extends ImagePlus {
     catch (IOException e) { }
   }
 
+  @Override
   public ImageStatistics getStatistics(int mOptions, int nBins,
     double histMin, double histMax)
   {

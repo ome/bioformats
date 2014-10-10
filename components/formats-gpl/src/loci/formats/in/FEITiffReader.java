@@ -90,6 +90,7 @@ public class FEITiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -98,6 +99,7 @@ public class FEITiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -116,6 +118,7 @@ public class FEITiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -231,6 +234,7 @@ public class FEITiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();
@@ -308,6 +312,7 @@ public class FEITiffReader extends BaseTiffReader {
 
     // -- DefaultHandler API methods --
 
+    @Override
     public void characters(char[] data, int start, int len) {
       if (qName.equals("Label")) {
         key = new String(data, start, len);
@@ -344,6 +349,7 @@ public class FEITiffReader extends BaseTiffReader {
       }
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {

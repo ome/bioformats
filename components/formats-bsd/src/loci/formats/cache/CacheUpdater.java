@@ -77,6 +77,7 @@ public class CacheUpdater extends Thread {
 
   // -- Thread API methods --
 
+  @Override
   public void run() {
     int length = 0;
     try {

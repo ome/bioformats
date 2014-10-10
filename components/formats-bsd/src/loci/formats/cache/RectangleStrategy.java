@@ -70,6 +70,7 @@ public class RectangleStrategy extends CacheStrategy {
   // -- CacheStrategy API methods --
 
   /* @see CacheStrategy#getPossiblePositions() */
+  @Override
   protected int[][] getPossiblePositions() {
     // with sufficient range, any position could be cached
     int[][] p = new int[length()][lengths.length];

@@ -339,6 +339,7 @@ public class Configuration {
 
   // -- Object API methods --
 
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof Configuration)) return false;
 
@@ -346,6 +347,7 @@ public class Configuration {
     return this.getINI().equals(thatConfig.getINI());
   }
 
+  @Override
   public int hashCode() {
     return this.getINI().hashCode();
   }

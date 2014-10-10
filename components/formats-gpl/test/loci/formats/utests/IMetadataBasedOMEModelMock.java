@@ -50,6 +50,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.resolveReferences();
   }
 
+  @Override
   public MetadataRoot getRoot() {
     return store.getRoot();
   }

@@ -90,6 +90,7 @@ public class ICSWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -162,9 +163,11 @@ public class ICSWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
@@ -174,6 +177,7 @@ public class ICSWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
@@ -282,6 +286,7 @@ public class ICSWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     if (lastPlane != getPlaneCount() - 1 && out != null) {
       overwriteDimensions(getMetadataRetrieve());

@@ -82,6 +82,7 @@ public class XMLCellRenderer extends DefaultTreeCellRenderer {
    * @see javax.swing.tree.TreeCellRenderer#getTreeCellRendererComponent(JTree,
    *   Object, boolean, boolean, boolean, int, boolean
    */
+  @Override
   public Component getTreeCellRendererComponent(JTree tree, Object value,
     boolean selected, boolean expanded, boolean leaf, int row,
     boolean hasFocus)
@@ -175,6 +176,7 @@ public class XMLCellRenderer extends DefaultTreeCellRenderer {
       return sb.toString();
     }
     /** Allows copy and paste from tree component. */
+    @Override
     public String toString() {
       return toString(false);
     }

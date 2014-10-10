@@ -56,6 +56,7 @@ public class AsciiImage {
 
   // -- Object methods --
 
+  @Override
   public String toString() {
     final int width = img.getWidth();
     final int height = img.getHeight();

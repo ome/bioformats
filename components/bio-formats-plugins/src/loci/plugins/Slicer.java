@@ -218,12 +218,14 @@ public class Slicer implements PlugInFilter {
 
   // -- PlugInFilter methods --
 
+  @Override
   public int setup(String arg, ImagePlus imp) {
     this.arg = arg;
     this.imp = imp;
     return DOES_ALL + NO_CHANGES;
   }
 
+  @Override
   public void run(ImageProcessor ip) {
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
 

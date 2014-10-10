@@ -122,6 +122,7 @@ public class ComboFileFilter extends FileFilter
   // -- FileFilter API methods --
 
   /** Accepts files with the proper filename prefix. */
+  @Override
   public boolean accept(File f) {
     for (int i=0; i<filts.length; i++) {
       if (filts[i].accept(f)) return true;
@@ -130,11 +131,13 @@ public class ComboFileFilter extends FileFilter
   }
 
   /** Returns the filter's description. */
+  @Override
   public String getDescription() { return desc; }
 
   // -- Object API methods --
 
   /** Gets a string representation of this file filter. */
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer("ComboFileFilter: ");
     sb.append(desc);
@@ -148,6 +151,7 @@ public class ComboFileFilter extends FileFilter
   // -- Comparable API methods --
 
   /** Compares two FileFilter objects alphanumerically. */
+  @Override
   public int compareTo(Object o) {
     return desc.compareToIgnoreCase(((FileFilter) o).getDescription());
   }

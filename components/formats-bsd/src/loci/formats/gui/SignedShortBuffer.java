@@ -93,11 +93,13 @@ public class SignedShortBuffer extends DataBuffer {
   }
 
   /* @see java.awt.image.DataBufferShort#getElem(int, int) */
+  @Override
   public int getElem(int bank, int i) {
     return helper.getElem(bank, i);
   }
 
   /* @see java.awt.image.DataBufferShort#setElem(int, int, int) */
+  @Override
   public void setElem(int bank, int i, int val) {
     helper.setElem(bank, i, val);
   }

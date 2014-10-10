@@ -206,6 +206,7 @@ public abstract class FormatReader extends FormatHandler
   // -- Internal FormatReader API methods --
 
   /* @see IFormatReader#reopenFile() */
+  @Override
   public void reopenFile() throws IOException {
     if (in != null) {
       in.close();
@@ -566,6 +567,7 @@ public abstract class FormatReader extends FormatHandler
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
    */
+  @Override
   public Set<MetadataLevel> getSupportedMetadataLevels() {
     Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
     supportedLevels.add(MetadataLevel.ALL);
@@ -577,6 +579,7 @@ public abstract class FormatReader extends FormatHandler
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
    */
+  @Override
   public MetadataOptions getMetadataOptions() {
     return metadataOptions;
   }
@@ -584,6 +587,7 @@ public abstract class FormatReader extends FormatHandler
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
    */
+  @Override
   public void setMetadataOptions(MetadataOptions options) {
     this.metadataOptions = options;
   }
@@ -600,6 +604,7 @@ public abstract class FormatReader extends FormatHandler
    * @param open If true, and the file extension is insufficient to determine
    *   the file type, the (existing) file is opened for further analysis.
    */
+  @Override
   public boolean isThisType(String name, boolean open) {
     // if file extension ID is insufficient and we can't open the file, give up
     if (!suffixSufficient && !open) return false;
@@ -630,6 +635,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isThisType(byte[]) */
+  @Override
   public boolean isThisType(byte[] block) {
     try {
       RandomAccessInputStream stream = new RandomAccessInputStream(block);
@@ -644,59 +650,69 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
   /* @see IFormatReader#getImageCount() */
+  @Override
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).imageCount;
   }
 
   /* @see IFormatReader#isRGB() */
+  @Override
   public boolean isRGB() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).rgb;
   }
 
   /* @see IFormatReader#getSizeX() */
+  @Override
   public int getSizeX() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
+  @Override
   public int getSizeY() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
+  @Override
   public int getSizeZ() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
+  @Override
   public int getSizeC() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
+  @Override
   public int getSizeT() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).sizeT;
   }
 
   /* @see IFormatReader#getPixelType() */
+  @Override
   public int getPixelType() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).pixelType;
   }
 
   /* @see IFormatReader#getBitsPerPixel() */
+  @Override
   public int getBitsPerPixel() {
     FormatTools.assertId(currentId, true, 1);
     if (core.get(getCoreIndex()).bitsPerPixel == 0) {
@@ -707,6 +723,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
+  @Override
   public int getEffectiveSizeC() {
     // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
     int sizeZT = getSizeZ() * getSizeT();
@@ -715,6 +732,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getRGBChannelCount() */
+  @Override
   public int getRGBChannelCount() {
     int effSizeC = getEffectiveSizeC();
     if (effSizeC == 0) return 0;
@@ -722,46 +740,54 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isIndexed() */
+  @Override
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).indexed;
   }
 
   /* @see IFormatReader#isFalseColor() */
+  @Override
   public boolean isFalseColor() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).falseColor;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return null;
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     return null;
   }
 
   /* @see IFormatReader#getModuloZ() */
+  @Override
   public Modulo getModuloZ() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).moduloZ;
   }
 
   /* @see IFormatReader#getModuloC() */
+  @Override
   public Modulo getModuloC() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).moduloC;
   }
 
   /* @see IFormatReader#getModuloT() */
+  @Override
   public Modulo getModuloT() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).moduloT;
   }
 
   /* @see IFormatReader#getThumbSizeX() */
+  @Override
   public int getThumbSizeX() {
     FormatTools.assertId(currentId, true, 1);
     if (core.get(getCoreIndex()).thumbSizeX == 0) {
@@ -779,6 +805,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getThumbSizeY() */
+  @Override
   public int getThumbSizeY() {
     FormatTools.assertId(currentId, true, 1);
     if (core.get(getCoreIndex()).thumbSizeY == 0) {
@@ -796,46 +823,54 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader.isLittleEndian() */
+  @Override
   public boolean isLittleEndian() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).littleEndian;
   }
 
   /* @see IFormatReader#getDimensionOrder() */
+  @Override
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).dimensionOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */
+  @Override
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).orderCertain;
   }
 
   /* @see IFormatReader#isThumbnailSeries() */
+  @Override
   public boolean isThumbnailSeries() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).thumbnail;
   }
 
   /* @see IFormatReader#isInterleaved() */
+  @Override
   public boolean isInterleaved() {
     return isInterleaved(0);
   }
 
   /* @see IFormatReader#isInterleaved(int) */
+  @Override
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).interleaved;
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -843,6 +878,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -864,10 +900,12 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public abstract byte[] openBytes(int no, byte[] buf, int x, int y,
     int w, int h) throws FormatException, IOException;
 
   /* @see IFormatReader#openPlane(int, int, int, int, int int) */
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -876,12 +914,14 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return FormatTools.openThumbBytes(this, no);
   }
 
   /* @see IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     if (in != null) in.close();
     if (!fileOnly) {
@@ -893,6 +933,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getSeriesCount() */
+  @Override
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 1);
     if (hasFlattenedResolutions()) {
@@ -903,6 +944,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#setSeries(int) */
+  @Override
   public void setSeries(int no) {
     coreIndex = seriesToCoreIndex(no);
     series = no;
@@ -910,22 +952,26 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getSeries() */
+  @Override
   public int getSeries() {
     return series;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
+  @Override
   public void setGroupFiles(boolean groupFiles) {
     FormatTools.assertId(currentId, false, 1);
     group = groupFiles;
   }
 
   /* @see IFormatReader#isGroupFiles() */
+  @Override
   public boolean isGroupFiles() {
     return group;
   }
 
   /* @see IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id)
     throws FormatException, IOException
   {
@@ -933,39 +979,46 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isMetadataComplete() */
+  @Override
   public boolean isMetadataComplete() {
     FormatTools.assertId(currentId, true, 1);
     return core.get(getCoreIndex()).metadataComplete;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
+  @Override
   public void setNormalized(boolean normalize) {
     FormatTools.assertId(currentId, false, 1);
     normalizeData = normalize;
   }
 
   /* @see IFormatReader#isNormalized() */
+  @Override
   public boolean isNormalized() {
     return normalizeData;
   }
 
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
+  @Override
   public void setOriginalMetadataPopulated(boolean populate) {
     FormatTools.assertId(currentId, false, 1);
     saveOriginalMetadata = populate;
   }
 
   /* @see IFormatReader#isOriginalMetadataPopulated() */
+  @Override
   public boolean isOriginalMetadataPopulated() {
     return saveOriginalMetadata;
   }
 
   /* @see IFormatReader#getUsedFiles() */
+  @Override
   public String[] getUsedFiles() {
     return getUsedFiles(false);
   }
 
   /* @see IFormatReader#getUsedFiles() */
+  @Override
   public String[] getUsedFiles(boolean noPixels) {
     int oldSeries = getSeries();
     Vector<String> files = new Vector<String>();
@@ -985,16 +1038,19 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getSeriesUsedFiles() */
+  @Override
   public String[] getSeriesUsedFiles() {
     return getSeriesUsedFiles(false);
   }
 
   /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     return noPixels ? null : new String[] {currentId};
   }
 
   /* @see IFormatReader#getAdvancedUsedFiles(boolean) */
+  @Override
   public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
     String[] files = getUsedFiles(noPixels);
     if (files == null) return null;
@@ -1009,6 +1065,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getAdvancedSeriesUsedFiles(boolean) */
+  @Override
   public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
     String[] files = getSeriesUsedFiles(noPixels);
     if (files == null) return null;
@@ -1023,23 +1080,27 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getCurrentFile() */
+  @Override
   public String getCurrentFile() {
     return currentId;
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
+  @Override
   public int getIndex(int z, int c, int t) {
     FormatTools.assertId(currentId, true, 1);
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
+  @Override
   public int[] getZCTCoords(int index) {
     FormatTools.assertId(currentId, true, 1);
     return FormatTools.getZCTCoords(this, index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */
+  @Override
   public Object getMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
     flattenHashtables();
@@ -1047,6 +1108,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getSeriesMetadataValue(String) */
+  @Override
   public Object getSeriesMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
     flattenHashtables();
@@ -1054,6 +1116,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
+  @Override
   public Hashtable<String, Object> getGlobalMetadata() {
     FormatTools.assertId(currentId, true, 1);
     flattenHashtables();
@@ -1061,6 +1124,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
+  @Override
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
     if (core.get(getCoreIndex()).seriesMetadata.size() > 0) {
@@ -1070,23 +1134,27 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getCoreMetadataList() */
+  @Override
   public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(currentId, true, 1);
     return core;
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
+  @Override
   public void setMetadataFiltered(boolean filter) {
     FormatTools.assertId(currentId, false, 1);
     filterMetadata = filter;
   }
 
   /* @see IFormatReader#isMetadataFiltered() */
+  @Override
   public boolean isMetadataFiltered() {
     return filterMetadata;
   }
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
+  @Override
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(currentId, false, 1);
     if (store == null) {
@@ -1097,27 +1165,32 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getMetadataStore() */
+  @Override
   public MetadataStore getMetadataStore() {
     return metadataStore;
   }
 
   /* @see IFormatReader#getMetadataStoreRoot() */
+  @Override
   public Object getMetadataStoreRoot() {
     FormatTools.assertId(currentId, true, 1);
     return getMetadataStore().getRoot();
   }
 
   /* @see IFormatReader#getUnderlyingReaders() */
+  @Override
   public IFormatReader[] getUnderlyingReaders() {
     return null;
   }
 
   /* @see IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return true;
   }
 
   /* @see IFormatReader#getRequiredDirectories(String[]) */
+  @Override
   public int getRequiredDirectories(String[] files)
     throws FormatException, IOException
   {
@@ -1125,16 +1198,19 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getDatasetStructureDescription() */
+  @Override
   public String getDatasetStructureDescription() {
     return datasetDescription;
   }
 
   /* @see IFormatReader#hasCompanionFiles() */
+  @Override
   public boolean hasCompanionFiles() {
     return hasCompanionFiles;
   }
 
   /* @see IFormatReader#getPossibleDomains(String) */
+  @Override
   public String[] getPossibleDomains(String id)
     throws FormatException, IOException
   {
@@ -1142,18 +1218,21 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return domains;
   }
 
   /* @see IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeX();
   }
 
   /* @see IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
      int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -1163,6 +1242,7 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Sub-resolution API methods --
 
+  @Override
   public int seriesToCoreIndex(int series)
   {
     if (hasFlattenedResolutions()) {
@@ -1194,6 +1274,7 @@ public abstract class FormatReader extends FormatHandler
     return index;
   }
 
+  @Override
   public int coreIndexToSeries(int index)
   {
     if (index < 0 || index >= core.size()) {
@@ -1227,6 +1308,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getResolutionCount() */
+  @Override
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
 
@@ -1238,6 +1320,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#setResolution(int) */
+  @Override
   public void setResolution(int no) {
     if (no < 0 || no >= getResolutionCount()) {
       throw new IllegalArgumentException("Invalid resolution: " + no);
@@ -1247,26 +1330,31 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getResolution() */
+  @Override
   public int getResolution() {
     return resolution;
   }
 
   /* @see IFormatReader#hasFlattenedResolutions */
+  @Override
   public boolean hasFlattenedResolutions() {
     return flattenedResolutions;
   }
 
   /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  @Override
   public void setFlattenedResolutions(boolean flattened) {
     FormatTools.assertId(currentId, false, 1);
     flattenedResolutions = flattened;
   }
 
+  @Override
   public int getCoreIndex() {
     return coreIndex;
   }
 
   /* @see IFormatHandler#setCoreIndex(int) */
+  @Override
   public void setCoreIndex(int no) {
     if (no < 0 || no >= core.size()) {
       throw new IllegalArgumentException("Invalid series: " + no);
@@ -1285,6 +1373,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
     if (!id.equals(currentId)) {
@@ -1348,6 +1437,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     close(false);
   }

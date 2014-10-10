@@ -129,6 +129,7 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
 
   // -- ItemListener methods --
 
+  @Override
   public void itemStateChanged(ItemEvent e) {
     final Object src = e.getSource();
     final int zIndex = zChoice.getSelectedIndex();

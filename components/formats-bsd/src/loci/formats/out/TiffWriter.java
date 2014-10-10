@@ -135,6 +135,7 @@ public class TiffWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
@@ -345,6 +346,7 @@ public class TiffWriter extends FormatWriter {
   }
 
   /* @see loci.formats.FormatWriter#getPlaneCount() */
+  @Override
   public int getPlaneCount() {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     int c = getSamplesPerPixel();
@@ -363,6 +365,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -387,9 +390,11 @@ public class TiffWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     if (codec != null && codec.equals(COMPRESSION_JPEG)) {
       return new int[] {FormatTools.INT8, FormatTools.UINT8,

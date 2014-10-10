@@ -151,6 +151,7 @@ public class ZipHandle extends StreamHandle {
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#close() */
+  @Override
   public void close() throws IOException {
     super.close();
     zip = null;
@@ -163,6 +164,7 @@ public class ZipHandle extends StreamHandle {
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
+  @Override
   protected void resetStream() throws IOException {
     if (stream != null) stream.close();
     if (in != null) {

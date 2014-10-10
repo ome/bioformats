@@ -61,6 +61,7 @@ public class HuffmanCodec extends BaseCodec {
   // -- Codec API methods --
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -77,6 +78,7 @@ public class HuffmanCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {

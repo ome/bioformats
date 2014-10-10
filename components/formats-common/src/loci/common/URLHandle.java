@@ -74,6 +74,7 @@ public class URLHandle extends StreamHandle {
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#seek(long) */
+  @Override
   public void seek(long pos) throws IOException {
     if (pos < fp && pos >= mark) {
       stream.reset();
@@ -86,6 +87,7 @@ public class URLHandle extends StreamHandle {
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
+  @Override
   protected void resetStream() throws IOException {
     conn = (new URL(url)).openConnection();
     stream = new DataInputStream(new BufferedInputStream(

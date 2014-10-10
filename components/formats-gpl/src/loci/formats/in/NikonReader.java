@@ -121,6 +121,7 @@ public class NikonReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     // extension is sufficient as long as it is NEF
     if (checkSuffix(name, NEF_SUFFIX)) return true;
@@ -128,6 +129,7 @@ public class NikonReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -140,6 +142,7 @@ public class NikonReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -276,6 +279,7 @@ public class NikonReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -295,6 +299,7 @@ public class NikonReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -430,6 +435,7 @@ public class NikonReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

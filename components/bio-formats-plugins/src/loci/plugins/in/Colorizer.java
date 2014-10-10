@@ -166,6 +166,7 @@ public class Colorizer {
       if (doComposite) {
         final ImagePlus toClose = imp;
         CompositeImage compImage = new CompositeImage(imp, mode) {
+          @Override
           public void close() {
             super.close();
             toClose.close();

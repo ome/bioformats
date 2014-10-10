@@ -64,6 +64,7 @@ public class PassthroughCodec extends BaseCodec {
   /* (non-Javadoc)
    * @see loci.formats.codec.Codec#compress(byte[], loci.formats.codec.CodecOptions)
    */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
       throws FormatException {
     return data;

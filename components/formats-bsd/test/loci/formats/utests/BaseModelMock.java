@@ -123,6 +123,7 @@ public class BaseModelMock implements ModelMock {
     ome.addImage(makeImage(1));
   }
 
+  @Override
   public OME getRoot() {
     return ome;
   }

@@ -53,12 +53,15 @@ public class TextAreaWriter extends Writer {
   // -- Writer API methods --
 
   /** Closing a TextAreaWriter does nothing. */
+  @Override
   public void close() { }
 
   /** Flushing a TextAreaWriter does nothing .*/
+  @Override
   public void flush() { }
 
   /** Writes the given characters to the associated text area component. */
+  @Override
   public void write(char[] cbuf, int off, int len) {
     textArea.append(new String(cbuf, off, len));
     textArea.setCaretPosition(textArea.getDocument().getLength());

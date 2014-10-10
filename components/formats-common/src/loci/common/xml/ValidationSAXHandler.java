@@ -49,10 +49,12 @@ class ValidationSAXHandler extends BaseHandler {
   private String schemaPath;
   private boolean first;
   public String getSchemaPath() { return schemaPath; }
+  @Override
   public void startDocument() {
     schemaPath = null;
     first = true;
   }
+  @Override
   public void startElement(String uri,
     String localName, String qName, Attributes attributes)
   {

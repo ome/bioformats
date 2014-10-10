@@ -92,6 +92,7 @@ public class FormatFileFilter extends FileFilter
   // -- FileFilter API methods --
 
   /** Accepts files in accordance with the file format reader. */
+  @Override
   public boolean accept(File f) {
     if (f.isDirectory()) return true;
     return reader.isThisType(f.getPath(), allowOpen);
@@ -101,16 +102,19 @@ public class FormatFileFilter extends FileFilter
   public IFormatReader getReader() { return reader; }
 
   /** Gets the filter's description. */
+  @Override
   public String getDescription() { return desc; }
 
   // -- Object API methods --
 
   /** Gets a string representation of this file filter. */
+  @Override
   public String toString() { return "FormatFileFilter: " + desc; }
 
   // -- Comparable API methods --
 
   /** Compares two FileFilter objects alphanumerically. */
+  @Override
   public int compareTo(Object o) {
     return desc.compareTo(((FileFilter) o).getDescription());
   }

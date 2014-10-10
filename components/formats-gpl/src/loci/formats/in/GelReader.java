@@ -87,6 +87,7 @@ public class GelReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
     parser.setDoCaching(false);
@@ -98,6 +99,7 @@ public class GelReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -136,6 +138,7 @@ public class GelReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initMetadata() */
+  @Override
   protected void initMetadata() throws FormatException, IOException {
     ifds = tiffParser.getIFDs();
     if (ifds.size() > 1) {

@@ -83,6 +83,7 @@ public class LegacyND2Reader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String file, boolean open) {
     return libraryFound && super.isThisType(file, open);
   }
@@ -90,6 +91,7 @@ public class LegacyND2Reader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -128,6 +130,7 @@ public class LegacyND2Reader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

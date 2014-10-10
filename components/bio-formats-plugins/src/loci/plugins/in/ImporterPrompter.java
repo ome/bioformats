@@ -59,6 +59,7 @@ public class ImporterPrompter implements StatusListener {
 
   // -- StatusListener methods --
 
+  @Override
   public void statusUpdated(StatusEvent e) {
     final String message = e.getStatusMessage();
     final int value = e.getProgressValue();

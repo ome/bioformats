@@ -49,6 +49,7 @@ public class RPZACodec extends BaseCodec {
   private int totalBlocks, pixelPtr, rowPtr, stride;
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] input, CodecOptions options)
     throws FormatException
   {
@@ -62,6 +63,7 @@ public class RPZACodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {

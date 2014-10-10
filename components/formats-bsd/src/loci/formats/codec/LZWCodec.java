@@ -101,6 +101,7 @@ public class LZWCodec extends BaseCodec {
     {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f};
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] input, CodecOptions options)
     throws FormatException
   {
@@ -257,6 +258,7 @@ public class LZWCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {

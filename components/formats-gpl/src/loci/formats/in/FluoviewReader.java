@@ -132,6 +132,7 @@ public class FluoviewReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -147,6 +148,7 @@ public class FluoviewReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -168,6 +170,7 @@ public class FluoviewReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -192,6 +195,7 @@ public class FluoviewReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -387,6 +391,7 @@ public class FluoviewReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();

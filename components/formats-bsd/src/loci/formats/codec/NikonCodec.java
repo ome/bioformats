@@ -134,6 +134,7 @@ public class NikonCodec extends BaseCodec {
   };
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -156,6 +157,7 @@ public class NikonCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {

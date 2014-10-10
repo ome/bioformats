@@ -96,11 +96,13 @@ public class ScreenReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
 
@@ -122,16 +124,19 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0].getCurrentFile() == null) {
@@ -141,6 +146,7 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0].getCurrentFile() == null) {
@@ -152,6 +158,7 @@ public class ScreenReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -165,6 +172,7 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -187,6 +195,7 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
@@ -204,6 +213,7 @@ public class ScreenReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -220,6 +230,7 @@ public class ScreenReader extends FormatReader {
     Vector<String> metadataFiles = new Vector<String>();
 
     Comparator<String> c = new Comparator<String>() {
+      @Override
       public int compare(String s1, String s2) {
         int row1 = (int) (getRow(s1).charAt(0) - 'A');
         int row2 = (int) (getRow(s2).charAt(0) - 'A');

@@ -69,6 +69,7 @@ public class CrosshairStrategy extends CacheStrategy {
   // -- CacheStrategy API methods --
 
   /* @see CacheStrategy#getPossiblePositions() */
+  @Override
   protected int[][] getPossiblePositions() {
     // only positions diverging along a single axis can ever be cached
     int len = 1;

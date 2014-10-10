@@ -207,6 +207,7 @@ public class CoreMetadata implements Cloneable {
 
   // -- Object methods --
 
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(super.toString() + ":");
@@ -233,6 +234,7 @@ public class CoreMetadata implements Cloneable {
     return sb.toString();
   }
 
+  @Override
   public Object clone() throws CloneNotSupportedException {
     return super.clone();
   }

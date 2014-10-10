@@ -103,6 +103,7 @@ public enum CompressionType implements CodedEnum {
    * Implemented as specified by the {@link CodedEnum} I/F.
    * @see CodedEnum#getCode()
    */
+  @Override
   public int getCode() {
     return code;
   }

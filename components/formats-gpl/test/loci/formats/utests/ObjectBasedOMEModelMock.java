@@ -83,6 +83,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     ome.setStructuredAnnotations(annotations);
   }
 
+  @Override
   public OMEXMLMetadataRoot getRoot() {
     return ome;
   }

@@ -39,6 +39,7 @@ import org.testng.ITestNGMethod;
  */
 public class OrderingListener implements IMethodInterceptor {
 
+  @Override
   public List<IMethodInstance> intercept(List<IMethodInstance> methods,
     ITestContext context)
   {
@@ -46,6 +47,7 @@ public class OrderingListener implements IMethodInterceptor {
       methods.toArray(new IMethodInstance[methods.size()]);
 
     Arrays.sort(originalMethods, new Comparator<IMethodInstance>() {
+      @Override
       public int compare(IMethodInstance m1, IMethodInstance m2) {
         FormatReaderTest i1 = (FormatReaderTest) m1.getInstances()[0];
         FormatReaderTest i2 = (FormatReaderTest) m2.getInstances()[0];

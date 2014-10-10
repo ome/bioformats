@@ -201,6 +201,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   }
 
   /** Closes the streams. */
+  @Override
   public void close() throws IOException {
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("RandomAccessInputStream {} CLOSE", hashCode());
@@ -473,36 +474,43 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   // -- DataInput API methods --
 
   /** Read an input byte and return true if the byte is nonzero. */
+  @Override
   public boolean readBoolean() throws IOException {
     return raf.readBoolean();
   }
 
   /** Read one byte and return it. */
+  @Override
   public byte readByte() throws IOException {
     return raf.readByte();
   }
 
   /** Read an input char. */
+  @Override
   public char readChar() throws IOException {
     return raf.readChar();
   }
 
   /** Read eight bytes and return a double value. */
+  @Override
   public double readDouble() throws IOException {
     return raf.readDouble();
   }
 
   /** Read four bytes and return a float value. */
+  @Override
   public float readFloat() throws IOException {
     return raf.readFloat();
   }
 
   /** Read four input bytes and return an int value. */
+  @Override
   public int readInt() throws IOException {
     return raf.readInt();
   }
 
   /** Read the next line of text from the input stream. */
+  @Override
   public String readLine() throws IOException {
     String line = findString("\n");
     return line.length() == 0 ? null : line;
@@ -524,36 +532,43 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   }
 
   /** Read eight input bytes and return a long value. */
+  @Override
   public long readLong() throws IOException {
     return raf.readLong();
   }
 
   /** Read two input bytes and return a short value. */
+  @Override
   public short readShort() throws IOException {
     return raf.readShort();
   }
 
   /** Read an input byte and zero extend it appropriately. */
+  @Override
   public int readUnsignedByte() throws IOException {
     return raf.readUnsignedByte();
   }
 
   /** Read two bytes and return an int in the range 0 through 65535. */
+  @Override
   public int readUnsignedShort() throws IOException {
     return raf.readUnsignedShort();
   }
 
   /** Read a string that has been encoded using a modified UTF-8 format. */
+  @Override
   public String readUTF() throws IOException {
     return raf.readUTF();
   }
 
   /** Skip n bytes within the stream. */
+  @Override
   public int skipBytes(int n) throws IOException {
     return raf.skipBytes(n);
   }
 
   /** Read bytes from the stream into the given array. */
+  @Override
   public int read(byte[] array) throws IOException {
     int rtn = raf.read(array);
     if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
@@ -563,6 +578,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
+  @Override
   public int read(byte[] array, int offset, int n) throws IOException {
     int rtn = raf.read(array, offset, n);
     if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
@@ -582,6 +598,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   }
 
   /** Read bytes from the stream into the given array. */
+  @Override
   public void readFully(byte[] array) throws IOException {
     raf.readFully(array);
   }
@@ -589,24 +606,28 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
+  @Override
   public void readFully(byte[] array, int offset, int n) throws IOException {
     raf.readFully(array, offset, n);
   }
 
   // -- InputStream API methods --
 
+  @Override
   public int read() throws IOException {
     int b = readByte();
     if (b == -1 && (getFilePointer() >= length())) return 0;
     return b;
   }
 
+  @Override
   public int available() throws IOException {
     long remain = length() - getFilePointer();
     if (remain > Integer.MAX_VALUE) remain = Integer.MAX_VALUE;
     return (int) remain;
   }
 
+  @Override
   public void mark(int readLimit) {
     try {
       markedPos = getFilePointer();
@@ -616,10 +637,12 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     }
   }
 
+  @Override
   public boolean markSupported() {
     return true;
   }
 
+  @Override
   public void reset() throws IOException {
     if (markedPos < 0) throw new IOException("No mark set");
     seek(markedPos);
@@ -627,6 +650,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
 
   // -- Externalizable API methods --
 
+  @Override
   public void read(Kryo kryo, Input in) {
     raf = (IRandomAccess) kryo.readClassAndObject(in);
     file = kryo.readObjectOrNull(in, String.class);
@@ -643,6 +667,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     encoding = kryo.readObject(in, String.class);
   }
 
+  @Override
   public void write(Kryo kryo, Output out) {
     kryo.writeClassAndObject(out, raf);
     kryo.writeObjectOrNull(out, file, String.class);

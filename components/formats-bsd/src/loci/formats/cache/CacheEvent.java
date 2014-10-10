@@ -105,6 +105,7 @@ public class CacheEvent {
 
   // -- Object API methods --
 
+  @Override
   public String toString() {
     // scan public fields to determine type name
     String sType = "unknown";

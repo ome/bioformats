@@ -521,6 +521,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   public int getC() { return cSlider.getValue() - 1; }
 
   // -- Window API methods --
+  @Override
   public void setVisible(boolean visible) {
     super.setVisible(visible);
     // kick off animation thread
@@ -530,6 +531,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   // -- ActionListener API methods --
 
   /** Handles menu commands. */
+  @Override
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if ("open".equals(cmd)) {
@@ -615,6 +617,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   // -- ChangeListener API methods --
 
   /** Handles slider events. */
+  @Override
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
     boolean outOfBounds = false;
@@ -664,24 +667,30 @@ public class ImageViewer extends JFrame implements ActionListener,
   // -- KeyListener API methods --
 
   /** Handles key presses. */
+  @Override
   public void keyPressed(KeyEvent e) {
     if (e.getKeyChar() == ANIMATION_KEY) anim = !anim; // toggle animation
   }
 
+  @Override
   public void keyReleased(KeyEvent e) { }
+  @Override
   public void keyTyped(KeyEvent e) { }
 
   // -- MouseMotionListener API methods --
 
   /** Handles cursor probes. */
+  @Override
   public void mouseDragged(MouseEvent e) { updateLabel(e.getX(), e.getY()); }
 
   /** Handles cursor probes. */
+  @Override
   public void mouseMoved(MouseEvent e) { updateLabel(e.getX(), e.getY()); }
 
   // -- Runnable API methods --
 
   /** Handles animation. */
+  @Override
   public void run() {
     while (isVisible()) {
       if (anim) {
@@ -700,13 +709,20 @@ public class ImageViewer extends JFrame implements ActionListener,
 
   // -- WindowListener API methods --
 
+  @Override
   public void windowClosing(WindowEvent e) { }
+  @Override
   public void windowActivated(WindowEvent e) { }
+  @Override
   public void windowDeactivated(WindowEvent e) { }
+  @Override
   public void windowOpened(WindowEvent e) { }
+  @Override
   public void windowIconified(WindowEvent e) { }
+  @Override
   public void windowDeiconified(WindowEvent e) { }
 
+  @Override
   public void windowClosed(WindowEvent e) {
     try {
       myReader.close();
@@ -800,6 +816,7 @@ public class ImageViewer extends JFrame implements ActionListener,
    */
   protected void open(final String id, final IFormatReader r) {
     new Thread("ImageViewer-Opener") {
+      @Override
       public void run() {
         try {
           myReader.close();
@@ -817,6 +834,7 @@ public class ImageViewer extends JFrame implements ActionListener,
    */
   protected void save(final String id, final IFormatWriter w) {
     new Thread("ImageViewer-Saver") {
+      @Override
       public void run() {
         try {
           myWriter.close();

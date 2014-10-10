@@ -93,6 +93,7 @@ public class BZip2Handle extends StreamHandle {
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
+  @Override
   protected void resetStream() throws IOException {
     BufferedInputStream bis = new BufferedInputStream(
       new FileInputStream(file), RandomAccessInputStream.MAX_OVERHEAD);

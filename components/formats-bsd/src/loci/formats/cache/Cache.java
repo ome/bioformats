@@ -228,6 +228,7 @@ public class Cache implements CacheReporter {
   // -- CacheReporter API methods --
 
   /* @see CacheReporter#addCacheListener(CacheListener) */
+  @Override
   public void addCacheListener(CacheListener l) {
     synchronized (listeners) {
       listeners.add(l);
@@ -236,6 +237,7 @@ public class Cache implements CacheReporter {
   }
 
   /* @see CacheReporter#removeCacheListener(CacheListener) */
+  @Override
   public void removeCacheListener(CacheListener l) {
     synchronized (listeners) {
       listeners.remove(l);
@@ -244,6 +246,7 @@ public class Cache implements CacheReporter {
   }
 
   /* @see CacheReporter#getCacheListeners() */
+  @Override
   public CacheListener[] getCacheListeners() {
     CacheListener[] l;
     synchronized (listeners) {

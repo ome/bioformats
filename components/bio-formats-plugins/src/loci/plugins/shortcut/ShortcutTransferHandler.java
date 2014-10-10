@@ -63,10 +63,12 @@ public class ShortcutTransferHandler extends TransferHandler {
 
   // -- TransferHandler API methods --
 
+  @Override
   public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
     return true;
   }
 
+  @Override
   public boolean importData(JComponent comp, Transferable t) {
     try {
       // search for compatible data flavors (lists, files and strings)
@@ -124,6 +126,7 @@ public class ShortcutTransferHandler extends TransferHandler {
 
       // open each item
       SwingUtilities.invokeLater(new Runnable() {
+        @Override
         public void run() {
           for (int i=0; i<ids.length; i++) shortcutPanel.open(ids[i]);
         }

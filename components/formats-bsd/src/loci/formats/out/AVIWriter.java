@@ -101,6 +101,7 @@ public class AVIWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -208,9 +209,11 @@ public class AVIWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8};
   }
@@ -218,6 +221,7 @@ public class AVIWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     super.close();
     planesWritten = 0;
@@ -231,6 +235,7 @@ public class AVIWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 

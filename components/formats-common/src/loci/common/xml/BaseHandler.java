@@ -53,6 +53,7 @@ public class BaseHandler extends DefaultHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public InputSource resolveEntity(String publicId, String systemId)
     throws IOException, SAXException
   {

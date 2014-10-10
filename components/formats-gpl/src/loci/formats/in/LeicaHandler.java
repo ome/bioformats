@@ -148,6 +148,7 @@ public class LeicaHandler extends BaseHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void endElement(String uri, String localName, String qName) {
     if (!nameStack.empty() && nameStack.peek().equals(qName)) nameStack.pop();
 
@@ -273,6 +274,7 @@ public class LeicaHandler extends BaseHandler {
     }
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {

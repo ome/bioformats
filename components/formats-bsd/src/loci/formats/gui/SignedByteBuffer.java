@@ -67,21 +67,25 @@ public class SignedByteBuffer extends DataBuffer {
   }
 
   /* @see java.awt.image.DataBuffer#getElem(int) */
+  @Override
   public int getElem(int i) {
     return getElem(0, i);
   }
 
   /* @see java.awt.image.DataBuffer#getElem(int, int) */
+  @Override
   public int getElem(int bank, int i) {
     return (int) bankData[bank][i + getOffsets()[bank]];
   }
 
   /* @see java.awt.image.DataBuffer#setElem(int, int) */
+  @Override
   public void setElem(int i, int val) {
     setElem(0, i, val);
   }
 
   /* @see java.awt.image.DataBuffer#setElem(int, int, int) */
+  @Override
   public void setElem(int bank, int i, int val) {
     bankData[bank][i + getOffsets()[bank]] = (byte) val;
   }

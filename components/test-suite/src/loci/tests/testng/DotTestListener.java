@@ -39,13 +39,20 @@ public class DotTestListener implements ITestListener {
 
   private int count = 0;
 
+  @Override
   public void onTestFailure(ITestResult tr) { log("F"); }
+  @Override
   public void onTestSkipped(ITestResult tr) { log("-"); }
+  @Override
   public void onTestSuccess(ITestResult tr) { log("."); }
 
+  @Override
   public void onFinish(ITestContext tc) { }
+  @Override
   public void onStart(ITestContext tc) { }
+  @Override
   public void onTestFailedButWithinSuccessPercentage(ITestResult tr) { }
+  @Override
   public void onTestStart(ITestResult tr) { }
 
   private void log(String s) {

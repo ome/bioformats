@@ -107,10 +107,12 @@ public class Region {
     return intersects(new Region(xc, yc, 1, 1));
   }
 
+  @Override
   public String toString() {
     return "x=" + x + ", y=" + y + ", w=" + width + ", h=" + height;
   }
 
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof Region)) return false;
 
@@ -119,6 +121,7 @@ public class Region {
       this.height == that.height;
   }
 
+  @Override
   public int hashCode() {
     return toString().hashCode();
   }

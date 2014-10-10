@@ -100,6 +100,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * Dumps the given OME-XML DOM tree to a string.
    * @return OME-XML as a string.
    */
+  @Override
   public String dumpXML() {
     if (root == null) {
       root = (OMEModelObject) getRoot();

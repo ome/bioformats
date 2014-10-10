@@ -66,6 +66,7 @@ public abstract class BIFormatReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -94,6 +95,7 @@ public abstract class BIFormatReader extends FormatReader {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return BufferedImage.class;
   }

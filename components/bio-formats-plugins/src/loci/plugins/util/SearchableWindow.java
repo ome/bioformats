@@ -77,6 +77,7 @@ public class SearchableWindow extends TextWindow {
 
   // -- ActionListener API methods --
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     if ("search".equals(e.getActionCommand())) {
       new SearchBox(this);
@@ -156,6 +157,7 @@ public class SearchableWindow extends TextWindow {
 
     // -- ActionListener API methods --
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       String cmd = e.getActionCommand();
       if (cmd.equals("next")) {
@@ -199,6 +201,7 @@ public class SearchableWindow extends TextWindow {
 
     // -- ChangeListener API methods --
 
+    @Override
     public void stateChanged(ChangeEvent e) {
       if (e.getSource().equals(ignore)) {
         ignoreCase = ignore.isSelected();

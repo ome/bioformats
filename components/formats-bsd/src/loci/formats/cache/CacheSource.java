@@ -65,9 +65,11 @@ public abstract class CacheSource implements ICacheSource {
   // -- ICacheSource API methods --
 
   /* @see loci.formats.cache.ICacheSource#getObjectCount() */
+  @Override
   public int getObjectCount() { return reader.getImageCount(); }
 
   /* @see ICacheSource#getObject(int) */
+  @Override
   public abstract Object getObject(int index) throws CacheException;
 
 }

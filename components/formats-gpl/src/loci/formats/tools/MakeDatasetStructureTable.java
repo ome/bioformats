@@ -139,6 +139,7 @@ public class MakeDatasetStructureTable {
     IFormatReader[] allReaders = baseReader.getReaders();
 
     Comparator<IFormatReader> comparator = new Comparator<IFormatReader>() {
+      @Override
       public int compare(IFormatReader r1, IFormatReader r2) {
         String s1 = r1.getFormat();
         String s2 = r2.getFormat();

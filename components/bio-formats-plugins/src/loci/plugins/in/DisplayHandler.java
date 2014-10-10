@@ -217,6 +217,7 @@ public class DisplayHandler implements StatusListener {
   // -- StatusListener methods --
 
   /** Reports status updates via ImageJ's status bar mechanism. */
+  @Override
   public void statusUpdated(StatusEvent e) {
     String msg = e.getStatusMessage();
     if (msg != null) BF.status(options.isQuiet(), msg);

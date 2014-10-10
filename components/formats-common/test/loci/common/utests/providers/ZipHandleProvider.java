@@ -50,6 +50,7 @@ import loci.common.ZipHandle;
  */
 class ZipHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".zip");

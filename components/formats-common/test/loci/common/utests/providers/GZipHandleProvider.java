@@ -50,6 +50,7 @@ import loci.common.IRandomAccess;
  */
 class GZipHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".gz");

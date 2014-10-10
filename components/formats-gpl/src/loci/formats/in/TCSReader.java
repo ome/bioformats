@@ -95,6 +95,7 @@ public class TCSReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, "xml")) return false;
     Location file = new Location(id);
@@ -108,6 +109,7 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
 
@@ -139,11 +141,13 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     // check for Leica TCS IFD directory entries
     TiffParser tp = new TiffParser(stream);
@@ -161,12 +165,14 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return tiffReaders[lastPlane].get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return tiffReaders[lastPlane].get16BitLookupTable();
@@ -175,6 +181,7 @@ public class TCSReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -202,6 +209,7 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -214,6 +222,7 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -234,6 +243,7 @@ public class TCSReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     Location l = new Location(id).getAbsoluteFile();
     Location parent = l.getParentFile();

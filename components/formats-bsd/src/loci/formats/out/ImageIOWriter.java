@@ -80,6 +80,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -93,6 +94,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#savePlane(int, Object, int, int, int, int)
    */
+  @Override
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -109,6 +111,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8, FormatTools.UINT16};
   }
@@ -116,6 +119,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return Image.class;
   }

@@ -40,6 +40,7 @@ public class LociConfig implements PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
+  @Override
   public void run(String arg) {
     ConfigWindow cw = new ConfigWindow();
     WindowTools.placeWindow(cw);

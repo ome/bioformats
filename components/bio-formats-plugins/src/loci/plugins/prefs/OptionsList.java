@@ -190,6 +190,7 @@ public class OptionsList {
   // -- Object API methods --
 
   /* @see java.lang.Object#equals(Object) */
+  @Override
   public boolean equals(Object o) {
     if (o == null || !(o instanceof OptionsList)) return false;
     OptionsList optionsList = (OptionsList) o;
@@ -227,6 +228,7 @@ public class OptionsList {
     return true;
   }
 
+  @Override
   public int hashCode() {
     return options.hashCode();
   }

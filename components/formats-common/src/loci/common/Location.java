@@ -64,6 +64,7 @@ public class Location {
   /** Map from given filenames to actual filenames. */
   private static ThreadLocal<HashMap<String, Object>> idMap =
     new ThreadLocal<HashMap<String, Object>>() {
+      @Override
       protected HashMap<String, Object> initialValue() {
         return new HashMap<String, Object>();
       }
@@ -500,6 +501,7 @@ public class Location {
    * @see java.io.File#equals(Object)
    * @see java.net.URL#equals(Object)
    */
+  @Override
   public boolean equals(Object obj) {
     String absPath = getAbsolutePath();
     String thatPath = null;
@@ -514,6 +516,7 @@ public class Location {
     return absPath.equals(thatPath);
   }
 
+  @Override
   public int hashCode() {
     return getAbsolutePath().hashCode();
   }
@@ -733,6 +736,7 @@ public class Location {
    * @see java.io.File#toString()
    * @see java.net.URL#toString()
    */
+  @Override
   public String toString() {
     return isURL ? url.toString() : file.toString();
   }

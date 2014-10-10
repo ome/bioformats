@@ -212,6 +212,7 @@ public class ChannelFiller extends ReaderWrapper {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return byte[].class;
   }

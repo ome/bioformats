@@ -109,6 +109,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- JPEGTurboService API methods --
 
+  @Override
   public void setRestartMarkers(long[] markers) {
     restartMarkers.clear();
     if (markers != null) {
@@ -118,6 +119,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public long[] getRestartMarkers() {
     long[] markers = new long[restartMarkers.size()];
     for (int i=0; i<markers.length; i++) {
@@ -126,6 +128,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     return markers;
   }
 
+  @Override
   public void initialize(RandomAccessInputStream jpeg, int width, int height)
     throws ServiceException, IOException
   {
@@ -209,6 +212,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate,
     int width, int height)
     throws IOException
@@ -264,6 +268,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     return buf;
   }
 
+  @Override
   public byte[] getTile(int tileX, int tileY) throws IOException {
     if (header == null) {
       header = getFixedHeader();
@@ -330,6 +335,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public void close() throws IOException {
     logger = null;
     imageWidth = 0;

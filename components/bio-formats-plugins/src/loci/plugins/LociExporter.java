@@ -56,6 +56,7 @@ public class LociExporter implements PlugInFilter {
   // -- PlugInFilter API methods --
 
   /** Sets up the writer. */
+  @Override
   public int setup(String arg, ImagePlus imp) {
     this.arg = arg;
     exporter = new Exporter(this, imp);
@@ -63,6 +64,7 @@ public class LociExporter implements PlugInFilter {
   }
 
   /** Executes the plugin. */
+  @Override
   public void run(ImageProcessor ip) {
     DebugTools.enableLogging("INFO");
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;

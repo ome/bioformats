@@ -55,11 +55,13 @@ public class TwoChannelColorSpace extends ColorSpace {
 
   // -- ColorSpace API methods --
 
+  @Override
   public float[] fromCIEXYZ(float[] color) {
     ColorSpace rgb = ColorSpace.getInstance(ColorSpace.CS_sRGB);
     return rgb.fromCIEXYZ(toRGB(color));
   }
 
+  @Override
   public float[] fromRGB(float[] rgb) {
     return new float[] {rgb[0], rgb[1]};
   }
@@ -71,25 +73,31 @@ public class TwoChannelColorSpace extends ColorSpace {
     return ColorSpace.getInstance(colorSpace);
   }
 
+  @Override
   public String getName(int idx) {
     return idx == 0 ? "Red" : "Green";
   }
 
+  @Override
   public int getNumComponents() {
     return NUM_COMPONENTS;
   }
 
+  @Override
   public int getType() {
     return ColorSpace.TYPE_2CLR;
   }
 
+  @Override
   public boolean isCS_sRGB() { return false; }
 
+  @Override
   public float[] toCIEXYZ(float[] color) {
     ColorSpace rgb = ColorSpace.getInstance(ColorSpace.CS_sRGB);
     return rgb.toCIEXYZ(toRGB(color));
   }
 
+  @Override
   public float[] toRGB(float[] color) {
     return new float[] {color[0], color[1], 0};
   }

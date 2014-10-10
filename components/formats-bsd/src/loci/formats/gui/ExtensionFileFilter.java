@@ -92,6 +92,7 @@ public class ExtensionFileFilter extends FileFilter
   // -- FileFilter API methods --
 
   /** Accepts files with the proper extensions. */
+  @Override
   public boolean accept(File f) {
     if (f.isDirectory()) return true;
 
@@ -105,16 +106,19 @@ public class ExtensionFileFilter extends FileFilter
   }
 
   /** Gets the filter's description. */
+  @Override
   public String getDescription() { return desc; }
 
   // -- Object API methods --
 
   /** Gets a string representation of this file filter. */
+  @Override
   public String toString() { return "ExtensionFileFilter: " + desc; }
 
   // -- Comparable API methods --
 
   /** Compares two FileFilter objects alphanumerically. */
+  @Override
   public int compareTo(Object o) {
     return desc.compareToIgnoreCase(((FileFilter) o).getDescription());
   }

@@ -85,22 +85,27 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
 
   // -- DocumentListener API methods --
 
+  @Override
   public void changedUpdate(DocumentEvent e) {
     documentUpdate();
   }
+  @Override
   public void removeUpdate(DocumentEvent e) {
     documentUpdate();
   }
+  @Override
   public void insertUpdate(DocumentEvent e) {
     documentUpdate();
   }
 
   // -- IFormatWidgets API methods --
 
+  @Override
   public String[] getLabels() {
     return labels;
   }
 
+  @Override
   public Component[] getWidgets() {
     return widgets;
   }

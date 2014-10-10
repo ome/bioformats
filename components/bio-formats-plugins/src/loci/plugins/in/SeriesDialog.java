@@ -202,6 +202,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
   // -- ActionListener methods --
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     final String cmd = e.getActionCommand();
     if ("select".equals(cmd)) {

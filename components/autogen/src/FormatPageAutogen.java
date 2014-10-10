@@ -191,6 +191,7 @@ public class FormatPageAutogen {
     }
 
     Arrays.sort(sortedTable, new Comparator<IniTable>() {
+      @Override
       public int compare(IniTable t1, IniTable t2) {
         String page1 = t1.get("pagename");
         String page2 = t2.get("pagename");

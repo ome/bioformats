@@ -214,6 +214,7 @@ public class MinMaxCalculatorTest {
     /**
      * @see loci.formats.meta.IMinMaxStore#setChannelGlobalMinMax(int, double, double, int)
      */
+    @Override
     public void setChannelGlobalMinMax(int channel, double minimum,
                                        double maximum, int series) {
       if (seriesGlobalMinimaMaxima.size() == series) {

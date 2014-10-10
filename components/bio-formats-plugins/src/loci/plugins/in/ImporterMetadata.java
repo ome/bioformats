@@ -118,6 +118,7 @@ public class ImporterMetadata extends HashMap<String, Object> {
 
   // -- Object API methods --
 
+  @Override
   public String toString() {
     return getMetadataString(" = ");
   }

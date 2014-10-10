@@ -146,6 +146,7 @@ public class LibraryEntry implements Comparable<Object> {
 
   // -- Comparable API methods --
 
+  @Override
   public int compareTo(Object o) {
     LibraryEntry entry = (LibraryEntry) o;
     return name.compareTo(entry.name);
@@ -153,6 +154,7 @@ public class LibraryEntry implements Comparable<Object> {
 
   // -- Object API methods --
 
+  @Override
   public String toString() {
     String markup = version == null ? MISSING : PRESENT;
     return "<html>" + markup + name;

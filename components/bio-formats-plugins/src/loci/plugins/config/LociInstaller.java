@@ -41,6 +41,7 @@ public class LociInstaller implements PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
+  @Override
   public void run(String arg) {
     InstallWizard iw = new InstallWizard();
     WindowTools.placeWindow(iw);

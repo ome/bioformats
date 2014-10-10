@@ -48,6 +48,7 @@ import loci.common.URLHandle;
  */
 class URLHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File f = File.createTempFile("url", ".dat");

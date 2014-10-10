@@ -54,6 +54,7 @@ public class ByteArraySource extends CacheSource {
   // -- ICacheSource API methods --
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
+  @Override
   public Object getObject(int index) throws CacheException {
     try { return reader.openBytes(index); }
     catch (FormatException exc) { throw new CacheException(exc); }

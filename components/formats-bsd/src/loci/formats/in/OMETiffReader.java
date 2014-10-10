@@ -110,6 +110,7 @@ public class OMETiffReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     // companion files in a binary-only dataset should always have additional files
     if (checkSuffix(id, "companion.ome")) {
@@ -150,6 +151,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "companion.ome")) {
       // force the reader to pick up binary-only companion files
@@ -159,6 +161,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     tp.setDoCaching(false);
@@ -227,6 +230,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
@@ -234,6 +238,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     int series = getSeries();
     if (info[series][lastPlane] == null ||
@@ -247,6 +252,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     int series = getSeries();
     if (info[series][lastPlane] == null ||
@@ -262,6 +268,7 @@ public class OMETiffReader extends FormatReader {
   /*
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -301,6 +308,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     int series = getSeries();
@@ -320,6 +328,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption() */
+  @Override
   public int fileGroupOption(String id) {
     try {
       boolean single = isSingleFile(id);
@@ -335,6 +344,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (info != null) {
@@ -362,12 +372,14 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return tileWidth[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return tileHeight[getSeries()];
@@ -376,6 +388,7 @@ public class OMETiffReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // normalize file name
     super.initFile(normalizeFilename(null, id));

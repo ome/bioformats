@@ -150,6 +150,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
       throws FormatException, IOException
   {
@@ -163,6 +164,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     int originalIndex = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
@@ -175,6 +177,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     return thumb;
   }
 
+  @Override
   public int getThumbSizeX() {
     int originalIndex = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
@@ -187,6 +190,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     return size;
   }
 
+  @Override
   public int getThumbSizeY() {
     int originalIndex = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
@@ -200,6 +204,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     handler = null;
@@ -208,6 +213,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -220,6 +226,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -277,6 +284,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -309,6 +317,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
@@ -449,6 +458,7 @@ class LeicaSCNHandler extends DefaultHandler {
   LeicaSCNHandler() {
   }
 
+  @Override
   public String toString()
   {
     String s = new String("TIFF-XML parsing\n");
@@ -458,6 +468,7 @@ class LeicaSCNHandler extends DefaultHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void endElement(String uri,
     String localName,
     String qName) {
@@ -556,6 +567,7 @@ class LeicaSCNHandler extends DefaultHandler {
 
   }
 
+  @Override
   public void characters(char[] ch,
     int start,
     int length)
@@ -567,6 +579,7 @@ class LeicaSCNHandler extends DefaultHandler {
       cdata += s;
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes) throws SAXException
     {

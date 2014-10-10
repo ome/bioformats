@@ -72,6 +72,7 @@ public class JPEGReader extends DelegateReader {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     try {
       super.setId(id);
@@ -141,12 +142,14 @@ public class JPEGReader extends DelegateReader {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return new String[] {currentId.replaceAll(".fixed", "")};
   }
 
   /* @see IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     Location.mapId(currentId, null);
@@ -162,6 +165,7 @@ public class JPEGReader extends DelegateReader {
     }
 
     /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+    @Override
     public boolean isThisType(String name, boolean open) {
       if (open) {
         return super.isThisType(name, open);
@@ -171,6 +175,7 @@ public class JPEGReader extends DelegateReader {
     }
 
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+    @Override
     public boolean isThisType(RandomAccessInputStream stream) throws IOException
     {
       final int blockLen = 4;

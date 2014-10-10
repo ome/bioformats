@@ -145,6 +145,7 @@ public class ColorDialog extends ImporterDialog {
       final TextField blueField = colors.get(colorIndex++);
       final Panel swatch = swatches.get(swatchIndex++);
       TextListener textListener = new TextListener() {
+        @Override
         public void textValueChanged(TextEvent e) {
           int red = getColorValue(redField);
           int green = getColorValue(greenField);

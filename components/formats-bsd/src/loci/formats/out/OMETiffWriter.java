@@ -90,6 +90,7 @@ public class OMETiffWriter extends TiffWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     try {
       if (currentId != null) {
@@ -173,6 +174,7 @@ public class OMETiffWriter extends TiffWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -182,6 +184,7 @@ public class OMETiffWriter extends TiffWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], IFD, int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -207,6 +210,7 @@ public class OMETiffWriter extends TiffWriter {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
     super.setId(id);

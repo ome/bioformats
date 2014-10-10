@@ -47,6 +47,7 @@ import loci.common.IRandomAccess;
  */
 class ExistingByteArrayHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     IRandomAccess handle = new ByteArrayHandle(page);

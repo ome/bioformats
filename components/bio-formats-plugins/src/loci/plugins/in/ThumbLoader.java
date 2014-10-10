@@ -93,6 +93,7 @@ public class ThumbLoader implements Runnable {
   // -- Runnable methods --
 
   /** Does the work of loading the thumbnails. */
+  @Override
   public void run() {
     BF.status(false, "Gathering series information");
     int seriesCount = ir.getSeriesCount();
@@ -155,6 +156,7 @@ public class ThumbLoader implements Runnable {
       this.size = size;
     }
 
+    @Override
     public int compareTo(SeriesInfo info) {
       return size - info.size;
     }

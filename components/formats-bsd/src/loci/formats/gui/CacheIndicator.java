@@ -89,6 +89,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- JComponent API methods --
 
+  @Override
   public void paintComponent(Graphics g) {
 //    super.paintComponent(g);
 
@@ -151,16 +152,19 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- Component API methods --
 
+  @Override
   public Dimension getPreferredSize() {
     int w = comp == null ? COMPONENT_WIDTH : comp.getPreferredSize().width;
     return new Dimension(w, COMPONENT_HEIGHT);
   }
 
+  @Override
   public Dimension getMinimumSize() {
     int w = comp == null ? COMPONENT_WIDTH : comp.getMinimumSize().width;
     return new Dimension(w, COMPONENT_HEIGHT);
   }
 
+  @Override
   public Dimension getMaximumSize() {
     int w = comp == null ? Integer.MAX_VALUE : comp.getMaximumSize().width;
     return new Dimension(w, COMPONENT_HEIGHT);
@@ -168,6 +172,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- CacheListener API methods --
 
+  @Override
   public void cacheUpdated(CacheEvent e) {
     if (e.getSource() instanceof Cache) this.cache = (Cache) e.getSource();
     int type = e.getType();
@@ -176,6 +181,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
     {
       // cache has changed; update GUI
       SwingUtilities.invokeLater(new Runnable() {
+        @Override
         public void run() {
           repaint();
         }

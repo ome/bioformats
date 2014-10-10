@@ -540,6 +540,7 @@ public class LociFunctions extends MacroFunctions {
 
   // -- PlugIn API methods --
 
+  @Override
   public void run(String arg) {
     if (IJ.macroRunning()) super.run(arg);
     else {

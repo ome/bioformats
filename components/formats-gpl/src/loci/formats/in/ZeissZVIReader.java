@@ -76,6 +76,7 @@ public class ZeissZVIReader extends BaseZeissReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 65536;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -87,6 +88,7 @@ public class ZeissZVIReader extends BaseZeissReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
@@ -166,6 +168,7 @@ public class ZeissZVIReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (poi != null) poi.close();
@@ -175,6 +178,7 @@ public class ZeissZVIReader extends BaseZeissReader {
 
   // -- Internal FormatReader API methods --
 
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     super.initFileMain(id);
@@ -201,6 +205,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
   }
 
+  @Override
   protected void initVars(String id) throws FormatException, IOException {
     super.initVars(id);
     initPOIService();
@@ -219,6 +224,7 @@ public class ZeissZVIReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void fillMetadataPass1(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass1(store);
 
@@ -320,6 +326,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
   }
 
+    @Override
     protected void fillMetadataPass3(MetadataStore store) throws FormatException, IOException {
       super.fillMetadataPass3(store);
 
@@ -352,6 +359,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
   }
 
+    @Override
     protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
       super.fillMetadataPass5(store);
 
@@ -361,10 +369,12 @@ public class ZeissZVIReader extends BaseZeissReader {
       }
     }
 
+  @Override
   protected void countImages() {
     // count number of images
     files = (String[]) poi.getDocumentList().toArray(new String[0]);
     Arrays.sort(files, new Comparator() {
+      @Override
       public int compare(Object o1, Object o2) {
         int n1 = getImageNumber((String) o1, -1);
         int n2 = getImageNumber((String) o2, -1);

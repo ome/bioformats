@@ -84,6 +84,7 @@ public class TiffJAIReader extends BIFormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -95,6 +96,7 @@ public class TiffJAIReader extends BIFormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     LOGGER.info("Checking for JAI");
     try {

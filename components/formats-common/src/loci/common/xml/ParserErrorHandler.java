@@ -42,14 +42,17 @@ import org.xml.sax.SAXParseException;
  */
 public class ParserErrorHandler implements ErrorHandler {
 
+  @Override
   public void error(SAXParseException e) {
     XMLTools.LOGGER.debug(e.getMessage());
   }
 
+  @Override
   public void fatalError(SAXParseException e) {
     XMLTools.LOGGER.debug(e.getMessage());
   }
 
+  @Override
   public void warning(SAXParseException e) {
     XMLTools.LOGGER.debug(e.getMessage());
   }

@@ -65,9 +65,11 @@ public class BufferedImageSource implements ICacheSource {
   // -- ICacheSource API methods --
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
+  @Override
   public int getObjectCount() { return reader.getImageCount(); }
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
+  @Override
   public Object getObject(int index) throws CacheException {
     BufferedImage bi = null;
     try {

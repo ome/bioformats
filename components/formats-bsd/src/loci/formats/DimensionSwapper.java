@@ -178,47 +178,55 @@ public class DimensionSwapper extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getSizeX() */
+  @Override
   public int getSizeX() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
+  @Override
   public int getSizeY() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
+  @Override
   public int getSizeZ() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
+  @Override
   public int getSizeC() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
+  @Override
   public int getSizeT() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeT;
   }
 
   /* @see IFormatReader#getDimensionOrder() */
+  @Override
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).dimensionOrder;
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return super.openBytes(reorder(no));
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -226,6 +234,7 @@ public class DimensionSwapper extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -233,6 +242,7 @@ public class DimensionSwapper extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -240,16 +250,19 @@ public class DimensionSwapper extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openThumbImage(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     return super.openThumbBytes(reorder(no));
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
+  @Override
   public int[] getZCTCoords(int no) {
     return FormatTools.getZCTCoords(this, no);
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
+  @Override
   public int getIndex(int z, int c, int t) {
     return FormatTools.getIndex(this, z, c, t);
   }
@@ -264,6 +277,7 @@ public class DimensionSwapper extends ReaderWrapper {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     String oldFile = getCurrentFile();
     super.setId(id);

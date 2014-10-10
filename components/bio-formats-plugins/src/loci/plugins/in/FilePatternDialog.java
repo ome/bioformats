@@ -105,6 +105,7 @@ public class FilePatternDialog extends ImporterDialog {
 
     // construct dialog
     GenericDialog gd = new GenericDialog("Bio-Formats File Stitching") {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         super.itemStateChanged(e);
 

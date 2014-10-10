@@ -104,6 +104,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     this.reader = reader;
   }
 
+  @Override
   public String toString()
   {
     String s = new String("TIFF-XML parsing\n");
@@ -122,6 +123,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void endElement(String uri,
       String localName,
       String qName) {
@@ -466,6 +468,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
   }
 
+  @Override
   public void characters(char[] ch,
       int start,
       int length)
@@ -474,6 +477,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     cdata += s;
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
       Attributes attributes)
   {
@@ -559,6 +563,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       return key != -1 && value != null && category != -1;
     }
 
+    @Override
     public String toString() {
       return new String("      T: K=" + key +
           " V=" + value + " C=" + category +
@@ -577,6 +582,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     // Mapping between tag key number and tag.
     public ArrayList<BaseZeissReader.Tag> tags = new ArrayList<BaseZeissReader.Tag>();
 
+    @Override
     public String toString() {
       String s = new String("  Tags(" + count + "):\n");
       for (BaseZeissReader.Tag t : tags) {
@@ -607,6 +613,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       this.tagset = tagset;
     }
 
+    @Override
     public String toString() {
       String s = new String("  Plane: " + basename + '\n');
       s += tagset;
@@ -652,6 +659,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       return d;
     }
 
+    @Override
     public String toString() {
       String s = new String("Scaling\n");
       s += "  Key=" + key + "\n";

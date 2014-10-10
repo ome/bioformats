@@ -80,6 +80,7 @@ public class NumberFilter implements FileFilter {
   // -- FileFilter API methods --
 
   /** Tests if a specified file should be included in a file list. */
+  @Override
   public boolean accept(File pathname) {
     return accept(pathname.getName());
   }

@@ -90,6 +90,7 @@ public class GZipHandle extends StreamHandle {
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
+  @Override
   protected void resetStream() throws IOException {
     if (stream != null) stream.close();
     BufferedInputStream bis = new BufferedInputStream(

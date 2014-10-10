@@ -135,6 +135,7 @@ public class StringOption extends Option {
   // -- Option methods --
 
   /* @see Option#parseOption(String arg) */
+  @Override
   public void parseOption(String arg) {
     String keyValue = Macro.getValue(arg, key, value);
     if ((value == null || keyValue.equals(value)) && label != null) {
@@ -144,11 +145,13 @@ public class StringOption extends Option {
   }
 
   /* @see Option#loadOption() */
+  @Override
   public void loadOption() {
     value = Prefs.get(KEY_PREFIX + key, defaultValue);
   }
 
   /* @see Option#saveOption() */
+  @Override
   public void saveOption() {
     if (save) Prefs.set(KEY_PREFIX + key, value);
   }

@@ -54,6 +54,7 @@ public class MacroFunctions implements PlugIn, MacroExtension {
 
   // -- PlugIn API methods --
 
+  @Override
   public void run(String arg) {
     if (!LibraryChecker.checkImageJ()) return;
     if (!IJ.macroRunning()) {
@@ -65,10 +66,12 @@ public class MacroFunctions implements PlugIn, MacroExtension {
 
   // -- MacroExtension API methods --
 
+  @Override
   public ExtensionDescriptor[] getExtensionFunctions() {
     return extensions;
   }
 
+  @Override
   public String handleExtension(String name, Object[] args) {
     Class<?>[] c = null;
     if (args != null) {

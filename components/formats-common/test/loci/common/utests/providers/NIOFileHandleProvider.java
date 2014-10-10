@@ -49,6 +49,7 @@ import loci.common.NIOFileHandle;
  */
 class NIOFileHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".dat");

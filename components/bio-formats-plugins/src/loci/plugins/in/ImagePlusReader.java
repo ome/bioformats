@@ -119,14 +119,17 @@ public class ImagePlusReader implements StatusReporter {
 
   // -- StatusReporter methods --
 
+  @Override
   public void addStatusListener(StatusListener l) {
     listeners.add(l);
   }
 
+  @Override
   public void removeStatusListener(StatusListener l) {
     listeners.remove(l);
   }
 
+  @Override
   public void notifyListeners(StatusEvent e) {
     for (StatusListener l : listeners) l.statusUpdated(e);
   }

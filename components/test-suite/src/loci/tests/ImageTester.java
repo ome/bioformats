@@ -64,6 +64,7 @@ public class ImageTester extends JPanel implements WindowListener {
 
   // -- Component API methods --
 
+  @Override
   public void paint(Graphics g) {
     Dimension size = getSize();
     g.setColor(Color.black);
@@ -82,6 +83,7 @@ public class ImageTester extends JPanel implements WindowListener {
     }
   }
 
+  @Override
   public Dimension getPreferredSize() {
     int width = 0, height = 0;
     for (int y=0; y<img.length; y++) {
@@ -100,12 +102,19 @@ public class ImageTester extends JPanel implements WindowListener {
 
   // -- WindowListener API methods --
 
+  @Override
   public void windowActivated(WindowEvent e) { }
+  @Override
   public void windowClosed(WindowEvent e) { }
+  @Override
   public void windowClosing(WindowEvent e) { System.exit(0); }
+  @Override
   public void windowDeactivated(WindowEvent e) { }
+  @Override
   public void windowDeiconified(WindowEvent e) { }
+  @Override
   public void windowIconified(WindowEvent e) { }
+  @Override
   public void windowOpened(WindowEvent e) { }
 
   // -- Main method --

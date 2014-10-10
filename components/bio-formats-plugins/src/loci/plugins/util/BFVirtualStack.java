@@ -154,6 +154,7 @@ public class BFVirtualStack extends VirtualStack {
 
   // -- VirtualStack API methods --
 
+  @Override
   public synchronized ImageProcessor getProcessor(int n) {
     reader.setSeries(series);
 
@@ -262,16 +263,19 @@ public class BFVirtualStack extends VirtualStack {
     return null;
   }
 
+  @Override
   public int getWidth() {
     reader.setSeries(series);
     return reader.getSizeX();
   }
 
+  @Override
   public int getHeight() {
     reader.setSeries(series);
     return reader.getSizeY();
   }
 
+  @Override
   public int getSize() {
     if (reader.getCurrentFile() == null) return 0;
     reader.setSeries(series);

@@ -149,6 +149,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /** Gets the wrapped reader prototype. */
+  @Override
   public IFormatReader getReader() { return reader; }
 
   /** Sets whether the reader is using file patterns for IDs. */
@@ -280,6 +281,7 @@ public class FileStitcher extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getRequiredDirectories() */
+  @Override
   public int getRequiredDirectories(String[] files)
     throws FormatException, IOException
   {
@@ -287,72 +289,84 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getImageCount() */
+  @Override
   public int getImageCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getImageCount() : core.get(getCoreIndex()).imageCount;
   }
 
   /* @see IFormatReader#isRGB() */
+  @Override
   public boolean isRGB() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isRGB() : core.get(getCoreIndex()).rgb;
   }
 
   /* @see IFormatReader#getSizeX() */
+  @Override
   public int getSizeX() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSizeX() : core.get(getCoreIndex()).sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
+  @Override
   public int getSizeY() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSizeY() : core.get(getCoreIndex()).sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
+  @Override
   public int getSizeZ() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSizeZ() : core.get(getCoreIndex()).sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
+  @Override
   public int getSizeC() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSizeC() : core.get(getCoreIndex()).sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
+  @Override
   public int getSizeT() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSizeT() : core.get(getCoreIndex()).sizeT;
   }
 
   /* @see IFormatReader#getPixelType() */
+  @Override
   public int getPixelType() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getPixelType() : core.get(getCoreIndex()).pixelType;
   }
 
   /* @see IFormatReader#getBitsPerPixel() */
+  @Override
   public int getBitsPerPixel() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getBitsPerPixel() : core.get(getCoreIndex()).bitsPerPixel;
   }
 
   /* @see IFormatReader#isIndexed() */
+  @Override
   public boolean isIndexed() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isIndexed() : core.get(getCoreIndex()).indexed;
   }
 
   /* @see IFormatReader#isFalseColor() */
+  @Override
   public boolean isFalseColor() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isFalseColor() : core.get(getCoreIndex()).falseColor;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.get8BitLookupTable() :
@@ -360,6 +374,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.get16BitLookupTable() :
@@ -367,6 +382,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getThumbSizeX() */
+  @Override
   public int getThumbSizeX() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getThumbSizeX() :
@@ -374,6 +390,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getThumbSizeY() */
+  @Override
   public int getThumbSizeY() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getThumbSizeY() :
@@ -381,6 +398,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#isLittleEndian() */
+  @Override
   public boolean isLittleEndian() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isLittleEndian() :
@@ -388,6 +406,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getDimensionOrder() */
+  @Override
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     if (noStitch) return reader.getDimensionOrder();
@@ -395,18 +414,21 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#isOrderCertain() */
+  @Override
   public boolean isOrderCertain() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isOrderCertain() : core.get(getCoreIndex()).orderCertain;
   }
 
   /* @see IFormatReader#isThumbnailSeries() */
+  @Override
   public boolean isThumbnailSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isThumbnailSeries() : core.get(getCoreIndex()).thumbnail;
   }
 
   /* @see IFormatReader#isInterleaved() */
+  @Override
   public boolean isInterleaved() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isInterleaved() :
@@ -414,6 +436,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#isInterleaved(int) */
+  @Override
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.isInterleaved(subC) :
@@ -421,11 +444,13 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -433,6 +458,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -443,6 +469,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -467,6 +494,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openPlane(int, int, int, int, int) */
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -480,6 +508,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
@@ -493,11 +522,13 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#close() */
+  @Override
   public void close() throws IOException {
     close(false);
   }
 
   /* @see IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (externals != null) {
@@ -522,12 +553,14 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getSeriesCount() */
+  @Override
   public int getSeriesCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSeriesCount() : core.size();
   }
 
   /* @see IFormatReader#setSeries(int) */
+  @Override
   public void setSeries(int no) {
     FormatTools.assertId(getCurrentFile(), true, 2);
     int n = reader.getSeriesCount();
@@ -539,12 +572,14 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getSeries() */
+  @Override
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.getSeries() > 0 ? reader.getSeries() : series;
   }
 
   /* @see IFormatReader#seriesToCoreIndex(int) */
+  @Override
   public int seriesToCoreIndex(int series) {
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) return reader.seriesToCoreIndex(series);
@@ -552,6 +587,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#coreIndexToSeries(int) */
+  @Override
   public int coreIndexToSeries(int index) {
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) return reader.coreIndexToSeries(index);
@@ -559,6 +595,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#setCoreIndex(int) */
+  @Override
   public void setCoreIndex(int no) {
     FormatTools.assertId(getCurrentFile(), true, 2);
     int n = reader.getSeriesCount();
@@ -570,22 +607,26 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getCoreIndex() */
+  @Override
   public int getCoreIndex() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.getCoreIndex() > 0 ? reader.getCoreIndex() : coreIndex;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
+  @Override
   public void setGroupFiles(boolean group) {
     this.group = group;
   }
 
   /* @see IFormatReader#isGroupFiles(boolean) */
+  @Override
   public boolean isGroupFiles() {
     return group;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
+  @Override
   public void setNormalized(boolean normalize) {
     FormatTools.assertId(getCurrentFile(), false, 2);
     if (externals == null) reader.setNormalized(normalize);
@@ -599,6 +640,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
+  @Override
   public void setOriginalMetadataPopulated(boolean populate) {
     FormatTools.assertId(getCurrentFile(), false, 1);
     if (externals == null) reader.setOriginalMetadataPopulated(populate);
@@ -612,6 +654,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getUsedFiles() */
+  @Override
   public String[] getUsedFiles() {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
@@ -650,22 +693,26 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getUsedFiles() */
+  @Override
   public String[] getUsedFiles(boolean noPixels) {
     return noPixels && noStitch ?
       reader.getUsedFiles(noPixels) : getUsedFiles();
   }
 
   /* @see IFormatReader#getSeriesUsedFiles() */
+  @Override
   public String[] getSeriesUsedFiles() {
     return getUsedFiles();
   }
 
   /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     return getUsedFiles(noPixels);
   }
 
   /* @see IFormatReader#getAdvancedUsedFiles(boolean) */
+  @Override
   public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
     if (noStitch) return reader.getAdvancedUsedFiles(noPixels);
     String[] files = getUsedFiles(noPixels);
@@ -689,6 +736,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getAdvancedSeriesUsedFiles(boolean) */
+  @Override
   public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
     if (noStitch) return reader.getAdvancedSeriesUsedFiles(noPixels);
     String[] files = getSeriesUsedFiles(noPixels);
@@ -712,12 +760,14 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
+  @Override
   public int getIndex(int z, int c, int t) {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
+  @Override
   public int[] getZCTCoords(int index) {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getZCTCoords(index) :
@@ -726,6 +776,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
+  @Override
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSeriesMetadata() :
@@ -733,12 +784,14 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getCoreMetadataList() */
+  @Override
   public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getCoreMetadataList() : core;
   }
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
+  @Override
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(getCurrentFile(), false, 2);
     reader.setMetadataStore(store);
@@ -746,18 +799,21 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getMetadataStore() */
+  @Override
   public MetadataStore getMetadataStore() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getMetadataStore() : store;
   }
 
   /* @see IFormatReader#getMetadataStoreRoot() */
+  @Override
   public Object getMetadataStoreRoot() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getMetadataStoreRoot() : store.getRoot();
   }
 
   /* @see IFormatReader#getUnderlyingReaders() */
+  @Override
   public IFormatReader[] getUnderlyingReaders() {
     List<IFormatReader> list = new ArrayList<IFormatReader>();
     for (ExternalSeries s : externals) {
@@ -769,6 +825,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#reopenFile) */
+  @Override
   public void reopenFile() throws IOException {
     reader.reopenFile();
     for (ExternalSeries s : externals) {
@@ -779,6 +836,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     close();
     initFile(id);

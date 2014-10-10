@@ -50,6 +50,7 @@ public class JPKReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     return checkSuffix(name, "jpk");
   }
@@ -57,6 +58,7 @@ public class JPKReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -78,6 +80,7 @@ public class JPKReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -124,6 +127,7 @@ public class JPKReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 

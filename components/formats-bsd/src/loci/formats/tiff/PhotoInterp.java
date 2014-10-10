@@ -116,6 +116,7 @@ public enum PhotoInterp implements CodedEnum {
   /* (non-Javadoc)
    * @see loci.common.CodedEnum#getCode()
    */
+  @Override
   public int getCode() {
     return code;
   }

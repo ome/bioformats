@@ -53,6 +53,7 @@ public class FileInfo {
 
   // -- Object API methods --
 
+  @Override
   public String toString() {
     return "filename = " + filename + "\nreader = " + reader.getName() +
       "\nused to initialize = " + usedToInitialize;

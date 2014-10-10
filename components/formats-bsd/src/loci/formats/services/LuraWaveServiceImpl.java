@@ -92,6 +92,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#setLicenseCode(java.lang.String)
    */
+  @Override
   public void setLicenseCode(String license) {
     this.license = license;
   }
@@ -99,6 +100,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#getLicenseCode()
    */
+  @Override
   public String getLicenseCode() {
     return license;
   }
@@ -106,6 +108,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#initialize(java.io.InputStream)
    */
+  @Override
   public void initialize(InputStream stream)
     throws IOException, DependencyException, ServiceException {
     initLicense();
@@ -120,6 +123,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#getWidth()
    */
+  @Override
   public int getWidth() {
     return ((lwfDecoder) delegate).getWidth();
   }
@@ -127,6 +131,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#getHeight()
    */
+  @Override
   public int getHeight() {
     return ((lwfDecoder) delegate).getHeight();
   }
@@ -134,6 +139,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#decodeToMemoryGray8(byte[], int, int, int)
    */
+  @Override
   public void decodeToMemoryGray8(byte[] image, int limit,
                                   int quality, int scale)
     throws ServiceException {
@@ -148,6 +154,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#decodeToMemoryGray16(short[], int, int, int, int, int, int, int, int, int, int)
    */
+  @Override
   public void decodeToMemoryGray16(
       short[] image, int imageoffset, int limit, int quality, int scale,
       int pdx, int pdy, int clip_x, int clip_y, int clip_w, int clip_h)

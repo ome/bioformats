@@ -219,6 +219,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -231,12 +232,14 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, MDB_SUFFIX)) return false;
     return isGroupFiles() ? getMDBFile(id) != null : true;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -273,6 +276,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4096;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -290,6 +294,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return checkSuffix(id, MDB_SUFFIX) ||
       !new Location(id).getName().startsWith("spim_") ? FormatTools.MUST_GROUP :
@@ -297,6 +302,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -311,6 +317,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()]  == null ||
@@ -328,6 +335,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()] == null ||
@@ -345,6 +353,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#setSeries(int) */
+  @Override
   public void setSeries(int series) {
     if (series != getSeries()) {
       prevBuf = null;
@@ -355,6 +364,7 @@ public class ZeissLSMReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -402,6 +412,7 @@ public class ZeissLSMReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -2269,6 +2280,7 @@ public class ZeissLSMReader extends FormatReader {
     public Double lensNA;
     public Boolean iris;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       description = getStringValue(RECORDING_DESCRIPTION);
@@ -2327,6 +2339,7 @@ public class ZeissLSMReader extends FormatReader {
     public String medium, type, model;
     public Double power;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       model = getStringValue(LASER_NAME);
@@ -2363,6 +2376,7 @@ public class ZeissLSMReader extends FormatReader {
   class Track extends SubBlock {
     public Double timeIncrement;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       timeIncrement = getDoubleValue(TRACK_TIME_BETWEEN_STACKS);
@@ -2376,6 +2390,7 @@ public class ZeissLSMReader extends FormatReader {
     public String filter, filterSet;
     public String channelName;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       pinhole = new Double(getDoubleValue(CHANNEL_PINHOLE_DIAMETER));
@@ -2400,6 +2415,7 @@ public class ZeissLSMReader extends FormatReader {
     public Double attenuation;
     public String name;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       wavelength = new Double(getDoubleValue(ILLUM_CHANNEL_WAVELENGTH));
@@ -2417,6 +2433,7 @@ public class ZeissLSMReader extends FormatReader {
   class DataChannel extends SubBlock {
     public String name;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       name = getStringValue(DATA_CHANNEL_NAME);
@@ -2434,6 +2451,7 @@ public class ZeissLSMReader extends FormatReader {
   class BeamSplitter extends SubBlock {
     public String filter, filterSet;
 
+    @Override
     protected void read() throws IOException {
       super.read();
 

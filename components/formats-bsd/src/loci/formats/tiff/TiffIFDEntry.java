@@ -87,6 +87,7 @@ public class TiffIFDEntry implements Comparable<Object> {
    */
   public long getValueOffset() { return valueOffset; }
 
+  @Override
   public String toString() {
     return "tag = " + tag + ", type = " + type + ", count = " + valueCount +
       ", offset = " + valueOffset;
@@ -94,6 +95,7 @@ public class TiffIFDEntry implements Comparable<Object> {
 
   // -- Comparable API methods --
 
+  @Override
   public int compareTo(Object o) {
     if (!(o instanceof TiffIFDEntry)) return 1;
     long offset = ((TiffIFDEntry) o).getValueOffset();

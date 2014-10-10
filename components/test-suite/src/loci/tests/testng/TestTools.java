@@ -168,6 +168,7 @@ public class TestTools {
 
     // close log file on exit
     Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
       public void run() {
         LOGGER.info(DIVIDER);
         LOGGER.info("Test suite complete.");
@@ -242,6 +243,7 @@ public class TestTools {
     catch (Exception e) { }
 
     Arrays.sort(subs, new Comparator() {
+      @Override
       public int compare(Object o1, Object o2) {
         String s1 = o1.toString();
         String s2 = o2.toString();

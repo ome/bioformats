@@ -255,6 +255,7 @@ public class SPWModelMock implements ModelMock {
     ome.setStructuredAnnotations(annotations);
   }
 
+  @Override
   public OME getRoot() {
     return ome;
   }

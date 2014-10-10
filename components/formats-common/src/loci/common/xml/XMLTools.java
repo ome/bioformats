@@ -115,6 +115,7 @@ public final class XMLTools {
   private static ThreadLocal<HashMap<URI, Schema>> schemas =
     new ThreadLocal<HashMap<URI, Schema>>()
   {
+    @Override
     protected HashMap<URI, Schema> initialValue() {
       return new HashMap<URI, Schema>();
     }
@@ -704,14 +705,17 @@ public final class XMLTools {
 
   /** ErrorListener implementation that logs errors and warnings using SLF4J. */
   static class XMLListener implements ErrorListener {
+    @Override
     public void error(TransformerException e) {
       LOGGER.debug("", e);
     }
 
+    @Override
     public void fatalError(TransformerException e) {
       LOGGER.debug("", e);
     }
 
+    @Override
     public void warning(TransformerException e) {
       LOGGER.debug("", e);
     }

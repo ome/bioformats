@@ -79,17 +79,21 @@ public abstract class FormatHandler implements IFormatHandler {
    * The default implementation checks filename suffixes against
    * those known for this format.
    */
+  @Override
   public boolean isThisType(String name) {
     return checkSuffix(name, suffixes);
   }
 
   /* @see IFormatHandler#getFormat() */
+  @Override
   public String getFormat() { return format; }
 
   /* @see IFormatHandler#getSuffixes() */
+  @Override
   public String[] getSuffixes() { return suffixes; }
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     // NB: Handlers use byte arrays by default as the native type.
     return byte[].class;

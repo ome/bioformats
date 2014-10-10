@@ -123,6 +123,7 @@ public class LegacyQTWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -136,6 +137,7 @@ public class LegacyQTWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#savePlane(int, Object, int, int, int, int)
    */
+  @Override
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -302,16 +304,19 @@ public class LegacyQTWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return true; }
 
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return Image.class;
   }
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     super.close();
     r = null;

@@ -169,6 +169,7 @@ public final class GUITools {
     // NB: construct JFileChooser in the AWT worker thread, to avoid deadlocks
     final JFileChooser[] jfc = new JFileChooser[1];
     Runnable r = new Runnable() {
+      @Override
       public void run() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         FileFilter[] ff = sortFilters(filters);

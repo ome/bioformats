@@ -98,6 +98,7 @@ public class Index16ColorModel extends ColorModel {
   // -- ColorModel API methods --
 
   /* @see java.awt.image.ColorModel#getDataElements(int, Object) */
+  @Override
   public synchronized Object getDataElements(int rgb, Object pixel) {
     int red = (rgb >> 16) & 0xff;
     int green = (rgb >> 8) & 0xff;
@@ -112,17 +113,20 @@ public class Index16ColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#isCompatibleRaster(Raster) */
+  @Override
   public boolean isCompatibleRaster(Raster raster) {
     return raster.getNumBands() == 1;
   }
 
   /* @see java.awt.image.ColorModel#createCompatibleWritableRaster(int, int) */
+  @Override
   public WritableRaster createCompatibleWritableRaster(int w, int h) {
     return Raster.createInterleavedRaster(DataBuffer.TYPE_USHORT,
       w, h, 1, null);
   }
 
   /* @see java.awt.image.ColorModel#getAlpha(int) */
+  @Override
   public int getAlpha(int pixel) {
     if (alphaShort != null) {
       return (int) (((alphaShort[pixel] & 0xffff) / 65535.0) * 255.0);
@@ -131,6 +135,7 @@ public class Index16ColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
+  @Override
   public int getBlue(int pixel) {
     if (blueShort == null) return 0;
     int blue = blueShort[pixel] & 0xffff;
@@ -138,6 +143,7 @@ public class Index16ColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
+  @Override
   public int getGreen(int pixel) {
     if (greenShort == null) return 0;
     int green = greenShort[pixel] & 0xffff;
@@ -145,6 +151,7 @@ public class Index16ColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#getRed(int) */
+  @Override
   public int getRed(int pixel) {
     if (redShort == null) return 0;
     int red = redShort[pixel] & 0xffff;

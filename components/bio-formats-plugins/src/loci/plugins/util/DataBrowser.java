@@ -129,6 +129,7 @@ public class DataBrowser extends StackWindow {
     // build fancy UI widgets
     while (getComponentCount() > 1) remove(1);
     Panel controls = new Panel() {
+      @Override
       public Dimension getPreferredSize() {
         int minWidth = MIN_BROWSER_WIDTH;
         int w = imp.getCanvas().getWidth();
@@ -330,6 +331,7 @@ public class DataBrowser extends StackWindow {
       // NB: Cannot implement Runnable because one of the superclasses does so
       // for its SliceSelector thread, and overriding results in a conflict.
       new Thread("DataBrowser-Animation") {
+        @Override
         public void run() {
           while (isVisible()) {
             int ms = 200;
@@ -444,6 +446,7 @@ public class DataBrowser extends StackWindow {
 
   // -- MouseWheelListener methods --
 
+  @Override
   public void mouseWheelMoved(MouseWheelEvent event) {
     super.mouseWheelMoved(event);
     syncSliders();

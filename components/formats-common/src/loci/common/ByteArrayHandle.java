@@ -104,6 +104,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   // -- AbstractNIOHandle API methods --
 
   /* @see AbstractNIOHandle.setLength(long) */
+  @Override
   public void setLength(long length) throws IOException {
     if (length > buffer.capacity()) {
       long fp = getFilePointer();
@@ -120,25 +121,30 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess.close() */
+  @Override
   public void close() {
   }
 
   /* @see IRandomAccess.getFilePointer() */
+  @Override
   public long getFilePointer() {
     return buffer.position();
   }
 
   /* @see IRandomAccess.length() */
+  @Override
   public long length() {
     return buffer.limit();
   }
 
   /* @see IRandomAccess.read(byte[]) */
+  @Override
   public int read(byte[] b) throws IOException {
     return read(b, 0, b.length);
   }
 
   /* @see IRandomAccess.read(byte[], int, int) */
+  @Override
   public int read(byte[] b, int off, int len) throws IOException {
     if (getFilePointer() + len > length()) {
       len = (int) (length() - getFilePointer());
@@ -148,11 +154,13 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see IRandomAccess.read(ByteBuffer) */
+  @Override
   public int read(ByteBuffer buf) throws IOException {
     return read(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.read(ByteBuffer, int, int) */
+  @Override
   public int read(ByteBuffer buf, int off, int len) throws IOException {
     if (buf.hasArray()) {
       buffer.get(buf.array(), off, len);
@@ -166,6 +174,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see IRandomAccess.seek(long) */
+  @Override
   public void seek(long pos) throws IOException {
     if (pos > length()) {
       setLength(pos);
@@ -174,11 +183,13 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see IRandomAccess.getOrder() */
+  @Override
   public ByteOrder getOrder() {
     return buffer.order();
   }
 
   /* @see IRandomAccess.setOrder(ByteOrder) */
+  @Override
   public void setOrder(ByteOrder order) {
     buffer.order(order);
   }
@@ -186,11 +197,13 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   // -- DataInput API methods --
 
   /* @see java.io.DataInput.readBoolean() */
+  @Override
   public boolean readBoolean() throws IOException {
     return readByte() != 0;
   }
 
   /* @see java.io.DataInput.readByte() */
+  @Override
   public byte readByte() throws IOException {
     if (getFilePointer() + 1 > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -206,6 +219,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readChar() */
+  @Override
   public char readChar() throws IOException {
     if (getFilePointer() + 2 > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -221,6 +235,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readDouble() */
+  @Override
   public double readDouble() throws IOException {
     if (getFilePointer() + 8 > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -236,6 +251,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readFloat() */
+  @Override
   public float readFloat() throws IOException {
     if (getFilePointer() + 4 > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -251,11 +267,13 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readFully(byte[]) */
+  @Override
   public void readFully(byte[] b) throws IOException {
     readFully(b, 0, b.length);
   }
 
   /* @see java.io.DataInput.readFully(byte[], int, int) */
+  @Override
   public void readFully(byte[] b, int off, int len) throws IOException {
     if (getFilePointer() + len > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -271,6 +289,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readInt() */
+  @Override
   public int readInt() throws IOException {
     if (getFilePointer() + 4 > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -286,11 +305,13 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readLine() */
+  @Override
   public String readLine() throws IOException {
     throw new IOException("Unimplemented");
   }
 
   /* @see java.io.DataInput.readLong() */
+  @Override
   public long readLong() throws IOException {
     if (getFilePointer() + 8 > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -306,6 +327,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readShort() */
+  @Override
   public short readShort() throws IOException {
     if (getFilePointer() + 2 > length()) {
       throw new EOFException(EOF_ERROR_MSG);
@@ -321,16 +343,19 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readUnsignedByte() */
+  @Override
   public int readUnsignedByte() throws IOException {
     return readByte() & 0xff;
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
+  @Override
   public int readUnsignedShort() throws IOException {
     return readShort() & 0xffff;
   }
 
   /* @see java.io.DataInput.readUTF() */
+  @Override
   public String readUTF() throws IOException {
     int length = readUnsignedShort();
     byte[] b = new byte[length];
@@ -339,6 +364,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.skipBytes(int) */
+  @Override
   public int skipBytes(int n) throws IOException {
     int skipped = (int) Math.min(n, length() - getFilePointer());
     if (skipped < 0) {
@@ -351,22 +377,26 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput.write(byte[]) */
+  @Override
   public void write(byte[] b) throws IOException {
     write(b, 0, b.length);
   }
 
   /* @see java.io.DataOutput.write(byte[], int, int) */
+  @Override
   public void write(byte[] b, int off, int len) throws IOException {
     validateLength(len);
     buffer.put(b, off, len);
   }
 
   /* @see IRandomAccess.write(ByteBuffer) */
+  @Override
   public void write(ByteBuffer buf) throws IOException {
     write(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
+  @Override
   public void write(ByteBuffer buf, int off, int len) throws IOException {
     validateLength(len);
     buf.position(off);
@@ -375,33 +405,39 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.write(int b) */
+  @Override
   public void write(int b) throws IOException {
     validateLength(1);
     buffer.put((byte) b);
   }
 
   /* @see java.io.DataOutput.writeBoolean(boolean) */
+  @Override
   public void writeBoolean(boolean v) throws IOException {
     write(v ? 1 : 0);
   }
 
   /* @see java.io.DataOutput.writeByte(int) */
+  @Override
   public void writeByte(int v) throws IOException {
     write(v);
   }
 
   /* @see java.io.DataOutput.writeBytes(String) */
+  @Override
   public void writeBytes(String s) throws IOException {
     write(s.getBytes(Constants.ENCODING));
   }
 
   /* @see java.io.DataOutput.writeChar(int) */
+  @Override
   public void writeChar(int v) throws IOException {
     validateLength(2);
     buffer.putChar((char) v);
   }
 
   /* @see java.io.DataOutput.writeChars(String) */
+  @Override
   public void writeChars(String s) throws IOException {
     int len = 2 * s.length();
     validateLength(len);
@@ -412,36 +448,42 @@ public class ByteArrayHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeDouble(double) */
+  @Override
   public void writeDouble(double v) throws IOException {
     validateLength(8);
     buffer.putDouble(v);
   }
 
   /* @see java.io.DataOutput.writeFloat(float) */
+  @Override
   public void writeFloat(float v) throws IOException {
     validateLength(4);
     buffer.putFloat(v);
   }
 
   /* @see java.io.DataOutput.writeInt(int) */
+  @Override
   public void writeInt(int v) throws IOException {
     validateLength(4);
     buffer.putInt(v);
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
+  @Override
   public void writeLong(long v) throws IOException {
     validateLength(8);
     buffer.putLong(v);
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
+  @Override
   public void writeShort(int v) throws IOException {
     validateLength(2);
     buffer.putShort((short) v);
   }
 
   /* @see java.io.DataOutput.writeUTF(String)  */
+  @Override
   public void writeUTF(String str) throws IOException {
     byte[] b = str.getBytes(Constants.ENCODING);
     writeShort(b.length);

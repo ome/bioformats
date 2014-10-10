@@ -77,10 +77,12 @@ public class SwappableMetadata extends CoreMetadata {
     inputOrder = dimensionOrder;
   }
   
+  @Override
   public Object clone() throws CloneNotSupportedException {
       return super.clone();
   }
 
+  @Override
   public CoreMetadata clone(IFormatReader r, int coreIndex) {
       return new SwappableMetadata(r, coreIndex);
   }

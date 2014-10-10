@@ -66,6 +66,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
     parser.setAssumeEqualStrips(equalStrips);
@@ -79,6 +80,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -89,6 +91,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -101,6 +104,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -115,6 +119,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.in.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     int seriesCount = ifds.size();
 
@@ -156,6 +161,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 

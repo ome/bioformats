@@ -56,10 +56,12 @@ class MetadataHandler extends BaseHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void characters(char[] data, int start, int len) {
     metadata.put(currentQName, new String(data, start, len));
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {

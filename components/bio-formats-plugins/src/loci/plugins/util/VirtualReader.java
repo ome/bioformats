@@ -58,6 +58,7 @@ public class VirtualReader extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
+  @Override
   public void close() throws IOException {
     if (refCount > 0) refCount--;
     if (refCount == 0) super.close();

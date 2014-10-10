@@ -94,6 +94,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#writeImage(OutputStream, BufferedImage, JPEG2000CodecOptions) */
+  @Override
   public void writeImage(OutputStream out, BufferedImage img,
       JPEG2000CodecOptions options) throws IOException, ServiceException
   {
@@ -136,6 +137,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readImage(InputStream, JPEG2000CodecOptions) */
+  @Override
   public BufferedImage readImage(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
@@ -150,6 +152,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readImage(InputStream) */
+  @Override
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException
   {
@@ -157,6 +160,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readRaster(InputStream, JPEG2000CodecOptions) */
+  @Override
   public Raster readRaster(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
@@ -171,6 +175,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readRaster(InputStream) */
+  @Override
   public Raster readRaster(InputStream in) throws IOException, ServiceException
   {
     return readRaster(in, JPEG2000CodecOptions.getDefaultOptions());

@@ -85,6 +85,7 @@ public class BooleanOption extends Option {
   // -- Option methods --
 
   /* @see Option#parseOption(String arg) */
+  @Override
   public void parseOption(String arg) {
     String s = Macro.getValue(arg, key, null);
     if (s != null) value = s.equalsIgnoreCase("true");
@@ -95,11 +96,13 @@ public class BooleanOption extends Option {
   }
 
   /* @see Option#loadOption() */
+  @Override
   public void loadOption() {
     value = Prefs.get(KEY_PREFIX + key, defaultValue);
   }
 
   /* @see Option#saveOption() */
+  @Override
   public void saveOption() {
     if (save) Prefs.set(KEY_PREFIX + key, value);
   }

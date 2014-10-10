@@ -161,16 +161,19 @@ public class CellSensReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -178,6 +181,7 @@ public class CellSensReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     if (getCoreIndex() < core.size() - ifds.size()) {
@@ -194,6 +198,7 @@ public class CellSensReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     if (getCoreIndex() < core.size() - ifds.size()) {
@@ -210,6 +215,7 @@ public class CellSensReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatHandler#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
@@ -233,6 +239,7 @@ public class CellSensReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -297,6 +304,7 @@ public class CellSensReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -326,6 +334,7 @@ public class CellSensReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -972,6 +981,7 @@ public class CellSensReader extends FormatReader {
       coordinate = new int[nDimensions];
     }
 
+    @Override
     public boolean equals(Object o) {
       if (!(o instanceof TileCoordinate)) {
         return false;
@@ -990,6 +1000,7 @@ public class CellSensReader extends FormatReader {
       return true;
     }
 
+    @Override
     public int hashCode() {
       int[] lengths = new int[coordinate.length];
       lengths[0] = 0;
@@ -1018,6 +1029,7 @@ public class CellSensReader extends FormatReader {
       return FormatTools.positionToRaster(lengths, coordinate);
     }
 
+    @Override
     public String toString() {
       StringBuffer b = new StringBuffer("{");
       for (int p : coordinate) {

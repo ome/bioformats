@@ -50,6 +50,7 @@ public class LZOCodec extends BaseCodec {
   private static final int LZO_OVERRUN = -6;
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -59,6 +60,7 @@ public class LZOCodec extends BaseCodec {
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
