@@ -60,7 +60,6 @@
     <kryo.version>2.24.0</kryo.version>
 
     <xsdfu.schemaver>2013-10-dev-4</xsdfu.schemaver>
-    <xsdfu.schemaver>2013-10-dev-3</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
     <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
