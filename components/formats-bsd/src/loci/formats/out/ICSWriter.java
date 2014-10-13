@@ -260,8 +260,11 @@ public class ICSWriter extends FormatWriter {
           units.append("micrometers\t");
         }
         else if (dim == 'T') {
-          value = meta.getPixelsTimeIncrement(0).value(UNITS.S);
-          units.append("seconds\t");
+          Time valueTime = meta.getPixelsTimeIncrement(0);
+          if (valueTime != null) {
+            value = valueTime.value(UNITS.S);
+            units.append("seconds\t");
+          }
         }
         out.writeBytes(value + "\t");
       }

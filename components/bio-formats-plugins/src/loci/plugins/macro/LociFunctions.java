@@ -429,11 +429,14 @@ public class LociFunctions extends MacroFunctions {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Double val = Double.NaN;
     if (planeIndex >= 0) {
-      val = retrieve.getPlaneDeltaT(imageIndex, planeIndex).value(UNITS.S).doubleValue();
+      Time valTime = retrieve.getPlaneDeltaT(imageIndex, planeIndex);
+      if (valTime != null ) {
+        val = valTime.value(UNITS.S).doubleValue();
+      }
     }
-    deltaT[0] = val == null ? new Double(Double.NaN) : val;
+    deltaT[0] = val;
   }
 
   public void getPlaneTimingExposureTime(Double[] exposureTime, Double no) {
