@@ -116,6 +116,7 @@ loci.formats.in.FujiReader            # inf, img
 loci.formats.in.OperettaReader        # xml, tif, tiff
 loci.formats.in.InveonReader          # hdr, ct.img, cat, ...
 loci.formats.in.CellVoyagerReader     # xml, tif
+loci.formats.in.ColumbusReader        # xml, tif
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
