@@ -481,6 +481,7 @@ public class CellSensReader extends FormatReader {
 
     // make sure magnification order matches resolution order
 
+    Double maxMag = 0d;
     if (magnifications.size() > 1) {
       HashMap<Integer, Integer> xDims = new HashMap<Integer, Integer>();
       for (int i=0; i<core.size();) {
@@ -502,6 +503,9 @@ public class CellSensReader extends FormatReader {
       }
       for (Double magnification : magnifications) {
         addGlobalMetaList("Magnification", magnification);
+        if (magnification > maxMag) {
+          maxMag = magnification;
+        }
       }
     }
 
@@ -509,10 +513,10 @@ public class CellSensReader extends FormatReader {
       store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
       store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
 
-      int nextMag = 1;
-      for (int i=core.get(0).resolutionCount; i<core.size();) {
+      int nextMag = 0;
+      for (int i=0; i<core.size();) {
         if (nextMag < magnifications.size()) {
-          double mult = magnifications.get(nextMag) / magnifications.get(0);
+          double mult = maxMag / magnifications.get(nextMag);
           int ii = coreIndexToSeries(i);
           store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX * mult), ii);
           store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY * mult), ii);
