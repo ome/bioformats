@@ -236,7 +236,7 @@ namespace ome
         else if (id && !notNull)
           {
             boost::format fmt("Current file should be null, but is '%1%'; call close() first");
-            fmt % id;
+            fmt % id.get();
             throw std::logic_error(fmt.str());
           }
       }

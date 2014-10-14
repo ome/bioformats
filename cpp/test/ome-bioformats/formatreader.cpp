@@ -764,7 +764,7 @@ TEST_P(FormatReaderTest, FlatFile)
 {
   r.setId("flat");
 
-  EXPECT_TRUE(r.getCurrentFile());
+  EXPECT_TRUE(!!r.getCurrentFile());
 
   EXPECT_TRUE(r.isSingleFile("id"));
   EXPECT_FALSE(r.hasCompanionFiles());
