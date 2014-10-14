@@ -306,13 +306,13 @@ public class Location {
       if (id.startsWith("http://")) {
         handle = new URLHandle(mapId);
       }
-      else if (allowArchiveHandles && ZipHandle.isZipFile(id)) {
+      else if (allowArchiveHandles && ZipHandle.isZipFile(mapId)) {
         handle = new ZipHandle(mapId);
       }
-      else if (allowArchiveHandles && GZipHandle.isGZipFile(id)) {
+      else if (allowArchiveHandles && GZipHandle.isGZipFile(mapId)) {
         handle = new GZipHandle(mapId);
       }
-      else if (allowArchiveHandles && BZip2Handle.isBZip2File(id)) {
+      else if (allowArchiveHandles && BZip2Handle.isBZip2File(mapId)) {
         handle = new BZip2Handle(mapId);
       }
       else {
