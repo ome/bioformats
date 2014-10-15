@@ -61,6 +61,8 @@ namespace
 
   using namespace ::ome::bioformats::tiff;
   using ::ome::bioformats::dimension_size_type;
+  using ::ome::bioformats::PixelBuffer;
+  using ::ome::bioformats::PixelProperties;
 
   // VariantPixelBuffer tile transfer
   // ────────────────────────────────
@@ -135,6 +137,125 @@ namespace
 
     template<typename T>
     void
+    transfer(std::shared_ptr<T>& buffer,
+             typename T::indices_type& destidx,
+             const TileBuffer& tilebuf,
+             PlaneRegion& rfull,
+             PlaneRegion& rclip,
+             uint16_t copysamples)
+    {
+      if (rclip.w == rfull.w &&
+          rclip.x == region.x &&
+          rclip.w == region.w)
+        {
+          // Transfer contiguous block since the tile spans the
+          // whole region width for both source and destination
+          // buffers.
+
+          destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+          destidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
+
+          typename T::value_type *dest = &buffer->at(destidx);
+          const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
+          std::copy(src,
+                    src + (rclip.w * rclip.h * copysamples),
+                    dest);
+        }
+      else
+        {
+          // Transfer discontiguous block.
+
+          dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
+
+          for (dimension_size_type row = rclip.y;
+               row != rclip.y + rclip.h;
+               ++row)
+            {
+              dimension_size_type yoffset = (row - rfull.y) * (rfull.w * copysamples);
+
+              destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+              destidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
+
+              typename T::value_type *dest = &buffer->at(destidx);
+              const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
+              std::copy(src + yoffset + xoffset,
+                        src + yoffset + xoffset + (rclip.w * copysamples),
+                        dest);
+            }
+        }
+    }
+
+    // Special case for BIT
+    void
+    transfer(std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
+             typename PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type& destidx,
+             const TileBuffer& tilebuf,
+             PlaneRegion& rfull,
+             PlaneRegion& rclip,
+             uint16_t copysamples)
+    {
+      // Unpack bits from buffer.
+
+      typedef PixelBuffer<PixelProperties<PixelType::BIT>::std_type> T;
+
+      dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
+
+      for (dimension_size_type row = rclip.y;
+           row != rclip.y + rclip.h;
+           ++row)
+        {
+          dimension_size_type row_width = rfull.w * copysamples;
+          if (row_width % 8)
+            row_width += 8 - (row_width % 8); // pad to next full byte
+          dimension_size_type yoffset = (row - rfull.y) * row_width;
+
+          destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+          destidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
+
+          typename T::value_type *dest = &buffer->at(destidx);
+          const uint8_t *src = reinterpret_cast<const uint8_t *>(tilebuf.data());
+
+          for (dimension_size_type sampleoffset = 0;
+               sampleoffset < (rclip.w * copysamples);
+               ++sampleoffset)
+            {
+              dimension_size_type src_bit = yoffset + xoffset + sampleoffset;
+              const uint8_t *src_byte = src + (src_bit / 8);
+              const uint8_t bit_offset = 7 - (src_bit % 8);
+              const uint8_t mask = 1 << bit_offset;
+              assert(src_byte >= src && src_byte < src + tilebuf.size());
+              *(dest+sampleoffset) = static_cast<T::value_type>(*src_byte & mask);
+            }
+        }
+    }
+
+    template<typename T>
+    dimension_size_type
+    expected_read(const std::shared_ptr<T>& /* buffer */,
+                  const PlaneRegion& rclip,
+                  uint16_t copysamples) const
+    {
+      return rclip.w * rclip.h * copysamples * sizeof(typename T::value_type);
+    }
+
+    // Special case for BIT
+    dimension_size_type
+    expected_read(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& /* buffer */,
+                  const PlaneRegion& rclip,
+                  uint16_t copysamples) const
+    {
+      dimension_size_type expectedread = rclip.w;
+
+      if (expectedread % 8)
+        ++expectedread;
+      expectedread *= rclip.h * copysamples;
+      expectedread /= 8;
+
+      return expectedread;
+    }
+
+    template<typename T>
+    void
     operator()(std::shared_ptr<T>& buffer)
     {
       std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
@@ -168,15 +289,16 @@ namespace
               int bytesread = TIFFReadEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
               if (bytesread < 0)
                 sentry.error("Failed to read encoded tile");
-              if (static_cast<dimension_size_type>(bytesread) != tilebuf.size())
+              else if (static_cast<dimension_size_type>(bytesread) != tilebuf.size())
                 sentry.error("Failed to read encoded tile fully");
             }
           else
             {
               int bytesread = TIFFReadEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              dimension_size_type expectedread = expected_read(buffer, rclip, copysamples);
               if (bytesread < 0)
                 sentry.error("Failed to read encoded strip");
-              if (static_cast<dimension_size_type>(bytesread) < rclip.w * rclip.h * copysamples * sizeof(typename T::value_type))
+              else if (static_cast<dimension_size_type>(bytesread) < expectedread)
                 sentry.error("Failed to read encoded strip fully");
             }
 
@@ -188,45 +310,7 @@ namespace
             destidx[ome::bioformats::DIM_CHANNEL] = destidx[ome::bioformats::DIM_MODULO_Z] =
             destidx[ome::bioformats::DIM_MODULO_T] = destidx[ome::bioformats::DIM_MODULO_C] = 0;
 
-          if (rclip.w == rfull.w &&
-              rclip.x == region.x &&
-              rclip.w == region.w)
-            {
-              // Transfer contiguous block since the tile spans the
-              // whole region width for both source and destination
-              // buffers.
-
-              destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
-              destidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
-
-              typename T::value_type *dest = &buffer->at(destidx);
-              const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
-              std::copy(src,
-                        src + (rclip.w * rclip.h * copysamples),
-                        dest);
-            }
-          else
-            {
-              // Transfer discontiguous block.
-
-              dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
-
-              for (dimension_size_type row = rclip.y;
-                   row != rclip.y + rclip.h;
-                   ++row)
-                {
-                  dimension_size_type yoffset = (row - rfull.y) * (rfull.w * copysamples);
-
-                  destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
-                  destidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
-
-                  typename T::value_type *dest = &buffer->at(destidx);
-                  const typename T::value_type *src = reinterpret_cast<const typename T::value_type *>(tilebuf.data());
-                  std::copy(src + yoffset + xoffset,
-                            src + yoffset + xoffset + (rclip.w * copysamples),
-                            dest);
-                }
-            }
+          transfer(buffer, destidx, tilebuf, rfull, rclip, copysamples);
         }
     }
   };
@@ -258,8 +342,13 @@ namespace
     void
     flush()
     {
+      std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
+      ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
+      TileType type = tileinfo.tileType();
       PlaneRegion rimage(0, 0, ifd.getImageWidth(), ifd.getImageHeight());
       dimension_size_type tile = ifd.getCurrentTile();
+
+      Sentry sentry;
       while(tile < tileinfo.tileCount())
         {
           dimension_size_type tile_subchannel = tileinfo.tileSample(tile);
@@ -296,19 +385,114 @@ namespace
 
     template<typename T>
     void
+    transfer(const std::shared_ptr<T>& buffer,
+             typename T::indices_type& srcidx,
+             TileBuffer& tilebuf,
+             PlaneRegion& rfull,
+             PlaneRegion& rclip,
+             uint16_t copysamples)
+    {
+      if (rclip.w == rfull.w &&
+          rclip.x == region.x &&
+          rclip.w == region.w)
+        {
+          // Transfer contiguous block since the tile spans the
+          // whole region width for both source and destination
+          // buffers.
+
+          srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+          srcidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
+
+          typename T::value_type *dest = reinterpret_cast<typename T::value_type *>(tilebuf.data());
+          const typename T::value_type *src = &buffer->at(srcidx);
+
+          assert(dest + (rclip.w * rclip.h * copysamples) <= dest + tilebuf.size());
+          std::copy(src,
+                    src + (rclip.w * rclip.h * copysamples),
+                    dest);
+        }
+      else
+        {
+          // Transfer discontiguous block.
+
+          dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
+
+          for (dimension_size_type row = rclip.y;
+               row < rclip.y + rclip.h;
+               ++row)
+            {
+              dimension_size_type yoffset = (row - rfull.y) * (rfull.w * copysamples);
+
+              srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+              srcidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
+
+              typename T::value_type *dest = reinterpret_cast<typename T::value_type *>(tilebuf.data());
+              const typename T::value_type *src = &buffer->at(srcidx);
+
+              assert(dest + yoffset + xoffset + (rclip.w * copysamples) <= dest + tilebuf.size());
+              std::copy(src,
+                        src + (rclip.w * copysamples),
+                        dest + yoffset + xoffset);
+            }
+        }
+    }
+
+    // Special case for BIT
+    void
+    transfer(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
+             PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type& srcidx,
+             TileBuffer& tilebuf,
+             PlaneRegion& rfull,
+             PlaneRegion& rclip,
+             uint16_t copysamples)
+    {
+      // Pack bits into buffer.
+
+      typedef PixelBuffer<PixelProperties<PixelType::BIT>::std_type> T;
+
+      dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
+
+      for (dimension_size_type row = rclip.y;
+           row != rclip.y + rclip.h;
+           ++row)
+        {
+          dimension_size_type row_width = rfull.w * copysamples;
+          if (row_width % 8)
+            row_width += 8 - (row_width % 8); // pad to next full byte
+          dimension_size_type yoffset = (row - rfull.y) * row_width;
+
+          srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
+          srcidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
+
+          uint8_t *dest = reinterpret_cast<uint8_t *>(tilebuf.data());
+          const typename T::value_type *src = &buffer->at(srcidx);
+
+          for (dimension_size_type sampleoffset = 0;
+               sampleoffset < (rclip.w * copysamples);
+               ++sampleoffset)
+            {
+              const typename T::value_type *srcsample = src + sampleoffset;
+              dimension_size_type dest_bit = yoffset + xoffset + sampleoffset;
+              uint8_t *dest_byte = dest + (dest_bit / 8);
+              const uint8_t bit_offset = 7 - (dest_bit % 8);
+
+              assert(dest_byte >= dest && dest_byte < dest + tilebuf.size());
+              // Don't clear the bit since the tile will only be written once.
+              *dest_byte |= (*srcsample << bit_offset);
+            }
+        }
+    }
+
+    template<typename T>
+    void
     operator()(const std::shared_ptr<T>& buffer)
     {
-      std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
-      ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
-      TileType type = tileinfo.tileType();
-
       uint16_t samples = ifd.getSamplesPerPixel();
       PlanarConfiguration planarconfig = ifd.getPlanarConfiguration();
 
       if (tilecoverage.size() != (planarconfig == CONTIG ? 1 : samples))
         tilecoverage.resize(planarconfig == CONTIG ? 1 : samples);
 
-      Sentry sentry;
       for(std::vector<dimension_size_type>::const_iterator i = tiles.begin();
           i != tiles.end();
           ++i)
@@ -339,45 +523,7 @@ namespace
             srcidx[ome::bioformats::DIM_CHANNEL] = srcidx[ome::bioformats::DIM_MODULO_Z] =
             srcidx[ome::bioformats::DIM_MODULO_T] = srcidx[ome::bioformats::DIM_MODULO_C] = 0;
 
-          if (rclip.w == rfull.w &&
-              rclip.x == region.x &&
-              rclip.w == region.w)
-            {
-              // Transfer contiguous block since the tile spans the
-              // whole region width for both source and destination
-              // buffers.
-
-              srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
-              srcidx[ome::bioformats::DIM_SPATIAL_Y] = rclip.y - region.y;
-
-              typename T::value_type *dest = reinterpret_cast<typename T::value_type *>(tilebuf.data());
-              const typename T::value_type *src = &buffer->at(srcidx);
-              std::copy(src,
-                        src + (rclip.w * rclip.h * copysamples),
-                        dest);
-            }
-          else
-            {
-              // Transfer discontiguous block.
-
-              dimension_size_type xoffset = (rclip.x - rfull.x) * copysamples;
-
-              for (dimension_size_type row = rclip.y;
-                   row != rclip.y + rclip.h;
-                   ++row)
-                {
-                  dimension_size_type yoffset = (row - rfull.y) * (rfull.w * copysamples);
-
-                  srcidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
-                  srcidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
-
-                  typename T::value_type *dest = reinterpret_cast<typename T::value_type *>(tilebuf.data());
-                  const typename T::value_type *src = &buffer->at(srcidx);
-                  std::copy(src,
-                            src + (rclip.w * copysamples),
-                            dest + yoffset + xoffset);
-                }
-            }
+          transfer(buffer, srcidx, tilebuf, rfull, rclip, copysamples);
           tilecoverage.at(dest_subchannel).insert(rclip);
         }
 
