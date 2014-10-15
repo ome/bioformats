@@ -492,11 +492,14 @@ TEST_P(FormatWriterTest, DefaultCompression)
 {
   EXPECT_FALSE(w.getCompression());
   EXPECT_NO_THROW(w.setCompression("lzw"));
-  EXPECT_EQ(std::string("lzw"), w.getCompression());
+  EXPECT_TRUE(!!w.getCompression());
+  EXPECT_EQ(std::string("lzw"), w.getCompression().get());
   EXPECT_NO_THROW(w.setCompression("rle"));
-  EXPECT_EQ(std::string("rle"), w.getCompression());
+  EXPECT_TRUE(!!w.getCompression());
+  EXPECT_EQ(std::string("rle"), w.getCompression().get());
   EXPECT_THROW(w.setCompression("invalid"), std::logic_error);
-  EXPECT_EQ(std::string("rle"), w.getCompression());
+  EXPECT_TRUE(!!w.getCompression());
+  EXPECT_EQ(std::string("rle"), w.getCompression().get());
 }
 
 TEST_P(FormatWriterTest, OutputCompression)
@@ -505,11 +508,14 @@ TEST_P(FormatWriterTest, OutputCompression)
 
   EXPECT_FALSE(w.getCompression());
   EXPECT_NO_THROW(w.setCompression("lzw"));
-  EXPECT_EQ(std::string("lzw"), w.getCompression());
+  EXPECT_TRUE(!!w.getCompression());
+  EXPECT_EQ(std::string("lzw"), w.getCompression().get());
   EXPECT_NO_THROW(w.setCompression("rle"));
-  EXPECT_EQ(std::string("rle"), w.getCompression());
+  EXPECT_TRUE(!!w.getCompression());
+  EXPECT_EQ(std::string("rle"), w.getCompression().get());
   EXPECT_THROW(w.setCompression("invalid"), std::logic_error);
-  EXPECT_EQ(std::string("rle"), w.getCompression());
+  EXPECT_TRUE(!!w.getCompression());
+  EXPECT_EQ(std::string("rle"), w.getCompression().get());
 }
 
 TEST_P(FormatWriterTest, DefaultChangeOutputFile)
