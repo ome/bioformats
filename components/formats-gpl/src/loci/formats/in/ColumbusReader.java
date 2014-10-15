@@ -343,16 +343,23 @@ public class ColumbusReader extends FormatReader {
 
         p.series = wellSample;
         wellSample++;
+
+        store.setPixelsPhysicalSizeX(new PositiveFloat(p.sizeX), p.series);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(p.sizeY), p.series);
+      }
+      else {
+        p.series = wellSample - 1;
       }
 
-      store.setChannelName(p.channelName, p.series, p.channel);
-      store.setChannelEmissionWavelength(
-        new PositiveInteger((int) p.emWavelength), p.series, p.channel);
-      store.setChannelExcitationWavelength(
-        new PositiveInteger((int) p.exWavelength), p.series, p.channel);
-      store.setChannelColor(p.channelColor, p.series, p.channel);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(p.sizeX), p.series);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(p.sizeY), p.series);
+      if (plane % getImageCount() < getSizeC()) {
+        store.setChannelName(p.channelName, p.series, p.channel);
+        store.setChannelEmissionWavelength(
+          new PositiveInteger((int) p.emWavelength), p.series, p.channel);
+        store.setChannelExcitationWavelength(
+          new PositiveInteger((int) p.exWavelength), p.series, p.channel);
+        store.setChannelColor(p.channelColor, p.series, p.channel);
+      }
+
       store.setPlaneDeltaT(p.deltaT - timestampSeconds, p.series, getIndex(0, p.channel, p.timepoint));
     }
   }
