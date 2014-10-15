@@ -230,7 +230,7 @@ Individual planes can be queried using the
 
     series1_plane1 = bfGetPlane(reader, 1);
 
-To switch between series in a multi-image files, use the
+To switch between series in a multi-image file, use the
 :javadoc:`setSeries() <loci/formats/IFormatReader.html#setSeries(int)>`
 method. To retrieve a plane given a set of `(z, c, t)` coordinates, these
 coordinates must be linearized first using :javadoc:`getIndex() <loci/formats/IFormatReader.html#getIndex(int, int, int)>`
