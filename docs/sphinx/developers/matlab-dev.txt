@@ -239,7 +239,7 @@ coordinates must be linearized first using :javadoc:`getIndex() <loci/formats/IF
 
    % Read plane from series iSeries at Z, C, T coordinates (iZ, iC, iT)
    % All indices are expected to be 1-based
-   reader.setSeries(iSeries -1);
+   reader.setSeries(iSeries - 1);
    iPlane = reader.getIndex(iZ - 1, iC -1, iT - 1) + 1;
    I = bfGetPlane(reader, iPlane);
 
