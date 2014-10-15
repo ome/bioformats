@@ -41,6 +41,7 @@
 
 #include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
+#include <ome/bioformats/VariantPixelBuffer.h>
 
 #include <ome/compat/cstdint.h>
 
@@ -106,6 +107,163 @@ pixel_value< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums:
   return pixel_value_complex< ::ome::bioformats::PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
                                                                         ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
 }
+
+/*
+ * Assign buffer with values from a buffer of a different pixel type
+ * and check.  This is for testing loading and saving of all pixel
+ * types.
+ */
+template<int P>
+struct PixelTypeConversionVisitor : public boost::static_visitor<>
+{
+  typedef typename ::ome::bioformats::PixelProperties<P>::std_type src_type;
+  typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
+
+  const std::shared_ptr<::ome::bioformats::PixelBuffer<src_type> > *src;
+  ::ome::bioformats::VariantPixelBuffer& dest;
+
+  PixelTypeConversionVisitor(const ::ome::bioformats::VariantPixelBuffer& src,
+                             ::ome::bioformats::VariantPixelBuffer& dest):
+    src(boost::get<std::shared_ptr<::ome::bioformats::PixelBuffer<src_type> > >(&src.vbuffer())),
+    dest(dest)
+  {
+
+    if (!(this->src && *this->src))
+      throw std::runtime_error("Null source buffer or incorrect pixel type");
+
+    if((*this->src)->num_elements() != dest.num_elements())
+      throw std::runtime_error("Array size mismatch");
+  }
+
+  // Expand pixel values to fill the positive pixel value range for
+  // the destination pixel type.
+  template <typename T>
+  typename boost::enable_if_c<
+    boost::is_integral<T>::value, void
+    >::type
+  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
+  {
+    const src_type *src_buf = (*src)->data();
+    T *dest_buf = lhs->data();
+
+    for (::ome::bioformats::VariantPixelBuffer::size_type i = 0;
+         i != (*src)->num_elements();
+         ++i)
+      {
+        dest_buf[i] = (static_cast<T>((static_cast<float>(src_buf[i] -
+                                                          std::numeric_limits<src_type>::min()) /
+                                       static_cast<float>(std::numeric_limits<src_type>::max())) *
+                                      std::numeric_limits<T>::max()));
+      }
+  }
+
+  // Normalise pixel values to fill the pixel value range 0..1 for the
+  // destination pixel type.
+  template <typename T>
+  typename boost::enable_if_c<
+    boost::is_floating_point<T>::value, void
+    >::type
+  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
+  {
+    const src_type *src_buf = (*src)->data();
+    T *dest_buf = lhs->data();
+
+    for (::ome::bioformats::VariantPixelBuffer::size_type i = 0;
+         i != (*src)->num_elements();
+         ++i)
+      {
+        dest_buf[i] = (static_cast<T>(src_buf[i] - std::numeric_limits<src_type>::min()) /
+                       static_cast<T>(std::numeric_limits<src_type>::max()));
+      }
+  }
+
+  // Normalise pixel values to fill the pixel value range 0..1+0.0i for the
+  // destination complex pixel type.
+  template <typename T>
+  typename boost::enable_if_c<
+    boost::is_complex<T>::value, void
+    >::type
+  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
+  {
+    const src_type *src_buf = (*src)->data();
+    T *dest_buf = lhs->data();
+
+    for (::ome::bioformats::VariantPixelBuffer::size_type i = 0;
+         i != (*src)->num_elements();
+         ++i)
+      {
+        dest_buf[i] = T(static_cast<typename T::value_type>(src_buf[i] - std::numeric_limits<src_type>::min()) /
+                        static_cast<typename T::value_type>(std::numeric_limits<src_type>::max()), 0.0f);
+      }
+  }
+
+  // Split the pixel range into two, the lower part being set to false
+  // and the upper part being set to true for the destination boolean
+  // pixel type.
+  void
+  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& lhs)
+  {
+    const src_type *src_buf = (*src)->data();
+    bit_type *dest_buf = lhs->data();
+
+    for (::ome::bioformats::VariantPixelBuffer::size_type i = 0;
+         i != (*src)->num_elements();
+         ++i)
+      {
+        dest_buf[i] = (static_cast<float>(src_buf[i] - std::numeric_limits<src_type>::min()) /
+                       static_cast<float>(std::numeric_limits<src_type>::max())) < 0.3 ? false : true;
+      }
+  }
+};
+
+struct PixelSubrangeVisitor : public boost::static_visitor<>
+{
+  ::ome::bioformats::dimension_size_type x;
+  ::ome::bioformats::dimension_size_type y;
+
+  PixelSubrangeVisitor(::ome::bioformats::dimension_size_type x,
+                       ::ome::bioformats::dimension_size_type y):
+    x(x),
+    y(y)
+  {}
+
+  template<typename T, typename U>
+  void
+  operator() (const T& /*src*/,
+              U& /* dest */) const
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& src,
+              T& dest) const
+  {
+    const ::ome::bioformats::VariantPixelBuffer::size_type *shape = dest->shape();
+
+    ::ome::bioformats::dimension_size_type width = shape[::ome::bioformats::DIM_SPATIAL_X];
+    ::ome::bioformats::dimension_size_type height = shape[::ome::bioformats::DIM_SPATIAL_Y];
+    ::ome::bioformats::dimension_size_type subchannels = shape[::ome::bioformats::DIM_SUBCHANNEL];
+
+    for (::ome::bioformats::dimension_size_type dx = 0; dx < width; ++dx)
+      for (::ome::bioformats::dimension_size_type dy = 0; dy < height; ++dy)
+        for (::ome::bioformats::dimension_size_type ds = 0; ds < subchannels; ++ds)
+          {
+            ::ome::bioformats::VariantPixelBuffer::indices_type srcidx;
+            srcidx[::ome::bioformats::DIM_SPATIAL_X] = x + dx;
+            srcidx[::ome::bioformats::DIM_SPATIAL_Y] = y + dy;
+            srcidx[::ome::bioformats::DIM_SUBCHANNEL] = ds;
+            srcidx[2] = srcidx[3] = srcidx[4] = srcidx[6] = srcidx[7] = srcidx[8] = 0;
+
+            ::ome::bioformats::VariantPixelBuffer::indices_type destidx;
+            destidx[::ome::bioformats::DIM_SPATIAL_X] = dx;
+            destidx[::ome::bioformats::DIM_SPATIAL_Y] = dy;
+            destidx[::ome::bioformats::DIM_SUBCHANNEL] = ds;
+            destidx[2] = destidx[3] = destidx[4] = destidx[6] = destidx[7] = destidx[8] = 0;
+
+            dest->at(destidx) = src->at(srcidx);
+          }
+  }
+};
 
 namespace std
 {

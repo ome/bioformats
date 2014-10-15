@@ -41,6 +41,7 @@
 #include <vector>
 
 #include <boost/filesystem.hpp>
+#include <boost/type_traits.hpp>
 
 #include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/TIFF.h>
@@ -60,6 +61,8 @@
 
 #include <gtest/gtest.h>
 
+#include "pixel.h"
+
 using ome::bioformats::tiff::directory_index_type;
 using ome::bioformats::tiff::TileInfo;
 using ome::bioformats::tiff::TIFF;
@@ -68,6 +71,8 @@ using ome::bioformats::tiff::PlaneRegion;
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::VariantPixelBuffer;
 using ome::bioformats::PixelBuffer;
+using ome::bioformats::PixelProperties;
+typedef ome::xml::model::enums::PixelType PT;
 
 using namespace boost::filesystem;
 
@@ -179,58 +184,116 @@ namespace
     return params;
   }
 
+  struct DumpPixelBufferVisitor : public boost::static_visitor<>
+  {
+    typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
+
+    std::ostream& stream;
+
+    DumpPixelBufferVisitor(std::ostream& stream):
+      stream(stream)
+    {}
+
+    template <typename T>
+    typename boost::enable_if_c<
+      boost::is_integral<T>::value, float
+      >::type
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf,
+         const typename ::ome::bioformats::PixelBuffer<T>::indices_type& idx) const
+    {
+      float v = static_cast<float>(buf->at(idx));
+      float max = static_cast<float>(std::numeric_limits<T>::max());
+
+      return v / max;
+    }
+
+    template <typename T>
+    typename boost::enable_if_c<
+      boost::is_floating_point<T>::value, float
+      >::type
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf,
+         const typename ::ome::bioformats::PixelBuffer<T>::indices_type& idx) const
+    {
+      // Assume float is already normalised.
+      return static_cast<float>(buf->at(idx));
+    }
+
+    template <typename T>
+    typename boost::enable_if_c<
+      boost::is_complex<T>::value, float
+      >::type
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf,
+         const typename ::ome::bioformats::PixelBuffer<T>::indices_type& idx) const
+    {
+      // Assume float is already normalised.
+      return static_cast<float>(buf->at(idx).real());
+    }
+
+    // Split the pixel range into two, the lower half being set to false
+    // and the upper half being set to true for the destination boolean
+    // pixel type.
+    float
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& buf,
+         const typename ::ome::bioformats::PixelBuffer<bit_type>::indices_type& idx)
+    {
+      return buf->at(idx) ? 1.0f : 0.0f;
+    }
+
+    template<typename T>
+    void
+    operator()(const T& buf) const
+    {
+      const VariantPixelBuffer::size_type *shape = buf->shape();
+      VariantPixelBuffer::size_type w = shape[ome::bioformats::DIM_SPATIAL_X];
+      VariantPixelBuffer::size_type h = shape[ome::bioformats::DIM_SPATIAL_X];
+      VariantPixelBuffer::size_type s = shape[ome::bioformats::DIM_SUBCHANNEL];
+
+      typename T::element_type::indices_type idx;
+      idx[ome::bioformats::DIM_SPATIAL_X] = 0;
+      idx[ome::bioformats::DIM_SPATIAL_Y] = 0;
+      idx[ome::bioformats::DIM_SUBCHANNEL] = 0;
+      idx[ome::bioformats::DIM_SPATIAL_Z] = idx[ome::bioformats::DIM_TEMPORAL_T] =
+        idx[ome::bioformats::DIM_CHANNEL] = idx[ome::bioformats::DIM_MODULO_Z] =
+        idx[ome::bioformats::DIM_MODULO_T] = idx[ome::bioformats::DIM_MODULO_C] = 0;
+
+      const char * const shades[] = {" ", "░", "▒", "▓", "█"};
+
+      for (VariantPixelBuffer::size_type y = 0; y < h; ++y)
+        {
+          std::vector<std::string> line(s);
+          for (VariantPixelBuffer::size_type x = 0; x < w; ++x)
+            {
+              for (VariantPixelBuffer::size_type c = 0; c < s; ++c)
+                {
+                  idx[ome::bioformats::DIM_SPATIAL_X] = x;
+                  idx[ome::bioformats::DIM_SPATIAL_Y] = y;
+                  idx[ome::bioformats::DIM_SUBCHANNEL] = c;
+
+                  uint16_t shadeidx = static_cast<uint16_t>(std::floor(dump(buf, idx) * 5.0f));
+                  if (shadeidx > 4)
+                    shadeidx = 4;
+                  line[c] += shades[shadeidx];
+                }
+            }
+          for (std::vector<std::string>::const_iterator i = line.begin();
+               i != line.end();
+               ++i)
+            {
+              stream << *i;
+              if (i + 1 != line.end())
+                stream << "  ";
+            }
+          stream << '\n';
+        }
+    }
+  };
+
   void
   dump_image_representation(const VariantPixelBuffer& buf,
                             std::ostream&             stream)
   {
-    const VariantPixelBuffer::size_type *shape = buf.shape();
-    VariantPixelBuffer::size_type w = shape[ome::bioformats::DIM_SPATIAL_X];
-    VariantPixelBuffer::size_type h = shape[ome::bioformats::DIM_SPATIAL_X];
-    VariantPixelBuffer::size_type s = shape[ome::bioformats::DIM_SUBCHANNEL];
-
-    typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type pixeltype;
-
-    const std::shared_ptr<PixelBuffer<pixeltype> >& rbuf
-      = boost::get<std::shared_ptr<PixelBuffer<pixeltype> > >(buf.vbuffer());
-
-    PixelBuffer<pixeltype>::indices_type idx;
-    idx[ome::bioformats::DIM_SPATIAL_X] = 0;
-    idx[ome::bioformats::DIM_SPATIAL_Y] = 0;
-    idx[ome::bioformats::DIM_SUBCHANNEL] = 0;
-    idx[ome::bioformats::DIM_SPATIAL_Z] = idx[ome::bioformats::DIM_TEMPORAL_T] =
-      idx[ome::bioformats::DIM_CHANNEL] = idx[ome::bioformats::DIM_MODULO_Z] =
-      idx[ome::bioformats::DIM_MODULO_T] = idx[ome::bioformats::DIM_MODULO_C] = 0;
-
-    const char * const shades[] = {" ", "░", "▒", "▓", "█"};
-
-    for (VariantPixelBuffer::size_type y = 0; y < h; ++y)
-      {
-        std::vector<std::string> line(s);
-        for (VariantPixelBuffer::size_type x = 0; x < w; ++x)
-          {
-            for (VariantPixelBuffer::size_type c = 0; c < s; ++c)
-              {
-                idx[ome::bioformats::DIM_SPATIAL_X] = x;
-                idx[ome::bioformats::DIM_SPATIAL_Y] = y;
-                idx[ome::bioformats::DIM_SUBCHANNEL] = c;
-
-                double normval = (static_cast<float>(rbuf->at(idx)) / 255.0f) * 5.0f;
-                uint16_t shadeidx = static_cast<uint16_t>(std::floor(normval));
-                if (shadeidx > 4)
-                  shadeidx = 4;
-                line[c] += shades[shadeidx];
-              }
-          }
-        for (std::vector<std::string>::const_iterator i = line.begin();
-             i != line.end();
-             ++i)
-          {
-            stream << *i;
-            if (i + 1 != line.end())
-              stream << "  ";
-          }
-        stream << '\n';
-      }
+    DumpPixelBufferVisitor v(stream);
+    boost::apply_visitor(v, buf.vbuffer());
   }
 
 }
@@ -891,7 +954,7 @@ TEST(TIFFTest, PixelType)
 
   std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
 
-  ASSERT_EQ(::ome::xml::model::enums::PixelType::UINT8, ifd->getPixelType());
+  ASSERT_EQ(PT::UINT8, ifd->getPixelType());
 }
 
 class TIFFTileTest : public ::testing::TestWithParam<TileTestParameters>
@@ -906,6 +969,8 @@ public:
 #ifdef PNG_FOUND
   static VariantPixelBuffer pngdata_chunky;
   static VariantPixelBuffer pngdata_planar;
+  typedef std::map<std::pair<PT,ome::bioformats::tiff::PlanarConfiguration>,VariantPixelBuffer> pngdata_map_type;
+  static pngdata_map_type pngdata_map;
   static bool pngdata_init;
 #endif // PNG_FOUND
   static uint32_t pwidth;
@@ -965,8 +1030,8 @@ public:
     ::ome::bioformats::PixelBufferBase::storage_order_type order_chunky(::ome::bioformats::PixelBufferBase::default_storage_order());
     ::ome::bioformats::PixelBufferBase::storage_order_type order_planar(::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC, false));
 
-    pngdata_chunky.setBuffer(shape, ::ome::xml::model::enums::PixelType::UINT8, order_chunky);
-    pngdata_planar.setBuffer(shape, ::ome::xml::model::enums::PixelType::UINT8, order_planar);
+    pngdata_chunky.setBuffer(shape, PT::UINT8, order_chunky);
+    pngdata_planar.setBuffer(shape, PT::UINT8, order_planar);
 
     std::vector<png_bytep> row_pointers(pheight);
     for (dimension_size_type y = 0; y < pheight; ++y)
@@ -979,7 +1044,7 @@ public:
           coord[ome::bioformats::DIM_CHANNEL] = coord[ome::bioformats::DIM_MODULO_Z] =
           coord[ome::bioformats::DIM_MODULO_T] = coord[ome::bioformats::DIM_MODULO_C] = 0;
 
-        row_pointers[y] = reinterpret_cast<png_bytep>(&pngdata_chunky.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(coord));
+        row_pointers[y] = reinterpret_cast<png_bytep>(&pngdata_chunky.at< PixelProperties<PT::UINT8>::std_type>(coord));
       }
 
     png_read_image(pngptr, &row_pointers[0]);
@@ -997,7 +1062,7 @@ public:
     pngdata_init = true;
   }
 
-  const VariantPixelBuffer&
+  static const VariantPixelBuffer&
   getPNGDataChunky()
   {
     if (!pngdata_init)
@@ -1005,12 +1070,41 @@ public:
     return pngdata_chunky;
   }
 
-  const VariantPixelBuffer&
+  static const VariantPixelBuffer&
   getPNGDataPlanar()
   {
     if (!pngdata_init)
       readPNGData();
     return pngdata_planar;
+  }
+
+  static const VariantPixelBuffer&
+  getPNGData(PT pixeltype,
+             ome::bioformats::tiff::PlanarConfiguration planarconfig)
+  {
+    pngdata_map_type::const_iterator found = pngdata_map.find(std::make_pair(pixeltype, planarconfig));
+    if (found == pngdata_map.end())
+      {
+        const VariantPixelBuffer& src(planarconfig == ome::bioformats::tiff::CONTIG ? getPNGDataChunky() : getPNGDataPlanar());
+
+        const VariantPixelBuffer::size_type *shape = src.shape();
+
+        VariantPixelBuffer dest(boost::extents[shape[0]][shape[1]][shape[2]][shape[3]][shape[4]][shape[5]][shape[6]][shape[7]][shape[8]], pixeltype, src.storage_order());
+
+        PixelTypeConversionVisitor<PT::UINT8> v(src, dest);
+        boost::apply_visitor(v, dest.vbuffer());
+
+        pngdata_map_type::key_type key(pixeltype, planarconfig);
+        std::pair<pngdata_map_type::iterator,bool> ins
+          (pngdata_map.insert(pngdata_map_type::value_type(key, dest)));
+
+        if (!ins.second)
+          throw std::runtime_error("Failed to cache test pixel data");
+
+        found = ins.first;
+      }
+
+    return found->second;
   }
 #endif // PNG_FOUND
 
@@ -1032,6 +1126,7 @@ public:
 #ifdef PNG_FOUND
 VariantPixelBuffer TIFFTileTest::pngdata_chunky;
 VariantPixelBuffer TIFFTileTest::pngdata_planar;
+TIFFTileTest::pngdata_map_type TIFFTileTest::pngdata_map;
 bool TIFFTileTest::pngdata_init = false;
 #endif // PNG_FOUND
 uint32_t TIFFTileTest::pwidth = 0;
@@ -1352,332 +1447,281 @@ TEST_P(TIFFTileTest, PlaneReadUnalignedTileRandom)
     }
 }
 
-TEST_P(TIFFTileTest, PlaneWrite)
+class PixelTestParameters
 {
-#ifdef PNG_FOUND
-  const TileTestParameters& params = GetParam();
+public:
+  PT pixeltype;
+  ome::bioformats::tiff::TileType                  tiletype;
+  ome::bioformats::tiff::PlanarConfiguration       planarconfig;
+  ome::bioformats::tiff::PhotometricInterpretation photometricinterp;
+  dimension_size_type                              tilewidth;
+  dimension_size_type                              tileheight;
+  bool                                             optimal;
+  bool                                             ordered;
+  std::string                                      filename;
 
-  std::shared_ptr<TIFF> wtiff = TIFF::open(params.wfile, "w");
-  std::shared_ptr<IFD> wifd = wtiff->getCurrentDirectory();
+  PixelTestParameters(PT pixeltype,
+                      ome::bioformats::tiff::TileType tiletype,
+                      ome::bioformats::tiff::PlanarConfiguration planarconfig,
+                      ome::bioformats::tiff::PhotometricInterpretation photometricinterp,
+                      dimension_size_type tilewidth,
+                      dimension_size_type tileheight,
+                      bool optimal,
+                      bool ordered):
+    pixeltype(pixeltype),
+    tiletype(tiletype),
+    planarconfig(planarconfig),
+    photometricinterp(photometricinterp),
+    tilewidth(tilewidth),
+    tileheight(tileheight),
+    optimal(optimal),
+    ordered(ordered)
+  {
+    std::ostringstream f;
+    f << "data-layout-" << pixeltype << '-'
+      << (planarconfig == ome::bioformats::tiff::CONTIG ? "chunky" : "planar") << '-'
+      << "pi" << photometricinterp << '-'
+      << (tiletype == ome::bioformats::tiff::TILE ? "tile" : "strip") << '-';
+    if (tiletype == ome::bioformats::tiff::TILE)
+      f << tilewidth << 'x' << tileheight;
+    else
+      f << tileheight;
+    f << '-' << (ordered ? "ordered" : "random")
+      << '-' << (optimal ? "optimal" : "suboptimal")
+      << ".tiff";
 
-  ASSERT_NO_THROW(wifd->setImageWidth(params.imagewidth));
-  ASSERT_NO_THROW(wifd->setImageHeight(params.imagelength));
-  ASSERT_NO_THROW(wifd->setTileType(params.tile ? ome::bioformats::tiff::TILE : ome::bioformats::tiff::STRIP));
-  ASSERT_NO_THROW(wifd->setTileWidth(params.tilewidth));
-  ASSERT_NO_THROW(wifd->setTileHeight(params.tilelength));
-  ASSERT_NO_THROW(wifd->setPixelType(ome::xml::model::enums::PixelType::UINT8));
-  ASSERT_NO_THROW(wifd->setSamplesPerPixel(3));
-  ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.imageplanar ? ome::bioformats::tiff::SEPARATE : ome::bioformats::tiff::CONTIG));
+    path dir(PROJECT_BINARY_DIR "/cpp/test/ome-bioformats/data");
+    if (!exists(dir) && !is_directory(dir) && !create_directories(dir))
+      throw std::runtime_error("Image directory unavailable and could not be created");
+    dir /= f.str();
+    filename = dir.string();
+  }
+};
 
-  wifd->writeImage(params.imageplanar ? getPNGDataPlanar() : getPNGDataChunky());
-  wtiff->writeCurrentDirectory();
-  wtiff->close();
-
-  read_test(params.wfile, getPNGDataChunky());
-#endif // PNG_FOUND
+template<class charT, class traits>
+inline std::basic_ostream<charT,traits>&
+operator<< (std::basic_ostream<charT,traits>& os,
+            const PixelTestParameters& params)
+{
+  return os << params.filename;
 }
 
-TEST_P(TIFFTileTest, PlaneWriteAlignedTileOrdered)
+class PixelTest : public ::testing::TestWithParam<PixelTestParameters>
+{
+};
+
+TEST_P(PixelTest, WriteTIFF)
 {
 #ifdef PNG_FOUND
-  const TileTestParameters& params = GetParam();
-  TileInfo info = ifd->getTileInfo();
+  const PixelTestParameters& params = GetParam();
+  const VariantPixelBuffer& pixels(TIFFTileTest::getPNGData(params.pixeltype, params.planarconfig));
+  const VariantPixelBuffer::size_type *shape = pixels.shape();
 
-  std::shared_ptr<TIFF> wtiff = TIFF::open(params.wfile, "w");
-  std::shared_ptr<IFD> wifd = wtiff->getCurrentDirectory();
+  dimension_size_type exp_size = (params.tilewidth * params.tileheight *
+                                  ::ome::bioformats::bytesPerPixel(params.pixeltype) *
+                                  (params.planarconfig == ::ome::bioformats::tiff::CONTIG ? shape[ome::bioformats::DIM_SUBCHANNEL] : 1));
 
-  ASSERT_NO_THROW(wifd->setImageWidth(params.imagewidth));
-  ASSERT_NO_THROW(wifd->setImageHeight(params.imagelength));
-  ASSERT_NO_THROW(wifd->setTileType(params.tile ? ome::bioformats::tiff::TILE : ome::bioformats::tiff::STRIP));
-  ASSERT_NO_THROW(wifd->setTileWidth(params.tilewidth));
-  ASSERT_NO_THROW(wifd->setTileHeight(params.tilelength));
-  ASSERT_NO_THROW(wifd->setPixelType(ome::xml::model::enums::PixelType::UINT8));
-  ASSERT_NO_THROW(wifd->setSamplesPerPixel(3));
-  ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.imageplanar ? ome::bioformats::tiff::SEPARATE : ome::bioformats::tiff::CONTIG));
+  // Write TIFF
+  {
+    std::shared_ptr<TIFF> wtiff = TIFF::open(params.filename, "w");
+    std::shared_ptr<IFD> wifd = wtiff->getCurrentDirectory();
 
-  PlaneRegion full(0, 0, ifd->getImageWidth(), ifd->getImageHeight());
-  std::vector<dimension_size_type> tiles = info.tileCoverage(full);
+    // Set IFD tags
+    ASSERT_NO_THROW(wifd->setImageWidth(shape[ome::bioformats::DIM_SPATIAL_X]));
+    ASSERT_NO_THROW(wifd->setImageHeight(shape[ome::bioformats::DIM_SPATIAL_Y]));
+    ASSERT_NO_THROW(wifd->setTileType(params.tiletype));
+    ASSERT_NO_THROW(wifd->setTileWidth(params.tilewidth));
+    ASSERT_NO_THROW(wifd->setTileHeight(params.tileheight));
+    ASSERT_NO_THROW(wifd->setPixelType(params.pixeltype));
+    ASSERT_NO_THROW(wifd->setSamplesPerPixel(shape[ome::bioformats::DIM_SUBCHANNEL]));
+    ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.planarconfig));
+    ASSERT_NO_THROW(wifd->getField(::ome::bioformats::tiff::PHOTOMETRIC).set(params.photometricinterp));
 
-  VariantPixelBuffer pb(getPNGDataChunky());
+    // Verify IFD tags
+    EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_X], wifd->getImageWidth());
+    EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_Y], wifd->getImageHeight());
+    EXPECT_EQ(params.tiletype, wifd->getTileType());
+    EXPECT_EQ(params.tilewidth, wifd->getTileWidth());
+    EXPECT_EQ(params.tileheight, wifd->getTileHeight());
+    EXPECT_EQ(params.pixeltype, wifd->getPixelType());
+    EXPECT_EQ(shape[ome::bioformats::DIM_SUBCHANNEL], wifd->getSamplesPerPixel());
+    EXPECT_EQ(params.planarconfig, wifd->getPlanarConfiguration());
 
-  for (std::vector<dimension_size_type>::const_iterator i = tiles.begin();
-       i != tiles.end();
-       ++i)
-    {
-      PlaneRegion r = info.tileRegion(*i, full);
-
-      std::array<VariantPixelBuffer::size_type, 9> shape;
-      shape[::ome::bioformats::DIM_SPATIAL_X] = r.w;
-      shape[::ome::bioformats::DIM_SPATIAL_Y] = r.h;
-      shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;
-      shape[::ome::bioformats::DIM_SPATIAL_Z] = shape[::ome::bioformats::DIM_TEMPORAL_T] = shape[::ome::bioformats::DIM_CHANNEL] =
-        shape[::ome::bioformats::DIM_MODULO_Z] = shape[::ome::bioformats::DIM_MODULO_T] = shape[::ome::bioformats::DIM_MODULO_C] = 1;
-
-      ::ome::bioformats::PixelBufferBase::storage_order_type order
-          (::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC,
-                                                                  !params.imageplanar));
-
-      VariantPixelBuffer vb;
-      vb.setBuffer(shape, ::ome::xml::model::enums::PixelType::UINT8, order);
-
-      for (dimension_size_type x = 0; x < r.w; ++x)
-        for (dimension_size_type y = 0; y < r.h; ++y)
-          for (dimension_size_type s = 0; s < 3; ++s)
-            {
-              VariantPixelBuffer::indices_type srcidx;
-              srcidx[::ome::bioformats::DIM_SPATIAL_X] = r.x + x;
-              srcidx[::ome::bioformats::DIM_SPATIAL_Y] = r.y + y;
-              srcidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              srcidx[2] = srcidx[3] = srcidx[4] = srcidx[6] = srcidx[7] = srcidx[8] = 0;
-
-              VariantPixelBuffer::indices_type destidx;
-              destidx[::ome::bioformats::DIM_SPATIAL_X] = x;
-              destidx[::ome::bioformats::DIM_SPATIAL_Y] = y;
-              destidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              destidx[2] = destidx[3] = destidx[4] = destidx[6] = destidx[7] = destidx[8] = 0;
-
-              vb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(destidx) = pb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(srcidx);
-            }
-
-      wifd->writeImage(vb, r.x, r.y, r.w, r.h);
-    }
-
-  wtiff->writeCurrentDirectory();
-  wtiff->close();
-
-  read_test(params.wfile, getPNGDataChunky());
-#endif // PNG_FOUND
-}
-
-TEST_P(TIFFTileTest, PlaneWriteUnalignedTileOrdered)
-{
-#ifdef PNG_FOUND
-  const TileTestParameters& params = GetParam();
-  TileInfo info = ifd->getTileInfo();
-
-  std::shared_ptr<TIFF> wtiff = TIFF::open(params.wfile, "w");
-  std::shared_ptr<IFD> wifd = wtiff->getCurrentDirectory();
-
-  ASSERT_NO_THROW(wifd->setImageWidth(params.imagewidth));
-  ASSERT_NO_THROW(wifd->setImageHeight(params.imagelength));
-  ASSERT_NO_THROW(wifd->setTileType(params.tile ? ome::bioformats::tiff::TILE : ome::bioformats::tiff::STRIP));
-  ASSERT_NO_THROW(wifd->setTileWidth(params.tilewidth));
-  ASSERT_NO_THROW(wifd->setTileHeight(params.tilelength));
-  ASSERT_NO_THROW(wifd->setPixelType(ome::xml::model::enums::PixelType::UINT8));
-  ASSERT_NO_THROW(wifd->setSamplesPerPixel(3));
-  ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.imageplanar ? ome::bioformats::tiff::SEPARATE : ome::bioformats::tiff::CONTIG));
-
-  PlaneRegion full(0, 0, ifd->getImageWidth(), ifd->getImageHeight());
-
-  std::vector<PlaneRegion> tiles;
-  for (dimension_size_type x = 0; x < full.w; x+= 5)
-    for (dimension_size_type y = 0; y < full.h; y+= 7)
+    // Make sure our expectations about buffer size are correct
+    if (params.pixeltype == PT::BIT)
       {
-        PlaneRegion r = PlaneRegion(x, y, 5, 7) & full;
-        tiles.push_back(r);
+        dimension_size_type size;
+        size = exp_size / 8;
+        if (exp_size % 8)
+          ++size;
+        exp_size = size;
+      }
+    ASSERT_EQ(exp_size,
+              wifd->getTileInfo().bufferSize());
+
+    PlaneRegion full(0, 0, wifd->getImageWidth(), wifd->getImageHeight());
+
+    dimension_size_type wtilewidth = params.tilewidth;
+    dimension_size_type wtileheight = params.tileheight;
+    if (!params.optimal)
+      {
+        wtilewidth = 5;
+        wtileheight = 7;
       }
 
-  VariantPixelBuffer pb(getPNGDataChunky());
+    std::vector<PlaneRegion> tiles;
+    for (dimension_size_type x = 0; x < full.w; x+= wtilewidth)
+      for (dimension_size_type y = 0; y < full.h; y+= wtileheight)
+        {
+          PlaneRegion r = PlaneRegion(x, y, wtilewidth, wtileheight) & full;
+          tiles.push_back(r);
+        }
 
-  for (std::vector<PlaneRegion>::const_iterator i = tiles.begin();
-       i != tiles.end();
-       ++i)
-    {
-      const PlaneRegion& r = *i;
+    if (!params.ordered)
+      std::random_shuffle(tiles.begin(), tiles.end());
 
-      std::array<VariantPixelBuffer::size_type, 9> shape;
-      shape[::ome::bioformats::DIM_SPATIAL_X] = r.w;
-      shape[::ome::bioformats::DIM_SPATIAL_Y] = r.h;
-      shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;
-      shape[::ome::bioformats::DIM_SPATIAL_Z] = shape[::ome::bioformats::DIM_TEMPORAL_T] = shape[::ome::bioformats::DIM_CHANNEL] =
-        shape[::ome::bioformats::DIM_MODULO_Z] = shape[::ome::bioformats::DIM_MODULO_T] = shape[::ome::bioformats::DIM_MODULO_C] = 1;
-
-      ::ome::bioformats::PixelBufferBase::storage_order_type order
-          (::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC,
-                                                                  !params.imageplanar));
-
-      VariantPixelBuffer vb;
-      vb.setBuffer(shape, ::ome::xml::model::enums::PixelType::UINT8, order);
-
-      for (dimension_size_type x = 0; x < r.w; ++x)
-        for (dimension_size_type y = 0; y < r.h; ++y)
-          for (dimension_size_type s = 0; s < 3; ++s)
-            {
-              VariantPixelBuffer::indices_type srcidx;
-              srcidx[::ome::bioformats::DIM_SPATIAL_X] = r.x + x;
-              srcidx[::ome::bioformats::DIM_SPATIAL_Y] = r.y + y;
-              srcidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              srcidx[2] = srcidx[3] = srcidx[4] = srcidx[6] = srcidx[7] = srcidx[8] = 0;
-
-              VariantPixelBuffer::indices_type destidx;
-              destidx[::ome::bioformats::DIM_SPATIAL_X] = x;
-              destidx[::ome::bioformats::DIM_SPATIAL_Y] = y;
-              destidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              destidx[2] = destidx[3] = destidx[4] = destidx[6] = destidx[7] = destidx[8] = 0;
-
-              vb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(destidx) = pb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(srcidx);
-            }
-
-      wifd->writeImage(vb, r.x, r.y, r.w, r.h);
-    }
-
-  wtiff->writeCurrentDirectory();
-  wtiff->close();
-
-  read_test(params.wfile, getPNGDataChunky());
-#endif // PNG_FOUND
-}
-
-TEST_P(TIFFTileTest, PlaneWriteAlignedTileRandom)
-{
-#ifdef PNG_FOUND
-  const TileTestParameters& params = GetParam();
-  TileInfo info = ifd->getTileInfo();
-
-  std::shared_ptr<TIFF> wtiff = TIFF::open(params.wfile, "w");
-  std::shared_ptr<IFD> wifd = wtiff->getCurrentDirectory();
-
-  ASSERT_NO_THROW(wifd->setImageWidth(params.imagewidth));
-  ASSERT_NO_THROW(wifd->setImageHeight(params.imagelength));
-  ASSERT_NO_THROW(wifd->setTileType(params.tile ? ome::bioformats::tiff::TILE : ome::bioformats::tiff::STRIP));
-  ASSERT_NO_THROW(wifd->setTileWidth(params.tilewidth));
-  ASSERT_NO_THROW(wifd->setTileHeight(params.tilelength));
-  ASSERT_NO_THROW(wifd->setPixelType(ome::xml::model::enums::PixelType::UINT8));
-  ASSERT_NO_THROW(wifd->setSamplesPerPixel(3));
-  ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.imageplanar ? ome::bioformats::tiff::SEPARATE : ome::bioformats::tiff::CONTIG));
-
-  PlaneRegion full(0, 0, ifd->getImageWidth(), ifd->getImageHeight());
-  std::vector<dimension_size_type> tiles = info.tileCoverage(full);
-
-  VariantPixelBuffer pb(getPNGDataChunky());
-
-  std::random_shuffle(tiles.begin(), tiles.end());
-  for (std::vector<dimension_size_type>::const_iterator i = tiles.begin();
-       i != tiles.end();
-       ++i)
-    {
-      PlaneRegion r = info.tileRegion(*i, full);
-
-      std::array<VariantPixelBuffer::size_type, 9> shape;
-      shape[::ome::bioformats::DIM_SPATIAL_X] = r.w;
-      shape[::ome::bioformats::DIM_SPATIAL_Y] = r.h;
-      shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;
-      shape[::ome::bioformats::DIM_SPATIAL_Z] = shape[::ome::bioformats::DIM_TEMPORAL_T] = shape[::ome::bioformats::DIM_CHANNEL] =
-        shape[::ome::bioformats::DIM_MODULO_Z] = shape[::ome::bioformats::DIM_MODULO_T] = shape[::ome::bioformats::DIM_MODULO_C] = 1;
-
-      ::ome::bioformats::PixelBufferBase::storage_order_type order
-          (::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC,
-                                                                  !params.imageplanar));
-
-      VariantPixelBuffer vb;
-      vb.setBuffer(shape, ::ome::xml::model::enums::PixelType::UINT8, order);
-
-      for (dimension_size_type x = 0; x < r.w; ++x)
-        for (dimension_size_type y = 0; y < r.h; ++y)
-          for (dimension_size_type s = 0; s < 3; ++s)
-            {
-              VariantPixelBuffer::indices_type srcidx;
-              srcidx[::ome::bioformats::DIM_SPATIAL_X] = r.x + x;
-              srcidx[::ome::bioformats::DIM_SPATIAL_Y] = r.y + y;
-              srcidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              srcidx[2] = srcidx[3] = srcidx[4] = srcidx[6] = srcidx[7] = srcidx[8] = 0;
-
-              VariantPixelBuffer::indices_type destidx;
-              destidx[::ome::bioformats::DIM_SPATIAL_X] = x;
-              destidx[::ome::bioformats::DIM_SPATIAL_Y] = y;
-              destidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              destidx[2] = destidx[3] = destidx[4] = destidx[6] = destidx[7] = destidx[8] = 0;
-
-              vb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(destidx) = pb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(srcidx);
-            }
-
-      wifd->writeImage(vb, r.x, r.y, r.w, r.h);
-    }
-
-  wtiff->writeCurrentDirectory();
-  wtiff->close();
-#endif // PNG_FOUND
-}
-
-TEST_P(TIFFTileTest, PlaneWriteUnalignedTileRandom)
-{
-#ifdef PNG_FOUND
-  const TileTestParameters& params = GetParam();
-  TileInfo info = ifd->getTileInfo();
-
-  std::shared_ptr<TIFF> wtiff = TIFF::open(params.wfile, "w");
-  std::shared_ptr<IFD> wifd = wtiff->getCurrentDirectory();
-
-  ASSERT_NO_THROW(wifd->setImageWidth(params.imagewidth));
-  ASSERT_NO_THROW(wifd->setImageHeight(params.imagelength));
-  ASSERT_NO_THROW(wifd->setTileType(params.tile ? ome::bioformats::tiff::TILE : ome::bioformats::tiff::STRIP));
-  ASSERT_NO_THROW(wifd->setTileWidth(params.tilewidth));
-  ASSERT_NO_THROW(wifd->setTileHeight(params.tilelength));
-  ASSERT_NO_THROW(wifd->setPixelType(ome::xml::model::enums::PixelType::UINT8));
-  ASSERT_NO_THROW(wifd->setSamplesPerPixel(3));
-  ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.imageplanar ? ome::bioformats::tiff::SEPARATE : ome::bioformats::tiff::CONTIG));
-
-  PlaneRegion full(0, 0, ifd->getImageWidth(), ifd->getImageHeight());
-
-  std::vector<PlaneRegion> tiles;
-  for (dimension_size_type x = 0; x < full.w; x+= 5)
-    for (dimension_size_type y = 0; y < full.h; y+= 7)
+    for (std::vector<PlaneRegion>::const_iterator i = tiles.begin();
+         i != tiles.end();
+         ++i)
       {
-        PlaneRegion r = PlaneRegion(x, y, 5, 7) & full;
-        tiles.push_back(r);
+        const PlaneRegion& r = *i;
+
+        std::array<VariantPixelBuffer::size_type, 9> shape;
+        shape[::ome::bioformats::DIM_SPATIAL_X] = r.w;
+        shape[::ome::bioformats::DIM_SPATIAL_Y] = r.h;
+        shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;
+        shape[::ome::bioformats::DIM_SPATIAL_Z] = shape[::ome::bioformats::DIM_TEMPORAL_T] = shape[::ome::bioformats::DIM_CHANNEL] =
+          shape[::ome::bioformats::DIM_MODULO_Z] = shape[::ome::bioformats::DIM_MODULO_T] = shape[::ome::bioformats::DIM_MODULO_C] = 1;
+
+        ::ome::bioformats::PixelBufferBase::storage_order_type order
+            (::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC,
+                                                                    params.planarconfig == ::ome::bioformats::tiff::CONTIG));
+
+        VariantPixelBuffer vb;
+        vb.setBuffer(shape, params.pixeltype, order);
+
+        // Temporary subrange to write into tile
+        PixelSubrangeVisitor sv(r.x, r.y);
+        boost::apply_visitor(sv, pixels.vbuffer(), vb.vbuffer());
+
+        wifd->writeImage(vb, r.x, r.y, r.w, r.h);
       }
 
-  VariantPixelBuffer pb(getPNGDataChunky());
+    wtiff->writeCurrentDirectory();
+    wtiff->close();
+  }
 
-  std::random_shuffle(tiles.begin(), tiles.end());
-  for (std::vector<PlaneRegion>::const_iterator i = tiles.begin();
-       i != tiles.end();
-       ++i)
-    {
-      const PlaneRegion& r = *i;
+  // Read and validate TIFF
+  {
+    // Note "c" to disable automatic strip chopping so we can verify
+    // the exact tag content of ROWSPERSTRIP.
+    std::shared_ptr<TIFF> tiff(TIFF::open(params.filename, "rc"));
+    std::shared_ptr<IFD> ifd(tiff->getDirectoryByIndex(0));
 
-      std::array<VariantPixelBuffer::size_type, 9> shape;
-      shape[::ome::bioformats::DIM_SPATIAL_X] = r.w;
-      shape[::ome::bioformats::DIM_SPATIAL_Y] = r.h;
-      shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;
-      shape[::ome::bioformats::DIM_SPATIAL_Z] = shape[::ome::bioformats::DIM_TEMPORAL_T] = shape[::ome::bioformats::DIM_CHANNEL] =
-        shape[::ome::bioformats::DIM_MODULO_Z] = shape[::ome::bioformats::DIM_MODULO_T] = shape[::ome::bioformats::DIM_MODULO_C] = 1;
+    EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_X], ifd->getImageWidth());
+    EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_Y], ifd->getImageHeight());
+    EXPECT_EQ(params.tiletype, ifd->getTileType());
+    EXPECT_EQ(params.tilewidth, ifd->getTileWidth());
+    EXPECT_EQ(params.tileheight, ifd->getTileHeight());
+    EXPECT_EQ(params.pixeltype, ifd->getPixelType());
+    EXPECT_EQ(shape[ome::bioformats::DIM_SUBCHANNEL], ifd->getSamplesPerPixel());
+    EXPECT_EQ(params.planarconfig, ifd->getPlanarConfiguration());
+    EXPECT_EQ(params.photometricinterp, static_cast<::ome::bioformats::tiff::PhotometricInterpretation>(ifd->getField(::ome::bioformats::tiff::PHOTOMETRIC)));
 
-      ::ome::bioformats::PixelBufferBase::storage_order_type order
-          (::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC,
-                                                                  !params.imageplanar));
+    VariantPixelBuffer vb;
+    ifd->readImage(vb);
 
-      VariantPixelBuffer vb;
-      vb.setBuffer(shape, ::ome::xml::model::enums::PixelType::UINT8, order);
-
-      for (dimension_size_type x = 0; x < r.w; ++x)
-        for (dimension_size_type y = 0; y < r.h; ++y)
-          for (dimension_size_type s = 0; s < 3; ++s)
-            {
-              VariantPixelBuffer::indices_type srcidx;
-              srcidx[::ome::bioformats::DIM_SPATIAL_X] = r.x + x;
-              srcidx[::ome::bioformats::DIM_SPATIAL_Y] = r.y + y;
-              srcidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              srcidx[2] = srcidx[3] = srcidx[4] = srcidx[6] = srcidx[7] = srcidx[8] = 0;
-
-              VariantPixelBuffer::indices_type destidx;
-              destidx[::ome::bioformats::DIM_SPATIAL_X] = x;
-              destidx[::ome::bioformats::DIM_SPATIAL_Y] = y;
-              destidx[::ome::bioformats::DIM_SUBCHANNEL] = s;
-              destidx[2] = destidx[3] = destidx[4] = destidx[6] = destidx[7] = destidx[8] = 0;
-
-              vb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(destidx) = pb.at< ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(srcidx);
-            }
-
-      wifd->writeImage(vb, r.x, r.y, r.w, r.h);
-    }
-
-  wtiff->writeCurrentDirectory();
-  wtiff->close();
-
-  read_test(params.wfile, getPNGDataChunky());
+    if(pixels != vb)
+      {
+        std::cout << "Observed\n";
+        dump_image_representation(vb, std::cout);
+        std::cout << "Expected\n";
+        dump_image_representation(pixels, std::cout);
+      }
+    EXPECT_TRUE(pixels == vb);
 #endif // PNG_FOUND
+  }
+
 }
+
+namespace
+{
+
+  PT
+  ptkey(const std::pair<PT::enum_value, std::string>& mapval)
+  {
+    return PT(mapval.first);
+  }
+
+  std::vector<PixelTestParameters>
+  pixel_tests()
+  {
+    std::vector<PixelTestParameters> ret;
+
+    std::vector<dimension_size_type> tilesizes;
+    tilesizes.push_back(16);
+    tilesizes.push_back(32);
+    tilesizes.push_back(48);
+    tilesizes.push_back(64);
+
+    std::vector<dimension_size_type> stripsizes;
+    stripsizes.push_back(1);
+    stripsizes.push_back(2);
+    stripsizes.push_back(5);
+    stripsizes.push_back(14);
+    stripsizes.push_back(32);
+    stripsizes.push_back(60);
+    stripsizes.push_back(64);
+
+    std::vector<ome::bioformats::tiff::TileType> tiletypes;
+    tiletypes.push_back(ome::bioformats::tiff::TILE);
+    tiletypes.push_back(ome::bioformats::tiff::STRIP);
+
+    std::vector<ome::bioformats::tiff::PlanarConfiguration> planarconfigs;
+    planarconfigs.push_back(ome::bioformats::tiff::CONTIG);
+    planarconfigs.push_back(ome::bioformats::tiff::SEPARATE);
+
+    std::vector<ome::bioformats::tiff::PhotometricInterpretation> photometricinterps;
+    photometricinterps.push_back(ome::bioformats::tiff::MIN_IS_BLACK);
+    photometricinterps.push_back(ome::bioformats::tiff::RGB);
+
+    const PT::value_map_type& pixeltypemap = PT::values();
+    std::vector<PT> pixeltypes;
+    std::transform(pixeltypemap.begin(), pixeltypemap.end(), std::back_inserter(pixeltypes), ptkey);
+
+    for (std::vector<PT>::const_iterator pt = pixeltypes.begin(); pt != pixeltypes.end(); ++pt)
+      for (std::vector<ome::bioformats::tiff::PlanarConfiguration>::const_iterator pc = planarconfigs.begin(); pc != planarconfigs.end(); ++pc)
+        for (std::vector<ome::bioformats::tiff::PhotometricInterpretation>::const_iterator pi = photometricinterps.begin(); pi != photometricinterps.end(); ++pi)
+          {
+            for(std::vector<dimension_size_type>::const_iterator wid = tilesizes.begin(); wid != tilesizes.end(); ++wid)
+              for(std::vector<dimension_size_type>::const_iterator ht = tilesizes.begin(); ht != tilesizes.end(); ++ht)
+                {
+                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, true, true));
+#ifdef EXTENDED_TESTS
+                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, true, false));
+                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, false, true));
+                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, false, false));
+#endif
+                }
+            for(std::vector<dimension_size_type>::const_iterator rows = stripsizes.begin(); rows != stripsizes.end(); ++rows)
+              {
+                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, true, true));
+#ifdef EXTENDED_TESTS
+                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, true, false));
+                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, false, true));
+                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, false, false));
+#endif
+              }
+        }
+
+    return ret;
+  }
+
+}
+
+std::vector<PixelTestParameters> pixel_params(pixel_tests());
+
+
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
 // this is solely to work around a missing prototype in gtest.
@@ -1688,3 +1732,4 @@ TEST_P(TIFFTileTest, PlaneWriteUnalignedTileRandom)
 #endif
 
 INSTANTIATE_TEST_CASE_P(TileVariants, TIFFTileTest, ::testing::ValuesIn(tile_params));
+INSTANTIATE_TEST_CASE_P(PixelVariants, PixelTest, ::testing::ValuesIn(pixel_params));
