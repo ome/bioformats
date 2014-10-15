@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -215,9 +216,11 @@ public class ColumbusReader extends FormatReader {
     MeasurementHandler handler = new MeasurementHandler();
     XMLTools.parseXML(xmlData, handler);
 
-    for (String file : metadataFiles) {
-      if (checkSuffix(file, "xml")) {
-        parseImageXML(new Location(parent, file).getAbsolutePath());
+    for (int i=0; i<metadataFiles.size(); i++) {
+      String path = new Location(parent + File.separator + metadataFiles.get(i)).getAbsolutePath();
+      metadataFiles.set(i, path);
+      if (checkSuffix(path, "xml")) {
+        parseImageXML(path);
       }
     }
 
@@ -497,6 +500,8 @@ public class ColumbusReader extends FormatReader {
     private Integer plateRows;
     private Integer plateColumns;
 
+    private StringBuffer currentValue;
+
     // -- MeasurementHandler API methods --
 
     public String getScreenName() {
@@ -531,6 +536,30 @@ public class ColumbusReader extends FormatReader {
 
     public void characters(char[] ch, int start, int length) {
       String value = new String(ch, start, length);
+      currentValue.append(value);
+    }
+
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      currentName = qName;
+
+      for (int i=0; i<attributes.getLength(); i++) {
+        String name = attributes.getQName(i);
+        String value = attributes.getValue(i);
+        if (currentName.equals("Measurement") && name.equals("MeasurementID")) {
+          measurementID = value;
+        }
+      }
+      currentValue = new StringBuffer();
+    }
+
+    public void endElement(String uri, String localName, String qName) {
+      if (currentName == null) {
+        return;
+      }
+
+      String value = currentValue.toString();
       addGlobalMeta(currentName, value);
 
       if (currentName.equals("ScreenName")) {
@@ -554,23 +583,8 @@ public class ColumbusReader extends FormatReader {
       else if (currentName.equals("PlateColumns")) {
         plateColumns = new Integer(value);
       }
-    }
 
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      currentName = qName;
-
-      for (int i=0; i<attributes.getLength(); i++) {
-        String name = attributes.getQName(i);
-        String value = attributes.getValue(i);
-        if (currentName.equals("Measurement") && name.equals("MeasurementID")) {
-          measurementID = value;
-        }
-      }
-    }
-
-    public void endElement(String uri, String localName, String qName) {
+      currentName = null;
     }
 
   }
