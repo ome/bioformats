@@ -3,7 +3,9 @@ function I = bfGetPlane(r, iPlane, varargin)
 % 
 %   I = bfGetPlane(r, iPlane) returns a specified plane from the input
 %   format reader. The index specifying the plane to retrieve should be
-%   contained between 1 and the number of planes for the series.
+%   contained between 1 and the number of planes for the series. Given a
+%   set of (z, c, t) plane coordinates, the plane index (0-based) can be
+%   retrieved using r.getIndex(z, c, t).
 %
 %   I = bfGetPlane(r, iPlane, x, y, width, height) only returns the tile
 %   which origin is specified by (x, y) and dimensions are specified by
@@ -13,6 +15,7 @@ function I = bfGetPlane(r, iPlane, varargin)
 %
 %    I = bfGetPlane(r, 1) % First plane of the series
 %    I = bfGetPlane(r, r.getImageCount()) % Last plane of the series
+%    I = bfGetPlane(r, r.getIndex(0, 0, 0) + 1) % First plane of the series
 %    I = bfGetPlane(r, 1, 1, 1, 20, 20) % 20x20 tile originated at (0, 0)
 %
 % See also: BFGETREADER
