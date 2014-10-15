@@ -1626,7 +1626,7 @@ TEST_P(PixelTest, WriteTIFF)
     EXPECT_EQ(params.pixeltype, ifd->getPixelType());
     EXPECT_EQ(shape[ome::bioformats::DIM_SUBCHANNEL], ifd->getSamplesPerPixel());
     EXPECT_EQ(params.planarconfig, ifd->getPlanarConfiguration());
-    EXPECT_EQ(params.photometricinterp, static_cast<::ome::bioformats::tiff::PhotometricInterpretation>(ifd->getField(::ome::bioformats::tiff::PHOTOMETRIC)));
+    EXPECT_EQ(params.photometricinterp, static_cast< ::ome::bioformats::tiff::PhotometricInterpretation>(ifd->getField(::ome::bioformats::tiff::PHOTOMETRIC)));
 
     VariantPixelBuffer vb;
     ifd->readImage(vb);
