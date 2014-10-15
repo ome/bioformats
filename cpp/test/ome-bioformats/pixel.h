@@ -146,14 +146,18 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
     const src_type *src_buf = (*src)->data();
     T *dest_buf = lhs->data();
 
+    float oldmin = static_cast<float>(std::numeric_limits<src_type>::min());
+    float oldmax = static_cast<float>(std::numeric_limits<src_type>::max());
+    float newmin = static_cast<float>(std::numeric_limits<T>::min());
+    float newmax = static_cast<float>(std::numeric_limits<T>::max());
+
     for (::ome::bioformats::VariantPixelBuffer::size_type i = 0;
          i != (*src)->num_elements();
          ++i)
       {
-        dest_buf[i] = (static_cast<T>((static_cast<float>(src_buf[i] -
-                                                          std::numeric_limits<src_type>::min()) /
-                                       static_cast<float>(std::numeric_limits<src_type>::max())) *
-                                      std::numeric_limits<T>::max()));
+
+        dest_buf[i] = static_cast<T>((static_cast<float>(src_buf[i] - oldmin) *
+                                      ((newmax - newmin) / (oldmax - oldmin))) + newmin);
       }
   }
 
@@ -168,12 +172,17 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
     const src_type *src_buf = (*src)->data();
     T *dest_buf = lhs->data();
 
+    float oldmin = static_cast<float>(std::numeric_limits<src_type>::min());
+    float oldmax = static_cast<float>(std::numeric_limits<src_type>::max());
+    float newmin = 0.0f;
+    float newmax = 1.0f;
+
     for (::ome::bioformats::VariantPixelBuffer::size_type i = 0;
          i != (*src)->num_elements();
          ++i)
       {
-        dest_buf[i] = (static_cast<T>(src_buf[i] - std::numeric_limits<src_type>::min()) /
-                       static_cast<T>(std::numeric_limits<src_type>::max()));
+        dest_buf[i] = static_cast<T>((static_cast<float>(src_buf[i] - oldmin) *
+                                      ((newmax - newmin) / (oldmax - oldmin))) + newmin);
       }
   }
 
@@ -188,12 +197,18 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
     const src_type *src_buf = (*src)->data();
     T *dest_buf = lhs->data();
 
+    float oldmin = static_cast<float>(std::numeric_limits<src_type>::min());
+    float oldmax = static_cast<float>(std::numeric_limits<src_type>::max());
+    float newmin = 0.0f;
+    float newmax = 1.0f;
+
     for (::ome::bioformats::VariantPixelBuffer::size_type i = 0;
          i != (*src)->num_elements();
          ++i)
       {
-        dest_buf[i] = T(static_cast<typename T::value_type>(src_buf[i] - std::numeric_limits<src_type>::min()) /
-                        static_cast<typename T::value_type>(std::numeric_limits<src_type>::max()), 0.0f);
+        dest_buf[i] = T((static_cast<typename T::value_type>((src_buf[i] - oldmin) *
+                                                             ((newmax - newmin) / (oldmax - oldmin))) + newmin),
+                        0.0f);
       }
   }
 
