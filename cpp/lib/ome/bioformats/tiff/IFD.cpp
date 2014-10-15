@@ -367,7 +367,7 @@ namespace
               int byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
               if (byteswritten < 0)
                 sentry.error("Failed to write encoded tile");
-              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
+              else if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
                 sentry.error("Failed to write encoded tile fully");
             }
           else
@@ -375,7 +375,7 @@ namespace
               int byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
               if (byteswritten < 0)
                 sentry.error("Failed to write encoded strip");
-              if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
+              else if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
                 sentry.error("Failed to write encoded strip fully");
             }
           tilecache.erase(tile);
