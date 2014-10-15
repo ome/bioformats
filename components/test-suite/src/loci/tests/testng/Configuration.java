@@ -269,9 +269,9 @@ public class Configuration {
     return null;
   }
 
-  public Double getTimeIncrement() {
+  public Time getTimeIncrement() {
     String physicalSize = currentTable.get(TIME_INCREMENT);
-    return physicalSize == null ? null : new Double(physicalSize);
+    return physicalSize == null ? null : new Time(new Double(physicalSize), UNITS.S);
   }
 
   public int getChannelCount() {
@@ -290,9 +290,9 @@ public class Configuration {
     return currentTable.containsKey(EXPOSURE_TIME + channel);
   }
 
-  public Double getExposureTime(int channel) {
+  public Time getExposureTime(int channel) {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
-    return exposure == null ? null : new Double(exposure);
+    return exposure == null ? null : new Time(new Double(exposure), UNITS.S);
   }
 
   public Double getEmissionWavelength(int channel) {

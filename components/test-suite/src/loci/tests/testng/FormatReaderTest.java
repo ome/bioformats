@@ -984,7 +984,7 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      Double expectedIncrement = config.getTimeIncrement();
+      Time expectedIncrement = config.getTimeIncrement();
       Time realIncrement = retrieve.getPixelsTimeIncrement(i);
 
       if (!(expectedIncrement == null && realIncrement == null) &&
@@ -1066,7 +1066,7 @@ public class FormatReaderTest {
 
       for (int c=0; c<config.getChannelCount(); c++) {
         if (config.hasExposureTime(c)) {
-          Double exposureTime = config.getExposureTime(c);
+          Time exposureTime = config.getExposureTime(c);
 
           for (int p=0; p<reader.getImageCount(); p++) {
             int[] zct = reader.getZCTCoords(p);
