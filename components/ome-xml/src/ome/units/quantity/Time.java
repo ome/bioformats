@@ -76,6 +76,31 @@ public class Time extends Quantity
     return null;
   }
 
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Time otherTime = (Time)other;
+    if (unit.equals(otherTime.unit))
+    {
+      // Times use same unit so compare value
+      return value.equals(otherTime.value);
+    } else {
+      if (unit.isConvertible(otherTime.unit))
+      {
+        // Times use different compitable units so convert value then compare
+        return (unit.convertValue(value, otherTime.unit)).equals(otherTime.value);
+      }
+    }
+    return false;
+  }
+
   public Unit<ome.units.quantity.Time> unit()
   {
     return UNITS.SECOND;
