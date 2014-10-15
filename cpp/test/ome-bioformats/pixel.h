@@ -119,12 +119,12 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
   typedef typename ::ome::bioformats::PixelProperties<P>::std_type src_type;
   typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
 
-  const std::shared_ptr<::ome::bioformats::PixelBuffer<src_type> > *src;
+  const std::shared_ptr< ::ome::bioformats::PixelBuffer<src_type> > *src;
   ::ome::bioformats::VariantPixelBuffer& dest;
 
   PixelTypeConversionVisitor(const ::ome::bioformats::VariantPixelBuffer& src,
                              ::ome::bioformats::VariantPixelBuffer& dest):
-    src(boost::get<std::shared_ptr<::ome::bioformats::PixelBuffer<src_type> > >(&src.vbuffer())),
+    src(boost::get<std::shared_ptr< ::ome::bioformats::PixelBuffer<src_type> > >(&src.vbuffer())),
     dest(dest)
   {
 
