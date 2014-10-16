@@ -770,8 +770,8 @@ public class FlexReader extends FormatReader {
     int field, boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
-    LOGGER.info("Parsing .flex file (well {}{})",
-      (char) (wellRow + 'A'), wellCol + 1);
+    LOGGER.info("Parsing .flex file (well {}{}, field {})",
+      (char) (wellRow + 'A'), wellCol + 1, field);
     FlexFile file = lookupFile(wellRow, wellCol, field);
     if (file == null) return;
 
@@ -815,7 +815,7 @@ public class FlexReader extends FormatReader {
     Vector<String> n = new Vector<String>();
     Vector<String> f = new Vector<String>();
     DefaultHandler handler =
-      new FlexHandler(n, f, store, firstFile, currentWell);
+      new FlexHandler(n, f, store, firstFile, currentWell, field);
     LOGGER.info("Parsing XML in .flex file");
 
     xml = xml.trim();
@@ -1381,6 +1381,7 @@ public class FlexReader extends FormatReader {
   public class FlexHandler extends BaseHandler {
     private Vector<String> names, factors;
     private MetadataStore store;
+    private int thisField = 0;
 
     private int nextLaser = -1;
     private int nextCamera = 0;
@@ -1409,7 +1410,7 @@ public class FlexReader extends FormatReader {
     private StringBuffer charData = new StringBuffer();
 
     public FlexHandler(Vector<String> names, Vector<String> factors,
-      MetadataStore store, boolean populateCore, int well)
+      MetadataStore store, boolean populateCore, int well, int thisField)
     {
       this.names = names;
       this.factors = factors;
@@ -1419,6 +1420,7 @@ public class FlexReader extends FormatReader {
       filterMap = new HashMap<String, String>();
       dichroicMap = new HashMap<String, String>();
       level = getMetadataOptions().getMetadataLevel();
+      this.thisField = thisField;
     }
 
     @Override
@@ -1659,7 +1661,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Field")) {
         parentQName = qName;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        if (fieldNo > fieldCount && fieldCount < firstWellPlanes()) {
+        if (fieldNo > fieldCount && fieldCount < (thisField * firstWellPlanes())) {
           fieldCount++;
         }
       }
