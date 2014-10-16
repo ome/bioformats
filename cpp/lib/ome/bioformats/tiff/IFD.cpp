@@ -188,7 +188,7 @@ namespace
     // Special case for BIT
     void
     transfer(std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
-             typename PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type& destidx,
+             PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type& destidx,
              const TileBuffer& tilebuf,
              PlaneRegion& rfull,
              PlaneRegion& rclip,
@@ -212,7 +212,7 @@ namespace
           destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
           destidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
 
-          typename T::value_type *dest = &buffer->at(destidx);
+          T::value_type *dest = &buffer->at(destidx);
           const uint8_t *src = reinterpret_cast<const uint8_t *>(tilebuf.data());
 
           for (dimension_size_type sampleoffset = 0;
@@ -465,13 +465,13 @@ namespace
           srcidx[ome::bioformats::DIM_SPATIAL_Y] = row - region.y;
 
           uint8_t *dest = reinterpret_cast<uint8_t *>(tilebuf.data());
-          const typename T::value_type *src = &buffer->at(srcidx);
+          const T::value_type *src = &buffer->at(srcidx);
 
           for (dimension_size_type sampleoffset = 0;
                sampleoffset < (rclip.w * copysamples);
                ++sampleoffset)
             {
-              const typename T::value_type *srcsample = src + sampleoffset;
+              const T::value_type *srcsample = src + sampleoffset;
               dimension_size_type dest_bit = yoffset + xoffset + sampleoffset;
               uint8_t *dest_byte = dest + (dest_bit / 8);
               const uint8_t bit_offset = 7 - (dest_bit % 8);
