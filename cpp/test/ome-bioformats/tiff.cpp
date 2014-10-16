@@ -234,7 +234,7 @@ namespace
     // pixel type.
     float
     dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& buf,
-         const typename ::ome::bioformats::PixelBuffer<bit_type>::indices_type& idx)
+         const ::ome::bioformats::PixelBuffer<bit_type>::indices_type& idx)
     {
       return buf->at(idx) ? 1.0f : 0.0f;
     }
