@@ -114,7 +114,6 @@ namespace ome
                 dimension_size_type t = mr->getPixelsSizeT(s);
                 dimension_size_type c = mr->getPixelsSizeC(s);
                 c /= mr->getChannelSamplesPerPixel(s, 0);
-                dimension_size_type planes = z * t * c;
               }
 
             currentId = id;
