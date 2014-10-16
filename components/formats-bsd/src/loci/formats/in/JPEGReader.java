@@ -137,10 +137,18 @@ public class JPEGReader extends DelegateReader {
       useLegacy = true;
       super.setId(id);
     }
-    currentId = id;
+    if (currentId.endsWith(".fixed")) {
+      currentId = currentId.substring(0, currentId.lastIndexOf("."));
+    }
   }
 
   // -- IFormatReader API methods --
+
+  /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return new String[] {currentId.replaceAll(".fixed", "")};
+  }
 
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {

@@ -93,6 +93,9 @@ public class ZipReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (Location.getMappedFile(entryName) == null) {
+      initFile(currentId);
+    }
     reader.setId(entryName);
     return reader.openBytes(no, buf, x, y, w, h);
   }

@@ -127,10 +127,13 @@ public class BrukerReader extends FormatReader {
     realDir = realDir.getParentFile();
     dir = realDir.getAbsolutePath();
     ArrayList<String> files = new ArrayList<String>();
+    files.add(new Location(getCurrentFile()).getAbsolutePath());
 
     for (String f : allFiles) {
       if (f.startsWith(dir) && (!f.endsWith("2dseq") || !noPixels)) {
-        files.add(f);
+        if (!files.contains(f)) {
+          files.add(f);
+        }
       }
     }
 

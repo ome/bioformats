@@ -106,7 +106,6 @@ public class GatanDM2Reader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    id = new Location(id).getAbsolutePath();
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.setEncoding("ISO-8859-1");

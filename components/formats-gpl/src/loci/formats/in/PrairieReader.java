@@ -25,9 +25,6 @@
 
 package loci.formats.in;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -676,8 +673,8 @@ public class PrairieReader extends FormatReader {
 
     // read entire XML document into a giant byte array
     final byte[] buf = new byte[(int) file.length()];
-    final DataInputStream is =
-      new DataInputStream(new FileInputStream(file.getAbsolutePath()));
+    final RandomAccessInputStream is =
+      new RandomAccessInputStream(file.getAbsolutePath());
     is.readFully(buf);
     is.close();
 
@@ -711,7 +708,7 @@ public class PrairieReader extends FormatReader {
 
   /** Gets the absolute path to the filename of the given {@link PFile}. */
   private String getPath(final PFile file) {
-    final File f = new File(xmlFile.getParent(), file.getFilename());
+    final Location f = new Location(xmlFile.getParent(), file.getFilename());
     return f.getAbsolutePath();
   }
 
@@ -739,13 +736,12 @@ public class PrairieReader extends FormatReader {
 
   /** Finds the first file with one of the given suffixes. */
   private Location find(final String[] suffix) {
-    final File file = new File(currentId).getAbsoluteFile();
-    final File parent = file.getParentFile();
-    final String[] listing = file.exists() ? parent.list() :
-      Location.getIdMap().keySet().toArray(new String[0]);
+    final Location file = new Location(currentId).getAbsoluteFile();
+    final Location parent = file.getParentFile();
+    final String[] listing = parent.list();
     for (final String name : listing) {
       if (checkSuffix(name, suffix)) {
-        return new Location(new File(parent, name));
+        return new Location(parent, name);
       }
     }
     return null;

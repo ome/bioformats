@@ -354,12 +354,6 @@ public class FilePatternReader extends FormatReader {
     return false;
   }
 
-  public int getRequiredDirectories(String[] files)
-    throws FormatException, IOException
-  {
-    return helper.getRequiredDirectories(files);
-  }
-
   public String getDatasetStructureDescription() {
     return helper.getDatasetStructureDescription();
   }

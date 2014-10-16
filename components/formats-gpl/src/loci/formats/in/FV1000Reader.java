@@ -298,7 +298,9 @@ public class FV1000Reader extends FormatReader {
         String f = file.toLowerCase();
         if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp"))
         {
-          files.add(file);
+          if (!files.contains(file)) {
+            files.add(file);
+          }
         }
       }
     }
@@ -400,7 +402,10 @@ public class FV1000Reader extends FormatReader {
     }
 
     String oifPath = new Location(oifName).getAbsoluteFile().getAbsolutePath();
-    String path = (isOIB || !oifPath.endsWith(oifName) || mappedOIF) ? "" :
+    if (mappedOIF) {
+      oifPath = oifName.substring(0, oifName.lastIndexOf(File.separator) + 1);
+    }
+    String path = isOIB ? "" :
       oifPath.substring(0, oifPath.lastIndexOf(File.separator) + 1);
 
     try {
@@ -431,17 +436,11 @@ public class FV1000Reader extends FormatReader {
       if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1 &&
         !isPreviewName(value))
       {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1).trim();
-        }
         filenames.put(new Integer(key.substring(11)), value);
       }
       else if (key.startsWith("RoiFileName") && key.indexOf("Thumb") == -1 &&
         !isPreviewName(value))
       {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1).trim();
-        }
         try {
           roiFilenames.put(new Integer(key.substring(11)), value);
         }
@@ -451,21 +450,12 @@ public class FV1000Reader extends FormatReader {
       else if (key.equals("PtyFileNameE")) ptyEnd = value;
       else if (key.equals("PtyFileNameT2")) ptyPattern = value;
       else if (key.indexOf("Thumb") != -1) {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1);
-        }
         if (thumbId == null) thumbId = value.trim();
       }
       else if (key.startsWith("LutFileName")) {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1);
-        }
         lutNames.add(path + value);
       }
       else if (isPreviewName(value)) {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1);
-        }
         previewNames.add(path + value.trim());
       }
     }
@@ -641,14 +631,15 @@ public class FV1000Reader extends FormatReader {
             String realOIFName = new Location(currentId).getName();
             String basePath = tiffFile.getParentFile().getParent();
             Location newFile = new Location(basePath, realOIFName + ".files");
-            if (newFile.exists()) {
-              String realDirectory = newFile.getName();
-              ptyFile = new Location(newFile, ptyFile.getName());
-              file = ptyFile.getAbsolutePath();
-              tiffPath = newFile.getAbsolutePath();
-            }
+            String realDirectory = newFile.getName();
+            ptyFile = new Location(newFile, ptyFile.getName());
+            file = ptyFile.getAbsolutePath();
+            tiffPath = newFile.getAbsolutePath();
           }
         }
+      }
+      else if (!isOIB) {
+        file = ptyFile.getAbsolutePath();
       }
 
       IniList pty = getIniFile(file);
@@ -768,7 +759,7 @@ public class FV1000Reader extends FormatReader {
       usedFiles.add(isOIB ? id : oifName);
       if (!isOIB) {
         Location dir = new Location(tiffPath);
-        if (!dir.exists()) {
+        if (!mappedOIF && !dir.exists()) {
           throw new FormatException(
             "Required directory " + tiffPath + " was not found.");
         }
@@ -1558,7 +1549,9 @@ public class FV1000Reader extends FormatReader {
       }
       return poi.getDocumentStream(realName);
     }
-    else return new RandomAccessInputStream(name);
+    else {
+      return new RandomAccessInputStream(name);
+    }
   }
 
   private RandomAccessInputStream getPlane(int seriesIndex, int planeIndex) {
