@@ -664,8 +664,21 @@ ${customAsXMLElementPropertyContent[prop.name]}
 			// MARKER [QQQ]
 {% end debug %}\
 			// Attribute property ${prop.name} with units companion prop.unitsCompanion.name
-			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.value().toString());
-//			${klass.name}_element.setAttribute("${prop.unitsCompanion.name}", ${prop.unitsCompanion.langType}.fromUnit(${prop.instanceVariableName}.unit()));
+			if (${prop.instanceVariableName}.value() != null)
+			{
+				${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.value().toString());
+			}
+			if (${prop.instanceVariableName}.unit() != null)
+			{
+				try
+				{
+					${prop.unitsCompanion.langType} enumUnits = ${prop.unitsCompanion.langType}.fromString(${prop.instanceVariableName}.unit().getSymbol());
+					${klass.name}_element.setAttribute("${prop.unitsCompanion.name}", enumUnits.toString());
+				} catch (EnumerationException e)
+				{
+					LOGGER.debug("Unable to create xml for ${klass.name}:${prop.unitsCompanion.name}: {}", e.toString());
+				}
+			}
 {% end when %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
 {% if debug %}\
