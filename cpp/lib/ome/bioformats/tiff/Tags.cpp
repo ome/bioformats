@@ -173,6 +173,11 @@ namespace ome
             ret = TIFFTAG_DATATYPE;
 #endif
             break;
+          case INDEXED:
+#ifdef TIFFTAG_INDEXED
+            ret = TIFFTAG_INDEXED;
+#endif
+            break;
           case INKSET:
 #ifdef TIFFTAG_INKSET
             ret = TIFFTAG_INKSET;

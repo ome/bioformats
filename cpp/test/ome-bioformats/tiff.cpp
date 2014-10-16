@@ -649,6 +649,7 @@ TEST(TIFFTest, FieldWrapUInt16)
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::COMPRESSION).get(value));
   ASSERT_EQ(1, value);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::DATATYPE).get(value), ome::bioformats::tiff::Exception);
+  ASSERT_THROW(ifd->getField(ome::bioformats::tiff::INDEXED).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::INKSET).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::MATTEING).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::MAXSAMPLEVALUE).get(value), ome::bioformats::tiff::Exception);
