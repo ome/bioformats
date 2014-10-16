@@ -48,16 +48,16 @@ import java.math.BigInteger;
 public class Unit<Q extends Quantity>
 {
   private final String measurementSystem;
-  private String symbol;
-  private Double scaleFactor;
-  private Double offset;
+  private final String symbol;
+  private final Double scaleFactor;
+  private final Double offset;
 
-  private Unit(String uniqueSystemName, String uniqueSymbol)
+  private Unit(String inSystem, String inSymbol, Double inScaleFactor, Double inOffset)
   {
-    measurementSystem = uniqueSystemName;
-    symbol = uniqueSymbol;
-    scaleFactor = 1.0;
-    offset = 0.0;
+    measurementSystem = inSystem;
+    symbol = inSymbol;
+    scaleFactor = inScaleFactor;
+    offset = inOffset;
   }
 
   public String getSymbol()
@@ -102,53 +102,52 @@ public class Unit<Q extends Quantity>
   // in java.
   public Unit<Q> multiply(Integer scalar)
   {
-    scaleFactor = scaleFactor * scalar;
-    offset = offset * scalar;
-    return this;
+    Double newScaleFactor = scaleFactor * scalar;
+    Double newOffset = offset * scalar;
+    return new Unit<Q>(measurementSystem, symbol, newScaleFactor, newOffset);
   }
   public Unit<Q> multiply(Double scalar)
   {
-    scaleFactor = scaleFactor * scalar;
-    offset = offset * scalar;
-    return this;
+    Double newScaleFactor = scaleFactor * scalar;
+    Double newOffset = offset * scalar;
+    return new Unit<Q>(measurementSystem, symbol, newScaleFactor, newOffset);
   }
   public Unit<Q> divide(Integer scalar)
   {
-    scaleFactor = scaleFactor / scalar;
-    offset = offset / scalar;
-    return this;
+    Double newScaleFactor = scaleFactor / scalar;
+    Double newOffset = offset / scalar;
+    return new Unit<Q>(measurementSystem, symbol, newScaleFactor, newOffset);
   }
   public Unit<Q> divide(Double scalar)
   {
-    scaleFactor = scaleFactor / scalar;
-    offset = offset / scalar;
-    return this;
+    Double newScaleFactor = scaleFactor / scalar;
+    Double newOffset = offset / scalar;
+    return new Unit<Q>(measurementSystem, symbol, newScaleFactor, newOffset);
   }
   public Unit<Q> add(Integer scalar)
   {
-    offset = offset + scalar;
-    return this;
+    Double newOffset = offset + scalar;
+    return new Unit<Q>(measurementSystem, symbol, scaleFactor, newOffset);
   }
   public Unit<Q> add(Double scalar)
   {
-    offset = offset + scalar;
-    return this;
+    Double newOffset = offset + scalar;
+    return new Unit<Q>(measurementSystem, symbol, scaleFactor, newOffset);
   }
-  public Unit<Q> setSymbol(String abbreviation)
+  public Unit<Q> setSymbol(String inSymbol)
   {
-    symbol = abbreviation;
-    return this;
+    return new Unit<Q>(measurementSystem, inSymbol, scaleFactor, offset);
   }
 
   public Unit<Q> prefixSymbol(String prefix)
   {
-    symbol = prefix + symbol;
-    return this;
+    String newSymbol = prefix + symbol;
+    return new Unit<Q>(measurementSystem, newSymbol, scaleFactor, offset);
   }
 
-  public static <Q extends Quantity> Unit<Q> CreateBaseUnit(String uniqueName, String baseSymbol)
+  public static <Q extends Quantity> Unit<Q> CreateBaseUnit(String inMeasurementSystem, String inSymbol)
   {
-    return new Unit<Q>(uniqueName, baseSymbol);
+    return new Unit<Q>(inMeasurementSystem, inSymbol, 1.0, 0.0);
   }
   // End "protected" functions
 

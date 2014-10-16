@@ -69,7 +69,7 @@ public final class UNITS
   public static final ome.units.unit.Unit<Pressure>          PASCAL  = ome.units.unit.Unit.<Pressure>CreateBaseUnit("SI.PASCAL", "Pa");
   public static final ome.units.unit.Unit<Pressure>          BAR     = PASCAL.multiply(100000).setSymbol("bar");
   public static final ome.units.unit.Unit<Temperature>       KELVIN  = ome.units.unit.Unit.<Temperature>CreateBaseUnit("SI.KELVIN", "K");
-  public static final ome.units.unit.Unit<Time>              SECOND  = ome.units.unit.Unit.<Time>CreateBaseUnit("SI.SECOND", "S");
+  public static final ome.units.unit.Unit<Time>              SECOND  = ome.units.unit.Unit.<Time>CreateBaseUnit("SI.SECOND", "s");
 
   // functions to provide standard SI scaling
   public static <T extends Quantity> ome.units.unit.Unit<T> YOTTA(ome.units.unit.Unit<T> inUnit){return inUnit.prefixSymbol( "Y").multiply(BigInteger.TEN.pow(24).doubleValue());}
