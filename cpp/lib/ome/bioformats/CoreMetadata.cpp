@@ -62,7 +62,7 @@ namespace ome
       littleEndian(false),
       interleaved(false),
       indexed(false),
-      falseColor(false),
+      falseColor(true),
       metadataComplete(true),
       seriesMetadata(),
       thumbnail(false),
