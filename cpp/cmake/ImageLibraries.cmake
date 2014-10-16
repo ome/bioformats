@@ -36,10 +36,10 @@
 
 include(CheckCSourceCompiles)
 
-find_package(TIFF)
+find_package(TIFF REQUIRED)
 
 if(NOT TIFF_FOUND)
-  message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/)")
+  message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/ is recommended)")
 endif(NOT TIFF_FOUND)
 
 set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
@@ -125,4 +125,4 @@ int main(void)
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
 
-find_package(PNG)
+find_package(PNG REQUIRED)
