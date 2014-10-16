@@ -596,6 +596,8 @@ namespace ome
         boost::optional<uint16_t> samples;
         /// Planar configuration.
         boost::optional<PlanarConfiguration> planarconfig;
+        /// Photometric interpretation.
+        boost::optional<PhotometricInterpretation> photometric;
         /// Current tile (for writing).
         tstrile_t ctile;
 
@@ -1129,6 +1131,25 @@ namespace ome
       {
         getField(PLANARCONFIG).set(planarconfig);
         impl->planarconfig = planarconfig;
+      }
+
+      PhotometricInterpretation
+      IFD::getPhotometricInterpretation() const
+      {
+        if (!impl->photometric)
+          {
+            PhotometricInterpretation photometric;
+            getField(PHOTOMETRIC).get(photometric);
+            impl->photometric = photometric;
+          }
+        return impl->photometric.get();
+      }
+
+      void
+      IFD::setPhotometricInterpretation(PhotometricInterpretation photometric)
+      {
+        getField(PHOTOMETRIC).set(photometric);
+        impl->photometric = photometric;
       }
 
       void

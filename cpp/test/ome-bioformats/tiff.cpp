@@ -1536,7 +1536,7 @@ TEST_P(PixelTest, WriteTIFF)
     ASSERT_NO_THROW(wifd->setPixelType(params.pixeltype));
     ASSERT_NO_THROW(wifd->setSamplesPerPixel(shape[ome::bioformats::DIM_SUBCHANNEL]));
     ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.planarconfig));
-    ASSERT_NO_THROW(wifd->getField(::ome::bioformats::tiff::PHOTOMETRIC).set(params.photometricinterp));
+    ASSERT_NO_THROW(wifd->setPhotometricInterpretation(params.photometricinterp));
 
     // Verify IFD tags
     EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_X], wifd->getImageWidth());
@@ -1627,7 +1627,7 @@ TEST_P(PixelTest, WriteTIFF)
     EXPECT_EQ(params.pixeltype, ifd->getPixelType());
     EXPECT_EQ(shape[ome::bioformats::DIM_SUBCHANNEL], ifd->getSamplesPerPixel());
     EXPECT_EQ(params.planarconfig, ifd->getPlanarConfiguration());
-    EXPECT_EQ(params.photometricinterp, static_cast< ::ome::bioformats::tiff::PhotometricInterpretation>(ifd->getField(::ome::bioformats::tiff::PHOTOMETRIC)));
+    EXPECT_EQ(params.photometricinterp, ifd->getPhotometricInterpretation());
 
     VariantPixelBuffer vb;
     ifd->readImage(vb);
