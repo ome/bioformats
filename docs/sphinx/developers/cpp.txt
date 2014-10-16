@@ -19,6 +19,8 @@ to be installed:
 +------------+-----------+------------------+----------------+----------+
 | Boost      | >= 1.42¹  | libboost-all-dev | boost-devel    | boost    |
 +------------+-----------+------------------+----------------+----------+
+| PNG        | >= 1.2    | libpng12-dev     | libpng-devel   | libpng   |
++------------+-----------+------------------+----------------+----------+
 | TIFF       | >= 4.0²   | libtiff5-dev     | libtiff4-devel | libtiff  |
 +------------+-----------+------------------+----------------+----------+
 | Xerces-C   | 3.x       | libxerces-c-dev  | xerces-c-devel | xerces-c |
@@ -136,6 +138,10 @@ embedded-gtest=(ON|OFF)
   library.  This is off by default but will be enabled automatically
   if a system copy is not found.  This may be enabled explicitly to
   override the autodetection.
+extended-tests=(ON|OFF)
+  Some of the unit tests are comprehensive and run many thousands of
+  tests.  These are enabled by default, but by setting to OFF a
+  representative subset of the tests will be run instead to save time.
 extra-warnings=(ON|OFF)
   Enable or disable additional compiler warnings in addition to the
   default set.  These are disabled by default since they trigger a large

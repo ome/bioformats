@@ -35,6 +35,8 @@
  * #L%
  */
 
+#include <boost/type_traits.hpp>
+
 #include <ome/bioformats/VariantPixelBuffer.h>
 
 using ome::bioformats::PixelBuffer;

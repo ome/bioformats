@@ -30,7 +30,7 @@ cpp()
             cmake /usr/src/gtest
             make
         )
-        CXX="g++ -std=gnu++98" GTEST_ROOT="$(pwd)/gtest" cmake -Dcxxstd-autodetect=OFF ../.. || cat CMakeFiles/CMakeError.log
+        CXX="g++ -std=gnu++98" GTEST_ROOT="$(pwd)/gtest" cmake -Dcxxstd-autodetect=OFF -Dextended-tests=OFF ../.. || cat CMakeFiles/CMakeError.log
         make
         make test
         make DESTDIR=../install install
