@@ -268,7 +268,7 @@ public class VisitechReader extends FormatReader {
     int ndx = currentId.lastIndexOf(File.separator) + 1;
     String base = currentId.substring(ndx, currentId.lastIndexOf(" "));
 
-    File f = new File(currentId).getAbsoluteFile();
+    Location f = new Location(currentId).getAbsoluteFile();
     String file = f.exists() ? f.getParent() + File.separator : "";
 
     if (numSeries == 0) numSeries = 1;

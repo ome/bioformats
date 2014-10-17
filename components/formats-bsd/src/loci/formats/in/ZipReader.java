@@ -58,7 +58,8 @@ public class ZipReader extends FormatReader {
 
   // -- Fields --
 
-  private ImageReader reader;
+  private transient ImageReader reader;
+  private String entryName;
 
   private ArrayList<String> mappedFiles = new ArrayList<String>();
 
@@ -92,6 +93,10 @@ public class ZipReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (Location.getMappedFile(entryName) == null) {
+      initFile(currentId);
+    }
+    reader.setId(entryName);
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
@@ -108,6 +113,7 @@ public class ZipReader extends FormatReader {
       }
     }
     mappedFiles.clear();
+    entryName = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -141,7 +147,7 @@ public class ZipReader extends FormatReader {
 
     ZipInputStream zip = new ZipInputStream(in);
     ZipEntry ze = null;
-    String entryName = null;
+    entryName = null;
     boolean matchFound = false;
     while (true) {
       ze = zip.getNextEntry();

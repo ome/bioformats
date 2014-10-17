@@ -782,11 +782,11 @@ ${counter(k, o, v)}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        const ome::xml::model::MapPairs::map_type&
+        const ::${lang.omexml_model_package}::MapPairs::map_type&
         getMapAnnotationValue(index_type mapAnnotationIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const ome::xml::model::MapPairs::map_type&
+      const ::${lang.omexml_model_package}::MapPairs::map_type&
       AggregateMetadata::getMapAnnotationValue(index_type mapAnnotationIndex) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
@@ -803,12 +803,12 @@ ${counter(k, o, v)}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        const ome::xml::model::MapPairs::map_type&
+        const ::${lang.omexml_model_package}::MapPairs::map_type&
         getGenericExcitationSourceMap(index_type instrumentIndex,
                                       index_type lightSourceIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const ome::xml::model::MapPairs::map_type&
+      const ::${lang.omexml_model_package}::MapPairs::map_type&
       AggregateMetadata::getGenericExcitationSourceMap(index_type instrumentIndex,
                                                        index_type lightSourceIndex) const
       {
@@ -827,11 +827,11 @@ ${counter(k, o, v)}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        const ome::xml::model::MapPairs::map_type&
+        const ::${lang.omexml_model_package}::MapPairs::map_type&
         getImagingEnvironmentMap(index_type imageIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const ome::xml::model::MapPairs::map_type&
+      const ::${lang.omexml_model_package}::MapPairs::map_type&
       AggregateMetadata::getImagingEnvironmentMap(index_type imageIndex) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
@@ -1004,12 +1004,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setMapAnnotationValue(ome::xml::model::MapPairs::map_type map,
+        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
                               index_type mapAnnotationIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setMapAnnotationValue(ome::xml::model::MapPairs::map_type map,
+      AggregateMetadata::setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
                                                index_type mapAnnotationIndex)
       {
         for (delegate_list_type::iterator i = delegates.begin();
@@ -1027,13 +1027,13 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setGenericExcitationSourceMap(ome::xml::model::MapPairs::map_type map,
+        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setGenericExcitationSourceMap(ome::xml::model::MapPairs::map_type map,
+      AggregateMetadata::setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                                        index_type instrumentIndex,
                                                        index_type lightSourceIndex)
       {
@@ -1054,12 +1054,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setImagingEnvironmentMap(ome::xml::model::MapPairs::map_type map,
+        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                  index_type imageIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setImagingEnvironmentMap(ome::xml::model::MapPairs::map_type map,
+      AggregateMetadata::setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                                   index_type imageIndex)
       {
         for (delegate_list_type::iterator i = delegates.begin();

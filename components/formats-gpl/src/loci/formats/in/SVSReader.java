@@ -455,4 +455,12 @@ public class SVSReader extends BaseTiffReader {
     return null;
   }
 
+  protected double[] getPhysicalSizes() {
+    return pixelSize;
+  }
+
+  protected double getMagnification() {
+    return magnification;
+  }
+
 }

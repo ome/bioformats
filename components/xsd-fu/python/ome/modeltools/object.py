@@ -169,12 +169,7 @@ class OMEModelObject(OMEModelEntity):
     langType = property(_get_langType, doc="""The model object's type.""")
 
     def _get_langTypeNS(self):
-        name = self.langType
-        if isinstance(self.model.opts.lang, language.Java):
-            name = "ome.xml.model.%s" % self.langType
-        if isinstance(self.model.opts.lang, language.CXX):
-            name = "::ome::xml::model::%s" % self.langType
-        return name
+        return "%s%s%s" % (self.model.opts.lang.omexml_model_package, self.model.opts.lang.package_separator, self.langType)
     langTypeNS = property(_get_langTypeNS, doc="""The model object's type with namespace.""")
 
     def _get_langBaseType(self):
@@ -329,7 +324,7 @@ class OMEModelObject(OMEModelEntity):
 
         if parents is not None:
             parent = self.model.getObjectByName(parents.keys()[0])
-            if parent is not None and parent.isAbstractProprietary:
+            if parent is not None and parent.isAbstractProprietary and not self.name in config.ANNOTATION_OVERRIDE:
                 name = parent.name
 
         return name

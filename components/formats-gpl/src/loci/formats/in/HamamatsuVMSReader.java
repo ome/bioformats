@@ -183,9 +183,10 @@ public class HamamatsuVMSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    in = new RandomAccessInputStream(id);
     IniParser parser = new IniParser();
     IniList layout = parser.parseINI(new BufferedReader(
-      new InputStreamReader(new FileInputStream(id), Constants.ENCODING)));
+      new InputStreamReader(in, Constants.ENCODING)));
     IniTable slideInfo = layout.getTable("Virtual Microscope Specimen");
 
     int nLayers = Integer.parseInt(slideInfo.get("NoLayers"));
@@ -208,7 +209,7 @@ public class HamamatsuVMSReader extends FormatReader {
       addGlobalMeta(key, slideInfo.get(key));
     }
 
-    Location dir = new Location(id).getAbsoluteFile().getParentFile();
+    Location dir = new Location(id).getParentFile();
 
     tileFiles = new String[nLayers][nRows][nCols];
 

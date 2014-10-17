@@ -81,7 +81,7 @@ public final class MetadataTools {
 
   // -- Static fields --
 
-  private static boolean defaultDateEnabled = true;
+  private static boolean defaultDateEnabled = false;
 
   // -- Constructor --
 

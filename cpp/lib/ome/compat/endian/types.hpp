@@ -77,7 +77,15 @@ namespace endian
 {
 
 #ifndef BOOST_ENDIAN_ORDER_ENUM_DEFINED
-  BOOST_SCOPED_ENUM_START(order) {big, little, native}; BOOST_SCOPED_ENUM_END
+  BOOST_SCOPED_ENUM_START(order)
+  {
+    big, little,
+# ifdef  BOOST_BIG_ENDIAN
+    native = big
+# else
+    native = little
+# endif
+  }; BOOST_SCOPED_ENUM_END
 # define BOOST_ENDIAN_ORDER_ENUM_DEFINED
 #endif
   BOOST_SCOPED_ENUM_START(align) {no, yes}; BOOST_SCOPED_ENUM_END
@@ -165,26 +173,59 @@ namespace endian
   typedef endian<order::little, uint_least64_t, 56>  little_uint56_t;
   typedef endian<order::little, uint_least64_t, 64>  little_uint64_t;
 
+# ifdef BOOST_BIG_ENDIAN
   // unaligned native endian signed integer types
-  typedef endian<order::native, int_least8_t, 8>     native_int8_t;
-  typedef endian<order::native, int_least16_t, 16>   native_int16_t;
-  typedef endian<order::native, int_least32_t, 24>   native_int24_t;
-  typedef endian<order::native, int_least32_t, 32>   native_int32_t;
-  typedef endian<order::native, int_least64_t, 40>   native_int40_t;
-  typedef endian<order::native, int_least64_t, 48>   native_int48_t;
-  typedef endian<order::native, int_least64_t, 56>   native_int56_t;
-  typedef endian<order::native, int_least64_t, 64>   native_int64_t;
+  typedef big_int8_t   native_int8_t;
+  typedef big_int16_t  native_int16_t;
+  typedef big_int24_t  native_int24_t;
+  typedef big_int32_t  native_int32_t;
+  typedef big_int40_t  native_int40_t;
+  typedef big_int48_t  native_int48_t;
+  typedef big_int56_t  native_int56_t;
+  typedef big_int64_t  native_int64_t;
 
   // unaligned native endian unsigned integer types
-  typedef endian<order::native, uint_least8_t, 8>    native_uint8_t;
-  typedef endian<order::native, uint_least16_t, 16>  native_uint16_t;
-  typedef endian<order::native, uint_least32_t, 24>  native_uint24_t;
-  typedef endian<order::native, uint_least32_t, 32>  native_uint32_t;
-  typedef endian<order::native, uint_least64_t, 40>  native_uint40_t;
-  typedef endian<order::native, uint_least64_t, 48>  native_uint48_t;
-  typedef endian<order::native, uint_least64_t, 56>  native_uint56_t;
-  typedef endian<order::native, uint_least64_t, 64>  native_uint64_t;
+  typedef big_uint8_t   native_uint8_t;
+  typedef big_uint16_t  native_uint16_t;
+  typedef big_uint24_t  native_uint24_t;
+  typedef big_uint32_t  native_uint32_t;
+  typedef big_uint40_t  native_uint40_t;
+  typedef big_uint48_t  native_uint48_t;
+  typedef big_uint56_t  native_uint56_t;
+  typedef big_uint64_t  native_uint64_t;
 
+  // native endian floating point types
+  typedef big_float32_t native_float32_t;
+  typedef big_float64_t native_float64_t;
+  typedef big_align_float32_t native_align_float32_t;
+  typedef big_align_float64_t native_align_float64_t;
+# else
+  // unaligned native endian signed integer types
+  typedef little_int8_t   native_int8_t;
+  typedef little_int16_t  native_int16_t;
+  typedef little_int24_t  native_int24_t;
+  typedef little_int32_t  native_int32_t;
+  typedef little_int40_t  native_int40_t;
+  typedef little_int48_t  native_int48_t;
+  typedef little_int56_t  native_int56_t;
+  typedef little_int64_t  native_int64_t;
+
+  // unaligned native endian unsigned integer types
+  typedef little_uint8_t   native_uint8_t;
+  typedef little_uint16_t  native_uint16_t;
+  typedef little_uint24_t  native_uint24_t;
+  typedef little_uint32_t  native_uint32_t;
+  typedef little_uint40_t  native_uint40_t;
+  typedef little_uint48_t  native_uint48_t;
+  typedef little_uint56_t  native_uint56_t;
+  typedef little_uint64_t  native_uint64_t;
+
+  // native endian floating point types
+  typedef little_float32_t native_float32_t;
+  typedef little_float64_t native_float64_t;
+  typedef little_align_float32_t native_align_float32_t;
+  typedef little_align_float64_t native_align_float64_t;
+# endif
 }  // namespace boost
 }  // namespace endian
 
@@ -457,38 +498,6 @@ namespace endian
 #       endif
           return detail::load_little_endian<T, n_bits/8>(m_value);
         }
-        const char* data() const BOOST_NOEXCEPT  { return m_value; }
-      private:
-        char m_value[n_bits/8];
-    };
-
-    //  unaligned native endian specialization
-    template <typename T, std::size_t n_bits>
-    class endian< order::native, T, n_bits, align::no >
-      : cover_operators< endian< order::native, T, n_bits >, T >
-    {
-        BOOST_STATIC_ASSERT( (n_bits/8)*8 == n_bits );
-      public:
-        typedef T value_type;
-#   ifndef BOOST_ENDIAN_NO_CTORS
-        endian() BOOST_ENDIAN_DEFAULT_CONSTRUCT
-#     ifdef BOOST_BIG_ENDIAN
-        BOOST_ENDIAN_EXPLICIT_OPT endian(T val) BOOST_NOEXCEPT { detail::store_big_endian<T, n_bits/8>(m_value, val); }
-#     else
-        BOOST_ENDIAN_EXPLICIT_OPT endian(T val) BOOST_NOEXCEPT { detail::store_little_endian<T, n_bits/8>(m_value, val); }
-#     endif
-#   endif
-#   ifdef BOOST_BIG_ENDIAN  
-        endian & operator=(T val) BOOST_NOEXCEPT
-          { detail::store_big_endian<T, n_bits/8>(m_value, val); return *this; }
-        operator T() const BOOST_NOEXCEPT
-          { return detail::load_big_endian<T, n_bits/8>(m_value); }
-#   else
-        endian & operator=(T val) BOOST_NOEXCEPT
-          { detail::store_little_endian<T, n_bits/8>(m_value, val); return *this; }
-        operator T() const BOOST_NOEXCEPT
-          { return detail::load_little_endian<T, n_bits/8>(m_value); }
-#   endif
         const char* data() const BOOST_NOEXCEPT  { return m_value; }
       private:
         char m_value[n_bits/8];

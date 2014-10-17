@@ -120,6 +120,18 @@ public class ImageFaker {
       return false;
     }
 
+    // make sure that we don't end up with just a ".fake" directory
+    if (new Location(targetDirectoryPath).exists()) {
+      Location p = new Location(targetDirectoryPath, "screen.fake");
+      int index = 1;
+      while (p.exists()) {
+        p = new Location(targetDirectoryPath, "screen" + index + ".fake");
+        index++;
+      }
+
+      targetDirectoryPath = p.getAbsolutePath();
+    }
+
     Location directoryRoot;
     if (!FormatHandler.checkSuffix(targetDirectoryPath,
             ResourceNamer.FAKE_EXT)) {

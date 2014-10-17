@@ -700,6 +700,12 @@ public class SDTInfo {
         if (adcRE > 0) timeBins = adcRE;
         if (scanRX > 0) channels = scanRX;
         
+        // measurement mode 0 and 1 are both single-point data
+        if (measMode == 0 || measMode == 1)  {
+          width = 1;
+          height = 1;
+        }  
+        
         // for measurement_mode 13 one channel is stored in each block 
         // & width & height are not in scanX & scanY
         if (measMode == 13)  {

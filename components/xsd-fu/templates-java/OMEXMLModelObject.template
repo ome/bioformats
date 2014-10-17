@@ -43,7 +43,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package ${fu.package};
+package ${lang.omexml_model_package};
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +56,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import ${fu.package}.enums.*;
-import ${fu.package}.primitives.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
 
 {% choose %}\
 {% when klass.isAbstractProprietary or klass.isAbstract %}\
@@ -536,7 +536,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end if isAnnotation %}\
 
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
 		if (${prop.instanceVariableName} != null)
 		{
 {% choose %}\

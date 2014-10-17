@@ -1,0 +1,14 @@
+apply plugin: 'application'
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://artifacts.openmicroscopy.org/artifactory/maven/'
+    }
+}
+
+dependencies {
+    compile(group: 'ome', name: 'formats-gpl', version: '5.1.0-SNAPSHOT'){
+    }
+}

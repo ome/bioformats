@@ -130,7 +130,7 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
      cmd, cpp.modelNamespace, cpp.omexml_model_package))
     sys.exit(2)
 
-def main(opts):
+def main(model, opts):
     """
     Default main() that parses command line options and generates
     classes in the output directory.
@@ -139,7 +139,6 @@ def main(opts):
     for file in opts.args:
         used_files.add(os.path.realpath(file))
 
-    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath('CLASS'), encoding='utf-8').read(), encoding='utf-8')
     used_files.add(os.path.realpath(opts.lang.templatepath('CLASS')))
@@ -266,7 +265,7 @@ def enum_value_name(value):
     value = value.replace("-", "")
     return value.upper()
 
-def enumTypesMain(opts):
+def enumTypesMain(model, opts):
     """
     Default main() that parses command line options and generates Java
     classes for enumeration types in an output directory.
@@ -276,7 +275,6 @@ def enumTypesMain(opts):
     for file in opts.args:
         used_files.add(os.path.realpath(file))
 
-    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath('ENUM'), encoding='utf-8').read(), encoding='utf-8')
     used_files.add(os.path.realpath(opts.lang.templatepath('ENUM')))
@@ -315,7 +313,7 @@ def enumTypesMain(opts):
         for file in sorted(used_files):
             print(file)
 
-def enumTypesIncludeAll(opts):
+def enumTypesIncludeAll(model, opts):
     """
     Generate header to include all enum headers.
     """
@@ -324,7 +322,6 @@ def enumTypesIncludeAll(opts):
     for file in opts.args:
         used_files.add(os.path.realpath(file))
 
-    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath('ENUM_INCLUDEALL'), encoding='utf-8').read(), encoding='utf-8')
     used_files.add(os.path.realpath(opts.lang.templatepath('ENUM_INCLUDEALL')))
@@ -357,7 +354,7 @@ def enumTypesIncludeAll(opts):
         for file in sorted(used_files):
             print(file)
 
-def enumHandlersMain(opts):
+def enumHandlersMain(model, opts):
     """
     Default main() that parses command line options and generates
     classes for enumeration handlers in an output directory.
@@ -367,7 +364,6 @@ def enumHandlersMain(opts):
     for file in opts.args:
         used_files.add(os.path.realpath(file))
 
-    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_omexml_model_enum_handlers_package)
     base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
     configobj = ConfigObj(os.path.join(base, "enum_handler.cfg"))
@@ -445,7 +441,7 @@ def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0
             results[key].append(func(child, max_occurs, level))
     return is_multi_path
 
-def processMetadataTemplate(template, outputFilename, opts):
+def processMetadataTemplate(template, outputFilename, model, opts):
     """
     Actually does the work of processing the model and providing the model
     to a given "Metadata" template for interface or concrete class code
@@ -458,7 +454,6 @@ def processMetadataTemplate(template, outputFilename, opts):
     for file in opts.args:
         used_files.add(os.path.realpath(file))
 
-    model = generateds.parse(opts)
     indexes = dict()
     parents = dict()
     is_multi_path = dict()
@@ -479,6 +474,7 @@ def processMetadataTemplate(template, outputFilename, opts):
     fu.METADATA_COUNT_IGNORE = config.METADATA_COUNT_IGNORE
     fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = config.BACK_REFERENCE_CLASS_NAME_OVERRIDE
     fu.ABSTRACT_PROPRIETARY_OVERRIDE = config.ABSTRACT_PROPRIETARY_OVERRIDE
+    fu.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
     fu.DEFAULT_BASE_CLASS = model.opts.lang.getDefaultModelBaseClass()
     fu.OBJECT_HEADERS = sorted(object_headers);
 
@@ -528,7 +524,7 @@ def processMetadataTemplate(template, outputFilename, opts):
         for file in sorted(used_files):
             print(file)
 
-def omeXmlMetadataMain(opts):
+def omeXmlMetadataMain(model, opts):
     """
     OME-XML main() that parses command line options and generates a
     MetadataStore and MetadataRetrieve implementation.
@@ -538,27 +534,27 @@ def omeXmlMetadataMain(opts):
 
     processMetadataTemplate('OMEXML_METADATA',
                             os.path.join(relpath, os.path.basename(os.path.splitext(opts.lang.getTemplate('OMEXML_METADATA'))[0])),
-                            opts)
+                            model, opts)
 
-def omeroMetadataMain(opts):
+def omeroMetadataMain(model, opts):
     """
     Default main() that parses command line options and generates a
     MetadataRetrieve implementation.
     """
 
     processMetadataTemplate('OMERO_METADATA', "OmeroMetadata",
-                opts)
+                            model, opts)
 
-def omeroModelMain(opts):
+def omeroModelMain(model, opts):
     """
     Default main() that parses command line options and generates a
     MetadataRetrieve implementation.
     """
 
     processMetadataTemplate('OMERO_MODEL', "OmeroModel.xml",
-                opts)
+                            model, opts)
 
-def metadataMain(opts):
+def metadataMain(model, opts):
     """
     Default main() that parses command line options and generates a
     MetadataStore implementation.
@@ -568,25 +564,25 @@ def metadataMain(opts):
 
     processMetadataTemplate('METADATA_STORE',
                 os.path.join(relpath, "MetadataStore"),
-                opts)
+                model, opts)
 
     processMetadataTemplate('METADATA_RETRIEVE',
                 os.path.join(relpath, "MetadataRetrieve"),
-                opts)
+                model, opts)
 
     processMetadataTemplate('METADATA_AGGREGATE',
                 os.path.join(relpath, "AggregateMetadata"),
-                opts)
+                model, opts)
 
     processMetadataTemplate('FILTER_METADATA',
                 os.path.join(relpath, "FilterMetadata"),
-                opts)
+                model, opts)
 
     processMetadataTemplate('DUMMY_METADATA',
                 os.path.join(relpath, "DummyMetadata"),
-                opts)
+                model, opts)
 
-def docGenMain(opts):
+def docGenMain(model, opts):
     """
     Documentation main() that does not parse the command line and spits
     generated wiki formatted docs to STDOUT.
@@ -603,7 +599,6 @@ def docGenMain(opts):
     ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
-        model = generateds.parse(opts)
         fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
         template = NewTextTemplate(codecs.open(opts.lang.templatepath('CLASS'), encoding='utf-8').read(), encoding='utf-8')
         print(" == `%s` ==" % (prefix))
@@ -615,7 +610,7 @@ def docGenMain(opts):
                     (prefix, obj.name, prop.name, prop.type, prop.minOccurs, prop.maxOccurs))
             print("\n")
 
-def tabGenMain(opts):
+def tabGenMain(model, opts):
     """
     Documentation main() that does not parse the command line and puts
     tab sperated format to STDOUT.
@@ -637,7 +632,6 @@ def tabGenMain(opts):
         ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
-        model = generateds.parse(opts)
         fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
         template = NewTextTemplate(codecs.open(opts.lang.templatepath('CLASS'), encoding='utf-8').read(), encoding='utf-8')
         for theToplevelNode in theSchemas[2]:
@@ -689,7 +683,6 @@ class options:
         omexml_metadata_package = None
 
         self.outdir = None
-        self.package = None # Used for output classes only
         self.namespace = config.DEFAULT_NAMESPACE
         self.lang = "Java"
         self.filetype = language.TYPE_SOURCE
@@ -776,36 +769,37 @@ class options:
 
 if __name__ == '__main__':
     opts = options(sys.argv)
+    model = generateds.parse(opts)
 
-    opts.package = opts.lang.omexml_model_package
-    if opts.command == "omexml_model_enums":
-        opts.package = opts.lang.omexml_model_enums_package
-    elif opts.command == "omexml_model_enum_handlers":
-        opts.package = opts.lang.omexml_model_omexml_model_enum_handlers_package
-    elif opts.command == "metadata":
-        opts.package = opts.lang.metadata_package
+    if opts.command == "omexml_model_all":
+        main(model, opts)
+        enumTypesMain(model, opts)
+        if isinstance(opts.lang, language.CXX) and opts.filetype == language.TYPE_HEADER:
+            enumTypesIncludeAll(model, opts)
+        if isinstance(opts.lang, language.Java):
+            enumHandlersMain(model, opts)
+    elif opts.command == "omexml_metadata_all":
+        metadataMain(model, opts)
+        omeXmlMetadataMain(model, opts)
+    elif opts.command == "omexml_model":
+        main(model, opts)
     elif opts.command == "omexml_metadata":
-        opts.package = opts.lang.omexml_metadata_package
-
-    if opts.command == "omexml_model":
-        main(opts)
-    elif opts.command == "omexml_metadata":
-        omeXmlMetadataMain(opts)
+        omeXmlMetadataMain(model, opts)
     elif opts.command == "omero_metadata":
-        omeroMetadataMain(opts)
+        omeroMetadataMain(model, opts)
     elif opts.command == "omero_model":
-        omeroModelMain(opts)
+        omeroModelMain(model, opts)
     elif opts.command == "metadata":
-        metadataMain(opts)
+        metadataMain(model, opts)
     elif opts.command == "omexml_model_enums":
-        enumTypesMain(opts)
+        enumTypesMain(model, opts)
     elif opts.command == "omexml_model_enum_includeall":
-        enumTypesIncludeAll(opts)
+        enumTypesIncludeAll(model, opts)
     elif opts.command == "omexml_model_enum_handlers":
-        enumHandlersMain(opts)
+        enumHandlersMain(model, opts)
     elif opts.command == "doc_gen":
-        docGenMain(opts)
+        docGenMain(model, opts)
     elif opts.command == "tab_gen":
-        tabGenMain(opts)
+        tabGenMain(model, opts)
     else:
         usage('Unrecognized subcommand: %s' % opts.command)

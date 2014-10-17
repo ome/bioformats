@@ -53,19 +53,23 @@ public class CaseInsensitiveLocation extends Location {
   // -- Constructors (no caching) --
 
   public CaseInsensitiveLocation(String pathname) throws IOException {
-    super(findCaseInsensitive(new File(pathname)));
+    super(findCaseInsensitive(new Location(pathname)));
   }
 
-  public CaseInsensitiveLocation(File file) throws IOException {
+  public CaseInsensitiveLocation(Location file) throws IOException {
     super(findCaseInsensitive(file));
   }
 
+  public CaseInsensitiveLocation(File file) throws IOException {
+    super(findCaseInsensitive(new Location(file.getAbsolutePath())));
+  }
+
   public CaseInsensitiveLocation(String parent, String child) throws IOException {
-    super(findCaseInsensitive(new File(parent + File.separator + child)));
+    super(findCaseInsensitive(new Location(parent, child)));
   }
 
   public CaseInsensitiveLocation(CaseInsensitiveLocation parent, String child) throws IOException {
-    super(findCaseInsensitive(new File(parent.getAbsolutePath(), child)));
+    super(findCaseInsensitive(new Location(parent.getAbsolutePath(), child)));
   }
 
   // -- Methods --
@@ -82,14 +86,14 @@ public class CaseInsensitiveLocation extends Location {
    * @param dir the directory to remove,
    */
   public static void invalidateCache(File dir) {
-    cache.invalidate(dir);
+    cache.invalidate(new Location(dir.getAbsolutePath()));
   }
 
-  private static File findCaseInsensitive(File name) throws IOException {
+  private static String findCaseInsensitive(Location name) throws IOException {
     // The file we're looking for doesn't exist, so look for it in the
     // same directory in a case-insensitive manner.  Note that this will
     // throw an exception if multiple copies are found.
-    return cache.lookup(name);
+    return cache.lookup(name).getAbsolutePath();
   }
 
   // Helper class
@@ -124,7 +128,7 @@ public class CaseInsensitiveLocation extends Location {
      * directory did not exist.
      */
     // Cache the whole directory content in a single pass
-    private HashMap<String, String> fill(File dir) throws IOException {
+    private HashMap<String, String> fill(Location dir) throws IOException {
       String dirname = dir.getAbsolutePath();
       HashMap<String, String> s = cache.get(dirname);
       if (s == null && dir.exists()) {
@@ -147,7 +151,7 @@ public class CaseInsensitiveLocation extends Location {
      * Remove a directory from the cache.
      * @param dir the directory to remove.
      */
-    public void invalidate(File dir) {
+    public void invalidate(Location dir) {
       String dirname = dir.getAbsolutePath();
       cache.remove(dirname);
     }
@@ -165,8 +169,8 @@ public class CaseInsensitiveLocation extends Location {
      * @return the filename on disc (case sensitive).
      * @throws IOException
      */
-    public File lookup(File name) throws IOException {
-      File parent = name.getParentFile();
+    public Location lookup(Location name) throws IOException {
+      Location parent = name.getParentFile();
       if (parent != null) {
         HashMap<String, String> s = fill(parent);
 
@@ -175,7 +179,7 @@ public class CaseInsensitiveLocation extends Location {
           String lower = realname.toLowerCase();
           String f = s.get(lower);
           if (f != null) {
-            return new File(parent, f);
+            return new Location(parent, f);
           }
         }
       }

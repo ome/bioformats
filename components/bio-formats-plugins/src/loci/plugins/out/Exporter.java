@@ -557,6 +557,10 @@ public class Exporter {
           System.arraycopy(pix[0], 0, plane, 0, x * y);
           System.arraycopy(pix[1], 0, plane, x * y, x * y);
           System.arraycopy(pix[2], 0, plane, 2 * x * y, x * y);
+
+          if (i == start) {
+            sizeC /= 3;
+          }
         }
 
         int fileIndex = 0;

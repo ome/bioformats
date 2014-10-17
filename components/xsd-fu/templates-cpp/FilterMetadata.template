@@ -315,12 +315,12 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setMapAnnotationValue(ome::xml::model::MapPairs::map_type map,
+        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
                               index_type mapAnnotationIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setMapAnnotationValue(ome::xml::model::MapPairs::map_type map,
+      FilterMetadata::setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
                                             index_type mapAnnotationIndex)
       {
         store->setMapAnnotationValue(map, mapAnnotationIndex);
@@ -330,13 +330,13 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setGenericExcitationSourceMap(ome::xml::model::MapPairs::map_type map,
+        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setGenericExcitationSourceMap(ome::xml::model::MapPairs::map_type map,
+      FilterMetadata::setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                                     index_type instrumentIndex,
                                                     index_type lightSourceIndex)
       {
@@ -347,12 +347,12 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setImagingEnvironmentMap(ome::xml::model::MapPairs::map_type map,
+        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                  index_type imageIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setImagingEnvironmentMap(ome::xml::model::MapPairs::map_type map,
+      FilterMetadata::setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                                index_type imageIndex)
       {
         store->setImagingEnvironmentMap(map, imageIndex);

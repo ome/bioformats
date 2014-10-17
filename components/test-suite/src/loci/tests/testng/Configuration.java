@@ -47,6 +47,7 @@ import loci.formats.meta.IMetadata;
 
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
@@ -479,9 +480,12 @@ public class Configuration {
         seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
       }
 
-      String date = retrieve.getImageAcquisitionDate(series).getValue();
-      if (date != null) {
-        seriesTable.put(DATE, date);
+      Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
+      if (acquisition != null) {
+        String date = acquisition.getValue();
+        if (date != null) {
+          seriesTable.put(DATE, date);
+        }
       }
 
       for (int c=0; c<retrieve.getChannelCount(series); c++) {

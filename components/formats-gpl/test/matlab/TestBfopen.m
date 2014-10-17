@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,35 +24,29 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfopen < TestBfMatlab
+classdef TestBfopen < ReaderTest
     
     properties
         filepath
         data
         nSeries = 1
-        sizeZ = 1
-        sizeC = 1
-        sizeT = 1
     end
     
     methods
         function self = TestBfopen(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
         end
         
         function tearDown(self)
-            if exist(self.filepath,'file') == 2, delete(self.filepath); end
+            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
             self.data = [];
-            tearDown@TestBfMatlab(self);
+            tearDown@ReaderTest(self);
         end
         
         function checkFake(self, fakefilename)
             % Create fake file
-            if isunix,
-                self.filepath = fullfile('/tmp', fakefilename);
-            else
-                self.filepath = fullfile('C:', fakefilename);
-            end
+            mkdir(self.tmpdir);
+            self.filepath = fullfile(self.tmpdir, fakefilename);
             fid = fopen(self.filepath, 'w+');
             fclose(fid);
             

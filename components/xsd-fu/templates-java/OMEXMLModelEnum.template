@@ -43,7 +43,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package ${fu.package};
+package ${lang.omexml_model_enums_package};
 
 public enum ${klass.langType} implements Enumeration
 {

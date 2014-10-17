@@ -39,6 +39,11 @@
 	{
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
+{% when is_abstract(parent) and prop.isReference and prop.maxOccurs > 1 %}\
+		// ${parent} is abstract proprietary, is reference and occurs more than once
+		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
+		return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
+{% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${parent} is abstract proprietary
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
@@ -250,16 +255,15 @@ ${customContent[obj.name][prop.name]}
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.meta;
+package ${lang.omexml_metadata_package};
 
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import ${lang.omexml_model_package}.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
- * DOMs for the current version of OME-XML. It requires the
- * ome.xml.model package to compile (part of ome-xml.jar).
+ * DOMs for the current version of OME-XML.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
@@ -457,7 +461,7 @@ ${counter(k, o, v)}\
 	/** Gets the Map value associated with this annotation */
 	public java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex)
 	{
-		// The getValue returns an ome.xml.model.MapPairs, 
+		// The getValue returns an ${lang.omexml_model_package}.MapPairs, 
 		// the getMap returns the java.util.Map holding the MapPairs
 		return root.getStructuredAnnotations().getMapAnnotation(mapAnnotationIndex).getValue().getMap();
 	}
@@ -466,8 +470,8 @@ ${counter(k, o, v)}\
 	public java.util.Map<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
 		GenericExcitationSource o = (GenericExcitationSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
-		// The first getMap returns an ome.xml.model.Map which
-		// extends ome.xml.model.MapPairs, the second getMap returns
+		// The first getMap returns an ${lang.omexml_model_package}.Map which
+		// extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
 		// the java.util.Map holding the MapPairs
 		return o.getMap().getMap();
 	}
@@ -475,8 +479,8 @@ ${counter(k, o, v)}\
 	/** Gets the Map value associated with this imaging environment */
 	public java.util.Map<String, String> getImagingEnvironmentMap(int imageIndex)
 	{
-		// The first getMap returns an ome.xml.model.Map which
-		// extends ome.xml.model.MapPairs, the second getMap returns
+		// The first getMap returns an ${lang.omexml_model_package}.Map which
+		// extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
 		// the java.util.Map holding the MapPairs
 		return root.getImage(imageIndex).getImagingEnvironment().getMap().getMap();
 	}
@@ -598,7 +602,7 @@ ${getter(k, o, prop, v)}\
 			o1.addMapAnnotation(new MapAnnotation());
 		}
 		MapAnnotation o2 = o1.getMapAnnotation(mapAnnotationIndex);
-        ome.xml.model.MapPairs valueAsPairs = new ome.xml.model.MapPairs();
+        ${lang.omexml_model_package}.MapPairs valueAsPairs = new ${lang.omexml_model_package}.MapPairs();
         valueAsPairs.setMap(value);
 		o2.setValue(valueAsPairs);
 	}
@@ -617,7 +621,7 @@ ${getter(k, o, prop, v)}\
 			o1.addLightSource(new GenericExcitationSource());
 		}
 		LightSource o2 = o1.getLightSource(lightSourceIndex);
-		ome.xml.model.Map mapAsOmeMap = new ome.xml.model.Map();
+		${lang.omexml_model_package}.Map mapAsOmeMap = new ${lang.omexml_model_package}.Map();
 		mapAsOmeMap.setMap(map);
 		((GenericExcitationSource)o2).setMap(mapAsOmeMap);
 	}
@@ -636,7 +640,7 @@ ${getter(k, o, prop, v)}\
 			o1.setImagingEnvironment(new ImagingEnvironment());
 		}
 		ImagingEnvironment o2 = o1.getImagingEnvironment();
-		ome.xml.model.Map mapAsOmeMap = new ome.xml.model.Map();
+		${lang.omexml_model_package}.Map mapAsOmeMap = new ${lang.omexml_model_package}.Map();
 		mapAsOmeMap.setMap(map);
 		o2.setMap(mapAsOmeMap);
 	}

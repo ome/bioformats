@@ -137,7 +137,7 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} ():
-        ::ome::xml::model::OMEModelObject(),
+        ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}()
@@ -180,7 +180,7 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} (const ${klass.name}& copy):
-        ::ome::xml::model::OMEModelObject(),
+        ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}(copy)
@@ -224,10 +224,10 @@ namespace ome
          * @throws EnumerationException if there is an error
          * instantiating an enumeration during model object creation.
          */
-        ${klass.name} (xerces::dom::Element& element, ::ome::xml::model::OMEModel& model);
+        ${klass.name} (xerces::dom::Element& element, ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${klass.name}::${klass.name} (xerces::dom::Element& element, ::ome::xml::model::OMEModel& model):
+      ${klass.name}::${klass.name} (xerces::dom::Element& element, ${lang.omexml_model_package}::OMEModel& model):
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}()
@@ -290,16 +290,16 @@ ${customContent}\
 
         // -- OMEModelObject API methods --
 
-        /// @copydoc ome::xml::model::OMEModelObject::update
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::update
         virtual void
         update(const xerces::dom::Element&  element,
-               ::ome::xml::model::OMEModel& model);
+               ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 
       void
       ${klass.name}::update(const xerces::dom::Element&  element,
-                            ::ome::xml::model::OMEModel& model)
+                            ${lang.omexml_model_package}::OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
 {% if klass.langBaseType is not None %}\
@@ -352,7 +352,7 @@ ${customUpdatePropertyContent[prop.name]}
             std::shared_ptr<${prop.name}> rcptr(std::make_shared< ${prop.name}>());
             rcptr->setID(elem->getAttribute("ID"));
             std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
-            std::shared_ptr< ::ome::xml::model::OMEModelObject> optr(this);
+            std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(std::static_pointer_cast<${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
             model.addReference(optr, rptr);
           }
 {% end %}\
@@ -385,7 +385,7 @@ ${customUpdatePropertyContent[prop.name]}
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
-             std::shared_ptr< ::ome::xml::model::OMEModelObject> thisptr(shared_from_this());
+             std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(shared_from_this());
              model.addModelObject(getID(), thisptr);
            }
 {% end %}\
@@ -555,15 +555,15 @@ ${customUpdatePropertyContent[prop.name]}
       public:
         // -- ${klass.name} API methods --
 
-        /// @copydoc ome::xml::model::OMEModelObject::link
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::link
         bool
-        link (std::shared_ptr<Reference>&                          reference,
-              std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+        link (std::shared_ptr<Reference>& reference,
+              std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link (std::shared_ptr<Reference>&                          reference,
-                           std::shared_ptr< ::ome::xml::model::OMEModelObject>& object)
+      ${klass.name}::link (std::shared_ptr<Reference>& reference,
+                           std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object)
       {
         if (${klass.parentName}::link(reference, object))
           {
@@ -579,10 +579,10 @@ ${customUpdatePropertyContent[prop.name]}
               {
 {% if not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.type}(std::shared_ptr<${klass.type}>(this));
+                o_casted->link${klass.type}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.type}>(this));
+                o_casted->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
@@ -741,10 +741,10 @@ ${customUpdatePropertyContent[prop.name]}
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->link${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
         if (!contains(this->${prop.instanceVariableName}, ${prop.argumentName}))
@@ -781,10 +781,10 @@ ${customUpdatePropertyContent[prop.name]}
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
         bool found = false;
@@ -979,7 +979,7 @@ ${customUpdatePropertyContent[prop.name]}
                                             ${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
         ${prop.instanceVariableName}.at(index) = ${prop.argumentName};
@@ -1003,7 +1003,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${klass.name}::add${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
         ${prop.instanceVariableName}.push_back(${prop.argumentName});
@@ -1054,7 +1054,7 @@ ${customUpdatePropertyContent[prop.name]}
         getLightSourceType() const = 0;
 {% end header %}\
 {% end light source%}\
-{% if klass.parents is not None and "LightSource" in klass.parents.keys() %}\
+{% if klass.name != "AnnotationRef" and klass.parents is not None and "LightSource" in klass.parents.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
         getLightSourceType() const;
@@ -1079,7 +1079,7 @@ ${customUpdatePropertyContent[prop.name]}
         getShapeType() const = 0;
 {% end header %}\
 {% end shape%}\
-{% if klass.parents is not None and "Shape" in klass.parents.keys() %}\
+{% if klass.name != "AnnotationRef" and klass.parents is not None and "Shape" in klass.parents.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
         getShapeType() const;
@@ -1096,7 +1096,7 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        /// @copydoc ome::xml::model::OMEModelObject::asXMLElement
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
         virtual xerces::dom::Element&
         asXMLElement (xerces::dom::Document& document) const;
 {% end header %}\
@@ -1156,7 +1156,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
         {
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\

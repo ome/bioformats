@@ -53,6 +53,10 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
 
   private IRandomAccess outputFile;
 
+  private int currentBit = 0;
+  private int currentByte = 0;
+  private boolean dirtyByte = false;
+
   // -- Constructor --
 
   /**
@@ -111,15 +115,61 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
     writeBytes("\n");
   }
 
+  /** Writes the given value using the given number of bits. */
+  public void writeBits(int value, int numBits) throws IOException {
+    if (numBits <= 0) {
+      return;
+    }
+    for (int i=numBits-1; i>=0; i--) {
+      int b = ((value >> i) & 1) << (7 - currentBit);
+
+      currentByte |= b;
+      dirtyByte = true;
+      currentBit++;
+
+      if (currentBit > 7) {
+        currentBit = 0;
+        flush();
+        currentByte = 0;
+      }
+    }
+  }
+
+  /**
+   * Writes the bits represented by a bit string to the buffer.
+   *
+   * @throws IllegalArgumentException If any characters other than
+   *   '0' and '1' appear in the string.
+   */
+  public void writeBits(String bitString) throws IOException {
+    if (bitString == null) {
+      throw new IllegalArgumentException("Bit string cannot be null");
+    }
+    for (char c : bitString.toCharArray()) {
+      if (c == '1') {
+        writeBits(1, 1);
+      }
+      else if (c == '0') {
+        writeBits(0, 1);
+      }
+      else {
+        throw new IllegalArgumentException(
+          "Found illegal character '" + c + "'; write terminated");
+      }
+    }
+  }
+
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput#write(byte[]) */
   public void write(byte[] b) throws IOException {
+    flush();
     outputFile.write(b);
   }
 
   /* @see java.io.DataOutput#write(byte[], int, int) */
   public void write(byte[] b, int off, int len) throws IOException {
+    flush();
     outputFile.write(b, off, len);
   }
 
@@ -129,6 +179,7 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
    * @throws IOException If there is an error writing to the stream.
    */
   public void write(ByteBuffer b) throws IOException {
+    flush();
     outputFile.write(b);
   }
 
@@ -139,66 +190,79 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
    * @throws IOException If there is an error writing to the stream.
    */
   public void write(ByteBuffer b, int off, int len) throws IOException {
+    flush();
     outputFile.write(b, off, len);
   }
 
   /* @see java.io.DataOutput#write(int) */
   public void write(int b) throws IOException {
+    flush();
     outputFile.write(b);
   }
 
   /* @see java.io.DataOutput#writeBoolean(boolean) */
   public void writeBoolean(boolean v) throws IOException {
+    flush();
     outputFile.writeBoolean(v);
   }
 
   /* @see java.io.DataOutput#writeByte(int) */
   public void writeByte(int v) throws IOException {
+    flush();
     outputFile.writeByte(v);
   }
 
   /* @see java.io.DataOutput#writeBytes(String) */
   public void writeBytes(String s) throws IOException {
+    flush();
     outputFile.writeBytes(s);
   }
 
   /* @see java.io.DataOutput#writeChar(int) */
   public void writeChar(int v) throws IOException {
+    flush();
     outputFile.writeChar(v);
   }
 
   /* @see java.io.DataOutput#writeChars(String) */
   public void writeChars(String s) throws IOException {
+    flush();
     outputFile.writeChars(s);
   }
 
   /* @see java.io.DataOutput#writeDouble(double) */
   public void writeDouble(double v) throws IOException {
+    flush();
     outputFile.writeDouble(v);
   }
 
   /* @see java.io.DataOutput#writeFloat(float) */
   public void writeFloat(float v) throws IOException {
+    flush();
     outputFile.writeFloat(v);
   }
 
   /* @see java.io.DataOutput#writeInt(int) */
   public void writeInt(int v) throws IOException {
+    flush();
     outputFile.writeInt(v);
   }
 
   /* @see java.io.DataOutput#writeLong(long) */
   public void writeLong(long v) throws IOException {
+    flush();
     outputFile.writeLong(v);
   }
 
   /* @see java.io.DataOutput#writeShort(int) */
   public void writeShort(int v) throws IOException {
+    flush();
     outputFile.writeShort(v);
   }
 
   /* @see java.io.DataOutput#writeUTF(String) */
   public void writeUTF(String str) throws IOException {
+    flush();
     outputFile.writeUTF(str);
   }
 
@@ -206,11 +270,16 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
 
   /* @see java.io.OutputStream#close() */
   public void close() throws IOException {
+    flush();
     outputFile.close();
   }
 
   /* @see java.io.OutputStream#flush() */
   public void flush() throws IOException {
+    if (dirtyByte) {
+      outputFile.writeByte(currentByte);
+      dirtyByte = false;
+    }
   }
 
 }

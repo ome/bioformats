@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,6 +43,7 @@ import java.io.RandomAccessFile;
 
 import loci.common.Location;
 import loci.formats.in.FakeReader;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.tools.FakeImage;
 
 import org.testng.annotations.AfterMethod;
@@ -51,16 +52,19 @@ import org.testng.annotations.Test;
 
 public class FakeReaderTest {
 
-  private File fake, fakeIni;
+  private File fake, fakeIni, fourChannelFake;
 
-  private Location oneWell, twoWells, twoFields;
+  private Location oneWell, twoWells, twoFields, twoPlates;
 
   private FakeReader reader;
 
   @BeforeMethod
   public void setUp() throws Exception {
     fake = File.createTempFile(this.getClass().getName(), ".fake");
+    fourChannelFake = File.createTempFile("&sizeC=4&"
+        + this.getClass().getName(), ".fake");
     fake.deleteOnExit();
+    fourChannelFake.deleteOnExit();
     fakeIni = new File(fake.getAbsolutePath() + ".ini");
     RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
     try {
@@ -85,6 +89,11 @@ public class FakeReaderTest {
         + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
     .generateScreen(1, 1, 1, 1, 2);
     deleteTemporaryDirectoryOnExit(twoFields);
+
+    twoPlates = new FakeImage(new Location(fake.getParent() + File.separator
+        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
+    .generateScreen(2, 2, 2, 2, 4);
+    deleteTemporaryDirectoryOnExit(twoPlates);
 
     reader = new FakeReader();
   }
@@ -144,6 +153,20 @@ public class FakeReaderTest {
   }
 
   @Test
+  public void testGetSizeCWithFakeFile() throws Exception {
+    reader.setId(fake.getAbsolutePath());
+    int expectedChannelCount = 1;
+    assertEquals(reader.getSizeC(), expectedChannelCount);
+  }
+
+  @Test
+  public void testGetSizeCWithFourChannelFake() throws Exception {
+    reader.setId(fourChannelFake.getAbsolutePath());
+    int expectedChannelCount = 4;
+    assertEquals(reader.getSizeC(), expectedChannelCount);
+  }
+
+  @Test
   public void testIsSingleFileReturnsTrueForOneWell() throws Exception {
     assertTrue(reader.isSingleFile(oneWell.getAbsolutePath()));
   }
@@ -190,6 +213,16 @@ public class FakeReaderTest {
   public void testGetSeriesCountWithTwoFields() throws Exception {
     reader.setId(twoFields.getAbsolutePath());
     assertEquals(2, reader.getSeriesCount());
+  }
+
+  @Test
+  public void testGetOmeXmlMetadataWithTwoPlates() throws Exception {
+    reader.setId(twoPlates.getAbsolutePath());
+    OMEXMLMetadata metadata = reader.getOmeXmlMetadata();
+    int i = reader.getImageCount();
+    while (i >= 0) {
+        assertEquals(metadata.getChannelCount(i--), reader.getSizeC());
+    }
   }
 
   //

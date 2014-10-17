@@ -129,6 +129,7 @@ public class FileStitcher extends ReaderWrapper {
    *   patterns rather than single file paths.
    */
   public FileStitcher(IFormatReader r, boolean patternIds) {
+    super(r);
     if (r.getClass().getPackage().getName().equals("loci.formats.in")) {
       ClassList<IFormatReader> classes =
         new ClassList<IFormatReader>(IFormatReader.class);
@@ -281,6 +282,13 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   // -- IFormatReader API methods --
+
+  /* @see IFormatReader#getRequiredDirectories() */
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return reader.getRequiredDirectories(files);
+  }
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {

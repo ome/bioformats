@@ -43,7 +43,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package ${fu.package};
+package ${lang.omexml_model_omexml_model_enum_handlers_package};
 
 import java.util.Hashtable;
 import java.util.List;

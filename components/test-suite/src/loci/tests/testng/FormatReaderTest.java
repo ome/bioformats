@@ -615,7 +615,10 @@ public class FormatReaderTest {
         }
 
         // if CreationDate is before 1990, it's probably invalid
-        String date = retrieve.getImageAcquisitionDate(i).getValue();
+        String date = null;
+        if (retrieve.getImageAcquisitionDate(i) != null) {
+          date = retrieve.getImageAcquisitionDate(i).getValue();
+        }
         String configDate = config.getDate();
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
@@ -1352,6 +1355,93 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"all", "type", "automated"})
+  public void testRequiredDirectories() {
+    if (!initFile()) return;
+    String testName = "testRequiredDirectories";
+    String file = reader.getCurrentFile();
+    int directories = -1;
+
+    try {
+      directories = reader.getRequiredDirectories(reader.getUsedFiles());
+    }
+    catch (Exception e) {
+      LOGGER.warn("Could not retrieve directory count", e);
+    }
+
+    if (directories < 0) {
+      result(testName, false, "Invalid directory count (" + directories + ")");
+    }
+    else {
+      // make sure the directory count is not too small
+      // we can't reliably test for the directory count being too large,
+      // since a different fileset in the same format may need more directories
+
+      String[] usedFiles = reader.getUsedFiles();
+      String[] newFiles = new String[usedFiles.length];
+
+      // find the common parent
+
+      String commonParent = new Location(usedFiles[0]).getParent();
+      for (int i=1; i<usedFiles.length; i++) {
+        while (!usedFiles[i].startsWith(commonParent)) {
+          commonParent = commonParent.substring(0, commonParent.lastIndexOf(File.separator));
+        }
+      }
+
+      // remove extra directories
+
+      String split = File.separatorChar == '\\' ? "\\\\" : File.separator;
+      String[] f = commonParent.split(split);
+      StringBuilder toRemove = new StringBuilder();
+      for (int i=0; i<f.length - directories - 1; i++) {
+        toRemove.append(f[i]);
+        if (i < f.length - directories - 2) {
+          toRemove.append(File.separator);
+        }
+      }
+
+      // map new file names and verify that setId still works
+
+      String newFile = null;
+      for (int i=0; i<usedFiles.length; i++) {
+        newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
+        Location.mapId(newFiles[i], usedFiles[i]);
+
+        if (usedFiles[i].equals(file)) {
+          newFile = newFiles[i];
+        }
+      }
+      if (newFile == null) {
+        newFile = newFiles[0];
+      }
+
+      IFormatReader check = new FileStitcher();
+      try {
+        check.setId(newFile);
+        int nFiles = check.getUsedFiles().length;
+        result(testName, nFiles == usedFiles.length,
+          "Found " + nFiles + "; expected " + usedFiles.length);
+      }
+      catch (Exception e) {
+        LOGGER.info("Initialization failed", e);
+        result(testName, false, e.getMessage());
+      }
+      finally {
+        try {
+          check.close();
+        }
+        catch (IOException e) {
+          LOGGER.warn("Could not close reader", e);
+        }
+
+        for (int i=0; i<newFiles.length; i++) {
+          Location.mapId(newFiles[i], null);
+        }
+      }
+    }
+  }
+
+  @Test(groups = {"all", "type", "automated"})
   public void testSaneUsedFiles() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
@@ -1370,7 +1460,10 @@ public class FormatReaderTest {
 
         int maxFiles = (int) Math.min(base.length, 100);
 
-        if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+        if (DataTools.indexOf(
+	  reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0 ||
+	  file.toLowerCase().endsWith(".czi"))
+	{
           maxFiles = (int) Math.min(maxFiles, 10);
         }
 
@@ -1415,6 +1508,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // QuickTime resource forks are not detected
+          if (reader.getFormat().equals("QuickTime") && !base[i].equals(file)) {
+            continue;
+          }
+
           // SVS files in AFI datasets are detected as SVS
           if (reader.getFormat().equals("Aperio AFI") &&
             base[i].toLowerCase().endsWith(".svs"))
@@ -1436,9 +1534,8 @@ public class FormatReaderTest {
             continue;
           }
 
-          // multi-file Zeiss CZI datasets are only detected when the
-          // "master" file is chosen
-          if (reader.getFormat().equals("Zeiss CZI")) {
+          // pattern datasets can only be detected with the pattern file
+          if (reader.getFormat().equals("File pattern")) {
             continue;
           }
 
@@ -2042,6 +2139,18 @@ public class FormatReaderTest {
             // the Hamamatsu VMS reader only picks up its .vms file
             if (!result && !used[i].toLowerCase().endsWith(".vms") &&
               r instanceof HamamatsuVMSReader)
+            {
+              continue;
+            }
+
+            // QuickTime reader doesn't pick up resource forks
+            if (!result && i > 0 && r instanceof QTReader) {
+              continue;
+            }
+
+            // the pattern reader only picks up pattern files
+            if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
+              r instanceof FilePatternReader)
             {
               continue;
             }

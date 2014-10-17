@@ -208,15 +208,15 @@ The main inconvenience of the
 :source:`bfopen.m <components/formats-gpl/matlab/bfopen.m>` function is that
 it loads all the content of an image regardless of its size.
 
-To access the file reader without loading all the data, use the low-level 
-:source:`bfGetReader.m <components/formats-gpl/matlab/bfGetReader.m>` 
+To access the file reader without loading all the data, use the low-level
+:source:`bfGetReader.m <components/formats-gpl/matlab/bfGetReader.m>`
 function:
 
 ::
 
     reader = bfGetReader('path/to/data/file');
 
-You can then access the OME metadata using the ``getMetadataStore()`` 
+You can then access the OME metadata using the ``getMetadataStore()``
 method:
 
 ::
@@ -229,6 +229,19 @@ Individual planes can be queried using the
 ::
 
     series1_plane1 = bfGetPlane(reader, 1);
+
+To switch between series in a multi-image file, use the
+:javadoc:`setSeries() <loci/formats/IFormatReader.html#setSeries(int)>`
+method. To retrieve a plane given a set of `(z, c, t)` coordinates, these
+coordinates must be linearized first using :javadoc:`getIndex() <loci/formats/IFormatReader.html#getIndex(int, int, int)>`
+
+::
+
+   % Read plane from series iSeries at Z, C, T coordinates (iZ, iC, iT)
+   % All indices are expected to be 1-based
+   reader.setSeries(iSeries - 1);
+   iPlane = reader.getIndex(iZ - 1, iC -1, iT - 1) + 1;
+   I = bfGetPlane(reader, iPlane);
 
 Saving files
 ------------
@@ -251,6 +264,23 @@ And the following code snippet will produce an image of 64 pixels by
 
     plane = zeros(64, 64, 1, 2, 2, 'uint8');
     bfsave(plane, 'my-file.ome.tiff');
+
+By default, ``bfsave`` will create a minimal OME-XML metadata object
+containing basic information such as the pixel dimensions, the dimension order
+and the pixel type.
+To customize the OME metadata, it is possible to create a metadata object
+from the input array using :source:`createMinimalOMEXMLMetadata.m <components/formats-gpl/matlab/createMinimalOMEXMLMetadata.m>`, add custom metadata
+and pass this object directly to ``bfsave``::
+
+    plane = zeros(64, 64, 1, 2, 2, 'uint8');
+    metadata = createMinimalOMEXMLMetadata(plane);
+    pixelSize = ome.xml.model.primitives.PositiveFloat(java.lang.Double(.05));
+    metadata.setPixelsPhysicalSizeX(pixelSize, 0);
+    metadata.setPixelsPhysicalSizeY(pixelSize, 0);
+    pixelSizeZ = ome.xml.model.primitives.PositiveFloat(java.lang.Double(.2));
+    metadata.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
+    ...
+    bfsave(plane, 'my-file.ome.tiff', 'metadata', metadata);
 
 For more information about the methods to store the metadata, see the
 :javadoc:`MetadataStore <loci/formats/meta/MetadataStore.html>` Javadoc page.

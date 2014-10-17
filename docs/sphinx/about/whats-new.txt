@@ -1,6 +1,33 @@
 Version history
 ===============
 
+5.0.5 (2014 September 23)
+-------------------------
+
+* Documentation improvements
+* Support for non-spectral Prairie 5.2 datasets
+
+5.0.4 (2014 September 3)
+------------------------
+
+* Fix compile and runtime errors under Java 1.8
+* Improvements to Nikon .nd2 metadata parsing
+* Added support for PicoQuant .bin files (thanks to Ian Munro)
+
+5.0.3 (2014 August 7)
+---------------------
+
+* Many bug fixes for Nikon .nd2 files
+* Several other bug fixes, including:
+    - LZW image decoding
+    - Stage position parsing for Zeiss CZI
+    - Exposure time units for ScanR
+    - Physical pixel size units for DICOM
+    - NDPI and Zeiss LSM files larger than 4GB
+    - Z and T dimensions for InCell 6000 plates
+    - Export of RGB images in ImageJ
+* Improved metadata saving in MATLAB functions
+
 5.0.2 (2014 May 28)
 -------------------
 

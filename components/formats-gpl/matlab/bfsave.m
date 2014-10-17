@@ -1,4 +1,4 @@
-function bfsave(I, outputPath, varargin)
+function bfsave(varargin)
 % BFSAVE Save a 5D matrix into an OME-TIFF using Bio-Formats library
 %
 %    bfsave(I, outputPath) writes the input 5D matrix into a new file
@@ -13,6 +13,12 @@ function bfsave(I, outputPath, varargin)
 %    bfsave(I, outputPath, 'BigTiff', true) allows to save the file using
 %    64-bit offsets
 %
+%    bfsave(I, outputPath, 'metadata', metadata) allows to use a custom
+%    OME-XML metadata object when saving the file instead of creating a
+%    minimal OME-XML metadata object from the input 5D matrix.
+%
+%    For more information, see https://www.openmicroscopy.org/site/support/bio-formats5/developers/matlab-dev.html
+%
 %    Examples:
 %
 %        bfsave(zeros(100, 100), outputPath)
@@ -20,12 +26,13 @@ function bfsave(I, outputPath, varargin)
 %        bfsave(zeros(100, 100, 20), outputPath, 'dimensionOrder', 'XYTZC')
 %        bfsave(zeros(100, 100), outputPath, 'Compression', 'LZW')
 %        bfsave(zeros(100, 100), outputPath, 'BigTiff', true)
+%        bfsave(zeros(100, 100), outputPath, 'metadata', metadata)
 %
-% See also: BFGETREADER
+% See also: BFGETREADER, CREATEMINIMALOMEXMLMETADATA
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -50,80 +57,38 @@ bfCheckJavaMemory();
 % Check for required jars in the Java path
 bfCheckJavaPath();
 
-% Not using the inputParser for first argument as it copies data
-assert(isnumeric(I), 'First argument must be numeric');
-
 % Input check
 ip = inputParser;
+ip.addRequired('I', @isnumeric);
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
+ip.addParamValue('metadata', [], @(x) isa(x, 'loci.formats.ome.OMEXMLMetadata'));
 ip.addParamValue('Compression', '',  @(x) ismember(x, getCompressionTypes()));
 ip.addParamValue('BigTiff', false , @islogical);
-ip.parse(outputPath, varargin{:});
+ip.parse(varargin{:});
 
 % Create metadata
-toInt = @(x) ome.xml.model.primitives.PositiveInteger(java.lang.Integer(x));
-OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
-metadata = OMEXMLService.createOMEXMLMetadata();
-metadata.createRoot();
-metadata.setImageID('Image:0', 0);
-metadata.setPixelsID('Pixels:0', 0);
-metadata.setPixelsBinDataBigEndian(java.lang.Boolean.TRUE, 0, 0);
-
-% Set dimension order
-dimensionOrderEnumHandler = ome.xml.model.enums.handlers.DimensionOrderEnumHandler();
-dimensionOrder = dimensionOrderEnumHandler.getEnumeration(ip.Results.dimensionOrder);
-metadata.setPixelsDimensionOrder(dimensionOrder, 0);
-
-% Set pixels type
-pixelTypeEnumHandler = ome.xml.model.enums.handlers.PixelTypeEnumHandler();
-if strcmp(class(I), 'single')
-    pixelsType = pixelTypeEnumHandler.getEnumeration('float');
+if isempty(ip.Results.metadata)
+    metadata = createMinimalOMEXMLMetadata(ip.Results.I,...
+        ip.Results.dimensionOrder);
 else
-    pixelsType = pixelTypeEnumHandler.getEnumeration(class(I));
+    metadata = ip.Results.metadata;
 end
-metadata.setPixelsType(pixelsType, 0);
-
-% Read pixels size from image and set it to the metadat
-sizeX = size(I, 2);
-sizeY = size(I, 1);
-sizeZ = size(I, find(ip.Results.dimensionOrder == 'Z'));
-sizeC = size(I, find(ip.Results.dimensionOrder == 'C'));
-sizeT = size(I, find(ip.Results.dimensionOrder == 'T'));
-metadata.setPixelsSizeX(toInt(sizeX), 0);
-metadata.setPixelsSizeY(toInt(sizeY), 0);
-metadata.setPixelsSizeZ(toInt(sizeZ), 0);
-metadata.setPixelsSizeC(toInt(sizeC), 0);
-metadata.setPixelsSizeT(toInt(sizeT), 0);
-
-% Set channels ID and samples per pixel
-for i = 1: sizeC
-    metadata.setChannelID(['Channel:0:' num2str(i-1)], 0, i-1);
-    metadata.setChannelSamplesPerPixel(toInt(1), 0, i-1);
-end
-
-% Here you can edit the function and pass metadata using the adequate set methods, e.g.
-% metadata.setPixelsPhysicalSizeX(ome.xml.model.primitives.PositiveFloat(java.lang.Double(.106)),0);
-%
-% For more information, see http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab
-%
-% For future versions of this function, we plan to support passing metadata as
-% parameter/key value pairs
 
 % Create ImageWriter
 writer = loci.formats.ImageWriter();
 writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
-    writer.setCompression(ip.Results.Compression)
+    writer.setCompression(ip.Results.Compression);
 end
 if ip.Results.BigTiff
-    writer.getWriter(outputPath).setBigTiff(ip.Results.BigTiff)
+    writer.getWriter(ip.Results.outputPath).setBigTiff(ip.Results.BigTiff);
 end
-writer.setId(outputPath);
+writer.setId(ip.Results.outputPath);
 
 % Load conversion tools for saving planes
-switch class(I)
+switch class(ip.Results.I)
     case {'int8', 'uint8'}
         getBytes = @(x) x(:);
     case {'uint16','int16'}
@@ -137,10 +102,14 @@ switch class(I)
 end
 
 % Save planes to the writer
-nPlanes = sizeZ * sizeC * sizeT;
+nPlanes = metadata.getPixelsSizeZ(0).getValue() *...
+    metadata.getPixelsSizeC(0).getValue() *...
+    metadata.getPixelsSizeT(0).getValue();
+zctCoord = [size(ip.Results.I, 3) size(ip.Results.I, 4)...
+    size(ip.Results.I, 5)];
 for index = 1 : nPlanes
-    [i, j, k] = ind2sub([size(I, 3) size(I, 4) size(I, 5)],index);
-    plane = I(:, :, i, j, k)';
+    [i, j, k] = ind2sub(zctCoord, index);
+    plane = ip.Results.I(:, :, i, j, k)';
     writer.saveBytes(index-1, getBytes(plane));
 end
 writer.close();

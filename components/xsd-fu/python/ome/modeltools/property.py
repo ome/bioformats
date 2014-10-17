@@ -117,11 +117,12 @@ class OMEModelProperty(OMEModelEntity):
         name = self.instanceType
         if isinstance(self.model.opts.lang, language.CXX):
             if self.isEnumeration:
-                name = "enums::%s" % name
-            if self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
-                name = "primitives::%s" % name
-            if (name != self.instanceType or self.model.getObjectByName(self.instanceType) is not None) and self.model.opts.package != "ome::xml::model":
-                name = "::ome::xml::model::" + name
+                name = "%s::enums::%s" % (self.model.opts.lang.omexml_model_package, name)
+            elif self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
+                name = "%s::primitives::%s" % (self.model.opts.lang.omexml_model_package, name)
+            elif (name != self.instanceType or self.model.getObjectByName(self.instanceType) is not None):
+                name = "%s::%s" % (self.model.opts.lang.omexml_model_package, name)
+
         return name
     instanceTypeNS = property(_get_instanceTypeNS, doc="""The property's type with namespace.""")
 
@@ -179,11 +180,12 @@ class OMEModelProperty(OMEModelEntity):
         name = self.langType
         if isinstance(self.model.opts.lang, language.CXX):
             if self.isEnumeration:
-                name = "enums::%s" % name
-            if self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
-                name = "primitives::%s" % name
-            if (name != self.langType or self.model.getObjectByName(self.langType) is not None) and self.model.opts.package != "ome::xml::model":
-                name = "::ome::xml::model::" + name
+                name = "%s::enums::%s" % (self.model.opts.lang.omexml_model_package, name)
+            elif self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
+                name = "%s::primitives::%s" % (self.model.opts.lang.omexml_model_package, name)
+            elif (name != self.langType or self.model.getObjectByName(self.langType) is not None):
+                name = "%s::%s" % (self.model.opts.lang.omexml_model_package, name) 
+
         return name
     langTypeNS = property(_get_langTypeNS, doc="""The property's type with namespace.""")
 
@@ -197,7 +199,7 @@ class OMEModelProperty(OMEModelEntity):
                 # TODO: Handle different arg/mstype = types
                 # TODO: Allow the model namespace to be configured
                 # independently of the metadata namespace.
-                mstype = "const ::ome::xml::model::AffineTransform&"
+                mstype = "const ::%s::AffineTransform&" % (self.model.opts.lang.omexml_model_package)
 
         if isinstance(self.model.opts.lang, language.Java):
             if mstype is None and not self.isPrimitive and not self.isEnumeration:
@@ -223,7 +225,7 @@ class OMEModelProperty(OMEModelEntity):
                 # TODO: Handle different arg/mstype = types
                 # TODO: Allow the model namespace to be configured
                 # independently of the metadata namespace.
-                mstype = "const ::ome::xml::model::AffineTransform&"
+                mstype = "const ::%s::AffineTransform&" % (self.model.opts.lang.omexml_model_package)
 
         if isinstance(self.model.opts.lang, language.Java):
             if mstype is None and not self.isPrimitive and not self.isEnumeration:

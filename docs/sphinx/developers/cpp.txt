@@ -19,6 +19,8 @@ to be installed:
 +------------+-----------+------------------+----------------+----------+
 | Boost      | >= 1.42¹  | libboost-all-dev | boost-devel    | boost    |
 +------------+-----------+------------------+----------------+----------+
+| PNG        | >= 1.2    | libpng12-dev     | libpng-devel   | libpng   |
++------------+-----------+------------------+----------------+----------+
 | TIFF       | >= 4.0²   | libtiff5-dev     | libtiff4-devel | libtiff  |
 +------------+-----------+------------------+----------------+----------+
 | Xerces-C   | 3.x       | libxerces-c-dev  | xerces-c-devel | xerces-c |
@@ -129,14 +131,24 @@ cxxstd-autodetect=(ON|OFF)
   4.4 or 4.6 require ``-std=gnu++98`` or else ``stdarg`` support is
   broken).
 doxygen=(ON|OFF)
-  Enable doxygen documentation
+  Enable doxygen documentation.  These will be enabled by default if
+  doxygen is found.
+embedded-gtest=(ON|OFF)
+  Enable the use of an embedded copy of the Google Test (gtest)
+  library.  This is off by default but will be enabled automatically
+  if a system copy is not found.  This may be enabled explicitly to
+  override the autodetection.
+extended-tests=(ON|OFF)
+  Some of the unit tests are comprehensive and run many thousands of
+  tests.  These are enabled by default, but by setting to OFF a
+  representative subset of the tests will be run instead to save time.
 extra-warnings=(ON|OFF)
   Enable or disable additional compiler warnings in addition to the
   default set.  These are disabled by default since they trigger a large
   number of false positives, particularly in third-party libraries
   outside our control.
 test=(ON|OFF)
-  Enable unit tests
+  Enable unit tests.  Tests are enabled by default.
 
 For example, to disable tests, run ``cmake -Dtest=OFF``.  Options will
 typically be enabled by default if the prerequisites are available.

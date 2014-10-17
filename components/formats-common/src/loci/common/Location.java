@@ -40,6 +40,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -85,7 +86,7 @@ public class Location {
       this.time = time;
     }
   }
-  private static ConcurrentHashMap<String, ListingsResult> fileListings =
+  private static Map<String, ListingsResult> fileListings =
     new ConcurrentHashMap<String, ListingsResult>();
 
   // -- Fields --
@@ -290,6 +291,12 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable,
     boolean allowArchiveHandles) throws IOException
   {
+    return getHandle(id, writable, allowArchiveHandles, 0);
+  }
+
+  public static IRandomAccess getHandle(String id, boolean writable,
+    boolean allowArchiveHandles, int bufferSize) throws IOException
+  {
     LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
     IRandomAccess handle = getMappedFile(id);
     if (handle == null) {
@@ -299,17 +306,23 @@ public class Location {
       if (id.startsWith("http://")) {
         handle = new URLHandle(mapId);
       }
-      else if (allowArchiveHandles && ZipHandle.isZipFile(id)) {
+      else if (allowArchiveHandles && ZipHandle.isZipFile(mapId)) {
         handle = new ZipHandle(mapId);
       }
-      else if (allowArchiveHandles && GZipHandle.isGZipFile(id)) {
+      else if (allowArchiveHandles && GZipHandle.isGZipFile(mapId)) {
         handle = new GZipHandle(mapId);
       }
-      else if (allowArchiveHandles && BZip2Handle.isBZip2File(id)) {
+      else if (allowArchiveHandles && BZip2Handle.isBZip2File(mapId)) {
         handle = new BZip2Handle(mapId);
       }
       else {
-        handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        if (bufferSize > 0) {
+          handle = new NIOFileHandle(
+            new File(mapId), writable ? "rw" : "r", bufferSize);
+        }
+        else {
+          handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        }
       }
     }
     LOGGER.trace("Location.getHandle: {} -> {}", id, handle);

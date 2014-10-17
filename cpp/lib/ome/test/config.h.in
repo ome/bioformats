@@ -36,12 +36,14 @@
  * #L%
  */
 
-#ifndef OME_INTERNAL_CONFIG_H
-#define OME_INTERNAL_CONFIG_H
+#ifndef OME_TEST_CONFIG_H
+#define OME_TEST_CONFIG_H
 
 // Configuration of source and build trees
 
 #define PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}"
 #define PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}"
 
-#endif // OME_INTERNAL_CONFIG_H
+#cmakedefine EXTENDED_TESTS 1
+
+#endif // OME_TEST_CONFIG_H

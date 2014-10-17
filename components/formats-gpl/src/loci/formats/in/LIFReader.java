@@ -828,8 +828,11 @@ public class LIFReader extends FormatReader {
           }
         }
 
+        // channel coloring is implicit if the image is stored as RGB
         Color channelColor = getChannelColor(realChannel[index][c]);
-        store.setChannelColor(channelColor, i, c);
+        if (!isRGB()) {
+          store.setChannelColor(channelColor, i, c);
+        }
 
         if (channelColor.getValue() != -1 && nextFilter >= 0) {
           if (nextDetector - firstDetector != getSizeC() &&

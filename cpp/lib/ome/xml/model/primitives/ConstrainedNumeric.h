@@ -103,6 +103,12 @@ namespace ome
          * It also implements the standard numeric operators, so
          * may be used as though it were the value type.
          *
+         * The default value for most template specialisations is @c 0
+         * for integer types or @c 0.0 for floating point types.  For
+         * types whose constraint would not allow zero as the default
+         * value, the default value is @c 1 for integer types or @c
+         * 1.0 for floating point types.
+         *
          * @tparam N the type to constrain.
          * @tparam C the constraint to impose.
          * @tparam E the error policy to apply on constraint violation.
@@ -131,6 +137,9 @@ namespace ome
           /// The error policy to apply on constraint violation.
           typedef E error_policy_type;
 
+          /// Default value for default construction.
+          static const value_type default_value;
+
           /**
            * Construct a ConstrainedNumeric.  Note that the
            * ConstrainedNumeric value will be set to the default
@@ -141,7 +150,7 @@ namespace ome
            * constructable.
            */
           ConstrainedNumeric():
-            value()
+            value(default_value)
           {
             check();
           }

@@ -50,6 +50,9 @@ namespace ome
         template<>
         const std::string PositiveInteger::typestr("PositiveInteger");
 
+        template<>
+        const PositiveInteger::value_type PositiveInteger::default_value(1U);
+
       }
     }
   }

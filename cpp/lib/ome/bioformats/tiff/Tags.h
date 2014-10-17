@@ -90,7 +90,6 @@ namespace ome
           MATTEING,       ///< Use EXTRASAMPLES [obsolete].
           MAXSAMPLEVALUE, ///< Maximum component value.
           MINSAMPLEVALUE, ///< Minimum component value.
-          PLANARCONFIG,   ///< How components of each pixel are stored.
           RESOLUTIONUNIT, ///< Unit of measurement for XRESOLUTION and YRESOLUTION.
           SAMPLESPERPIXEL ///< Number of components per pixel.
         };
@@ -111,6 +110,12 @@ namespace ome
       enum UInt16PhotometricInterpretation1
         {
           PHOTOMETRIC ///< Photometric interpretation; colour space of image data.
+        };
+
+      /// PlanarConfiguration enum fields.
+      enum UInt16PlanarConfiguration1
+        {
+          PLANARCONFIG ///< How components of each pixel are stored.
         };
 
       /// Predictor enum fields.
@@ -415,6 +420,10 @@ namespace ome
 
       /// @copydoc getWrappedTag(StringTag1)
       tag_type
+      getWrappedTag(UInt16PlanarConfiguration1 tag);
+
+      /// @copydoc getWrappedTag(StringTag1)
+      tag_type
       getWrappedTag(UInt16Predictor1 tag);
 
       /// @copydoc getWrappedTag(StringTag1)
@@ -536,6 +545,14 @@ namespace ome
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::PhotometricInterpretation value_type;
+        };
+
+        /// Properties of UInt16PlanarConfiguration1 tags.
+        template<>
+        struct TagProperties< ::ome::bioformats::tiff::UInt16PlanarConfiguration1>
+        {
+          /// uint16_t type.
+          typedef ::ome::bioformats::tiff::PlanarConfiguration value_type;
         };
 
         /// Properties of UInt16Predictor1 tags.

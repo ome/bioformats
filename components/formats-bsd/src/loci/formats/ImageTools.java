@@ -482,10 +482,10 @@ public final class ImageTools {
       if (s >= max) s = 255;
       else if (s <= min) s = 0;
       else {
-        int diff = max - min;
+        float diff = max - min;
         float dist = (s - min) / diff;
 
-        s = (int) dist * 256;
+        s = (int)(dist * 255);
       }
 
       out[i / bpp] = (byte) s;

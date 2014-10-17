@@ -36,6 +36,13 @@
 
 cmake_minimum_required(VERSION 2.8)
 
+# Default policy is from 2.8.0
+cmake_policy(VERSION 2.8.0)
+# Set MacOSX @rpath usage globally.
+if (POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif(POLICY CMP0042)
+
 project(bioformats)
 include(cpp/cmake/Version.cmake)
 
@@ -45,21 +52,24 @@ endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 enable_language(CXX)
 
+list(APPEND CMAKE_MODULE_PATH
+     "${PROJECT_SOURCE_DIR}/cpp/cmake")
+
 include(CheckIncludeFileCXX)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 
-include(cpp/cmake/GNUInstallDirs.cmake)
-include(cpp/cmake/CompilerChecks.cmake)
-include(cpp/cmake/BoostChecks.cmake)
-include(cpp/cmake/RegexChecks.cmake)
-include(cpp/cmake/ThreadChecks.cmake)
-include(cpp/cmake/XercesChecks.cmake)
-include(cpp/cmake/ImageLibraries.cmake)
-include(cpp/cmake/XsdFu.cmake)
-include(cpp/cmake/GTest.cmake)
-include(cpp/cmake/Doxygen.cmake)
-include(cpp/cmake/HeaderTest.cmake)
+include(GNUInstallDirs)
+include(CompilerChecks)
+include(BoostChecks)
+include(RegexChecks)
+include(ThreadChecks)
+include(XercesChecks)
+include(ImageLibraries)
+include(XsdFu)
+include(GTest)
+include(Doxygen)
+include(HeaderTest)
 
 add_subdirectory(docs/doxygen)
 add_subdirectory(cpp)
@@ -67,3 +77,7 @@ add_subdirectory(cpp)
 set(LIBRARY_PREFIX OME)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config)
+if(WIN32)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
+               ${PROJECT_BINARY_DIR}/config.bat)
+endif()

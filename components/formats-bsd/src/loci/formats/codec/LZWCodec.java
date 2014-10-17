@@ -351,11 +351,15 @@ public class LZWCodec extends BaseCodec {
           int outLength = lengths[currCode];
           int i = currOutPos + outLength;
           int tablePos = currCode;
-          if (i > output.length) break;
+          while (i > output.length) {
+            tablePos = anotherCodes[tablePos];
+            i--;
+          }
           while (i > currOutPos) {
             output[--i] = newBytes[tablePos];
             tablePos = anotherCodes[tablePos];
           }
+          if (i >= output.length) break;
           currOutPos += outLength;
           // 2) Add string[old_code]+firstByte(string[curr_code]) to the table
           if (nextCode >= anotherCodes.length) break; 
@@ -378,7 +382,7 @@ public class LZWCodec extends BaseCodec {
           }
           currOutPos += outLength;
           // 2) Write firstByte(string[old_code]) to output
-          if (currOutPos >= output.length - 1) break;
+          if (currOutPos > output.length - 1) break;
           output[currOutPos++] = output[i];
           // 3) Add string[old_code]+firstByte(string[old_code]) to the table
           anotherCodes[nextCode] = oldCode;

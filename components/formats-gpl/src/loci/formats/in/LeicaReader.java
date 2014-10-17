@@ -904,7 +904,10 @@ public class LeicaReader extends FormatReader {
       // grab the file patterns
       Vector<String> filePatterns = new Vector<String>();
       for (String q : listing) {
-        Location l = new Location(dirPrefix, q).getAbsoluteFile();
+        Location l = new Location(q).getAbsoluteFile();
+        if (!l.exists()) {
+          l = new Location(dirPrefix, q).getAbsoluteFile();
+        }
         FilePattern pattern = new FilePattern(l);
         if (!pattern.isValid()) continue;
 
@@ -1421,8 +1424,7 @@ public class LeicaReader extends FormatReader {
           store.setFilterID(filterID, series, channel);
 
           int index = activeChannelIndices.indexOf(new Integer(channel));
-          CoreMetadata ms = core.get(series);
-          if (index >= 0 && index < ms.sizeC) {
+          if (index >= 0 && index < getEffectiveSizeC()) {
             if (!filterRefPopulated[series][index]) {
               store.setLightPathEmissionFilterRef(filterID, series, index, 0);
               filterRefPopulated[series][index] = true;

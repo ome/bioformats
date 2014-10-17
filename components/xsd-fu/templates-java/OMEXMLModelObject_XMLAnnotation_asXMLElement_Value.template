@@ -3,7 +3,7 @@
 			{
 				javax.xml.parsers.DocumentBuilderFactory factory =
 					javax.xml.parsers.DocumentBuilderFactory.newInstance();
-				factory.setNamespaceAware(true);
+				factory.setNamespaceAware(false);
 				javax.xml.parsers.DocumentBuilder parser =
 					factory.newDocumentBuilder();
 				org.xml.sax.InputSource is = new org.xml.sax.InputSource();

@@ -41,6 +41,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -95,12 +96,13 @@ public class OMETiffReader extends FormatReader {
   private int[] tileHeight;
 
   private OMEXMLService service;
+  private String metadataFile;
 
   // -- Constructor --
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
+    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff", "companion.ome"});
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
@@ -112,6 +114,11 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
+    // companion files in a binary-only dataset should always have additional files
+    if (checkSuffix(id, "companion.ome")) {
+      return false;
+    }
+
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
@@ -142,7 +149,16 @@ public class OMETiffReader extends FormatReader {
       int t = meta.getPixelsSizeT(i).getValue().intValue();
       nImages += z * t * nChannels;
     }
-    return nImages <= ifdOffsets.length;
+    return nImages > 0 && nImages <= ifdOffsets.length;
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "companion.ome")) {
+      // force the reader to pick up binary-only companion files
+      return true;
+    }
+    return super.isThisType(name, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -182,6 +198,16 @@ public class OMETiffReader extends FormatReader {
     try {
       if (service == null) setupService();
       IMetadata meta = service.createOMEXMLMetadata(comment);
+
+      try {
+        String metadataFile = meta.getBinaryOnlyMetadataFile();
+        if (metadataFile != null) {
+          return !checkSuffix(metadataFile, "tif") && !checkSuffix(metadataFile, "tiff");
+        }
+      }
+      catch (NullPointerException e) {
+      }
+
       for (int i=0; i<meta.getImageCount(); i++) {
         meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, 0);
         MetadataTools.verifyMinimumPopulated(meta, i);
@@ -262,6 +288,12 @@ public class OMETiffReader extends FormatReader {
     TiffParser p = new TiffParser(s);
     p.getSamples(ifd, buf, x, y, w, h);
     s.close();
+
+    // reasonably safe to close the reader if the entire plane or
+    // lower-right-most tile from a single plane file has been read
+    if (r.getImageCount() == 1 && w + x == getSizeX() && h + y == getSizeY()) {
+      r.close();
+    }
     return buf;
   }
 
@@ -271,9 +303,14 @@ public class OMETiffReader extends FormatReader {
     int series = getSeries();
     if (noPixels) return null;
     Vector<String> usedFiles = new Vector<String>();
-    for (int i=0; i<info[series].length; i++) {
-      if (!usedFiles.contains(info[series][i].id)) {
-        usedFiles.add(info[series][i].id);
+    if (metadataFile != null) {
+      usedFiles.add(metadataFile);
+    }
+    if (info != null && info[series] != null) {
+      for (int i=0; i<info[series].length; i++) {
+        if (!usedFiles.contains(info[series][i].id)) {
+          usedFiles.add(info[series][i].id);
+        }
       }
     }
     return usedFiles.toArray(new String[usedFiles.size()]);
@@ -317,6 +354,7 @@ public class OMETiffReader extends FormatReader {
       lastPlane = 0;
       tileWidth = null;
       tileHeight = null;
+      metadataFile = null;
     }
   }
 
@@ -346,25 +384,69 @@ public class OMETiffReader extends FormatReader {
     if (!new File(fileName).exists()) {
       fileName = currentId;
     }
-    RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     String xml;
-    IFD firstIFD;
-    try {
-      TiffParser tp = new TiffParser(ras);
-      firstIFD = tp.getFirstIFD();
-      xml = firstIFD.getComment();
+    IFD firstIFD = null;
+
+    boolean companion = false;
+    if (checkSuffix(fileName, "companion.ome")) {
+      xml = DataTools.readFile(fileName);
+      companion = true;
     }
-    finally {
-      ras.close();
+    else {
+      RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
+      try {
+        TiffParser tp = new TiffParser(ras);
+        firstIFD = tp.getFirstIFD();
+        xml = firstIFD.getComment();
+      }
+      finally {
+        ras.close();
+      }
     }
 
     if (service == null) setupService();
     OMEXMLMetadata meta;
     try {
       meta = service.createOMEXMLMetadata(xml);
+      if (companion) {
+        String firstTIFF = meta.getUUIDFileName(0, 0);
+        initFile(new Location(dir, firstTIFF).getAbsolutePath());
+        return;
+      }
     }
     catch (ServiceException se) {
       throw new FormatException(se);
+    }
+
+    String metadataPath = null;
+    try {
+      metadataPath = meta.getBinaryOnlyMetadataFile();
+      if (checkSuffix(metadataPath, "tif") || checkSuffix(metadataPath, "tiff")) {
+        metadataPath = null;
+      }
+    }
+    catch (NullPointerException e) {
+    }
+
+    if (metadataPath != null) {
+      // this is a binary-only file
+      // overwrite XML with what is in the companion OME-XML file
+      Location path = new Location(dir, metadataPath);
+      if (path.exists()) {
+        metadataFile = path.getAbsolutePath();
+        xml = DataTools.readFile(metadataFile);
+
+        try {
+          meta = service.createOMEXMLMetadata(xml);
+        }
+        catch (ServiceException se) {
+          throw new FormatException(se);
+        }
+        catch (NullPointerException e) {
+          metadataFile = null;
+          metadataPath = null;
+        }
+      }
     }
 
     hasSPW = meta.getPlateCount() > 0;

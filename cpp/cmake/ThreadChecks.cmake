@@ -39,6 +39,8 @@ include(CheckCXXSourceRuns)
 find_package(Threads REQUIRED)
 
 function(thread_test namespace header library outvar outlib)
+  set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
+  set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
   set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
   set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${library} ${CMAKE_THREAD_LIBS_INIT})
   check_cxx_source_runs(
@@ -70,6 +72,7 @@ int main() {
 ${outvar})
 
   set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+  set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
 
   set(${outvar} ${${outvar}} PARENT_SCOPE)
   if (${outvar})

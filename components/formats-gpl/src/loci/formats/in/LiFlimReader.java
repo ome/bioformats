@@ -148,8 +148,6 @@ public class LiFlimReader extends FormatReader {
   /** Series number indicating position in gzip stream. */
   private int gzSeries;
 
-  private int seriesCount, backgroundSeriesCount;
-
   // -- Constructor --
 
   /** Constructs a new LI-FLIM reader. */
@@ -234,8 +232,6 @@ public class LiFlimReader extends FormatReader {
       rois = null;
       stampValues = null;
       exposureTime = null;
-      seriesCount = 0;
-      backgroundSeriesCount = 0;
     }
   }
 
@@ -365,46 +361,38 @@ public class LiFlimReader extends FormatReader {
     int p = backgroundP == null ? 1 : Integer.parseInt(backgroundP);
     int f = backgroundF == null ? 1 : Integer.parseInt(backgroundF);
 
-    seriesCount = sizeP * sizeF;
-    backgroundSeriesCount = p * f;
-
-    int realSeriesCount = core.size();
-    if (backgroundDatatype != null) {
-      realSeriesCount = seriesCount + backgroundSeriesCount;
-    }
-    else if (seriesCount > 1) {
-      realSeriesCount = seriesCount;
-    }
-    core.clear();
-    for (int i=0; i<realSeriesCount; i++) {
-      core.add(new CoreMetadata());
-    }
-
     // populate core metadata
-    for (int i=0; i<seriesCount; i++) {
-      CoreMetadata ms = core.get(i);
-      ms.sizeX = Integer.parseInt(xLen);
-      ms.sizeY = Integer.parseInt(yLen);
-      ms.sizeZ = Integer.parseInt(zLen);
-      ms.sizeC = Integer.parseInt(channels);
-      ms.sizeT = Integer.parseInt(timestamps);
-      ms.imageCount = getSizeZ() * getSizeT();
-      ms.rgb = getSizeC() > 1;
-      ms.indexed = false;
-      ms.dimensionOrder = "XYCZT";
-      ms.pixelType = getPixelTypeFromString(datatype);
-      ms.littleEndian = true;
-      ms.interleaved = true;
-      ms.falseColor = false;
-    }
+    CoreMetadata ms = core.get(0);
+    ms.sizeX = Integer.parseInt(xLen);
+    ms.sizeY = Integer.parseInt(yLen);
+    ms.sizeZ = Integer.parseInt(zLen) * sizeF;
+    ms.sizeC = Integer.parseInt(channels);
+    ms.sizeT = Integer.parseInt(timestamps) * sizeP;
+    ms.imageCount = getSizeZ() * getSizeT();
+    ms.rgb = getSizeC() > 1;
+    ms.indexed = false;
+    ms.dimensionOrder = "XYCZT";
+    ms.pixelType = getPixelTypeFromString(datatype);
+    ms.littleEndian = true;
+    ms.interleaved = true;
+    ms.falseColor = false;
 
-    for (int i=seriesCount; i<core.size(); i++) {
-      CoreMetadata ms = core.get(i);
+    ms.moduloZ.type = FormatTools.FREQUENCY;
+    ms.moduloZ.step = ms.sizeZ / sizeF;
+    ms.moduloZ.start = 0;
+    ms.moduloZ.end = ms.sizeZ - 1;
+    ms.moduloT.type = FormatTools.PHASE;
+    ms.moduloT.step = ms.sizeT / sizeP;
+    ms.moduloT.start = 0;
+    ms.moduloT.end = ms.sizeT - 1;
+
+    if (backgroundX != null) {
+      ms = new CoreMetadata();
       ms.sizeX = Integer.parseInt(backgroundX);
       ms.sizeY = Integer.parseInt(backgroundY);
-      ms.sizeZ = Integer.parseInt(backgroundZ);
+      ms.sizeZ = Integer.parseInt(backgroundZ) * f;
       ms.sizeC = Integer.parseInt(backgroundC);
-      ms.sizeT = Integer.parseInt(backgroundT);
+      ms.sizeT = Integer.parseInt(backgroundT) * p;
       ms.imageCount = ms.sizeZ * ms.sizeT;
       ms.rgb = ms.sizeC > 1;
       ms.indexed = false;
@@ -413,6 +401,16 @@ public class LiFlimReader extends FormatReader {
       ms.littleEndian = true;
       ms.interleaved = true;
       ms.falseColor = false;
+
+      ms.moduloZ.type = FormatTools.FREQUENCY;
+      ms.moduloZ.step = ms.sizeZ / f;
+      ms.moduloZ.start = 0;
+      ms.moduloZ.end = ms.sizeZ - 1;
+      ms.moduloT.type = FormatTools.PHASE;
+      ms.moduloT.step = ms.sizeT / p;
+      ms.moduloT.start = 0;
+      ms.moduloT.end = ms.sizeT - 1;
+      core.add(ms);
     }
   }
 
@@ -423,15 +421,10 @@ public class LiFlimReader extends FormatReader {
     MetadataTools.populatePixels(store, this, times > 0);
 
     String path = new Location(getCurrentFile()).getName();
-    for (int i=0; i<getSeriesCount(); i++) {
-      // image data
-      if (i < seriesCount) {
-        store.setImageName(path + " Primary Image #" + (i + 1), i);
-      }
-      else {
-        store.setImageName(
-          path + " Background Image #" + (i - seriesCount + 1), i);
-      }
+
+    store.setImageName(path + " Primary Image #1", 0);
+    if (getSeriesCount() > 1) {
+      store.setImageName(path + " Background Image #1", 1);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {

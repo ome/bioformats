@@ -490,7 +490,11 @@ public class ZeissLSMReader extends FormatReader {
     long[] previousStripOffsets = null;
 
     for (int series=0; series<ifdsList.size(); series++) {
-      if (series > 0 && lsmFilenames.length > 1) {
+      // IFD ordering is ZPT, so reset state if we have multiple timepoints
+      // this prevents offsets from being confused when the first offset in
+      // the next series is legitimately smaller than the last offset in
+      // the previous series
+      if (series > 0 && getSizeT() > 1) {
         previousStripOffsets = null;
       }
 
@@ -1058,6 +1062,10 @@ public class ZeissLSMReader extends FormatReader {
             // we want to read until we find a null char
             int length = in.readInt();
             String name = in.readString(length);
+            while ((name.length() > 0) &&
+            	   (name.codePointAt(name.length()-1) == 0)) {
+            	name = name.substring(0, name.length()-1);
+            }
             if (name.length() <= 128) {
               addSeriesMetaList("ChannelName", name);
             }
@@ -1864,9 +1872,14 @@ public class ZeissLSMReader extends FormatReader {
     String[] fileList = parent.list(true);
     Arrays.sort(fileList);
     for (int i=0; i<fileList.length; i++) {
-      String absolutePath = new Location(parent, fileList[i]).getAbsolutePath();
+      Location f = new Location(fileList[i]);
+      if (!f.exists()) {
+        f = new Location(parent, fileList[i]);
+      }
+      String absolutePath = f.getAbsolutePath();
       if (checkSuffix(fileList[i], "mdb") &&
-        (!absolutePath.equals(mdbFile) && !fileList[i].equals(mdbFile)))
+        (!absolutePath.equals(mdbFile) && !fileList[i].equals(mdbFile) &&
+        !absolutePath.equals(new Location(mdbFile).getAbsolutePath())))
       {
         if (referencedLSMs.size() > 0) {
           return referencedLSMs.toArray(new String[0]);

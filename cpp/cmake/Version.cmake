@@ -49,7 +49,13 @@ function(ome_version)
   else(EXISTS "${PROJECT_SOURCE_DIR}/cpp/cmake/GitVersion.cmake")
     message(STATUS "Obtaining version from git")
 
-    execute_process(COMMAND git log -1 HEAD --pretty=%h
+    find_package(Git)
+
+    if(NOT GIT_FOUND)
+      message(FATAL_ERROR "No git executable found for getting version")
+    endif(NOT GIT_FOUND)
+
+    execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 HEAD --pretty=%h
       OUTPUT_VARIABLE commit_hash RESULT_VARIABLE git_log_fail ERROR_QUIET
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     if (git_log_fail)
@@ -57,7 +63,7 @@ function(ome_version)
     endif (git_log_fail)
     string(REPLACE "\n" "" commit_hash "${commit_hash}")
 
-    execute_process(COMMAND git log -1 "${commit_hash}" --pretty=%ai
+    execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 "${commit_hash}" --pretty=%ai
       OUTPUT_VARIABLE commit_date_string RESULT_VARIABLE git_log_fail ERROR_QUIET
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     if (git_log_fail)
@@ -65,7 +71,7 @@ function(ome_version)
     endif (git_log_fail)
     string(REPLACE "\n" "" commit_date_string "${commit_date_string}")
 
-    execute_process(COMMAND git log -1 "${commit_hash}" --pretty=%at
+    execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 "${commit_hash}" --pretty=%at
       OUTPUT_VARIABLE commit_date_unix RESULT_VARIABLE git_log_fail ERROR_QUIET
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     if (git_log_fail)
@@ -77,14 +83,14 @@ function(ome_version)
     set(OME_VCS_DATE ${commit_date_unix} PARENT_SCOPE)
     set(OME_VCS_DATE_S ${commit_date_string} PARENT_SCOPE)
 
-    execute_process(COMMAND git describe --match=v[0-9]* --exact
+    execute_process(COMMAND "${GIT_EXECUTABLE}" describe --match=v[0-9]* --exact
                     OUTPUT_VARIABLE describe_exact_output
                     RESULT_VARIABLE describe_exact_fail
                     ERROR_QUIET
                     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     string(REPLACE "\n" "" describe_exact_output "${describe_exact_output}")
 
-    execute_process(COMMAND git describe --match=v[0-9]*
+    execute_process(COMMAND "${GIT_EXECUTABLE}" describe --match=v[0-9]*
                     OUTPUT_VARIABLE describe_output
                     RESULT_VARIABLE describe_fail
                     ERROR_QUIET

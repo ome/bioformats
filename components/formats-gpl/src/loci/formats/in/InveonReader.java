@@ -25,6 +25,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -255,6 +256,11 @@ public class InveonReader extends FormatReader {
           value = value.substring(space + 1);
         }
         else if (key.equals("file_name")) {
+          // remove path from stored file name, if present
+          value = value.replaceAll("/", File.separator);
+          value = value.replace('\\', File.separatorChar);
+          value = value.substring(value.lastIndexOf(File.separator) + 1);
+
           Location header = new Location(currentId).getAbsoluteFile();
           datFile = new Location(header.getParent(), value).getAbsolutePath();
         }
