@@ -861,7 +861,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     Pixels pix = root.getImage(image).getPixels();
     pix.setMetadataOnly(meta);
-    omexmlMeta.setRoot(root);
   }
 
   /** @see OMEXMLService#isEqual(OMEXMLMetadata, OMEXMLMetadata) */
