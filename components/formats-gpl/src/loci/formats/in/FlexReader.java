@@ -1283,8 +1283,6 @@ public class FlexReader extends FormatReader {
               tp.setDoCaching(false);
               file.ifds = tp.getIFDs();
               file.ifds.set(0, firstIFD);
-              flexFiles.add(file);
-              parseFlexFile(currentWell, row, col, field, firstFile, store);
             }
             else {
               // if the pixel data is uncompressed and the IFD is stored
@@ -1295,8 +1293,6 @@ public class FlexReader extends FormatReader {
               nOffsets = file.offsets.length;
               file.ifds = new IFDList();
               file.ifds.add(firstIFD);
-              flexFiles.add(file);
-              parseFlexFile(currentWell, row, col, field, firstFile, store);
             }
           }
           else {
@@ -1319,9 +1315,9 @@ public class FlexReader extends FormatReader {
                 file.offsets[i] = file.offsets[i - 1] + size;
               }
             }
-            flexFiles.add(file);
-            parseFlexFile(currentWell, row, col, field, firstFile, store);
           }
+          flexFiles.add(file);
+          parseFlexFile(currentWell, row, col, field, firstFile, store);
           s.close();
           if (firstFile) firstFile = false;
         }
@@ -1706,17 +1702,22 @@ public class FlexReader extends FormatReader {
         if (sliderName.endsWith("Dichro")) {
           String dichroicID =
             MetadataTools.createLSID("Dichroic", 0, nextDichroic);
-          dichroicMap.put(id, dichroicID);
-          store.setDichroicID(dichroicID, 0, nextDichroic);
-          store.setDichroicModel(id, 0, nextDichroic);
+          if (dichroicMap.get(id) == null || !dichroicMap.get(id).equals(dichroicID)) {
+            dichroicMap.put(id, dichroicID);
+            LOGGER.warn("setDichroicID({}, 0, {})", dichroicID, nextDichroic);
+            store.setDichroicID(dichroicID, 0, nextDichroic);
+            store.setDichroicModel(id, 0, nextDichroic);
+          }
           nextDichroic++;
         }
         else {
           String filterID = MetadataTools.createLSID("Filter", 0, nextFilter);
-          filterMap.put(id, filterID);
-          store.setFilterID(filterID, 0, nextFilter);
-          store.setFilterModel(id, 0, nextFilter);
-          store.setFilterFilterWheel(sliderName, 0, nextFilter);
+          if (filterMap.get(id) == null || !filterMap.get(id).equals(filterID)) {
+            filterMap.put(id, filterID);
+            store.setFilterID(filterID, 0, nextFilter);
+            store.setFilterModel(id, 0, nextFilter);
+            store.setFilterFilterWheel(sliderName, 0, nextFilter);
+          }
           nextFilter++;
         }
       }
