@@ -139,6 +139,9 @@ public class FlexReader extends FormatReader {
   private HashMap<String, String> reverseFileMapping =
     new HashMap<String, String>();
 
+  private HashMap<String, String> dichroicMap = new HashMap<String, String>();
+  private HashMap<String, String> filterMap = new HashMap<String, String>();
+
   /** Specifies the row and column index into 'flexFiles' for a given well. */
   private int[][] wellNumber;
 
@@ -330,6 +333,8 @@ public class FlexReader extends FormatReader {
       planeDeltaT.clear();
       acquisitionDates = null;
       reverseFileMapping.clear();
+      dichroicMap.clear();
+      filterMap.clear();
     }
   }
 
@@ -1399,8 +1404,6 @@ public class FlexReader extends FormatReader {
     private boolean populateCore = true;
     private int well = 0;
 
-    private HashMap<String, String> filterMap;
-    private HashMap<String, String> dichroicMap;
     private MetadataLevel level;
 
     private String filterSet;
@@ -1415,8 +1418,6 @@ public class FlexReader extends FormatReader {
       this.store = store;
       this.populateCore = populateCore;
       this.well = well;
-      filterMap = new HashMap<String, String>();
-      dichroicMap = new HashMap<String, String>();
       level = getMetadataOptions().getMetadataLevel();
       this.thisField = thisField;
     }
