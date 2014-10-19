@@ -842,11 +842,13 @@ public class FlexReader extends FormatReader {
         "(count={}, names={}, factors={})",
         new Object[] {totalPlanes, nsize, fsize});
     }
-    for (String ns : n) {
-      addGlobalMetaList("Name", ns);
-    }
-    for (String fs : f) {
-      addGlobalMetaList("Factor", fs);
+    if (firstFile) {
+      for (String ns : n) {
+        addGlobalMetaList("Name", ns);
+      }
+      for (String fs : f) {
+        addGlobalMetaList("Factor", fs);
+      }
     }
 
     // parse factor values
@@ -1556,17 +1558,23 @@ public class FlexReader extends FormatReader {
         else if (qName.equals("PositionX")) {
           final double v = Double.parseDouble(value) * 1000000;
           planePositionX.add(new Length(v, UNITS.REFERENCEFRAME));
-          addGlobalMetaList("X position for position", v);
+          if (planePositionX.size() <= fieldCount) {
+            addGlobalMetaList("X position for position", v);
+          }
         }
         else if (qName.equals("PositionY")) {
           final double v = Double.parseDouble(value) * 1000000;
           planePositionY.add(new Length(v, UNITS.REFERENCEFRAME));
-          addGlobalMetaList("Y position for position", v);
+          if (planePositionY.size() <= fieldCount) {
+            addGlobalMetaList("Y position for position", v);
+          }
         }
         else if (qName.equals("PositionZ")) {
           final double v = Double.parseDouble(value) * 1000000;
           planePositionZ.add(new Length(v, UNITS.REFERENCEFRAME));
-          addGlobalMetaList("Z position for position", v);
+          if (planePositionZ.size() <= fieldCount) {
+            addGlobalMetaList("Z position for position", v);
+          }
         }
         else if (qName.equals("TimepointOffsetUsed")) {
           planeDeltaT.add(new Double(value));
