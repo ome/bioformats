@@ -2,38 +2,22 @@
 Developer Documentation
 ***********************
 
-Using Bio-Formats
-=================
+Introduction to Bio-Formats
+===========================
 
 .. toctree::
-    :maxdepth: 1
-    :titlesonly:
+    :maxdepth: 3
 
-    using-bioformats
     building-bioformats
-    generating-test-images
+    using-bioformats
 
-Bio-Formats as a Java library
-=============================
-
-API documentation
------------------
+Using Bio-Formats as a Java library
+===================================
 
 .. toctree::
-    :maxdepth: 1
-    :titlesonly:
+    :maxdepth: 3
 
     java-library
-
-Also see :javadoc:`Bio-Formats Javadocs <>`
-
-Examples
---------
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
     export
     export2
     conversion
@@ -43,7 +27,7 @@ Interfacing from non-Java code
 ==============================
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 3
     :titlesonly:
 
     non-java-code
@@ -58,24 +42,16 @@ Interfacing from non-Java code
 .. _bfapplications:
 
 
-Writing new Bio-Formats file format readers
-===========================================
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    reader-guide
-
 Contributing to Bio-Formats
 ===========================
 
 .. toctree::
-    :maxdepth: 1
-    :titlesonly:
+    :maxdepth: 3
 
     commit-testing
     testing-notes
+    generating-test-images
+    reader-guide
     service
     xsd-fu
 
