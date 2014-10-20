@@ -40,7 +40,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.Timestamp;
 
-import ome.units.quantity.*;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;

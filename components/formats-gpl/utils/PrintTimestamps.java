@@ -34,7 +34,7 @@ import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.units.quantity.*;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**

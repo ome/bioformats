@@ -55,7 +55,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
-import ome.units.quantity.*;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**

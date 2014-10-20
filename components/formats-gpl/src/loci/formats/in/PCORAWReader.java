@@ -38,7 +38,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 
-import ome.units.quantity.*;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**

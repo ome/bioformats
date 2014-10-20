@@ -31,8 +31,16 @@
 
 package ome.units;
 
-import ome.units.quantity.*;
-import ome.units.unit.*;
+import ome.units.quantity.Angle;
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Power;
+import ome.units.quantity.Pressure;
+import ome.units.quantity.Quantity;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 
 import java.math.BigInteger;
 

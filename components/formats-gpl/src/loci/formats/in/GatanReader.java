@@ -39,7 +39,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 
-import ome.units.quantity.*;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**

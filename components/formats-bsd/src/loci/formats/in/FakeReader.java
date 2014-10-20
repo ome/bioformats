@@ -64,7 +64,7 @@ import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.OME;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
-import ome.units.quantity.*;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**

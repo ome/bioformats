@@ -56,7 +56,7 @@ import loci.plugins.util.LociPrefs;
 
 import ome.xml.model.primitives.PositiveFloat;
 
-import ome.units.quantity.*;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**
