@@ -481,7 +481,7 @@ public class CellSensReader extends FormatReader {
 
     // make sure magnification order matches resolution order
 
-    Double maxMag = 0d;
+    Double maxMag = magnifications.get(0);
     if (magnifications.size() > 1) {
       HashMap<Integer, Integer> xDims = new HashMap<Integer, Integer>();
       for (int i=0; i<core.size();) {
