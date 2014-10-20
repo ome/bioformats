@@ -2102,7 +2102,7 @@ developer = Aldus and Microsoft
 bsd = yes
 export = yes
 samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ \n
-`Big TIFF <http://tiffcentral.com/>`_
+`Big TIFF <http://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
 weHave = * a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) \n
 * many TIFF datasets \n
 * a few BigTIFF datasets
