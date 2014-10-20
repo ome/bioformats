@@ -735,7 +735,9 @@ public class LIFReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.S), i);
+      if (tSteps[index] != null) {
+        store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.S), i);
+      }
 
       Vector detectors = detectorModels[index];
       if (detectors != null) {
