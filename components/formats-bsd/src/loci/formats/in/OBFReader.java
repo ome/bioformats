@@ -2,10 +2,8 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
- *   - Board of Regents of the University of Wisconsin-Madison
- *   - Glencoe Software, Inc.
- *   - University of Dundee
+ * Copyright (C) Max Planck Institute for Biophysical Chemistry, 
+ * Goettingen, 2014
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -27,6 +25,10 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -87,7 +89,7 @@ public class OBFReader extends FormatReader
 	}
 	private Frame currentInflatedFrame = new Frame() ;
 	
-	private transient Inflater inflater = new Inflater() ;
+	private Inflater inflater = new Inflater() ;
 
 	public OBFReader()
 	{
@@ -168,7 +170,11 @@ public class OBFReader extends FormatReader
 
 			if (lengths.size() > 0)
 			{
-				final double lengthX = Math.abs(lengths.get(0)) ;
+				double lengthX = Math.abs(lengths.get(0)) ;
+				if (lengthX < 0.01)
+				{
+					lengthX *= 1000000 ;
+				}
 				if (lengthX > 0)
 				{
 					final PositiveFloat physicalSizeX = new PositiveFloat( lengthX / obf.sizeX ) ;
@@ -177,7 +183,11 @@ public class OBFReader extends FormatReader
 			}
 			if (lengths.size() > 1)
 			{
-				final double lengthY = Math.abs(lengths.get(1)) ;
+				double lengthY = Math.abs(lengths.get(1)) ;
+				if (lengthY < 0.01)
+				{
+					lengthY *= 1000000 ;
+				}
 				if (lengthY > 0)
 				{
 					final PositiveFloat physicalSizeY = new PositiveFloat( lengthY / obf.sizeY ) ;
@@ -186,7 +196,11 @@ public class OBFReader extends FormatReader
 			}
 			if (lengths.size() > 2)
 			{
-				final double lengthZ = Math.abs(lengths.get(2)) ;
+				double lengthZ = Math.abs(lengths.get(2)) ;
+				if (lengthZ < 0.01)
+				{
+					lengthZ *= 1000000 ;
+				}
 				if (lengthZ > 0)
 				{
 					final PositiveFloat physicalSizeZ = new PositiveFloat( lengthZ / obf.sizeZ ) ;
