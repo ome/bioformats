@@ -25,7 +25,7 @@ Supported Metadata Fields: :doc:`TIFF (Tagged Image File Format) <tiff-metadata>
 Sample Datasets:
 
 - `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
-- `Big TIFF <http://tiffcentral.com/>`_
+- `Big TIFF <http://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
 
 We currently have:
 
