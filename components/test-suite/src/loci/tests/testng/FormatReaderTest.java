@@ -988,7 +988,7 @@ public class FormatReaderTest {
       Time realIncrement = retrieve.getPixelsTimeIncrement(i);
 
       if (!(expectedIncrement == null && realIncrement == null) &&
-        !expectedIncrement.equals(realIncrement))
+        (expectedIncrement == null || !expectedIncrement.equals(realIncrement)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedIncrement + ", actual " + realIncrement + ")");
       }
