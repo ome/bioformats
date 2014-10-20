@@ -53,60 +53,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.unitsofmeasurement</groupId>
-      <artifactId>unit-api</artifactId>
-      <version>0.6.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.uomo</groupId>
-      <artifactId>org.eclipse.uomo.core</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.uomo</groupId>
-      <artifactId>org.eclipse.uomo.ucum</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.uomo</groupId>
-      <artifactId>org.eclipse.uomo.ui</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.uomo</groupId>
-      <artifactId>org.eclipse.uomo.units</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.uomo</groupId>
-      <artifactId>org.eclipse.uomo.util</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.uomo</groupId>
-      <artifactId>org.eclipse.uomo.xml</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.osgi</groupId>
-      <artifactId>org.eclipse.osgi</artifactId>
-      <version>3.7.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>icu4j</groupId>
-      <artifactId>icu4j</artifactId>
-      <version>4_4_1_1</version>
-    </dependency>
-
-    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
@@ -332,10 +278,6 @@
     <repository>
       <id>ome.snapshots</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
-    <repository>
-      <id>geotoolkit.org</id>
-      <url>http://maven.geotoolkit.org/</url>
     </repository>
   </repositories>
 </project>

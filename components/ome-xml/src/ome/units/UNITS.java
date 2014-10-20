@@ -36,14 +36,8 @@ import ome.units.unit.*;
 
 import java.math.BigInteger;
 
-import org.eclipse.uomo.units.SI;
-import org.eclipse.uomo.units.AbstractSystemOfUnits;
-import org.eclipse.uomo.units.internal.NonSI;
-import org.eclipse.uomo.units.impl.system.Imperial;
-import org.eclipse.uomo.units.impl.BaseUnit;
-
 /**
- * A wrapper-like for the SI and Imperial classes from the units implimintation.
+ * Defines unit constants corresponding to unit classes in ome.units.unit.*
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
