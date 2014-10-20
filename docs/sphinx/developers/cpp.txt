@@ -193,7 +193,7 @@ If possible, install the following packages:
 For Python on Windows, either download separate installers for each
 package, or install ``setuptools`` and ``pip`` for Python, then ``pip
 install`` needed packages; ensure downloaded packages are 64-bit if
-using 64-bit Python)
+using 64-bit Python.
 
 
 Python Genshi
@@ -534,12 +534,12 @@ Configuring
 
 Bio-Formats uses :program:`cmake`, a generic cross-platform build
 system which generates build files for a large number of common build
-systems and IDEs.  For example, on BSD, Linux and MacOS X Unix
-:program:`make` :file:`Makefile` files may be created, while on
-Windows Visual Studio :program:`msbuild` :file:`.sln` solution files
-and :file:`.vcxproj` project may be created.  However, Eclipse,
-Sublime Text or several other IDEs or alternative build systems may be
-used instead, if desired.
+systems and IDEs.  For example, on BSD, Linux and MacOS X, Unix
+:program:`make` :file:`Makefile` files may be created.  On Windows,
+Visual Studio :program:`msbuild` :file:`.sln` solution files and
+:file:`.vcxproj` project may be created.  However, Eclipse, Sublime
+Text or several other IDEs or alternative build systems may be used
+instead, if desired.
 
 Start by creating a temporary build directory.  This directory may be
 in any location inside or outside the bioformats source tree.

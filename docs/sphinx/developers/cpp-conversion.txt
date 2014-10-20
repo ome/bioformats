@@ -51,7 +51,7 @@ Java has primitive types and classes.
 
     Pixels[] array = new Pixels[5];
 
-- Arrays have an intrintic size.
+- Arrays have an intrinsic size.
 - Arrays are safe to index out of bounds (an exception is thrown).
 
 C++ types
@@ -99,7 +99,7 @@ C++ has primitive types, structures and classes.
 - Arrays “decay” to bare pointers
 - Arrays are not safe to index out of bounds
 - Size information lost at runtime
-- **Never use arrays** outside static initialisers
+- **Never use arrays** outside static initializers
 
 Simplified type names
 ^^^^^^^^^^^^^^^^^^^^^
@@ -122,7 +122,7 @@ Simplified type names
 Used in standard container types e.g. :cpp:type:`size_type`,
 :cpp:type:`value_type` and in classes and class templates in
 Bio-Formats.  Consistency is needed for generic programming—use the
-standardised type names to enable interoperability with standard
+standard type names to enable interoperability with standard
 algorithms.
 
 Exception handling
@@ -133,21 +133,22 @@ Java
 
 :c:type:`throws` details which exceptions are thrown by a method.
 Java exceptions are also “checked”, requiring the caller to catch and
-handle all exceptions which might be thrown.
+handle all exceptions which might be thrown, aside from
+:cpp:class:`RuntimeException` and its subclasses.
 
 C++
 ^^^
 
 C++ has exception specifications like Java, however they are useless
-with the exception of of :c:type:`nothrow`.  This is because if an
-exception is thrown which does not match the specification, it will
-abort the program with a :cpp:class:`bad_exception` which makes them
-unusable in practice.
+aside from :c:type:`nothrow`.  This is because if an exception is
+thrown which does not match the specification, it will abort the
+program with a :cpp:class:`bad_exception` which makes them unusable in
+practice.
 
 Exceptions can be thrown at any point with the exception that they
 should **never be thrown in a destructor**.  It is not necessary or
 typical to check exceptions except where needed.  All code must be
-exception safe given that an exception could be thrown at any point;
+exception-safe given that an exception could be thrown at any point;
 the design considerations for exception safety are covered below.
 
 Interfaces
@@ -158,7 +159,7 @@ multiple-inheritance, which is rather more flexible, at the expense of
 being rather more complicated and dangerous.  However, the Java
 single-inheritance-plus-interfaces model can be implemented in C++
 using a subset of the facilities provided by multiple inheritance.
-Rather than being enforced by the language, it's a set of idioms.
+Rather than being enforced by the language, it is a set of idioms.
 These must be rigorously followed or else things will fail horribly!
 
 C++ interfaces are classes with:
@@ -176,7 +177,7 @@ C++ classes implementing interfaces:
 - Have a :cpp:type:`virtual` destructor
 
 When compiled with optimization enabled, the interface classes should
-have zero storage overhead.  If implementing classes don't use
+have zero storage overhead.  If implementing classes do not use
 :c:type:`virtual public` inheritance, compilation will fail as soon as
 a second class in the inheritance hierarchy also implements the
 interface.
@@ -231,7 +232,7 @@ the “leak” fixed:
     delete i; // never called
   }
 
-:c:type:`new` and :c:type:`delete` are now paired, but the code isn't
+:c:type:`new` and :c:type:`delete` are now paired, but the code is not
 exception-safe.  If an exception is thrown, memory will still be
 leaked.  Manual memory management requires correct clean up for every
 exit point in the function, including both all :c:type:`return`
@@ -286,9 +287,9 @@ The unsafe example above, has been rewritten to use
 
 Rather than managing the memory by hand, responsibility for this is
 delegated to a “smart” pointer, :cpp:class:`std::shared_ptr`.  The
-memory is freed by the :cpp:class:`std::shared_ptr` destructor either
-at the end of the block scope, and explicit :c:type:`return` or when
-cleaned up by exception stack unwinding.
+memory is freed by the :cpp:class:`std::shared_ptr` destructor which
+is run at the end of the block scope, on explicit :c:type:`return`, or
+when cleaned up by exception stack unwinding.
 
 - :cpp:class:`shared_ptr` object lifetime manages the resource
 - :cpp:class:`new` replaced with :cpp:class:`std::make_shared`
@@ -369,20 +370,19 @@ Class member types:
   std::shared_ptr<Image> i;    // Reference
   std::weak_ptr<Image> i;      // Weak reference
 
-Wherever possible, a concrete instance should be preferred.  This
-won't be possible for polymorphic types, where a reference is
-required.  In this situation, a :cpp:class:`std::shared_ptr` is
-preferred if the class owns the member and/or needs control over its
-lifetime.  If the class does not have ownership then a
-:cpp:class:`std::weak_ptr` will allow safe access to the object if it
-still exists.  In circumstances where manual lifetime management is
-required, e.g. for performance, and the member is guaranteed to exist
-for the duration of the object's lifetime, a plain pointer or
-reference may be used.  A pointer will be used if it's possible for it
-to be :cpp:class:`null`, or it may be reassigned more than once, or if
-is initialised after initial construction.  If properly using RAII,
-using references should be possible and preferred over bare pointers
-in all cases.
+Wherever possible, a concrete instance should be preferred.  This is
+not possible for polymorphic types, where a reference is required.  In
+this situation, a :cpp:class:`std::shared_ptr` is preferred if the
+class owns the member and/or needs control over its lifetime.  If the
+class does not have ownership then a :cpp:class:`std::weak_ptr` will
+allow safe access to the object if it still exists.  In circumstances
+where manual lifetime management is required, e.g. for performance,
+and the member is guaranteed to exist for the duration of the object's
+lifetime, a plain pointer or reference may be used.  A pointer will be
+used if it is possible for it to be :cpp:class:`null`, or it may be
+reassigned more than once, or if is assigned after initial
+construction.  If properly using RAII, using references should be
+possible and preferred over bare pointers in all cases.
 
 Argument types:
 
@@ -396,16 +396,17 @@ Argument types:
 Passing primitive types by value is acceptable.  However, passing a
 struct or class by value will implicitly copy the object into the
 callee's stack frame, which may be expensive (and requires a copy
-constructor which won't be guaranteed or even possible for polymorphic
-types).  Passing by reference avoids the need for any copying, and
-passing by :c:type:`const` reference will prevent the callee from
-modifying the object, also making it clear that there is no transfer
-of ownership.  Passing using a :cpp:class:`std::shared_ptr` is
-possible but not recommended---the copy will involve reference
-counting overhead which can kill multi-threaded performance since it
-requires synchronization between all threads; use a :c:type:`const`
-reference to a :cpp:class:`std::shared_ptr` to avoid the overhead.  If
-ownership should be transferred or shared with the callee, use a
+constructor which will not be guaranteed or even possible for
+polymorphic types).  Passing by reference avoids the need for any
+copying, and passing by :c:type:`const` reference will prevent the
+callee from modifying the object, also making it clear that there is
+no transfer of ownership.  Passing using a
+:cpp:class:`std::shared_ptr` is possible but not recommended---the
+copy will involve reference counting overhead which can kill
+multi-threaded performance since it requires synchronization between
+all threads; use a :c:type:`const` reference to a
+:cpp:class:`std::shared_ptr` to avoid the overhead.  If ownership
+should be transferred or shared with the callee, use a
 non-:c:type:`const` reference.
 
 To be absolutely clear, plain pointers are never used and are not
@@ -431,7 +432,7 @@ reference implies ownership retention.  Passing a
 :cpp:class:`std::shared_ptr` by value or reference implies sharing
 ownership since the caller can retain a reference; if passing by value
 ownership *may* be transferred since this implies the callee is not
-retaining a reference to it (but this isn't guaranteed).
+retaining a reference to it (but this is not guaranteed).
 
 Again, to be absolutely clear, plain pointers are never used and are
 not acceptable for ownership transfer.  A plain reference also makes
@@ -513,7 +514,7 @@ Java containers can be problematic:
 
 - Java can store root :cpp:class`Object` in containers
 - Java can pass and return root :cpp:class`Object` in methods.
-- This isn't possible in C++: there is no root object.
+- This is not possible in C++: there is no root object.
 - An alternative approach is needed.
 
 Arbitrary types
@@ -530,12 +531,12 @@ Arbitrary types
 - Type erasure (similar to Java generics)
 - Use for containers of arbitrary types
 - Flexible, but need to cast to each type used to extract
-- Code won't be able to handle all possible types meaningfully
+- Code will not be able to handle all possible types meaningfully
 
 This is the most flexible solution, but in order to get a value back
 out, requires casting it to its specific type.  This can mean a
 situation could arise where values are stored of types which cannot be
-handled since it's not possible to write the code to handle every
+handled since it is not possible to write the code to handle every
 single possibility ahead of time.  However, if the open-ended
 flexibility is needed, this is available.
 
@@ -574,8 +575,8 @@ a :cpp:class:`std::shared_ptr` since it can behave as a value type
 Java uses polymorphism to store and pass the root :cpp:class:`Object`
 around.  The :cpp:class:`boost::variant` and :cpp:class:`boost::any`
 approaches use templates to [internally] create a common base and
-manage the stored objects.  However, the end user doesn't need to deal
-with this complexity directly—the use of the types is quite
+manage the stored objects.  However, the end user does not need to
+deal with this complexity directly—the use of the types is quite
 transparent.
 
 Variant example: MetadataMap
@@ -587,7 +588,7 @@ for two different categories of type (scalars and vectors of scalars).
 The :cpp:class:`MetadataMap` class stores key-value pairs, where the
 value can be either a string, Boolean, or several integer and floating
 point types, or vectors of any of these types.  When converting the
-data to other forms, it's necessary to flatten the vector types to a
+data to other forms, it is necessary to flatten the vector types to a
 set of separate key-value pairs with the key having a numbered suffix,
 one for each element in the vector.
 
@@ -649,7 +650,7 @@ The :cpp:class:`MetadataMapFlattenVisitor` is implemented thusly:
 
 The :cpp:class:`MetadataMapFlattenVisitor` is derived from
 :cpp:class:`boost::static_visitor`, and its templated operator method
-is specialised and expanded once for each type supported by the
+is specialized and expanded once for each type supported by the
 variant type used by the map.  In the above example, two separate
 overloaded operators are provided, one for scalar values which is a
 simple copy, and one for vector values which splits the elements into
@@ -696,8 +697,8 @@ This is implemented using an overloaded equality operator:
     }
 
 As before, this is implemented in terms of a
-:cpp:class:`boost::static_visitor`, but note that this time it's
-specialised for :cpp:type:`bool`, meaning that the return type of
+:cpp:class:`boost::static_visitor`, but note that this time it is
+specialized for :cpp:type:`bool`, meaning that the return type of
 :cpp:func:`apply_visitor` will also be :cpp:type:`bool`, and the
 operator methods must also return this type.
 
@@ -725,9 +726,9 @@ of the possible types.  When the types are not equal, the first
 templated operator is called, which always returns false.  When the
 types are equal the second operator is called; this checks both
 operands are not null and then performs an equality comparison using
-the buffer contents.  Given that all the operators are inlined, we
-would hope that a good optimising compiler would cause all the false
-cases to be optimised out after expansion.
+the buffer contents.  Given that all the operators are inline, we
+would hope that a good compiler would cause all the false cases to be
+optimized out after expansion.
 
 Variant example: VariantPixelBuffer SFINAE
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -748,7 +749,7 @@ Use of SFINAE has been made accessible through the creation of
 :cpp:class:`boost::enable_if` (:cpp:class:`std::enable_if` in C++11),
 and *type traits* (type category checking classes such as
 :cpp:class:`is_integer`).  The following code is an example of how one
-might write a visitor for specialising an algorithm for separate
+might write a visitor for adapting an algorithm to separate
 integer, floating point, complex floating point and bitmask cases.
 
 .. code-block:: cpp
@@ -791,7 +792,7 @@ integer, floating point, complex floating point and bitmask cases.
         // Complex floating point algorithm.
       }
 
-      // BIT/bool pixel types.  Note this is a simple overload since it's
+      // BIT/bool pixel types.  Note this is a simple overload since it is
       // a simple type, not a category of different types.
       void
       operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& buf)
@@ -812,8 +813,8 @@ match), then the substitution fails and the template will not be used.
 Note that the conditional is itself a type, which can be confusing,
 since all this logic is driven by conditional template expansion.
 
-Normal templates are specialised for a type.  This approach allows
-specialisation for different categories of type.  Without this
+Normal templates are specialized for a type.  This approach allows
+specialization for different *categories* of type.  Without this
 approach it would be necessary to write separate overloads for each
 individual type (each integer type, each floating point type, each
 complex type, etc.), even when the logic would be identical for
