@@ -473,6 +473,62 @@ console replacement such as :program:`ConsoleZ` is used.
   some will be discovered automatically by :program:`cmake`
 
 
+Source tree layout
+------------------
+
+Source tree layout::
+
+  cpp
+  ├── cmake
+  ├── ext
+  ├── lib
+  │   └── ome
+  │       ├── bioformats
+  │       │   ├── detail
+  │       │   ├── in
+  │       │   ├── out
+  │       │   └── tiff
+  │       ├── compat
+  │       ├── internal
+  │       ├── xerces
+  │       │   └── dom
+  │       └── xml
+  │           ├── meta
+  │           └── model
+  │               ├── enums
+  │               └── primitives
+  └── test
+      ├── ome-bioformats
+      ├── ome-compat
+      ├── ome-internal
+      ├── ome-xerces
+      └── ome-xml
+
+Top-level directories inside :file:`cpp`:
+
+:file:`cmake`
+  CMake build infrastructure
+:file:`ext`
+  External third-party code
+:file:`lib`
+  Bio-Formats library headers and sources
+:file:`test`
+  Bio-Formats unit tests
+
+Components in :file:`lib` and :file:`test`:
+
+:file:`bioformats`
+  Bio-Formats reader and writer interfaces and implementations
+:file:`compat`
+  Compatibility workarounds
+:file:`internal`
+  Private implementation details
+:file:`xerces`
+  Xerces-C XML DOM wrappers
+:file:`xml`
+  OME XML model and metadata
+
+
 Configuring
 -----------
 
@@ -610,8 +666,6 @@ To build the API reference documentation, run::
 If using an IDE, open the generated project file and proceed using the
 IDE to build the project.
 
-Run::
-
 Windows
 ^^^^^^^
 
@@ -697,3 +751,34 @@ When using Visual Studio, there should be an :file:`INSTALL.vcxproj`
 project which may be run using :program:`msbuild`, for example::
 
   > msbuild INSTALL.vcxproj /p:platform=x64
+
+Installation layout
+^^^^^^^^^^^^^^^^^^^
+
+A typical installation layout::
+
+  $CMAKE_INSTALL_PREFIX
+  ├── include
+  │   └── ome
+  │       ├── bioformats
+  │       │   ├── detail
+  │       │   ├── in
+  │       │   ├── out
+  │       │   └── tiff
+  │       ├── compat
+  │       ├── xerces
+  │       │   └── dom
+  │       └── xml
+  │           ├── meta
+  │           └── model
+  │               ├── enums
+  │               └── primitives
+  └── lib
+      └── cmake
+
+
+Using the library
+-----------------
+
+The :doxygen:`Doxygen API reference <annotated.html>` is used to
+document all aspects of the Bio-Formats API.
