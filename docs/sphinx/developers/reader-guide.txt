@@ -1,5 +1,5 @@
-Bio-Formats file format reader guide
-====================================
+New file format guide
+=====================
 
 This document is a brief guide to writing new Bio-Formats file format readers.
 
