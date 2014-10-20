@@ -401,6 +401,22 @@ namespace ome
         setPlanarConfiguration(PlanarConfiguration planarconfig);
 
         /**
+         * Get photometric interpretation.
+         *
+         * @returns the photometric interpretation of sample values.
+         */
+        PhotometricInterpretation
+        getPhotometricInterpretation() const;
+
+        /**
+         * Set photometric interpretation.
+         *
+         * @param photometric the photometric interpretation of sample values.
+         */
+        void
+        setPhotometricInterpretation(PhotometricInterpretation photometric);
+
+        /**
          * Read a whole image plane into a pixel buffer.
          *
          * @param buf the destination pixel buffer.

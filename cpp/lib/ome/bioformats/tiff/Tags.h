@@ -86,6 +86,7 @@ namespace ome
           CLEANFAXDATA,   ///< How bad scanlines were handled.
           COMPRESSION,    ///< Compression scheme in use on the image data.
           DATATYPE,       ///< Use SAMPLEFORMAT [obsolete].
+          INDEXED,        ///< Image uses indexed color in any color space.
           INKSET,         ///< Inkset used in a separated image.
           MATTEING,       ///< Use EXTRASAMPLES [obsolete].
           MAXSAMPLEVALUE, ///< Maximum component value.
@@ -255,7 +256,6 @@ namespace ome
        * CLIPPATH,                    ///<
        * XCLIPPATHUNITS,              ///<
        * YCLIPPATHUNITS,              ///<
-       * INDEXED,                     ///<
        * OPIPROXY,                    ///<
        * GLOBALPARAMETERSIFD,         ///<
        * PROFILETYPE,                 ///<

@@ -55,9 +55,7 @@
 
 #include <ome/test/config.h>
 
-#ifdef PNG_FOUND
 #include <png.h>
-#endif // PNG_FOUND
 
 #include <gtest/gtest.h>
 
@@ -649,6 +647,7 @@ TEST(TIFFTest, FieldWrapUInt16)
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::COMPRESSION).get(value));
   ASSERT_EQ(1, value);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::DATATYPE).get(value), ome::bioformats::tiff::Exception);
+  ASSERT_THROW(ifd->getField(ome::bioformats::tiff::INDEXED).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::INKSET).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::MATTEING).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::MAXSAMPLEVALUE).get(value), ome::bioformats::tiff::Exception);
@@ -966,17 +965,14 @@ public:
   uint32_t iheight;
   ome::bioformats::tiff::PlanarConfiguration planarconfig;
   uint16_t samples;
-#ifdef PNG_FOUND
   static VariantPixelBuffer pngdata_chunky;
   static VariantPixelBuffer pngdata_planar;
   typedef std::map<std::pair<PT,ome::bioformats::tiff::PlanarConfiguration>,VariantPixelBuffer> pngdata_map_type;
   static pngdata_map_type pngdata_map;
   static bool pngdata_init;
-#endif // PNG_FOUND
   static uint32_t pwidth;
   static uint32_t pheight;
 
-#ifdef PNG_FOUND
   static void
   readPNGData()
   {
@@ -1106,7 +1102,6 @@ public:
 
     return found->second;
   }
-#endif // PNG_FOUND
 
   virtual void SetUp()
   {
@@ -1123,12 +1118,10 @@ public:
 
 };
 
-#ifdef PNG_FOUND
 VariantPixelBuffer TIFFTileTest::pngdata_chunky;
 VariantPixelBuffer TIFFTileTest::pngdata_planar;
 TIFFTileTest::pngdata_map_type TIFFTileTest::pngdata_map;
 bool TIFFTileTest::pngdata_init = false;
-#endif // PNG_FOUND
 uint32_t TIFFTileTest::pwidth = 0;
 uint32_t TIFFTileTest::pheight = 0;
 
@@ -1323,7 +1316,6 @@ namespace
     VariantPixelBuffer vb;
     ifd->readImage(vb);
 
-#ifdef PNG_FOUND
     if(reference != vb)
       {
         std::cout << "Observed\n";
@@ -1332,7 +1324,6 @@ namespace
         dump_image_representation(reference, std::cout);
       }
     ASSERT_TRUE(reference == vb);
-#endif // PNG_FOUND
   }
 }
 
@@ -1512,7 +1503,6 @@ class PixelTest : public ::testing::TestWithParam<PixelTestParameters>
 
 TEST_P(PixelTest, WriteTIFF)
 {
-#ifdef PNG_FOUND
   const PixelTestParameters& params = GetParam();
   const VariantPixelBuffer& pixels(TIFFTileTest::getPNGData(params.pixeltype, params.planarconfig));
   const VariantPixelBuffer::size_type *shape = pixels.shape();
@@ -1535,7 +1525,7 @@ TEST_P(PixelTest, WriteTIFF)
     ASSERT_NO_THROW(wifd->setPixelType(params.pixeltype));
     ASSERT_NO_THROW(wifd->setSamplesPerPixel(shape[ome::bioformats::DIM_SUBCHANNEL]));
     ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.planarconfig));
-    ASSERT_NO_THROW(wifd->getField(::ome::bioformats::tiff::PHOTOMETRIC).set(params.photometricinterp));
+    ASSERT_NO_THROW(wifd->setPhotometricInterpretation(params.photometricinterp));
 
     // Verify IFD tags
     EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_X], wifd->getImageWidth());
@@ -1626,7 +1616,7 @@ TEST_P(PixelTest, WriteTIFF)
     EXPECT_EQ(params.pixeltype, ifd->getPixelType());
     EXPECT_EQ(shape[ome::bioformats::DIM_SUBCHANNEL], ifd->getSamplesPerPixel());
     EXPECT_EQ(params.planarconfig, ifd->getPlanarConfiguration());
-    EXPECT_EQ(params.photometricinterp, static_cast< ::ome::bioformats::tiff::PhotometricInterpretation>(ifd->getField(::ome::bioformats::tiff::PHOTOMETRIC)));
+    EXPECT_EQ(params.photometricinterp, ifd->getPhotometricInterpretation());
 
     VariantPixelBuffer vb;
     ifd->readImage(vb);
@@ -1639,7 +1629,6 @@ TEST_P(PixelTest, WriteTIFF)
         dump_image_representation(pixels, std::cout);
       }
     EXPECT_TRUE(pixels == vb);
-#endif // PNG_FOUND
   }
 
 }

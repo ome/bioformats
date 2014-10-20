@@ -96,7 +96,7 @@ namespace ome
       /// Width (in pixels) of thumbnail images in this series.
       dimension_size_type thumbSizeX;
 
-      /// Height (in pixels) of thumbnail images in this series. */
+      /// Height (in pixels) of thumbnail images in this series.
       dimension_size_type thumbSizeY;
 
       /// Number of bytes per pixel.
@@ -138,7 +138,7 @@ namespace ome
       /// Are images are stored as indexed color?
       bool indexed;
 
-      /// Can the color map (if present) be ignored? */
+      /// Can the color map (if present) be ignored?
       bool falseColor;
 
       /// Is all of the metadata stored within the file parsed correctly?
