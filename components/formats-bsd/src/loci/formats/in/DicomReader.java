@@ -79,6 +79,7 @@ public class DicomReader extends FormatReader {
   private static final Hashtable<Integer, String> TYPES = buildTypes();
 
   private static final int PIXEL_REPRESENTATION = 0x00280103;
+  private static final int PIXEL_SIGN = 0x00281041;
   private static final int TRANSFER_SYNTAX_UID = 0x00020010;
   private static final int SLICE_SPACING = 0x00180088;
   private static final int SAMPLES_PER_PIXEL = 0x00280002;
@@ -547,6 +548,7 @@ public class DicomReader extends FormatReader {
           addInfo(tag, bitsPerPixel);
           break;
         case PIXEL_REPRESENTATION:
+        case PIXEL_SIGN:
           short ss = in.readShort();
           signed = ss == 1;
           addInfo(tag, ss);
