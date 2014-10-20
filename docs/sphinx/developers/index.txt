@@ -20,7 +20,7 @@ Introduction to Bio-Formats
 ===========================
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 1
 
     building-bioformats
     file-reader
@@ -31,7 +31,7 @@ Using Bio-Formats as a Java library
 ===================================
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 1
 
     java-library
     export
@@ -43,7 +43,7 @@ Interfacing from non-Java code
 ==============================
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 1
     :titlesonly:
 
     non-java-code
@@ -62,7 +62,7 @@ Contributing to Bio-Formats
 ===========================
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 1
 
     commit-testing
     testing-notes
