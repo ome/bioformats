@@ -56,6 +56,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -878,9 +881,9 @@ public final class FormatTools {
     if (timestamp != null) {
       date = timestamp.getValue();
       if (retrieve.getPlaneCount(series) > image) {
-        Double deltaT = retrieve.getPlaneDeltaT(series, image);
+        Time deltaT = retrieve.getPlaneDeltaT(series, image);
         if (deltaT != null) {
-          stamp = (long) (deltaT * 1000);
+          stamp = (long) (deltaT.value(UNITS.S).doubleValue() * 1000);
         }
       }
       stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);

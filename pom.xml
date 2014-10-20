@@ -59,7 +59,7 @@
     <slf4j.version>1.7.6</slf4j.version>
     <kryo.version>2.24.0</kryo.version>
 
-    <xsdfu.schemaver>2013-10-dev-3</xsdfu.schemaver>
+    <xsdfu.schemaver>2013-10-dev-4</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
     <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
@@ -653,6 +653,10 @@
   <!-- NB: for parent project -->
   <repositories>
     <repository>
+        <id>ome.experimental</id>
+        <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
+    </repository>
+    <repository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </repository>
@@ -691,6 +695,10 @@
     <pluginRepository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>ome.experimental</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
     </pluginRepository>
   </pluginRepositories>
 

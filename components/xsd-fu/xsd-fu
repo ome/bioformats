@@ -5,7 +5,7 @@ Generate code to process OME-XML from an OME-XML schema.
 """
 
 #
-#  Copyright (C) 2007 University of Dundee. All rights reserved.
+#  Copyright (C) 2007 - 2014 University of Dundee. All rights reserved.
 #
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@ Generate code to process OME-XML from an OME-XML schema.
 #
 
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import logging
 import sys
@@ -247,7 +248,7 @@ def main(model, opts):
             print(file)
 
 
-def enum_value_name(value):
+def enum_value_name(value, isUnitsEnum):
     """
     Returns a valid Java enumeration name for an OME-XML enumeration value.
     """
@@ -262,7 +263,27 @@ def enum_value_name(value):
         value = value.replace("7", "seven")
         value = value.replace("8", "eight")
         value = value.replace("9", "nine")
+    value = value.replace(' ', "")
     value = value.replace("-", "")
+
+    if isUnitsEnum:
+        """ replace SI multiple prefixes """
+        value = re.sub("^M", "mega", value)
+        value = re.sub("^G", "giga", value)
+        value = re.sub("^T(?!o)", "tera", value)
+        value = re.sub("^P", "peta", value)
+        value = re.sub("^E", "exa", value)
+        value = re.sub("^Z", "zetta", value)
+        value = re.sub("^Y", "yotta", value)
+
+        """ µ is &micro; &#181; &#xB5; 'micro sign Mu' """
+        """ replace all µ to avoid compile errors """
+        value = value.replace('µ', "micro")
+
+        """ replace all ° and Å to avoid compile errors """
+        value = value.replace('°', "degree")
+        value = value.replace('Å', "angstrom")
+
     return value.upper()
 
 def enumTypesMain(model, opts):

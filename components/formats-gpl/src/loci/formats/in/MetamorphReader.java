@@ -59,6 +59,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * Reader is the file format reader for Metamorph STK files.
  *
@@ -938,8 +941,8 @@ public class MetamorphReader extends BaseTiffReader {
           expTime = exposureTimes.get(index);
         }
 
-        store.setPlaneDeltaT(deltaT, i, p);
-        store.setPlaneExposureTime(expTime, i, p);
+        store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, p);
+        store.setPlaneExposureTime(new Time(expTime, UNITS.S), i, p);
 
         if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);

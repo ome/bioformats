@@ -38,6 +38,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * AnalyzeReader is the file format reader for Analyze 7.5 files.
  *
@@ -347,7 +350,7 @@ public class AnalyzeReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
 
-      store.setPixelsTimeIncrement(new Double(deltaT * 1000), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(deltaT * 1000), UNITS.S), 0);
     }
   }
 

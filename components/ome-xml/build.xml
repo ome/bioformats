@@ -36,7 +36,7 @@ Type "ant -p" for a list of targets.
   <target name="test" depends="jar,compile-tests" description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
-      file="${tests.dir}/ome/xml/utests/testng.xml"/>
+      file="${testng.xml}"/>
     <testng failureProperty="failedTest">
       <classpath>
         <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->

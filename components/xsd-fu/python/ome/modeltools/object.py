@@ -223,9 +223,9 @@ class OMEModelObject(OMEModelEntity):
         props = list();
 
         if self.langBaseType != self.model.opts.lang.base_class:
-            props.append([self.langBaseType, "value", None, "Element's text data"])
+            props.append([self.langBaseType, "value", None, "Element's text data", False])
         for prop in self.properties.values():
-            props.append([prop.instanceVariableType, prop.instanceVariableName, prop.instanceVariableDefault, prop.instanceVariableComment])
+            props.append([prop.instanceVariableType, prop.instanceVariableName, prop.instanceVariableDefault, prop.instanceVariableComment, prop.isUnitsEnumeration])
         return props
     instanceVariables = property(_get_instanceVariables,
         doc="""The instance variables of this class.""")

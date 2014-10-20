@@ -57,6 +57,9 @@ import ome.xml.model.primitives.Timestamp;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ome.units.quantity.*;
+import ome.units.UNITS;
+
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
  *
@@ -317,7 +320,7 @@ public class MicromanagerReader extends FormatReader {
           if (tiff != null && new Location(tiff).exists() &&
             nextStamp < p.timestamps.length)
           {
-            store.setPlaneDeltaT(p.timestamps[nextStamp++], i, q);
+            store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.S), i, q);
           }
         }
 
@@ -605,7 +608,7 @@ public class MicromanagerReader extends FormatReader {
 
           if (key.equals("Exposure-ms")) {
             double t = Double.parseDouble(value);
-            p.exposureTime = new Double(t / 1000);
+            p.exposureTime = new Time(new Double(t / 1000), UNITS.S);
           }
           else if (key.equals("ElapsedTime-ms")) {
             double t = Double.parseDouble(value);
@@ -829,7 +832,8 @@ public class MicromanagerReader extends FormatReader {
     public String[] channels;
 
     public String comment, time;
-    public Double exposureTime, sliceThickness, pixelSize;
+    public Time exposureTime;
+    public Double sliceThickness, pixelSize;
     public Double[] timestamps;
 
     public int gain;

@@ -75,7 +75,7 @@ class OMEModelProperty(OMEModelEntity):
             choiceMaxOccurs = self.delegate.choice.getMaxOccurs()
         return max(choiceMaxOccurs, self.delegate.getMaxOccurs())
     maxOccurs = property(_get_maxOccurs,
-        doc="""The maximum number of occurances for this property.""")
+        doc="""The maximum number of occurrences for this property.""")
 
     def _get_minOccurs(self):
         if self.isAttribute:
@@ -87,7 +87,7 @@ class OMEModelProperty(OMEModelEntity):
             return self.delegate.choice.getMinOccurs()
         return self.delegate.getMinOccurs()
     minOccurs = property(_get_minOccurs,
-        doc="""The minimum number of occurances for this property.""")
+        doc="""The minimum number of occurrences for this property.""")
 
     def _get_name(self):
         return self.delegate.getName()
@@ -129,6 +129,9 @@ class OMEModelProperty(OMEModelEntity):
     def _get_langType(self):
         name = None
 
+        if self.hasUnitsCompanion:
+            name = self.unitsType
+
         # Hand back the type of enumerations
         if self.isEnumeration:
             langType = self.name
@@ -153,6 +156,9 @@ class OMEModelProperty(OMEModelEntity):
             # handle cases where the type is prefixed by a namespace definition.
             # (ex. OME:NonNegativeInt).
         else:
+            # This sets name only for those types mentioned in the type_map
+            # for the generated language. All other cases set name to None
+            # so the following if block is executed
             name = self.model.opts.lang.type(self.type.replace('OME:', ''))
 
         if name is None:
@@ -192,6 +198,9 @@ class OMEModelProperty(OMEModelEntity):
     def _get_metadataStoreArgType(self):
         mstype = None
 
+        if self.hasUnitsCompanion:
+            mstype = self.model.opts.lang.typeToUnitsType(self.unitsCompanion.metadataStoreArgType)
+
         if self.name == "Transform":
             if isinstance(self.model.opts.lang, language.Java):
                 mstype = "AffineTransform"
@@ -217,6 +226,9 @@ class OMEModelProperty(OMEModelEntity):
 
     def _get_metadataStoreRetType(self):
         mstype = None
+
+        if self.hasUnitsCompanion:
+            mstype = self.model.opts.lang.typeToUnitsType(self.unitsCompanion.metadataStoreRetType)
 
         if self.name == "Transform":
             if isinstance(self.model.opts.lang, language.Java):
@@ -265,6 +277,34 @@ class OMEModelProperty(OMEModelEntity):
     isEnumeration = property(_get_isEnumeration,
         doc="""Whether or not the property is an enumeration.""")
 
+    def _get_isUnitsEnumeration(self):
+        if self.langType.startswith("Units"):
+             return True
+        return False
+    isUnitsEnumeration = property(_get_isUnitsEnumeration,
+        doc="""Whether or not the property is a units enumeration.""")
+
+    def _get_hasUnitsCompanion(self):
+        if self.name+"Unit" in self.parent.properties:
+             return True
+        return False
+    hasUnitsCompanion = property(_get_hasUnitsCompanion,
+        doc="""Whether or not the property has a units companion.""")
+
+    def _get_unitsCompanion(self):
+        if self.hasUnitsCompanion:
+             return self.parent.properties[self.name+"Unit"]
+        return None
+    unitsCompanion = property(_get_unitsCompanion,
+        doc="""The property's units companion.""")
+
+    def _get_unitsType(self):
+        if self.hasUnitsCompanion:
+             return self.unitsCompanion.langType
+        return None
+    unitsType = property(_get_unitsType,
+        doc="""The property's units type.""")
+
     def _get_isReference(self):
         o = self.model.getObjectByName(self.type)
         if o is not None:
@@ -285,6 +325,11 @@ class OMEModelProperty(OMEModelEntity):
             return self.delegate.getValues()[0]
     defaultValue = property(_get_defaultValue,
         doc="""If the property is an enumeration, its default value.""")
+
+    def _get_defaultXsdValue(self):
+        return self.delegate.default
+    defaultXsdValue = property(_get_defaultXsdValue,
+        doc="""The default value, if any, that is set on the attribute.""")
 
     def _isShared(self):
         shared = False
@@ -476,7 +521,9 @@ class OMEModelProperty(OMEModelEntity):
         itype = None
 
         if isinstance(self.model.opts.lang, language.Java):
-            if self.isReference and self.maxOccurs > 1:
+            if self.hasUnitsCompanion:
+                itype = self.model.opts.lang.typeToUnitsType(self.unitsCompanion.instanceVariableType)
+            elif self.isReference and self.maxOccurs > 1:
                 itype = "List<%s>" % self.langTypeNS
             elif self.isBackReference and self.maxOccurs > 1:
                 itype = "List<%s>" % self.langTypeNS
@@ -490,7 +537,9 @@ class OMEModelProperty(OMEModelEntity):
             ns_sep = self.langTypeNS
             if ns_sep.startswith('::'):
                 ns_sep = ' ' + ns_sep
-            if self.isReference and self.maxOccurs > 1:
+            if self.hasUnitsCompanion:
+                itype = self.model.opts.lang.typeToUnitsType(self.unitsCompanion.instanceVariableType)
+            elif self.isReference and self.maxOccurs > 1:
                 itype = "std::vector<std::weak_ptr<%s> >" % ns_sep
             elif self.isReference:
                 itype = "std::weak_ptr<%s>" % ns_sep
