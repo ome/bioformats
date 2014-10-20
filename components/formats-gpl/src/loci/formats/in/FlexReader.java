@@ -1469,9 +1469,11 @@ public class FlexReader extends FormatReader {
       }
       else if (qName.equals("Barcode")) {
         if (plateBarcode == null) plateBarcode = value;
-        store.setPlateExternalIdentifier(value, nextPlate - 1);
+        if (populateCore) {
+          store.setPlateExternalIdentifier(value, nextPlate - 1);
+        }
       }
-      else if (qName.equals("Wavelength")) {
+      else if (qName.equals("Wavelength") && populateCore) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
         Double wavelength = new Double(value);
@@ -1487,14 +1489,14 @@ public class FlexReader extends FormatReader {
           LOGGER.warn("", e);
         }
       }
-      else if (qName.equals("Magnification")) {
+      else if (qName.equals("Magnification") && populateCore) {
         store.setObjectiveCalibratedMagnification(new Double(value), 0,
           nextObjective);
       }
-      else if (qName.equals("NumAperture")) {
+      else if (qName.equals("NumAperture") && populateCore) {
         store.setObjectiveLensNA(new Double(value), 0, nextObjective);
       }
-      else if (qName.equals("Immersion")) {
+      else if (qName.equals("Immersion") && populateCore) {
         String immersion = "Other";
         if (value.equals("1.33")) immersion = "Water";
         else if (value.equals("1.00")) immersion = "Air";
@@ -1633,7 +1635,7 @@ public class FlexReader extends FormatReader {
           lightSourceCombinationIDs.put(lightSourceID, v);
         }
       }
-      else if (qName.equals("Camera") && level != MetadataLevel.MINIMUM) {
+      else if (qName.equals("Camera") && level != MetadataLevel.MINIMUM && populateCore) {
         parentQName = qName;
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
@@ -1647,7 +1649,7 @@ public class FlexReader extends FormatReader {
         cameraIDs.add(attributes.getValue("ID"));
         nextCamera++;
       }
-      else if (qName.equals("Objective") && level != MetadataLevel.MINIMUM) {
+      else if (qName.equals("Objective") && level != MetadataLevel.MINIMUM && populateCore) {
         parentQName = qName;
         nextObjective++;
 
