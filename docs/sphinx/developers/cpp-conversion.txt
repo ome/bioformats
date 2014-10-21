@@ -641,10 +641,10 @@ The :cpp:class:`MetadataMapFlattenVisitor` is implemented thusly:
         typename std::vector<T>::size_type idx = 1;
         for (typename std::vector<T>::const_iterator i = c.begin();
              i != c.end(); ++i, ++idx) {
-            std::ostringstream os;
-            os << key << " #" << idx;
-            map.set(os.str(), *i);
-          }
+          std::ostringstream os;
+          os << key << " #" << idx;
+          map.set(os.str(), *i);
+        }
       }
     };
 
