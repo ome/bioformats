@@ -25,7 +25,6 @@ Introduction to Bio-Formats
     building-bioformats
     file-reader
     file-writer
-    troubleshooting
 
 Using Bio-Formats as a Java library
 ===================================
