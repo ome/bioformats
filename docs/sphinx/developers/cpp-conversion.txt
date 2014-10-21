@@ -512,8 +512,8 @@ elements are removed from the container (unless externally managed
 
 Java containers can be problematic:
 
-- Java can store root :cpp:class`Object` in containers
-- Java can pass and return root :cpp:class`Object` in methods.
+- Java can store root :cpp:class:`Object` in containers
+- Java can pass and return root :cpp:class:`Object` in methods.
 - This is not possible in C++: there is no root object.
 - An alternative approach is needed.
 
@@ -566,7 +566,7 @@ a discriminated union, which can store one of a defined set of
 “variant” types.  A static visitor pattern may be used to generate
 code to operate on all of the supported types.  The variant type may
 be used as a class member, passed by value, passed by reference or
-stored in a containers like any other type.  Due to the way it is
+stored in a container like any other type.  Due to the way it is
 implemented to store values, it does not necessarily need wrapping in
 a :cpp:class:`std::shared_ptr` since it can behave as a value type
 (depending upon the context).
@@ -574,7 +574,7 @@ a :cpp:class:`std::shared_ptr` since it can behave as a value type
 
 Java uses polymorphism to store and pass the root :cpp:class:`Object`
 around.  The :cpp:class:`boost::variant` and :cpp:class:`boost::any`
-approaches use templates to [internally] create a common base and
+approaches use templates to (internally) create a common base and
 manage the stored objects.  However, the end user does not need to
 deal with this complexity directly—the use of the types is quite
 transparent.
