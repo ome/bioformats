@@ -45,15 +45,12 @@ package ome.xml.model.primitives;
  */
 public abstract class PrimitiveNumber<T extends Number> extends PrimitiveType<T> implements PrimitiveInterface<T>{
 
-  /** The delegate value. */
-  T value;
-
   /**
    * Default constructor.
    * @param value The delegate value to use.
    */
   PrimitiveNumber(T value) {
-    this.value = value;
+    super(value);
   }
 
   /**
@@ -61,22 +58,7 @@ public abstract class PrimitiveNumber<T extends Number> extends PrimitiveType<T>
    * @param value The delegate value to use.
    */
   PrimitiveNumber() {
-  }
-
-  /**
-   * Retrieves the concrete delegate value.
-   * @return See above.
-   */
-  public T getValue() {
-    return value;
-  }
-
-  /* (non-Javadoc)
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return value.toString();
+    super();
   }
 
   /* (non-Javadoc)
