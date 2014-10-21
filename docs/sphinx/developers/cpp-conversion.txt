@@ -754,7 +754,6 @@ integer, floating point, complex floating point and bitmask cases.
 
 .. code-block:: cpp
 
-    template<int P>
     struct TypeCategoryVisitor : public boost::static_visitor<>
     {
       typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
@@ -792,7 +791,7 @@ integer, floating point, complex floating point and bitmask cases.
         // Complex floating point algorithm.
       }
 
-      // BIT/bool pixel types.  Note this is a simple overload since it is
+      // BIT/bool pixel type.  Note this is a simple overload since it is
       // a simple type, not a category of different types.
       void
       operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& buf)
