@@ -43,7 +43,7 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PrimitiveType.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrimitiveType.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public abstract class PrimitiveNumber<T extends Number> extends Number implements PrimitiveInterface<T>{
+public abstract class PrimitiveNumber<T extends Number> extends PrimitiveType<T> implements PrimitiveInterface<T>{
 
   /** The delegate value. */
   T value;
