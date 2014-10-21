@@ -1,5 +1,5 @@
-Testing individual commits (internal developers)
-================================================
+Testing code changes
+====================
 
 At the bottom of many commit messages in
 `https://github.com/openmicroscopy/bioformats <https://github.com/openmicroscopy/bioformats>`_,

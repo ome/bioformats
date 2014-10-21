@@ -1,0 +1,28 @@
+Writing files
+=============
+
+The following file formats can be written using Bio-Formats:
+
+- TIFF (uncompressed, LZW, JPEG, or JPEG-2000)
+- OME-TIFF (uncompressed, LZW, JPEG, or JPEG-2000)
+- JPEG
+- PNG
+- AVI (uncompressed)
+- QuickTime (uncompressed is supported natively; additional codecs use QTJava)
+- Encapsulated PostScript (EPS)
+- OME-XML (not recommended)
+
+The writer API (see :source:`loci.formats.IFormatWriter
+<components/formats-api/src/loci/formats/IFormatWriter.java>`) is very similar to 
+the reader
+API, in that files are written one plane at time (rather than all at once).
+
+All writers allow the output file to be changed before the last plane has
+been written.  This allows you to write to any number of output files using
+the same writer and output settings (compression, frames per second, etc.),
+and is especially useful for formats that do not support multiple images per
+file.
+
+Please see :source:`loci.formats.tools.ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` and 
+:doc:`this guide to exporting to OME-TIFF files <export2>` for examples of how 
+to write files.

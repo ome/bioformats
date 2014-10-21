@@ -2,38 +2,37 @@
 Developer Documentation
 ***********************
 
-Using Bio-Formats
-=================
+This document describes various things that are useful to know when
+working with Bio-Formats.  It is recommended that you obtain the
+Bio-Formats source by following the directions in the
+:ref:`source-code` section.  Having a copy of the :javadoc:`Javadocs <>`
+nearby is recommended—the notes that follow will make more sense when you see 
+the API.
+
+For a complete list of supported formats, see the Bio-Formats 
+:doc:`supported formats table </supported-formats>`.
+
+For a few working examples of how to use Bio-Formats, see 
+:sourcedir:`these Github pages <components/formats-gpl/utils>`.
+
+
+Introduction to Bio-Formats
+===========================
 
 .. toctree::
     :maxdepth: 1
-    :titlesonly:
 
-    using-bioformats
     building-bioformats
-    generating-test-images
+    file-reader
+    file-writer
 
-Bio-Formats as a Java library
-=============================
-
-API documentation
------------------
+Using Bio-Formats as a Java library
+===================================
 
 .. toctree::
     :maxdepth: 1
-    :titlesonly:
 
     java-library
-
-Also see :javadoc:`Bio-Formats Javadocs <>`
-
-Examples
---------
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
     export
     export2
     conversion
@@ -58,24 +57,16 @@ Interfacing from non-Java code
 .. _bfapplications:
 
 
-Writing new Bio-Formats file format readers
-===========================================
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    reader-guide
-
 Contributing to Bio-Formats
 ===========================
 
 .. toctree::
     :maxdepth: 1
-    :titlesonly:
 
     commit-testing
     testing-notes
+    generating-test-images
+    reader-guide
     service
     xsd-fu
 
