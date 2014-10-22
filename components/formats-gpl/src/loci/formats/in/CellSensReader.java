@@ -859,6 +859,7 @@ public class CellSensReader extends FormatReader {
     if (usePyramid) {
       int finalResolution = 1;
       double aspectRatio = (double) ms.sizeX / ms.sizeY;
+      int initialCoreSize = core.size();
       for (int i=1; i<maxResolution; i++) {
         CoreMetadata newResolution = new CoreMetadata(ms);
 
@@ -905,7 +906,7 @@ public class CellSensReader extends FormatReader {
         if (Math.abs(newAspect - aspectRatio) < Constants.EPSILON) {
           core.add(newResolution);
           fileMap.put(core.size() - 1, file);
-          finalResolution = core.size();
+          finalResolution = core.size() - initialCoreSize + 1;
         }
       }
 
