@@ -134,7 +134,7 @@ namespace ome
 
       bool
       FormatWriter::isThisType(const std::string& name,
-                               bool               /* open */)
+                               bool               /* open */) const
       {
         return checkSuffix(name,
                            writerProperties.suffixes,

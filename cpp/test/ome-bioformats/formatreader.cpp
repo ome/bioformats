@@ -130,7 +130,18 @@ public:
   {
   }
 
-private:
+protected:
+  bool
+  isStreamThisTypeImpl(std::istream& stream) const
+  {
+    std::istreambuf_iterator<char> eos;
+    std::string in(std::istreambuf_iterator<char>(stream), eos);
+
+    std::cout << "IN: " << in << std::endl;
+
+    return in == "Valid file content";
+  }
+
   std::shared_ptr<CoreMetadata>
   makeCore()
   {
@@ -289,8 +300,10 @@ TEST_P(FormatReaderTest, ReaderProperties)
 
 TEST_P(FormatReaderTest, IsThisType)
 {
-  std::string content("Invalid file content");
-  std::istringstream iscontent(content);
+  std::string icontent("Invalid file content");
+  std::string vcontent("Valid file content");
+  std::istringstream isicontent(icontent);
+  std::istringstream isvcontent(vcontent);
 
   EXPECT_FALSE(r.isThisType("invalid.file"));
   EXPECT_FALSE(r.isThisType("invalid.file", true));
@@ -300,11 +313,17 @@ TEST_P(FormatReaderTest, IsThisType)
   EXPECT_TRUE(r.isThisType("valid.test", true));
   EXPECT_TRUE(r.isThisType("valid.test", false));
 
-  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*content.begin()),
-                            reinterpret_cast<uint8_t *>(&*content.end())));
-  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*content.begin()),
-                            content.size()));
-  EXPECT_FALSE(r.isThisType(content));
+  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
+                            reinterpret_cast<uint8_t *>(&*icontent.end())));
+  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
+                            icontent.size()));
+  EXPECT_FALSE(r.isThisType(isicontent));
+
+  EXPECT_TRUE(r.isThisType(reinterpret_cast<uint8_t *>(&*vcontent.begin()),
+                           reinterpret_cast<uint8_t *>(&*vcontent.end())));
+  EXPECT_TRUE(r.isThisType(reinterpret_cast<uint8_t *>(&*vcontent.begin()),
+                           vcontent.size()));
+  EXPECT_TRUE(r.isThisType(isvcontent));
 }
 
 TEST_P(FormatReaderTest, DefaultClose)

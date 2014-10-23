@@ -137,7 +137,7 @@ namespace ome
         // Documented in superclass.
         bool
         isThisType(const std::string& name,
-                   bool               open = true);
+                   bool               open = true) const;
 
         // Documented in superclass.
         void

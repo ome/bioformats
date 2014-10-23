@@ -152,7 +152,7 @@ namespace ome
       virtual
       bool
       isThisType(const std::string& name,
-                 bool               open = true) = 0;
+                 bool               open = true) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -169,7 +169,7 @@ namespace ome
       virtual
       bool
       isThisType(const uint8_t *begin,
-                 const uint8_t *end) = 0;
+                 const uint8_t *end) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -186,7 +186,7 @@ namespace ome
       virtual
       bool
       isThisType(const uint8_t *begin,
-                 std::size_t    length) = 0;
+                 std::size_t    length) const = 0;
 
       /**
        * Check if the given input stream is a valid stream for this file format.
@@ -198,7 +198,7 @@ namespace ome
        */
       virtual
       bool
-      isThisType(std::istream& stream) = 0;
+      isThisType(std::istream& stream) const = 0;
 
       /**
        * Determine the number of image planes in the current file.

@@ -356,22 +356,55 @@ namespace ome
         // Documented in superclass.
         bool
         isThisType(const std::string& name,
-                   bool               open = true);
+                   bool               open = true) const;
 
         // Documented in superclass.
         bool
-        isThisType(const uint8_t *begin,
-                   std::size_t    length);
+        isThisType(const uint8_t      *begin,
+                   std::size_t         length) const;
 
         // Documented in superclass.
         bool
-        isThisType(const uint8_t *begin,
-                   const uint8_t *end);
+        isThisType(const uint8_t      *begin,
+                   const uint8_t      *end) const;
 
         // Documented in superclass.
         bool
-        isThisType(std::istream& stream);
+        isThisType(std::istream&      stream) const;
 
+      protected:
+        /**
+         * isThisType file implementation for readers.
+         *
+         * Readers which require opening a file in order to determine
+         * its type should override this method with their own
+         * implementation.  Reader implementations should open the
+         * specified file using their preferred method and check its
+         * validity.
+         *
+         * @param name the file to open for checking.
+         * @returns @c true if the file is valid, @c false otherwise.
+         */
+        virtual
+        bool
+        isFilenameThisTypeImpl(const std::string& name) const;
+
+        /**
+         * isThisType stream implementation for readers.
+         *
+         * Readers which require opening a file in order to determine
+         * its type, and which can handle @c istream data, should
+         * override this method with their own implementation.  Reader
+         * implementations check the validity of the stream data.
+         *
+         * @param stream the input stream to check.
+         * @returns @c true if the stream is valid, @c false otherwise.
+         */
+        virtual
+        bool
+        isStreamThisTypeImpl(std::istream& stream) const;
+
+      public:
         // Documented in superclass.
         dimension_size_type
         getImageCount() const;

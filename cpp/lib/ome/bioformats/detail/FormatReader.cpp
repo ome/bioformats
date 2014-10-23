@@ -416,7 +416,7 @@ namespace ome
 
       bool
       FormatReader::isThisType(const std::string& name,
-                               bool               open)
+                               bool               open) const
       {
         // if file extension ID is insufficient and we can't open the file, give up
         if (!suffixSufficient && !open)
@@ -441,16 +441,12 @@ namespace ome
         if (!open)
           return false; // not allowed to open any files
 
-        std::ifstream ifs(name.c_str());
-        if (!ifs)
-          return false;
-
-        return isThisType(ifs);
+        return isFilenameThisTypeImpl(name);
       }
 
       bool
-      FormatReader::isThisType(const uint8_t *begin,
-                               const uint8_t *end)
+      FormatReader::isThisType(const uint8_t      *begin,
+                               const uint8_t      *end) const
       {
         imstream ims(reinterpret_cast<const char *>(begin),
                      reinterpret_cast<const char *>(end));
@@ -458,15 +454,27 @@ namespace ome
       }
 
       bool
-      FormatReader::isThisType(const uint8_t *begin,
-                               std::size_t    length)
+      FormatReader::isThisType(const uint8_t      *begin,
+                               std::size_t         length) const
       {
         imstream ims(reinterpret_cast<const char *>(begin), length);
         return isThisType(ims);
       }
 
       bool
-      FormatReader::isThisType(std::istream& /* stream */)
+      FormatReader::isThisType(std::istream& stream) const
+      {
+        return isStreamThisTypeImpl(stream);
+      }
+
+      bool
+      FormatReader::isFilenameThisTypeImpl(const std::string& /* name */) const
+      {
+        return false;
+      }
+
+      bool
+      FormatReader::isStreamThisTypeImpl(std::istream& /* stream */) const
       {
         return false;
       }
