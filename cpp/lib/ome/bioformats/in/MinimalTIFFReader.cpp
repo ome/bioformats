@@ -102,11 +102,7 @@ namespace ome
       bool
       MinimalTIFFReader::isFilenameThisTypeImpl(const std::string& name) const
       {
-        std::shared_ptr<ome::bioformats::tiff::TIFF> tiff = TIFF::open(name, "r");
-        if (tiff)
-          return true;
-        else
-          return false;
+        return static_cast<bool>(TIFF::open(name, "r"));
       }
 
       void
