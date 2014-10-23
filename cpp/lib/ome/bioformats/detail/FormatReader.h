@@ -418,11 +418,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        get8BitLookupTable(VariantPixelBuffer& buf) const;
-
-        // Documented in superclass.
-        void
-        get16BitLookupTable(VariantPixelBuffer& buf) const;
+        getLookupTable(VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         Modulo&

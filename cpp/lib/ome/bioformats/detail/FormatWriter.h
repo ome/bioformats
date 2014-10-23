@@ -133,11 +133,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        set8BitLookupTable(const VariantPixelBuffer& buf);
-
-        // Documented in superclass.
-        void
-        set16BitLookupTable(const VariantPixelBuffer& buf);
+        setLookupTable(const VariantPixelBuffer& buf);
 
         // Documented in superclass.
         void

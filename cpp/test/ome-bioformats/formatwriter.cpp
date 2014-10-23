@@ -356,20 +356,16 @@ TEST_P(FormatWriterTest, IsThisType)
 
 TEST_P(FormatWriterTest, DefaultLUT)
 {
-  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(w.set8BitLookupTable(buf8), std::logic_error);
-  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(w.set16BitLookupTable(buf16), std::logic_error);
+  VariantPixelBuffer buf(boost::extents[256][1][1][1][1][3][1][1][1]);
+  EXPECT_THROW(w.setLookupTable(buf), std::logic_error);
 }
 
 TEST_P(FormatWriterTest, OutputLUT)
 {
   w.setId("output.test");
 
-  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
-  EXPECT_NO_THROW(w.set8BitLookupTable(buf8));
-  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
-  EXPECT_NO_THROW(w.set16BitLookupTable(buf16));
+  VariantPixelBuffer buf(boost::extents[256][1][1][1][1][3][1][1][1]);
+  EXPECT_NO_THROW(w.setLookupTable(buf));
 }
 
 TEST_P(FormatWriterTest, DefaultPixels)

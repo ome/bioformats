@@ -335,15 +335,11 @@ namespace ome
       isFalseColor() const = 0;
 
       /**
-       * Get the 8-bit color lookup table associated with the most
-       * recently opened image.
+       * Get the color lookup table associated with the most recently
+       * opened image.
        *
        * If no image planes have been opened, or if isIndexed()
-       * returns @c false, then this may throw an exception. If
-       * getPixelType() returns anything other
-       * ome::xml::model::enums::PixelType::UINT8 or
-       * ome::xml::model::enums::PixelType::INT8 this method will
-       * throw an exception.
+       * returns @c false, then this may throw an exception.
        *
        * @param buf the destination pixel buffer.
        *
@@ -352,27 +348,7 @@ namespace ome
        */
       virtual
       void
-      get8BitLookupTable(VariantPixelBuffer& buf) const = 0;
-
-      /**
-       * Get the 16-bit color lookup table associated with the most
-       * recently opened image.
-       *
-       * If no image planes have been opened, or if isIndexed()
-       * returns @c false, then this may throw an exception. Also, if
-       * getPixelType() returns anything other than
-       * ome::xml::model::enums::PixelType::UINT16 or
-       * ome::xml::model::enums::PixelType::INT16 this method will
-       * throw an exception.
-       *
-       * @param buf the destination pixel buffer.
-       *
-       * @todo use a more specific buffer type.
-       * @todo throw on failure.
-       */
-      virtual
-      void
-      get16BitLookupTable(VariantPixelBuffer& buf) const = 0;
+      getLookupTable(VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.

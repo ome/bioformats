@@ -468,20 +468,16 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
 
 TEST_P(FormatReaderTest, DefaultLUT)
 {
-  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get8BitLookupTable(buf8), std::runtime_error);
-  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
+  VariantPixelBuffer buf;
+  EXPECT_THROW(r.getLookupTable(buf), std::runtime_error);
 }
 
 TEST_P(FormatReaderTest, FlatLUT)
 {
   r.setId("flat");
 
-  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get8BitLookupTable(buf8), std::runtime_error);
-  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
+  VariantPixelBuffer buf;
+  EXPECT_THROW(r.getLookupTable(buf), std::runtime_error);
 }
 
 TEST_P(FormatReaderTest, DefaultSeries)

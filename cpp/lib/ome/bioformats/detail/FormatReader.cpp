@@ -584,15 +584,9 @@ namespace ome
       }
 
       void
-      FormatReader::get8BitLookupTable(VariantPixelBuffer& /* buf */) const
+      FormatReader::getLookupTable(VariantPixelBuffer& /* buf */) const
       {
-        throw std::runtime_error("Reader does not implement 8-bit lookup tables");
-      }
-
-      void
-      FormatReader::get16BitLookupTable(VariantPixelBuffer& /* buf */) const
-      {
-        throw std::runtime_error("Reader does not implement 16-bit lookup tables");
+        throw std::runtime_error("Reader does not implement lookup tables");
       }
 
       Modulo&
