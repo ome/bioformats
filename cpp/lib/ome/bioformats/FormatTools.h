@@ -49,6 +49,9 @@ namespace ome
   namespace bioformats
   {
 
+    /**
+     * Imaging domain.
+     */
     enum Domain
       {
         UNKNOWN,   ///< Unknown
