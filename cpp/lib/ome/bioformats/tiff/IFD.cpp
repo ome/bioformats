@@ -1286,6 +1286,57 @@ namespace ome
         return TIFFLastDirectory(tiffraw) != 0;
       }
 
+      CoreMetadata
+      makeCoreMetadata(const IFD& ifd)
+      {
+        CoreMetadata m;
+
+        m.sizeX = ifd.getImageWidth();
+        m.sizeY = ifd.getImageHeight();
+        m.pixelType = ifd.getPixelType();
+        m.bitsPerPixel = bitsPerPixel(m.pixelType);
+
+        uint16_t samples = ifd.getSamplesPerPixel();
+        tiff::PhotometricInterpretation photometric = ifd.getPhotometricInterpretation();
+
+        if (samples == 3 && photometric == tiff::RGB)
+          m.rgb = true;
+
+        // libtiff does any needed endian conversion
+        // automatically, so the data is always in the native
+        // byte order.
+#ifdef BOOST_BIG_ENDIAN
+        m.littleEndian = false;
+#else // ! BOOST_BIG_ENDIAN
+        m.littleEndian = true;
+#endif // BOOST_BIG_ENDIAN
+
+        m.interleaved = ifd.getPlanarConfiguration() == tiff::CONTIG ? true : false;
+
+        if (samples == 1)
+          {
+            if (photometric == tiff::PALETTE)
+              {
+                m.indexed = true;
+              }
+            else
+              {
+                try
+                  {
+                    uint16_t indexed;
+                    ifd.getField(tiff::INDEXED).get(indexed);
+                    if (indexed)
+                      m.indexed = true;
+                  }
+                catch (...)
+                  {
+                  }
+              }
+          }
+
+        return m;
+      }
+
     }
   }
 }

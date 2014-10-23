@@ -42,6 +42,7 @@
 
 #include <ome/compat/memory.h>
 
+#include <ome/bioformats/CoreMetadata.h>
 #include <ome/bioformats/tiff/TileCoverage.h>
 #include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/Types.h>
@@ -489,6 +490,15 @@ namespace ome
         bool
         last() const;
       };
+
+      /**
+       * Create CoreMetadata from an IFD.
+       *
+       * @param ifd the IFD to use.
+       * @returns the CoreMetadata.
+       */
+      CoreMetadata
+      makeCoreMetadata(const IFD& ifd);
 
     }
   }
