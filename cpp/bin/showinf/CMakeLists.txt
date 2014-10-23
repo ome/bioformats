@@ -34,13 +34,22 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-set(OME_TOPLEVEL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR}/lib)
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS})
 
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/internal)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-add_subdirectory(lib/ome/bioformats)
-add_subdirectory(lib/ome/test)
-add_subdirectory(bin/showinf)
-add_subdirectory(test)
+set(showinf_SOURCES
+    ImageInfo.h
+    ImageInfo.cpp
+    options.h
+    options.cpp
+    showinf.cpp)
+
+add_executable(showinf ${showinf_SOURCES})
+target_link_libraries(showinf ome-bioformats ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
+
+install(TARGETS showinf RUNTIME
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                    GROUP_READ GROUP_EXECUTE
+                    WORLD_READ WORLD_EXECUTE)
+
