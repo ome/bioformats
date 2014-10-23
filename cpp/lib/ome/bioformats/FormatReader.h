@@ -581,11 +581,6 @@ namespace ome
       openThumbBytes(dimension_size_type no,
                      VariantPixelBuffer& buf) const = 0;
 
-      // Documented in superclass.
-      //virtual
-      //void
-      //close(bool fileOnly) = 0;
-
       /**
        * Get the number of image series in this file.
        *
