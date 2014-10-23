@@ -246,7 +246,6 @@ namespace ome
           void
           operator()(T& v)
           {
-            const ome::xml::model::enums::PixelType type(reader.getPixelType());
             EndianType endian = reader.isLittleEndian() ? ENDIAN_LITTLE : ENDIAN_BIG;
 
             const uint32_t bpp(bytesPerPixel(reader.getPixelType()));
