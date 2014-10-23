@@ -35,6 +35,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -272,6 +273,12 @@ public class OMETiffReader extends FormatReader {
     int series = getSeries();
     lastPlane = no;
     int i = info[series][no].ifd;
+
+    if (!info[series][no].exists) {
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
+
     MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
     if (r.getCurrentFile() == null) {
       r.setId(info[series][no].id);
@@ -696,6 +703,7 @@ public class OMETiffReader extends FormatReader {
         }
 
         Location file = new Location(filename);
+        boolean exists = true;
         if (!file.exists()) {
           // if this is an absolute file name, try using a relative name
           // old versions of OMETiffWriter wrote an absolute path to
@@ -707,6 +715,7 @@ public class OMETiffReader extends FormatReader {
 
           if (!new Location(filename).exists()) {
             filename = currentId;
+            exists = false;
           }
         }
 
@@ -717,6 +726,7 @@ public class OMETiffReader extends FormatReader {
           planes[no].id = filename;
           planes[no].ifd = ifd + q;
           planes[no].certain = true;
+          planes[no].exists = exists;
           LOGGER.debug("      Plane[{}]: file={}, IFD={}",
             new Object[] {no, planes[no].id, planes[no].ifd});
         }
@@ -727,6 +737,7 @@ public class OMETiffReader extends FormatReader {
             planes[no].reader = r;
             planes[no].id = filename;
             planes[no].ifd = planes[no - 1].ifd + 1;
+            planes[no].exists = exists;
             LOGGER.debug("      Plane[{}]: FILLED", no);
           }
         }
@@ -994,6 +1005,13 @@ public class OMETiffReader extends FormatReader {
     public int ifd = -1;
     /** Certainty flag, for dealing with unspecified NumPlanes. */
     public boolean certain = false;
+    /**
+     * Whether or not the file meant to contain this plane exists.
+     * The value of 'id' may be changed to allow the tile and image dimensions
+     * to be populated; this flag indicates whether the originally recorded file
+     * for this plane exists.
+     */
+    public boolean exists = true;
   }
 
 }
