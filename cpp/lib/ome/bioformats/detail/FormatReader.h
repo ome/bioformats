@@ -192,6 +192,14 @@ namespace ome
         virtual
         ~FormatReader();
 
+      private:
+        /// Copy constructor (deleted).
+        FormatReader (const FormatReader&);
+
+        /// Assignment operator (deleted).
+        FormatReader&
+        operator= (const FormatReader&);
+
       protected:
         /**
          * Initialize the given file.

@@ -60,11 +60,20 @@ namespace ome
      */
     class FormatHandler
     {
-    public:
+    protected:
       /// Constructor.
       FormatHandler()
       {}
 
+    private:
+      /// Copy constructor (deleted).
+      FormatHandler (const FormatHandler&);
+
+      /// Assignment operator (deleted).
+      FormatHandler&
+      operator= (const FormatHandler&);
+
+    public:
       /// Destructor.
       virtual
       ~FormatHandler()

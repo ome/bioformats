@@ -134,6 +134,14 @@ namespace ome
       FormatReader()
       {}
 
+    private:
+      /// Copy constructor (deleted).
+      FormatReader (const FormatReader&);
+
+      /// Assignment operator (deleted).
+      FormatReader&
+      operator= (const FormatReader&);
+
     public:
       /// Destructor.
       virtual

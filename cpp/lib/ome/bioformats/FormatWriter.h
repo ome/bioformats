@@ -136,9 +136,18 @@ namespace ome
         }
       };
 
+    protected:
       /// Constructor.
       FormatWriter()
       {}
+
+    private:
+      /// Copy constructor (deleted).
+      FormatWriter (const FormatWriter&);
+
+      /// Assignment operator (deleted).
+      FormatWriter&
+      operator= (const FormatWriter&);
 
     public:
       /// Destructor.

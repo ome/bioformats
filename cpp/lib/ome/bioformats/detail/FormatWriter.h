@@ -121,6 +121,14 @@ namespace ome
         /// Constructor.
         FormatWriter(const WriterProperties&);
 
+      private:
+        /// Copy constructor (deleted).
+        FormatWriter (const FormatWriter&);
+
+        /// Assignment operator (deleted).
+        FormatWriter&
+        operator= (const FormatWriter&);
+
       public:
         /// Destructor.
         virtual
