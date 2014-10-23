@@ -68,6 +68,12 @@ namespace ome
         GRAPHICS   ///< Graphics
       };
 
+    /**
+     * Get the string corresponding to a particular Domain.
+     *
+     * @param domain the Domain to use.
+     * @returns the string description of the Domain.
+     */
     const std::string&
     getDomain(Domain domain);
 
