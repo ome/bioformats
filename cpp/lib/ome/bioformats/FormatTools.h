@@ -49,6 +49,25 @@ namespace ome
   namespace bioformats
   {
 
+    enum Domain
+      {
+        UNKNOWN,   ///< Unknown
+        HCS,       ///< High-Content Screening (HCS)
+        LM,        ///< Light Microscopy (LM)
+        EM,        ///< Electron Microscopy (EM)
+        SPM,       ///< Scanning Probe Microscopy (SPM)
+        SEM,       ///< Scanning Electron Microscopy (SEM)
+        FLIM,      ///< Fluorescence-Lifetime Imaging (FLIM)
+        MEDICAL,   ///< Medical Imaging
+        HISTOLOGY, ///< Histology
+        GEL,       ///< Gel/Blot Imaging
+        ASTRONOMY, ///< Astronomy
+        GRAPHICS   ///< Graphics
+      };
+
+    const std::string&
+    getDomain(Domain domain);
+
     /**
      * Get the rasterized index corresponding to the given Z, C and T
      * coordinates.
