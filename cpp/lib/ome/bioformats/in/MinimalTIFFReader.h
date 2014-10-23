@@ -86,11 +86,11 @@ namespace ome
         void
         readIFDs();
 
-      public:
         // Documented in superclass.
         bool
         isFilenameThisTypeImpl(const std::string& name) const;
 
+      public:
         // Documented in superclass.
         void
         close(bool fileOnly = false);
