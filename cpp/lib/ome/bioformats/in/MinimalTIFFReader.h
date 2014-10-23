@@ -95,20 +95,17 @@ namespace ome
         void
         close(bool fileOnly = false);
 
+      protected:
         // Documented in superclass.
         void
-        openBytes(dimension_size_type no,
-                  VariantPixelBuffer& buf) const;
+        openBytesImpl(dimension_size_type no,
+                      VariantPixelBuffer& buf,
+                      dimension_size_type x,
+                      dimension_size_type y,
+                      dimension_size_type w,
+                      dimension_size_type h) const;
 
-        // Documented in superclass.
-        void
-        openBytes(dimension_size_type no,
-                  VariantPixelBuffer& buf,
-                  dimension_size_type x,
-                  dimension_size_type y,
-                  dimension_size_type w,
-                  dimension_size_type h) const;
-
+      public:
         /**
          * Get open TIFF file.
          *

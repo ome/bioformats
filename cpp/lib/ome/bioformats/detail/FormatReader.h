@@ -541,8 +541,22 @@ namespace ome
                   dimension_size_type x,
                   dimension_size_type y,
                   dimension_size_type w,
-                  dimension_size_type h) const = 0;
+                  dimension_size_type h) const;
 
+      protected:
+        /**
+         * @copydoc ome::bioformats::FormatReader::openBytes(dimension_size_type,VariantPixelBuffer&,dimension_size_type,dimension_size_type,dimension_size_type,dimension_size_type)const
+         */
+        virtual
+        void
+        openBytesImpl(dimension_size_type no,
+                      VariantPixelBuffer& buf,
+                      dimension_size_type x,
+                      dimension_size_type y,
+                      dimension_size_type w,
+                      dimension_size_type h) const = 0;
+
+      public:
         // Documented in superclass.
         void
         openThumbBytes(dimension_size_type no,

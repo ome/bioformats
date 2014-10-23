@@ -150,19 +150,12 @@ namespace ome
       }
 
       void
-      MinimalTIFFReader::openBytes(dimension_size_type no,
-                                   VariantPixelBuffer& buf) const
-      {
-        ::ome::bioformats::detail::FormatReader::openBytes(no, buf);
-      }
-
-      void
-      MinimalTIFFReader::openBytes(dimension_size_type no,
-                                   VariantPixelBuffer& buf,
-                                   dimension_size_type x,
-                                   dimension_size_type y,
-                                   dimension_size_type w,
-                                   dimension_size_type h) const
+      MinimalTIFFReader::openBytesImpl(dimension_size_type no,
+                                       VariantPixelBuffer& buf,
+                                       dimension_size_type x,
+                                       dimension_size_type y,
+                                       dimension_size_type w,
+                                       dimension_size_type h) const
       {
         assertId(currentId, true);
 
