@@ -35,9 +35,6 @@
  * #L%
  */
 
-#include <algorithm>
-#include <cmath>
-
 #include <boost/format.hpp>
 
 #include <ome/bioformats/FormatException.h>
@@ -45,13 +42,10 @@
 #include <ome/bioformats/in/MinimalTIFFReader.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/TIFF.h>
-#include <ome/bioformats/tiff/Tags.h>
-#include <ome/bioformats/tiff/Field.h>
 
 using ome::bioformats::detail::ReaderProperties;
 using ome::bioformats::tiff::TIFF;
 using ome::bioformats::tiff::IFD;
-using ome::bioformats::tiff::tag_type;
 
 namespace ome
 {
