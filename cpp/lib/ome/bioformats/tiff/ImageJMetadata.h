@@ -97,11 +97,12 @@ namespace ome
         ImageJMetadata(const IFD& ifd);
 
         /**
-         * Parse the ImageDescription field content.
+         * Parse the TIFF ImageDescription field content.
          *
          * Split into separate lines, then split on the first @c =
          * symbol into key-value pairs.
          *
+         * @param description the TIFF ImageDescription field content.
          * @returns a map of all the key-value pairs.
          */
         static
