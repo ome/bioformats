@@ -646,9 +646,6 @@ public class ZeissCZIReader extends FormatReader {
           seriesCount /= positions;
           positions = 1;
         }
-        else {
-          ms0.sizeT = 1;
-        }
       }
       else if (planes.size() == ms0.sizeT || planes.size() == ms0.imageCount ||
         (!isGroupFiles() && positions > 1))
@@ -658,14 +655,6 @@ public class ZeissCZIReader extends FormatReader {
         mosaics = 1;
         angles = 1;
         seriesCount = 1;
-      }
-      ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
-
-      int newCount = planes.size() / ms0.imageCount;
-      if (planes.size() - (ms0.imageCount * newCount) <
-        ms0.imageCount * seriesCount - planes.size() && (planes.size() % seriesCount) != 0)
-      {
-        seriesCount = newCount;
       }
     }
 
@@ -983,6 +972,8 @@ public class ZeissCZIReader extends FormatReader {
     // calculate the dimensions
     CoreMetadata ms0 = core.get(0);
 
+    ArrayList<Integer> uniqueT = new ArrayList<Integer>();
+
     for (SubBlock plane : planes) {
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
         if (dimension == null) {
@@ -1025,8 +1016,9 @@ public class ZeissCZIReader extends FormatReader {
             }
             break;
           case 'T':
-            if (dimension.start >= getSizeT()) {
-              ms0.sizeT = dimension.start + 1;
+            if (!uniqueT.contains(dimension.start)) {
+              uniqueT.add(dimension.start);
+              ms0.sizeT = uniqueT.size();
             }
             if (dimension.size > getSizeT()) {
               ms0.sizeT = dimension.size;
