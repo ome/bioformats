@@ -38,7 +38,7 @@
 
 #include <ome/bioformats/MetadataTools.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using ome::bioformats::createID;
 

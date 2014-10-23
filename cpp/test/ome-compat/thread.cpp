@@ -38,7 +38,7 @@
 
 #include <ome/compat/thread.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 namespace
 {

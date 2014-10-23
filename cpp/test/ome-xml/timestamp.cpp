@@ -38,11 +38,11 @@
 
 #include <ome/xml/model/primitives/Timestamp.h>
 
+#include <ome/test/test.h>
+
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
-
-#include <gtest/gtest.h>
 
 using ome::xml::model::primitives::Timestamp;
 

@@ -40,7 +40,7 @@
 #include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/tiff/TileCache.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::tiff::TileCache;

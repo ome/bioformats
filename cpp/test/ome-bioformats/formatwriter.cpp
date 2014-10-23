@@ -54,7 +54,7 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 #include "pixel.h"
 

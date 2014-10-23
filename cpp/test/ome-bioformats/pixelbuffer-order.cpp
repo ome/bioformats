@@ -42,8 +42,7 @@
 
 #include <ome/bioformats/PixelBuffer.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+#include <ome/test/test.h>
 
 #include "pixel.h"
 

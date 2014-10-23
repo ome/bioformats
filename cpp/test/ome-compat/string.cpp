@@ -38,7 +38,7 @@
 
 #include <ome/compat/string.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using ome::ltrim;
 using ome::rtrim;

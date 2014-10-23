@@ -85,7 +85,7 @@ function(header_test_from_file component library path)
       string(REGEX REPLACE "[/.]" "_" safeheader ${include})
       string(CONFIGURE "#include <@include@>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 TEST(Header, ${safeheader}_${repeat})
 {

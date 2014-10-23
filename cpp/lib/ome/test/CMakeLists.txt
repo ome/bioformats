@@ -34,20 +34,25 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${GTEST_INCLUDE_DIR})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${GTEST_INCLUDE_DIR})
 
 if(BUILD_TESTS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                  ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-  set(ome_test_static_headers)
+  set(ome_test_static_headers
+      test.h)
 
   set(ome_test_generated_headers
      ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
   set(ome_test_sources main.cpp)
 
-  add_library(ome-test STATIC ${ome_test_sources})
+  add_library(ome-test STATIC
+              ${ome_test_sources}
+              ${ome_test_static_headers}
+              ${ome_test_generated_headers})
 
   target_link_libraries(ome-test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
   set_target_properties(ome-test PROPERTIES LINKER_LANGUAGE CXX)

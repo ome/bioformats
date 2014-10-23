@@ -43,7 +43,7 @@
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::getIndex;

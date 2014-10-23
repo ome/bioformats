@@ -38,7 +38,7 @@
 
 #include <ome/compat/memory.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 class base
 {

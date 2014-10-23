@@ -38,10 +38,10 @@
 
 #include <ome/xml/model/primitives/Color.h>
 
+#include <ome/test/test.h>
+
 #include <sstream>
 #include <stdexcept>
-
-#include <gtest/gtest.h>
 
 using ome::xml::model::primitives::Color;
 

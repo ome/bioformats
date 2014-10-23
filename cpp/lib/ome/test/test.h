@@ -1,8 +1,8 @@
 /*
  * #%L
- * # Bio-Formats C++ libraries (test infrastructure)
+ * OME-INTERNAL C++ headers for internal use only
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,12 +36,25 @@
  * #L%
  */
 
-#include <ome/test/test.h>
+#ifndef OME_TEST_TEST_H
+#define OME_TEST_TEST_H
 
-int
-main (int   argc,
-      char *argv[])
-{
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+// Google Test has a problem with the protection of its
+// testing::internal::ImplicitlyConvertible<From, To> class
+// constructor; suppress these warnings.  It also misses declaration
+// for INSTANTIATE_TEST_CASE_P.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
+#endif
+
+#include <gtest/gtest.h>
+#include <gtest/gtest-death-test.h>
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
+
+#include <ome/test/config.h>
+
+#endif // OME_TEST_TEST_H

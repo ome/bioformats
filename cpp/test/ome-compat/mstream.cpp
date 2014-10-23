@@ -38,7 +38,7 @@
 
 #include <ome/compat/mstream.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using ome::imstream;
 
