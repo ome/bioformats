@@ -48,7 +48,7 @@ import ome.units.UNITS;
  */
 public class Length extends Quantity
 {
-  public Length(Double value, 
+  public Length(Number value, 
     Unit<ome.units.quantity.Length> unit)
   {
   }

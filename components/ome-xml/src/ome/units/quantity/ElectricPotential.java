@@ -48,7 +48,7 @@ import ome.units.UNITS;
  */
 public class ElectricPotential extends Quantity
 {
-  public ElectricPotential(Double value, 
+  public ElectricPotential(Number value, 
     Unit<ome.units.quantity.ElectricPotential> unit)
   {
   }

@@ -48,7 +48,7 @@ import ome.units.UNITS;
  */
 public class Power extends Quantity
 {
-  public Power(Double value, 
+  public Power(Number value, 
     Unit<ome.units.quantity.Power> unit)
   {
   }

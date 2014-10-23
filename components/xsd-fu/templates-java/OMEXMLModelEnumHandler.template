@@ -65,6 +65,8 @@ import ${lang.units_package}.quantity.Temperature;
 import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
 import ${lang.units_package}.unit.Unit;
 
+import ome.xml.model.primitives.*;
+
 ${lang.units_implementation_imports}
 
 /**
@@ -102,7 +104,8 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEnumeration(String) */
   public Enumeration getEnumeration(String value)
-    throws EnumerationException {
+    throws EnumerationException
+  {
     if (value != null) {
       for (String pattern : patterns.keySet()) {
 {% if not klass.isUnitsEnumeration %}\
@@ -151,17 +154,34 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
     return theResult;
   }
 
-  public static <T> ${klass.model.opts.lang.typeToUnitsType(klass.langType)} getQuantity(T inValue, ${klass.langType} inModelUnit)
+  public static <T extends PrimitiveNumber> ${klass.model.opts.lang.typeToUnitsType(klass.langType)} getQuantity(T inValue, ${klass.langType} inModelUnit)
+    throws EnumerationException
   {
-    Double doubleValue = null;
+    if (inValue instanceof PositiveFloat) {
+        PositiveFloat positiveFloatValue = (PositiveFloat) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(positiveFloatValue.getValue(), getBaseUnit(inModelUnit));
+    }
+    LOGGER.warn("Unknown type '{}' cannot be used to create a '${klass.model.opts.lang.typeToUnitsType(klass.langType)}' quantity",
+      inValue.getClass().getName());
+    throw new EnumerationException("${klass.langType}EnumHandler: type '"
+      + inValue.getClass().getName() + "' cannot be used to create a quantity");
+  }
+
+  public static <T extends Number> ${klass.model.opts.lang.typeToUnitsType(klass.langType)} getQuantity(T inValue, ${klass.langType} inModelUnit)
+    throws EnumerationException
+  {
     if (inValue instanceof Double) {
-        doubleValue = (Double) inValue;
+        Double doubleValue = (Double) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(doubleValue, getBaseUnit(inModelUnit));
     }
     if (inValue instanceof Integer) {
         Integer intValue = (Integer) inValue;
-        doubleValue = new Double(intValue);
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(intValue, getBaseUnit(inModelUnit));
     }
-    return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(doubleValue, ${klass.model.opts.lang.typeToDefault(klass.langType)});
+    LOGGER.warn("Unknown type '{}' cannot be used to create a '${klass.model.opts.lang.typeToUnitsType(klass.langType)}' quantity",
+      inValue.getClass().getName());
+    throw new EnumerationException("${klass.langType}EnumHandler: type '"
+      + inValue.getClass().getName() + "' cannot be used to create a quantity");
   }
 {% end %}\
 

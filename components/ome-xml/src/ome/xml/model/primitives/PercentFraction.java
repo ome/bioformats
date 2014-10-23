@@ -44,7 +44,7 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PercentFraction.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PercentFraction.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class PercentFraction extends PrimitiveNumber<Float> {
+public class PercentFraction extends PrimitiveType<Float> implements PrimitiveNumber {
 
   public PercentFraction(Float value) {
     super(value);

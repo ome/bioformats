@@ -35,81 +35,13 @@
 package ome.xml.model.primitives;
 
 /**
- * A primitive number from an XSD definition with a given set of constraints.
+ * A primitive type from an XSD definition with a given set of constraints.
  *
  * @author callan
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PrimitiveType.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrimitiveType.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PrimitiveNumber.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrimitiveNumber.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public abstract class PrimitiveNumber<T extends Number> extends PrimitiveType<T> implements PrimitiveInterface<T>{
-
-  /**
-   * Default constructor.
-   * @param value The delegate value to use.
-   */
-  PrimitiveNumber(T value) {
-    super(value);
-  }
-
-  /**
-   * Default constructor.
-   * @param value The delegate value to use.
-   */
-  PrimitiveNumber() {
-    super();
-  }
-
-  /* (non-Javadoc)
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof PrimitiveNumber<?>) {
-      return value.equals(((PrimitiveNumber<?>) obj).getValue());
-    }
-    return value.equals(obj);
-  }
-  
-  /**
-   * Retrieves the value as a double.
-   * This function is required by Number and may not make sence for
-   * the ome type.
-   * @return See above.
-   */
-  public double doubleValue() {
-    return value.doubleValue();
-  }
-
-  /**
-   * Retrieves the value as a float.
-   * This function is required by Number and may not make sence for
-   * the ome type.
-   * @return See above.
-   */
-  public float floatValue() {
-    return value.floatValue();
-  }
-
-  /**
-   * Retrieves the value as a long.
-   * This function is required by Number and may not make sence for
-   * the ome type.
-   * @return See above.
-   */
-  public long longValue() {
-    return value.longValue();
-  }
-
-  /**
-   * Retrieves the value as an int.
-   * This function is required by Number and may not make sence for
-   * the ome type.
-   * @return See above.
-   */
-  public int intValue() {
-    return value.intValue();
-  }
-
+public interface PrimitiveNumber{
 }

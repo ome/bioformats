@@ -48,7 +48,7 @@ import ome.units.UNITS;
  */
 public class Frequency extends Quantity
 {
-  public Frequency(Double value, 
+  public Frequency(Number value, 
     Unit<ome.units.quantity.Frequency> unit)
   {
   }

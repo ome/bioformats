@@ -48,7 +48,7 @@ import ome.units.UNITS;
  */
 public class Pressure extends Quantity
 {
-  public Pressure(Double value, 
+  public Pressure(Number value, 
     Unit<ome.units.quantity.Pressure> unit)
   {
   }

@@ -48,7 +48,7 @@ import ome.units.UNITS;
  */
 public class Angle extends Quantity
 {
-  public Angle(Double value, 
+  public Angle(Number value, 
     Unit<ome.units.quantity.Angle> unit)
   {
   }
