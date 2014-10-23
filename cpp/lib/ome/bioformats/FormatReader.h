@@ -585,9 +585,9 @@ namespace ome
        * Get the number of image series in this file.
        *
        * @returns the number of image series.
-       * @throws std::logic_error if the any subresolution metadata is
-       * invalid, which would only occur if the reader set invalid
-       * metadata.
+       * @throws std::logic_error if the subresolution metadata (if
+       * any) is invalid; this will only occur if the reader sets
+       * invalid metadata.
        */
       virtual
       dimension_size_type
