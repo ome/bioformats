@@ -69,7 +69,6 @@ namespace ome
           p.description = "Baseline Tagged Image File Format";
           p.suffixes = std::vector<std::string>(suffixes,
                                                 suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
-          p.compression_suffixes.push_back("gz");
           p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
           p.metadata_levels.insert(MetadataOptions::METADATA_NO_OVERLAYS);
           p.metadata_levels.insert(MetadataOptions::METADATA_ALL);
