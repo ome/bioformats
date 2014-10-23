@@ -676,6 +676,7 @@ FormatWriterTestParameters variant_params[] =
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(FormatWriterVariants, FormatWriterTest, ::testing::ValuesIn(variant_params));

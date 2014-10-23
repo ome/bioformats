@@ -258,6 +258,7 @@ std::vector<DimensionTestParameters> params(init_params());
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(DimensionVariants, DimensionTest, ::testing::ValuesIn(params));
