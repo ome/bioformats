@@ -171,12 +171,19 @@ namespace ome
 
         if (no != 0)
           {
-            boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
+            boost::format fmt("Invalid plane number ‘%1%’ in series ‘%2%’");
             fmt % no % series;
             throw FormatException(fmt.str());
           }
 
         const std::shared_ptr<IFD> ifd = tiff->getDirectoryByIndex(series);
+
+        if (!ifd)
+          {
+            boost::format fmt("Invalid IFD for plane number ‘%1%’ in series ‘%2%’");
+            fmt % no % series;
+            throw FormatException(fmt.str());
+          }
 
         ifd->readImage(buf, x, y, w, h);
       }

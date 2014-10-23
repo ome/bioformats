@@ -35,6 +35,7 @@
  * #L%
  */
 
+#include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/in/TIFFReader.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/TIFF.h>
@@ -185,6 +186,13 @@ namespace ome
         if (!!ijmeta)
           {
             const std::shared_ptr<IFD> ifd = tiff->getDirectoryByIndex(no);
+
+            if (!ifd)
+              {
+                boost::format fmt("Invalid IFD for plane number ‘%1%’ in series ‘%2%’");
+                fmt % no % getSeries();
+                throw FormatException(fmt.str());
+              }
 
             ifd->readImage(buf, x, y, w, h);
           }
