@@ -497,7 +497,7 @@ namespace ome
        * @param ifd the IFD to use.
        * @returns the CoreMetadata.
        */
-      CoreMetadata
+      std::shared_ptr<CoreMetadata>
       makeCoreMetadata(const IFD& ifd);
 
     }

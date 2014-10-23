@@ -144,8 +144,7 @@ namespace ome
              i != tiff->end();
              ++i)
           {
-            CoreMetadata m(tiff::makeCoreMetadata(**i));
-            core.push_back(std::make_shared<CoreMetadata>(m));
+            core.push_back(makeCoreMetadata(**i));
           }
       }
 

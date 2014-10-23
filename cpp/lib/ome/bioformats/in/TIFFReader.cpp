@@ -112,14 +112,14 @@ namespace ome
               {
                 tiff::ImageJMetadata ijmeta(*ifd0);
 
-                CoreMetadata ijm(tiff::makeCoreMetadata(*ifd0));
+                std::shared_ptr<CoreMetadata> ijm(tiff::makeCoreMetadata(*ifd0));
 
-                ijm.sizeZ = ijmeta.slices;
-                ijm.sizeT = ijmeta.frames;
-                ijm.sizeC = ijmeta.channels;
+                ijm->sizeZ = ijmeta.slices;
+                ijm->sizeT = ijmeta.frames;
+                ijm->sizeC = ijmeta.channels;
 
                 core.clear();
-                core.push_back(std::make_shared<CoreMetadata>(ijm));
+                core.push_back(ijm);
 
                 dimension_size_type images = 0;
                 for (TIFF::const_iterator i = tiff->begin();
