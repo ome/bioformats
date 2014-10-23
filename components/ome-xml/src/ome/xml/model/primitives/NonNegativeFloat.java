@@ -44,7 +44,7 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NonNegativeInteger.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NonNegativeInteger.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class NonNegativeFloat extends PrimitiveNumber<Double> {
+public class NonNegativeFloat extends PrimitiveType<Double> implements PrimitiveNumber {
 
   public NonNegativeFloat(Double value) {
     super(value);

@@ -48,7 +48,7 @@ import ome.units.UNITS;
  */
 public class Temperature extends Quantity
 {
-  public Temperature(Double value, 
+  public Temperature(Number value, 
     Unit<ome.units.quantity.Temperature> unit)
   {
   }

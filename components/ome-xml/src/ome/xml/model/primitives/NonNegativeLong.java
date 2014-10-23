@@ -44,7 +44,7 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NonNegativeLong.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NonNegativeLong.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class NonNegativeLong extends PrimitiveNumber<Long> {
+public class NonNegativeLong extends PrimitiveType<Long> implements PrimitiveNumber {
 
   public NonNegativeLong(Long value) {
     super(value);
