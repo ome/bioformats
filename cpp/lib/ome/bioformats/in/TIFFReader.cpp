@@ -35,9 +35,6 @@
  * #L%
  */
 
-#include <algorithm>
-#include <cmath>
-
 #include <ome/bioformats/in/TIFFReader.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/TIFF.h>
@@ -47,7 +44,6 @@
 using ome::bioformats::detail::ReaderProperties;
 using ome::bioformats::tiff::TIFF;
 using ome::bioformats::tiff::IFD;
-using ome::bioformats::tiff::tag_type;
 
 namespace ome
 {
