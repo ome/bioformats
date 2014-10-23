@@ -585,6 +585,9 @@ namespace ome
        * Get the number of image series in this file.
        *
        * @returns the number of image series.
+       * @throws std::logic_error if the any subresolution metadata is
+       * invalid, which would only occur if the reader set invalid
+       * metadata.
        */
       virtual
       dimension_size_type
@@ -599,6 +602,8 @@ namespace ome
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
+       *
+       * @throws std::logic_error if the series is invalid.
        */
       virtual
       void
@@ -1062,6 +1067,8 @@ namespace ome
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
+       *
+       * @throws std::logic_error if the index is invalid.
        */
       virtual
       void
@@ -1089,6 +1096,8 @@ namespace ome
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
+       *
+       * @throws std::logic_error if the resolution is invalid.
        */
       virtual
       void
