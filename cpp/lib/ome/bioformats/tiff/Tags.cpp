@@ -158,6 +158,16 @@ namespace ome
             ret = TIFFTAG_BITSPERSAMPLE;
 #endif
             break;
+          case CELLWIDTH:
+#ifdef TIFFTAG_CELLWIDTH
+            ret = TIFFTAG_CELLWIDTH;
+#endif
+            break;
+          case CELLLENGTH:
+#ifdef TIFFTAG_CELLLENGTH
+            ret = TIFFTAG_CELLLENGTH;
+#endif
+            break;
           case CLEANFAXDATA:
 #ifdef TIFFTAG_CLEANFAXDATA
             ret = TIFFTAG_CLEANFAXDATA;
@@ -171,6 +181,11 @@ namespace ome
           case DATATYPE:
 #ifdef TIFFTAG_DATATYPE
             ret = TIFFTAG_DATATYPE;
+#endif
+            break;
+          case GRAYRESPONSEUNIT:
+#ifdef TIFFTAG_GRAYRESPONSEUNIT
+            ret = TIFFTAG_GRAYRESPONSEUNIT;
 #endif
             break;
           case INDEXED:
@@ -198,6 +213,11 @@ namespace ome
             ret = TIFFTAG_MINSAMPLEVALUE;
 #endif
             break;
+          case NUMBEROFINKS:
+#ifdef TIFFTAG_NUMBEROFINKS
+            ret = TIFFTAG_NUMBEROFINKS;
+#endif
+            break;
           case RESOLUTIONUNIT:
 #ifdef TIFFTAG_RESOLUTIONUNIT
             ret = TIFFTAG_RESOLUTIONUNIT;
@@ -209,6 +229,23 @@ namespace ome
 #endif
             break;
           };
+        return ret;
+      }
+
+      tag_type
+      getWrappedTag(UInt16TagArray1 tag)
+      {
+        tag_type ret = 0;
+
+        switch(tag)
+          {
+          case GRAYRESPONSECURVE:
+#ifdef TIFFTAG_GRAYRESPONSECURVE
+            ret = TIFFTAG_GRAYRESPONSECURVE;
+#endif
+            break;
+          };
+
         return ret;
       }
 
@@ -372,6 +409,20 @@ namespace ome
       }
 
       tag_type
+      getWrappedTag(UInt16Tag6 tag)
+      {
+        tag_type ret = 0;
+
+        switch(tag)
+          {
+          case TRANSFERRANGE:
+            ret = 342;
+            break;
+          };
+        return ret;
+      }
+
+      tag_type
       getWrappedTag(UInt16ExtraSamplesArray1 tag)
       {
         tag_type ret = 0;
@@ -460,6 +511,16 @@ namespace ome
             ret = TIFFTAG_SUBFILETYPE;
 #endif
             break;
+          case T4OPTIONS:
+#ifdef TIFFTAG_T4OPTIONS
+            ret = TIFFTAG_T4OPTIONS;
+#endif
+            break;
+          case T6OPTIONS:
+#ifdef TIFFTAG_T6OPTIONS
+            ret = TIFFTAG_T6OPTIONS;
+#endif
+            break;
           case TILEDEPTH:
 #ifdef TIFFTAG_TILEDEPTH
             ret = TIFFTAG_TILEDEPTH;
@@ -498,6 +559,7 @@ namespace ome
 
         return ret;
       }
+
       tag_type
       getWrappedTag(UInt64TagArray1 tag)
       {
@@ -505,6 +567,16 @@ namespace ome
 
         switch(tag)
           {
+          case FREEOFFSETS:
+#ifdef TIFFTAG_FREEOFFSETS
+            ret = TIFFTAG_FREEOFFSETS;
+#endif
+            break;
+          case FREEBYTECOUNTS:
+#ifdef TIFFTAG_FREEBYTECOUNTS
+            ret = TIFFTAG_FREEBYTECOUNTS;
+#endif
+            break;
           case STRIPBYTECOUNTS:
 #ifdef TIFFTAG_STRIPBYTECOUNTS
             ret = TIFFTAG_STRIPBYTECOUNTS;

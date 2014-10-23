@@ -82,17 +82,27 @@ namespace ome
       /// Unsigned 16-bit integer fields.
       enum UInt16Tag1
         {
-          BITSPERSAMPLE,  ///< Number of bits per component.
-          CLEANFAXDATA,   ///< How bad scanlines were handled.
-          COMPRESSION,    ///< Compression scheme in use on the image data.
-          DATATYPE,       ///< Use SAMPLEFORMAT [obsolete].
-          INDEXED,        ///< Image uses indexed color in any color space.
-          INKSET,         ///< Inkset used in a separated image.
-          MATTEING,       ///< Use EXTRASAMPLES [obsolete].
-          MAXSAMPLEVALUE, ///< Maximum component value.
-          MINSAMPLEVALUE, ///< Minimum component value.
-          RESOLUTIONUNIT, ///< Unit of measurement for XRESOLUTION and YRESOLUTION.
-          SAMPLESPERPIXEL ///< Number of components per pixel.
+          BITSPERSAMPLE,    ///< Number of bits per component.
+          CELLWIDTH,        ///< Width of dithering or halftoning matrix for bilevel data.
+          CELLLENGTH,       ///< Height of dithering or halftoning matrix for bilevel data.
+          CLEANFAXDATA,     ///< How bad scanlines were handled.
+          COMPRESSION,      ///< Compression scheme in use on the image data.
+          DATATYPE,         ///< Use SAMPLEFORMAT [obsolete].
+          GRAYRESPONSEUNIT, ///< Precision of GRAYRESPONSECURVE.
+          INDEXED,          ///< Image uses indexed color in any color space.
+          INKSET,           ///< Inkset used in a separated image.
+          MATTEING,         ///< Use EXTRASAMPLES [obsolete].
+          MAXSAMPLEVALUE,   ///< Maximum component value.
+          MINSAMPLEVALUE,   ///< Minimum component value.
+          NUMBEROFINKS,     ///< Number of inks.
+          RESOLUTIONUNIT,   ///< Unit of measurement for XRESOLUTION and YRESOLUTION.
+          SAMPLESPERPIXEL   ///< Number of components per pixel.
+        };
+
+      /// Unsigned 16-bit integer array fields.
+      enum UInt16TagArray1
+        {
+          GRAYRESPONSECURVE ///< Optical density of greyscale pixel values.
         };
 
       /// Fill order enum fields.
@@ -152,6 +162,12 @@ namespace ome
           YCBCRSUBSAMPLING ///< Subsampling factors used for YCbCr chrominance components.
         };
 
+      /// Unsigned 16-bit integer (×6) fields.
+      enum UInt16Tag6
+        {
+          TRANSFERRANGE ///< Expand range of TransferFunction.
+        };
+
       /// Unsigned 16-bit integer array fields.
       enum UInt16ExtraSamplesArray1
         {
@@ -177,6 +193,8 @@ namespace ome
           IMAGEWIDTH,             ///< Number of columns in the image (pixels per row).
           ROWSPERSTRIP,           ///< Number of rows per strip.
           SUBFILETYPE,            ///< Type of data in this subfile [new tag].
+          T4OPTIONS,              ///< Options for Group3 fax compression.
+          T6OPTIONS,              ///< Options for Group4 fax compression.
           TILEDEPTH,              ///< Tile depth in pixels (z planes).
           TILELENGTH,             ///< Tile height in pixels (rows).
           TILEWIDTH               ///< Tile width in pixels (columns).
@@ -192,6 +210,8 @@ namespace ome
       /// Unsigned 64-bit integer fields.
       enum UInt64TagArray1
         {
+          FREEOFFSETS,     ///< Offsets of free bytes [unused].
+          FREEBYTECOUNTS,  ///< Sizes of free bytes [unused].
           SUBIFD,          ///< Offsets of child IFDs.
           STRIPBYTECOUNTS, ///< Number of bytes in each strip (after compression).
           STRIPOFFSETS,    ///< Byte offset of each strip.
@@ -241,16 +261,7 @@ namespace ome
        * Tags which are known but not currently wrapped.
        *
        * OSUBFILETYPE,                ///< Type of data in this subfile [old tag].
-       * CELLWIDTH,                   ///< Width of dithering or halftoning matrix for bilevel data.
-       * CELLLENGTH,                  ///< Height of dithering or halftoning matrix for bilevel data.
-       * FREEOFFSETS,                 ///< Offsets of free bytes [unused].
-       * FREEBYTECOUNTS,              ///< Sizes of free bytes [unused].
-       * GRAYRESPONSEUNIT,            ///< Precision of GRAYRESPONSECURVE.
-       * GRAYRESPONSECURVE,           ///< Optical density of greyscale pixel values.
-       * T4OPTIONS,                   ///< Options for Group3 fax compression.
-       * T6OPTIONS,                   ///< Options for Group4 fax compression.
        * COLORRESPONSEUNIT,           ///<
-       * NUMBEROFINKS,                ///< Number of inks.
        * SMINSAMPLEVALUE,             ///<
        * SMAXSAMPLEVALUE,             ///<
        * CLIPPATH,                    ///<
@@ -408,6 +419,10 @@ namespace ome
 
       /// @copydoc getWrappedTag(StringTag1)
       tag_type
+      getWrappedTag(UInt16TagArray1 tag);
+
+      /// @copydoc getWrappedTag(StringTag1)
+      tag_type
       getWrappedTag(UInt16FillOrder1 tag);
 
       /// @copydoc getWrappedTag(StringTag1)
@@ -441,6 +456,10 @@ namespace ome
       /// @copydoc getWrappedTag(StringTag1)
       tag_type
       getWrappedTag(UInt16Tag2 tag);
+
+      /// @copydoc getWrappedTag(StringTag1)
+      tag_type
+      getWrappedTag(UInt16Tag6 tag);
 
       /// @copydoc getWrappedTag(StringTag1)
       tag_type
@@ -523,6 +542,14 @@ namespace ome
           typedef uint16_t value_type;
         };
 
+        /// Properties of UInt16TagArray1 tags.
+        template<>
+        struct TagProperties< ::ome::bioformats::tiff::UInt16TagArray1>
+        {
+          /// uint16_t vector type.
+          typedef std::vector<uint16_t> value_type;
+        };
+
         /// Properties of UInt16FillOrder1 tags.
         template<>
         struct TagProperties< ::ome::bioformats::tiff::UInt16FillOrder1>
@@ -593,6 +620,14 @@ namespace ome
         {
           /// uint16_t array type.
           typedef std::array<uint16_t, 2> value_type;
+        };
+
+        /// Properties of UInt16Tag6 tags.
+        template<>
+        struct TagProperties< ::ome::bioformats::tiff::UInt16Tag6>
+        {
+          /// uint16 array type.
+          typedef std::array<uint16_t, 6> value_type;
         };
 
         /// Properties of UInt16ExtraSamplesArray1 tags.

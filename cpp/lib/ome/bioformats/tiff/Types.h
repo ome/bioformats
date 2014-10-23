@@ -111,18 +111,19 @@ namespace ome
       /// Photometric interpretation of pixel data.
       enum PhotometricInterpretation
         {
-          MIN_IS_WHITE = 0, ///< Minimum value is white.
-          MIN_IS_BLACK = 1, ///< Minimum value is black.
-          RGB = 2,          ///< RGB subchannels.
-          PALETTE = 3,      ///< Indexed colour with colormap.
-          MASK = 4,         ///< Mask.
-          SEPARATED = 5,    ///< Color separations.
-          YCBCR = 6,        ///< CCIR 601.
-          CIELAB = 8,       ///< 1976 CIE L*a*b*.
-          ICCLAB = 9,       ///< ICC L*a*b*.
-          ITULAB = 10,      ///< ITU L*a*b*.
-          LOGL = 32844,     ///< CIE log2(L).
-          LOGLUV = 32845    ///< CIE log2(L) (u',v').
+          MIN_IS_WHITE = 0,  ///< Minimum value is white.
+          MIN_IS_BLACK = 1,  ///< Minimum value is black.
+          RGB = 2,           ///< RGB subchannels.
+          PALETTE = 3,       ///< Indexed colour with colormap.
+          MASK = 4,          ///< Mask.
+          SEPARATED = 5,     ///< Color separations.
+          YCBCR = 6,         ///< CCIR 601.
+          CIELAB = 8,        ///< 1976 CIE L*a*b*.
+          ICCLAB = 9,        ///< ICC L*a*b*.
+          ITULAB = 10,       ///< ITU L*a*b*.
+          CFA_ARRAY = 32803, ///< Color Filter Array.
+          LOGL = 32844,      ///< CIE log2(L).
+          LOGLUV = 32845     ///< CIE log2(L) (u',v').
         };
 
       /// Planar configuration of samples.
