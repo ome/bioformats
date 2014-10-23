@@ -65,8 +65,8 @@ namespace ome
         {
           ReaderProperties p;
 
-          p.name = "TIFF";
-          p.description = "Tagged Image File Format";
+          p.name = "MinimalTIFF";
+          p.description = "Baseline Tagged Image File Format";
           p.suffixes = std::vector<std::string>(suffixes,
                                                 suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
           p.compression_suffixes.push_back("gz");
