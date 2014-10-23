@@ -83,10 +83,12 @@ set(OME_BIOFORMATS_DETAIL_HEADERS
     detail/FormatWriter.h)
 
 set(OME_BIOFORMATS_IN_SOURCES
-    in/MinimalTIFFReader.cpp)
+    in/MinimalTIFFReader.cpp
+    in/TIFFReader.cpp)
 
 set(OME_BIOFORMATS_IN_HEADERS
-    in/MinimalTIFFReader.h)
+    in/MinimalTIFFReader.h
+    in/TIFFReader.h)
 
 set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/Exception.cpp
