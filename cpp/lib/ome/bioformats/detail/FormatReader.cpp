@@ -445,8 +445,8 @@ namespace ome
       }
 
       bool
-      FormatReader::isThisType(const uint8_t      *begin,
-                               const uint8_t      *end) const
+      FormatReader::isThisType(const uint8_t *begin,
+                               const uint8_t *end) const
       {
         imstream ims(reinterpret_cast<const char *>(begin),
                      reinterpret_cast<const char *>(end));
@@ -454,8 +454,8 @@ namespace ome
       }
 
       bool
-      FormatReader::isThisType(const uint8_t      *begin,
-                               std::size_t         length) const
+      FormatReader::isThisType(const uint8_t *begin,
+                               std::size_t    length) const
       {
         imstream ims(reinterpret_cast<const char *>(begin), length);
         return isThisType(ims);

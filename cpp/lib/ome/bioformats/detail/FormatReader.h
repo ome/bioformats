@@ -360,17 +360,17 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isThisType(const uint8_t      *begin,
-                   std::size_t         length) const;
+        isThisType(const uint8_t *begin,
+                   std::size_t    length) const;
 
         // Documented in superclass.
         bool
-        isThisType(const uint8_t      *begin,
-                   const uint8_t      *end) const;
+        isThisType(const uint8_t *begin,
+                   const uint8_t *end) const;
 
         // Documented in superclass.
         bool
-        isThisType(std::istream&      stream) const;
+        isThisType(std::istream& stream) const;
 
       protected:
         /**
@@ -395,7 +395,8 @@ namespace ome
          * Readers which require opening a file in order to determine
          * its type, and which can handle @c istream data, should
          * override this method with their own implementation.  Reader
-         * implementations check the validity of the stream data.
+         * implementations should check the validity of the stream
+         * data.
          *
          * @param stream the input stream to check.
          * @returns @c true if the stream is valid, @c false otherwise.
