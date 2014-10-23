@@ -90,6 +90,7 @@ set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/Exception.cpp
     tiff/Field.cpp
     tiff/IFD.cpp
+    tiff/ImageJMetadata.cpp
     tiff/Sentry.cpp
     tiff/Tags.cpp
     tiff/TIFF.cpp
@@ -102,6 +103,7 @@ set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/Exception.h
     tiff/Field.h
     tiff/IFD.h
+    tiff/ImageJMetadata.h
     tiff/Sentry.h
     tiff/Tags.h
     tiff/TIFF.h
