@@ -1286,6 +1286,81 @@ namespace ome
         return TIFFLastDirectory(tiffraw) != 0;
       }
 
+      namespace
+      {
+
+        // Scalar
+        template<typename T>
+        void
+        setMetadata(CoreMetadata&      core,
+                    const std::string& key,
+                    const T&           value)
+        {
+          core.seriesMetadata.set(key, value);
+        }
+       
+        // Vector
+        template <typename T>
+        void
+        setMetadata(CoreMetadata&         core,
+                    const std::string&    key,
+                    const std::vector<T>& value)
+        {
+          std::ostringstream os;
+          for (typename std::vector<T>::const_iterator i = value.begin();
+               i != value.end();
+               ++i)
+            {
+              os << *i;
+              if (i + 1 != value.end())
+                os << ", ";
+            }
+          core.seriesMetadata.set(key, os.str());
+        }
+
+        // Array
+        template <template <typename, std::size_t> class C, 
+                  typename T,
+                  std::size_t S>
+        void
+        setMetadata(CoreMetadata&      core,
+                    const std::string& key,
+                    const C<T, S>&     value)
+        {
+          std::ostringstream os;
+          for (typename C<T, S>::const_iterator i = value.begin();
+               i != value.end();
+               ++i)
+            {
+              os << *i;
+              if (i + 1 != value.end())
+                os << ", ";
+            }
+          core.seriesMetadata.set(key, os.str());
+        }
+
+        template<typename TagCategory>
+        void
+        setMetadata(const IFD&         ifd,
+                    CoreMetadata&      core,
+                    const std::string& key,
+                    TagCategory        tag)
+        {
+          typedef typename ::ome::bioformats::detail::tiff::TagProperties<TagCategory>::value_type value_type;
+
+          try
+            {
+              value_type v;
+              ifd.getField(tag).get(v);
+              setMetadata(core, key, v);
+            }
+          catch (...)
+            {
+            }
+        }
+
+      }
+
       CoreMetadata
       makeCoreMetadata(const IFD& ifd)
       {
@@ -1333,6 +1408,138 @@ namespace ome
                   }
               }
           }
+
+        // Add series metadata from tags.
+        setMetadata(ifd, m, "PageName #", PAGENAME);
+        setMetadata(ifd, m, "ImageWidth", IMAGEWIDTH);
+        setMetadata(ifd, m, "ImageLength", IMAGELENGTH);
+        setMetadata(ifd, m, "BitsPerSample", BITSPERSAMPLE);
+
+        /// @todo EXIF IFDs
+
+        setMetadata(ifd, m, "PhotometricInterpretation", PHOTOMETRIC);
+
+        /// @todo Text stream output for Tag enums.
+        /// @todo Metadata type for PhotometricInterpretation.
+
+        try
+          {
+            setMetadata(ifd, m, "Artist", ARTIST);
+            Threshholding th;
+            ifd.getField(THRESHHOLDING).get(th);
+            m.seriesMetadata.set("Threshholding", th);
+            if (th == HALFTONE)
+              {
+                setMetadata(ifd, m, "CellWidth", CELLWIDTH);
+                setMetadata(ifd, m, "CellLength", CELLLENGTH);
+              }
+          }
+        catch (...)
+          {
+          }
+
+        setMetadata(ifd, m, "Orientation", ORIENTATION);        
+
+
+        /// @todo Image orientation (storage order and direction) from
+        /// ORIENTATION; fix up width and length from orientation.
+
+        setMetadata(ifd, m, "SamplesPerPixel", SAMPLESPERPIXEL);
+        setMetadata(ifd, m, "Software", SOFTWARE);
+        setMetadata(ifd, m, "Instrument Make", MAKE);
+        setMetadata(ifd, m, "Instrument Model", MODEL);
+        setMetadata(ifd, m, "Make", MAKE);
+        setMetadata(ifd, m, "Model", MODEL);
+        setMetadata(ifd, m, "Document Name", DOCUMENTNAME);
+        setMetadata(ifd, m, "Date Time", DATETIME);
+        setMetadata(ifd, m, "Artist", ARTIST);
+
+        setMetadata(ifd, m, "Host Computer", HOSTCOMPUTER);
+        setMetadata(ifd, m, "Copyright", COPYRIGHT);
+
+        setMetadata(ifd, m, "Subfile Type", SUBFILETYPE);
+        setMetadata(ifd, m, "Fill Order", FILLORDER);
+
+        setMetadata(ifd, m, "Min Sample Value", MINSAMPLEVALUE);
+        setMetadata(ifd, m, "Max Sample Value", MAXSAMPLEVALUE);
+
+        setMetadata(ifd, m, "XResolution", XRESOLUTION);
+        setMetadata(ifd, m, "YResolution", YRESOLUTION);
+
+        setMetadata(ifd, m, "Planar Configuration", PLANARCONFIG);
+
+        setMetadata(ifd, m, "XPosition", XPOSITION);
+        setMetadata(ifd, m, "YPosition", YPOSITION);
+
+        setMetadata(ifd, m, "FreeOffsets", FREEOFFSETS);
+        setMetadata(ifd, m, "FreeByteCounts", FREEBYTECOUNTS);
+
+        setMetadata(ifd, m, "GrayResponseUnit", GRAYRESPONSEUNIT);
+        setMetadata(ifd, m, "GrayResponseCurve", GRAYRESPONSECURVE);
+
+        setMetadata(ifd, m, "T4Options", T4OPTIONS);
+        setMetadata(ifd, m, "T6Options", T6OPTIONS);
+
+        setMetadata(ifd, m, "ResolutionUnit", RESOLUTIONUNIT);
+
+        setMetadata(ifd, m, "PageNumber", PAGENUMBER);
+        setMetadata(ifd, m, "TransferFunction", TRANSFERFUNCTION);
+        setMetadata(ifd, m, "Predictor", PREDICTOR);
+
+        setMetadata(ifd, m, "WhitePoint", WHITEPOINT);
+        setMetadata(ifd, m, "PrimaryChromacities", PRIMARYCHROMATICITIES);
+        setMetadata(ifd, m, "HalftoneHints", HALFTONEHINTS);
+
+        setMetadata(ifd, m, "TileWidth", TILEWIDTH);
+        setMetadata(ifd, m, "TileLength", TILELENGTH);
+        setMetadata(ifd, m, "TileOffsets", TILEOFFSETS);
+        setMetadata(ifd, m, "TileByteCounts", TILEBYTECOUNTS);
+
+        setMetadata(ifd, m, "InkSet", INKSET);
+        setMetadata(ifd, m, "InkNames", INKNAMES);
+        setMetadata(ifd, m, "NumberOfInks", NUMBEROFINKS);
+        setMetadata(ifd, m, "DotRange", DOTRANGE);
+        setMetadata(ifd, m, "TargetPrinter", TARGETPRINTER);
+        setMetadata(ifd, m, "ExtraSamples", EXTRASAMPLES);
+
+        setMetadata(ifd, m, "SampleFormat", SAMPLEFORMAT);
+
+        /// @todo sminsamplevalue
+        /// @todo smaxsamplevalue
+
+        setMetadata(ifd, m, "TransferRange", TRANSFERRANGE);
+
+        setMetadata(ifd, m, "StripOffsets", STRIPOFFSETS);
+        setMetadata(ifd, m, "StripByteCounts", STRIPBYTECOUNTS);
+
+
+        /// @todo JPEG tags
+
+        setMetadata(ifd, m, "YCbCrCoefficients", YCBCRCOEFFICIENTS);
+        setMetadata(ifd, m, "YCbCrSubSampling", YCBCRSUBSAMPLING);
+        setMetadata(ifd, m, "YCbCrPositioning", YCBCRPOSITIONING);
+        setMetadata(ifd, m, "ReferenceBlackWhite", REFERENCEBLACKWHITE);
+
+        try
+          {
+            PhotometricInterpretation photometric;
+            ifd.getField(PHOTOMETRIC).get(photometric);
+            uint16_t samples;
+            ifd.getField(SAMPLESPERPIXEL).get(samples);
+            std::vector<ExtraSamples> extra;
+            ifd.getField(EXTRASAMPLES).get(extra);
+            if (photometric == RGB ||
+                photometric == CFA_ARRAY)
+              samples = 3;
+            uint32_t fullsamples(samples);
+            fullsamples += extra.size();
+
+            m.seriesMetadata.set("NumberOfChannels", samples);
+          }
+        catch (...)
+          {
+          }
+        m.seriesMetadata.set("BitsPerSample", bitsPerPixel(ifd.getPixelType()));
 
         return m;
       }
