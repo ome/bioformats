@@ -510,8 +510,10 @@ namespace
               dest_subchannel = sample;
             }
 
+          // Note boost::make_shared makes arguments const, so can't use
+          // here.
           if (!tilecache.find(tile))
-            tilecache.insert(tile, std::make_shared<TileBuffer>(tileinfo.bufferSize()));
+            tilecache.insert(tile, std::shared_ptr<TileBuffer>(new TileBuffer(tileinfo.bufferSize())));
           assert(tilecache.find(tile));
           TileBuffer& tilebuf = *tilecache.find(tile);
 
