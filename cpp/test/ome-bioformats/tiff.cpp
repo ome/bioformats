@@ -515,7 +515,9 @@ TEST(TIFFTest, ConstructFailFile)
 
 TEST(TIFFTest, IFDsByIndex)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t =TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
   for (directory_index_type i = 0; i < 10; ++i)
     {
@@ -528,7 +530,9 @@ TEST(TIFFTest, IFDsByIndex)
 
 TEST(TIFFTest, IFDsByOffset)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t =TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
   for (directory_index_type i = 0; i < 10; ++i)
     {
@@ -543,7 +547,9 @@ TEST(TIFFTest, IFDsByOffset)
 
 TEST(TIFFTest, IFDSimpleIter)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
   std::shared_ptr<IFD> ifd = t->getDirectoryByIndex(0);
 
@@ -555,7 +561,9 @@ TEST(TIFFTest, IFDSimpleIter)
 
 TEST(TIFFTest, TIFFIter)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
   for (TIFF::iterator pos = t->begin(); pos != t->end(); ++pos)
     {
@@ -564,7 +572,9 @@ TEST(TIFFTest, TIFFIter)
 
 TEST(TIFFTest, TIFFConstIter)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
   for (TIFF::const_iterator pos = t->begin(); pos != t->end(); ++pos)
     {
@@ -573,7 +583,9 @@ TEST(TIFFTest, TIFFConstIter)
 
 TEST(TIFFTest, TIFFConstIter2)
 {
-  std::shared_ptr<const TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
   for (TIFF::const_iterator pos = t->begin(); pos != t->end(); ++pos)
     {
@@ -582,9 +594,13 @@ TEST(TIFFTest, TIFFConstIter2)
 
 TEST(TIFFTest, RawField)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   char *text;
   ifd->getRawField(270, &text);
@@ -592,9 +608,13 @@ TEST(TIFFTest, RawField)
 
 TEST(TIFFTest, RawField0)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   char *text;
   ASSERT_THROW(ifd->getRawField(0, &text), ome::bioformats::tiff::Exception);
@@ -602,9 +622,13 @@ TEST(TIFFTest, RawField0)
 
 TEST(TIFFTest, FieldWrapString)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::string text;
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::ARTIST).get(text), ome::bioformats::tiff::Exception);
@@ -622,9 +646,13 @@ TEST(TIFFTest, FieldWrapString)
 
 TEST(TIFFTest, FieldWrapStringArray)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::vector<std::string> text;
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::INKNAMES).get(text), ome::bioformats::tiff::Exception);
@@ -635,9 +663,13 @@ TEST(TIFFTest, FieldWrapStringArray)
 
 TEST(TIFFTest, FieldWrapUInt16)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   uint16_t value;
 
@@ -659,9 +691,13 @@ TEST(TIFFTest, FieldWrapUInt16)
 
 TEST(TIFFTest, FieldWrapFillOrder)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::FillOrder value;
 
@@ -670,9 +706,13 @@ TEST(TIFFTest, FieldWrapFillOrder)
 
 TEST(TIFFTest, FieldWrapOrientation)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::Orientation value;
 
@@ -681,9 +721,13 @@ TEST(TIFFTest, FieldWrapOrientation)
 
 TEST(TIFFTest, FieldWrapPlanarConfiguration)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::PlanarConfiguration value;
 
@@ -693,9 +737,13 @@ TEST(TIFFTest, FieldWrapPlanarConfiguration)
 
 TEST(TIFFTest, FieldWrapPhotometricInterpretation)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::PhotometricInterpretation value;
 
@@ -705,9 +753,13 @@ TEST(TIFFTest, FieldWrapPhotometricInterpretation)
 
 TEST(TIFFTest, FieldWrapPredictor)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::Predictor value;
 
@@ -716,9 +768,13 @@ TEST(TIFFTest, FieldWrapPredictor)
 
 TEST(TIFFTest, FieldWrapSampleFormat)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::SampleFormat value;
 
@@ -727,9 +783,13 @@ TEST(TIFFTest, FieldWrapSampleFormat)
 
 TEST(TIFFTest, FieldWrapThreshholding)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::Threshholding value;
 
@@ -738,9 +798,13 @@ TEST(TIFFTest, FieldWrapThreshholding)
 
 TEST(TIFFTest, FieldWrapYCbCrPosition)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::YCbCrPosition value;
 
@@ -749,9 +813,13 @@ TEST(TIFFTest, FieldWrapYCbCrPosition)
 
 TEST(TIFFTest, FieldWrapUInt16Pair)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::array<uint16_t, 2> value;
 
@@ -763,9 +831,13 @@ TEST(TIFFTest, FieldWrapUInt16Pair)
 
 TEST(TIFFTest, FieldWrapFloat)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   float value = -1.0f;
 
@@ -779,9 +851,13 @@ TEST(TIFFTest, FieldWrapFloat)
 
 TEST(TIFFTest, FieldWrapFloat2)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::array<float, 2> value;
 
@@ -790,9 +866,13 @@ TEST(TIFFTest, FieldWrapFloat2)
 
 TEST(TIFFTest, FieldWrapFloat3)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::array<float, 3> value;
 
@@ -802,9 +882,13 @@ TEST(TIFFTest, FieldWrapFloat3)
 
 TEST(TIFFTest, FieldWrapFloat6)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::array<float, 6> value;
 
@@ -814,9 +898,13 @@ TEST(TIFFTest, FieldWrapFloat6)
 
 TEST(TIFFTest, FieldWrapUInt16ExtraSamplesArray)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::vector<ome::bioformats::tiff::ExtraSamples> value;
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::EXTRASAMPLES).get(value), ome::bioformats::tiff::Exception);
@@ -824,9 +912,13 @@ TEST(TIFFTest, FieldWrapUInt16ExtraSamplesArray)
 
 TEST(TIFFTest, FieldWrapUInt16Array3)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::array<std::vector<uint16_t>, 3> value;
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::COLORMAP).get(value), ome::bioformats::tiff::Exception);
@@ -835,9 +927,13 @@ TEST(TIFFTest, FieldWrapUInt16Array3)
 
 TEST(TIFFTest, FieldWrapUInt32)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   uint32_t value;
 
@@ -860,9 +956,13 @@ TEST(TIFFTest, FieldWrapUInt32)
 
 TEST(TIFFTest, FieldWrapUInt32Array)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::vector<uint32_t> value;
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::IMAGEJ_META_DATA_BYTE_COUNTS).get(value), ome::bioformats::tiff::Exception);
@@ -871,9 +971,13 @@ TEST(TIFFTest, FieldWrapUInt32Array)
 
 TEST(TIFFTest, FieldWrapUInt64Array)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::vector<uint64_t> value;
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::SUBIFD).get(value), ome::bioformats::tiff::Exception);
@@ -885,9 +989,13 @@ TEST(TIFFTest, FieldWrapUInt64Array)
 
 TEST(TIFFTest, FieldWrapByteArray)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::vector<uint8_t> value;
 
@@ -900,9 +1008,13 @@ TEST(TIFFTest, FieldWrapByteArray)
 
 TEST(TIFFTest, ValueProxy)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::string text;
   ome::bioformats::tiff::ValueProxy<std::string> d(text);
@@ -911,9 +1023,13 @@ TEST(TIFFTest, ValueProxy)
 
 TEST(TIFFTest, Value)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ome::bioformats::tiff::Value<std::string> text;
   text = ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION);
@@ -921,9 +1037,13 @@ TEST(TIFFTest, Value)
 
 TEST(TIFFTest, FieldName)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::string name;
   name = ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION).name();
@@ -937,9 +1057,13 @@ TEST(TIFFTest, FieldName)
 
 TEST(TIFFTest, FieldCount)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   std::string name;
   bool count = ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION).passCount();
@@ -949,9 +1073,13 @@ TEST(TIFFTest, FieldCount)
 
 TEST(TIFFTest, PixelType)
 {
-  std::shared_ptr<TIFF> t(TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
 
-  std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
 
   ASSERT_EQ(PT::UINT8, ifd->getPixelType());
 }
@@ -1107,8 +1235,10 @@ public:
   {
     const TileTestParameters& params = GetParam();
 
-    tiff = TIFF::open(params.file, "r");
-    ifd = tiff->getDirectoryByIndex(0);
+    ASSERT_NO_THROW(tiff = TIFF::open(params.file, "r"));
+    ASSERT_TRUE(static_cast<bool>(tiff));
+    ASSERT_NO_THROW(ifd = tiff->getDirectoryByIndex(0));
+    ASSERT_TRUE(static_cast<bool>(ifd));
 
     ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::IMAGEWIDTH).get(iwidth));
     ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::IMAGELENGTH).get(iheight));
@@ -1308,8 +1438,13 @@ namespace
   read_test(const std::string& file,
             const VariantPixelBuffer& reference)
   {
-    std::shared_ptr<TIFF> tiff(TIFF::open(file, "r"));
-    std::shared_ptr<IFD> ifd(tiff->getDirectoryByIndex(0));
+    std::shared_ptr<TIFF> tiff;
+    ASSERT_NO_THROW(tiff = TIFF::open(file, "r"));
+    ASSERT_TRUE(static_cast<bool>(tiff));
+    std::shared_ptr<IFD> ifd;
+    ASSERT_NO_THROW(ifd = tiff->getDirectoryByIndex(0));
+    ASSERT_TRUE(static_cast<bool>(ifd));
+
     EXPECT_EQ(64U, ifd->getImageWidth());
     EXPECT_EQ(64U, ifd->getImageHeight());
 
@@ -1513,8 +1648,12 @@ TEST_P(PixelTest, WriteTIFF)
 
   // Write TIFF
   {
-    std::shared_ptr<TIFF> wtiff = TIFF::open(params.filename, "w");
-    std::shared_ptr<IFD> wifd = wtiff->getCurrentDirectory();
+    std::shared_ptr<TIFF> wtiff;
+    ASSERT_NO_THROW(wtiff = TIFF::open(params.filename, "w"));
+    ASSERT_TRUE(static_cast<bool>(wtiff));
+    std::shared_ptr<IFD> wifd;
+    ASSERT_NO_THROW(wifd = wtiff->getCurrentDirectory());
+    ASSERT_TRUE(static_cast<bool>(wifd));
 
     // Set IFD tags
     ASSERT_NO_THROW(wifd->setImageWidth(shape[ome::bioformats::DIM_SPATIAL_X]));
@@ -1605,8 +1744,12 @@ TEST_P(PixelTest, WriteTIFF)
   {
     // Note "c" to disable automatic strip chopping so we can verify
     // the exact tag content of ROWSPERSTRIP.
-    std::shared_ptr<TIFF> tiff(TIFF::open(params.filename, "rc"));
-    std::shared_ptr<IFD> ifd(tiff->getDirectoryByIndex(0));
+    std::shared_ptr<TIFF> tiff;
+    ASSERT_NO_THROW(tiff = TIFF::open(params.filename, "rc"));
+    ASSERT_TRUE(static_cast<bool>(tiff));
+    std::shared_ptr<IFD> ifd;
+    ASSERT_NO_THROW(ifd = tiff->getDirectoryByIndex(0));
+    ASSERT_TRUE(static_cast<bool>(ifd));
 
     EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_X], ifd->getImageWidth());
     EXPECT_EQ(shape[ome::bioformats::DIM_SPATIAL_Y], ifd->getImageHeight());
