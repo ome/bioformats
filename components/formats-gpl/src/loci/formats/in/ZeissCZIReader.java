@@ -305,6 +305,7 @@ public class ZeissCZIReader extends FormatReader {
     }
     int previousHeight = 0;
 
+    Arrays.fill(buf, (byte) 0);
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
     try {
       for (SubBlock plane : planes) {
