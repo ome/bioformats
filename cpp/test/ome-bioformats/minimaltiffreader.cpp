@@ -82,14 +82,14 @@ TEST_P(TIFFTest, setId)
 {
   const TIFFTestParameters& params = GetParam();
 
-  tiff.setId(params.file);
+  ASSERT_NO_THROW(tiff.setId(params.file));
 }
 
 TEST_P(TIFFTest, seriesCount)
 {
   const TIFFTestParameters& params = GetParam();
 
-  tiff.setId(params.file);
+  ASSERT_NO_THROW(tiff.setId(params.file));
   EXPECT_EQ(params.series, tiff.getSeriesCount());
 }
 
@@ -97,7 +97,7 @@ TEST_P(TIFFTest, setSeries)
 {
   const TIFFTestParameters& params = GetParam();
 
-  tiff.setId(params.file);
+  ASSERT_NO_THROW(tiff.setId(params.file));
 
   EXPECT_EQ(0, tiff.getSeries());
 
@@ -114,7 +114,8 @@ TEST_P(TIFFTest, openBytes)
 {
   const TIFFTestParameters& params = GetParam();
 
-  tiff.setId(params.file);
+  ASSERT_NO_THROW(tiff.setId(params.file));
+
   for (dimension_size_type s = 0; s < tiff.getSeriesCount(); ++s)
     {
       VariantPixelBuffer buf;
