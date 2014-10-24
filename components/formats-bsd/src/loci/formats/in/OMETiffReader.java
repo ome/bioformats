@@ -715,7 +715,9 @@ public class OMETiffReader extends FormatReader {
 
           if (!new Location(filename).exists()) {
             filename = currentId;
-            exists = false;
+            // if only one file is defined, we have to assume that it
+            // corresponds to the current file
+            exists = fileSet.size() == 1;
           }
         }
 
