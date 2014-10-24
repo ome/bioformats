@@ -1298,7 +1298,7 @@ namespace ome
         {
           core.seriesMetadata.set(key, value);
         }
-       
+
         // Vector
         template <typename T>
         void
@@ -1319,7 +1319,7 @@ namespace ome
         }
 
         // Array
-        template <template <typename, std::size_t> class C, 
+        template <template <typename, std::size_t> class C,
                   typename T,
                   std::size_t S>
         void
