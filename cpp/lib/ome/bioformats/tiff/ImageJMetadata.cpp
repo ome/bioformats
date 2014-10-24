@@ -35,6 +35,8 @@
  * #L%
  */
 
+#include <boost/format.hpp>
+
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/ImageJMetadata.h>
 #include <ome/bioformats/tiff/Tags.h>
@@ -132,6 +134,15 @@ namespace ome
       }
 
       void
+      ImageJMetadata::parse_value_error(const std::string& key,
+                                        const std::string& value)
+      {
+        boost::format fmt("Failed to parse value ‘%1%’ in ImageJ TIFF metadata for key ‘%2%’");
+        fmt % value % key;
+        throw std::runtime_error(fmt.str());
+      }
+
+      void
       ImageJMetadata::parse_value(const std::string& key,
                                   bool&              value)
       {
@@ -143,7 +154,7 @@ namespace ome
             else if (i->second == "false" || i->second == "no" || i->second == "0")
               value = false;
             else
-              throw std::runtime_error("Bad boolean value in ImageJ metadata");
+              parse_value_error(key, i->second);
           }
       }
 

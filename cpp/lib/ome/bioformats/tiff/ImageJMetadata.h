@@ -111,6 +111,18 @@ namespace ome
 
       protected:
         /**
+         * Throw an exception on failing to parse a particular key value.
+         *
+         * @param key the key name.
+         * @param value the value which failed to parse.
+         * @throws @c std::runtime_error.
+         */
+        static
+        void
+        parse_value_error(const std::string& key,
+                          const std::string& value);
+
+        /**
          * Parse a key's value into a given type.
          *
          * The string value of the given key will be parsed into the
@@ -118,7 +130,7 @@ namespace ome
          *
          * @param key the key name.
          * @param value the value to store the key's parsed string value.
-         * @throws @c std::ios_base::failure on stream parse errors.
+         * @throws @c std::runtime_error on parse errors.
          */
         template<typename T>
         void
@@ -128,10 +140,17 @@ namespace ome
           std::map<std::string,std::string>::const_iterator i = map.find(key);
           if (i != map.end())
             {
-              std::istringstream is(i->second);
-              is.imbue(std::locale::classic());
-              is.exceptions(std::ios::failbit);
-              is >> value;
+              try
+                {
+                  std::istringstream is(i->second);
+                  is.imbue(std::locale::classic());
+                  is.exceptions(std::ios::failbit);
+                  is >> value;
+                }
+              catch (const std::ios_base::failure& e)
+                {
+                  parse_value_error(key, i->second);
+                }
             }
         }
 
