@@ -58,7 +58,7 @@ TEST(TileCache, Insert)
 
   for (dimension_size_type i = 0; i < 16; ++i)
     {
-      ASSERT_TRUE(c.insert(i, std::make_shared<TileBuffer>(8192)));
+      ASSERT_TRUE(c.insert(i, std::shared_ptr<TileBuffer>(new TileBuffer((8192)))));
       ASSERT_TRUE(static_cast<bool>(c.find(i)));
       ASSERT_TRUE(static_cast<bool>(cc.find(i)));
     }
@@ -72,11 +72,11 @@ TEST(TileCache, InsertFail)
 
   for (dimension_size_type i = 0; i < 16; ++i)
     {
-      ASSERT_TRUE(c.insert(i, std::make_shared<TileBuffer>(8192)));
+      ASSERT_TRUE(c.insert(i, std::shared_ptr<TileBuffer>(new TileBuffer((8192)))));
     }
   for (dimension_size_type i = 0; i < 16; ++i)
     {
-      ASSERT_FALSE(c.insert(i, std::make_shared<TileBuffer>(8192)));
+      ASSERT_FALSE(c.insert(i, std::shared_ptr<TileBuffer>(new TileBuffer((8192)))));
     }
 }
 
@@ -94,7 +94,7 @@ TEST(TileCache, IndexOperator)
   c.clear();
   for (dimension_size_type i = 0; i < 16; ++i)
     {
-      c[i] = std::make_shared<TileBuffer>(8192);
+      c[i] = std::shared_ptr<TileBuffer>(new TileBuffer((8192)));
       ASSERT_TRUE(static_cast<bool>(c[i]));
     }
 
@@ -108,7 +108,7 @@ TEST(TileCache, Remove)
 
   for (dimension_size_type i = 0; i < 16; ++i)
     {
-      ASSERT_TRUE(c.insert(i, std::make_shared<TileBuffer>(8192)));
+      ASSERT_TRUE(c.insert(i, std::shared_ptr<TileBuffer>(new TileBuffer((8192)))));
       ASSERT_TRUE(static_cast<bool>(c.find(i)));
       ASSERT_TRUE(static_cast<bool>(cc.find(i)));
     }
@@ -126,7 +126,7 @@ TEST(TileCache, Clear)
 
   for (dimension_size_type i = 0; i < 16; ++i)
     {
-      ASSERT_TRUE(c.insert(i, std::make_shared<TileBuffer>(8192)));
+      ASSERT_TRUE(c.insert(i, std::shared_ptr<TileBuffer>(new TileBuffer((8192)))));
     }
 
   ASSERT_EQ(16, c.size());
