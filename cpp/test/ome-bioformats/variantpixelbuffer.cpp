@@ -991,7 +991,7 @@ TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
   VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
                          params.type);
 
-  SetIndexTestVisitor v(buf);
+  SetIndexDeathTestVisitor v(buf);
   boost::apply_visitor(v, buf.vbuffer());
 }
 
