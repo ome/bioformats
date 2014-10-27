@@ -1830,7 +1830,7 @@ public class NativeND2Reader extends FormatReader {
           if (exposureTime.size() == getSizeC()) {
             index = coords[1];
           }
-          if (exposureTime != null && index < exposureTime.size()) {
+          if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
             store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.S), i, n);
           }
         }

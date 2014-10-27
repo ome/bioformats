@@ -159,7 +159,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     for (int i=0; i<getImageCount(); i++) {
       int c = getZCTCoords(i)[1];
-      if (c < exposureTimes.size()) {
+      if (c < exposureTimes.size() && exposureTimes.get(c) != null) {
         store.setPlaneExposureTime(new Time(exposureTimes.get(c), UNITS.S), 0, i);
       }
 

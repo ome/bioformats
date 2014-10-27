@@ -692,10 +692,12 @@ public class FlexReader extends FormatReader {
             store.setPlanePositionZ(planePositionZ.get(plane), i, image);
           }
           if (plane - image + c < planeExposureTime.size()) {
-            store.setPlaneExposureTime(
-              new Time(planeExposureTime.get(plane - image + c), UNITS.S), i, image);
+            if (planeExposureTime.get(plane - image + c) != null) {
+              store.setPlaneExposureTime(
+                new Time(planeExposureTime.get(plane - image + c), UNITS.S), i, image);
+            }
           }
-          if (plane < planeDeltaT.size()) {
+          if (plane < planeDeltaT.size() && planeDeltaT.get(plane) != null) {
             store.setPlaneDeltaT(new Time(planeDeltaT.get(plane), UNITS.S), i, image);
           }
         }

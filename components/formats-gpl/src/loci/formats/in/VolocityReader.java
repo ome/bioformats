@@ -774,7 +774,7 @@ public class VolocityReader extends FormatReader {
             stack.zLocation + z * stack.physicalZ, i, img);
         }
 
-        if (i < timestamps.size() && coords[2] < timestamps.get(i).length) {
+        if (i < timestamps.size() && coords[2] < timestamps.get(i).length && timestamps.get(i)[coords[2]] != null) {
           store.setPlaneDeltaT(new Time(timestamps.get(i)[coords[2]], UNITS.S), i, img);
         }
       }

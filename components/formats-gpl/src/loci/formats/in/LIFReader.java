@@ -898,7 +898,10 @@ public class LIFReader extends FormatReader {
 
         if (expTimes[index] != null) {
           int c = getZCTCoords(image)[1];
-          store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.S), i, image);
+          if (expTimes[index][c] != null)
+          {
+            store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.S), i, image);
+          }
         }
       }
 

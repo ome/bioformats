@@ -318,7 +318,8 @@ public class MicromanagerReader extends FormatReader {
           store.setPlaneExposureTime(p.exposureTime, i, q);
           String tiff = positions.get(getSeries()).getFile(q);
           if (tiff != null && new Location(tiff).exists() &&
-            nextStamp < p.timestamps.length)
+            nextStamp < p.timestamps.length &&
+            p.timestamps[nextStamp] != null)
           {
             store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.S), i, q);
           }

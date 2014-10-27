@@ -1330,7 +1330,10 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof Track) {
       Track track = (Track) block;
       if (track.acquire) {
-        store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.S), series);
+        if (track.timeIncrement != null)
+        {
+          store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.S), series);
+        }
       }
     }
     else if (block instanceof DetectionChannel) {

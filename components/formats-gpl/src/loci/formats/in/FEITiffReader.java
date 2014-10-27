@@ -289,7 +289,9 @@ public class FEITiffReader extends BaseTiffReader {
       if (physicalSizeY != null) {
         store.setPixelsPhysicalSizeY(physicalSizeY, 0);
       }
-      store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
+      if (timeIncrement != null) {
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
+      }
     }
   }
 

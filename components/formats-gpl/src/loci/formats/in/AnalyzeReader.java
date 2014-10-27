@@ -349,7 +349,6 @@ public class AnalyzeReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-
       store.setPixelsTimeIncrement(new Time(new Double(deltaT * 1000), UNITS.S), 0);
     }
   }

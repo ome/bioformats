@@ -1312,7 +1312,8 @@ public class SlidebookReader extends FormatReader {
         for (int plane=0; plane<getImageCount(); plane++) {
           int c = getZCTCoords(plane)[1];
           if (exposureIndex + c < exposureTimes.size() &&
-            exposureIndex + c >= 0)
+            exposureIndex + c >= 0 &&
+            exposureTimes.get(exposureIndex + c) != null)
           {
             store.setPlaneExposureTime(
               new Time(new Double(exposureTimes.get(exposureIndex + c)), UNITS.S), i, plane);

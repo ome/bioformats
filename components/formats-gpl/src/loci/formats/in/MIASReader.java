@@ -1109,8 +1109,10 @@ public class MIASReader extends FormatReader {
         store.setImageAcquisitionDate(new Timestamp(date), well);
       }
 
-      for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(new Time(exposure, UNITS.S), well, i);
+      if (exposure != null) {
+        for (int i=0; i<getImageCount(); i++) {
+          store.setPlaneExposureTime(new Time(exposure, UNITS.S), well, i);
+        }
       }
     }
   }
