@@ -54,6 +54,10 @@ public class Time extends Quantity
   public Time(Number inValue,
     Unit<ome.units.quantity.Time> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Time: Time cannot be constructed with a null value.");
+    }
     value = inValue;
     unit = inUnit;
   }
