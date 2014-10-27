@@ -484,12 +484,24 @@ public class CellSensReader extends FormatReader {
     Double maxMag = magnifications.size() > 0 ? magnifications.get(0) : 0d;
     if (magnifications.size() > 1) {
       HashMap<Integer, Integer> xDims = new HashMap<Integer, Integer>();
+      int dimIndex = 0;
       for (int i=0; i<core.size();) {
-        xDims.put(core.get(i).sizeX, i);
-        if (xDims.size() == magnifications.size()) {
+        int key = core.get(i).sizeX;
+        while (xDims.containsKey(key)) {
+          key++;
+        }
+        xDims.put(key, dimIndex);
+        dimIndex++;
+        i += core.get(i).resolutionCount;
+        if (dimIndex >= files.size() - 1) {
           break;
         }
-        i += core.get(i).resolutionCount;
+      }
+
+      for (Double magnification : magnifications) {
+        if (magnification > maxMag) {
+          maxMag = magnification;
+        }
       }
 
       Integer[] keys = xDims.keySet().toArray(new Integer[xDims.size()]);
@@ -497,15 +509,29 @@ public class CellSensReader extends FormatReader {
       Double[] newMags = magnifications.toArray(new Double[magnifications.size()]);
       Arrays.sort(newMags);
 
-      for (int i=0; i<newMags.length; i++) {
+      magnifications.clear();
+
+      for (int i=0; i<keys.length; i++) {
         int magIndex = xDims.get(keys[i]);
-        magnifications.set(magIndex, newMags[i]);
+        if (magIndex < magnifications.size() && i < newMags.length) {
+          magnifications.set(magIndex, newMags[i]);
+        }
+        else {
+          while (magIndex > magnifications.size()) {
+            magnifications.add(1.0);
+          }
+          Double newMag = i < newMags.length ? newMags[i] : maxMag;
+          if (magIndex < magnifications.size()) {
+            magnifications.set(magIndex, newMag);
+          }
+          else {
+            magnifications.add(newMag);
+          }
+        }
       }
+
       for (Double magnification : magnifications) {
         addGlobalMetaList("Magnification", magnification);
-        if (magnification > maxMag) {
-          maxMag = magnification;
-        }
       }
     }
 
