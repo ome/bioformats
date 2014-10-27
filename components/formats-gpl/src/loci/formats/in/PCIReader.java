@@ -395,11 +395,15 @@ public class PCIReader extends FormatReader {
         if (i >= getImageCount()) {
           break;
         }
-        store.setPlaneDeltaT(new Time(timestamp, UNITS.S), 0, i);
+        if (timestamp != null) {
+          store.setPlaneDeltaT(new Time(timestamp, UNITS.S), 0, i);
+        }
         if (i == 2) {
           double first = timestamps.get(1).doubleValue();
           Double increment = new Double(timestamp.doubleValue() - first);
-          store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+          if (increment != null) {
+            store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+          }
         }
       }
 

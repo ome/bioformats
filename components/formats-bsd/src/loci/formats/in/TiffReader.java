@@ -282,8 +282,11 @@ public class TiffReader extends BaseTiffReader {
         put("Unit", calibrationUnit);
       }
       else if (token.startsWith("finterval=")) {
-        timeIncrement = new Time(parseDouble(value), UNITS.S);
-        put("Frame Interval", timeIncrement);
+        Double valueDouble = parseDouble(value);
+        if (valueDouble != null) {
+          timeIncrement = new Time(valueDouble, UNITS.S);
+          put("Frame Interval", timeIncrement);
+        }
       }
       else if (token.startsWith("spacing=")) {
         physicalSizeZ = parseDouble(value);

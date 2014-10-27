@@ -522,7 +522,9 @@ public class CellVoyagerReader extends FormatReader
 		omeMD.setPixelsPhysicalSizeY( new PositiveFloat( omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue() / magnification ), 0 );
 
 		// Time interval
-		omeMD.setPixelsTimeIncrement(new Time( Double.valueOf( readFrameInterval( msDocument ) ), UNITS.S), 0 );
+		if (Double.valueOf( readFrameInterval( msDocument ) ) != null) {
+			omeMD.setPixelsTimeIncrement(new Time( Double.valueOf( readFrameInterval( msDocument ) ), UNITS.S), 0 );
+		}
 
 		/*
 		 * Channels

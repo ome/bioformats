@@ -1155,7 +1155,10 @@ public class ICSReader extends FormatReader {
               if (expTime.indexOf(" ") != -1) {
                 expTime = expTime.substring(0, expTime.indexOf(" "));
               }
-              exposureTime = new Time(new Double(expTime), UNITS.S);
+              Double expDouble = new Double(expTime);
+              if (expDouble != null) {
+                exposureTime = new Time(expDouble, UNITS.S);
+              }
             }
             else if (key.equalsIgnoreCase("history filterset")) {
               filterSetModel = value;
@@ -1507,11 +1510,11 @@ public class ICSReader extends FormatReader {
               }
             }
           }
-          else if (axis.equals("t")) {
+          else if (axis.equals("t") && pixelSize != null) {
             if (checkUnit(unit, "ms")) {
               store.setPixelsTimeIncrement(new Time(1000 * pixelSize, UNITS.S), 0);
             }
-            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s")) {
+            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s") ) {
               store.setPixelsTimeIncrement(new Time(pixelSize, UNITS.S), 0);
             }
           }

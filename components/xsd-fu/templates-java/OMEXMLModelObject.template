@@ -275,7 +275,10 @@ ${customUpdatePropertyContent[prop.name]}
 				${prop.unitsCompanion.langType}.fromString(unitSymbol);
 			${prop.langType} baseValue = ${prop.langType}.valueOf(
 					element.getAttribute("${prop.name}"));
-			set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
+			if (baseValue != null) 
+			{
+				set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
+			}
 		}
 {% end %}\
 {% when not prop.isEnumeration %}\

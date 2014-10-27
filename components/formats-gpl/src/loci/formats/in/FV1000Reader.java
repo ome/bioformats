@@ -1138,7 +1138,9 @@ public class FV1000Reader extends FormatReader {
     // Populate metadata for the planes
     for (int i=0; i<planes.size(); i++) {
       PlaneData plane = planes.get(i);
-      store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.S), 0, i);
+      if (plane.deltaT != null) {
+        store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.S), 0, i);
+      }
       store.setPlanePositionX(plane.positionX, 0, i);
       store.setPlanePositionY(plane.positionY, 0, i);
       store.setPlanePositionZ(plane.positionZ, 0, i);

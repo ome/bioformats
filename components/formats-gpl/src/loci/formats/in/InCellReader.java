@@ -588,8 +588,12 @@ public class InCellReader extends FormatReader {
             Image img = imageFiles[well][field][timepoint][q];
             if (img == null) continue;
             int plane = time * getSizeZ() * c + q;
-            store.setPlaneDeltaT(new Time(img.deltaT, UNITS.S), i, plane);
-            store.setPlaneExposureTime(new Time(img.exposure, UNITS.S), i, plane);
+            if (img.deltaT != null) {
+              store.setPlaneDeltaT(new Time(img.deltaT, UNITS.S), i, plane);
+            }
+            if (img.exposure != null) {
+              store.setPlaneExposureTime(new Time(img.exposure, UNITS.S), i, plane);
+            }
 
             store.setPlanePositionX(posX.get(field), i, plane);
             store.setPlanePositionY(posY.get(field), i, plane);

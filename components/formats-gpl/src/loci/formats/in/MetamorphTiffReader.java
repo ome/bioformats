@@ -420,10 +420,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
               long ms = DateTools.getTime(stamp, DATE_FORMAT);
               store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.S), s, image);
             }
-            if (image < exposures.size()) {
+            if (image < exposures.size() && exposures.get(image) != null) {
               store.setPlaneExposureTime(new Time(exposures.get(image), UNITS.S), s, image);
             }
-
             if (s < stageX.size()) {
               store.setPlanePositionX(stageX.get(s), s, image);
             }

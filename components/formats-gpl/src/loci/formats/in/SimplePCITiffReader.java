@@ -246,7 +246,9 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]) / 1000000, UNITS.S), 0, i);
+        if (exposureTimes.get(zct[1]) != null) {
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]) / 1000000, UNITS.S), 0, i);
+        }
       }
     }
   }

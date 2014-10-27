@@ -245,7 +245,6 @@ public class HISReader extends FormatReader {
         if (date[i] != null) {
           store.setImageAcquisitionDate(new Timestamp(date[i]), i);
         }
-
         store.setPlaneExposureTime(new Time(exposureTime[i], UNITS.S), i, 0);
 
         String detectorID = MetadataTools.createLSID("Detector", 0, i);

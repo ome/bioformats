@@ -664,9 +664,10 @@ public class ScanrReader extends FormatReader {
             // exposure time is stored in milliseconds
             // convert to seconds before populating MetadataStore
             Double time = exposures.get(c);
-            time /= 1000;
-
-            store.setPlaneExposureTime(new Time(time, UNITS.S), i, image);
+            if (time != null) {
+              time /= 1000;
+              store.setPlaneExposureTime(new Time(time, UNITS.S), i, image);
+            }
             if (deltaT != null) {
               store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, image);
             }

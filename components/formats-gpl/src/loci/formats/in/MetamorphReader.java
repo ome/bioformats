@@ -940,9 +940,12 @@ public class MetamorphReader extends BaseTiffReader {
         if (index < exposureTimes.size()) {
           expTime = exposureTimes.get(index);
         }
-
-        store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, p);
-        store.setPlaneExposureTime(new Time(expTime, UNITS.S), i, p);
+        if (deltaT != null) {
+          store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, p);
+        }
+        if (expTime != null) {
+          store.setPlaneExposureTime(new Time(expTime, UNITS.S), i, p);
+        }
 
         if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);

@@ -560,7 +560,9 @@ public class TillVisionReader extends FormatReader {
         // populate PlaneTiming data
 
         for (int q=0; q<core.get(i).imageCount; q++) {
-          store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.S), i, q);
+          if (exposureTimes.get(i) != null) {
+            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.S), i, q);
+          }
         }
 
         // populate Experiment data

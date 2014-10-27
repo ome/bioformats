@@ -611,8 +611,10 @@ public class FluoviewReader extends BaseTiffReader {
 
     store.setImageInstrumentRef(instrumentID, 0);
 
-    for (int i=0; i<getImageCount(); i++) {
-      store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.S), 0, i);
+    if (exposureTime != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.S), 0, i);
+      }
     }
 
     for (int i=0; i<getEffectiveSizeC(); i++) {

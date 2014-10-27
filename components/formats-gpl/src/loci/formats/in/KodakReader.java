@@ -200,8 +200,10 @@ public class KodakReader extends FormatReader {
         }
       }
       else if (key.equals("Exposure Time")) {
-        Time exposure = new Time(new Double(value.substring(0, value.indexOf(" "))), UNITS.S);
-        store.setPlaneExposureTime(exposure, 0, 0);
+        Double exposureTime = new Double(value.substring(0, value.indexOf(" ")));
+        if (exposureTime != null) {
+          store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), 0, 0);
+        }
       }
       else if (key.equals("Vertical Resolution")) {
         // resolution stored in pixels per inch

@@ -866,7 +866,9 @@ public class ZeissCZIReader extends FormatReader {
           store.setPlaneDeltaT(new Time(p.timestamp - startTime, UNITS.S), i, plane);
         }
         else if (plane < timestamps.size()) {
-          store.setPlaneDeltaT(new Time(timestamps.get(plane), UNITS.S), i, plane);
+           if (timestamps.get(plane) != null) {
+             store.setPlaneDeltaT(new Time(timestamps.get(plane), UNITS.S), i, plane);
+           }
         }
         if (p.exposureTime != null) {
           store.setPlaneExposureTime(new Time(p.exposureTime, UNITS.S), i, plane);

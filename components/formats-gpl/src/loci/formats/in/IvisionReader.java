@@ -293,7 +293,9 @@ public class IvisionReader extends FormatReader {
         catch (NumberFormatException e) {
           LOGGER.debug("Failed to parse time increment", e);
         }
-        store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+        if (increment != null) {
+          store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+        }
       }
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
