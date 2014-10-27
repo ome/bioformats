@@ -863,13 +863,6 @@ public class CellSensReader extends FormatReader {
       for (int i=1; i<maxResolution; i++) {
         CoreMetadata newResolution = new CoreMetadata(ms);
 
-        tileX.add(tileX.get(tileX.size() - 1));
-        tileY.add(tileY.get(tileY.size() - 1));
-        compressionType.add(compressionType.get(compressionType.size() - 1));
-        tileMap.add(map);
-        nDimensions.add(nDimensions.get(nDimensions.size() - 1));
-        tileOffsets.add(tileOffsets.get(tileOffsets.size() - 1));
-
         if (maxX[i] >= 1) {
           newResolution.sizeX = tileX.get(tileX.size() - 1) * (maxX[i] + 1);
           cols.add(maxX[i] + 1);
@@ -907,6 +900,13 @@ public class CellSensReader extends FormatReader {
           core.add(newResolution);
           fileMap.put(core.size() - 1, file);
           finalResolution = core.size() - initialCoreSize + 1;
+
+          tileX.add(tileX.get(tileX.size() - 1));
+          tileY.add(tileY.get(tileY.size() - 1));
+          compressionType.add(compressionType.get(compressionType.size() - 1));
+          tileMap.add(map);
+          nDimensions.add(nDimensions.get(nDimensions.size() - 1));
+          tileOffsets.add(tileOffsets.get(tileOffsets.size() - 1));
         }
       }
 
@@ -969,6 +969,10 @@ public class CellSensReader extends FormatReader {
 
       LOGGER.debug("parsing {} tags from {}", tagCount, vsi.getFilePointer());
 
+      if (tagCount > vsi.length()) {
+        return;
+      }
+
       for (int i=0; i<tagCount; i++) {
         if (vsi.getFilePointer() + 16 >= vsi.length()) {
           break;
@@ -1001,6 +1005,13 @@ public class CellSensReader extends FormatReader {
         LOGGER.debug("  extraTag = {}", extraTag);
         LOGGER.debug("  extendedField = {}", extendedField);
         LOGGER.debug("  realType = {}", realType);
+
+        if (tag < 0) {
+          if (!inlineData) {
+            vsi.skipBytes(dataSize);
+          }
+          return;
+        }
 
         if (extendedField && realType == NEW_VOLUME_HEADER) {
           if (tag == 2007) {
@@ -1101,7 +1112,7 @@ public class CellSensReader extends FormatReader {
           }
         }
 
-        if (nextField == 0) {
+        if (nextField == 0 || tag == -494804095) {
           return;
         }
 
