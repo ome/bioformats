@@ -63,7 +63,7 @@ Type "ant -p" for a list of targets.
     <if>
       <equals arg1="${component.junit}" arg2="true"/>
       <then>
-        <junit haltonfailure="true">
+        <junit haltonfailure="true" fork="true">
           <classpath>
             <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
             <pathelement location="${artifact.dir}/junit-4.8.2.jar"/>
