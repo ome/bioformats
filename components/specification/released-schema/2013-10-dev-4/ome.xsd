@@ -2044,29 +2044,49 @@
 			<xsd:attribute name="CutIn" use="optional" type="PositiveInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units: nanometres[nm].
+						CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units are set by CutInUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutInUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutIn - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutOut" use="optional" type="PositiveInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units: nanometres[nm].
+						CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units are set by CutOutUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutOutUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutOut - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutInTolerance" use="optional" type="NonNegativeInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutInTolerance Units: nanometres[nm],
+						CutInTolerance. Units are set by CutInToleranceUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutInToleranceUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutInTolerance - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutOutTolerance" use="optional" type="NonNegativeInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutOutTolerance Units: nanometres[nm],
+						CutOutTolerance. Units are set by CutOutToleranceUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutOutToleranceUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutOutTolerance - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" >
