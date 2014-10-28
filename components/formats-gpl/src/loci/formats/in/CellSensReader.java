@@ -891,19 +891,15 @@ public class CellSensReader extends FormatReader {
 
         if (maxX[i] >= 1) {
           newResolution.sizeX = tileX.get(tileX.size() - 1) * (maxX[i] + 1);
-          cols.add(maxX[i] + 1);
         }
         else {
           newResolution.sizeX = tileX.get(tileX.size() - 1);
-          cols.add(1);
         }
         if (maxY[i] >= 1) {
           newResolution.sizeY = tileY.get(tileY.size() - 1) * (maxY[i] + 1);
-          rows.add(maxY[i] + 1);
         }
         else {
           newResolution.sizeY = tileY.get(tileY.size() - 1);
-          rows.add(1);
         }
         newResolution.sizeZ = maxZ[i] + 1;
         if (maxC[i] > 0 && newResolution.sizeC != (maxC[i] + 1)) {
@@ -924,6 +920,10 @@ public class CellSensReader extends FormatReader {
         double newAspect = (double) newResolution.sizeX / newResolution.sizeY;
         if (Math.abs(newAspect - aspectRatio) < Constants.EPSILON) {
           core.add(newResolution);
+
+          rows.add(maxY[i] >= 1 ? maxY[i] + 1 : 1);
+          cols.add(maxX[i] >= 1 ? maxX[i] + 1 : 1);
+
           fileMap.put(core.size() - 1, file);
           finalResolution = core.size() - initialCoreSize + 1;
 
