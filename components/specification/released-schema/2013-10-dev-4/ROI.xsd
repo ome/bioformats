@@ -210,7 +210,14 @@
 			<xsd:attribute name="FontSize" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						Size of the font [units points]
+						Size of the font. Units are set by FontSizeUnit.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FontSizeUnit" use="optional" default="pt" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>
+						The units used for the font size.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
