@@ -883,22 +883,37 @@
 			<xsd:attribute name="X" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X position of the stage label. [units are in the microscope reference frame]
+						The X position of the stage label. Units are set by XUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="XUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the X stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y position of the stage label. [units are in the microscope reference frame]
+						The Y position of the stage label. Units are set by YUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="YUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Y stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Z" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Z position of the stage label. [units are in the microscope reference frame]
+						The Z position of the stage label. Units are set by ZUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="ZUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Z  stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
