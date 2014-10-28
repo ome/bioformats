@@ -66,7 +66,7 @@ public final class UNITS
   public static final ome.units.unit.Unit<ElectricPotential> VOLT    = ome.units.unit.Unit.<ElectricPotential>CreateBaseUnit("SI.VOLT", "V");
   public static final ome.units.unit.Unit<Frequency>         HERTZ   = ome.units.unit.Unit.<Frequency>CreateBaseUnit("SI.HERTZ", "Hz");
   public static final ome.units.unit.Unit<Length>            METRE   = ome.units.unit.Unit.<Length>CreateBaseUnit("SI.METRE", "m");
-  public static final ome.units.unit.Unit<Length>            INCH    = ome.units.unit.Unit.<Length>CreateBaseUnit("Imperial.INCH", "");
+  public static final ome.units.unit.Unit<Length>            INCH    = ome.units.unit.Unit.<Length>CreateBaseUnit("Imperial.INCH", "in");
   public static final ome.units.unit.Unit<Power>             WATT    = ome.units.unit.Unit.<Power>CreateBaseUnit("SI.WATT", "W");
   public static final ome.units.unit.Unit<Pressure>          PASCAL  = ome.units.unit.Unit.<Pressure>CreateBaseUnit("SI.PASCAL", "Pa");
   public static final ome.units.unit.Unit<Pressure>          BAR     = PASCAL.multiply(100000).setSymbol("bar");
