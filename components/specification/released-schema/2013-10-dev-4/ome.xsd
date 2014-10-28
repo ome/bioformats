@@ -693,15 +693,25 @@
 			<xsd:attribute name="ExcitationWavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
-						Excitation wavelength of excitation for a particular channel, in nanometres[nm].
+						Wavelength of excitation for a particular channel. Units are set by ExcitationWavelengthUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="ExcitationWavelengthUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the wavelength of excitation - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="EmissionWavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
-						Emission wavelength of excitation for a particular channel, in nanometres[nm].
+						Wavelength of emission for a particular channel. Units are set by EmissionWavelengthUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="EmissionWavelengthUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the wavelength of emission - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Fluor" use="optional" type="xsd:string">
