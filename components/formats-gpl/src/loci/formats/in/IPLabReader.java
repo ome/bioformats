@@ -38,6 +38,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * IPLabReader is the file format reader for IPLab (.IPL) files.
  *
@@ -205,7 +208,7 @@ public class IPLabReader extends FormatReader {
         store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       if (timeIncrement != null) {
-        store.setPixelsTimeIncrement(timeIncrement, 0);
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
       }
     }
   }
@@ -394,7 +397,7 @@ public class IPLabReader extends FormatReader {
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {
               int plane = getIndex(z, c, i);
-              store.setPlaneDeltaT(new Double(timepoint), 0, plane);
+              store.setPlaneDeltaT(new Time(new Double(timepoint), UNITS.S), 0, plane);
             }
           }
           if (i == 1) {

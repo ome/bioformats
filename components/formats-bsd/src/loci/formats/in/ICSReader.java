@@ -56,6 +56,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
  * files. More information on ICS can be found at http://libics.sourceforge.net
@@ -834,7 +837,7 @@ public class ICSReader extends FormatReader {
     String microscopeModel = null;
     String microscopeManufacturer = null;
     String experimentType = null;
-    Double exposureTime = null;
+    Time exposureTime = null;
 
     String filterSetModel = null;
     String dichroicModel = null;
@@ -1152,7 +1155,10 @@ public class ICSReader extends FormatReader {
               if (expTime.indexOf(" ") != -1) {
                 expTime = expTime.substring(0, expTime.indexOf(" "));
               }
-              exposureTime = new Double(expTime);
+              Double expDouble = new Double(expTime);
+              if (expDouble != null) {
+                exposureTime = new Time(expDouble, UNITS.S);
+              }
             }
             else if (key.equalsIgnoreCase("history filterset")) {
               filterSetModel = value;
@@ -1504,12 +1510,12 @@ public class ICSReader extends FormatReader {
               }
             }
           }
-          else if (axis.equals("t")) {
+          else if (axis.equals("t") && pixelSize != null) {
             if (checkUnit(unit, "ms")) {
-              store.setPixelsTimeIncrement(1000 * pixelSize, 0);
+              store.setPixelsTimeIncrement(new Time(1000 * pixelSize, UNITS.S), 0);
             }
-            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s")) {
-              store.setPixelsTimeIncrement(pixelSize, 0);
+            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s") ) {
+              store.setPixelsTimeIncrement(new Time(pixelSize, UNITS.S), 0);
             }
           }
         }
@@ -1536,8 +1542,8 @@ public class ICSReader extends FormatReader {
         for (int t=0; t<timestamps.length; t++) {
           if (t >= getSizeT()) break; // ignore superfluous timestamps
           if (timestamps[t] == null) continue; // ignore missing timestamp
-          double deltaT = timestamps[t];
-          if (Double.isNaN(deltaT)) continue; // ignore invalid timestamp
+          Time deltaT = new Time(timestamps[t], UNITS.S);
+          if (Double.isNaN(deltaT.value().doubleValue())) continue; // ignore invalid timestamp
           // assign timestamp to all relevant planes
           for (int z=0; z<getSizeZ(); z++) {
             for (int c=0; c<getEffectiveSizeC(); c++) {

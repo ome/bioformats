@@ -47,6 +47,9 @@ import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
  *
@@ -728,9 +731,9 @@ public class DeltavisionReader extends FormatReader {
         DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
 
         // plane timing
-        store.setPlaneDeltaT(new Double(hdr.timeStampSeconds), series, i);
+        store.setPlaneDeltaT(new Time(new Double(hdr.timeStampSeconds), UNITS.S), series, i);
         store.setPlaneExposureTime(
-          new Double(extHdrFields[0][coords[1]][0].expTime), series, i);
+          new Time(new Double(extHdrFields[0][coords[1]][0].expTime), UNITS.S), series, i);
 
         // stage position
         if (!logFound || getSeriesCount() > 1) {

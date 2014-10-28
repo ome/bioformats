@@ -59,6 +59,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
  *
@@ -1264,7 +1267,7 @@ public class ZeissLSMReader extends FormatReader {
 
         if (getSizeT() > 1 && zct[2] < timestamps.size() - stampIndex) {
           double thisStamp = timestamps.get(stampIndex + zct[2]).doubleValue();
-          store.setPlaneDeltaT(thisStamp - firstStamp, series, i);
+          store.setPlaneDeltaT(new Time(thisStamp - firstStamp, UNITS.S), series, i);
         }
         if (xCoordinates.size() > series) {
           store.setPlanePositionX(xCoordinates.get(series), series, i);
@@ -1331,7 +1334,10 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof Track) {
       Track track = (Track) block;
       if (track.acquire) {
-        store.setPixelsTimeIncrement(track.timeIncrement, series);
+        if (track.timeIncrement != null)
+        {
+          store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.S), series);
+        }
       }
     }
     else if (block instanceof DetectionChannel) {

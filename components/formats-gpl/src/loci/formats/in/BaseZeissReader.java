@@ -50,6 +50,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * BaseZeissReader contains common functionality required by
  * readers for Zeiss AxioVision formats.
@@ -385,7 +388,7 @@ public abstract class BaseZeissReader extends FormatReader {
           try { exp = new Double(exposure); }
           catch (NumberFormatException e) { }
           catch (NullPointerException e) { }
-          store.setPlaneExposureTime(exp, i, plane);
+          store.setPlaneExposureTime(new Time(exp, UNITS.S), i, plane);
 
           int posIndex = i * getImageCount() + plane;
 
@@ -393,7 +396,7 @@ public abstract class BaseZeissReader extends FormatReader {
             String timestamp = timestamps.get(new Integer(posIndex));
             long stamp = parseTimestamp(timestamp);
             stamp -= firstStamp;
-            store.setPlaneDeltaT(new Double(stamp / 1600000), i, plane);
+            store.setPlaneDeltaT(new Time(new Double(stamp / 1600000), UNITS.S), i, plane);
           }
 
           if (stageX.get(posIndex) != null) {

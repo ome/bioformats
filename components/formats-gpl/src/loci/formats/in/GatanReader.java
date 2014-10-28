@@ -39,6 +39,9 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * GatanReader is the file format reader for Gatan files.
  *
@@ -293,7 +296,7 @@ public class GatanReader extends FormatReader {
       store.setPlanePositionX(posX, 0, 0);
       store.setPlanePositionY(posY, 0, 0);
       store.setPlanePositionZ(posZ, 0, 0);
-      store.setPlaneExposureTime(sampleTime, 0, 0);
+      store.setPlaneExposureTime(new Time(sampleTime, UNITS.S), 0, 0);
     }
   }
 

@@ -48,6 +48,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -583,8 +586,12 @@ public class InCellReader extends FormatReader {
             Image img = imageFiles[well][field][timepoint][q];
             if (img == null) continue;
             int plane = time * getSizeZ() * c + q;
-            store.setPlaneDeltaT(img.deltaT, i, plane);
-            store.setPlaneExposureTime(img.exposure, i, plane);
+            if (img.deltaT != null) {
+              store.setPlaneDeltaT(new Time(img.deltaT, UNITS.S), i, plane);
+            }
+            if (img.exposure != null) {
+              store.setPlaneExposureTime(new Time(img.exposure, UNITS.S), i, plane);
+            }
 
             store.setPlanePositionX(posX.get(field), i, plane);
             store.setPlanePositionY(posY.get(field), i, plane);

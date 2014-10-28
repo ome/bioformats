@@ -53,6 +53,9 @@ import loci.formats.tiff.TiffCompression;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * TiffReader is the file format reader for regular TIFF files,
  * not of any specific TIFF variant.
@@ -85,7 +88,7 @@ public class TiffReader extends BaseTiffReader {
   private String description;
   private String calibrationUnit;
   private Double physicalSizeZ;
-  private Double timeIncrement;
+  private Time timeIncrement;
   private Integer xOrigin, yOrigin;
 
   // -- Constructor --
@@ -279,8 +282,11 @@ public class TiffReader extends BaseTiffReader {
         put("Unit", calibrationUnit);
       }
       else if (token.startsWith("finterval=")) {
-        timeIncrement = parseDouble(value);
-        put("Frame Interval", timeIncrement);
+        Double valueDouble = parseDouble(value);
+        if (valueDouble != null) {
+          timeIncrement = new Time(valueDouble, UNITS.S);
+          put("Frame Interval", timeIncrement);
+        }
       }
       else if (token.startsWith("spacing=")) {
         physicalSizeZ = parseDouble(value);

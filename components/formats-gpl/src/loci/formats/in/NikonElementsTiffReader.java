@@ -43,6 +43,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * NikonElementsTiffReader is the file format reader for TIFF files produced
  * by Nikon Elements.
@@ -156,8 +159,8 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     for (int i=0; i<getImageCount(); i++) {
       int c = getZCTCoords(i)[1];
-      if (c < exposureTimes.size()) {
-        store.setPlaneExposureTime(exposureTimes.get(c), 0, i);
+      if (c < exposureTimes.size() && exposureTimes.get(c) != null) {
+        store.setPlaneExposureTime(new Time(exposureTimes.get(c), UNITS.S), 0, i);
       }
 
       if (i < posX.size()) {

@@ -66,6 +66,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -732,7 +735,9 @@ public class LIFReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(tSteps[index], i);
+      if (tSteps[index] != null) {
+        store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.S), i);
+      }
 
       Vector detectors = detectorModels[index];
       if (detectors != null) {
@@ -888,12 +893,15 @@ public class LIFReader extends FormatReader {
           else if (timestamp == acquiredDate[index] && image > 0) {
             timestamp = timestamps[index][0];
           }
-          store.setPlaneDeltaT(timestamp, i, image);
+          store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, image);
         }
 
         if (expTimes[index] != null) {
           int c = getZCTCoords(image)[1];
-          store.setPlaneExposureTime(expTimes[index][c], i, image);
+          if (expTimes[index][c] != null)
+          {
+            store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.S), i, image);
+          }
         }
       }
 

@@ -38,6 +38,9 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * PCORAWReader is the file format reader for PCORAW files.
  *
@@ -204,7 +207,11 @@ public class PCORAWReader extends FormatReader {
           // set the exposure time
 
           String exp = value.substring(0, value.indexOf(" "));
-          Double exposure = new Double(exp) / 1000;
+          Double parsedExp = new Double(exp);
+          Time exposure = null;
+          if (parsedExp != null) {
+            exposure = new Time(parsedExp / 1000, UNITS.S);
+          }
 
           for (int plane=0; plane<getImageCount(); plane++) {
             store.setPlaneExposureTime(exposure, 0, plane);

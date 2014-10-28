@@ -53,6 +53,9 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -661,11 +664,12 @@ public class ScanrReader extends FormatReader {
             // exposure time is stored in milliseconds
             // convert to seconds before populating MetadataStore
             Double time = exposures.get(c);
-            time /= 1000;
-
-            store.setPlaneExposureTime(time, i, image);
+            if (time != null) {
+              time /= 1000;
+              store.setPlaneExposureTime(new Time(time, UNITS.S), i, image);
+            }
             if (deltaT != null) {
-              store.setPlaneDeltaT(deltaT, i, image);
+              store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, image);
             }
           }
         }

@@ -34,6 +34,8 @@ import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * Uses Bio-Formats to extract some basic standardized
@@ -69,13 +71,13 @@ public class GetPhysicalMetadata {
     PositiveFloat physicalSizeX = meta.getPixelsPhysicalSizeX(series);
     PositiveFloat physicalSizeY = meta.getPixelsPhysicalSizeY(series);
     PositiveFloat physicalSizeZ = meta.getPixelsPhysicalSizeZ(series);
-    Double timeIncrement = meta.getPixelsTimeIncrement(series);
+    Time timeIncrement = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Physical dimensions:");
     System.out.println("\tX spacing = " + physicalSizeX + " microns");
     System.out.println("\tY spacing = " + physicalSizeY + " microns");
     System.out.println("\tZ spacing = " + physicalSizeZ + " microns");
-    System.out.println("\tTime increment = " + timeIncrement + " seconds");
+    System.out.println("\tTime increment = " + timeIncrement.value(UNITS.S).doubleValue() + " seconds");
   }
 
   public static void main(String[] args) throws Exception {

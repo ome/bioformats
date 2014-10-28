@@ -57,6 +57,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * BDReader is the file format reader for BD Pathway datasets.
  *
@@ -469,7 +472,7 @@ public class BDReader extends FormatReader {
         long firstPlane = 0;
         for (int p=0; p<getImageCount(); p++) {
           int[] zct = getZCTCoords(p);
-          store.setPlaneExposureTime(exposure[zct[1]], i, p);
+          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.S), i, p);
           String file = getFilename(i, p);
           if (file != null) {
             long plane = getTimestamp(file);
@@ -477,7 +480,7 @@ public class BDReader extends FormatReader {
               firstPlane = plane;
             }
             double timestamp = (plane - firstPlane) / 1000.0;
-            store.setPlaneDeltaT(timestamp, i, p);
+            store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, p);
           }
         }
       }

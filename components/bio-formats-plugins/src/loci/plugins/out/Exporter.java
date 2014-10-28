@@ -83,6 +83,9 @@ import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
  *
@@ -378,7 +381,7 @@ public class Exporter {
       store.setPixelsPhysicalSizeX(new PositiveFloat(cal.pixelWidth), 0);
       store.setPixelsPhysicalSizeY(new PositiveFloat(cal.pixelHeight), 0);
       store.setPixelsPhysicalSizeZ(new PositiveFloat(cal.pixelDepth), 0);
-      store.setPixelsTimeIncrement(new Double(cal.frameInterval), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(cal.frameInterval), UNITS.S), 0);
 
       if (imp.getImageStackSize() !=
         imp.getNChannels() * imp.getNSlices() * imp.getNFrames())

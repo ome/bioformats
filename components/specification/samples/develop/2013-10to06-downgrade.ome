@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3"
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-3"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-3"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-3"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-3"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3
-		http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3/ome.xsd">
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-4"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-4"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4
+		http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4/ome.xsd">
 	
 	<OME:Project ID="Project:0">
 		<OME:DatasetRef ID="Dataset:0"/>
@@ -145,12 +145,18 @@
 	<OME:Image ID="Image:0" Name="6x6x1x8-swatch.tif">
 		<OME:AcquisitionDate>2010-02-23T12:51:30</OME:AcquisitionDate>
 		<ExperimenterRef ID="Experimenter:1"/>
-		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
-			PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+		<ImagingEnvironment 
+			AirPressure="999" AirPressureUnit="mbar"
+			Temperature="23.3" TemperatureUnit="°C"
+			CO2Percent="0.05" Humidity="0.35"/>
+		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0"
+			PhysicalSizeX="10000.0" PhysicalSizeXUnit="nm"
+			PhysicalSizeY="10000.0" PhysicalSizeYUnit="nm"
+			Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
 				EmissionWavelength="577.2" ExcitationWavelength="655.8"
 				ID="Channel:0">
-				<LightSourceSettings ID="LightSource:1" Wavelength="655.4"/>
+				<LightSourceSettings ID="LightSource:1" Wavelength="0.6554" WavelengthUnit="mm"/>
 				<LightPath>
 					<ExcitationFilterRef ID="Filter:0"/>
 					<DichroicRef ID="Dichroic:0"/>
@@ -247,7 +253,7 @@
 			<ROI:Shape ID="Shape:4" StrokeWidth="2" StrokeColor="15">
 				<ROI:Polygon Points="1,1 10,20, 20,20 20,10"/>
 			</ROI:Shape>
-			<ROI:Shape ID="Shape:5" StrokeWidth="2" StrokeColor="16">
+			<ROI:Shape ID="Shape:5" StrokeWidth="2" StrokeColor="16" PhysicalXUnit="µm" PhysicalYUnit="nm">
 				<ROI:Polyline Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
 					MarkerEnd="Arrow"/>
 			</ROI:Shape>

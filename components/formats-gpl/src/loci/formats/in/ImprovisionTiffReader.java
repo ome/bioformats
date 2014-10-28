@@ -41,6 +41,9 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * ImprovisionTiffReader is the file format reader for
  * Improvision TIFF files.
@@ -343,7 +346,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(pixelSizeT / 1000000.0, 0);
+      store.setPixelsTimeIncrement(new Time(pixelSizeT / 1000000.0, UNITS.S), 0);
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (cNames != null && i < cNames.length) {
           store.setChannelName(cNames[i], 0, i);

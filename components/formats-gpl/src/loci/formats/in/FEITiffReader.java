@@ -47,6 +47,9 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -286,7 +289,9 @@ public class FEITiffReader extends BaseTiffReader {
       if (physicalSizeY != null) {
         store.setPixelsPhysicalSizeY(physicalSizeY, 0);
       }
-      store.setPixelsTimeIncrement(timeIncrement, 0);
+      if (timeIncrement != null) {
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
+      }
     }
   }
 

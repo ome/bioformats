@@ -38,6 +38,9 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * Logic for calibrating images.
  *
@@ -73,8 +76,8 @@ public class Calibrator {
     if (yd != null) ycal = yd.getValue();
     PositiveFloat zd = meta.getPixelsPhysicalSizeZ(series);
     if (zd != null) zcal = zd.getValue();
-    Double td = meta.getPixelsTimeIncrement(series);
-    if (td != null) tcal = td.floatValue();
+    Time td = meta.getPixelsTimeIncrement(series);
+    if (td != null) tcal = td.value(UNITS.S).floatValue();
 
     boolean xcalPresent = !Double.isNaN(xcal);
     boolean ycalPresent = !Double.isNaN(ycal);
@@ -130,8 +133,8 @@ public class Calibrator {
     final PositiveInteger sizeT = meta.getPixelsSizeT(series);
     final int tSize = sizeT == null ? 1 : sizeT.getValue();
     final int planeCount = meta.getPlaneCount(series);
-    final double[] deltas = new double[tSize];
-    Arrays.fill(deltas, Double.NaN);
+    final Time[] deltas = new Time[tSize];
+    Arrays.fill(deltas, new Time(Double.NaN, UNITS.S));
     for (int p=0; p<planeCount; p++) {
       final NonNegativeInteger theZ = meta.getPlaneTheZ(series, p);
       final NonNegativeInteger theC = meta.getPlaneTheC(series, p);
@@ -141,7 +144,7 @@ public class Calibrator {
       // store delta T value at appropriate index
       final int t = theT.getValue();
       if (t >= tSize) continue;
-      final Double deltaT = meta.getPlaneDeltaT(series, p);
+      final Time deltaT = meta.getPlaneDeltaT(series, p);
       if (deltaT == null) continue;
       deltas[t] = deltaT;
     }
@@ -149,8 +152,8 @@ public class Calibrator {
     double tiTotal = 0;
     int tiCount = 0;
     for (int t=1; t<tSize; t++) {
-      double delta1 = deltas[t - 1];
-      double delta2 = deltas[t];
+      double delta1 = deltas[t - 1].value(UNITS.S).doubleValue();;
+      double delta2 = deltas[t].value(UNITS.S).doubleValue();;
       if (Double.isNaN(delta1) || Double.isNaN(delta2)) continue;
       tiTotal += delta2 - delta1;
       tiCount++;

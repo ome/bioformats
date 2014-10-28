@@ -61,7 +61,15 @@ class Language(object):
             'PercentFraction': 'PercentFraction',
             'Color': 'Color',
             'Text': 'Text',
-            namespace + 'dateTime': 'Timestamp'
+            'UnitsLength':            'UnitsLength',
+            'UnitsTime':              'UnitsTime',
+            'UnitsPressure':          'UnitsPressure',
+            'UnitsAngle':             'UnitsAngle',
+            'UnitsTemperature':       'UnitsTemperature',
+            'UnitsElectricPotential': 'UnitsElectricPotential',
+            'UnitsPower':             'UnitsPower',
+            'UnitsFrequency':         'UnitsFrequency',
+            namespace + 'dateTime':   'Timestamp'
             }
 
         # A global type mapping from XSD Schema elements to language model
@@ -75,6 +83,9 @@ class Language(object):
         self.base_type_map = {
             'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass()
             }
+
+        self.model_unit_map = {}
+        self.model_unit_default = {}
 
         self.name = None
         self.template_dir = None
@@ -197,6 +208,23 @@ class Java(Language):
         self.model_type_map['K'] = None
         self.model_type_map['V'] = None
 
+        self.model_unit_map['UnitsLength'] = 'Length'
+        self.model_unit_map['UnitsPressure'] = 'Pressure'
+        self.model_unit_map['UnitsAngle'] = 'Angle'
+        self.model_unit_map['UnitsTemperature'] = 'Temperature'
+        self.model_unit_map['UnitsElectricPotential'] = 'ElectricPotential'
+        self.model_unit_map['UnitsPower'] = 'Power'
+        self.model_unit_map['UnitsFrequency'] = 'Frequency'
+
+        self.model_unit_default['UnitsLength'] = 'UNITS.METRE'
+        self.model_unit_default['UnitsTime'] = 'UNITS.SECOND'
+        self.model_unit_default['UnitsPressure'] = 'UNITS.PASCAL'
+        self.model_unit_default['UnitsAngle'] = 'UNITS.RADIAN'
+        self.model_unit_default['UnitsTemperature'] = 'UNITS.KELVIN'
+        self.model_unit_default['UnitsElectricPotential'] = 'UNITS.VOLT'
+        self.model_unit_default['UnitsPower'] = 'UNITS.WATT'
+        self.model_unit_default['UnitsFrequency'] = 'UNITS.HERTZ'
+
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
         self.type_map['MIMEtype'] = 'String'
@@ -212,8 +240,26 @@ class Java(Language):
         self.metadata_package = "ome.xml.meta"
         self.omexml_metadata_package = "ome.xml.meta"
 
+        # use ome implementation
+        # self.units_implementation_is = "ome"
+        # self.units_package = "org.unitsofmeasurement"
+        # self.units_implementation_imports = "import ome.units.quantity.*;\nimport ome.units.*;"
+        # self.model_unit_map['UnitsTime'] = 'Time'
+
+        # use ome-standalone implementation
+        self.units_implementation_is = "ome"
+        self.units_package = "ome.units"
+        self.units_implementation_imports = "import ome.units.quantity.*;\nimport ome.units.*;"
+        self.model_unit_map['UnitsTime'] = 'Time'
+
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
+
+    def typeToUnitsType(self, valueType):
+        return self.model_unit_map[valueType]
+
+    def typeToDefault(self, valueType):
+        return self.model_unit_default[valueType]
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a Java method signature dictionary from an index name."""
@@ -285,6 +331,9 @@ class CXX(Language):
 
     def getDefaultModelBaseClass(self):
         return "detail::OMEModelObject"
+
+    def typeToUnitsType(self, valueType):
+        return "Unit<" + valueType + ">"
 
     def index_signature(self, name, max_occurs, level, dummy = False):
         """Makes a C++ method signature dictionary from an index name."""

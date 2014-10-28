@@ -57,6 +57,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -717,16 +720,16 @@ public class LeicaReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       if ((int) physicalSizes[i][4] > 0) {
-        store.setPixelsTimeIncrement(physicalSizes[i][4], i);
+        store.setPixelsTimeIncrement(new Time(physicalSizes[i][4], UNITS.S), i);
       }
 
       for (int j=0; j<ms.imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
           double elapsedTime = (double) (time - firstPlane) / 1000;
-          store.setPlaneDeltaT(elapsedTime, i, j);
+          store.setPlaneDeltaT(new Time(elapsedTime, UNITS.S), i, j);
           if (exposureTime[i] > 0) {
-            store.setPlaneExposureTime(exposureTime[i], i, j);
+            store.setPlaneExposureTime(new Time(exposureTime[i], UNITS.S), i, j);
           }
         }
       }

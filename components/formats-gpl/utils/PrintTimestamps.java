@@ -32,7 +32,10 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * Uses Bio-Formats to extract timestamp information
@@ -70,7 +73,7 @@ public class PrintTimestamps {
     if (meta.getImageAcquisitionDate(series) != null) {
       creationDate = meta.getImageAcquisitionDate(series).getValue();
     }
-    Double timeInc = meta.getPixelsTimeIncrement(series);
+    Time timeInc = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Global timing information:");
     System.out.println("\tImage name = " + imageName);
@@ -79,7 +82,7 @@ public class PrintTimestamps {
       System.out.println("\tCreation time (in ms since epoch) = " +
         DateTools.getTime(creationDate, DateTools.ISO8601_FORMAT));
     }
-    System.out.println("\tTime increment (in seconds) = " + timeInc);
+    System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.S).doubleValue());
   }
 
   /** Outputs timing details per timepoint. */
@@ -89,14 +92,14 @@ public class PrintTimestamps {
       "Timing information per timepoint (from beginning of experiment):");
     int planeCount = meta.getPlaneCount(series);
     for (int i = 0; i < planeCount; i++) {
-      Double deltaT = meta.getPlaneDeltaT(series, i);
+      Time deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
       int z = meta.getPlaneTheZ(series, i).getValue().intValue();
       int c = meta.getPlaneTheC(series, i).getValue().intValue();
       int t = meta.getPlaneTheT(series, i).getValue().intValue();
       if (z == 0 && c == 0) {
-        System.out.println("\tTimepoint #" + t + " = " + deltaT + " s");
+        System.out.println("\tTimepoint #" + t + " = " + deltaT.value(UNITS.S).doubleValue() + " s");
       }
     }
   }
@@ -115,14 +118,14 @@ public class PrintTimestamps {
       "Timing information per plane (from beginning of experiment):");
     int planeCount = meta.getPlaneCount(series);
     for (int i = 0; i < planeCount; i++) {
-      Double deltaT = meta.getPlaneDeltaT(series, i);
+      Time deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
       int z = meta.getPlaneTheZ(series, i).getValue().intValue();
       int c = meta.getPlaneTheC(series, i).getValue().intValue();
       int t = meta.getPlaneTheT(series, i).getValue().intValue();
       System.out.println("\tZ " + z + ", C " + c + ", T " + t + " = " +
-        deltaT + " s");
+        deltaT.value(UNITS.S).doubleValue() + " s");
     }
   }
 

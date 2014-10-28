@@ -51,6 +51,9 @@ import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
  * or derived from the TIFF 6.0 file format.
@@ -477,7 +480,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         if (exif.containsKey(IFD.EXPOSURE_TIME)) {
           Object exp = exif.get(IFD.EXPOSURE_TIME);
           if (exp instanceof TiffRational) {
-            Double exposure = ((TiffRational) exp).doubleValue();
+            Time exposure = new Time(((TiffRational) exp).doubleValue(), UNITS.S);
             for (int i=0; i<getImageCount(); i++) {
               store.setPlaneExposureTime(exposure, 0, i);
             }

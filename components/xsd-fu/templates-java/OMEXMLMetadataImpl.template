@@ -12,6 +12,9 @@
 {% def counter(parent, obj, indexes) %}\
 	public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
 	{
+{% if debug %}\
+		// MARKER [A-IMP]
+{% end debug %}\
 		// Parents: ${repr(parents[obj.name])}
 {% if obj.isReference %}\
 		// ${obj.name} is a reference
@@ -37,6 +40,9 @@
 {% end %}\
 {% end %}\
 	{
+{% if debug %}\
+		// MARKER [B-IMP]
+{% end debug %}\
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference and prop.maxOccurs > 1 %}\
@@ -83,6 +89,9 @@
 {% end %}\
 {% end %}\
 	{
+{% if debug %}\
+		// MARKER [C-IMP]
+{% end debug %}\
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
@@ -260,6 +269,16 @@ package ${lang.omexml_metadata_package};
 import ${lang.omexml_model_package}.*;
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -519,7 +538,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
 
@@ -541,6 +560,11 @@ ${getter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -678,7 +702,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
 
@@ -700,6 +724,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

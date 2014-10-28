@@ -223,6 +223,12 @@ ${customContent[o.name]['properties']}\
             -->
             <{% if prop.minOccurs == 0 %}manyzero{% end %}{% if prop.minOccurs == 1 %}manyone{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and (not o.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or prop.name in fu.ANNOTATION_OVERRIDE) %}\
+            <!--
+            // Property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+            -->
+            <{% if prop.minOccurs == 0 and not prop.isUnique %}optional{% end %}{% if prop.minOccurs == 1 or prop.isUnique %}required{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
 {% when prop.maxOccurs == 1 and (not o.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or prop.name in fu.ANNOTATION_OVERRIDE) %}\
             <!--
             // Property ${prop.name}

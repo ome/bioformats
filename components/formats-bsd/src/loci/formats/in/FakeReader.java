@@ -64,6 +64,8 @@ import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.OME;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * FakeReader is the file format reader for faking input data.
@@ -117,7 +119,7 @@ public class FakeReader extends FormatReader {
   // -- Fields --
 
   /** exposure time per plane info */
-  private Float exposureTime = null;
+  private Time exposureTime = null;
 
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
@@ -510,7 +512,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
-      else if (key.equals("exposureTime")) exposureTime = (float) doubleValue;
+      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.S);
       else if (key.equals("acquisitionDate")) acquisitionDate = value;
       else if (key.equals("plates")) plates = intValue;
       else if (key.equals("plateRows")) plateRows = intValue;
@@ -793,7 +795,7 @@ public class FakeReader extends FormatReader {
     for (int s=0; s<getSeriesCount(); s++) {
       setSeries(s);
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(exposureTime.doubleValue(), s, i);
+        store.setPlaneExposureTime(exposureTime, s, i);
       }
       setSeries(oldSeries);
     }

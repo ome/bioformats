@@ -51,6 +51,9 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.
  * The JAI ImageIO library is required to use this reader; it is available from
@@ -1821,14 +1824,14 @@ public class NativeND2Reader extends FormatReader {
             stampIndex = coords[0];
           }
           double stamp = tsT.get(stampIndex).doubleValue();
-          store.setPlaneDeltaT(stamp, i, n);
+          store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
 
           int index = i * getSizeC() + coords[1];
           if (exposureTime.size() == getSizeC()) {
             index = coords[1];
           }
-          if (exposureTime != null && index < exposureTime.size()) {
-            store.setPlaneExposureTime(exposureTime.get(index), i, n);
+          if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
+            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.S), i, n);
           }
         }
       }

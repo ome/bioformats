@@ -43,4 +43,14 @@
             <package name="ome.xml.utests"/>
         </packages>
     </test>
+    <test name="UnitsTests">
+        <groups>
+            <run>
+                <exclude name="inOutTests"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="ome.units.utests"/>
+        </packages>
+    </test>
 </suite>

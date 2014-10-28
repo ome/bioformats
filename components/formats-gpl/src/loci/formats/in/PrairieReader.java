@@ -52,6 +52,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -543,7 +546,7 @@ public class PrairieReader extends FormatReader {
 
       // populate TimeIncrement
       final Double waitTime = meta.getWaitTime();
-      if (waitTime != null) store.setPixelsTimeIncrement(waitTime, s);
+      if (waitTime != null) store.setPixelsTimeIncrement(new Time(waitTime, UNITS.S), s);
 
       final String[] detectorIDs = new String[channels.length];
 
@@ -632,7 +635,7 @@ public class PrairieReader extends FormatReader {
             if (posX != null) store.setPlanePositionX(posX, s, i);
             if (posY != null) store.setPlanePositionY(posY, s, i);
             if (posZ != null) store.setPlanePositionZ(posZ, s, i);
-            if (deltaT != null) store.setPlaneDeltaT(deltaT, s, i);
+            if (deltaT != null) store.setPlaneDeltaT(new Time(deltaT, UNITS.S), s, i);
           }
         }
       }

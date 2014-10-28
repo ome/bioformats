@@ -137,6 +137,9 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * Creates XML objects for the 2010-06 schema.
  *
@@ -997,8 +1000,8 @@ public class XMLMockObjects
   public Plane createPlane(int z, int c, int t)
   {
     Plane plane = new Plane();
-    plane.setDeltaT(0.1);
-    plane.setExposureTime(10.0);
+    plane.setDeltaT(new Time(0.1, UNITS.S));
+    plane.setExposureTime(new Time(10.0, UNITS.S));
     plane.setPositionX(1.0);
     plane.setPositionY(1.0);
     plane.setPositionZ(1.0);

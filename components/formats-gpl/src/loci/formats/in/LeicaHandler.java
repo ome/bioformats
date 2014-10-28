@@ -59,6 +59,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -524,7 +527,10 @@ public class LeicaHandler extends BaseHandler {
         }
       }
       else if (id.equals("nDelayTime_s")) {
-        store.setPixelsTimeIncrement(new Double(value), numDatasets);
+        Double timeIncrement = new Double(value);
+        if (timeIncrement != null) {
+          store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), numDatasets);
+        }
       }
       else if (id.equals("CameraName")) {
         store.setDetectorModel(value, numDatasets, 0);
@@ -539,7 +545,10 @@ public class LeicaHandler extends BaseHandler {
         if (channel == null) channel = new Channel();
         if (id.endsWith("ExposureTime") && c < numChannels) {
           try {
-            store.setPlaneExposureTime(new Double(value), numDatasets, c);
+            Double exposureTime = new Double(value);
+            if (exposureTime != null) {
+              store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), numDatasets, c);
+            }
           }
           catch (IndexOutOfBoundsException e) { }
         }
@@ -862,14 +871,14 @@ public class LeicaHandler extends BaseHandler {
           store.setImageAcquisitionDate(new Timestamp(date), numDatasets);
         }
         firstStamp = ms;
-        store.setPlaneDeltaT(0.0, numDatasets, count);
+        store.setPlaneDeltaT(new Time(0.0, UNITS.S), numDatasets, count);
       }
       else if (level != MetadataLevel.MINIMUM) {
         CoreMetadata coreMeta = core.get(numDatasets);
         int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
         if (count < nImages) {
           ms -= firstStamp;
-          store.setPlaneDeltaT(ms / 1000.0, numDatasets, count);
+          store.setPlaneDeltaT(new Time(ms / 1000.0, UNITS.S), numDatasets, count);
         }
       }
 
@@ -880,7 +889,9 @@ public class LeicaHandler extends BaseHandler {
       int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
       if (count < nImages) {
         Double time = new Double(attributes.getValue("Time"));
-        store.setPlaneDeltaT(time, numDatasets, count++);
+        if (time != null) {
+          store.setPlaneDeltaT(new Time(time, UNITS.S), numDatasets, count++);
+        }
       }
     }
     else if (qName.equals("Annotation") && level != MetadataLevel.MINIMUM) {

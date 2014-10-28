@@ -50,6 +50,9 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
  * Metamorph software version 7.5 and above.
@@ -415,12 +418,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
             if (t < timestamps.size()) {
               String stamp = timestamps.get(t);
               long ms = DateTools.getTime(stamp, DATE_FORMAT);
-              store.setPlaneDeltaT((ms - startDate) / 1000.0, s, image);
+              store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.S), s, image);
             }
-            if (image < exposures.size()) {
-              store.setPlaneExposureTime(exposures.get(image), s, image);
+            if (image < exposures.size() && exposures.get(image) != null) {
+              store.setPlaneExposureTime(new Time(exposures.get(image), UNITS.S), s, image);
             }
-
             if (s < stageX.size()) {
               store.setPlanePositionX(stageX.get(s), s, image);
             }

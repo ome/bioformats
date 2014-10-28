@@ -41,6 +41,9 @@ import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * FluoviewReader is the file format reader for
  * Olympus Fluoview TIFF files AND Andor Bio-imaging Division (ABD) TIFF files.
@@ -412,7 +415,7 @@ public class FluoviewReader extends BaseTiffReader {
         setSeries(s);
         for (int i=0; i<getImageCount(); i++) {
           int index = getImageIndex(i);
-          store.setPlaneDeltaT(stamps[timeIndex][index], s, i);
+          store.setPlaneDeltaT(new Time(stamps[timeIndex][index], UNITS.S), s, i);
         }
       }
       setSeries(0);
@@ -432,7 +435,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(voxelT, i);
+      store.setPixelsTimeIncrement(new Time(voxelT, UNITS.S), i);
 
       int montage = getMontage(i);
       int field = getField(i);
@@ -608,8 +611,10 @@ public class FluoviewReader extends BaseTiffReader {
 
     store.setImageInstrumentRef(instrumentID, 0);
 
-    for (int i=0; i<getImageCount(); i++) {
-      store.setPlaneExposureTime(new Double(exposureTime.floatValue()), 0, i);
+    if (exposureTime != null) {
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.S), 0, i);
+      }
     }
 
     for (int i=0; i<getEffectiveSizeC(); i++) {

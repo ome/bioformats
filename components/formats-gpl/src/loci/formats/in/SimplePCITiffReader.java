@@ -48,6 +48,9 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * SimplePCITiffReader is the file format reader for TIFF files produced by
  * SimplePCI software.
@@ -243,7 +246,9 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneExposureTime(exposureTimes.get(zct[1]) / 1000000, 0, i);
+        if (exposureTimes.get(zct[1]) != null) {
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]) / 1000000, UNITS.S), 0, i);
+        }
       }
     }
   }

@@ -37,6 +37,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
  * Specifications available at
@@ -227,7 +230,7 @@ public class ImarisReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(1.0, 0);
+      store.setPixelsTimeIncrement(new Time(1.0, UNITS.S), 0);
 
       // populate LogicalChannel data
 

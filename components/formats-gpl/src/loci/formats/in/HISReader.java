@@ -39,6 +39,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * HISReader is the file format reader for Hamamatsu .his files.
  *
@@ -242,8 +245,7 @@ public class HISReader extends FormatReader {
         if (date[i] != null) {
           store.setImageAcquisitionDate(new Timestamp(date[i]), i);
         }
-
-        store.setPlaneExposureTime(exposureTime[i], i, 0);
+        store.setPlaneExposureTime(new Time(exposureTime[i], UNITS.S), i, 0);
 
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);

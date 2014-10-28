@@ -40,6 +40,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -290,7 +293,9 @@ public class IvisionReader extends FormatReader {
         catch (NumberFormatException e) {
           LOGGER.debug("Failed to parse time increment", e);
         }
-        store.setPixelsTimeIncrement(increment, 0);
+        if (increment != null) {
+          store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+        }
       }
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);

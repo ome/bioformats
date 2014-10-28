@@ -53,6 +53,9 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * LiFlimReader is the file format reader for LI-FLIM files.
  *
@@ -455,8 +458,12 @@ public class LiFlimReader extends FormatReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         for (int z=0; z<getSizeZ(); z++) {
           int index = getIndex(z, c, t);
-          store.setPlaneDeltaT(deltaT, 0, index);
-          store.setPlaneExposureTime(exposureTime, 0, index);
+          if (deltaT != null) {
+            store.setPlaneDeltaT(new Time(deltaT, UNITS.S), 0, index);
+          }
+          if (exposureTime != null) {
+            store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), 0, index);
+          }
         }
       }
     }

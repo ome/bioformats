@@ -38,6 +38,8 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import ome.units.quantity.Time;
+
 /**
  * A utility class containing a method for piping a source
  * {@link MetadataRetrieve} object into a destination {@link MetadataStore}.
@@ -841,7 +843,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double timeIncrement = src.getPixelsTimeIncrement(i);
+          Time timeIncrement = src.getPixelsTimeIncrement(i);
           dest.setPixelsTimeIncrement(timeIncrement, i);
         }
         catch (NullPointerException e) { }
@@ -1115,13 +1117,13 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
       for (int p=0; p<planeCount; p++) {
         try {
-          Double deltaT = src.getPlaneDeltaT(i, p);
+          Time deltaT = src.getPlaneDeltaT(i, p);
           dest.setPlaneDeltaT(deltaT, i, p);
         }
         catch (NullPointerException e) { }
 
         try {
-          Double exposureTime = src.getPlaneExposureTime(i, p);
+          Time exposureTime = src.getPlaneExposureTime(i, p);
           dest.setPlaneExposureTime(exposureTime, i, p);
         }
         catch (NullPointerException e) { }

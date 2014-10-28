@@ -39,6 +39,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * NiftiReader is the file format reader for NIfTI files.
  *
@@ -272,7 +275,7 @@ public class NiftiReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(new Double(deltaT), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(deltaT), UNITS.S), 0);
     }
   }
 

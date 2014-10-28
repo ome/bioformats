@@ -58,6 +58,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -519,7 +522,9 @@ public class CellVoyagerReader extends FormatReader
 		omeMD.setPixelsPhysicalSizeY( new PositiveFloat( omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue() / magnification ), 0 );
 
 		// Time interval
-		omeMD.setPixelsTimeIncrement( Double.valueOf( readFrameInterval( msDocument ) ), 0 );
+		if (Double.valueOf( readFrameInterval( msDocument ) ) != null) {
+			omeMD.setPixelsTimeIncrement(new Time( Double.valueOf( readFrameInterval( msDocument ) ), UNITS.S), 0 );
+		}
 
 		/*
 		 * Channels

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -44,7 +44,7 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NonNegativeInteger.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NonNegativeInteger.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class NonNegativeInteger extends PrimitiveType<Integer> {
+public class NonNegativeInteger extends PrimitiveType<Integer> implements PrimitiveNumber {
 
   public NonNegativeInteger(Integer value) {
     super(value);

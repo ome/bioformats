@@ -55,6 +55,9 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * TillVisionReader is the file format reader for TillVision files.
  *
@@ -557,7 +560,9 @@ public class TillVisionReader extends FormatReader {
         // populate PlaneTiming data
 
         for (int q=0; q<core.get(i).imageCount; q++) {
-          store.setPlaneExposureTime(exposureTimes.get(i), i, q);
+          if (exposureTimes.get(i) != null) {
+            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.S), i, q);
+          }
         }
 
         // populate Experiment data

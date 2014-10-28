@@ -64,6 +64,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -860,13 +863,15 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         if (p.timestamp != null) {
-          store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
+          store.setPlaneDeltaT(new Time(p.timestamp - startTime, UNITS.S), i, plane);
         }
         else if (plane < timestamps.size()) {
-          store.setPlaneDeltaT(timestamps.get(plane), i, plane);
+           if (timestamps.get(plane) != null) {
+             store.setPlaneDeltaT(new Time(timestamps.get(plane), UNITS.S), i, plane);
+           }
         }
         if (p.exposureTime != null) {
-          store.setPlaneExposureTime(p.exposureTime, i, plane);
+          store.setPlaneExposureTime(new Time(p.exposureTime, UNITS.S), i, plane);
         }
         else {
           int channel = getZCTCoords(plane)[1];
@@ -874,7 +879,7 @@ public class ZeissCZIReader extends FormatReader {
             channels.get(channel).exposure != null)
           {
             store.setPlaneExposureTime(
-              channels.get(channel).exposure, i, plane);
+              new Time(channels.get(channel).exposure, UNITS.S), i, plane);
           }
         }
       }

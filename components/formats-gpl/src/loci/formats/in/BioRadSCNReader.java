@@ -44,6 +44,9 @@ import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * BioRadSCNReader is the reader for Bio-Rad .scn files
  *
@@ -208,7 +211,7 @@ public class BioRadSCNReader extends FormatReader {
     }
 
     if (exposureTime != null) {
-      store.setPlaneExposureTime(exposureTime, 0, 0);
+      store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), 0, 0);
     }
 
     if (physicalSizeX != null) {
