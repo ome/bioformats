@@ -32,6 +32,8 @@
 
 package spec.schema.samples;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.FillRule;
@@ -161,7 +163,7 @@ public class Upgrade2011_06
         public static final Color ROI1Shape1Fill = Color.valueOf("1");
         public static final FillRule ROI1Shape1FillRule = FillRule.NONZERO;
         public static final FontFamily ROI1Shape1FontFamily = FontFamily.SANSSERIF;
-        public static final NonNegativeInteger ROI1Shape1FontSize = NonNegativeInteger.valueOf("1");
+        public static final Length ROI1Shape1FontSize = new Length(1, UNITS.PT);
         public static final FontStyle ROI1Shape1FontStyle = FontStyle.BOLD;
         public static final LineCap ROI1Shape1LineCap = LineCap.BUTT;
         public static final Marker ROI1Shape1MarkerStart = Marker.ARROW;

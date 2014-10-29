@@ -46,7 +46,6 @@ import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.MicroscopeType;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
