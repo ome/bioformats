@@ -137,6 +137,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -563,7 +564,7 @@ public class XMLMockObjects
     LightSourceSettings settings = new LightSourceSettings();
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
-    settings.setWavelength(new PositiveFloat(200.2));
+    settings.setWavelength(new Length(200.2, UNITS.NM));
     settings.setLightSource(instrument.copyLightSourceList().get(0));
     return settings;
   }
