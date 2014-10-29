@@ -1312,48 +1312,6 @@ public final class FormatTools {
 
   // -- Quantity helper methods --
 
-  public static Time createQuantity(Double value, Unit<Time> valueUnit) {
-    if (value == null) {
-      return null;
-    }
-    return new Time(value, valueUnit);
-  }
-
-  public static Time createQuantity(Integer value, Unit<Time> valueUnit) {
-    if (value == null) {
-      return null;
-    }
-    return new Time(value, valueUnit);
-  }
-
-  public static <T extends PrimitiveNumber> Time createQuantity(T value, Unit<Time> valueUnit) {
-    if (value == null) {
-      return null;
-    }
-    return new Time(value.getNumberValue(), valueUnit);
-  }
-
-  public static Length createQuantity(Double value, Unit<Length> valueUnit) {
-    if (value == null) {
-      return null;
-    }
-    return new Length(value, valueUnit);
-  }
-
-  public static Length createQuantity(Integer value, Unit<Length> valueUnit) {
-    if (value == null) {
-      return null;
-    }
-    return new Length(value, valueUnit);
-  }
-
-  public static <T extends PrimitiveNumber> Length createQuantity(T value, Unit<Length> valueUnit) {
-    if (value == null) {
-      return null;
-    }
-    return new Length(value.getNumberValue(), valueUnit);
-  }
-  
   public static Time createTime(Double value, Unit<Time> valueUnit) {
     if (value == null) {
       return null;
