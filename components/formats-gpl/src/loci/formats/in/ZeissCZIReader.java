@@ -64,6 +64,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -906,8 +907,7 @@ public class ZeissCZIReader extends FormatReader {
           String emWave = channels.get(c).emission;
           if (emWave != null) {
             Double wave = new Double(emWave);
-            PositiveFloat em =
-              FormatTools.getEmissionWavelength(wave);
+            Length em = FormatTools.getEmissionWavelength(wave);
             if (em != null) {
               store.setChannelEmissionWavelength(em, i, c);
             }
@@ -915,8 +915,7 @@ public class ZeissCZIReader extends FormatReader {
           String exWave = channels.get(c).excitation;
           if (exWave != null) {
             Double wave = new Double(exWave);
-            PositiveFloat ex =
-              FormatTools.getExcitationWavelength(wave);
+            Length ex = FormatTools.getExcitationWavelength(wave);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);
             }
@@ -1588,8 +1587,8 @@ public class ZeissCZIReader extends FormatReader {
           Integer inWave = cutIn == null ? 0 : new Integer(cutIn);
           Integer outWave = cutOut == null ? 0 : new Integer(cutOut);
 
-          PositiveInteger in = FormatTools.getCutIn(inWave);
-          PositiveInteger out = FormatTools.getCutOut(outWave);
+          Length in = FormatTools.getCutIn(inWave);
+          Length out = FormatTools.getCutOut(outWave);
           if (in != null) {
             store.setTransmittanceRangeCutIn(in, 0, i);
           }
@@ -1605,13 +1604,13 @@ public class ZeissCZIReader extends FormatReader {
           if (inTolerance != null) {
             Integer cutInTolerance = new Integer(inTolerance);
             store.setTransmittanceRangeCutInTolerance(
-              new NonNegativeInteger(cutInTolerance), 0, i);
+              new Length(cutInTolerance, UNITS.NM), 0, i);
           }
 
           if (outTolerance != null) {
             Integer cutOutTolerance = new Integer(outTolerance);
             store.setTransmittanceRangeCutOutTolerance(
-              new NonNegativeInteger(cutOutTolerance), 0, i);
+              new Length(cutOutTolerance, UNITS.NM), 0, i);
           }
 
           String transmittancePercent =

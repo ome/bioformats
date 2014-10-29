@@ -46,6 +46,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -241,8 +242,8 @@ public class AFIReader extends FormatReader {
     }
 
     if (!minimalMetadata) {
-      PositiveFloat[] emission = new PositiveFloat[pixels.size()];
-      PositiveFloat[] excitation = new PositiveFloat[pixels.size()];
+      Length[] emission = new Length[pixels.size()];
+      Length[] excitation = new Length[pixels.size()];
       Double[] exposure = new Double[pixels.size()];
       Timestamp[] datestamp = new Timestamp[pixels.size()];
       double[] physicalSizes = null;

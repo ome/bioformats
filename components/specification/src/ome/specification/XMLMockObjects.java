@@ -55,6 +55,9 @@ import java.util.List;
 //Third-party libraries
 
 //Application-internal dependencies
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.AffineTransform;
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
@@ -423,10 +426,10 @@ public class XMLMockObjects
     filter.setType(FILTER_TYPE);
 
     TransmittanceRange transmittance = new TransmittanceRange();
-    transmittance.setCutIn(new PositiveInteger(cutIn));
-    transmittance.setCutOut(new PositiveInteger(cutOut));
-    transmittance.setCutInTolerance(new NonNegativeInteger(1));
-    transmittance.setCutOutTolerance(new NonNegativeInteger(1));
+    transmittance.setCutIn(new Length(cutIn, UNITS.NM));
+    transmittance.setCutOut(new Length(cutOut, UNITS.NM));
+    transmittance.setCutInTolerance(new Length(1, UNITS.NM));
+    transmittance.setCutOutTolerance(new Length(1, UNITS.NM));
     filter.setTransmittanceRange(transmittance);
     return filter;
   }
@@ -904,8 +907,8 @@ public class XMLMockObjects
     plate.setColumns(new PositiveInteger(columns));
     plate.setRowNamingConvention(ROW_NAMING_CONVENTION);
     plate.setColumnNamingConvention(COLUMN_NAMING_CONVENTION);
-    plate.setWellOriginX(0.0);
-    plate.setWellOriginY(1.0);
+    plate.setWellOriginX(new Length(0.0, UNITS.MICROM));
+    plate.setWellOriginY(new Length(1.0, UNITS.MICROM));
     plate.setStatus("Plate status");
     PlateAcquisition pa = null;
     List<PlateAcquisition> pas = new ArrayList<PlateAcquisition>();
@@ -1096,8 +1099,10 @@ public class XMLMockObjects
     channel.setIlluminationType(IlluminationType.OBLIQUE);
     channel.setPinholeSize(0.5);
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-    channel.setEmissionWavelength(new PositiveFloat(300.3));
-    channel.setExcitationWavelength(new PositiveFloat(400.4));
+	PositiveFloat emWave = new PositiveFloat(300.3);
+    channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
+    PositiveFloat exWave = new PositiveFloat(400.3);
+    channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
     channel.setFluor("Fluor");
     channel.setNDFilter(1.0);
     channel.setPockelCellSetting(0);

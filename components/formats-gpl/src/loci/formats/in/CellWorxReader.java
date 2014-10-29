@@ -58,6 +58,8 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
  *
@@ -678,10 +680,8 @@ public class CellWorxReader extends FormatReader {
               Double emission = new Double(em);
               Double excitation = new Double(ex);
 
-              PositiveFloat exWave =
-                FormatTools.getExcitationWavelength(excitation);
-              PositiveFloat emWave =
-                FormatTools.getEmissionWavelength(emission);
+              Length exWave = FormatTools.getExcitationWavelength(excitation);
+              Length emWave = FormatTools.getEmissionWavelength(emission);
 
               for (int field=0; field<fieldCount; field++) {
                 if (exWave != null) {

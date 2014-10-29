@@ -43,6 +43,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -203,13 +204,13 @@ public class NikonElementsTiffReader extends BaseTiffReader {
           getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
-        PositiveFloat em = FormatTools.getEmissionWavelength(emWave.get(c));
+        Length em = FormatTools.getEmissionWavelength(emWave.get(c));
         if (em != null) {
           store.setChannelEmissionWavelength(em, 0, c);
         }
       }
       if (c < exWave.size()) {
-        PositiveFloat ex = FormatTools.getExcitationWavelength(exWave.get(c));
+        Length ex = FormatTools.getExcitationWavelength(exWave.get(c));
         if (ex != null) {
           store.setChannelExcitationWavelength(ex, 0, c);
         }

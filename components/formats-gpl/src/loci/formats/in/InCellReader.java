@@ -48,6 +48,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -606,15 +607,14 @@ public class InCellReader extends FormatReader {
           }
           if (q < emWaves.size()) {
             Double wave = emWaves.get(q);
-            PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+            Length emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               store.setChannelEmissionWavelength(emission, i, q);
             }
           }
           if (q < exWaves.size()) {
             Double wave = exWaves.get(q);
-            PositiveFloat excitation =
-              FormatTools.getExcitationWavelength(wave);
+            Length excitation = FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               store.setChannelExcitationWavelength(excitation, i, q);
             }
@@ -638,8 +638,8 @@ public class InCellReader extends FormatReader {
 
       // populate Plate data
 
-      store.setPlateWellOriginX(0.5, 0);
-      store.setPlateWellOriginY(0.5, 0);
+      store.setPlateWellOriginX(new Length(0.5, UNITS.MICROM), 0);
+      store.setPlateWellOriginY(new Length(0.5, UNITS.MICROM), 0);
     }
   }
 

@@ -39,6 +39,8 @@ import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Length;
+
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
  *
@@ -270,15 +272,13 @@ public class NikonTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setChannelPinholeSize(pinholeSize, 0, c);
         if (c < exWave.size()) {
-          PositiveFloat wave =
-            FormatTools.getExcitationWavelength(exWave.get(c));
+          Length wave = FormatTools.getExcitationWavelength(exWave.get(c));
           if (wave != null) {
             store.setChannelExcitationWavelength(wave, 0, c);
           }
         }
         if (c < emWave.size()) {
-          PositiveFloat wave =
-            FormatTools.getEmissionWavelength(emWave.get(c));
+          Length wave = FormatTools.getEmissionWavelength(emWave.get(c));
           if (wave != null) {
             store.setChannelEmissionWavelength(wave, 0, c);
           }

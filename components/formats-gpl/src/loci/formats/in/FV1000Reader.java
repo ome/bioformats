@@ -58,6 +58,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -1016,11 +1017,9 @@ public class FV1000Reader extends FormatReader {
         MetadataTools.createLSID("LightSource", 0, channelIndex);
       store.setChannelLightSourceSettingsID(lightSourceID, 0, channelIndex);
 
-      PositiveFloat emission =
-        FormatTools.getEmissionWavelength(channel.emWave);
-      PositiveFloat excitation =
-        FormatTools.getExcitationWavelength(channel.exWave);
       Length wavelength = FormatTools.getWavelength(channel.exWave);
+      Length emission = FormatTools.getEmissionWavelength(channel.emWave);
+      Length excitation = FormatTools.getExcitationWavelength(channel.exWave);
 
       if (emission != null) {
         store.setChannelEmissionWavelength(emission, 0, channelIndex);
@@ -1048,8 +1047,8 @@ public class FV1000Reader extends FormatReader {
             Integer cutIn = new Integer(emValues[0]);
             Integer cutOut = new Integer(emValues[1]);
 
-            PositiveInteger in = FormatTools.getCutIn(cutIn);
-            PositiveInteger out = FormatTools.getCutOut(cutOut);
+            Length in = FormatTools.getCutIn(cutIn);
+            Length out = FormatTools.getCutOut(cutOut);
 
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, 0, channelIndex);
