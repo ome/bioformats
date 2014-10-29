@@ -134,11 +134,16 @@
 						fields (individual images) taken in a well. It is used
 						with the X in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
-						in the plate has the same well origin. [units:none]
+						in the plate has the same well origin. Units are set by WellOriginXUnit.
 
 						In the OMERO clients by convention we display the WellOrigin
 						in the center of the view.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="WellOriginXUnit" use="optional" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the well origin in X - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="WellOriginY" use="optional" type="xsd:float">
@@ -148,11 +153,16 @@
 						fields (individual images) taken in a well. It is used
 						with the Y in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
-						in the plate has the same well origin. [units:none]
+						in the plate has the same well origin.  Units are set by WellOriginYUnit.
 
 						In the OMERO clients by convention we display the WellOrigin
 						in the center of the view.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="WellOriginYUnit" use="optional" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the well origin in Y - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Rows" use="optional" type="OME:PositiveInt">

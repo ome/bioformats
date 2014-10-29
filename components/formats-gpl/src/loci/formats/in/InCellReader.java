@@ -48,6 +48,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -638,8 +639,8 @@ public class InCellReader extends FormatReader {
 
       // populate Plate data
 
-      store.setPlateWellOriginX(0.5, 0);
-      store.setPlateWellOriginY(0.5, 0);
+      store.setPlateWellOriginX(new Length(0.5, UNITS.MICROM), 0);
+      store.setPlateWellOriginY(new Length(0.5, UNITS.MICROM), 0);
     }
   }
 
