@@ -578,16 +578,26 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The X position of the field (image) within the well relative to
-						the well origin defined on the Plate.
+						the well origin defined on the Plate. Units are set by PositionXUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionXUnit" use="optional" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the position in X - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
 						The Y position of the field (image) within the well relative to
-						the well origin defined on the Plate.
+						the well origin defined on the Plate. Units are set by PositionYUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionYUnit" use="optional" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the position in Y - default:none.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Timepoint" use="optional" type="xsd:dateTime">

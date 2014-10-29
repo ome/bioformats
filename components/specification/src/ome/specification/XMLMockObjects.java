@@ -946,8 +946,8 @@ public class XMLMockObjects
         if (pas.size() == 0) {
           for (int field = 0; field < fields; field++) {
             sample = new WellSample();
-            sample.setPositionX(0.0);
-            sample.setPositionY(1.0);
+            sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
+            sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
             sample.setTimepoint(new Timestamp(TIME));
             sample.setID(String.format("WellSample:%d_%d_%d_%d",
                 index, row, column, field));
@@ -968,8 +968,8 @@ public class XMLMockObjects
             for (int field = 0; field < fields; field++) {
               v = kk+index*numberOfPlates;
               sample = new WellSample();
-              sample.setPositionX(0.0);
-              sample.setPositionY(1.0);
+              sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
+              sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
               sample.setTimepoint(new Timestamp(TIME));
               sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
                   index, row, column, field, v));

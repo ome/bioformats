@@ -57,7 +57,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
-
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -759,11 +759,12 @@ public class CellVoyagerReader extends FormatReader
 				areaIndex++;
 				final String imageName = "Well " + wellNumber + " (r=" + well.row + ", c=" + well.col + ") - Area " + areaIndex;
 				store.setImageName( imageName, seriesIndex );
-
+				Length posX = new Length(Double.valueOf(well.centerX), UNITS.REFERENCEFRAME);
+				Length posY = new Length(Double.valueOf(well.centerY), UNITS.REFERENCEFRAME);
 				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, areaIndex );
 				store.setWellSampleID( MetadataTools.createLSID( "WellSample", area.UID ), 0, wellIndex, areaIndex );
-				store.setWellSamplePositionX( Double.valueOf( well.centerX ), 0, wellIndex, areaIndex );
-				store.setWellSamplePositionY( Double.valueOf( well.centerY ), 0, wellIndex, areaIndex );
+				store.setWellSamplePositionX(posX, 0, wellIndex, areaIndex);
+				store.setWellSamplePositionY(posY, 0, wellIndex, areaIndex);
 
 				channelIndex = 0;
 				for ( int i = 0; i < channelInfos.size(); i++ )
