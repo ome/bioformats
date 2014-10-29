@@ -37,12 +37,12 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.NonNegativeInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.xml.sax.Attributes;
 
 /**
@@ -153,7 +153,7 @@ public class ND2Handler extends BaseHandler {
 
         int fontSize = Integer.parseInt(roi.get("fHeight"));
         if (fontSize >= 0) {
-          store.setLabelFontSize(new NonNegativeInteger(fontSize), r, 0);
+          store.setLabelFontSize(new Length(fontSize, UNITS.PT), r, 0);
         }
         store.setLabelText(roi.get("eval-text"), r, 0);
         store.setLabelStrokeWidth(new Double(roi.get("line-width")), r, 0);

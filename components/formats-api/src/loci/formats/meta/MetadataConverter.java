@@ -2299,7 +2299,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getEllipseFontSize(i, q);
+            Length fontSize = src.getEllipseFontSize(i, q);
             dest.setEllipseFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2441,7 +2441,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getLabelFontSize(i, q);
+            Length fontSize = src.getLabelFontSize(i, q);
             dest.setLabelFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2571,7 +2571,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getLineFontSize(i, q);
+            Length fontSize = src.getLineFontSize(i, q);
             dest.setLineFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2725,7 +2725,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getMaskFontSize(i, q);
+            Length fontSize = src.getMaskFontSize(i, q);
             dest.setMaskFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2867,7 +2867,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getPointFontSize(i, q);
+            Length fontSize = src.getPointFontSize(i, q);
             dest.setPointFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2997,7 +2997,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getPolygonFontSize(i, q);
+            Length fontSize = src.getPolygonFontSize(i, q);
             dest.setPolygonFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -3121,7 +3121,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getPolylineFontSize(i, q);
+            Length fontSize = src.getPolylineFontSize(i, q);
             dest.setPolylineFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -3257,7 +3257,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getRectangleFontSize(i, q);
+            Length fontSize = src.getRectangleFontSize(i, q);
             dest.setRectangleFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
