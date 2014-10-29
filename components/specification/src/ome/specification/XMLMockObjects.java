@@ -139,7 +139,6 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
-import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**

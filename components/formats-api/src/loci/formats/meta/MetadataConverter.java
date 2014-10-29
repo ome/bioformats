@@ -40,7 +40,6 @@ import ome.xml.model.primitives.*;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
-import ome.units.quantity.Length;
 
 /**
  * A utility class containing a method for piping a source
