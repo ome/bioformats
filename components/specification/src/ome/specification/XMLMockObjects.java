@@ -137,6 +137,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -422,10 +423,10 @@ public class XMLMockObjects
     filter.setType(FILTER_TYPE);
 
     TransmittanceRange transmittance = new TransmittanceRange();
-    transmittance.setCutIn(new PositiveInteger(cutIn));
-    transmittance.setCutOut(new PositiveInteger(cutOut));
-    transmittance.setCutInTolerance(new NonNegativeInteger(1));
-    transmittance.setCutOutTolerance(new NonNegativeInteger(1));
+    transmittance.setCutIn(new Length(cutIn, UNITS.NM));
+    transmittance.setCutOut(new Length(cutOut, UNITS.NM));
+    transmittance.setCutInTolerance(new Length(1, UNITS.NM));
+    transmittance.setCutOutTolerance(new Length(1, UNITS.NM));
     filter.setTransmittanceRange(transmittance);
     return filter;
   }
