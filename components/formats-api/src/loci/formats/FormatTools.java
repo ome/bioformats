@@ -1312,7 +1312,14 @@ public final class FormatTools {
 
   // -- Quantity helper methods --
 
-  public static <T extends Number> Time createQuantity(T value, Unit<Time> valueUnit) {
+  public static Time createQuantity(Double value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static Time createQuantity(Integer value, Unit<Time> valueUnit) {
     if (value == null) {
       return null;
     }
@@ -1326,7 +1333,14 @@ public final class FormatTools {
     return new Time(value.getNumberValue(), valueUnit);
   }
 
-  public static <T extends Number> Length createQuantity(T value, Unit<Length> valueUnit) {
+  public static Length createQuantity(Double value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value, valueUnit);
+  }
+
+  public static Length createQuantity(Integer value, Unit<Length> valueUnit) {
     if (value == null) {
       return null;
     }
@@ -1340,7 +1354,14 @@ public final class FormatTools {
     return new Length(value.getNumberValue(), valueUnit);
   }
   
-  public static <T extends Number> Time createTime(T value, Unit<Time> valueUnit) {
+  public static Time createTime(Double value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static Time createTime(Integer value, Unit<Time> valueUnit) {
     if (value == null) {
       return null;
     }
@@ -1354,7 +1375,14 @@ public final class FormatTools {
     return new Time(value.getNumberValue(), valueUnit);
   }
 
-  public static <T extends Number> Length createLength(T value, Unit<Length> valueUnit) {
+  public static Length createLength(Double value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value, valueUnit);
+  }
+
+  public static Length createLength(Integer value, Unit<Length> valueUnit) {
     if (value == null) {
       return null;
     }
