@@ -928,7 +928,7 @@ public class ZeissCZIReader extends FormatReader {
 
           if (channels.get(c).pinhole != null) {
             store.setChannelPinholeSize(
-              new Double(channels.get(c).pinhole), i, c);
+              new Length(new Double(channels.get(c).pinhole), UNITS.MICROM), i, c);
           }
 
           if (channels.get(c).acquisitionMode != null) {
@@ -1997,7 +1997,7 @@ public class ZeissCZIReader extends FormatReader {
           }
           if (wd != null) {
             try {
-              store.setObjectiveWorkingDistance(new Double(wd), 0, i);
+              store.setObjectiveWorkingDistance(new Length(new Double(wd), UNITS.MICROM), 0, i);
             }
             catch (NumberFormatException e) {
               LOGGER.debug("Could not parse working distance", e);
@@ -2570,7 +2570,7 @@ public class ZeissCZIReader extends FormatReader {
         }
         String wd = getFirstNodeValue(objective, "WorkingDistance");
         if (wd != null) {
-          store.setObjectiveWorkingDistance(new Double(wd), 0, i);
+          store.setObjectiveWorkingDistance(new Length(new Double(wd), UNITS.MICROM), 0, i);
         }
         String iris = getFirstNodeValue(objective, "Iris");
         if (iris != null) {

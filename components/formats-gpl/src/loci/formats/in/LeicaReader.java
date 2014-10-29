@@ -1590,7 +1590,7 @@ public class LeicaReader extends FormatReader {
           }
         }
         if (i < pinhole.length) {
-          store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);
+          store.setChannelPinholeSize(new Length(pinhole[i], UNITS.MICROM), i, channel);
         }
         if (channel < channelColor[i].length) {
           store.setChannelColor(channelColor[i][channel], i, channel);
