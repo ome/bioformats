@@ -797,19 +797,19 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat physicalSizeX = src.getPixelsPhysicalSizeX(i);
+          Length physicalSizeX = src.getPixelsPhysicalSizeX(i);
           dest.setPixelsPhysicalSizeX(physicalSizeX, i);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat physicalSizeY = src.getPixelsPhysicalSizeY(i);
+          Length physicalSizeY = src.getPixelsPhysicalSizeY(i);
           dest.setPixelsPhysicalSizeY(physicalSizeY, i);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
+          Length physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
           dest.setPixelsPhysicalSizeZ(physicalSizeZ, i);
         }
         catch (NullPointerException e) { }

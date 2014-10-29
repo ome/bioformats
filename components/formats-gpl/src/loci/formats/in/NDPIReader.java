@@ -44,6 +44,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
@@ -426,8 +427,8 @@ public class NDPIReader extends BaseTiffReader {
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xResolution);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(yResolution);
+        Length sizeX = FormatTools.getPhysicalSizeX(xResolution);
+        Length sizeY = FormatTools.getPhysicalSizeY(yResolution);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);

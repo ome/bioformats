@@ -218,9 +218,9 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
+      Length sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
+      Length sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
+      Length sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

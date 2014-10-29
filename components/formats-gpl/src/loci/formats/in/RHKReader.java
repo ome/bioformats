@@ -38,6 +38,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * RHKReader is the file format reader for RHK Technologies files.
@@ -205,8 +206,8 @@ public class RHKReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xScale);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(yScale);
+      Length sizeX = FormatTools.getPhysicalSizeX(xScale);
+      Length sizeY = FormatTools.getPhysicalSizeY(yScale);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

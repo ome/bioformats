@@ -953,14 +953,14 @@ public class FV1000Reader extends FormatReader {
 
       if (pixelSizeX != null) {
         Double sizeX = new Double(pixelSizeX);
-        PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+        Length size = FormatTools.getPhysicalSizeX(sizeX);
         if (size != null) {
           store.setPixelsPhysicalSizeX(size, i);
         }
       }
       if (pixelSizeY != null) {
         Double sizeY = new Double(pixelSizeY);
-        PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+        Length size = FormatTools.getPhysicalSizeY(sizeY);
         if (size != null) {
           store.setPixelsPhysicalSizeY(size, i);
         }
@@ -976,7 +976,7 @@ public class FV1000Reader extends FormatReader {
         pixelSizeT = 1d;
       }
 
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }

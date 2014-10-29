@@ -39,6 +39,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -244,8 +245,8 @@ public class GatanReader extends FormatReader {
         String yUnits = index + 1 < units.size() ? units.get(index + 1) : "";
         x = correctForUnits(x, xUnits);
         y = correctForUnits(y, yUnits);
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(x);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(y);
+        Length sizeX = FormatTools.getPhysicalSizeX(x);
+        Length sizeY = FormatTools.getPhysicalSizeY(y);
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);
         }
@@ -257,7 +258,7 @@ public class GatanReader extends FormatReader {
           Double z = pixelSizes.get(index + 2);
           String zUnits = index + 2 < units.size() ? units.get(index + 2) : "";
           z = correctForUnits(z, zUnits);
-          PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(z);
+          Length sizeZ = FormatTools.getPhysicalSizeZ(z);
 
           if (sizeZ != null) {
             store.setPixelsPhysicalSizeZ(sizeZ, 0);

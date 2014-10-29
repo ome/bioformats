@@ -37,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * AIMReader is the file format reader for .aim files.
@@ -189,21 +190,21 @@ public class AIMReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize != null && xLength != null) {
         Double size = xLength / xSize;
-        PositiveFloat physicalSize = FormatTools.getPhysicalSizeX(size);
+        Length physicalSize = FormatTools.getPhysicalSizeX(size);
         if (physicalSize != null) {
           store.setPixelsPhysicalSizeX(physicalSize, 0);
         }
       }
       if (ySize != null && yLength != null) {
         Double size = yLength / ySize;
-        PositiveFloat physicalSize = FormatTools.getPhysicalSizeY(size);
+        Length physicalSize = FormatTools.getPhysicalSizeY(size);
         if (physicalSize != null) {
           store.setPixelsPhysicalSizeY(physicalSize, 0);
         }
       }
       if (zSize != null && zLength != null) {
         Double size = zLength / zSize;
-        PositiveFloat physicalSize = FormatTools.getPhysicalSizeZ(size);
+        Length physicalSize = FormatTools.getPhysicalSizeZ(size);
         if (physicalSize != null) {
           store.setPixelsPhysicalSizeZ(physicalSize, 0);
         }

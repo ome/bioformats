@@ -49,6 +49,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -217,8 +218,8 @@ public class SimplePCITiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(MAGIC_STRING, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(scaling);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(scaling);
+      Length sizeX = FormatTools.getPhysicalSizeX(scaling);
+      Length sizeY = FormatTools.getPhysicalSizeY(scaling);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

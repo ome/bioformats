@@ -1773,23 +1773,23 @@ public class NativeND2Reader extends FormatReader {
         double sizeZ = handler.getPixelSizeZ();
 
         if (trueSizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
+          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(trueSizeX), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+          Length size = FormatTools.getPhysicalSizeX(sizeX);
           if (size != null) {
             store.setPixelsPhysicalSizeX(size, i);
           }
         }
         if (trueSizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeY), i);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(trueSizeY), i);
         }
         else if (trueSizeX > 0) {
           // if the X size is set, assume X and Y are equal
-          store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeX), i);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(trueSizeX), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+          Length size = FormatTools.getPhysicalSizeY(sizeY);
           if (size == null) {
             // if the X size is set, assume X and Y are equal
             size = FormatTools.getPhysicalSizeY(sizeX);
@@ -1799,10 +1799,10 @@ public class NativeND2Reader extends FormatReader {
           }
         }
         if (trueSizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(trueSizeZ), i);
+          store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(trueSizeZ), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+          Length size = FormatTools.getPhysicalSizeZ(sizeZ);
           if (size != null) {
             store.setPixelsPhysicalSizeZ(size, i);
           }

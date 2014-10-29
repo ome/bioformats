@@ -38,6 +38,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -335,9 +336,9 @@ public class AnalyzeReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelWidth * 0.001);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelHeight * 0.001);
-      PositiveFloat sizeZ =
+      Length sizeX = FormatTools.getPhysicalSizeX(voxelWidth * 0.001);
+      Length sizeY = FormatTools.getPhysicalSizeY(voxelHeight * 0.001);
+      Length sizeZ =
         FormatTools.getPhysicalSizeZ(sliceThickness * 0.001);
 
       if (sizeX != null) {

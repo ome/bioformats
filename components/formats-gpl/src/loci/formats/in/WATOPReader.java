@@ -37,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * WATOPReader is the file format reader for WA Technology .wat files.
@@ -158,9 +159,9 @@ public class WATOPReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
 
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX((double) xSize / getSizeX());
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY((double) ySize / getSizeY());
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

@@ -39,6 +39,7 @@ import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
@@ -273,8 +274,8 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX) * 1000000;
         double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);

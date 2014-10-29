@@ -441,15 +441,15 @@ public class IMODReader extends FormatReader {
 
       if (physicalX > 0) {
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalX)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalX), UNITS.MICROM), 0);
       }
       if (physicalY > 0) {
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalY)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalY), UNITS.MICROM), 0);
       }
       if (physicalZ > 0) {
         store.setPixelsPhysicalSizeZ(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalZ)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalZ), UNITS.MICROM), 0);
       }
     }
   }

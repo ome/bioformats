@@ -51,6 +51,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -736,9 +737,9 @@ public class VolocityReader extends FormatReader {
         }
       }
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(stack.physicalX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(stack.physicalY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(stack.physicalZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(stack.physicalX);
+      Length sizeY = FormatTools.getPhysicalSizeY(stack.physicalY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(stack.physicalZ);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
       }

@@ -333,10 +333,10 @@ public class LeicaSCNReader extends BaseTiffReader {
       double offsetY = ((double) i.vOffsetY) / 1000;
       double sizeZ = (double) i.vSpacingZ / 1000;
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX/i.pixels.dimSizeX[0][0][r]), s);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY/i.pixels.dimSizeY[0][0][r]), s);
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX/i.pixels.dimSizeX[0][0][r]), s);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY/i.pixels.dimSizeY[0][0][r]), s);
       if (sizeZ > 0) // awful hack to cope with PositiveFloat
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), s);
+        store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(sizeZ), s);
 
       if (instruments.get(i.devModel) == null) {
         String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);

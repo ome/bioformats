@@ -519,8 +519,8 @@ public class CellVoyagerReader extends FormatReader
 		}
 
 		// Correct pixel size for magnification
-		omeMD.setPixelsPhysicalSizeX( new PositiveFloat( omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue() / magnification ), 0 );
-		omeMD.setPixelsPhysicalSizeY( new PositiveFloat( omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue() / magnification ), 0 );
+		omeMD.setPixelsPhysicalSizeX( FormatTools.createLength( omeMD.getPixelsPhysicalSizeX( 0 ).value().doubleValue() / magnification , omeMD.getPixelsPhysicalSizeX( 0 ).unit()), 0 );
+		omeMD.setPixelsPhysicalSizeY( FormatTools.createLength( omeMD.getPixelsPhysicalSizeY( 0 ).value().doubleValue() / magnification , omeMD.getPixelsPhysicalSizeY( 0 ).unit()), 0 );
 
 		// Time interval
 		if (Double.valueOf( readFrameInterval( msDocument ) ) != null) {
@@ -561,8 +561,8 @@ public class CellVoyagerReader extends FormatReader
 		omeMD.setInstrumentID( MetadataTools.createLSID( "Instrument", 0 ), 0 );
 
 		// Read pixel sizes from OME metadata.
-		final double pixelWidth = omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue();
-		final double pixelHeight = omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue();
+		final double pixelWidth = omeMD.getPixelsPhysicalSizeX( 0 ).value().doubleValue();
+		final double pixelHeight = omeMD.getPixelsPhysicalSizeY( 0 ).value().doubleValue();
 
 		/*
 		 * Read tile size from channel info. This is weird, but it's like that.

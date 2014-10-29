@@ -58,6 +58,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -1489,7 +1490,7 @@ public class ICSReader extends FormatReader {
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
+              Length x = FormatTools.getPhysicalSizeX(pixelSize);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
@@ -1497,7 +1498,7 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("y")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+              Length y = FormatTools.getPhysicalSizeY(pixelSize);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
@@ -1505,7 +1506,7 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("z")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSize);
+              Length z = FormatTools.getPhysicalSizeZ(pixelSize);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }
@@ -1523,14 +1524,14 @@ public class ICSReader extends FormatReader {
       }
       else if (sizes != null) {
         if (sizes.length > 0) {
-          PositiveFloat x = FormatTools.getPhysicalSizeX(sizes[0]);
+          Length x = FormatTools.getPhysicalSizeX(sizes[0]);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, 0);
           }
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          PositiveFloat y = FormatTools.getPhysicalSizeY(sizes[1]);
+          Length y = FormatTools.getPhysicalSizeY(sizes[1]);
           if (y != null) {
             store.setPixelsPhysicalSizeY(y, 0);
           }

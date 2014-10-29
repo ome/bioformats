@@ -41,6 +41,7 @@ import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -423,9 +424,9 @@ public class FluoviewReader extends BaseTiffReader {
 
     // populate Dimensions
     for (int i=0; i<getSeriesCount(); i++) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(voxelX);
+      Length sizeY = FormatTools.getPhysicalSizeY(voxelY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
       }

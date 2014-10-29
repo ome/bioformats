@@ -75,6 +75,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * WlzReader is a file format reader for Woolz files.
  * Woolz is available from: https://github.com/ma-tech/Woolz
@@ -170,9 +173,9 @@ public class WlzReader extends FormatReader {
       PositiveFloat x = new PositiveFloat(Math.abs(wlz.getVoxSzX()));
       PositiveFloat y = new PositiveFloat(Math.abs(wlz.getVoxSzY()));
       PositiveFloat z = new PositiveFloat(Math.abs(wlz.getVoxSzZ()));
-      store.setPixelsPhysicalSizeX(x, 0);
-      store.setPixelsPhysicalSizeY(y, 0);
-      store.setPixelsPhysicalSizeZ(z, 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(x, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(y, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeZ(FormatTools.createLength(z, UNITS.MICROM), 0);
       store.setStageLabelName(wlz.getWlzOrgLabelName(), 0);
       store.setStageLabelX((double )(wlz.getOrgX()), 0);
       store.setStageLabelY((double )(wlz.getOrgY()), 0);

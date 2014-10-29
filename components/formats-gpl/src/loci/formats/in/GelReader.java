@@ -40,6 +40,7 @@ import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * GelReader is the file format reader for
@@ -198,8 +199,8 @@ public class GelReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double pixelSize = new Double(scale.doubleValue());
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

@@ -1678,17 +1678,17 @@ public class ZeissCZIReader extends FormatReader {
 
           if (id.equals("X")) {
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeX(size, series);
+              store.setPixelsPhysicalSizeX(FormatTools.createLength(size, UNITS.MICROM), series);
             }
           }
           else if (id.equals("Y")) {
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeY(size, series);
+              store.setPixelsPhysicalSizeY(FormatTools.createLength(size, UNITS.MICROM), series);
             }
           }
           else if (id.equals("Z")) {
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeZ(size, series);
+              store.setPixelsPhysicalSizeZ(FormatTools.createLength(size, UNITS.MICROM), series);
             }
           }
         }

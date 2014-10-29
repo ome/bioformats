@@ -136,9 +136,9 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       return;
     }
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
-    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
+    Length sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+    Length sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+    Length sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }

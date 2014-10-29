@@ -246,7 +246,7 @@ public class AFIReader extends FormatReader {
       Length[] excitation = new Length[pixels.size()];
       Double[] exposure = new Double[pixels.size()];
       Timestamp[] datestamp = new Timestamp[pixels.size()];
-      double[] physicalSizes = null;
+      Length[] physicalSizes = null;
       double magnification = Double.NaN;
 
       for (int c=0; c<pixels.size(); c++) {
@@ -276,9 +276,9 @@ public class AFIReader extends FormatReader {
         store.setObjectiveSettingsID(objective, i);
 
         if (i < physicalSizes.length &&
-          physicalSizes[i] - Constants.EPSILON > 0)
+          physicalSizes[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0)
         {
-          PositiveFloat size = new PositiveFloat(physicalSizes[i]);
+          Length size = physicalSizes[i];
           store.setPixelsPhysicalSizeX(size, i);
           store.setPixelsPhysicalSizeY(size, i);
         }

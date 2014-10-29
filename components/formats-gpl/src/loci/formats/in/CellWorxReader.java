@@ -626,8 +626,8 @@ public class CellWorxReader extends FormatReader {
           Double xSize = new Double(value.substring(0, s).trim());
           Double ySize = new Double(value.substring(s + 1, end).trim());
 
-          PositiveFloat x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
-          PositiveFloat y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
+          Length x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
+          Length y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
 
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;

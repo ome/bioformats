@@ -41,6 +41,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
  *
@@ -330,10 +333,10 @@ public class GatanDM2Reader extends FormatReader {
       store.setImageName(name, 0);
     }
     if (pixelSizeX != null) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(pixelSizeX, UNITS.MICROM), 0);
     }
     if (pixelSizeY != null) {
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(pixelSizeY, UNITS.MICROM), 0);
     }
   }
 
