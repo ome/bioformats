@@ -935,7 +935,7 @@ public abstract class BaseZeissReader extends FormatReader {
           }
         }
         else if (key.startsWith("Objective Working Distance")) {
-          store.setObjectiveWorkingDistance(new Double(value), 0, 0);
+          store.setObjectiveWorkingDistance(new Length(new Double(value), UNITS.MICROM), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
           String immersion = "Other";

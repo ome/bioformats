@@ -46,6 +46,10 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -286,7 +290,7 @@ public class HitachiReader extends FormatReader {
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
       store.setObjectiveSettingsID(objective, 0);
-      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
     }
   }
 }

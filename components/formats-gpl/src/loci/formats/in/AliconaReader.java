@@ -35,6 +35,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -253,7 +256,7 @@ public class AliconaReader extends FormatReader {
       }
 
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+        store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
       }
 
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);

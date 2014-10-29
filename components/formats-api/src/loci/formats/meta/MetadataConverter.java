@@ -977,7 +977,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double pinholeSize = src.getChannelPinholeSize(i, c);
+          Length pinholeSize = src.getChannelPinholeSize(i, c);
           dest.setChannelPinholeSize(pinholeSize, i, c);
         }
         catch (NullPointerException e) { }
@@ -1619,7 +1619,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double workingDistance = src.getObjectiveWorkingDistance(i, q);
+          Length workingDistance = src.getObjectiveWorkingDistance(i, q);
           dest.setObjectiveWorkingDistance(workingDistance, i, q);
         }
         catch (NullPointerException e) { }

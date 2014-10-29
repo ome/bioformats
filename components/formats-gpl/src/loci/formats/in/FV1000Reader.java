@@ -1102,7 +1102,7 @@ public class FV1000Reader extends FormatReader {
       store.setObjectiveNominalMagnification(mag, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
     }
     store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
     store.setObjectiveImmersion(getImmersion("Other"), 0, 0);

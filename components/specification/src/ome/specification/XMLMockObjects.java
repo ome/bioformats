@@ -403,7 +403,7 @@ public class XMLMockObjects
     objective.setIris(true);
     objective.setLensNA(0.5);
     objective.setNominalMagnification(1.5);
-    objective.setWorkingDistance(1.0);
+    objective.setWorkingDistance(new Length(1.0, UNITS.MICROM));
     return objective;
   }
 
@@ -1097,7 +1097,7 @@ public class XMLMockObjects
     channel.setColor(new ome.xml.model.primitives.Color(rgba));
     channel.setName("Name");
     channel.setIlluminationType(IlluminationType.OBLIQUE);
-    channel.setPinholeSize(0.5);
+    channel.setPinholeSize(new Length(0.5, UNITS.MICROM));
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
 	PositiveFloat emWave = new PositiveFloat(300.3);
     channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
