@@ -48,11 +48,10 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
-
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -651,8 +650,11 @@ public class ScanrReader extends FormatReader {
         if (fieldPositionX != null && fieldPositionY != null) {
           int field = i % nFields;
           int well = i / nFields;
-          store.setWellSamplePositionX(fieldPositionX[field], 0, well, field);
-          store.setWellSamplePositionY(fieldPositionY[field], 0, well, field);
+          Length posX = new Length(fieldPositionX[field], UNITS.REFERENCEFRAME);
+          Length posY = new Length(fieldPositionY[field], UNITS.REFERENCEFRAME);
+          
+          store.setWellSamplePositionX(posX, 0, well, field);
+          store.setWellSamplePositionY(posY, 0, well, field);
           for (int c=0; c<getSizeC(); c++) {
             int image = getIndex(0, c, 0);
             store.setPlaneTheZ(new NonNegativeInteger(0), i, image);

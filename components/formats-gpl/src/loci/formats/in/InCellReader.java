@@ -561,10 +561,12 @@ public class InCellReader extends FormatReader {
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
       if (field < posX.size()) {
-        store.setWellSamplePositionX(posX.get(field), 0, well, sampleIndex);
+        Length l = new Length(posX.get(field), UNITS.REFERENCEFRAME);
+        store.setWellSamplePositionX(l, 0, well, sampleIndex);
       }
       if (field < posY.size()) {
-        store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
+        Length l = new Length(posY.get(field), UNITS.REFERENCEFRAME);
+        store.setWellSamplePositionY(l, 0, well, sampleIndex);
       }
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);

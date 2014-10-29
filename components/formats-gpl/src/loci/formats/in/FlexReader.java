@@ -671,12 +671,12 @@ public class FlexReader extends FormatReader {
         }
 
         if (pos[0] < xPositions.size()) {
-          store.setWellSamplePositionX(
-            xPositions.get(pos[0]), pos[2], well, pos[0]);
+          Length l = new Length(xPositions.get(pos[0]), UNITS.REFERENCEFRAME);
+          store.setWellSamplePositionX(l, pos[2], well, pos[0]);
         }
         if (pos[0] < yPositions.size()) {
-          store.setWellSamplePositionY(
-            yPositions.get(pos[0]), pos[2], well, pos[0]);
+          Length l = new Length(yPositions.get(pos[0]), UNITS.REFERENCEFRAME); 
+          store.setWellSamplePositionY(l, pos[2], well, pos[0]);
         }
 
         for (int image=0; image<getImageCount(); image++) {

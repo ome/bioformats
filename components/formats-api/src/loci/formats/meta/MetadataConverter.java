@@ -2057,13 +2057,13 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double positionX = src.getWellSamplePositionX(i, q, w);
+            Length positionX = src.getWellSamplePositionX(i, q, w);
             dest.setWellSamplePositionX(positionX, i, q, w);
           }
           catch (NullPointerException e) { }
 
           try {
-            Double positionY = src.getWellSamplePositionY(i, q, w);
+            Length positionY = src.getWellSamplePositionY(i, q, w);
             dest.setWellSamplePositionY(positionY, i, q, w);
           }
           catch (NullPointerException e) { }
