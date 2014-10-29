@@ -59,6 +59,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -1368,7 +1369,7 @@ public class ZeissLSMReader extends FormatReader {
           String[] v = transmittance.split("-");
           try {
             Integer cutIn = new Integer(v[0].trim());
-            PositiveInteger in = FormatTools.getCutIn(cutIn);
+            Length in = FormatTools.getCutIn(cutIn);
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, instrument, nextFilter);
             }
@@ -1377,7 +1378,7 @@ public class ZeissLSMReader extends FormatReader {
           if (v.length > 1) {
             try {
               Integer cutOut = new Integer(v[1].trim());
-              PositiveInteger out = FormatTools.getCutOut(cutOut);
+              Length out = FormatTools.getCutOut(cutOut);
               if (out != null) {
                 store.setTransmittanceRangeCutOut(out, instrument, nextFilter);
               }

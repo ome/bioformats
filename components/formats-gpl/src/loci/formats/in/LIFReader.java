@@ -66,6 +66,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -592,9 +593,9 @@ public class LIFReader extends FormatReader {
               (String) filterModels[index].get(filter), i, filter);
           }
           store.setTransmittanceRangeCutIn(
-            (PositiveInteger) cutIns[index].get(filter), i, filter);
+            (Length) cutIns[index].get(filter), i, filter);
           store.setTransmittanceRangeCutOut(
-            (PositiveInteger) cutOuts[index].get(filter), i, filter);
+            (Length) cutOuts[index].get(filter), i, filter);
         }
       }
 
@@ -1156,7 +1157,7 @@ public class LIFReader extends FormatReader {
               if (cutIns[image] == null) {
                 cutIns[image] = new Vector<PositiveInteger>();
               }
-              PositiveInteger in =
+              Length in =
                 FormatTools.getCutIn((int) Math.round(cutIn));
               if (in != null) {
                 cutIns[image].add(in);
@@ -1166,7 +1167,7 @@ public class LIFReader extends FormatReader {
               if (cutOuts[image] == null) {
                 cutOuts[image] = new Vector<PositiveInteger>();
               }
-              PositiveInteger out =
+              Length out =
                 FormatTools.getCutOut((int) Math.round(cutOut));
               if (out != null) {
                 cutOuts[image].add(out);
@@ -1539,7 +1540,7 @@ public class LIFReader extends FormatReader {
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
           if (v != null && v > 0) {
-            PositiveInteger in = FormatTools.getCutIn(v);
+            Length in = FormatTools.getCutIn(v);
             if (in != null) {
               cutIns[image].add(in);
             }
@@ -1547,7 +1548,7 @@ public class LIFReader extends FormatReader {
         }
         else if (description.endsWith("(right)")) {
           if (v != null && v > 0) {
-            PositiveInteger out = FormatTools.getCutOut(v);
+            Length out = FormatTools.getCutOut(v);
             if (out != null) {
               cutOuts[image].add(out);
             }

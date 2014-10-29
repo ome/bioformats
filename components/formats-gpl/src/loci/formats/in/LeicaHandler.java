@@ -59,6 +59,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -709,13 +710,13 @@ public class LeicaHandler extends BaseHandler {
           store.setFilterID(id, numDatasets, nextFilter);
           store.setFilterModel(object, numDatasets, nextFilter);
 
-          PositiveInteger in = FormatTools.getCutIn(v);
+          Length in = FormatTools.getCutIn(v);
           if (in != null) {
             store.setTransmittanceRangeCutIn(in, numDatasets, nextFilter);
           }
         }
         else if (attributes.getValue("Description").endsWith("(right)")) {
-          PositiveInteger out = FormatTools.getCutOut(v);
+          Length out = FormatTools.getCutOut(v);
           if (out != null) {
             store.setTransmittanceRangeCutOut(out, numDatasets, nextFilter);
             nextFilter++;
@@ -765,8 +766,8 @@ public class LeicaHandler extends BaseHandler {
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(filter, numDatasets, nextFilter);
 
-          PositiveInteger in = FormatTools.getCutIn(m.cutIn);
-          PositiveInteger out = FormatTools.getCutOut(m.cutOut);
+          Length in = FormatTools.getCutIn(m.cutIn);
+          Length out = FormatTools.getCutOut(m.cutOut);
           if (in != null) {
             store.setTransmittanceRangeCutIn(in, numDatasets, nextFilter);
           }
