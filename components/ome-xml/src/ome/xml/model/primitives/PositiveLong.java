@@ -54,6 +54,10 @@ public class PositiveLong extends NonNegativeLong {
     }
   }
 
+  public Number getNumberValue() {
+    return value;
+  }
+
   /**
    * Returns an <code>PositiveLong</code> object holding the value of
    * the specified string.

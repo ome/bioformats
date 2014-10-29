@@ -292,9 +292,7 @@ public class AFIReader extends FormatReader {
             store.setChannelExcitationWavelength(excitation[c], i, c);
           }
 
-          if (exposure[c] != null) {
-            store.setPlaneExposureTime(new Time(exposure[c], UNITS.S), i, c);
-          }
+          store.setPlaneExposureTime(FormatTools.createQuantity(exposure[c], UNITS.S), i, c);
         }
       }
     }

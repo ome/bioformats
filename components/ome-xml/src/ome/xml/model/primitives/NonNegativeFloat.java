@@ -54,6 +54,10 @@ public class NonNegativeFloat extends PrimitiveType<Double> implements Primitive
     }
   }
 
+  public Number getNumberValue() {
+    return value;
+  }
+
   /**
    * Returns an <code>NonNegativeFloat</code> object holding the value of
    * the specified string.

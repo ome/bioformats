@@ -51,12 +51,15 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.unit.Unit;
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import org.slf4j.Logger;
@@ -1305,6 +1308,64 @@ public final class FormatTools {
     }
     LOGGER.debug("Expected non-negative value for FontSize; got {}", value);
     return null;
+  }
+
+  // -- Quantity helper methods --
+
+  public static <T extends Number> Time createQuantity(T value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Time createQuantity(T value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value.getNumberValue(), valueUnit);
+  }
+
+  public static <T extends Number> Length createQuantity(T value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Length createQuantity(T value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value.getNumberValue(), valueUnit);
+  }
+  
+  public static <T extends Number> Time createTime(T value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Time createTime(T value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value.getNumberValue(), valueUnit);
+  }
+
+  public static <T extends Number> Length createLength(T value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Length createLength(T value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value.getNumberValue(), valueUnit);
   }
 
 }

@@ -54,6 +54,10 @@ public class NonNegativeLong extends PrimitiveType<Long> implements PrimitiveNum
     }
   }
 
+  public Number getNumberValue() {
+    return value;
+  }
+
   /**
    * Returns an <code>NonNegativeLong</code> object holding the value of
    * the specified string.
