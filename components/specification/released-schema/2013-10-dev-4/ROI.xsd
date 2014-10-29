@@ -161,7 +161,14 @@
 			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The width of the stroke [units pixels]
+						The width of the stroke. Units are set by StrokeWidthUnit.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="StrokeWidthUnit" use="optional" default="pixel" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>
+						The units used for the stroke width.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>

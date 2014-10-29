@@ -2335,7 +2335,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getEllipseStrokeWidth(i, q);
+            Length strokeWidth = src.getEllipseStrokeWidth(i, q);
             dest.setEllipseStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2477,7 +2477,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getLabelStrokeWidth(i, q);
+            Length strokeWidth = src.getLabelStrokeWidth(i, q);
             dest.setLabelStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2607,7 +2607,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getLineStrokeWidth(i, q);
+            Length strokeWidth = src.getLineStrokeWidth(i, q);
             dest.setLineStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2761,7 +2761,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getMaskStrokeWidth(i, q);
+            Length strokeWidth = src.getMaskStrokeWidth(i, q);
             dest.setMaskStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2903,7 +2903,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getPointStrokeWidth(i, q);
+            Length strokeWidth = src.getPointStrokeWidth(i, q);
             dest.setPointStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -3033,7 +3033,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getPolygonStrokeWidth(i, q);
+            Length strokeWidth = src.getPolygonStrokeWidth(i, q);
             dest.setPolygonStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -3157,7 +3157,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getPolylineStrokeWidth(i, q);
+            Length strokeWidth = src.getPolylineStrokeWidth(i, q);
             dest.setPolylineStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -3293,7 +3293,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getRectangleStrokeWidth(i, q);
+            Length strokeWidth = src.getRectangleStrokeWidth(i, q);
             dest.setRectangleStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
