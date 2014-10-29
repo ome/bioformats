@@ -912,8 +912,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeX(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeX(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -937,8 +937,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeY(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeY(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -963,8 +963,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
