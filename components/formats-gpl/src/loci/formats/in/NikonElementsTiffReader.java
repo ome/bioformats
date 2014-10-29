@@ -194,7 +194,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
       if (pinholeSize != null) {
-        store.setChannelPinholeSize(pinholeSize, 0, c);
+        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), 0, c);
       }
       if (c < channelNames.size()) {
         store.setChannelName(channelNames.get(c), 0, c);

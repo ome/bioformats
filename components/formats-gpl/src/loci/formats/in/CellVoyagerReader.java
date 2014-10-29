@@ -57,6 +57,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -769,7 +770,7 @@ public class CellVoyagerReader extends FormatReader
 				channelIndex = 0;
 				for ( int i = 0; i < channelInfos.size(); i++ )
 				{
-					store.setChannelPinholeSize( pinholeSize, seriesIndex, channelIndex++ );
+					store.setChannelPinholeSize( new Length(pinholeSize, UNITS.MICROM), seriesIndex, channelIndex++ );
 					store.setChannelName( channelInfos.get( i ).name, seriesIndex, i );
 				}
 			}

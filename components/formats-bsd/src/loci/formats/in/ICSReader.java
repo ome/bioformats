@@ -1562,7 +1562,7 @@ public class ICSReader extends FormatReader {
           store.setChannelName(channelNames.get(i), 0, i);
         }
         if (pinholes.containsKey(i)) {
-          store.setChannelPinholeSize(pinholes.get(i), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes.get(i), UNITS.MICROM), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
           Length em = FormatTools.getEmissionWavelength(emWaves[i]);
@@ -1639,7 +1639,7 @@ public class ICSReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+        store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
       }
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);

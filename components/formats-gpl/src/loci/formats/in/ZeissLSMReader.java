@@ -1345,7 +1345,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.pinhole != null && channel.pinhole.doubleValue() != 0f &&
         nextDetectChannel < getSizeC() && channel.acquire)
       {
-        store.setChannelPinholeSize(channel.pinhole, series, nextDetectChannel);
+        store.setChannelPinholeSize(new Length(channel.pinhole, UNITS.MICROM), series, nextDetectChannel);
       }
       if (channel.filter != null) {
         String id = MetadataTools.createLSID("Filter", instrument, nextFilter);

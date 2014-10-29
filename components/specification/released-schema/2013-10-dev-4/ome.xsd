@@ -635,8 +635,13 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The optional PinholeSize attribute allows specifying adjustable
-						pin hole diameters for confocal microscopes (units microns[µm]).
+						pin hole diameters for confocal microscopes. Units are set by PinholeSizeUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PinholeSizeUnit" use="optional" default="µm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the pin hole diameter for confocal microscopes - default:microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="AcquisitionMode" use="optional">
@@ -1853,8 +1858,13 @@
 					<xsd:attribute name="WorkingDistance" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The working distance of the lens expressed as a floating point (real) number. Units are microns[µm].
+								The working distance of the lens expressed as a floating point (real) number. Units are set by WorkingDistanceUnit.
 							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="WorkingDistanceUnit" use="optional" default="µm" type="UnitsLength">
+						<xsd:annotation>
+							<xsd:documentation>The units of the working distance - default:microns[µm].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Iris" use="optional" type="xsd:boolean">

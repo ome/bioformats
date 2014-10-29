@@ -207,7 +207,7 @@ public class LeicaHandler extends BaseHandler {
         int nChannels = coreMeta.rgb ? 0 : numChannels;
 
         for (int c=0; c<nChannels; c++) {
-          store.setChannelPinholeSize(pinhole, numDatasets, c);
+          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROM), numDatasets, c);
         }
 
         for (int i=0; i<xPos.size(); i++) {
@@ -261,7 +261,7 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorSettingsID(id, numDatasets, index);
         }
         for (int c=0; c<nChannels; c++) {
-          store.setChannelPinholeSize(pinhole, numDatasets, c);
+          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROM), numDatasets, c);
         }
       }
     }

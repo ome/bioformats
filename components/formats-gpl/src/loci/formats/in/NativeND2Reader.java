@@ -1913,7 +1913,7 @@ public class NativeND2Reader extends FormatReader {
 
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
-          store.setChannelPinholeSize(pinholeSize, i, c);
+          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), i, c);
         }
         if (index < channelNames.size()) {
           String channelName = channelNames.get(index);

@@ -2238,7 +2238,7 @@ public class DeltavisionReader extends FormatReader {
       store.setObjectiveCalibratedMagnification(calibratedMagnification, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(workingDistance * 1000, 0, 0);
+      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MM), 0, 0);
     }
   }
 
