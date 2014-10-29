@@ -35,7 +35,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -253,7 +253,7 @@ public class NikonTiffReader extends BaseTiffReader {
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
 
-        PositiveFloat wave = FormatTools.getWavelength(wavelength.get(i));
+        Length wave = FormatTools.getWavelength(wavelength.get(i));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
         }

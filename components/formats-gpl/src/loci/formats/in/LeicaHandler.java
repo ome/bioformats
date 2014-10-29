@@ -59,6 +59,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -840,7 +841,7 @@ public class LeicaHandler extends BaseHandler {
       store.setLaserID(l.id, numDatasets, l.index);
       laserCount++;
 
-      PositiveFloat wavelength = FormatTools.getWavelength(l.wavelength);
+      Length wavelength = FormatTools.getWavelength(l.wavelength);
       if (wavelength != null) {
         store.setLaserWavelength(wavelength, numDatasets, l.index);
       }
