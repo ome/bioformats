@@ -1286,17 +1286,17 @@ public final class FormatTools {
     return null;
   }
 
-  public static PositiveInteger getCutIn(Integer value) {
+  public static Length getCutIn(Integer value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new Length(value, UNITS.NM);
     }
     LOGGER.debug("Expected positive value for CutIn; got {}", value);
     return null;
   }
 
-  public static PositiveInteger getCutOut(Integer value) {
+  public static Length getCutOut(Integer value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new Length(value, UNITS.NM);
     }
     LOGGER.debug("Expected positive value for CutOut; got {}", value);
     return null;
