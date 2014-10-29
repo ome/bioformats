@@ -157,9 +157,33 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
   public static <T extends PrimitiveNumber> ${klass.model.opts.lang.typeToUnitsType(klass.langType)} getQuantity(T inValue, ${klass.langType} inModelUnit)
     throws EnumerationException
   {
+    if (inValue instanceof NonNegativeFloat) {
+        NonNegativeFloat typedValue = (NonNegativeFloat) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+    }
+    if (inValue instanceof NonNegativeInteger) {
+        NonNegativeInteger typedValue = (NonNegativeInteger) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+    }
+    if (inValue instanceof NonNegativeLong) {
+        NonNegativeLong typedValue = (NonNegativeLong) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+    }
+    if (inValue instanceof PercentFraction) {
+        PercentFraction typedValue = (PercentFraction) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+    }
     if (inValue instanceof PositiveFloat) {
-        PositiveFloat positiveFloatValue = (PositiveFloat) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(positiveFloatValue.getValue(), getBaseUnit(inModelUnit));
+        PositiveFloat typedValue = (PositiveFloat) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+    }
+    if (inValue instanceof PositiveInteger) {
+        PositiveInteger typedValue = (PositiveInteger) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+    }
+    if (inValue instanceof PositiveLong) {
+        PositiveLong typedValue = (PositiveLong) inValue;
+        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     LOGGER.warn("Unknown type '{}' cannot be used to create a '${klass.model.opts.lang.typeToUnitsType(klass.langType)}' quantity",
       inValue.getClass().getName());
