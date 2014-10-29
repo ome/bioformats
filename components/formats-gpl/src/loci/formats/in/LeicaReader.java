@@ -57,6 +57,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -1434,7 +1435,7 @@ public class LeicaReader extends FormatReader {
             }
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
-              PositiveInteger cutIn = FormatTools.getCutIn(wavelength);
+              Length cutIn = FormatTools.getCutIn(wavelength);
               if (cutIn != null) {
                 store.setTransmittanceRangeCutIn(cutIn, series, channel);
               }
@@ -1442,7 +1443,7 @@ public class LeicaReader extends FormatReader {
             }
             else if (tokens[3].equals("1") && !cutOutPopulated[series][index])
             {
-              PositiveInteger cutOut = FormatTools.getCutOut(wavelength);
+              Length cutOut = FormatTools.getCutOut(wavelength);
               if (cutOut != null) {
                 store.setTransmittanceRangeCutOut(cutOut, series, channel);
               }

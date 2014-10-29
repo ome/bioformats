@@ -38,6 +38,7 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 
 /**
@@ -1499,25 +1500,25 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger cutIn = src.getTransmittanceRangeCutIn(i, q);
+          Length cutIn = src.getTransmittanceRangeCutIn(i, q);
           dest.setTransmittanceRangeCutIn(cutIn, i, q);
         }
         catch (NullPointerException e) { }
 
         try {
-          NonNegativeInteger cutInTolerance = src.getTransmittanceRangeCutInTolerance(i, q);
+          Length cutInTolerance = src.getTransmittanceRangeCutInTolerance(i, q);
           dest.setTransmittanceRangeCutInTolerance(cutInTolerance, i, q);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger cutOut = src.getTransmittanceRangeCutOut(i, q);
+          Length cutOut = src.getTransmittanceRangeCutOut(i, q);
           dest.setTransmittanceRangeCutOut(cutOut, i, q);
         }
         catch (NullPointerException e) { }
 
         try {
-          NonNegativeInteger cutOutTolerance = src.getTransmittanceRangeCutOutTolerance(i, q);
+          Length cutOutTolerance = src.getTransmittanceRangeCutOutTolerance(i, q);
           dest.setTransmittanceRangeCutOutTolerance(cutOutTolerance, i, q);
         }
         catch (NullPointerException e) { }
