@@ -935,13 +935,13 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat emWave = src.getChannelEmissionWavelength(i, c);
+          Length emWave = src.getChannelEmissionWavelength(i, c);
           dest.setChannelEmissionWavelength(emWave, i, c);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat exWave = src.getChannelExcitationWavelength(i, c);
+          Length exWave = src.getChannelExcitationWavelength(i, c);
           dest.setChannelExcitationWavelength(exWave, i, c);
         }
         catch (NullPointerException e) { }

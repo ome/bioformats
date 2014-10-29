@@ -607,15 +607,14 @@ public class InCellReader extends FormatReader {
           }
           if (q < emWaves.size()) {
             Double wave = emWaves.get(q);
-            PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+            Length emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               store.setChannelEmissionWavelength(emission, i, q);
             }
           }
           if (q < exWaves.size()) {
             Double wave = exWaves.get(q);
-            PositiveFloat excitation =
-              FormatTools.getExcitationWavelength(wave);
+            Length excitation = FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               store.setChannelExcitationWavelength(excitation, i, q);
             }

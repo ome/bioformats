@@ -1018,10 +1018,8 @@ public class FV1000Reader extends FormatReader {
         MetadataTools.createLSID("LightSource", 0, channelIndex);
       store.setChannelLightSourceSettingsID(lightSourceID, 0, channelIndex);
 
-      PositiveFloat emission =
-        FormatTools.getEmissionWavelength(channel.emWave);
-      PositiveFloat excitation =
-        FormatTools.getExcitationWavelength(channel.exWave);
+      Length emission = FormatTools.getEmissionWavelength(channel.emWave);
+      Length excitation = FormatTools.getExcitationWavelength(channel.exWave);
       PositiveFloat wavelength = FormatTools.getWavelength(channel.exWave);
 
       if (emission != null) {

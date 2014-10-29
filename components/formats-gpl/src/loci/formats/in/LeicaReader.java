@@ -1577,14 +1577,14 @@ public class LeicaReader extends FormatReader {
         }
         if (channel < emWaves[i].size()) {
           Double wave = new Double(emWaves[i].get(channel).toString());
-          PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+          Length emission = FormatTools.getEmissionWavelength(wave);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, channel);
           }
         }
         if (channel < exWaves[i].size()) {
           Double wave = new Double(exWaves[i].get(channel).toString());
-          PositiveFloat ex = FormatTools.getExcitationWavelength(wave);
+          Length ex = FormatTools.getExcitationWavelength(wave);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, i, channel);
           }

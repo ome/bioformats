@@ -47,6 +47,7 @@ import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -746,9 +747,9 @@ public class DeltavisionReader extends FormatReader {
       for (int w=0; w<getSizeC(); w++) {
         DVExtHdrFields hdrC = extHdrFields[0][w][series];
 
-        PositiveFloat emission =
+        Length emission =
           FormatTools.getEmissionWavelength(new Double(waves[w]));
-        PositiveFloat excitation =
+        Length excitation =
           FormatTools.getExcitationWavelength(new Double(hdrC.exWavelen));
 
         if (emission != null) {

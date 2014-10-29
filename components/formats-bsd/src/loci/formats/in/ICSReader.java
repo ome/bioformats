@@ -56,6 +56,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -1564,13 +1565,13 @@ public class ICSReader extends FormatReader {
           store.setChannelPinholeSize(pinholes.get(i), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
-          PositiveFloat em = FormatTools.getEmissionWavelength(emWaves[i]);
+          Length em = FormatTools.getEmissionWavelength(emWaves[i]);
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (exWaves != null && i < exWaves.length) {
-          PositiveFloat ex = FormatTools.getExcitationWavelength(exWaves[i]);
+          Length ex = FormatTools.getExcitationWavelength(exWaves[i]);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);
           }
