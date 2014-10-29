@@ -1247,22 +1247,22 @@ public final class FormatTools {
     return null;
   }
 
-  public static PositiveFloat getEmissionWavelength(Double value) {
+  public static Length getEmissionWavelength(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return createLength(new PositiveFloat(value), UNITS.NM);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
       value);
     return null;
   }
 
-  public static PositiveFloat getExcitationWavelength(Double value) {
+  public static Length getExcitationWavelength(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return createLength(new PositiveFloat(value), UNITS.NM);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
       value);

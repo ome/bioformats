@@ -47,6 +47,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -623,14 +624,13 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          PositiveFloat em = FormatTools.getEmissionWavelength(emWaves.get(i));
+          Length em = FormatTools.getEmissionWavelength(emWaves.get(i));
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (i < exWaves.size()) {
-          PositiveFloat ex =
-            FormatTools.getExcitationWavelength(exWaves.get(i));
+          Length ex = FormatTools.getExcitationWavelength(exWaves.get(i));
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);
           }

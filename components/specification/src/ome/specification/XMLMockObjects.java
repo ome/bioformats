@@ -139,6 +139,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -1096,8 +1097,10 @@ public class XMLMockObjects
     channel.setIlluminationType(IlluminationType.OBLIQUE);
     channel.setPinholeSize(0.5);
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-    channel.setEmissionWavelength(new PositiveFloat(300.3));
-    channel.setExcitationWavelength(new PositiveFloat(400.4));
+	PositiveFloat emWave = new PositiveFloat(300.3);
+    channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
+    PositiveFloat exWave = new PositiveFloat(400.3);
+    channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
     channel.setFluor("Fluor");
     channel.setNDFilter(1.0);
     channel.setPockelCellSetting(0);

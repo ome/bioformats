@@ -674,8 +674,7 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
 
-              PositiveFloat ex =
-                FormatTools.getExcitationWavelength(wavelength);
+              Length ex = FormatTools.getExcitationWavelength(wavelength);
               if (ex != null) {
                 store.setChannelExcitationWavelength(ex, i, nextChannel);
               }
@@ -826,7 +825,7 @@ public class LIFReader extends FormatReader {
         store.setChannelPinholeSize(pinholes[index], i, c);
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
-            PositiveFloat ex =
+            Length ex =
               FormatTools.getExcitationWavelength(exWaves[index][c]);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);

@@ -50,6 +50,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
  *
@@ -424,16 +427,16 @@ public class SVSReader extends BaseTiffReader {
     }
   }
 
-  protected PositiveFloat getEmission() {
+  protected Length getEmission() {
     if (emissionWavelength != null && emissionWavelength > 0) {
-      return new PositiveFloat(emissionWavelength);
+      return FormatTools.getEmissionWavelength(emissionWavelength);
     }
     return null;
   }
 
-  protected PositiveFloat getExcitation() {
+  protected Length getExcitation() {
     if (excitationWavelength != null && excitationWavelength > 0) {
-      return new PositiveFloat(excitationWavelength);
+      return FormatTools.getExcitationWavelength(excitationWavelength);
     }
     return null;
   }

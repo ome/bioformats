@@ -66,6 +66,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import org.xml.sax.SAXException;
@@ -907,8 +908,7 @@ public class ZeissCZIReader extends FormatReader {
           String emWave = channels.get(c).emission;
           if (emWave != null) {
             Double wave = new Double(emWave);
-            PositiveFloat em =
-              FormatTools.getEmissionWavelength(wave);
+            Length em = FormatTools.getEmissionWavelength(wave);
             if (em != null) {
               store.setChannelEmissionWavelength(em, i, c);
             }
@@ -916,8 +916,7 @@ public class ZeissCZIReader extends FormatReader {
           String exWave = channels.get(c).excitation;
           if (exWave != null) {
             Double wave = new Double(exWave);
-            PositiveFloat ex =
-              FormatTools.getExcitationWavelength(wave);
+            Length ex = FormatTools.getExcitationWavelength(wave);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);
             }

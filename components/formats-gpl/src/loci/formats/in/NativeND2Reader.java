@@ -51,6 +51,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -1928,7 +1929,7 @@ public class NativeND2Reader extends FormatReader {
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Double value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          PositiveFloat emission = FormatTools.getEmissionWavelength(value);
+          Length emission = FormatTools.getEmissionWavelength(value);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);
           }
@@ -1937,7 +1938,7 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          PositiveFloat excitation =
+          Length excitation =
             FormatTools.getExcitationWavelength(exWave.get(index));
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);

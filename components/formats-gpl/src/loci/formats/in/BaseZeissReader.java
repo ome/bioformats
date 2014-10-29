@@ -50,6 +50,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -91,10 +92,10 @@ public abstract class BaseZeissReader extends FormatReader {
       new Hashtable<Integer, Double>();
   protected Hashtable<Integer, Double> detectorOffset =
       new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, PositiveFloat> emWavelength =
-      new Hashtable<Integer, PositiveFloat>();
-  protected Hashtable<Integer, PositiveFloat> exWavelength =
-      new Hashtable<Integer, PositiveFloat>();
+  protected Hashtable<Integer, Length> emWavelength =
+      new Hashtable<Integer, Length>();
+  protected Hashtable<Integer, Length> exWavelength =
+      new Hashtable<Integer, Length>();
   protected Hashtable<Integer, String> channelName =
       new Hashtable<Integer, String>();
   protected Double physicalSizeX, physicalSizeY, physicalSizeZ;
@@ -866,7 +867,7 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1) {
             Double wave = new Double(value);
-            PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+            Length emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               emWavelength.put(cIndex, emission);
             }
@@ -875,8 +876,7 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1) {
             Double wave = new Double(Double.parseDouble(value));
-            PositiveFloat excitation =
-              FormatTools.getExcitationWavelength(wave);
+            Length excitation = FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               exWavelength.put(cIndex, excitation);
             }

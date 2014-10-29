@@ -564,7 +564,7 @@ public class LeicaHandler extends BaseHandler {
         }
         else if (id.endsWith("WaveLength")) {
           Double exWave = new Double(value);
-          PositiveFloat ex = FormatTools.getExcitationWavelength(exWave);
+          Length ex = FormatTools.getExcitationWavelength(exWave);
           if (ex != null) {
             channel.exWave = ex;
           }
@@ -810,7 +810,7 @@ public class LeicaHandler extends BaseHandler {
             new PercentFraction((float) laser.intensity / 100f),
             numDatasets, nextChannel);
 
-          PositiveFloat wavelength =
+          Length wavelength =
             FormatTools.getExcitationWavelength(laser.wavelength);
           if (wavelength != null) {
             store.setChannelExcitationWavelength(wavelength,
@@ -1187,7 +1187,7 @@ public class LeicaHandler extends BaseHandler {
   class Channel {
     public String detector;
     public Double gain;
-    public PositiveFloat exWave;
+    public Length exWave;
     public String name;
   }
 
