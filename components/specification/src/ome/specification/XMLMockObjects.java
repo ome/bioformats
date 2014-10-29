@@ -55,6 +55,9 @@ import java.util.List;
 //Third-party libraries
 
 //Application-internal dependencies
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.AffineTransform;
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
@@ -904,8 +907,8 @@ public class XMLMockObjects
     plate.setColumns(new PositiveInteger(columns));
     plate.setRowNamingConvention(ROW_NAMING_CONVENTION);
     plate.setColumnNamingConvention(COLUMN_NAMING_CONVENTION);
-    plate.setWellOriginX(0.0);
-    plate.setWellOriginY(1.0);
+    plate.setWellOriginX(new Length(0.0, UNITS.MICROM));
+    plate.setWellOriginY(new Length(1.0, UNITS.MICROM));
     plate.setStatus("Plate status");
     PlateAcquisition pa = null;
     List<PlateAcquisition> pas = new ArrayList<PlateAcquisition>();

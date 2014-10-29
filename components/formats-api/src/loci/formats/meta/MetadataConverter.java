@@ -40,6 +40,7 @@ import ome.xml.model.primitives.*;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * A utility class containing a method for piping a source
@@ -1949,13 +1950,13 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Double wellOriginX = src.getPlateWellOriginX(i);
+        Length wellOriginX = src.getPlateWellOriginX(i);
         dest.setPlateWellOriginX(wellOriginX, i);
       }
       catch (NullPointerException e) { }
 
       try {
-        Double wellOriginY = src.getPlateWellOriginY(i);
+        Length wellOriginY = src.getPlateWellOriginY(i);
         dest.setPlateWellOriginY(wellOriginY, i);
       }
       catch (NullPointerException e) { }
