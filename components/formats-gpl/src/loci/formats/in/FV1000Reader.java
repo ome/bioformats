@@ -1179,7 +1179,7 @@ public class FV1000Reader extends FormatReader {
         fontName = fontAttributes[0];
         fontSize = Integer.parseInt(fontAttributes[1]);
 
-        NonNegativeInteger font = FormatTools.getFontSize(fontSize);
+        Length font = FormatTools.getFontSize(fontSize);
 
         lineWidth = Integer.parseInt(table.get("LINEWIDTH"));
         name = table.get("NAME");

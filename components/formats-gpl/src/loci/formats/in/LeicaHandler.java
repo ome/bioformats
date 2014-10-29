@@ -1032,7 +1032,7 @@ public class LeicaHandler extends BaseHandler {
       store.setLabelText(text, roi, 0);
       if (fontSize != null) {
         double size = Double.parseDouble(fontSize);
-        NonNegativeInteger fontSize = FormatTools.getFontSize((int) size);
+        Length fontSize = FormatTools.getFontSize((int) size);
         if (fontSize != null) {
           store.setLabelFontSize(fontSize, roi, 0);
         }

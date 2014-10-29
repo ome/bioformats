@@ -1959,7 +1959,7 @@ public class LIFReader extends FormatReader {
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
-          NonNegativeInteger fontSize = FormatTools.getFontSize(size);
+          Length fontSize = FormatTools.getFontSize(size);
           if (fontSize != null) {
             store.setLabelFontSize(fontSize, roi, 0);
           }

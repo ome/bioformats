@@ -1496,7 +1496,7 @@ public class ZeissLSMReader extends FormatReader {
       String roiID = MetadataTools.createLSID("ROI", i);
       String shapeID = MetadataTools.createLSID("Shape", i, 0);
 
-      NonNegativeInteger fontSize = FormatTools.getFontSize(fontHeight);
+      Length fontSize = FormatTools.getFontSize(fontHeight);
 
       switch (type) {
         case TEXT:
