@@ -1302,9 +1302,9 @@ public final class FormatTools {
     return null;
   }
 
-  public static NonNegativeInteger getFontSize(Integer value) {
+  public static Length getFontSize(Integer value) {
     if (value != null && value >= 0) {
-      return new NonNegativeInteger(value);
+      return new Length(value, UNITS.PT);
     }
     LOGGER.debug("Expected non-negative value for FontSize; got {}", value);
     return null;
