@@ -1497,7 +1497,7 @@ public class ZeissLSMReader extends FormatReader {
       String shapeID = MetadataTools.createLSID("Shape", i, 0);
 
       Length fontSize = FormatTools.getFontSize(fontHeight);
-
+      Length line = new Length(lineWidth, UNITS.PIXEL);
       switch (type) {
         case TEXT:
           double x = in.readDouble();
@@ -1512,7 +1512,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setLabelFontSize(fontSize, i, 0);
           }
-          store.setLabelStrokeWidth(lineWidth, i, 0);
+          store.setLabelStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1532,7 +1532,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setLineFontSize(fontSize, i, 0);
           }
-          store.setLineStrokeWidth(lineWidth, i, 0);
+          store.setLineStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1565,7 +1565,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setRectangleFontSize(fontSize, i, 0);
           }
-          store.setRectangleStrokeWidth(lineWidth, i, 0);
+          store.setRectangleStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1625,7 +1625,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setEllipseFontSize(fontSize, i, 0);
           }
-          store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setEllipseStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1648,7 +1648,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setEllipseFontSize(fontSize, i, 0);
           }
-          store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setEllipseStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1688,7 +1688,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setEllipseFontSize(fontSize, i, 0);
           }
-          store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setEllipseStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1715,7 +1715,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setPolylineFontSize(fontSize, i, 0);
           }
-          store.setPolylineStrokeWidth(lineWidth, i, 0);
+          store.setPolylineStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1745,7 +1745,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolylineFontSize(fontSize, i, 0);
             }
-            store.setPolylineStrokeWidth(lineWidth, i, 0);
+            store.setPolylineStrokeWidth(line, i, 0);
             store.setPolylineID(shapeID, i, 0);
           }
           else {
@@ -1753,7 +1753,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolygonFontSize(fontSize, i, 0);
             }
-            store.setPolygonStrokeWidth(lineWidth, i, 0);
+            store.setPolygonStrokeWidth(line, i, 0);
             store.setPolygonID(shapeID, i, 0);
           }
           store.setImageROIRef(roiID, series, i);
@@ -1786,7 +1786,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolylineFontSize(fontSize, i, 0);
             }
-            store.setPolylineStrokeWidth(lineWidth, i, 0);
+            store.setPolylineStrokeWidth(line, i, 0);
           }
           else {
             store.setPolygonID(shapeID, i, 0);
@@ -1794,7 +1794,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolygonFontSize(fontSize, i, 0);
             }
-            store.setPolygonStrokeWidth(lineWidth, i, 0);
+            store.setPolygonStrokeWidth(line, i, 0);
           }
           store.setImageROIRef(roiID, series, i);
 

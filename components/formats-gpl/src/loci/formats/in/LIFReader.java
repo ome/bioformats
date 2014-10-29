@@ -65,7 +65,6 @@ import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
-
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -1966,7 +1965,8 @@ public class LIFReader extends FormatReader {
         }
         catch (NumberFormatException e) { }
       }
-      store.setLabelStrokeWidth(new Double(linewidth), roi, 0);
+      Length l = new Length(new Double(linewidth), UNITS.PIXEL);
+      store.setLabelStrokeWidth(l, roi, 0);
 
       if (!normalized) normalize();
 

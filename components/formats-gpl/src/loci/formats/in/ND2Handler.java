@@ -156,7 +156,8 @@ public class ND2Handler extends BaseHandler {
           store.setLabelFontSize(new Length(fontSize, UNITS.PT), r, 0);
         }
         store.setLabelText(roi.get("eval-text"), r, 0);
-        store.setLabelStrokeWidth(new Double(roi.get("line-width")), r, 0);
+        Length l = new Length(new Double(roi.get("line-width")), UNITS.PIXEL);
+        store.setLabelStrokeWidth(l, r, 0);
 
         String rectangle = roi.get("rectangle");
         String[] p = rectangle.split(",");
