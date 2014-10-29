@@ -54,7 +54,6 @@ import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -1018,9 +1017,9 @@ public class FV1000Reader extends FormatReader {
         MetadataTools.createLSID("LightSource", 0, channelIndex);
       store.setChannelLightSourceSettingsID(lightSourceID, 0, channelIndex);
 
+      Length wavelength = FormatTools.getWavelength(channel.exWave);
       Length emission = FormatTools.getEmissionWavelength(channel.emWave);
       Length excitation = FormatTools.getExcitationWavelength(channel.exWave);
-      PositiveFloat wavelength = FormatTools.getWavelength(channel.exWave);
 
       if (emission != null) {
         store.setChannelEmissionWavelength(emission, 0, channelIndex);
@@ -1083,7 +1082,7 @@ public class FV1000Reader extends FormatReader {
       store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
         0, channelIndex);
       if (channelIndex < wavelengths.size()) {
-        PositiveFloat wave =
+          Length wave =
           FormatTools.getWavelength(wavelengths.get(channelIndex));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, channelIndex);

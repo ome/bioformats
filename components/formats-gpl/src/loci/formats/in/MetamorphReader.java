@@ -34,7 +34,6 @@ import java.util.Vector;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +53,10 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
-
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
-
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -791,7 +789,7 @@ public class MetamorphReader extends BaseTiffReader {
         store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length) {
-          PositiveFloat wavelength =
+          Length wavelength =
             FormatTools.getWavelength(wave[waveIndex]);
 
           if ((int) wave[waveIndex] >= 1) {

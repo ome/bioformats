@@ -52,7 +52,6 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -1469,7 +1468,7 @@ public class FlexReader extends FormatReader {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
         Double wavelength = new Double(value);
-        PositiveFloat wave = FormatTools.getWavelength(wavelength);
+        Length wave = FormatTools.getWavelength(wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, 0, nextLaser);
         }

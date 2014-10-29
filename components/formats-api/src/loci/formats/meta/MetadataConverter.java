@@ -417,7 +417,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              PositiveFloat wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
+              Length wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
               dest.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, i, q, p);
             }
             catch (NullPointerException e) { }
@@ -1064,7 +1064,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              PositiveFloat wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
+              Length wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
               dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
             }
             catch (NullPointerException e) { }
@@ -4090,7 +4090,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat wavelength =
+          Length wavelength =
             src.getLaserWavelength(instrumentIndex, lightSource);
           if (wavelength != null) {
             dest.setLaserWavelength(wavelength, instrumentIndex, lightSource);

@@ -52,7 +52,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
@@ -1432,7 +1431,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.acquire && channel.wavelength != null &&
         channel.wavelength > 0)
       {
-        PositiveFloat wave = FormatTools.getWavelength(channel.wavelength);
+        Length wave = FormatTools.getWavelength(channel.wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, instrument, nextIllumChannel);
         }

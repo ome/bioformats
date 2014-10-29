@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -55,7 +56,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
@@ -620,7 +620,7 @@ public class LIFReader extends FormatReader {
           store.setLaserType(LaserType.OTHER, i, laser);
           store.setLaserLaserMedium(LaserMedium.OTHER, i, laser);
           Double wavelength = (Double) lasers.get(laser);
-          PositiveFloat wave = FormatTools.getWavelength(wavelength);
+          Length wave = FormatTools.getWavelength(wavelength);
           if (wave != null) {
             store.setLaserWavelength(wave, i, laser);
           }

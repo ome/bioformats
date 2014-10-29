@@ -2312,8 +2312,13 @@
 			<xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Wavelength of the laser in nanometres[nm]
+						The Wavelength of the laser. Units are set by WavelengthUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="WavelengthUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Wavelength - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="FrequencyMultiplication" use="optional" type="PositiveInt">
@@ -2698,7 +2703,14 @@
 					<xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Wavelength of the light source. nanometres[nm]
+								The Wavelength of the light source. Units are set by WavelengthUnit.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="WavelengthUnit" use="optional" default="nm" type="UnitsLength">
+						<xsd:annotation>
+							<xsd:documentation>
+								The units of the Wavelength of the light source - default:nanometres[nm]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>

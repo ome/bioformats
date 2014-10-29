@@ -1585,7 +1585,7 @@ public class ICSReader extends FormatReader {
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
 
-        PositiveFloat wave =
+        Length wave =
           FormatTools.getWavelength(wavelengths.get(lasers[i]));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);

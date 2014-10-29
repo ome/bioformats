@@ -1269,9 +1269,9 @@ public final class FormatTools {
     return null;
   }
 
-  public static PositiveFloat getWavelength(Double value) {
+  public static Length getWavelength(Double value) {
     if (value != null && value > 0) {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.NM);
     }
     LOGGER.debug("Expected positive value for Wavelength; got {}", value);
     return null;

@@ -40,7 +40,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -350,7 +350,7 @@ public class L2DReader extends FormatReader {
             String laser = MetadataTools.createLSID("LightSource", 0, q);
             store.setLaserID(laser, 0, q);
             Double wave = new Double(waves[q].trim());
-            PositiveFloat wavelength = FormatTools.getWavelength(wave);
+            Length wavelength = FormatTools.getWavelength(wave);
             if (wavelength != null) {
               store.setLaserWavelength(wavelength, 0, q);
             }
