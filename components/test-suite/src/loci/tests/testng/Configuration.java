@@ -49,6 +49,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -508,15 +509,14 @@ public class Configuration {
         }
         catch (NullPointerException e) { }
 
-        PositiveFloat emWavelength =
-          retrieve.getChannelEmissionWavelength(series, c);
+        Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
         if (emWavelength != null) {
-          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.toString());
+          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value(UNITS.NM).toString());
         }
-        PositiveFloat exWavelength =
+        Length exWavelength =
           retrieve.getChannelExcitationWavelength(series, c);
         if (exWavelength != null) {
-          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.toString());
+          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value(UNITS.NM).toString());
         }
         try {
           seriesTable.put(DETECTOR + c,
