@@ -34,6 +34,8 @@ package spec.schema.samples;
 
 import ome.units.quantity.Length;
 import ome.units.UNITS;
+import loci.formats.FormatTools;
+
 import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.Correction;
@@ -133,8 +135,8 @@ public class Instrument2011_06
         public static final String Image0AcquiredDate = "2010-02-23T12:51:30";
         public static final String Image0Description = "This image has instrument data";
         public static final DimensionOrder Image0Pixels0_0DimensionOrder = DimensionOrder.XYCZT;
-        public static final Double Image0Pixels0_0PhysicalSizeX = Double.valueOf("10000.0");
-        public static final Double Image0Pixels0_0PhysicalSizeY = Double.valueOf("10000.0");
+        public static final Length Image0Pixels0_0PhysicalSizeX = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROM);
+        public static final Length Image0Pixels0_0PhysicalSizeY = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROM);
         public static final PixelType Image0Pixels0_0Type = PixelType.UINT8;
         public static final PositiveInteger Image0Pixels0_0SizeC = PositiveInteger.valueOf("1");
         public static final PositiveInteger Image0Pixels0_0SizeT = PositiveInteger.valueOf("1");
@@ -145,7 +147,7 @@ public class Instrument2011_06
         public static final NonNegativeLong Image0Pixels0_0Bindata0Length = NonNegativeLong.valueOf("32");
         public static final Boolean Image0Pixels0_0Bindata0BigEndian = Boolean.FALSE;
         public static final PercentFraction Image0LightSourceSettings0Attenuation = PercentFraction.valueOf("0.8");
-        public static final PositiveFloat Image0LightSourceSettings0Wavelength = PositiveFloat.valueOf("510");
+        public static final Length Image0LightSourceSettings0Wavelength = FormatTools.createLength(Double.valueOf("510"), UNITS.NM);
         public static final Binning Image0DetectorSettings0Binning = Binning.TWOXTWO;
         public static final Double Image0DetectorSettings0Gain = Double.valueOf("1.2");
         public static final Double Image0DetectorSettings0Offset = Double.valueOf("0.7");
