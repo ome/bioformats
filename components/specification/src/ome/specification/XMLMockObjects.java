@@ -141,6 +141,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
@@ -662,7 +663,7 @@ public class XMLMockObjects
     settings.setGain(1.0);
     settings.setOffset(1.0);
     settings.setReadOutRate(1.0);
-    settings.setVoltage(1.0);
+    settings.setVoltage(new ElectricPotential(0, UNITS.V));
     return settings;
   }
 
