@@ -1056,7 +1056,14 @@
 			<xsd:attribute name="Temperature" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Temperature is in Celsius[°C].
+						The Temperature is the define units.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TemperatureUnit" use="optional" default="°C" type="UnitsTemperature">
+				<xsd:annotation>
+					<xsd:documentation>
+						The units the Temperature is in - default:Celsius[°C].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
