@@ -91,7 +91,7 @@ public class InCellReader extends FormatReader {
 
   private int wellRows, wellCols;
   private Hashtable<Integer, int[]> wellCoordinates;
-  private Vector<Double> posX, posY;
+  private Vector<Length> posX, posY;
 
   private boolean[][] exclude;
 
@@ -342,8 +342,8 @@ public class InCellReader extends FormatReader {
     // parse metadata from the .xdce or .xml file
 
     wellCoordinates = new Hashtable<Integer, int[]>();
-    posX = new Vector<Double>();
-    posY = new Vector<Double>();
+    posX = new Vector<Length>();
+    posY = new Vector<Length>();
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -561,12 +561,10 @@ public class InCellReader extends FormatReader {
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
       if (field < posX.size()) {
-        Length l = new Length(posX.get(field), UNITS.REFERENCEFRAME);
-        store.setWellSamplePositionX(l, 0, well, sampleIndex);
+        store.setWellSamplePositionX(posX.get(field), 0, well, sampleIndex);
       }
       if (field < posY.size()) {
-        Length l = new Length(posY.get(field), UNITS.REFERENCEFRAME);
-        store.setWellSamplePositionY(l, 0, well, sampleIndex);
+        store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
       }
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);
@@ -833,7 +831,8 @@ public class InCellReader extends FormatReader {
     private int currentRow = -1, currentCol = -1;
     private int currentField = 0;
     private int currentImage, currentPlane;
-    private Double timestamp, exposure, zPosition;
+    private Double timestamp, exposure;
+    private Length zPosition;
 
     public InCellHandler(MetadataStore store) {
       this.store = store;
@@ -904,7 +903,8 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("FocusPosition")) {
-        zPosition = new Double(attributes.getValue("z"));
+        final Double z = Double.valueOf(attributes.getValue("z"));
+        zPosition = new Length(z, UNITS.REFERENCEFRAME);
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd
@@ -1000,8 +1000,8 @@ public class InCellReader extends FormatReader {
         String x = attributes.getValue("x");
         String y = attributes.getValue("y");
 
-        posX.add(new Double(x));
-        posY.add(new Double(y));
+        posX.add(new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
+        posY.add(new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
 
         addGlobalMetaList("X position for position", x);
         addGlobalMetaList("Y position for position", y);
@@ -1014,7 +1014,7 @@ public class InCellReader extends FormatReader {
     public String thumbnailFile;
     public boolean isTiff;
     public Double deltaT, exposure;
-    public Double zPosition;
+    public Length zPosition;
   }
 
 }

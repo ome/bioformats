@@ -1270,9 +1270,28 @@ public class ZeissLSMReader extends FormatReader {
           store.setPlaneDeltaT(new Time(thisStamp - firstStamp, UNITS.S), series, i);
         }
         if (xCoordinates.size() > series) {
-          store.setPlanePositionX(xCoordinates.get(series), series, i);
-          store.setPlanePositionY(yCoordinates.get(series), series, i);
-          store.setPlanePositionZ(zCoordinates.get(series), series, i);
+          final Double xCoord = xCoordinates.get(series);
+          final Double yCoord = yCoordinates.get(series);
+          final Double zCoord = zCoordinates.get(series);
+
+          if (xCoord == null) {
+              store.setPlanePositionX(null, series, i);
+          } else {
+              final Length x = new Length(xCoord, UNITS.REFERENCEFRAME);
+              store.setPlanePositionX(x, series, i);
+          }
+          if (yCoord == null) {
+              store.setPlanePositionY(null, series, i);
+          } else {
+              final Length y = new Length(yCoord, UNITS.REFERENCEFRAME);
+              store.setPlanePositionY(y, series, i);
+          }
+          if (zCoord == null) {
+              store.setPlanePositionZ(null, series, i);
+          } else {
+              final Length z = new Length(zCoord, UNITS.REFERENCEFRAME);
+              store.setPlanePositionZ(z, series, i);
+          }
         }
       }
     }

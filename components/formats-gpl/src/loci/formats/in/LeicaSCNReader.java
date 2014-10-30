@@ -38,6 +38,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
@@ -329,8 +331,10 @@ public class LeicaSCNReader extends BaseTiffReader {
       // Leica units are nanometres; convert to µm
       double sizeX = ((double) i.vSizeX) / 1000;
       double sizeY = ((double) i.vSizeY) / 1000;
-      double offsetX = ((double) i.vOffsetX) / 1000;
-      double offsetY = ((double) i.vOffsetY) / 1000;
+      final Length offsetX =
+              new Length(i.vOffsetX / 1000.0d, UNITS.REFERENCEFRAME);
+      final Length offsetY =
+              new Length(i.vOffsetY / 1000.0d, UNITS.REFERENCEFRAME);
       double sizeZ = (double) i.vSpacingZ / 1000;
 
       store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX/i.pixels.dimSizeX[0][0][r]), s);

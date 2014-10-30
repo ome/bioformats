@@ -80,8 +80,8 @@ public abstract class BaseZeissReader extends FormatReader {
 
   protected Vector<String> tagsToParse;
   protected int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  protected Hashtable<Integer, Double> stageX = new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, Double> stageY = new Hashtable<Integer, Double>();
+  protected Hashtable<Integer, Length> stageX = new Hashtable<Integer, Length>();
+  protected Hashtable<Integer, Length> stageY = new Hashtable<Integer, Length>();
   protected int timepoint = 0;
 
   protected int[] channelColors;
@@ -951,11 +951,13 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
         }
         else if (key.startsWith("Stage Position X")) {
-          stageX.put(image, new Double(value));
+          final Double number = Double.valueOf(value);
+          stageX.put(image, new Length(number, UNITS.REFERENCEFRAME));
           addGlobalMetaList("X position for position", value);
         }
         else if (key.startsWith("Stage Position Y")) {
-          stageY.put(image, new Double(value));
+          final Double number = Double.valueOf(value);
+          stageY.put(image, new Length(number, UNITS.REFERENCEFRAME));
           addGlobalMetaList("Y position for position", value);
         }
         else if (key.startsWith("Orca Analog Gain")) {

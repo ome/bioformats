@@ -78,7 +78,7 @@ public class FEITiffReader extends BaseTiffReader {
   private String date;
   private String userName;
   private String microscopeModel;
-  private Double stageX, stageY, stageZ;
+  private Length stageX, stageY, stageZ;
   private Double sizeX, sizeY, timeIncrement;
   private ArrayList<String> detectors;
   private Double magnification;
@@ -168,24 +168,30 @@ public class FEITiffReader extends BaseTiffReader {
             IniTable stageTable = ini.getTable("Stage");
 
             if (beamX != null) {
-              stageX = new Double(beamX);
+              final Double number = Double.valueOf(beamX);
+              stageX = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (stageTable != null) {
-              stageX = new Double(stageTable.get("StageX"));
+              final Double number = Double.valueOf(stageTable.get("StageX"));
+              stageX = new Length(number, UNITS.REFERENCEFRAME);
             }
 
             if (beamY != null) {
-              stageY = new Double(beamY);
+              final Double number = Double.valueOf(beamY);
+              stageY = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (stageTable != null) {
-              stageY = new Double(stageTable.get("StageY"));
+              final Double number = Double.valueOf(stageTable.get("StageY"));
+              stageY = new Length(number, UNITS.REFERENCEFRAME);
             }
 
             if (beamZ != null) {
-              stageZ = new Double(beamZ);
+              final Double number = Double.valueOf(beamZ);
+              stageZ = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (stageTable != null) {
-              stageZ = new Double(stageTable.get("StageZ"));
+              final Double number = Double.valueOf(stageTable.get("StageZ"));
+              stageZ = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
 
@@ -206,8 +212,10 @@ public class FEITiffReader extends BaseTiffReader {
         sizeY = new Double(magnification) * MAG_MULTIPLIER;
 
         IniTable scanTable = ini.getTable("Vector.Sysscan");
-        stageX = new Double(scanTable.get("PositionX"));
-        stageY = new Double(scanTable.get("PositionY"));
+        final Double posX = Double.valueOf(scanTable.get("PositionX"));
+        final Double posY = Double.valueOf(scanTable.get("PositionY"));
+        stageX = new Length(posX, UNITS.REFERENCEFRAME);
+        stageY = new Length(posY, UNITS.REFERENCEFRAME);
 
         IniTable detectorTable = ini.getTable("Vector.Video.Detectors");
         int detectorCount =
@@ -317,13 +325,16 @@ public class FEITiffReader extends BaseTiffReader {
         addGlobalMeta(key, value);
 
         if (key.equals("Stage X")) {
-          stageX = new Double(value);
+          final Double number = Double.valueOf(value);
+          stageX = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (key.equals("Stage Y")) {
-          stageY = new Double(value);
+          final Double number = Double.valueOf(value);
+          stageY = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (key.equals("Stage Z")) {
-          stageZ = new Double(value);
+          final Double number = Double.valueOf(value);
+          stageZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (key.equals("Microscope")) {
           microscopeModel = value;

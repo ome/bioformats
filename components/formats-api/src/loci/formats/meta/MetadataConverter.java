@@ -766,19 +766,19 @@ public final class MetadataConverter {
           dest.setStageLabelName(stageLabelName, i);
 
           try {
-            Double stageLabelX = src.getStageLabelX(i);
+            final Length stageLabelX = src.getStageLabelX(i);
             dest.setStageLabelX(stageLabelX, i);
           }
           catch (NullPointerException e) { }
 
           try {
-            Double stageLabelY = src.getStageLabelY(i);
+            final Length stageLabelY = src.getStageLabelY(i);
             dest.setStageLabelY(stageLabelY, i);
           }
           catch (NullPointerException e) { }
 
           try {
-            Double stageLabelZ = src.getStageLabelZ(i);
+            final Length stageLabelZ = src.getStageLabelZ(i);
             dest.setStageLabelZ(stageLabelZ, i);
           }
           catch (NullPointerException e) { }
@@ -1137,19 +1137,19 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double positionX = src.getPlanePositionX(i, p);
+          final Length positionX = src.getPlanePositionX(i, p);
           dest.setPlanePositionX(positionX, i, p);
         }
         catch (NullPointerException e) { }
 
         try {
-          Double positionY = src.getPlanePositionY(i, p);
+          final Length positionY = src.getPlanePositionY(i, p);
           dest.setPlanePositionY(positionY, i, p);
         }
         catch (NullPointerException e) { }
 
         try {
-          Double positionZ = src.getPlanePositionZ(i, p);
+          final Length positionZ = src.getPlanePositionZ(i, p);
           dest.setPlanePositionZ(positionZ, i, p);
         }
         catch (NullPointerException e) { }

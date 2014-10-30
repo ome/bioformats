@@ -97,9 +97,9 @@ public class NativeND2Reader extends FormatReader {
 
   private long xOffset, yOffset, zOffset;
 
-  private ArrayList<Double> posX;
-  private ArrayList<Double> posY;
-  private ArrayList<Double> posZ;
+  private ArrayList<Length> posX;
+  private ArrayList<Length> posY;
+  private ArrayList<Length> posZ;
   private ArrayList<Double> exposureTime = new ArrayList<Double>();
 
   private Hashtable<String, Integer> channelColors;
@@ -1097,7 +1097,8 @@ public class NativeND2Reader extends FormatReader {
       if (posX.size() == 0 && xOffset != 0) {
         in.seek(xOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double x = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length x = new Length(number, UNITS.REFERENCEFRAME);
           if (!posX.contains(x)) {
             uniqueX++;
           }
@@ -1107,7 +1108,8 @@ public class NativeND2Reader extends FormatReader {
       if (posY.size() == 0 && yOffset != 0) {
         in.seek(yOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double y = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length y = new Length(number, UNITS.REFERENCEFRAME);
           if (!posY.contains(y)) {
             uniqueY++;
           }
@@ -1117,12 +1119,15 @@ public class NativeND2Reader extends FormatReader {
       if (posZ.size() == 0 && zOffset != 0) {
         in.seek(zOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double z = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length z = new Length(number, UNITS.REFERENCEFRAME);
           if (!posZ.contains(z)) {
             boolean unique = true;
             for (int q=0; q<posZ.size(); q++) {
               // account for potential stage drift
-              if (Math.abs(z - posZ.get(q)) <= 0.05) {
+              final double z1 = z.value(UNITS.REFERENCEFRAME).doubleValue();
+              final double z2 = posZ.get(q).value(UNITS.REFERENCEFRAME).doubleValue();
+              if (Math.abs(z1 - z2) <= 0.05) {
                 unique = false;
                 break;
               }

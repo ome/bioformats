@@ -467,9 +467,12 @@ public class FluoviewReader extends BaseTiffReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        store.setPlanePositionX(posX, i, image);
-        store.setPlanePositionY(posY, i, image);
-        store.setPlanePositionZ(posZ, i, image);
+        final Length xl = new Length(posX, UNITS.REFERENCEFRAME);
+        final Length yl = new Length(posY, UNITS.REFERENCEFRAME);
+        final Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
+        store.setPlanePositionX(xl, i, image);
+        store.setPlanePositionY(yl, i, image);
+        store.setPlanePositionZ(zl, i, image);
       }
     }
 

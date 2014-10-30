@@ -129,9 +129,9 @@ public class FlexReader extends FormatReader {
 
   private String plateAcqStartTime;
 
-  private ArrayList<Double> planePositionX = new ArrayList<Double>();
-  private ArrayList<Double> planePositionY = new ArrayList<Double>();
-  private ArrayList<Double> planePositionZ = new ArrayList<Double>();
+  private ArrayList<Length> planePositionX = new ArrayList<Length>();
+  private ArrayList<Length> planePositionY = new ArrayList<Length>();
+  private ArrayList<Length> planePositionZ = new ArrayList<Length>();
   private ArrayList<Double> planeExposureTime = new ArrayList<Double>();
   private ArrayList<Double> planeDeltaT = new ArrayList<Double>();
 
@@ -1550,18 +1550,18 @@ public class FlexReader extends FormatReader {
           ySizes.add(new Double(v));
         }
         else if (qName.equals("PositionX")) {
-          Double v = new Double(Double.parseDouble(value) * 1000000);
-          planePositionX.add(v);
+          final double v = Double.parseDouble(value) * 1000000;
+          planePositionX.add(new Length(v, UNITS.REFERENCEFRAME));
           addGlobalMetaList("X position for position", v);
         }
         else if (qName.equals("PositionY")) {
-          Double v = new Double(Double.parseDouble(value) * 1000000);
-          planePositionY.add(v);
+          final double v = Double.parseDouble(value) * 1000000;
+          planePositionY.add(new Length(v, UNITS.REFERENCEFRAME));
           addGlobalMetaList("Y position for position", v);
         }
         else if (qName.equals("PositionZ")) {
-          Double v = new Double(Double.parseDouble(value) * 1000000);
-          planePositionZ.add(v);
+          final double v = Double.parseDouble(value) * 1000000;
+          planePositionZ.add(new Length(v, UNITS.REFERENCEFRAME));
           addGlobalMetaList("Z position for position", v);
         }
         else if (qName.equals("TimepointOffsetUsed")) {

@@ -30,6 +30,9 @@ import java.util.Vector;
 
 import loci.common.xml.BaseHandler;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -58,7 +61,7 @@ public class MetamorphHandler extends BaseHandler {
   private double temperature;
   private String binning;
   private double readOutRate, zoom;
-  private double positionX, positionY;
+  private Length positionX, positionY;
   private Vector<Double> exposures;
   private String channelName;
   private String stageLabel;
@@ -109,9 +112,9 @@ public class MetamorphHandler extends BaseHandler {
 
   public double getZoom() { return zoom; }
 
-  public double getStagePositionX() { return positionX; }
+  public Length getStagePositionX() { return positionX; }
 
-  public double getStagePositionY() { return positionY; }
+  public Length getStagePositionY() { return positionY; }
 
   public Vector<Double> getExposures() { return exposures; }
 
@@ -208,13 +211,15 @@ public class MetamorphHandler extends BaseHandler {
       zoom = Double.parseDouble(value);
     }
     else if (key.equals("stage-position-x")) {
-      positionX = Double.parseDouble(value);
+      final Double number = Double.valueOf(value);
+      positionX = new Length(number, UNITS.REFERENCEFRAME);
       if (metadata != null) {
         metadata.put("X position for position #1", positionX);
       }
     }
     else if (key.equals("stage-position-y")) {
-      positionY = Double.parseDouble(value);
+      final Double number = Double.valueOf(value);
+      positionY = new Length(number, UNITS.REFERENCEFRAME);
       if (metadata != null) {
         metadata.put("Y position for position #1", positionY);
       }

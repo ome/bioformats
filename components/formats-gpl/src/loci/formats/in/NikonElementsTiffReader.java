@@ -154,9 +154,9 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     store.setImageInstrumentRef(instrument, 0);
 
     ArrayList<Double> exposureTimes = handler.getExposureTimes();
-    ArrayList<Double> posX = handler.getXPositions();
-    ArrayList<Double> posY = handler.getYPositions();
-    ArrayList<Double> posZ = handler.getZPositions();
+    ArrayList<Length> posX = handler.getXPositions();
+    ArrayList<Length> posY = handler.getYPositions();
+    ArrayList<Length> posZ = handler.getZPositions();
 
     for (int i=0; i<getImageCount(); i++) {
       int c = getZCTCoords(i)[1];

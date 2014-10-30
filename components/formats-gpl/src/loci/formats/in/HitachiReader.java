@@ -248,9 +248,14 @@ public class HitachiReader extends FormatReader {
     Double pixelSize = new Double(image.get("PixelSize"));
 
     String workingDistance = image.get("WorkingDistance");
-    Double stagePosX = new Double(image.get("StagePositionX"));
-    Double stagePosY = new Double(image.get("StagePositionY"));
-    Double stagePosZ = new Double(image.get("StagePositionZ"));
+
+    final Double stagePosXn = Double.valueOf(image.get("StagePositionX"));
+    final Double stagePosYn = Double.valueOf(image.get("StagePositionY"));
+    final Double stagePosZn = Double.valueOf(image.get("StagePositionZ"));
+
+    final Length stagePosXl = new Length(stagePosXn, UNITS.REFERENCEFRAME);
+    final Length stagePosYl = new Length(stagePosYn, UNITS.REFERENCEFRAME);
+    final Length stagePosZl = new Length(stagePosZn, UNITS.REFERENCEFRAME);
 
     Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
     Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
@@ -261,15 +266,9 @@ public class HitachiReader extends FormatReader {
       store.setPixelsPhysicalSizeY(sizeY, 0);
     }
 
-    if (stagePosX != null) {
-      store.setPlanePositionX(stagePosX, 0, 0);
-    }
-    if (stagePosY != null) {
-      store.setPlanePositionY(stagePosY, 0, 0);
-    }
-    if (stagePosZ != null) {
-      store.setPlanePositionZ(stagePosZ, 0, 0);
-    }
+    store.setPlanePositionX(stagePosXl, 0, 0);
+    store.setPlanePositionY(stagePosYl, 0, 0);
+    store.setPlanePositionZ(stagePosZl, 0, 0);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);

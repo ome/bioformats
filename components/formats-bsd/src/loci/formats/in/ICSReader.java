@@ -821,7 +821,7 @@ public class ICSReader extends FormatReader {
     double[] sizes = null;
 
     Double[] emWaves = null, exWaves = null;
-    Double[] stagePos = null;
+    Length[] stagePos = null;
     String imageName = null, date = null, description = null;
     Double magnification = null, lensNA = null, workingDistance = null;
     String objectiveModel = null, immersion = null, lastName = null;
@@ -1096,10 +1096,11 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history stage_xyzum")) {
               String[] positions = value.split(" ");
-              stagePos = new Double[positions.length];
+              stagePos = new Length[positions.length];
               for (int n=0; n<stagePos.length; n++) {
                 try {
-                  stagePos[n] = new Double(positions[n]);
+                  final Double number = Double.valueOf(positions[n]);
+                  stagePos[n] = new Length(number, UNITS.REFERENCEFRAME);
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse stage position", e);
@@ -1108,21 +1109,24 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history stage positionx")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[0] = new Double(value); //TODO doubleValue
+              final Double number = Double.valueOf(value);
+              stagePos[0] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history stage positiony")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[1] = new Double(value);
+              final Double number = Double.valueOf(value);
+              stagePos[1] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history stage positionz")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[2] = new Double(value);
+              final Double number = Double.valueOf(value);
+              stagePos[2] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history other text")) {
               description = value;

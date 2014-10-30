@@ -147,9 +147,9 @@ public class ZeissCZIReader extends FormatReader {
   private ArrayList<String> detectorRefs = new ArrayList<String>();
   private ArrayList<Double> timestamps = new ArrayList<Double>();
 
-  private Double[] positionsX;
-  private Double[] positionsY;
-  private Double[] positionsZ;
+  private Length[] positionsX;
+  private Length[] positionsY;
+  private Length[] positionsZ;
 
   private int previousChannel = 0;
 
@@ -2144,9 +2144,9 @@ public class ZeissCZIReader extends FormatReader {
     Element tilesSetup = getFirstNode(acquisition, "TilesSetup");
     NodeList groups = getGrandchildren(tilesSetup, "PositionGroup");
 
-    positionsX = new Double[core.size()];
-    positionsY = new Double[core.size()];
-    positionsZ = new Double[core.size()];
+    positionsX = new Length[core.size()];
+    positionsY = new Length[core.size()];
+    positionsZ = new Length[core.size()];
 
     if (groups != null) {
       for (int i=0; i<groups.getLength(); i++) {
@@ -2161,19 +2161,19 @@ public class ZeissCZIReader extends FormatReader {
         String y = position.getAttribute("Y");
         String z = position.getAttribute("Z");
 
-        Double xPos = null;
+        Length xPos = null;
         try {
-          xPos = new Double(x);
+          xPos = new Length(Double.valueOf(x), UNITS.REFERENCEFRAME);
         }
         catch (NumberFormatException e) { }
-        Double yPos = null;
+        Length yPos = null;
         try {
-          yPos = new Double(y);
+          yPos = new Length(Double.valueOf(y), UNITS.REFERENCEFRAME);
         }
         catch (NumberFormatException e) { }
-        Double zPos = null;
+        Length zPos = null;
         try {
-          zPos = new Double(z);
+          zPos = new Length(Double.valueOf(z), UNITS.REFERENCEFRAME);
         }
         catch (NumberFormatException e) { }
 
@@ -2205,9 +2205,24 @@ public class ZeissCZIReader extends FormatReader {
 
               // safe to assume all 3 arrays have the same length
               if (i < positionsX.length) {
-                positionsX[i] = x == null ? null : new Double(x);
-                positionsY[i] = y == null ? null : new Double(y);
-                positionsZ[i] = z == null ? null : new Double(z);
+                if (x == null) {
+                  positionsX[i] = null;
+                } else {
+                  final Double number = Double.valueOf(x);
+                  positionsX[i] = new Length(number, UNITS.REFERENCEFRAME);
+                }
+                if (y == null) {
+                  positionsY[i] = null;
+                } else {
+                  final Double number = Double.valueOf(y);
+                  positionsY[i] = new Length(number, UNITS.REFERENCEFRAME);
+                }
+                if (z == null) {
+                  positionsZ[i] = null;
+                } else {
+                  final Double number = Double.valueOf(z);
+                  positionsZ[i] = new Length(number, UNITS.REFERENCEFRAME);
+                }
               }
             }
           }
@@ -2733,7 +2748,8 @@ public class ZeissCZIReader extends FormatReader {
 
     private long dataOffset;
 
-    private Double stageX, stageY, timestamp, exposureTime, stageZ;
+    private Length stageX, stageY, stageZ;
+    private Double timestamp, exposureTime;
 
     public int x, y;
     public int row, col;
@@ -2904,13 +2920,16 @@ public class ZeissCZIReader extends FormatReader {
               String text = tagNode.getTextContent();
               if (text != null) {
                 if (tagNode.getNodeName().equals("StageXPosition")) {
-                  stageX = new Double(text);
+                  final Double number = Double.valueOf(text);
+                  stageX = new Length(number, UNITS.REFERENCEFRAME);
                 }
                 else if (tagNode.getNodeName().equals("StageYPosition")) {
-                  stageY = new Double(text);
+                  final Double number = Double.valueOf(text);
+                  stageY = new Length(number, UNITS.REFERENCEFRAME);
                 }
                 else if (tagNode.getNodeName().equals("FocusPosition")) {
-                  stageZ = new Double(text);
+                  final Double number = Double.valueOf(text);
+                  stageZ = new Length(number, UNITS.REFERENCEFRAME);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
                   Timestamp t = Timestamp.valueOf(text);

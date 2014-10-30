@@ -39,6 +39,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -251,14 +253,18 @@ public class SlidebookTiffReader extends BaseTiffReader {
         store.setObjectiveNominalMagnification(new Double(mag), 0, 0);
       }
 
-      Double x = new Double(ifd.getIFDTextValue(X_POS_TAG));
-      Double y = new Double(ifd.getIFDTextValue(Y_POS_TAG));
-      Double z = new Double(ifd.getIFDTextValue(Z_POS_TAG));
+      final Double xn = Double.valueOf(ifd.getIFDTextValue(X_POS_TAG));
+      final Double yn = Double.valueOf(ifd.getIFDTextValue(Y_POS_TAG));
+      final Double zn = Double.valueOf(ifd.getIFDTextValue(Z_POS_TAG));
+
+      final Length xl = new Length(xn, UNITS.REFERENCEFRAME);
+      final Length yl = new Length(yn, UNITS.REFERENCEFRAME);
+      final Length zl = new Length(zn, UNITS.REFERENCEFRAME);
 
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlanePositionX(x, 0, i);
-        store.setPlanePositionY(y, 0, i);
-        store.setPlanePositionZ(z, 0, i);
+        store.setPlanePositionX(xl, 0, i);
+        store.setPlanePositionY(yl, 0, i);
+        store.setPlanePositionZ(zl, 0, i);
       }
     }
   }

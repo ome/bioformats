@@ -96,7 +96,7 @@ public class GatanReader extends FormatReader {
   private double gamma, mag, voltage;
   private String info;
 
-  private double posX, posY, posZ;
+  private Length posX, posY, posZ;
   private double sampleTime;
 
   private boolean adjustEndianness = true;
@@ -147,7 +147,7 @@ public class GatanReader extends FormatReader {
       info = null;
       adjustEndianness = true;
       version = 0;
-      posX = posY = posZ = 0;
+      posX = posY = posZ = new Length(0, UNITS.REFERENCEFRAME);
       sampleTime = 0;
       units = null;
     }
@@ -500,13 +500,16 @@ public class GatanReader extends FormatReader {
           gamma = Double.parseDouble(value);
         }
         else if (labelString.startsWith("xPos")) {
-          posX = Double.parseDouble(value);
+          final Double number = Double.valueOf(value);
+          posX = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (labelString.startsWith("yPos")) {
-          posY = Double.parseDouble(value);
+          final Double number = Double.valueOf(value);
+          posY = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (labelString.startsWith("Specimen position")) {
-          posZ = Double.parseDouble(value);
+          final Double number = Double.valueOf(value);
+          posZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (labelString.equals("Sample Time")) {
           sampleTime = Double.parseDouble(value);

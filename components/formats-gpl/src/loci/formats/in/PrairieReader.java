@@ -52,6 +52,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -629,9 +630,9 @@ public class PrairieReader extends FormatReader {
             warnFrame(sequence, index);
             continue;
           }
-          final Double posX = zFrame.getPositionX();
-          final Double posY = zFrame.getPositionY();
-          final Double posZ = zFrame.getPositionZ();
+          final Length posX = zFrame.getPositionX();
+          final Length posY = zFrame.getPositionY();
+          final Length posZ = zFrame.getPositionZ();
           final Double deltaT = zFrame.getRelativeTime();
           for (int c = 0; c < getSizeC(); c++) {
             final int i = getIndex(z, c, t);
@@ -786,9 +787,9 @@ public class PrairieReader extends FormatReader {
         }
 
         // obtain the initial XYZ stage coordinates for this position
-        final Double xInitial = initialFrame.getPositionX();
-        final Double yInitial = initialFrame.getPositionY();
-        final Double zInitial = initialFrame.getPositionZ();
+        final Length xInitial = initialFrame.getPositionX();
+        final Length yInitial = initialFrame.getPositionY();
+        final Length zInitial = initialFrame.getPositionZ();
 
         // verify that the initial coordinates match all subsequent time points
         for (int t = 1; t < sizeT; t++) {
@@ -799,9 +800,9 @@ public class PrairieReader extends FormatReader {
             continue;
           }
 
-          final Double xPos = frame.getPositionX();
-          final Double yPos = frame.getPositionY();
-          final Double zPos = frame.getPositionZ();
+          final Length xPos = frame.getPositionX();
+          final Length yPos = frame.getPositionY();
+          final Length zPos = frame.getPositionZ();
 
           if (!equal(xPos, xInitial) || !equal(yPos, yInitial) ||
             !equal(zPos, zInitial))
@@ -863,11 +864,10 @@ public class PrairieReader extends FormatReader {
   }
 
 
-  /** Determines whether the two {@link Double} values are equal. */
-  private boolean equal(final Double xPos, final Double xInitial) {
+  /** Determines whether the two {@link Length} values are equal. */
+  private static boolean equal(final Length xPos, final Length xInitial) {
     if (xPos == null && xInitial == null) return true;
     if (xPos == null) return false;
     return xPos.equals(xInitial);
   }
-
 }

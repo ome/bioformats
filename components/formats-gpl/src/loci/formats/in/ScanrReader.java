@@ -97,8 +97,8 @@ public class ScanrReader extends FormatReader {
   private MinimalTiffReader reader;
 
   private boolean foundPositions = false;
-  private double[] fieldPositionX;
-  private double[] fieldPositionY;
+  private Length[] fieldPositionX;
+  private Length[] fieldPositionY;
   private Vector<Double> exposures = new Vector<Double>();
   private Double deltaT = null;
 
@@ -651,8 +651,8 @@ public class ScanrReader extends FormatReader {
         if (fieldPositionX != null && fieldPositionY != null) {
           int field = i % nFields;
           int well = i / nFields;
-          Length posX = new Length(fieldPositionX[field], UNITS.REFERENCEFRAME);
-          Length posY = new Length(fieldPositionY[field], UNITS.REFERENCEFRAME);
+          final Length posX = fieldPositionX[field];
+          final Length posY = fieldPositionY[field];
           
           store.setWellSamplePositionX(posX, 0, well, field);
           store.setWellSamplePositionY(posY, 0, well, field);
@@ -736,8 +736,8 @@ public class ScanrReader extends FormatReader {
           fieldPositionX == null)
         {
           int nPositions = Integer.parseInt(v);
-          fieldPositionX = new double[nPositions];
-          fieldPositionY = new double[nPositions];
+          fieldPositionX = new Length[nPositions];
+          fieldPositionY = new Length[nPositions];
         }
         else if ("Rows".equals(key) && foundPlateLayout) {
           wellRows = Integer.parseInt(v);
@@ -808,12 +808,16 @@ public class ScanrReader extends FormatReader {
           else if (foundPositions) {
             if (nextXPos == nextYPos) {
               if (nextXPos < fieldPositionX.length) {
-                fieldPositionX[nextXPos++] = Double.parseDouble(v);
+                final Double number = Double.valueOf(v);
+                final Length length = new Length(number, UNITS.REFERENCEFRAME);
+                fieldPositionX[nextXPos++] = length;
               }
             }
             else {
               if (nextYPos < fieldPositionY.length) {
-                fieldPositionY[nextYPos++] = Double.parseDouble(v);
+                final Double number = Double.valueOf(v);
+                final Length length = new Length(number, UNITS.REFERENCEFRAME);
+                fieldPositionY[nextYPos++] = length;
               }
             }
           }

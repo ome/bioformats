@@ -676,7 +676,8 @@ public class FV1000Reader extends FormatReader {
           if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
             ms0.dimensionOrder += "Z";
           }
-          plane.positionZ = Double.parseDouble(axis.get("AbsPositionValue"));
+          final Double number = Double.valueOf(axis.get("AbsPositionValue"));
+          plane.positionZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (dim == 4) {
           if (addAxis && getDimensionOrder().indexOf("T") == -1) {
@@ -691,14 +692,16 @@ public class FV1000Reader extends FormatReader {
           try {
             String xPos = axis.get("AbsPositionValueX");
             if (xPos != null) {
-              plane.positionX = Double.parseDouble(xPos);
+              final Double number = Double.valueOf(xPos);
+              plane.positionX = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
           catch (NumberFormatException e) { }
           try {
             String yPos = axis.get("AbsPositionValueY");
             if (yPos != null) {
-              plane.positionY = Double.parseDouble(yPos);
+              final Double number = Double.valueOf(yPos);
+              plane.positionY = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
           catch (NumberFormatException e) { }
@@ -1698,9 +1701,9 @@ public class FV1000Reader extends FormatReader {
 
   class PlaneData {
     public Double deltaT;
-    public Double positionX;
-    public Double positionY;
-    public Double positionZ;
+    public Length positionX;
+    public Length positionY;
+    public Length positionZ;
   }
 
 }

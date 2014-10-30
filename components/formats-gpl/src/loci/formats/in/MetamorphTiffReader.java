@@ -157,8 +157,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     Vector<String> uniqueChannels = new Vector<String>();
     Vector<Double> uniqueZs = new Vector<Double>();
-    Vector<Double> stageX = new Vector<Double>();
-    Vector<Double> stageY = new Vector<Double>();
+    Vector<Length> stageX = new Vector<Length>();
+    Vector<Length> stageY = new Vector<Length>();
 
     CoreMetadata m = core.get(0);
 
@@ -234,25 +234,30 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // parse XML comment
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
-    Vector<Double> xPositions = new Vector<Double>();
-    Vector<Double> yPositions = new Vector<Double>();
+    final Vector<Length> xPositions = new Vector<Length>();
+    final Vector<Length> yPositions = new Vector<Length>();
 
     for (IFD ifd : ifds) {
       String xml = XMLTools.sanitizeXML(ifd.getComment());
       XMLTools.parseXML(xml, handler);
 
-      double x = handler.getStagePositionX();
-      double y = handler.getStagePositionY();
+      final Length x = handler.getStagePositionX();
+      final Length y = handler.getStagePositionY();
 
       if (xPositions.size() == 0) {
         xPositions.add(x);
         yPositions.add(y);
       }
       else {
-        double previousX = xPositions.get(xPositions.size() - 1);
-        double previousY = yPositions.get(yPositions.size() - 1);
+        final Length previousX = xPositions.get(xPositions.size() - 1);
+        final Length previousY = yPositions.get(yPositions.size() - 1);
 
-        if (Math.abs(previousX - x) > 0.21 || Math.abs(previousY - y) > 0.21) {
+        final double x1 = x.value(UNITS.REFERENCEFRAME).doubleValue();
+        final double x2 = previousX.value(UNITS.REFERENCEFRAME).doubleValue();
+        final double y1 = y.value(UNITS.REFERENCEFRAME).doubleValue();
+        final double y2 = previousY.value(UNITS.REFERENCEFRAME).doubleValue();
+
+        if (Math.abs(x1 - x2) > 0.21 || Math.abs(y1 - y2) > 0.21) {
           xPositions.add(x);
           yPositions.add(y);
         }

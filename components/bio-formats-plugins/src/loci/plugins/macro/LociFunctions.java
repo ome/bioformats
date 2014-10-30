@@ -451,37 +451,46 @@ public class LociFunctions extends MacroFunctions {
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
 
-  public void getPlanePositionX(Double[] positionX, Double no) {
+  public void getPlanePositionX(Length[] positionX, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Length val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlanePositionX(imageIndex, planeIndex);
     }
-    positionX[0] = val == null ? new Double(Double.NaN) : val;
+    if (val == null) {
+        val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
+    }
+    positionX[0] = val;
   }
 
-  public void getPlanePositionY(Double[] positionY, Double no) {
+  public void getPlanePositionY(Length[] positionY, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Length val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlanePositionY(imageIndex, planeIndex);
     }
-    positionY[0] = val == null ? new Double(Double.NaN) : val;
+    if (val == null) {
+        val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
+    }
+    positionY[0] = val;
   }
 
-  public void getPlanePositionZ(Double[] positionZ, Double no) {
+  public void getPlanePositionZ(Length[] positionZ, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Length val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlanePositionZ(imageIndex, planeIndex);
     }
-    positionZ[0] = val == null ? new Double(Double.NaN) : val;
+    if (val == null) {
+        val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
+    }
+    positionZ[0] = val;
   }
 
   public void getPixelsPhysicalSizeX(Double[] sizeX) {

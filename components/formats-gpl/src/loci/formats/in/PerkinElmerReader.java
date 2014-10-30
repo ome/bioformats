@@ -657,9 +657,18 @@ public class PerkinElmerReader extends FormatReader {
         }
 
         if (zct[0] < zPositions.size()) {
-          store.setPlanePositionX(0.0, 0, i);
-          store.setPlanePositionY(0.0, 0, i);
-          store.setPlanePositionZ(zPositions.get(zct[0]), 0, i);
+          final Double zPosition = zPositions.get(zct[0]);
+          final Length xl = new Length(0d, UNITS.REFERENCEFRAME);
+          final Length yl = new Length(0d, UNITS.REFERENCEFRAME);
+          final Length zl;
+          if (zPosition == null) {
+              zl = null;
+          } else {
+              zl = new Length(zPosition, UNITS.REFERENCEFRAME);
+          }
+          store.setPlanePositionX(xl, 0, i);
+          store.setPlanePositionY(yl, 0, i);
+          store.setPlanePositionZ(zl, 0, i);
         }
       }
     }

@@ -62,6 +62,9 @@ package loci.formats.out;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 
@@ -172,9 +175,12 @@ public class WlzWriter extends FormatWriter {
       int oZ = 0;
       if((stageLabelName != null) &&
          stageLabelName.equals(wlz.getWlzOrgLabelName())) {
-	oX = (int )Math.rint(meta.getStageLabelX(0));
-        oY = (int )Math.rint(meta.getStageLabelY(0));
-        oZ = (int )Math.rint(meta.getStageLabelZ(0));
+        final Length stageX = meta.getStageLabelX(0);
+        final Length stageY = meta.getStageLabelY(0);
+        final Length stageZ = meta.getStageLabelZ(0);
+        oX = (int) Math.rint(stageX.value(UNITS.REFERENCEFRAME).doubleValue());
+        oY = (int) Math.rint(stageY.value(UNITS.REFERENCEFRAME).doubleValue());
+        oZ = (int) Math.rint(stageZ.value(UNITS.REFERENCEFRAME).doubleValue());
       }
       int nX = meta.getPixelsSizeX(series).getValue().intValue();
       int nY = meta.getPixelsSizeY(series).getValue().intValue();

@@ -37,6 +37,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -93,9 +94,9 @@ public class ND2Handler extends BaseHandler {
   private ArrayList<Integer> power = new ArrayList<Integer>();
   private ArrayList<Hashtable<String, String>> rois =
     new ArrayList<Hashtable<String, String>>();
-  private ArrayList<Double> posX = new ArrayList<Double>();
-  private ArrayList<Double> posY = new ArrayList<Double>();
-  private ArrayList<Double> posZ = new ArrayList<Double>();
+  private ArrayList<Length> posX = new ArrayList<Length>();
+  private ArrayList<Length> posY = new ArrayList<Length>();
+  private ArrayList<Length> posZ = new ArrayList<Length>();
   private ArrayList<String> posNames = new ArrayList<String>();
 
   private String cameraModel;
@@ -311,15 +312,15 @@ public class ND2Handler extends BaseHandler {
     return rois;
   }
 
-  public ArrayList<Double> getXPositions() {
+  public ArrayList<Length> getXPositions() {
     return posX;
   }
 
-  public ArrayList<Double> getYPositions() {
+  public ArrayList<Length> getYPositions() {
     return posY;
   }
 
-  public ArrayList<Double> getZPositions() {
+  public ArrayList<Length> getZPositions() {
     return posZ;
   }
 
@@ -512,15 +513,18 @@ public class ND2Handler extends BaseHandler {
         }
       }
       else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
-        posX.add(new Double(DataTools.sanitizeDouble(value)));
+        final Double number = Double.valueOf(DataTools.sanitizeDouble(value));
+        posX.add(new Length(number, UNITS.REFERENCEFRAME));
         metadata.put("X position for position #" + posX.size(), value);
       }
       else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
-        posY.add(new Double(DataTools.sanitizeDouble(value)));
+        final Double number = Double.valueOf(DataTools.sanitizeDouble(value));
+        posY.add(new Length(number, UNITS.REFERENCEFRAME));
         metadata.put("Y position for position #" + posY.size(), value);
       }
       else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
-        posZ.add(new Double(DataTools.sanitizeDouble(value)));
+        final Double number = Double.valueOf(DataTools.sanitizeDouble(value));
+        posZ.add(new Length(number, UNITS.REFERENCEFRAME));
         metadata.put("Z position for position #" + posZ.size(), value);
       }
       else if (qName.startsWith("item_")) {

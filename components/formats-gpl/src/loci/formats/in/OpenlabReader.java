@@ -42,6 +42,8 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
@@ -640,9 +642,22 @@ public class OpenlabReader extends FormatReader {
         }
       }
 
-      Double stageX = xPos == null ? null : new Double(xPos);
-      Double stageY = yPos == null ? null : new Double(yPos);
-      Double stageZ = zPos == null ? null : new Double(zPos);
+      final Length stageX, stageY, stageZ;
+      if (xPos == null) {
+          stageX = null;
+      } else {
+          stageX = new Length(Double.valueOf(xPos), UNITS.REFERENCEFRAME);
+      }
+      if (yPos == null) {
+          stageY = null;
+      } else {
+          stageY = new Length(Double.valueOf(yPos), UNITS.REFERENCEFRAME);
+      }
+      if (zPos == null) {
+          stageZ = null;
+      } else {
+          stageZ = new Length(Double.valueOf(zPos), UNITS.REFERENCEFRAME);
+      }
 
       if (stageX != null || stageY != null || stageZ != null) {
         for (int series=0; series<getSeriesCount(); series++) {

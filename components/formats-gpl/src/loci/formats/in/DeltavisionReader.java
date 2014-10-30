@@ -384,8 +384,8 @@ public class DeltavisionReader extends FormatReader {
 
     ndFilters = new Double[getSizeC()];
 
-    Vector<Float> uniqueTileX = new Vector<Float>();
-    Vector<Float> uniqueTileY = new Vector<Float>();
+    final Vector<Length> uniqueTileX = new Vector<Length>();
+    final Vector<Length> uniqueTileY = new Vector<Length>();
 
     // Run through every image and fill in the
     // Extended Header information array for that image
@@ -404,17 +404,19 @@ public class DeltavisionReader extends FormatReader {
       DVExtHdrFields hdr = new DVExtHdrFields(in);
       extHdrFields[z][w][t] = hdr;
 
-      if (!uniqueTileX.contains(hdr.stageXCoord) && hdr.stageXCoord != 0) {
+      if (!uniqueTileX.contains(hdr.stageXCoord) &&
+              hdr.stageXCoord.value().floatValue() != 0) {
         uniqueTileX.add(hdr.stageXCoord);
       }
-      else if (hdr.stageXCoord == 0) {
+      else if (hdr.stageXCoord.value().floatValue() == 0) {
         hasZeroX = true;
       }
 
-      if (!uniqueTileY.contains(hdr.stageYCoord) && hdr.stageYCoord != 0) {
+      if (!uniqueTileY.contains(hdr.stageYCoord) &&
+              hdr.stageYCoord.value().floatValue() != 0) {
         uniqueTileY.add(hdr.stageYCoord);
       }
-      else if (hdr.stageYCoord == 0) {
+      else if (hdr.stageYCoord.value().floatValue() == 0) {
         hasZeroY = true;
       }
     }
@@ -432,7 +434,10 @@ public class DeltavisionReader extends FormatReader {
     }
 
     if (yTiles > 1) {
-      if (uniqueTileY.get(1) < uniqueTileY.get(0)) {
+       // TODO: use compareTo once Length implements Comparable
+      final Number y0 = uniqueTileY.get(0).value(UNITS.REFERENCEFRAME);
+      final Number y1 = uniqueTileY.get(1).value(UNITS.REFERENCEFRAME);
+      if (y1.floatValue() < y0.floatValue()) {
         backwardsStage = true;
       }
     }
@@ -738,9 +743,9 @@ public class DeltavisionReader extends FormatReader {
 
         // stage position
         if (!logFound || getSeriesCount() > 1) {
-          store.setPlanePositionX(new Double(hdr.stageXCoord), series, i);
-          store.setPlanePositionY(new Double(hdr.stageYCoord), series, i);
-          store.setPlanePositionZ(new Double(hdr.stageZCoord), series, i);
+          store.setPlanePositionX(hdr.stageXCoord, series, i);
+          store.setPlanePositionY(hdr.stageYCoord, series, i);
+          store.setPlanePositionZ(hdr.stageZCoord, series, i);
         }
       }
 
@@ -1154,9 +1159,10 @@ public class DeltavisionReader extends FormatReader {
           }
           String[] coords = value.split(",");
           for (int i=0; i<coords.length; i++) {
-            Double p = null;
+            Length p = null;
             try {
-              p = new Double(coords[i].trim());
+              final Double number = Double.valueOf(coords[i]);
+              p = new Length(number, UNITS.REFERENCEFRAME);
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse stage coordinate '{}'", coords[i]);
@@ -2259,13 +2265,13 @@ public class DeltavisionReader extends FormatReader {
     public float timeStampSeconds;
 
     /** X stage coordinates. */
-    public float stageXCoord;
+    public Length stageXCoord;
 
     /** Y stage coordinates. */
-    public float stageYCoord;
+    public Length stageYCoord;
 
     /** Z stage coordinates. */
-    public float stageZCoord;
+    public Length stageZCoord;
 
     /** Minimum intensity */
     public float minInten;
@@ -2350,9 +2356,9 @@ public class DeltavisionReader extends FormatReader {
         // for ImageJ (http://rsb.info.nih.gov/ij/plugins/track/delta.html)
         photosensorReading = in.readFloat();
         timeStampSeconds = in.readFloat();
-        stageXCoord = in.readFloat();
-        stageYCoord = in.readFloat();
-        stageZCoord = in.readFloat();
+        stageXCoord = new Length(in.readFloat(), UNITS.REFERENCEFRAME);
+        stageYCoord = new Length(in.readFloat(), UNITS.REFERENCEFRAME);
+        stageZCoord = new Length(in.readFloat(), UNITS.REFERENCEFRAME);
         minInten = in.readFloat();
         maxInten = in.readFloat();
         in.skipBytes(4);

@@ -123,8 +123,8 @@ public class LIFReader extends FormatReader {
   private Vector<String> lutNames = new Vector<String>();
   private Vector<Double> physicalSizeXs = new Vector<Double>();
   private Vector<Double> physicalSizeYs = new Vector<Double>();
-  private Vector<Double> fieldPosX = new Vector<Double>();
-  private Vector<Double> fieldPosY = new Vector<Double>();
+  private Vector<Length> fieldPosX = new Vector<Length>();
+  private Vector<Length> fieldPosY = new Vector<Length>();
 
   private String[] descriptions, microscopeModels, serialNumber;
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
@@ -137,7 +137,7 @@ public class LIFReader extends FormatReader {
 
   private String[] immersions, corrections, objectiveModels;
   private Double[] magnification;
-  private Double[] posX, posY, posZ;
+  private Length[] posX, posY, posZ;
   private Double[] refractiveIndex;
   private Vector[] cutIns, cutOuts, filterModels;
   private double[][] timestamps;
@@ -869,8 +869,8 @@ public class LIFReader extends FormatReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        Double xPos = posX[index];
-        Double yPos = posY[index];
+        Length xPos = posX[index];
+        Length yPos = posY[index];
         if (i < fieldPosX.size() && fieldPosX.get(i) != null) {
           xPos = fieldPosX.get(i);
         }
@@ -963,9 +963,9 @@ public class LIFReader extends FormatReader {
     immersions = new String[imageNodes.getLength()];
     corrections = new String[imageNodes.getLength()];
     objectiveModels = new String[imageNodes.getLength()];
-    posX = new Double[imageNodes.getLength()];
-    posY = new Double[imageNodes.getLength()];
-    posZ = new Double[imageNodes.getLength()];
+    posX = new Length[imageNodes.getLength()];
+    posY = new Length[imageNodes.getLength()];
+    posZ = new Length[imageNodes.getLength()];
     refractiveIndex = new Double[imageNodes.getLength()];
     cutIns = new Vector[imageNodes.getLength()];
     cutOuts = new Vector[imageNodes.getLength()];
@@ -1520,13 +1520,16 @@ public class LIFReader extends FormatReader {
         refractiveIndex[image] = new Double(variant);
       }
       else if (attribute.equals("XPos")) {
-        posX[image] = new Double(variant);
+        final Double number = Double.valueOf(variant);
+        posX[image] = new Length(number, UNITS.REFERENCEFRAME);
       }
       else if (attribute.equals("YPos")) {
-        posY[image] = new Double(variant);
+        final Double number = Double.valueOf(variant);
+        posY[image] = new Length(number, UNITS.REFERENCEFRAME);
       }
       else if (attribute.equals("ZPos")) {
-        posZ[image] = new Double(variant);
+        final Double number = Double.valueOf(variant);
+        posZ[image] = new Length(number, UNITS.REFERENCEFRAME);
       }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
         Integer v = null;
@@ -1662,7 +1665,8 @@ public class LIFReader extends FormatReader {
 
           if (posX != null) {
             try {
-              fieldPosX.add(new Double(posX));
+              final Double number = Double.valueOf(posX);
+              fieldPosX.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -1671,7 +1675,8 @@ public class LIFReader extends FormatReader {
           }
           if (posY != null) {
             try {
-              fieldPosY.add(new Double(posY));
+              final Double number = Double.valueOf(posY);
+              fieldPosY.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);

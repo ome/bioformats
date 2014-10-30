@@ -549,9 +549,9 @@ public class XMLMockObjects
   {
     StageLabel label = new StageLabel();
     label.setName("StageLabel");
-    label.setX(1.0);
-    label.setY(1.0);
-    label.setZ(1.0);
+    label.setX(new Length(1.0, UNITS.REFERENCEFRAME));
+    label.setY(new Length(1.0, UNITS.REFERENCEFRAME));
+    label.setZ(new Length(1.0, UNITS.REFERENCEFRAME));
     return label;
   }
 
@@ -1006,9 +1006,9 @@ public class XMLMockObjects
     Plane plane = new Plane();
     plane.setDeltaT(new Time(0.1, UNITS.S));
     plane.setExposureTime(new Time(10.0, UNITS.S));
-    plane.setPositionX(1.0);
-    plane.setPositionY(1.0);
-    plane.setPositionZ(1.0);
+    plane.setPositionX(new Length(1.0, UNITS.REFERENCEFRAME));
+    plane.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
+    plane.setPositionZ(new Length(1.0, UNITS.REFERENCEFRAME));
     plane.setTheZ(new NonNegativeInteger(z));
     plane.setTheC(new NonNegativeInteger(c));
     plane.setTheT(new NonNegativeInteger(z));

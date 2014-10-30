@@ -90,7 +90,7 @@ public class LeicaHandler extends BaseHandler {
   private int count = 0, numChannels, extras = 1;
 
   private Vector<String> lutNames;
-  private Vector<Double> xPos, yPos, zPos;
+  private Vector<Length> xPos, yPos, zPos;
   private double physicalSizeX, physicalSizeY;
 
   private int numDatasets = -1;
@@ -134,9 +134,9 @@ public class LeicaHandler extends BaseHandler {
     this.store = store;
     core = new ArrayList<CoreMetadata>();
     detectorIndices = new Vector<Integer>();
-    xPos = new Vector<Double>();
-    yPos = new Vector<Double>();
-    zPos = new Vector<Double>();
+    xPos = new Vector<Length>();
+    yPos = new Vector<Length>();
+    zPos = new Vector<Length>();
     bytesPerAxis = new Hashtable<Integer, String>();
     this.level = level;
   }
@@ -671,29 +671,32 @@ public class LeicaHandler extends BaseHandler {
       else if (attribute.equals("XPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
         int nPlanes = coreMeta.imageCount;
-        Double posX = new Double(variant);
+        final Double posXn = Double.valueOf(variant);
+        final Length posXl = new Length(posXn, UNITS.REFERENCEFRAME);
         for (int image=0; image<nPlanes; image++) {
-          store.setPlanePositionX(posX, numDatasets, image);
+          store.setPlanePositionX(posXl, numDatasets, image);
         }
-        if (numChannels == 0) xPos.add(posX);
+        if (numChannels == 0) xPos.add(posXl);
       }
       else if (attribute.equals("YPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
         int nPlanes = coreMeta.imageCount;
-        Double posY = new Double(variant);
+        final Double posYn = Double.valueOf(variant);
+        final Length posYl = new Length(posYn, UNITS.REFERENCEFRAME);
         for (int image=0; image<nPlanes; image++) {
-          store.setPlanePositionY(posY, numDatasets, image);
+          store.setPlanePositionY(posYl, numDatasets, image);
         }
-        if (numChannels == 0) yPos.add(posY);
+        if (numChannels == 0) yPos.add(posYl);
       }
       else if (attribute.equals("ZPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
         int nPlanes = coreMeta.imageCount;
-        Double posZ = new Double(variant);
+        final Double posZn = Double.valueOf(variant);
+        final Length posZl = new Length(posZn, UNITS.REFERENCEFRAME);
         for (int image=0; image<nPlanes; image++) {
-          store.setPlanePositionZ(posZ, numDatasets, image);
+          store.setPlanePositionZ(posZl, numDatasets, image);
         }
-        if (numChannels == 0) zPos.add(posZ);
+        if (numChannels == 0) zPos.add(posZl);
       }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
         Integer v = null;

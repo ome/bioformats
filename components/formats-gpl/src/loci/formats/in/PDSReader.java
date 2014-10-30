@@ -39,6 +39,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.UNITS;
 import ome.units.quantity.Length;
 
 /**
@@ -195,7 +196,7 @@ public class PDSReader extends FormatReader {
     if (headerData.length == 1) {
       headerData = headerData[0].split("\r");
     }
-    Double xPos = null, yPos = null;
+    Length xPos = null, yPos = null;
     Double deltaX = null, deltaY = null;
     String date = null;
 
@@ -217,11 +218,13 @@ public class PDSReader extends FormatReader {
         m.sizeY = Integer.parseInt(value);
       }
       else if (key.equals("XPOS")) {
-        xPos = new Double(value);
+        final Double number = Double.valueOf(value);
+        xPos = new Length(number, UNITS.REFERENCEFRAME);
         addGlobalMeta("X position for position #1", xPos);
       }
       else if (key.equals("YPOS")) {
-        yPos = new Double(value);
+        final Double number = Double.valueOf(value);
+        yPos = new Length(number, UNITS.REFERENCEFRAME);
         addGlobalMeta("Y position for position #1", yPos);
       }
       else if (key.equals("SIGNX")) {

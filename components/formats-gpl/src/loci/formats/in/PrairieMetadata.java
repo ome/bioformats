@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -811,21 +814,38 @@ public class PrairieMetadata {
       return i(value(getValue("linesPerFrame")));
     }
 
+    /**
+     * Convert a position number to a length in the microscope reference frame.
+     * @param position a position number, may be {@code null}
+     * @param isInvert if the number's sign should be flipped
+     * @return a length corresponding to the number, may be {@code null}
+     */
+    private Length toLength(Double position, boolean isInvert) {
+        if (position == null) {
+            return null;
+        }
+        if (isInvert) {
+            position = -position;
+        }
+        return new Length(position, UNITS.REFERENCEFRAME);
+    }
+
     /** Gets the X stage position associated with this {@code Frame}. */
-    public Double getPositionX() {
+    public Length getPositionX() {
       final Double posX = d(value(getValue("positionCurrent"), "XAxis"));
-      return posX == null ? null : isInvertX() ? -posX : posX;
+      return toLength(posX, isInvertX());
     }
 
     /** Gets the Y stage position associated with this {@code Frame}. */
-    public Double getPositionY() {
+    public Length getPositionY() {
       final Double posY = d(value(getValue("positionCurrent"), "YAxis"));
-      return posY == null ? null : isInvertY() ? -posY : posY;
+      return toLength(posY, isInvertY());
     }
 
     /** Gets the Z stage position associated with this {@code Frame}. */
-    public Double getPositionZ() {
-      return d(value(getValue("positionCurrent"), "ZAxis"));
+    public Length getPositionZ() {
+      final Double posZ = d(value(getValue("positionCurrent"), "ZAxis"));
+      return toLength(posZ, false);
     }
 
     /** Gets the optical zoom associated with this {@code Frame}. */

@@ -1467,7 +1467,9 @@ public class LeicaReader extends FormatReader {
         // NB: there is only one stage position specified for each series
         if (tokens[2].equals("XPos")) {
           for (int q=0; q<ms.imageCount; q++) {
-            store.setPlanePositionX(new Double(data), series, q);
+            final Double number = Double.valueOf(data);
+            final Length length = new Length(number, UNITS.REFERENCEFRAME);
+            store.setPlanePositionX(length, series, q);
             if (q == 0) {
               addGlobalMetaList("X position for position", data);
             }
@@ -1475,24 +1477,28 @@ public class LeicaReader extends FormatReader {
         }
         else if (tokens[2].equals("YPos")) {
           for (int q=0; q<ms.imageCount; q++) {
-            store.setPlanePositionY(new Double(data), series, q);
+            final Double number = Double.valueOf(data);
+            final Length length = new Length(number, UNITS.REFERENCEFRAME);
+            store.setPlanePositionY(length, series, q);
             if (q == 0) {
               addGlobalMetaList("Y position for position", data);
             }
           }
         }
         else if (tokens[2].equals("ZPos")) {
+          final Double number = Double.valueOf(data);
+          final Length length = new Length(number, UNITS.REFERENCEFRAME);
           store.setStageLabelName("Position", series);
-          store.setStageLabelZ(new Double(data), series);
+          store.setStageLabelZ(length, series);
           addGlobalMetaList("Z position for position", data);
         }
       }
       else if (tokens[0].equals("CScanActuator") &&
         tokens[1].equals("Z Scan Actuator") && tokens[2].equals("Position"))
       {
-        double pos = Double.parseDouble(data) * 1000000;
+        final double pos = Double.parseDouble(data) * 1000000;
         store.setStageLabelName("Position", series);
-        store.setStageLabelZ(pos, series);
+        store.setStageLabelZ(new Length(pos, UNITS.REFERENCEFRAME), series);
         addGlobalMetaList("Z position for position", pos);
       }
 

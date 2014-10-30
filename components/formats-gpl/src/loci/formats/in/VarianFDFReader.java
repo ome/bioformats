@@ -39,6 +39,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.UNITS;
 import ome.units.quantity.Length;
 
 /**
@@ -57,9 +58,9 @@ public class VarianFDFReader extends FormatReader {
   private double pixelSizeX;
   private double pixelSizeY;
   private double pixelSizeZ;
-  private double originX;
-  private double originY;
-  private double originZ;
+  private Length originX;
+  private Length originY;
+  private Length originZ;
   private String[] units;
 
   // -- Constructor --
@@ -126,9 +127,9 @@ public class VarianFDFReader extends FormatReader {
       pixelSizeX = 0d;
       pixelSizeY = 0d;
       pixelSizeZ = 0d;
-      originX = 0d;
-      originY = 0d;
-      originZ = 0d;
+      originX = new Length(0d, UNITS.REFERENCEFRAME);
+      originY = new Length(0d, UNITS.REFERENCEFRAME);
+      originZ = new Length(0d, UNITS.REFERENCEFRAME);
       units = null;
     }
   }
@@ -268,15 +269,18 @@ public class VarianFDFReader extends FormatReader {
       else if (var.equals("origin[]")) {
         String[] values = parseArray(value);
         if (values.length > 0) {
-          originX = computePhysicalSize(1, values[0], units[0]);
+          final double size = computePhysicalSize(1, values[0], units[0]);
+          originX = new Length(size, UNITS.REFERENCEFRAME);
           addGlobalMeta("X position for position #1", originX);
         }
         if (values.length > 1) {
-          originY = computePhysicalSize(1, values[1], units[1]);
+          final double size = computePhysicalSize(1, values[1], units[1]);
+          originY = new Length(size, UNITS.REFERENCEFRAME);
           addGlobalMeta("Y position for position #1", originY);
         }
         if (values.length > 2) {
-          originZ = computePhysicalSize(1, values[2], units[2]);
+          final double size = computePhysicalSize(1, values[2], units[2]);
+          originZ = new Length(size, UNITS.REFERENCEFRAME);
           addGlobalMeta("Z position for position #1", originZ);
         }
       }
