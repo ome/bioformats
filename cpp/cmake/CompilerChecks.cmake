@@ -146,6 +146,14 @@ if (NOT MSVC)
   endif (${test_cxx_flag})
 endif (NOT MSVC)
 
+# These are annoyingly verbose, produce false positives or don't work
+# nicely with all supported compiler versions, so are disabled unless
+# explicitly enabled.
+option(extra-warnings "Enable extra compiler warnings" OFF)
+
+# This will cause the compiler to fail when an error occurs.
+option(fatal-warnings "Compiler warnings are errors" OFF)
+
 # Check if the compiler supports each of the following additional
 # warning flags, and enable them if supported.  This greatly improves
 # the quality of the build by checking for a number of common
@@ -170,29 +178,36 @@ if (NOT MSVC)
       -Wunused-variable
       -Wwrite-strings
       -fstrict-aliasing)
+  if (extra-warnings)
+    list(APPEND test_flags
+        -Wconversion
+        -Wdocumentation
+        -Wfloat-equal
+        -Wmissing-prototypes
+        -Wunreachable-code)
+  endif (extra-warnings)
+  if (fatal-warnings)
+    list(APPEND test_flags
+         -Werror)
+  endif (fatal-warnings)
 else (NOT MSVC)
   set(test_flags
       /bigobj)
+  if (extra-warnings)
+    list(APPEND test_flags
+         /W4)
+  else (extra-warnings)
+    list(APPEND test_flags
+         /W3)
+  endif (extra-warnings)
+  if (fatal-warnings)
+    list(APPEND test_flags
+         /WX)
+  endif (fatal-warnings)
 endif (NOT MSVC)
 
-# These are annoyingly verbose, produce false positives or don't work
-# nicely with all supported compiler versions, so are disabled unless
-# explicitly enabled.
-option(extra-warnings "Enable extra compiler warnings" OFF)
-if (extra-warnings)
-  if (NOT MSVC)
-  list(APPEND test_flags
-      -Wconversion
-      -Wdocumentation
-      -Wfloat-equal
-      -Wmissing-prototypes
-      -Wunreachable-code)
-  endif (NOT MSVC)
-endif (extra-warnings)
-
-
 foreach(flag ${test_flags})
-  string(REPLACE "/" "_" flag_var "${flag}")
+  string(REGEX REPLACE "[^A-Za-z0-9]" "_" flag_var "${flag}")
   set(test_cxx_flag "CXX_FLAG${flag_var}")
   CHECK_CXX_COMPILER_FLAG(${flag} "${test_cxx_flag}")
   if (${test_cxx_flag})

@@ -582,6 +582,9 @@ extra-warnings=(ON|OFF)
   default set.  These are disabled by default since they trigger a large
   number of false positives, particularly in third-party libraries
   outside our control.
+fatal-warnings=(ON|OFF)
+  Make compiler warnings into fatal errors.  This is disabled by
+  default.
 test=(ON|OFF)
   Enable unit tests.  Tests are enabled by default.
 
