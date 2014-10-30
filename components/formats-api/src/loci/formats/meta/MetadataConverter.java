@@ -38,6 +38,7 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Pressure;
@@ -1034,7 +1035,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              Double voltage = src.getDetectorSettingsVoltage(i, c);
+              ElectricPotential voltage = src.getDetectorSettingsVoltage(i, c);
               dest.setDetectorSettingsVoltage(voltage, i, c);
             }
             catch (NullPointerException e) { }
@@ -1376,7 +1377,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double voltage = src.getDetectorVoltage(i, q);
+          ElectricPotential voltage = src.getDetectorVoltage(i, q);
           dest.setDetectorVoltage(voltage, i, q);
         }
         catch (NullPointerException e) { }

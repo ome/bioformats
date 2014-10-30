@@ -37,10 +37,10 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
-
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
@@ -492,7 +492,8 @@ public class FluoviewReader extends BaseTiffReader {
 
     for (int i=0; i<getSizeC(); i++) {
       if (voltages != null && voltages[i] != null) {
-        store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, i);
+        store.setDetectorSettingsVoltage(
+                new ElectricPotential(new Double(voltages[i]), UNITS.V), 0, i);
       }
       if (gains != null && gains[i] != null) {
         store.setDetectorSettingsGain(new Double(gains[i]), 0, i);

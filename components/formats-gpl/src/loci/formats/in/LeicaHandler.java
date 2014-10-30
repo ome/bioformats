@@ -57,6 +57,7 @@ import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -338,7 +339,8 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorModel(d.model, numDatasets, detectorChannel);
           store.setDetectorZoom(d.zoom, numDatasets, detectorChannel);
           store.setDetectorOffset(d.offset, numDatasets, detectorChannel);
-          store.setDetectorVoltage(d.voltage, numDatasets, detectorChannel);
+          store.setDetectorVoltage(new ElectricPotential(d.voltage, UNITS.V),
+                  numDatasets, detectorChannel);
 
           if (c < numChannels) {
             if (d.active) {
@@ -800,7 +802,9 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorModel(detector.model, numDatasets, nextChannel);
           store.setDetectorZoom(detector.zoom, numDatasets, nextChannel);
           store.setDetectorOffset(detector.offset, numDatasets, nextChannel);
-          store.setDetectorVoltage(detector.voltage, numDatasets, nextChannel);
+          store.setDetectorVoltage(
+                  new ElectricPotential(detector.voltage, UNITS.V),
+                  numDatasets, nextChannel);
         }
 
         if (laser != null && laser.intensity < 100) {

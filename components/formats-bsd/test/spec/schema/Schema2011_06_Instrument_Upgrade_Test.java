@@ -40,7 +40,6 @@ import javax.xml.transform.stream.StreamSource;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -66,12 +65,14 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+
 /**
  * import the schema resolver so I can use it to locate
  * transforms in the specification jar
  */
 import ome.specification.SchemaResolver;
 
+import ome.units.quantity.ElectricPotential;
 /**
  * import the reference strings for the associated sample file
  */
@@ -459,7 +460,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Image0DetectorSettings0Gain, detectorSettings.getGain());
         Assert.assertEquals(ref.Image0DetectorSettings0Offset, detectorSettings.getOffset());
         Assert.assertEquals(ref.Image0DetectorSettings0ReadOutRate, detectorSettings.getReadOutRate());
-        Assert.assertEquals(ref.Image0DetectorSettings0Voltage, detectorSettings.getVoltage());
+        Assert.assertEquals(ref.Image0DetectorSettings0Voltage, detectorSettings.getVoltage().value());
     }
 
     @Test (enabled=false, groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-detector"})
