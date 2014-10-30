@@ -1648,23 +1648,25 @@ namespace
     std::vector<PixelTestParameters> ret;
 
     std::vector<dimension_size_type> tilesizes;
+#ifdef EXTENDED_TESTS
     tilesizes.push_back(16);
+#endif // EXTENDED_TESTS
     tilesizes.push_back(32);
     tilesizes.push_back(48);
+#ifdef EXTENDED_TESTS
     tilesizes.push_back(64);
+#endif // EXTENDED_TESTS
 
     std::vector<dimension_size_type> stripsizes;
     stripsizes.push_back(1);
     stripsizes.push_back(2);
+#ifdef EXTENDED_TESTS
     stripsizes.push_back(5);
     stripsizes.push_back(14);
     stripsizes.push_back(32);
+#endif // EXTENDED_TESTS
     stripsizes.push_back(60);
     stripsizes.push_back(64);
-
-    std::vector<ome::bioformats::tiff::TileType> tiletypes;
-    tiletypes.push_back(ome::bioformats::tiff::TILE);
-    tiletypes.push_back(ome::bioformats::tiff::STRIP);
 
     std::vector<ome::bioformats::tiff::PlanarConfiguration> planarconfigs;
     planarconfigs.push_back(ome::bioformats::tiff::CONTIG);
@@ -1673,6 +1675,18 @@ namespace
     std::vector<ome::bioformats::tiff::PhotometricInterpretation> photometricinterps;
     photometricinterps.push_back(ome::bioformats::tiff::MIN_IS_BLACK);
     photometricinterps.push_back(ome::bioformats::tiff::RGB);
+
+    std::vector<bool> optimal;
+    optimal.push_back(true);
+#ifdef EXTENDED_TESTS
+    optimal.push_back(false);
+#endif // EXTENDED_TESTS
+
+    std::vector<bool> ordered;
+    ordered.push_back(true);
+#ifdef EXTENDED_TESTS
+    ordered.push_back(false);
+#endif // EXTENDED_TESTS
 
     const PT::value_map_type& pixeltypemap = PT::values();
     std::vector<PT> pixeltypes;
@@ -1685,23 +1699,17 @@ namespace
             for(std::vector<dimension_size_type>::const_iterator wid = tilesizes.begin(); wid != tilesizes.end(); ++wid)
               for(std::vector<dimension_size_type>::const_iterator ht = tilesizes.begin(); ht != tilesizes.end(); ++ht)
                 {
-                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, true, true));
-#ifdef EXTENDED_TESTS
-                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, true, false));
-                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, false, true));
-                  ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, false, false));
-#endif
+                  for(std::vector<bool>::const_iterator opt = optimal.begin(); opt != optimal.end(); ++opt)
+                    for(std::vector<bool>::const_iterator ord = ordered.begin(); ord != ordered.end(); ++ord)
+                    ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::TILE, *pc, *pi, *wid, *ht, *opt, *ord));
                 }
             for(std::vector<dimension_size_type>::const_iterator rows = stripsizes.begin(); rows != stripsizes.end(); ++rows)
               {
-                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, true, true));
-#ifdef EXTENDED_TESTS
-                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, true, false));
-                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, false, true));
-                ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, false, false));
-#endif
+                for(std::vector<bool>::const_iterator opt = optimal.begin(); opt != optimal.end(); ++opt)
+                  for(std::vector<bool>::const_iterator ord = ordered.begin(); ord != ordered.end(); ++ord)
+                    ret.push_back(PixelTestParameters(*pt, ome::bioformats::tiff::STRIP, *pc, *pi, 64, *rows, *opt, *ord));
               }
-        }
+          }
 
     return ret;
   }
