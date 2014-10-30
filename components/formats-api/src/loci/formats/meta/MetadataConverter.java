@@ -39,6 +39,7 @@ import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Pressure;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -704,7 +705,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Double airPressure = src.getImagingEnvironmentAirPressure(i);
+        Pressure airPressure = src.getImagingEnvironmentAirPressure(i);
         dest.setImagingEnvironmentAirPressure(airPressure, i);
       }
       catch (NullPointerException e) { }

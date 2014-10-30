@@ -65,6 +65,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Pressure;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -794,7 +795,8 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       if (airPressure != null) {
-        store.setImagingEnvironmentAirPressure(new Double(airPressure), i);
+        store.setImagingEnvironmentAirPressure(
+                new Pressure(new Double(airPressure), UNITS.MBAR), i);
       }
       if (co2Percent != null) {
         store.setImagingEnvironmentCO2Percent(
