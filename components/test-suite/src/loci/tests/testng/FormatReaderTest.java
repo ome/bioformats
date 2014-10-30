@@ -2086,6 +2086,38 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
+  @Test(groups = {"all",  "automated"})
+  public void testMemoFileUsage() {
+    String testName = "testMemoFileUsage";
+    if (!initFile()) result(testName, false, "initFile");
+    File memoFile = null;
+    try {
+      Memoizer memo = new Memoizer(0);
+      memo.setId(reader.getCurrentFile());
+      memo.close();
+      memoFile = memo.getMemoFile(reader.getCurrentFile());
+      if (!memo.isSavedToMemo()) {
+        result(testName, false, "Memo file not saved");
+      }
+      memo.setId(reader.getCurrentFile());
+      if (!memo.isLoadedFromMemo()) {
+        result(testName, false, "Memo file could not be loaded");
+      }
+      memo.openBytes(0, 0, 0, 1, 1);
+      memo.close();
+      result(testName, true);
+    }
+    catch (Throwable t) {
+      LOGGER.warn("", t);
+      result(testName, false, t.getMessage());
+    }
+    finally {
+      if (memoFile != null) {
+        memoFile.delete();
+      }
+    }
+  }
+
   @Test(groups = {"config"})
   public void writeConfigFile() {
     setupReader();
