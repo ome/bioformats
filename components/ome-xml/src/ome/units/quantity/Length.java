@@ -98,7 +98,7 @@ public class Length extends Quantity
     } else {
       if (unit.isConvertible(otherLength.unit))
       {
-        // Lengths use different compitable units so convert value then compare
+        // Lengths use different compatible units so convert value then compare
         return (unit.convertValue(value, otherLength.unit)).equals(otherLength.value);
       }
     }

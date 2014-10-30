@@ -98,7 +98,7 @@ public class Time extends Quantity
     } else {
       if (unit.isConvertible(otherTime.unit))
       {
-        // Times use different compitable units so convert value then compare
+        // Times use different compatible units so convert value then compare
         return (unit.convertValue(value, otherTime.unit)).equals(otherTime.value);
       }
     }

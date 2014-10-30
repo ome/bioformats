@@ -48,17 +48,65 @@ import ome.units.UNITS;
  */
 public class Power extends Quantity
 {
-  public Power(Number value, 
-    Unit<ome.units.quantity.Power> unit)
+  Number value;
+  Unit<ome.units.quantity.Power> unit;
+
+  public Power(Number inValue,
+    Unit<ome.units.quantity.Power> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Power: Power cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
   }
-    public Number value()
+
+  public Number value()
+  {
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Power> inUnit)
+  {
+    if (unit.equals(inUnit))
     {
-      return 1;
+      return value;
     }
-    
-    public Unit<ome.units.quantity.Power> unit()
+    if (unit.isConvertible(inUnit))
     {
-      return UNITS.WATT;
+      return unit.convertValue(value, inUnit);
     }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Power otherPower = (Power)other;
+    if (unit.equals(otherPower.unit))
+    {
+      // Powers use same unit so compare value
+      return value.equals(otherPower.value);
+    } else {
+      if (unit.isConvertible(otherPower.unit))
+      {
+        // Powers use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherPower.unit)).equals(otherPower.value);
+      }
+    }
+    return false;
+  }
+
+  public Unit<ome.units.quantity.Power> unit()
+  {
+    return UNITS.WATT;
+  }
 }
