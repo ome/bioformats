@@ -57,9 +57,24 @@ if(NOT GTEST_FOUND)
   if(NOT MSVC_VERSION VERSION_LESS 1700 AND MSVC_VERSION VERSION_LESS 1800)
     add_definitions(-D_VARIADIC_MAX=10)
   endif()
+
+  # Remove warnings triggered by gtest since they aren't our responsibility.
+  set(SAVED_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  string(REPLACE " " ";" GTEST_FLAG_LIST "${CMAKE_CXX_FLAGS}")
+  list(REMOVE_ITEM GTEST_FLAG_LIST
+       -Wconversion
+       -Wctor-dtor-privacy
+       -Wmissing-declarations)
+  string(REPLACE ";" " " CMAKE_CXX_FLAGS "${GTEST_FLAG_LIST}")
+  unset(GTEST_FLAG_LIST)
+
+  # Build gtest using its own CMake support.
   add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0")
   set(GTEST_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../ext/gtest-1.7.0/include")
   set(GTEST_LIBRARIES gtest)
   set(GTEST_FOUND ON)
   set_property(TARGET gtest gtest_main PROPERTY FOLDER "External/Google Test")
+
+  # Restore saved flags.
+  set(CMAKE_CXX_FLAGS "${SAVED_CMAKE_CXX_FLAGS}")
 endif()
