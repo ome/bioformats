@@ -571,9 +571,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PositionXUnit" use="optional" default="referenceFrame" type="UnitsLength">
+			<xsd:attribute name="PositionXUnit" use="optional" default="reference frame" type="UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the X stage position - default:[referenceFrame].</xsd:documentation>
+					<xsd:documentation>The units of the X stage position - default:[reference frame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
@@ -583,9 +583,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PositionYUnit" use="optional" default="referenceFrame" type="UnitsLength">
+			<xsd:attribute name="PositionYUnit" use="optional" default="reference frame" type="UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the Y stage position - default:[referenceFrame].</xsd:documentation>
+					<xsd:documentation>The units of the Y stage position - default:[reference frame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
@@ -595,9 +595,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PositionZUnit" use="optional" default="referenceFrame" type="UnitsLength">
+			<xsd:attribute name="PositionZUnit" use="optional" default="reference frame" type="UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the Z stage position - default:[referenceFrame].</xsd:documentation>
+					<xsd:documentation>The units of the Z stage position - default:[reference frame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -887,9 +887,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="XUnit" use="optional" default="referenceFrame" type="UnitsLength">
+			<xsd:attribute name="XUnit" use="optional" default="reference frame" type="UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the X stage position - default:[referenceFrame].</xsd:documentation>
+					<xsd:documentation>The units of the X stage position - default:[reference frame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y" use="optional" type="xsd:float">
@@ -899,9 +899,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="YUnit" use="optional" default="referenceFrame" type="UnitsLength">
+			<xsd:attribute name="YUnit" use="optional" default="reference frame" type="UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the Y stage position - default:[referenceFrame].</xsd:documentation>
+					<xsd:documentation>The units of the Y stage position - default:[reference frame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Z" use="optional" type="xsd:float">
@@ -911,9 +911,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="ZUnit" use="optional" default="referenceFrame" type="UnitsLength">
+			<xsd:attribute name="ZUnit" use="optional" default="reference frame" type="UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the Z  stage position - default:[referenceFrame].</xsd:documentation>
+					<xsd:documentation>The units of the Z  stage position - default:[reference frame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
