@@ -1976,7 +1976,7 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsVoltage">
+					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsElectricPotential">
 						<xsd:annotation>
 							<xsd:documentation>The units of the Voltage - default:volts[V].</xsd:documentation>
 						</xsd:annotation>
@@ -2834,7 +2834,7 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsVoltage">
+					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsElectricPotential">
 						<xsd:annotation>
 							<xsd:documentation>
 								The units of the Voltage of the detector - default:volts[V]
