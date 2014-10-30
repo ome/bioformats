@@ -51,6 +51,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -1958,7 +1959,8 @@ public class NativeND2Reader extends FormatReader {
           store.setDetectorSettingsGain(gain.get(index), i, c);
         }
         if (index < speed.size()) {
-          store.setDetectorSettingsReadOutRate(speed.get(index), i, c);
+          store.setDetectorSettingsReadOutRate(
+                  new Frequency(speed.get(index), UNITS.HZ), i, c);
         }
         store.setDetectorSettingsID(detectorID, i, c);
       }

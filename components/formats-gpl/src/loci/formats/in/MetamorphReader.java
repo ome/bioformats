@@ -56,6 +56,7 @@ import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -780,7 +781,8 @@ public class MetamorphReader extends BaseTiffReader {
           store.setDetectorSettingsBinning(getBinning(binning), i, c);
         }
         if (handler.getReadOutRate() != 0) {
-          store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
+          store.setDetectorSettingsReadOutRate(
+                  new Frequency(handler.getReadOutRate(), UNITS.HZ), i, c);
         }
 
         if (gain == null) {

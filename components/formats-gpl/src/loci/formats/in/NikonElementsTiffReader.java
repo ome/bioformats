@@ -43,6 +43,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -223,7 +224,8 @@ public class NikonElementsTiffReader extends BaseTiffReader {
         store.setDetectorSettingsGain(gain.get(c), 0, c);
       }
       if (c < speed.size()) {
-        store.setDetectorSettingsReadOutRate(speed.get(c), 0, c);
+        store.setDetectorSettingsReadOutRate(
+                new Frequency(speed.get(c), UNITS.HZ), 0, c);
       }
       store.setDetectorSettingsID(detector, 0, c);
     }

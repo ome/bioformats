@@ -41,6 +41,7 @@ import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -625,7 +626,7 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<getEffectiveSizeC(); i++) {
       store.setDetectorSettingsID(detectorID, 0, i);
       store.setDetectorSettingsReadOutRate(
-        new Double(readoutTime.floatValue()), 0, i);
+        new Frequency(new Double(readoutTime.floatValue()), UNITS.HZ), 0, i);
     }
   }
 

@@ -662,7 +662,7 @@ public class XMLMockObjects
     settings.setBinning(BINNING);
     settings.setGain(1.0);
     settings.setOffset(1.0);
-    settings.setReadOutRate(new Frequency(1.0, UNITS.HZ);
+    settings.setReadOutRate(new Frequency(1.0, UNITS.HZ));
     settings.setVoltage(1.0);
     return settings;
   }
