@@ -41,6 +41,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -333,9 +334,9 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

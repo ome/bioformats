@@ -444,17 +444,32 @@
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeX" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns[µm].</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel. Units are set by PhysicalSizeXUnit.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PhysicalSizeXUnit" use="optional" default="µm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the physical size of a pixel - default:microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeY" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns[µm].</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel. Units are set by PhysicalSizeYUnit.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PhysicalSizeYUnit" use="optional" default="µm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the physical size of a pixel - default:microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeZ" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns[µm].</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel. Units are set by PhysicalSizeZUnit.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PhysicalSizeZUnit" use="optional" default="µm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the physical size of a pixel - default:microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TimeIncrement" use="optional" type="xsd:float">

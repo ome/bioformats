@@ -651,14 +651,14 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          PositiveFloat size =
+          Length size =
             FormatTools.getPhysicalSizeX(xSizes.get(seriesIndex));
           if (size != null) {
             store.setPixelsPhysicalSizeX(size, i);
           }
         }
         if (seriesIndex < ySizes.size()) {
-          PositiveFloat size =
+          Length size =
             FormatTools.getPhysicalSizeY(ySizes.get(seriesIndex));
           if (size != null) {
             store.setPixelsPhysicalSizeY(size, i);

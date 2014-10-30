@@ -221,9 +221,9 @@ public class NikonTiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription("", 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

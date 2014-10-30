@@ -50,6 +50,8 @@ import ome.xml.model.primitives.Timestamp;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ome.units.quantity.Length;
+
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
  *
@@ -696,14 +698,14 @@ public class BioRadReader extends FormatReader {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
                       if (key.equals("AXIS_2")) {
-                        PositiveFloat size =
+                        Length size =
                           FormatTools.getPhysicalSizeX(pixelSize);
                         if (size != null) {
                           store.setPixelsPhysicalSizeX(size, 0);
                         }
                       }
                       else if (key.equals("AXIS_3")) {
-                        PositiveFloat size =
+                        Length size =
                           FormatTools.getPhysicalSizeY(pixelSize);
 
                         if (size != null) {
@@ -719,7 +721,7 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              PositiveFloat size = FormatTools.getPhysicalSizeX(pixelSize);
+              Length size = FormatTools.getPhysicalSizeX(pixelSize);
               if (size != null) {
                 store.setPixelsPhysicalSizeX(size, 0);
               }
@@ -727,7 +729,7 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              PositiveFloat size = FormatTools.getPhysicalSizeY(pixelSize);
+              Length size = FormatTools.getPhysicalSizeY(pixelSize);
               if (size != null) {
                 store.setPixelsPhysicalSizeY(size, 0);
               }
@@ -751,7 +753,7 @@ public class BioRadReader extends FormatReader {
                   store.setObjectiveNominalMagnification(mag, 0, 0);
 
                   Double sizeZ = new Double(values[14]);
-                  PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+                  Length size = FormatTools.getPhysicalSizeZ(sizeZ);
                   if (size != null) {
                     store.setPixelsPhysicalSizeZ(size, 0);
                   }
@@ -771,8 +773,8 @@ public class BioRadReader extends FormatReader {
                   double height = y2 - y1;
                   height /= getSizeY();
 
-                  PositiveFloat sizeX = FormatTools.getPhysicalSizeX(width);
-                  PositiveFloat sizeY = FormatTools.getPhysicalSizeY(height);
+                  Length sizeX = FormatTools.getPhysicalSizeX(width);
+                  Length sizeY = FormatTools.getPhysicalSizeY(height);
                   if (sizeX != null) {
                     store.setPixelsPhysicalSizeX(sizeX, 0);
                   }

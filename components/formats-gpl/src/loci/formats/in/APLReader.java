@@ -47,6 +47,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * APLReader is the file format reader for Olympus APL files.
@@ -440,8 +441,8 @@ public class APLReader extends FormatReader {
         }
         // TODO : add cases for other units
 
-        PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(px);
-        PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(py);
+        Length physicalSizeX = FormatTools.getPhysicalSizeX(px);
+        Length physicalSizeY = FormatTools.getPhysicalSizeY(py);
 
         if (physicalSizeX != null) {
           store.setPixelsPhysicalSizeX(physicalSizeX, i);

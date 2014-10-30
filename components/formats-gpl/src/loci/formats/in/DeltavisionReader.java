@@ -687,17 +687,17 @@ public class DeltavisionReader extends FormatReader {
       }
 
       Double x = new Double(pixX);
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(x);
+      Length sizeX = FormatTools.getPhysicalSizeX(x);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, series);
       }
       Double y = new Double(pixY);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(y);
+      Length sizeY = FormatTools.getPhysicalSizeY(y);
       if (sizeY != null) {
         store.setPixelsPhysicalSizeY(sizeY, series);
       }
       Double z = new Double(pixZ);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(z);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(z);
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, series);
       }
@@ -1033,7 +1033,7 @@ public class DeltavisionReader extends FormatReader {
                 pixelSizes[q].trim());
             }
             if (q == 0) {
-              PositiveFloat sizeX = FormatTools.getPhysicalSizeX(size);
+              Length sizeX = FormatTools.getPhysicalSizeX(size);
               if (sizeX != null) {
                 for (int series=0; series<getSeriesCount(); series++) {
                   store.setPixelsPhysicalSizeX(sizeX, series);
@@ -1041,7 +1041,7 @@ public class DeltavisionReader extends FormatReader {
               }
             }
             if (q == 1) {
-              PositiveFloat sizeY = FormatTools.getPhysicalSizeY(size);
+              Length sizeY = FormatTools.getPhysicalSizeY(size);
               if (sizeY != null) {
                 for (int series=0; series<getSeriesCount(); series++) {
                   store.setPixelsPhysicalSizeY(sizeY, series);
@@ -1049,7 +1049,7 @@ public class DeltavisionReader extends FormatReader {
               }
             }
             if (q == 2) {
-              PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(size);
+              Length sizeZ = FormatTools.getPhysicalSizeZ(size);
               if (sizeZ != null) {
                 for (int series=0; series<getSeriesCount(); series++) {
                   store.setPixelsPhysicalSizeZ(sizeZ, series);

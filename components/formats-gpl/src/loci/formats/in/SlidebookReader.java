@@ -45,6 +45,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -1288,8 +1289,8 @@ public class SlidebookReader extends FormatReader {
         setSeries(i);
         if (pixelSize.get(i) != null) {
           Double size = new Double(pixelSize.get(i));
-          PositiveFloat x = FormatTools.getPhysicalSizeX(size);
-          PositiveFloat y = FormatTools.getPhysicalSizeY(size);
+          Length x = FormatTools.getPhysicalSizeX(size);
+          Length y = FormatTools.getPhysicalSizeY(size);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, i);
           }
@@ -1303,7 +1304,7 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx));
+          Length z = FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx));
           if (z != null) {
             store.setPixelsPhysicalSizeZ(z, i);
           }

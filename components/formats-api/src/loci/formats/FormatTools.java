@@ -1217,31 +1217,31 @@ public final class FormatTools {
 
   // -- OME-XML primitive type methods --
 
-  public static PositiveFloat getPhysicalSizeX(Double value) {
+  public static Length getPhysicalSizeX(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
     return null;
   }
 
-  public static PositiveFloat getPhysicalSizeY(Double value) {
+  public static Length getPhysicalSizeY(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
     return null;
   }
 
-  public static PositiveFloat getPhysicalSizeZ(Double value) {
+  public static Length getPhysicalSizeZ(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
     return null;

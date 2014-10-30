@@ -47,6 +47,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -280,8 +281,8 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
 
-      PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
-      PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
+      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
 
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(physicalSizeX, 0);

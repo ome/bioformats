@@ -52,6 +52,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
@@ -75,7 +76,7 @@ public class SVSReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private double[] pixelSize;
+  private Length[] pixelSize;
   private String[] comments;
   private int[] ifdmap;
 
@@ -249,7 +250,7 @@ public class SVSReader extends BaseTiffReader {
 
     int seriesCount = ifds.size();
 
-    pixelSize = new double[seriesCount];
+    pixelSize = new Length[seriesCount];
     comments = new String[seriesCount];
 
     core.clear();
@@ -282,7 +283,7 @@ public class SVSReader extends BaseTiffReader {
               value = t.substring(t.indexOf("=") + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
-                pixelSize[i] = Double.parseDouble(value);
+                pixelSize[i] = FormatTools.getPhysicalSizeX(Double.parseDouble(value));
               }
               else if (key.equals("Date")) {
                 date = value;
@@ -378,9 +379,9 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
-      if (i < pixelSize.length && pixelSize[i] - Constants.EPSILON > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize[i]), i);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize[i]), i);
+      if (i < pixelSize.length && pixelSize[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0) {
+        store.setPixelsPhysicalSizeX(pixelSize[i], i);
+        store.setPixelsPhysicalSizeY(pixelSize[i], i);
       }
     }
   }
@@ -458,7 +459,7 @@ public class SVSReader extends BaseTiffReader {
     return null;
   }
 
-  protected double[] getPhysicalSizes() {
+  protected Length[] getPhysicalSizes() {
     return pixelSize;
   }
 

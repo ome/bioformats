@@ -39,6 +39,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * UnisokuReader is the file format reader for Unisoku STM files.
@@ -231,8 +232,8 @@ public class UnisokuReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(remark, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

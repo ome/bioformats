@@ -75,6 +75,9 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * WlzWriter is the file format writer for Woolz files.
  */
@@ -182,13 +185,13 @@ public class WlzWriter extends FormatWriter {
       double vY = 1.0;
       double vZ = 1.0;
       if(meta.getPixelsPhysicalSizeX(0) != null) {
-        vX = meta.getPixelsPhysicalSizeX(0).getValue();
+        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeY(0) != null) {
-        vY = meta.getPixelsPhysicalSizeY(0).getValue();
+        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeZ(0) != null) {
-        vZ = meta.getPixelsPhysicalSizeZ(0).getValue();
+        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
 		  meta.getPixelsType(series).toString());

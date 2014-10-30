@@ -37,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * MolecularImagingReader is the file format reader for Molecular Imaging files.
@@ -160,8 +161,8 @@ public class MolecularImagingReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

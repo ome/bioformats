@@ -58,6 +58,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -300,9 +301,9 @@ public class MicromanagerReader extends FormatReader {
           store.setChannelName(p.channels[c], i, c);
         }
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(p.sliceThickness);
+        Length sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
+        Length sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(p.sliceThickness);
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);
         }

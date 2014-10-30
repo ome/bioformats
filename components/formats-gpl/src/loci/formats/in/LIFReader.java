@@ -719,11 +719,11 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(imageNames[index].trim(), i);
 
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(physicalSizeXs.get(index));
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(physicalSizeYs.get(index));
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);

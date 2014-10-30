@@ -243,19 +243,19 @@ public class ICSWriter extends FormatWriter {
         Number value = 1.0;
         if (dim == 'X') {
           if (meta.getPixelsPhysicalSizeX(0) != null) {
-            value = meta.getPixelsPhysicalSizeX(0).getValue();
+            value = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Y') {
           if (meta.getPixelsPhysicalSizeY(0) != null) {
-            value = meta.getPixelsPhysicalSizeY(0).getValue();
+            value = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Z') {
           if (meta.getPixelsPhysicalSizeZ(0) != null) {
-            value = meta.getPixelsPhysicalSizeZ(0).getValue();
+            value = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
           }
           units.append("micrometers\t");
         }

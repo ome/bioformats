@@ -56,6 +56,7 @@ import loci.plugins.util.LociPrefs;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -486,9 +487,9 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeX(Double[] sizeX) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    PositiveFloat x = retrieve.getPixelsPhysicalSizeX(imageIndex);
+    Length x = retrieve.getPixelsPhysicalSizeX(imageIndex);
     if (x != null) {
-      sizeX[0] = x.getValue();
+      sizeX[0] = x.value(UNITS.MICROM).doubleValue();
     }
     if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
   }
@@ -496,9 +497,9 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeY(Double[] sizeY) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    PositiveFloat y = retrieve.getPixelsPhysicalSizeY(imageIndex);
+    Length y = retrieve.getPixelsPhysicalSizeY(imageIndex);
     if (y != null) {
-      sizeY[0] = y.getValue();
+      sizeY[0] = y.value(UNITS.MICROM).doubleValue();
     }
     if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
   }
@@ -506,9 +507,9 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeZ(Double[] sizeZ) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    PositiveFloat z = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+    Length z = retrieve.getPixelsPhysicalSizeZ(imageIndex);
     if (z != null) {
-      sizeZ[0] = z.getValue();
+      sizeZ[0] = z.value(UNITS.MICROM).doubleValue();
     }
     if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
   }

@@ -707,9 +707,9 @@ public class LeicaReader extends FormatReader {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizes[i][0]);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizes[i][1]);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizes[i][2]);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizes[i][0]);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizes[i][1]);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizes[i][2]);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);

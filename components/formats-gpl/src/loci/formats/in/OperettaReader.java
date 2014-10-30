@@ -364,9 +364,9 @@ public class OperettaReader extends FormatReader {
         }
 
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(planes[i][0].resolutionX), i);
+          FormatTools.getPhysicalSizeX(planes[i][0].resolutionX), i);
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(planes[i][0].resolutionY), i);
+          FormatTools.getPhysicalSizeY(planes[i][0].resolutionY), i);
 
         for (int p=0; p<getImageCount(); p++) {
           store.setPlanePositionX(planes[i][p].positionX, i, p);

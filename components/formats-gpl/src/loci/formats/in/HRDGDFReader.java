@@ -36,6 +36,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * HRDGDFReader is the file format reader for the Gridded Data Format used
@@ -192,8 +193,8 @@ public class HRDGDFReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSize);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSize);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSize);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

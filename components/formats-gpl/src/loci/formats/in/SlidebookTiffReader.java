@@ -237,8 +237,8 @@ public class SlidebookTiffReader extends BaseTiffReader {
       if (physicalSize != null) {
         Double size = new Double(physicalSize);
         if (size > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(size), 0);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(size), 0);
         }
       }
 

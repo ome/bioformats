@@ -53,6 +53,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
@@ -638,8 +639,8 @@ public class ScanrReader extends FormatReader {
           store.setChannelName(channelNames.get(c), i, c);
         }
 
-        PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
-        PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+        Length x = FormatTools.getPhysicalSizeX(pixelSize);
+        Length y = FormatTools.getPhysicalSizeY(pixelSize);
         if (x != null) {
           store.setPixelsPhysicalSizeX(x, i);
         }

@@ -537,13 +537,16 @@ public class PrairieReader extends FormatReader {
       // populate PhysicalSizeX
       final PositiveFloat physicalSizeX =
         pf(firstFrame.getMicronsPerPixelX(), "PhysicalSizeX");
-      if (physicalSizeX != null) store.setPixelsPhysicalSizeX(physicalSizeX, s);
-
+      if (physicalSizeX != null) {
+        store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROM), s);
+      }
+    
       // populate PhysicalSizeY
       final PositiveFloat physicalSizeY =
         pf(firstFrame.getMicronsPerPixelY(), "PhysicalSizeY");
-      if (physicalSizeY != null) store.setPixelsPhysicalSizeY(physicalSizeY, s);
-
+      if (physicalSizeY != null) {
+        store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROM), s);
+      }
       // populate TimeIncrement
       final Double waitTime = meta.getWaitTime();
       if (waitTime != null) store.setPixelsTimeIncrement(new Time(waitTime, UNITS.S), s);

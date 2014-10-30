@@ -467,15 +467,15 @@ public class Configuration {
       seriesTable.put(NAME, retrieve.getImageName(series));
       seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
 
-      PositiveFloat physicalX = retrieve.getPixelsPhysicalSizeX(series);
+      Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
         seriesTable.put(PHYSICAL_SIZE_X, physicalX.toString());
       }
-      PositiveFloat physicalY = retrieve.getPixelsPhysicalSizeY(series);
+      Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
       if (physicalY != null) {
         seriesTable.put(PHYSICAL_SIZE_Y, physicalY.toString());
       }
-      PositiveFloat physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
+      Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
       if (physicalZ != null) {
         seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.toString());
       }

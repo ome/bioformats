@@ -43,6 +43,7 @@ import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
@@ -597,8 +598,8 @@ public class OpenlabReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(new Double(xcal));
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(new Double(ycal));
+      Length sizeX = FormatTools.getPhysicalSizeX(new Double(xcal));
+      Length sizeY = FormatTools.getPhysicalSizeY(new Double(ycal));
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

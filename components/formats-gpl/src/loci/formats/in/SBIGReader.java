@@ -38,6 +38,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * SBIGReader is the file format reader for SBIG files.
@@ -199,8 +200,8 @@ public class SBIGReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat x = FormatTools.getPhysicalSizeX(sizeX);
-      PositiveFloat y = FormatTools.getPhysicalSizeY(sizeY);
+      Length x = FormatTools.getPhysicalSizeX(sizeX);
+      Length y = FormatTools.getPhysicalSizeY(sizeY);
       if (x != null) {
         store.setPixelsPhysicalSizeX(x, 0);
       }

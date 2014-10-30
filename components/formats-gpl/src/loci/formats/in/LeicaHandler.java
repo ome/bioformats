@@ -437,7 +437,7 @@ public class LeicaHandler extends BaseHandler {
               break;
           }
           physicalSizeX = physicalSize.doubleValue();
-          PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSize);
+          Length sizeX = FormatTools.getPhysicalSizeX(physicalSize);
           if (sizeX != null) {
             store.setPixelsPhysicalSizeX(sizeX, numDatasets);
           }
@@ -456,7 +456,7 @@ public class LeicaHandler extends BaseHandler {
           else {
             coreMeta.sizeY = len;
             physicalSizeY = physicalSize.doubleValue();
-            PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+            Length sizeY = FormatTools.getPhysicalSizeY(physicalSize);
             if (sizeY != null) {
               store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
@@ -468,7 +468,7 @@ public class LeicaHandler extends BaseHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeZ = 1;
             physicalSizeY = physicalSize.doubleValue();
-            PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+            Length sizeY = FormatTools.getPhysicalSizeY(physicalSize);
             if (sizeY != null) {
               store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
@@ -485,7 +485,7 @@ public class LeicaHandler extends BaseHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeT = 1;
             physicalSizeY = physicalSize.doubleValue();
-            PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+            Length sizeY = FormatTools.getPhysicalSizeY(physicalSize);
             if (sizeY != null) {
               store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
@@ -519,7 +519,7 @@ public class LeicaHandler extends BaseHandler {
       }
       else if (id.equals("dblStepSize")) {
         double zStep = Double.parseDouble(value) * 1000000;
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zStep);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(zStep);
         if (sizeZ != null) {
           store.setPixelsPhysicalSizeZ(sizeZ, numDatasets);
         }

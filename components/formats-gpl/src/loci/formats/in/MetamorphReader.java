@@ -736,8 +736,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();
 
-      PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
-      PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
+      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(physicalSizeX, i);
       }
@@ -747,7 +747,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
-      PositiveFloat physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
+      Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
       if (physicalSizeZ != null) {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
       }

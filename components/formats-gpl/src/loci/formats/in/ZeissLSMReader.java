@@ -1232,9 +1232,9 @@ public class ZeissLSMReader extends FormatReader {
         store.setExperimenterUserName(userName, 0);
       }
 
-      PositiveFloat pixX = FormatTools.getPhysicalSizeX(new Double(pixelSizeX));
-      PositiveFloat pixY = FormatTools.getPhysicalSizeY(new Double(pixelSizeY));
-      PositiveFloat pixZ = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ));
+      Length pixX = FormatTools.getPhysicalSizeX(new Double(pixelSizeX));
+      Length pixY = FormatTools.getPhysicalSizeY(new Double(pixelSizeY));
+      Length pixZ = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ));
       if (pixX != null) {
         store.setPixelsPhysicalSizeX(pixX, series);
       }

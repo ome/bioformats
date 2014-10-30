@@ -45,6 +45,8 @@ import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * BMPReader is the file format reader for Microsoft Bitmap (BMP) files.
@@ -328,8 +330,8 @@ public class BMPReader extends FormatReader {
       double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
       double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(correctedX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(correctedY);
+      Length sizeX = FormatTools.getPhysicalSizeX(correctedX);
+      Length sizeY = FormatTools.getPhysicalSizeY(correctedY);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

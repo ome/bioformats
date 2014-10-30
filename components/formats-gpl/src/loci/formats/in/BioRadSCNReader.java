@@ -215,10 +215,10 @@ public class BioRadSCNReader extends FormatReader {
     }
 
     if (physicalSizeX != null) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROM), 0);
     }
     if (physicalSizeY != null) {
-      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROM), 0);
     }
   }
 

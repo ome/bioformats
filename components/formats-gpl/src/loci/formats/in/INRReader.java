@@ -36,6 +36,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * INRReader is the file format reader for INR files.
@@ -167,9 +168,9 @@ public class INRReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

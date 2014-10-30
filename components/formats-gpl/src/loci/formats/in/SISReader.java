@@ -45,6 +45,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * SISReader is the file format reader for Olympus Soft Imaging Solutions
@@ -263,8 +264,8 @@ public class SISReader extends BaseTiffReader {
       physicalSizeX /= 1000;
       physicalSizeY /= 1000;
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

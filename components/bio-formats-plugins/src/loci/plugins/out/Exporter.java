@@ -378,9 +378,9 @@ public class Exporter {
 
       Calibration cal = imp.getCalibration();
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(cal.pixelWidth), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(cal.pixelHeight), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(cal.pixelDepth), 0);
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(cal.pixelWidth), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(cal.pixelHeight), 0);
+      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(cal.pixelDepth), 0);
       store.setPixelsTimeIncrement(new Time(new Double(cal.frameInterval), UNITS.S), 0);
 
       if (imp.getImageStackSize() !=

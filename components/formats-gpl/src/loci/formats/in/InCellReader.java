@@ -102,7 +102,7 @@ public class InCellReader extends FormatReader {
   private Vector<String> metadataFiles;
 
   private Binning bin;
-  private PositiveFloat x, y;
+  private Length x, y;
   private Double gain;
   private Double temperature;
   private Double refractive;

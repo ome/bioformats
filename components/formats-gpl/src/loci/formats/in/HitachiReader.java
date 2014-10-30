@@ -52,6 +52,7 @@ import ome.units.UNITS;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * HitachiReader is the file format reader for S-4800 files.
@@ -251,8 +252,8 @@ public class HitachiReader extends FormatReader {
     Double stagePosY = new Double(image.get("StagePositionY"));
     Double stagePosZ = new Double(image.get("StagePositionZ"));
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+    Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+    Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }
