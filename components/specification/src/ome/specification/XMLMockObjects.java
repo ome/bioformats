@@ -141,6 +141,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
@@ -661,7 +662,7 @@ public class XMLMockObjects
     settings.setBinning(BINNING);
     settings.setGain(1.0);
     settings.setOffset(1.0);
-    settings.setReadOutRate(1.0);
+    settings.setReadOutRate(new Frequency(1.0, UNITS.HZ);
     settings.setVoltage(1.0);
     return settings;
   }
