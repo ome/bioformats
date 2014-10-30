@@ -32,6 +32,7 @@
 
 package spec.schema.samples;
 
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 import loci.formats.FormatTools;
@@ -151,7 +152,7 @@ public class Instrument2011_06
         public static final Binning Image0DetectorSettings0Binning = Binning.TWOXTWO;
         public static final Double Image0DetectorSettings0Gain = Double.valueOf("1.2");
         public static final Double Image0DetectorSettings0Offset = Double.valueOf("0.7");
-        public static final Double Image0DetectorSettings0ReadOutRate = Double.valueOf("3200");
+        public static final Frequency Image0DetectorSettings0ReadOutRate = new Frequency(3200.0, UNITS.MEGAHZ);
         public static final Double Image0DetectorSettings0Voltage = Double.valueOf("120");
     }
 }

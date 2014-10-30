@@ -38,6 +38,7 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
@@ -1027,7 +1028,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              Double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
+              Frequency readOutRate = src.getDetectorSettingsReadOutRate(i, c);
               dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
             }
             catch (NullPointerException e) { }
@@ -4074,7 +4075,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double repetitionRate =
+          Frequency repetitionRate =
             src.getLaserRepetitionRate(instrumentIndex, lightSource);
           if (repetitionRate != null) {
             dest.setLaserRepetitionRate(

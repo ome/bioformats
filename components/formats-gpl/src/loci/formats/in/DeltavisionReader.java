@@ -47,6 +47,7 @@ import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -1103,7 +1104,8 @@ public class DeltavisionReader extends FormatReader {
             store.setDetectorID(detectorID, 0, 0);
             for (int series=0; series<getSeriesCount(); series++) {
               for (int c=0; c<getSizeC(); c++) {
-                store.setDetectorSettingsReadOutRate(mhz, series, c);
+                store.setDetectorSettingsReadOutRate(
+                        new Frequency(mhz, UNITS.HZ), series, c);
                 store.setDetectorSettingsID(detectorID, series, c);
               }
             }
