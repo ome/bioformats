@@ -66,6 +66,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -807,7 +808,8 @@ public class ZeissCZIReader extends FormatReader {
           PercentFraction.valueOf(humidity), i);
       }
       if (temperature != null) {
-        store.setImagingEnvironmentTemperature(new Double(temperature), i);
+        store.setImagingEnvironmentTemperature(new Temperature(
+                new Double(temperature), UNITS.DEGREEC), i);
       }
 
       if (objectiveSettingsID != null) {

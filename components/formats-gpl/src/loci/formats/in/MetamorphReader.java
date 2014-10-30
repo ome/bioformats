@@ -57,6 +57,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -733,7 +734,8 @@ public class MetamorphReader extends BaseTiffReader {
       }
       store.setImageDescription("", i);
 
-      store.setImagingEnvironmentTemperature(handler.getTemperature(), i);
+      store.setImagingEnvironmentTemperature(
+              new Temperature(handler.getTemperature(), UNITS.DEGREEC), i);
 
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();

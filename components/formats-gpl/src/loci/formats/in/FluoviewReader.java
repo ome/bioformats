@@ -42,6 +42,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -605,7 +606,7 @@ public class FluoviewReader extends BaseTiffReader {
   private void initAlternateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     store.setImagingEnvironmentTemperature(
-      new Double(temperature.floatValue()), 0);
+      new Temperature(new Double(temperature.floatValue()), UNITS.DEGREEC), 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
