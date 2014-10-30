@@ -145,7 +145,7 @@ public class FV1000Reader extends FormatReader {
     new Hashtable<Integer, String>();
   private Vector<PlaneData> planes;
 
-  private POIService poi;
+  private transient POIService poi;
 
   private short[][][] lut;
   private int lastChannel = 0;
@@ -361,15 +361,7 @@ public class FV1000Reader extends FormatReader {
     isOIB = checkSuffix(id, OIB_SUFFIX);
 
     if (isOIB) {
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        poi = factory.getInstance(POIService.class);
-      }
-      catch (DependencyException de) {
-        throw new FormatException("POI library not found", de);
-      }
-
-      poi.initialize(Location.getMappedId(id));
+      initPOIService();
     }
 
     // mappedOIF is used to distinguish between datasets that are being read
@@ -1546,10 +1538,26 @@ public class FV1000Reader extends FormatReader {
     return s;
   }
 
+  private void initPOIService() throws FormatException, IOException {
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("POI library not found", de);
+    }
+
+    poi.initialize(Location.getMappedId(getCurrentFile()));
+  }
+
   private RandomAccessInputStream getFile(String name)
     throws FormatException, IOException
   {
     if (isOIB) {
+      if (poi == null) {
+        initPOIService();
+      }
+
       name = name.replace('\\', File.separatorChar);
       name = name.replace('/', File.separatorChar);
       String realName = oibMapping.get(name);

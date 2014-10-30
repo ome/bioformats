@@ -166,7 +166,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private String[] lsmFilenames;
   private Vector<IFDList> ifdsList;
-  private TiffParser tiffParser;
+  private transient TiffParser tiffParser;
 
   private int nextLaser = 0, nextDetector = 0;
   private int nextFilter = 0, nextDichroicChannel = 0, nextDichroic = 0;
@@ -365,6 +365,9 @@ public class ZeissLSMReader extends FormatReader {
       in.close();
       in = new RandomAccessInputStream(getLSMFileFromSeries(getSeries()));
       in.order(!isLittleEndian());
+      tiffParser = new TiffParser(in);
+    }
+    else if (tiffParser == null) {
       tiffParser = new TiffParser(in);
     }
 

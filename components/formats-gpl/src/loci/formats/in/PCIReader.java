@@ -66,7 +66,7 @@ public class PCIReader extends FormatReader {
   // -- Fields --
 
   private HashMap<Integer, String> imageFiles;
-  private POIService poi;
+  private transient POIService poi;
   private HashMap<Integer, Double> timestamps;
   private String creationDate;
   private int binning;
@@ -93,7 +93,12 @@ public class PCIReader extends FormatReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     String file = imageFiles.get(0);
+
     try {
+      if (poi == null) {
+       initPOIService();
+      }
+
       RandomAccessInputStream s = poi.getDocumentStream(file);
       TiffParser tp = new TiffParser(s);
       if (tp.isValidHeader()) {
@@ -116,7 +121,12 @@ public class PCIReader extends FormatReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     String file = imageFiles.get(0);
+
     try {
+      if (poi == null) {
+        initPOIService();
+      }
+
       RandomAccessInputStream s = poi.getDocumentStream(file);
       TiffParser tp = new TiffParser(s);
       if (tp.isValidHeader()) {
@@ -142,6 +152,10 @@ public class PCIReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (poi == null) {
+      initPOIService();
+    }
 
     String file = imageFiles.get(no);
     RandomAccessInputStream s = poi.getDocumentStream(file);
@@ -188,15 +202,7 @@ public class PCIReader extends FormatReader {
 
     CoreMetadata m = core.get(0);
 
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      poi = factory.getInstance(POIService.class);
-    }
-    catch (DependencyException de) {
-      throw new FormatException("POI library not found", de);
-    }
-
-    poi.initialize(Location.getMappedId(currentId));
+    initPOIService();
 
     double scaleFactor = 1;
 
@@ -418,6 +424,18 @@ public class PCIReader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  private void initPOIService() throws FormatException, IOException {
+   try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("POI library not found", de);
+    }
+
+    poi.initialize(Location.getMappedId(getCurrentFile()));
+  }
 
   /** Get the image index from the image file name. */
   private Integer getImageIndex(String path) {

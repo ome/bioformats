@@ -70,7 +70,7 @@ public class NiftiReader extends FormatReader {
   private int pixelOffset;
 
   /** File containing the pixel data. */
-  private RandomAccessInputStream pixelFile;
+  private transient RandomAccessInputStream pixelFile;
 
   private String pixelsFilename;
   private short nDimensions;
@@ -175,6 +175,14 @@ public class NiftiReader extends FormatReader {
       nDimensions = 0;
       description = null;
       voxelWidth = voxelHeight = sliceThickness = deltaT = 0d;
+    }
+  }
+
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (pixelFile == null) {
+      pixelFile = new RandomAccessInputStream(pixelsFilename);
     }
   }
 

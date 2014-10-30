@@ -60,11 +60,13 @@ public class AmiraReader extends FormatReader {
 
   // -- Fields --
 
-  AmiraParameters parameters;
   long offsetOfFirstStream;
 
   // for non-raw plane formats
-  PlaneReader planeReader;
+  transient PlaneReader planeReader;
+  private boolean hasPlaneReader = false;
+  private String compression;
+  private boolean ascii = false;
 
   // for labels
   byte[][] lut;
@@ -93,12 +95,16 @@ public class AmiraReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int planeSize = FormatTools.getPlaneSize(this);
-    if (planeReader != null) {
+    if (hasPlaneReader) {
+      if (planeReader == null) {
+        initPlaneReader();
+      }
+
       // plane readers can only read whole planes, so we need to blit
       int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
       byte[] planeBuf = new byte[planeSize];
       planeReader.read(no, planeBuf);
-      int srcWidth = parameters.width * bytesPerPixel;
+      int srcWidth = getSizeX() * bytesPerPixel;
       int destWidth = w * bytesPerPixel;
       for (int j = y; j < y + h; j++) {
         int src = j * srcWidth + x * bytesPerPixel;
@@ -114,6 +120,18 @@ public class AmiraReader extends FormatReader {
     return buf;
   }
 
+  /* @see loci.formats.FormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+
+    offsetOfFirstStream = 0;
+    planeReader = null;
+    hasPlaneReader = false;
+    compression = null;
+    ascii = false;
+    lut = null;
+  }
+
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#initFile(java.lang.String)
    */
@@ -121,7 +139,7 @@ public class AmiraReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    parameters = new AmiraParameters(in);
+    AmiraParameters parameters = new AmiraParameters(in);
     offsetOfFirstStream = in.getFilePointer();
 
     LOGGER.info("Populating metadata hashtable");
@@ -210,29 +228,15 @@ public class AmiraReader extends FormatReader {
       }
     }
 
-    if (parameters.ascii) {
-      planeReader = new ASCII(m.pixelType,
-        parameters.width * parameters.height);
-    }
-
-    int compressionType = 0;
+    ascii = parameters.ascii;
     ArrayList streamData = (ArrayList) parameters.getStreams().get("@1");
     if (streamData.size() > 2) {
-      String compression = (String) streamData.get(2);
-      if (compression.startsWith("HxZip,")) {
-        compressionType = 1;
-        long size = Long.parseLong(compression.substring("HxZip,".length()));
-        planeReader = new HxZip(size);
-      }
-      else if (compression.startsWith("HxByteRLE,")) {
-        compressionType = 2;
-        long size =
-          Long.parseLong(compression.substring("HxByteRLE,".length()));
-        planeReader = new HxRLE(parameters.depth, size);
-      }
-
+      compression = (String) streamData.get(2);
     }
-    addGlobalMeta("Compression", compressionType);
+    initPlaneReader();
+    hasPlaneReader = planeReader != null;
+
+    addGlobalMeta("Compression", compression);
 
     Map params = (Map) parameters.getMap().get("Parameters");
     if (params != null) {
@@ -240,6 +244,24 @@ public class AmiraReader extends FormatReader {
       if (materials != null) {
         lut = getLookupTable(materials);
         m.indexed = true;
+      }
+    }
+  }
+
+  private void initPlaneReader() {
+    if (ascii) {
+      planeReader = new ASCII(getPixelType(), getSizeX() * getSizeY());
+    }
+
+    if (compression != null) {
+      if (compression.startsWith("HxZip,")) {
+        long size = Long.parseLong(compression.substring("HxZip,".length()));
+        planeReader = new HxZip(size);
+      }
+      else if (compression.startsWith("HxByteRLE,")) {
+        long size =
+          Long.parseLong(compression.substring("HxByteRLE,".length()));
+        planeReader = new HxRLE(getSizeZ(), size);
       }
     }
   }
@@ -312,7 +334,7 @@ public class AmiraReader extends FormatReader {
       this.pixelType = pixelType;
       this.pixelsPerPlane = pixelsPerPlane;
       bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-      offsets = new long[parameters.depth + 1];
+      offsets = new long[getSizeZ() + 1];
       offsets[0] = offsetOfFirstStream;
     }
 
@@ -379,7 +401,7 @@ public class AmiraReader extends FormatReader {
   class HxZip implements PlaneReader {
     long offsetOfStream, compressedSize;
     int currentNo, planeSize;
-    InflaterInputStream decompressor;
+    transient InflaterInputStream decompressor;
 
     HxZip(long compressedSize) {
       this.compressedSize = compressedSize;

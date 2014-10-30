@@ -74,7 +74,7 @@ public class IPWReader extends FormatReader {
   private Hashtable<Integer, String> imageFiles;
 
   /** Helper reader - parses embedded files from the OLE document. */
-  private POIService poi;
+  private transient POIService poi;
 
   // -- Constructor --
 
@@ -163,6 +163,10 @@ public class IPWReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    if (poi == null) {
+      initPOIService();
+    }
+
     RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(no));
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -188,16 +192,7 @@ public class IPWReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
-
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      poi = factory.getInstance(POIService.class);
-    }
-    catch (DependencyException de) {
-      throw new MissingLibraryException("POI library not found", de);
-    }
-
-    poi.initialize(Location.getMappedId(currentId));
+    initPOIService();
 
     imageFiles = new Hashtable<Integer, String>();
 
@@ -332,6 +327,18 @@ public class IPWReader extends FormatReader {
     if (creationDate != null) {
       store.setImageAcquisitionDate(new Timestamp(creationDate), 0);
     }
+  }
+
+  private void initPOIService() throws FormatException, IOException {
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException("POI library not found", de);
+    }
+
+    poi.initialize(Location.getMappedId(getCurrentFile()));
   }
 
 }

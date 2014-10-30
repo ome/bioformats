@@ -154,13 +154,15 @@ public class LeicaSCNReader extends BaseTiffReader {
    */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
       throws FormatException, IOException
-      {
-    int ifd = imageIFD(no);
-
+  {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    if (tiffParser == null) {
+      initTiffParser();
+    }
+    int ifd = imageIFD(no);
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
-      }
+  }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {

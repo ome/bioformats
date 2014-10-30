@@ -31,7 +31,6 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
@@ -66,7 +65,7 @@ public class APLReader extends FormatReader {
 
   private String[] tiffFiles;
   private String[] xmlFiles;
-  private TiffParser[] parser;
+  private transient TiffParser[] parser;
   private IFDList[] ifds;
   private Vector<String> used;
 
@@ -137,6 +136,14 @@ public class APLReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (parser == null) {
+      parser = new TiffParser[getSeriesCount()];
+    }
+    if (parser[getSeries()] == null) {
+      parser[getSeries()] = new TiffParser(tiffFiles[getSeries()]);
+      parser[getSeries()].setDoCaching(false);
+    }
 
     IFD ifd = ifds[getSeries()].get(no);
     return parser[getSeries()].getSamples(ifd, buf, x, y, w, h);

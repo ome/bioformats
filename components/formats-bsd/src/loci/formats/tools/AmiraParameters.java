@@ -62,7 +62,7 @@ public class AmiraParameters {
   public String[] streamNames;
   public String[] streamTypes;
 
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
   protected Map map, streams;
 
   protected int column, row;

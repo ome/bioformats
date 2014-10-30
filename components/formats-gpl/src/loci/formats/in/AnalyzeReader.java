@@ -59,7 +59,7 @@ public class AnalyzeReader extends FormatReader {
   private int pixelOffset;
 
   /** File containing the pixel data. */
-  private RandomAccessInputStream pixelFile;
+  private transient RandomAccessInputStream pixelFile;
 
   private String pixelsFilename;
 
@@ -155,6 +155,14 @@ public class AnalyzeReader extends FormatReader {
       pixelOffset = 0;
       pixelFile = null;
       pixelsFilename = null;
+    }
+  }
+
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (pixelFile == null) {
+      pixelFile = new RandomAccessInputStream(pixelsFilename);
     }
   }
 

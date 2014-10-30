@@ -107,6 +107,10 @@ public class GelReader extends BaseTiffReader {
     IFD ifd = ifds.get(no);
 
     if (fmt == SQUARE_ROOT) {
+      if (tiffParser == null) {
+        initTiffParser();
+      }
+
       float scale =
         ((TiffRational) ifd.getIFDValue(MD_SCALE_PIXEL)).floatValue();
 
