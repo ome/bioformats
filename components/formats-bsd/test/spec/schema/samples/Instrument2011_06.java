@@ -91,7 +91,7 @@ public class Instrument2011_06
         public static final Double Instrument0Objective0LensNA = Double.valueOf("1.2");
         public static final Double Instrument0Objective0NominalMagnification = Double.valueOf("60.0");
         public static final Double Instrument0Objective0CalibratedMagnification = Double.valueOf("60.12");
-        public static final Double Instrument0Objective0WorkingDistance = Double.valueOf("20");
+        public static final Length Instrument0Objective0WorkingDistance = FormatTools.createLength(Double.valueOf("20"), UNITS.MICROM);
         public static final String Instrument0Objective0Manufacturer = "OME Objectives";
         public static final String Instrument0Objective0Model = "60xUV-Air";
         public static final String Instrument0FilterSet0Manufacturer = "OME Filters";
