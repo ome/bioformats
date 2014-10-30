@@ -51,6 +51,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -1975,7 +1976,8 @@ public class NativeND2Reader extends FormatReader {
     // populate DetectorSettings
     Double voltage = handler.getVoltage();
     if (voltage != null) {
-      store.setDetectorSettingsVoltage(voltage, 0, 0);
+      store.setDetectorSettingsVoltage(
+              new ElectricPotential(voltage, UNITS.V), 0, 0);
     }
 
     // populate Objective
