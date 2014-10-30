@@ -821,7 +821,9 @@ public class LIFReader extends FormatReader {
         if (channelNames[index] != null) {
           store.setChannelName(channelNames[index][c], i, c);
         }
-        store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROM), i, c);
+        if (pinholes[index] != null) {
+          store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROM), i, c);
+        }
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
             Length ex =
