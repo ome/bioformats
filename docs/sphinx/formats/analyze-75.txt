@@ -24,7 +24,7 @@ Supported Metadata Fields: :doc:`Analyze 7.5 <analyze-75-metadata>`
 
 We currently have:
 
-* `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ 
+* `an Analyze 7.5 specification document <http://web.archive.org/web/20070927191351/http://www.mayo.edu/bir/PDF/ANALYZE75.pdf>`_ 
 * several Analyze 7.5 datasets
 
 We would like to have:
