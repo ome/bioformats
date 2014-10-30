@@ -40,6 +40,7 @@ import ome.xml.model.primitives.*;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -729,7 +730,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Double temperature = src.getImagingEnvironmentTemperature(i);
+        Temperature temperature = src.getImagingEnvironmentTemperature(i);
         dest.setImagingEnvironmentTemperature(temperature, i);
       }
       catch (NullPointerException e) { }

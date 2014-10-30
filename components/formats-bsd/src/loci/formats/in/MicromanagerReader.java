@@ -57,8 +57,9 @@ import ome.xml.model.primitives.Timestamp;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-import ome.units.quantity.Time;
 import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**
@@ -353,7 +354,8 @@ public class MicromanagerReader extends FormatReader {
 
         if (p.cameraMode == null) p.cameraMode = "Other";
         store.setDetectorType(getDetectorType(p.cameraMode), 0, i);
-        store.setImagingEnvironmentTemperature(p.temperature, i);
+        store.setImagingEnvironmentTemperature(
+                new Temperature(p.temperature, UNITS.DEGREEC), i);
       }
     }
   }

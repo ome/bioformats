@@ -49,6 +49,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -631,7 +632,8 @@ public class InCellReader extends FormatReader {
           }
         }
         if (temperature != null) {
-          store.setImagingEnvironmentTemperature(temperature, i);
+          store.setImagingEnvironmentTemperature(
+                  new Temperature(temperature, UNITS.DEGREEC), i);
         }
       }
       setSeries(0);

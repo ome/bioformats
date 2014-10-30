@@ -44,6 +44,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -228,7 +229,8 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     }
 
     if (temperature.size() > 0) {
-      store.setImagingEnvironmentTemperature(temperature.get(0), 0);
+      store.setImagingEnvironmentTemperature(new Temperature(
+              temperature.get(0), UNITS.DEGREEC), 0);
     }
 
     Double voltage = handler.getVoltage();
