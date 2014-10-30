@@ -46,10 +46,13 @@ import ome.units.UNITS;
  * </small>
  * @since 5.1
  */
-public class Temperature extends Quantity
+public class Temperature extends Quantity implements Comparable<Temperature>
 {
+  private static final int SEED1 = 12;
+  private static final int SEED2 = 23;
   Number value;
   Unit<ome.units.quantity.Temperature> unit;
+  private int hashCodeValue;
 
   public Temperature(Number inValue,
     Unit<ome.units.quantity.Temperature> inUnit)
@@ -60,6 +63,9 @@ public class Temperature extends Quantity
     }
     value = inValue;
     unit = inUnit;
+    hashCodeValue = SEED1;
+    hashCodeValue = SEED2 * hashCodeValue + Float.floatToIntBits(value.floatValue());
+    hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
 
   public Number value()
@@ -103,6 +109,35 @@ public class Temperature extends Quantity
       }
     }
     return false;
+  }
+
+  @Override
+  public int compareTo(Temperature other)
+  {
+    if (this == other) {
+      return 0;
+    }
+    return Double.compare(value.doubleValue(), other.value(unit).doubleValue());
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return hashCodeValue;
+  }
+  @Override
+  public String toString()
+  {
+    StringBuilder result = new StringBuilder();
+    result.append(this.getClass().getName());
+    result.append(": ");
+    result.append("value[");
+    result.append(value);
+    result.append("], unit[");
+    result.append(unit.getSymbol());
+    result.append("] stored as ");
+    result.append(value.getClass().getName());
+    return result.toString();
   }
 
   public Unit<ome.units.quantity.Temperature> unit()
