@@ -57,6 +57,7 @@ import ome.xml.model.primitives.Timestamp;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -334,7 +335,8 @@ public class MicromanagerReader extends FormatReader {
           store.setDetectorSettingsBinning(getBinning(p.binning), i, c);
           store.setDetectorSettingsGain(new Double(p.gain), i, c);
           if (c < p.voltage.size()) {
-            store.setDetectorSettingsVoltage(p.voltage.get(c), i, c);
+            store.setDetectorSettingsVoltage(
+                    new ElectricPotential(p.voltage.get(c), UNITS.V), i, c);
           }
           store.setDetectorSettingsID(p.detectorID, i, c);
         }

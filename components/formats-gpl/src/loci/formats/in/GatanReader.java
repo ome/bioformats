@@ -39,6 +39,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -280,7 +281,8 @@ public class GatanReader extends FormatReader {
       store.setDetectorID(detector, 0, 0);
 
       store.setDetectorSettingsID(detector, 0, 0);
-      store.setDetectorSettingsVoltage(voltage, 0, 0);
+      store.setDetectorSettingsVoltage(new ElectricPotential(voltage, UNITS.V),
+              0, 0);
 
       if (info == null) info = "";
       String[] scopeInfo = info.split("\\(");

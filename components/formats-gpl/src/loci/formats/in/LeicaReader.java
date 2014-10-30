@@ -57,6 +57,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -1532,7 +1533,9 @@ public class LeicaReader extends FormatReader {
       // link Detector to Image, if the detector was actually used
       if (detector.active) {
         store.setDetectorOffset(detector.offset, series, nextDetector);
-        store.setDetectorVoltage(detector.voltage, series, nextDetector);
+        store.setDetectorVoltage(
+                new ElectricPotential(detector.voltage, UNITS.V), series,
+                nextDetector);
         store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
 
         String detectorID =
