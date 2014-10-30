@@ -58,8 +58,14 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.unit.Unit;
-import ome.units.quantity.Time;
+import ome.units.quantity.Angle;
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
+import ome.units.quantity.Power;
+import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 import org.slf4j.Logger;
@@ -1312,27 +1318,95 @@ public final class FormatTools {
 
   // -- Quantity helper methods --
 
-  public static Time createTime(Double value, Unit<Time> valueUnit) {
+  // Angle
+  public static Angle createAngle(Double value, Unit<Angle> valueUnit) {
     if (value == null) {
       return null;
     }
-    return new Time(value, valueUnit);
+    return new Angle(value, valueUnit);
   }
 
-  public static Time createTime(Integer value, Unit<Time> valueUnit) {
+  public static Angle createAngle(Integer value, Unit<Angle> valueUnit) {
     if (value == null) {
       return null;
     }
-    return new Time(value, valueUnit);
+    return new Angle(value, valueUnit);
   }
 
-  public static <T extends PrimitiveNumber> Time createTime(T value, Unit<Time> valueUnit) {
+  public static <T extends PrimitiveNumber> Angle createAngle(T value, Unit<Angle> valueUnit) {
     if (value == null) {
       return null;
     }
-    return new Time(value.getNumberValue(), valueUnit);
+    return new Angle(value.getNumberValue(), valueUnit);
   }
 
+  // ElectricPotential
+  public static ElectricPotential createElectricPotential(Double value, Unit<ElectricPotential> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new ElectricPotential(value, valueUnit);
+  }
+
+  public static ElectricPotential createElectricPotential(Integer value, Unit<ElectricPotential> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new ElectricPotential(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> ElectricPotential createElectricPotential(T value, Unit<ElectricPotential> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new ElectricPotential(value.getNumberValue(), valueUnit);
+  }
+
+  // Frequency
+  public static Frequency createFrequency(Double value, Unit<Frequency> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Frequency(value, valueUnit);
+  }
+
+  public static Frequency createFrequency(Integer value, Unit<Frequency> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Frequency(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Frequency createFrequency(T value, Unit<Frequency> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Frequency(value.getNumberValue(), valueUnit);
+  }
+
+  // Power
+  public static Power createPower(Double value, Unit<Power> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Power(value, valueUnit);
+  }
+
+  public static Power createPower(Integer value, Unit<Power> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Power(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Power createPower(T value, Unit<Power> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Power(value.getNumberValue(), valueUnit);
+  }
+
+  // Length
   public static Length createLength(Double value, Unit<Length> valueUnit) {
     if (value == null) {
       return null;
@@ -1352,6 +1426,72 @@ public final class FormatTools {
       return null;
     }
     return new Length(value.getNumberValue(), valueUnit);
+  }
+
+  // Pressure
+  public static Pressure createPressure(Double value, Unit<Pressure> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Pressure(value, valueUnit);
+  }
+
+  public static Pressure createPressure(Integer value, Unit<Pressure> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Pressure(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Pressure createPressure(T value, Unit<Pressure> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Pressure(value.getNumberValue(), valueUnit);
+  }
+
+  // Temperature
+    public static Temperature createTemperature(Double value, Unit<Temperature> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Temperature(value, valueUnit);
+  }
+
+  public static Temperature createTemperature(Integer value, Unit<Temperature> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Temperature(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Temperature createTemperature(T value, Unit<Temperature> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Temperature(value.getNumberValue(), valueUnit);
+  }
+
+  // Time
+  public static Time createTime(Double value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static Time createTime(Integer value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Time createTime(T value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value.getNumberValue(), valueUnit);
   }
 
 }
