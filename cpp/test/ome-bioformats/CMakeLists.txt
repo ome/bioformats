@@ -41,8 +41,10 @@ include_directories(${OME_TOPLEVEL_INCLUDES}
 add_subdirectory(data)
 
 if(BUILD_TESTS)
-  header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
-  add_test(ome-bioformats/headers ome-bioformats-headers)
+  if(extended-tests)
+    header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
+    add_test(ome-bioformats/headers ome-bioformats-headers)
+  endif(extended-tests)
 
   add_executable(formatreader formatreader.cpp)
   target_link_libraries(formatreader ome-bioformats)
