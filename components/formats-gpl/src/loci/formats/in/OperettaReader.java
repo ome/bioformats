@@ -522,12 +522,12 @@ public class OperettaReader extends FormatReader {
         else if ("PositionY".equals(currentName)) {
           // position stored in meters
           final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionX = new Length(meters, UNITS.REFERENCEFRAME);
+          activePlane.positionY = new Length(meters, UNITS.REFERENCEFRAME);
         }
         else if ("AbsPositionZ".equals(currentName)) {
           // position stored in meters
           final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionX = new Length(meters, UNITS.REFERENCEFRAME);
+          activePlane.positionZ = new Length(meters, UNITS.REFERENCEFRAME);
         }
         else if ("ObjectiveMagnification".equals(currentName)) {
           activePlane.magnification = Double.parseDouble(value);
