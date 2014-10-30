@@ -48,17 +48,65 @@ import ome.units.UNITS;
  */
 public class Frequency extends Quantity
 {
-  public Frequency(Number value, 
-    Unit<ome.units.quantity.Frequency> unit)
+  Number value;
+  Unit<ome.units.quantity.Frequency> unit;
+
+  public Frequency(Number inValue,
+    Unit<ome.units.quantity.Frequency> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Frequency: Frequency cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
   }
-    public Number value()
+
+  public Number value()
+  {
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Frequency> inUnit)
+  {
+    if (unit.equals(inUnit))
     {
-      return 1;
+      return value;
     }
-    
-    public Unit<ome.units.quantity.Frequency> unit()
+    if (unit.isConvertible(inUnit))
     {
-      return UNITS.HERTZ;
+      return unit.convertValue(value, inUnit);
     }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Frequency otherFrequency = (Frequency)other;
+    if (unit.equals(otherFrequency.unit))
+    {
+      // Frequencys use same unit so compare value
+      return value.equals(otherFrequency.value);
+    } else {
+      if (unit.isConvertible(otherFrequency.unit))
+      {
+        // Frequencys use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherFrequency.unit)).equals(otherFrequency.value);
+      }
+    }
+    return false;
+  }
+
+  public Unit<ome.units.quantity.Frequency> unit()
+  {
+    return UNITS.HERTZ;
+  }
 }

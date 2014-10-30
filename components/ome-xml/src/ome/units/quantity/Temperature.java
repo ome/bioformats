@@ -48,17 +48,65 @@ import ome.units.UNITS;
  */
 public class Temperature extends Quantity
 {
-  public Temperature(Number value, 
-    Unit<ome.units.quantity.Temperature> unit)
+  Number value;
+  Unit<ome.units.quantity.Temperature> unit;
+
+  public Temperature(Number inValue,
+    Unit<ome.units.quantity.Temperature> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Temperature: Temperature cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
   }
-    public Number value()
+
+  public Number value()
+  {
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Temperature> inUnit)
+  {
+    if (unit.equals(inUnit))
     {
-      return 1;
+      return value;
     }
-    
-    public Unit<ome.units.quantity.Temperature> unit()
+    if (unit.isConvertible(inUnit))
     {
-      return UNITS.KELVIN;
+      return unit.convertValue(value, inUnit);
     }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Temperature otherTemperature = (Temperature)other;
+    if (unit.equals(otherTemperature.unit))
+    {
+      // Temperatures use same unit so compare value
+      return value.equals(otherTemperature.value);
+    } else {
+      if (unit.isConvertible(otherTemperature.unit))
+      {
+        // Temperatures use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherTemperature.unit)).equals(otherTemperature.value);
+      }
+    }
+    return false;
+  }
+
+  public Unit<ome.units.quantity.Temperature> unit()
+  {
+    return UNITS.KELVIN;
+  }
 }

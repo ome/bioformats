@@ -48,13 +48,61 @@ import ome.units.UNITS;
  */
 public class ElectricPotential extends Quantity
 {
-  public ElectricPotential(Number value, 
-    Unit<ome.units.quantity.ElectricPotential> unit)
+  Number value;
+  Unit<ome.units.quantity.ElectricPotential> unit;
+
+  public ElectricPotential(Number inValue,
+    Unit<ome.units.quantity.ElectricPotential> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("ElectricPotential: ElectricPotential cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
   }
+
   public Number value()
   {
-    return 1;
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.ElectricPotential> inUnit)
+  {
+    if (unit.equals(inUnit))
+    {
+      return value;
+    }
+    if (unit.isConvertible(inUnit))
+    {
+      return unit.convertValue(value, inUnit);
+    }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    ElectricPotential otherElectricPotential = (ElectricPotential)other;
+    if (unit.equals(otherElectricPotential.unit))
+    {
+      // ElectricPotentials use same unit so compare value
+      return value.equals(otherElectricPotential.value);
+    } else {
+      if (unit.isConvertible(otherElectricPotential.unit))
+      {
+        // ElectricPotentials use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherElectricPotential.unit)).equals(otherElectricPotential.value);
+      }
+    }
+    return false;
   }
 
   public Unit<ome.units.quantity.ElectricPotential> unit()

@@ -48,17 +48,65 @@ import ome.units.UNITS;
  */
 public class Pressure extends Quantity
 {
-  public Pressure(Number value, 
-    Unit<ome.units.quantity.Pressure> unit)
+  Number value;
+  Unit<ome.units.quantity.Pressure> unit;
+
+  public Pressure(Number inValue,
+    Unit<ome.units.quantity.Pressure> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Pressure: Pressure cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
   }
-    public Number value()
+
+  public Number value()
+  {
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Pressure> inUnit)
+  {
+    if (unit.equals(inUnit))
     {
-      return 1;
+      return value;
     }
-    
-    public Unit<ome.units.quantity.Pressure> unit()
+    if (unit.isConvertible(inUnit))
     {
-      return UNITS.PASCAL;
+      return unit.convertValue(value, inUnit);
     }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Pressure otherPressure = (Pressure)other;
+    if (unit.equals(otherPressure.unit))
+    {
+      // Pressures use same unit so compare value
+      return value.equals(otherPressure.value);
+    } else {
+      if (unit.isConvertible(otherPressure.unit))
+      {
+        // Pressures use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherPressure.unit)).equals(otherPressure.value);
+      }
+    }
+    return false;
+  }
+
+  public Unit<ome.units.quantity.Pressure> unit()
+  {
+    return UNITS.PASCAL;
+  }
 }

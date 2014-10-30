@@ -48,17 +48,65 @@ import ome.units.UNITS;
  */
 public class Angle extends Quantity
 {
-  public Angle(Number value, 
-    Unit<ome.units.quantity.Angle> unit)
+  Number value;
+  Unit<ome.units.quantity.Angle> unit;
+
+  public Angle(Number inValue,
+    Unit<ome.units.quantity.Angle> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Angle: Angle cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
   }
-    public Number value()
+
+  public Number value()
+  {
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Angle> inUnit)
+  {
+    if (unit.equals(inUnit))
     {
-      return 1;
+      return value;
     }
-    
-    public Unit<ome.units.quantity.Angle> unit()
+    if (unit.isConvertible(inUnit))
     {
-      return UNITS.RADIAN;
+      return unit.convertValue(value, inUnit);
     }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Angle otherAngle = (Angle)other;
+    if (unit.equals(otherAngle.unit))
+    {
+      // Angles use same unit so compare value
+      return value.equals(otherAngle.value);
+    } else {
+      if (unit.isConvertible(otherAngle.unit))
+      {
+        // Angles use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherAngle.unit)).equals(otherAngle.value);
+      }
+    }
+    return false;
+  }
+
+  public Unit<ome.units.quantity.Angle> unit()
+  {
+    return UNITS.RADIAN;
+  }
 }
