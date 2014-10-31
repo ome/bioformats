@@ -413,7 +413,7 @@ public class CellSensReader extends FormatReader {
     files.add(file.getAbsolutePath());
     usedFiles = files.toArray(new String[files.size()]);
 
-    int seriesCount = files.size() - 1 + ifds.size();
+    int seriesCount = files.size();
     core.clear();
 
     IFDList exifs = parser.getExifIFDs();
