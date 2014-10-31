@@ -2091,8 +2091,14 @@ public class FormatReaderTest {
     String testName = "testMemoFileUsage";
     if (!initFile()) result(testName, false, "initFile");
     File memoFile = null;
+    File memoDir = null;
     try {
-      Memoizer memo = new Memoizer(0);
+      // this should prevent conflicts when running multiple tests
+      // on the same system and/or in multiple threads
+      String tmpdir = System.getProperty("java.io.tmpdir");
+      memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
+      memoDir.mkdir();
+      Memoizer memo = new Memoizer(0, memoDir);
       memo.setId(reader.getCurrentFile());
       memo.close();
       memoFile = memo.getMemoFile(reader.getCurrentFile());
@@ -2114,6 +2120,15 @@ public class FormatReaderTest {
     finally {
       if (memoFile != null) {
         memoFile.delete();
+        // recursively delete, as the original file's path is replicated
+        // within the memo directory
+        while (!memoFile.getParentFile().equals(memoDir)) {
+          memoFile = memoFile.getParentFile();
+          memoFile.delete();
+        }
+      }
+      if (memoDir != null) {
+        memoDir.delete();
       }
     }
   }
