@@ -148,6 +148,7 @@ public class LIFReader extends FormatReader {
   private double[] acquiredDate;
 
   private int[] tileCount;
+  private long endPointer;
 
   // -- Constructor --
 
@@ -297,7 +298,7 @@ public class LIFReader extends FormatReader {
 
     long planeSize = (long) getSizeX() * getSizeY() * bpp;
     long nextOffset = index + 1 < offsets.size() ?
-      offsets.get(index + 1).longValue() : in.length();
+      offsets.get(index + 1).longValue() : endPointer;
     int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
@@ -373,6 +374,7 @@ public class LIFReader extends FormatReader {
       tileCount = null;
       fieldPosX.clear();
       fieldPosY.clear();
+      endPointer = 0;
     }
   }
 
@@ -416,6 +418,11 @@ public class LIFReader extends FormatReader {
         in.getFilePointer(), offsets.size());
       int check = in.readInt();
       if (check != LIF_MAGIC_BYTE) {
+        if (check == 0 && offsets.size() > 0) {
+          // newer .lif file; the remainder of the file is all 0s
+          endPointer = in.getFilePointer();
+          break;
+        }
         throw new FormatException("Invalid Memory Block: found magic bytes " +
           check + ", expected " + LIF_MAGIC_BYTE);
       }
@@ -448,6 +455,10 @@ public class LIFReader extends FormatReader {
     }
     initMetadata(xml);
     xml = null;
+
+    if (endPointer == 0) {
+      endPointer = in.length();
+    }
 
     // correct offsets, if necessary
     if (offsets.size() > getSeriesCount()) {
