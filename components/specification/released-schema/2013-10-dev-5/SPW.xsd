@@ -24,18 +24,18 @@
 	# Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	version="1"
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5/SA.xsd"/>
 
 	<xsd:annotation>
 		<xsd:documentation>

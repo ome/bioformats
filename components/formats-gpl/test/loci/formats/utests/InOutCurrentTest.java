@@ -288,7 +288,7 @@ public class InOutCurrentTest {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4";
+    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -296,7 +296,7 @@ public class InOutCurrentTest {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd";
 
   private Document document;
 

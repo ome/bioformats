@@ -24,25 +24,25 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-4"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-4"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1"
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-4"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-4/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-4"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-4/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5/ROI.xsd"/>
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
