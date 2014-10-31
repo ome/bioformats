@@ -55,12 +55,12 @@ class TIFFTestParameters
 public:
 
   std::string file;
-  dimension_size_type series;
+  dimension_size_type sizeT;
 
   TIFFTestParameters(const std::string& file,
-                     dimension_size_type series):
+                     dimension_size_type sizeT):
     file(file),
-    series(series)
+    sizeT(sizeT)
   {}
 };
 
@@ -92,7 +92,7 @@ TEST_P(TIFFTest, seriesCount)
   const TIFFTestParameters& params = GetParam();
 
   ASSERT_NO_THROW(tiff.setId(params.file));
-  EXPECT_EQ(params.series, tiff.getSeriesCount());
+  EXPECT_EQ(1U, tiff.getSeriesCount());
 }
 
 TEST_P(TIFFTest, setSeries)
@@ -101,7 +101,7 @@ TEST_P(TIFFTest, setSeries)
 
   ASSERT_NO_THROW(tiff.setId(params.file));
 
-  EXPECT_EQ(0, tiff.getSeries());
+  EXPECT_EQ(0U, tiff.getSeries());
 
   for (dimension_size_type s = 0; s < tiff.getSeriesCount(); ++s)
     {
@@ -110,6 +110,21 @@ TEST_P(TIFFTest, setSeries)
     }
 
   EXPECT_THROW(tiff.setSeries(tiff.getSeriesCount() + 1), std::logic_error);
+}
+
+TEST_P(TIFFTest, Series0Size)
+{
+  const TIFFTestParameters& params = GetParam();
+
+  ASSERT_NO_THROW(tiff.setId(params.file));
+
+  EXPECT_EQ(0U, tiff.getSeries());
+
+  EXPECT_EQ(18U, tiff.getSizeX());
+  EXPECT_EQ(24U, tiff.getSizeY());
+  EXPECT_EQ(1U, tiff.getSizeZ());
+  EXPECT_EQ(params.sizeT, tiff.getSizeT());
+  EXPECT_EQ(1U, tiff.getSizeC());
 }
 
 TEST_P(TIFFTest, openBytes)

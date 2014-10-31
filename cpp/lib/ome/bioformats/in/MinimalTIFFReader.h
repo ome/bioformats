@@ -47,6 +47,7 @@ namespace ome
     namespace tiff
     {
 
+      class IFD;
       class TIFF;
 
     }
@@ -60,8 +61,16 @@ namespace ome
       class MinimalTIFFReader : public ::ome::bioformats::detail::FormatReader
       {
       protected:
+        /// List of IFDs used by a single series.
+        typedef std::vector<std::shared_ptr<const ome::bioformats::tiff::IFD> > ifd_list_type;
+        /// Mapping between index and IFD list.
+        typedef std::map<dimension_size_type, ifd_list_type> series_ifd_map_type;
+
         /// Underlying TIFF file.
         std::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+
+        /// Mapping between series number and IFD list.
+        series_ifd_map_type series_ifd_map;
 
       public:
         /// Constructor.
