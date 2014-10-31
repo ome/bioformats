@@ -41,6 +41,7 @@ import ome.xml.model.primitives.*;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
+import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -3799,7 +3800,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power = src.getArcPower(instrumentIndex, lightSource);
+          Power power = src.getArcPower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setArcPower(power, instrumentIndex, lightSource);
           }
@@ -3873,7 +3874,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power = src.getFilamentPower(instrumentIndex, lightSource);
+          Power power = src.getFilamentPower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setFilamentPower(power, instrumentIndex, lightSource);
           }
@@ -3954,7 +3955,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power =
+          Power power =
             src.getGenericExcitationSourcePower(instrumentIndex, lightSource);
           dest.setGenericExcitationSourcePower(power,
             instrumentIndex, lightSource);
@@ -4006,7 +4007,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power = src.getLaserPower(instrumentIndex, lightSource);
+          Power power = src.getLaserPower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setLaserPower(power, instrumentIndex, lightSource);
           }
@@ -4157,7 +4158,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power =
+          Power power =
             src.getLightEmittingDiodePower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setLightEmittingDiodePower(

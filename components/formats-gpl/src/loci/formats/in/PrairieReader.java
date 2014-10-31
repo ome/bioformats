@@ -53,6 +53,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Power;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -523,7 +524,7 @@ public class PrairieReader extends FormatReader {
       final String laserID = MetadataTools.createLSID("LightSource", 0, 0);
       store.setLaserID(laserID, 0, 0);
 
-      store.setLaserPower(laserPower, 0, 0);
+      store.setLaserPower(new Power(laserPower, UNITS.MW), 0, 0);
     }
 
     String objectiveID = null;

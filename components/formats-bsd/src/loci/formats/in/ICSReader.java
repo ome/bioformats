@@ -58,6 +58,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
+import ome.units.quantity.Power;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -1600,7 +1601,7 @@ public class ICSReader extends FormatReader {
 
         store.setLaserManufacturer(laserManufacturer, 0, i);
         store.setLaserModel(laserModel, 0, i);
-        store.setLaserPower(laserPower, 0, i);
+        store.setLaserPower(new Power(laserPower, UNITS.MW), 0, i);
         store.setLaserRepetitionRate(
                 new Frequency(laserRepetitionRate, UNITS.HZ), 0, i);
       }
@@ -1611,7 +1612,7 @@ public class ICSReader extends FormatReader {
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
         store.setLaserManufacturer(laserManufacturer, 0, 0);
         store.setLaserModel(laserModel, 0, 0);
-        store.setLaserPower(laserPower, 0, 0);
+        store.setLaserPower(new Power(laserPower, UNITS.MW), 0, 0);
         store.setLaserRepetitionRate(
                 new Frequency(laserRepetitionRate, UNITS.HZ), 0, 0);
       }

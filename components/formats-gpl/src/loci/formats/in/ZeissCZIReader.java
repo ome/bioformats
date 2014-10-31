@@ -65,6 +65,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -1387,7 +1388,7 @@ public class ZeissCZIReader extends FormatReader {
           String power = getFirstNodeValue(lightSource, "Power");
           if ("Laser".equals(type)) {
             if (power != null) {
-              store.setLaserPower(new Double(power), 0, i);
+              store.setLaserPower(new Power(new Double(power), UNITS.MW), 0, i);
             }
             store.setLaserLotNumber(lotNumber, 0, i);
             store.setLaserManufacturer(manufacturer, 0, i);
@@ -1396,7 +1397,7 @@ public class ZeissCZIReader extends FormatReader {
           }
           else if ("Arc".equals(type)) {
             if (power != null) {
-              store.setArcPower(new Double(power), 0, i);
+              store.setArcPower(new Power(new Double(power), UNITS.MW), 0, i);
             }
             store.setArcLotNumber(lotNumber, 0, i);
             store.setArcManufacturer(manufacturer, 0, i);
@@ -1405,7 +1406,7 @@ public class ZeissCZIReader extends FormatReader {
           }
           else if ("LightEmittingDiode".equals(type)) {
             if (power != null) {
-              store.setLightEmittingDiodePower(new Double(power), 0, i);
+              store.setLightEmittingDiodePower(new Power(new Double(power), UNITS.MW), 0, i);
             }
             store.setLightEmittingDiodeLotNumber(lotNumber, 0, i);
             store.setLightEmittingDiodeManufacturer(manufacturer, 0, i);
@@ -1414,7 +1415,7 @@ public class ZeissCZIReader extends FormatReader {
           }
           else if ("Filament".equals(type)) {
             if (power != null) {
-              store.setFilamentPower(new Double(power), 0, i);
+              store.setFilamentPower(new Power(new Double(power), UNITS.MW), 0, i);
             }
             store.setFilamentLotNumber(lotNumber, 0, i);
             store.setFilamentManufacturer(manufacturer, 0, i);

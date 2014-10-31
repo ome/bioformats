@@ -2285,8 +2285,13 @@
 					<xsd:attribute name="Power" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The light-source power. units milliwatts[mW]
+								The light-source power. Units are set by PowerUnit.
 							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="PowerUnit" use="optional" default="mW" type="UnitsPower">
+						<xsd:annotation>
+							<xsd:documentation>The units of the Power - default:milliwatts[mW].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 				</xsd:extension>

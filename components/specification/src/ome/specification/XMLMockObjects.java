@@ -143,6 +143,7 @@ import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
+import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
@@ -454,7 +455,7 @@ public class XMLMockObjects
       laser.setManufacturer(COMPONENT_MANUFACTURER);
       laser.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       laser.setLotNumber(COMPONENT_LOT_NUMBER);
-      laser.setPower(LIGHTSOURCE_POWER);
+      laser.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       laser.setType(LASER_TYPE);
       return laser;
     } else if (Arc.class.getName().equals(type)) {
@@ -464,7 +465,7 @@ public class XMLMockObjects
       arc.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       arc.setLotNumber(COMPONENT_LOT_NUMBER);
       arc.setModel(COMPONENT_MODEL);
-      arc.setPower(LIGHTSOURCE_POWER);
+      arc.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       arc.setType(ARC_TYPE);
       return arc;
     } else if (Filament.class.getName().equals(type)) {
@@ -474,7 +475,7 @@ public class XMLMockObjects
       filament.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       filament.setLotNumber(COMPONENT_LOT_NUMBER);
       filament.setModel(COMPONENT_MODEL);
-      filament.setPower(LIGHTSOURCE_POWER);
+      filament.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       filament.setType(FILAMENT_TYPE);
       return filament;
     } else if (LightEmittingDiode.class.getName().equals(type)) {
@@ -484,7 +485,7 @@ public class XMLMockObjects
       light.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       light.setLotNumber(COMPONENT_LOT_NUMBER);
       light.setModel(COMPONENT_MODEL);
-      light.setPower(LIGHTSOURCE_POWER);
+      light.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       return light;
     }
     return null;
