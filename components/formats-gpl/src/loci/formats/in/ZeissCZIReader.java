@@ -187,7 +187,7 @@ public class ZeissCZIReader extends FormatReader {
       return null;
     }
     else if (noPixels) {
-      return new String[] {currentId};
+      return null;
     }
     String[] files = new String[pixels.size() + 1];
     files[0] = currentId;
