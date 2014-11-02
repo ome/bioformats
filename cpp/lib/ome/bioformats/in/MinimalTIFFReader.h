@@ -58,17 +58,20 @@ namespace ome
 
       /**
        * Basic TIFF reader.
+       *
+       * @note Any derived reader which does not implement its own
+       * openBytesImpl() must fill @c series_ifd_map.
        */
       class MinimalTIFFReader : public ::ome::bioformats::detail::FormatReader
       {
       protected:
-        /// Mapping between series index and starting IFD.
+        /// Mapping between series index and start and end IFD as a half-open range.
         typedef std::vector<std::pair<dimension_size_type, dimension_size_type> > series_ifd_map_type;
 
         /// Underlying TIFF file.
         std::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
 
-        /// Mapping between series number and IFD list.
+        /// Mapping between series index and start and end IFD as a half-open range.
         series_ifd_map_type series_ifd_map;
 
       public:
