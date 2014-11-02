@@ -162,12 +162,11 @@ namespace ome
         std::shared_ptr<const tiff::IFD> prev_ifd;
         std::shared_ptr<CoreMetadata> prev_core;
 
-        dimension_size_type series = 0U;
-        ifd_list_type ifd_list;
+        dimension_size_type current_ifd = 0U;
 
         for (TIFF::const_iterator i = tiff->begin();
              i != tiff->end();
-             ++i)
+             ++i, ++current_ifd)
           {
             // The minimal TIFF reader makes the assumption that if
             // the pixel data is of the same format as the pixel data
@@ -177,27 +176,15 @@ namespace ome
             if (prev_core && prev_ifd && compare_ifd(*prev_ifd, **i))
               {
                 ++prev_core->sizeT;
-                ifd_list.push_back(*i);
+                ++(series_ifd_map.back().second);
               }
             else
               {
-                if (!ifd_list.empty())
-                  {
-                    series_ifd_map.insert(std::make_pair(series, ifd_list));
-                    ++series;
-                    ifd_list.clear();
-                  }
-
                 prev_core = makeCoreMetadata(**i);
                 core.push_back(prev_core);
-                ifd_list.push_back(*i);
+                series_ifd_map.push_back(std::make_pair(current_ifd, current_ifd + 1));
               }
             prev_ifd = *i;
-          }
-        // Save last series.
-        if (!ifd_list.empty())
-          {
-            series_ifd_map.insert(std::make_pair(series, ifd_list));
           }
       }
 
@@ -213,22 +200,22 @@ namespace ome
 
         dimension_size_type series = getSeries();
 
-        series_ifd_map_type::const_iterator i = series_ifd_map.find(series);
-        if (i == series_ifd_map.end())
+        if (series >= series_ifd_map.size())
           {
-            boost::format fmt("No IFDs cached for series number ‘%1%’");
+            boost::format fmt("Invalid series number ‘%1%’");
             fmt % series;
             throw FormatException(fmt.str());
           }
+        const series_ifd_map_type::value_type range(series_ifd_map.at(series));
 
-        if (no >= i->second.size())
+        if (no >= (range.second - range.first))
           {
-            boost::format fmt("Invalid IFD for plane number ‘%1%’ in series ‘%2%’");
+            boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
             fmt % no % series;
             throw FormatException(fmt.str());
           }
 
-        const std::shared_ptr<const IFD>& ifd(i->second.at(no));
+        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(range.first + no));
 
         ifd->readImage(buf, x, y, w, h);
       }

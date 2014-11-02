@@ -42,8 +42,6 @@
 #include <ome/bioformats/VariantPixelBuffer.h>
 #include <ome/bioformats/in/TIFFReader.h>
 
-#include <ome/test/config.h>
-
 #include <ome/test/test.h>
 
 using ome::bioformats::dimension_size_type;
