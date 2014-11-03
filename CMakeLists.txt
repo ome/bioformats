@@ -53,114 +53,131 @@ if (POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif(POLICY CMP0054)
 
-project(bioformats)
-include(cpp/cmake/Version.cmake)
-
-if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-  message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
-endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-
+# For MSVC
 enable_language(CXX)
 
-list(APPEND CMAKE_MODULE_PATH
-     "${PROJECT_SOURCE_DIR}/cpp/cmake")
-
-include(CheckIncludeFileCXX)
-include(CheckCXXCompilerFlag)
-include(CheckCXXSourceCompiles)
-
-include(GNUInstallDirs)
-
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
-  set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
-      CACHE PATH "Bio-Formats-specific datadir")
+set(sb_default OFF)
+if(MSVC)
+  set(sb_default ON)
 endif()
+option(bioformats-superbuild "Build Bio-Formats and the projects it depends upon using a Super-Build setup" ${sb_default})
+mark_as_advanced(bioformats-superbuild)
+unset(sb_default)
 
-# Use standard path if using a prefix.
-if(CMAKE_INSTALL_PREFIX)
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
-        CACHE PATH "Bio-Formats-specific libexecdir")
-  endif()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
-    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable"
-        CACHE PATH "Icon directory")
-  endif()
+include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
+
+if(bioformats-superbuild)
+  include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsSuperBuild.cmake")
+  return()
 else()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
-        CACHE PATH "Bio-Formats-specific libexecdir")
-  endif()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
-    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons"
-        CACHE PATH "Icon directory")
-  endif()
-endif()
+  project(bioformats)
+  message(STATUS "Configuring Bio-Formats main build")
+  message(STATUS "BFSB prefix path: ${CMAKE_PREFIX_PATH}")
 
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_SCHEMADIR)
-  set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
-      CACHE PATH "Bio-Formats schema directory")
-endif()
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_TRANSFORMDIR)
-  set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
-      CACHE PATH "Bio-Formats transform directory")
-endif()
+  include(cpp/cmake/Version.cmake)
 
-foreach(dir
-    DATADIR
-    LIBEXECDIR
-    ICONDIR
-    SCHEMADIR
-    TRANSFORMDIR
-    )
-  mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
-  if(NOT IS_ABSOLUTE ${OME_BIOFORMATS_INSTALL_${dir}})
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${CMAKE_INSTALL_PREFIX}/${OME_BIOFORMATS_INSTALL_${dir}}")
+  if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+    message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
+  endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+
+  enable_language(CXX)
+
+  list(APPEND CMAKE_MODULE_PATH
+       "${PROJECT_SOURCE_DIR}/cpp/cmake")
+
+  include(GNUInstallDirs)
+  include(CompilerChecks)
+  include(PlatformChecks)
+  include(BoostChecks)
+  include(RegexChecks)
+  include(ThreadChecks)
+  include(XercesChecks)
+  include(ImageLibraries)
+  include(QtGLChecks)
+  include(XsdFu)
+  include(GTest)
+  include(Doxygen)
+  include(HeaderTest)
+
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
+    set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
+        CACHE PATH "Bio-Formats-specific datadir")
+  endif()
+
+  # Use standard path if using a prefix.
+  if(CMAKE_INSTALL_PREFIX)
+    if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
+      set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
+          CACHE PATH "Bio-Formats-specific libexecdir")
+    endif()
+    if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
+      set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable"
+          CACHE PATH "Icon directory")
+    endif()
   else()
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${OME_BIOFORMATS_INSTALL_${dir}}")
+    if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
+      set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
+          CACHE PATH "Bio-Formats-specific libexecdir")
+    endif()
+    if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
+      set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons"
+          CACHE PATH "Icon directory")
+    endif()
   endif()
-endforeach()
 
-include(CompilerChecks)
-include(PlatformChecks)
-include(BoostChecks)
-include(RegexChecks)
-include(ThreadChecks)
-include(XercesChecks)
-include(ImageLibraries)
-include(QtGLChecks)
-include(XsdFu)
-include(GTest)
-include(Doxygen)
-include(HeaderTest)
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_SCHEMADIR)
+    set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
+        CACHE PATH "Bio-Formats schema directory")
+  endif()
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_TRANSFORMDIR)
+    set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
+        CACHE PATH "Bio-Formats transform directory")
+  endif()
 
-add_subdirectory(docs/doxygen)
-add_subdirectory(docs/sphinx)
-add_subdirectory(cpp)
+  foreach(dir
+      DATADIR
+      LIBEXECDIR
+      ICONDIR
+      SCHEMADIR
+      TRANSFORMDIR
+      )
+    mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
+    if(NOT IS_ABSOLUTE ${OME_BIOFORMATS_INSTALL_${dir}})
+      set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${CMAKE_INSTALL_PREFIX}/${OME_BIOFORMATS_INSTALL_${dir}}")
+    else()
+      set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${OME_BIOFORMATS_INSTALL_${dir}}")
+    endif()
+  endforeach()
 
-set(LIBRARY_PREFIX OME)
-file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/bin")
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
-file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
-     DESTINATION ${PROJECT_BINARY_DIR}
-     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
-     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
-        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
-if(WIN32)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config.bat @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
-install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
-        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  add_subdirectory(docs/doxygen)
+  add_subdirectory(docs/sphinx)
+  add_subdirectory(cpp)
+
+  set(LIBRARY_PREFIX OME)
+  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/bin")
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
+                 ${PROJECT_BINARY_DIR}/config @ONLY)
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
+                 ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
+                 ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
+  file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
+       DESTINATION ${PROJECT_BINARY_DIR}
+       FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+       GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+  install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
+          DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  if(WIN32)
+    configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
+                   ${PROJECT_BINARY_DIR}/config.bat @ONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
+                   ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
+                   ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
+    install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
+            DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+    endif()
+  return()
 endif()
 
 message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")

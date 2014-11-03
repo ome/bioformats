@@ -676,6 +676,14 @@ Run ``cmake -LH`` to see the configurable project options; use
 ``-LAH`` to see advanced options.  The following basic options are
 supported:
 
+bioformats-superbuild=(ON|OFF)
+  Build Bio-Formats as part of a “super-build” project.  This will
+  download and build all needed library dependencies (Boost, libtiff
+  etc.) prior to building Bio-Formats.  This option is disabled by
+  default since most platforms provide all the libraries by default.
+  However, it is enabled by default when using Microsoft Visual C++,
+  since this platform does not provide libraries unless you have built
+  your own.
 cxxstd-autodetect=(ON|OFF)
   Enable or disable (default) C++ compiler standard autodetection.  If
   enabled, the compiler will be put into C++11 mode if available,
