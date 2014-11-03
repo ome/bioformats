@@ -684,12 +684,12 @@ public class LIFReader extends FormatReader {
                   continue;
                 }
                 Integer cutIn =
-                  ((PositiveInteger) cutIns[index].get(nextFilter)).getValue();
+                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NM).intValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
                   if (nextFilter < cutIns[index].size()) {
-                    cutIn = ((PositiveInteger)
-                      cutIns[index].get(nextFilter)).getValue();
+                    cutIn = ((Length)
+                      cutIns[index].get(nextFilter)).value(UNITS.NM).intValue();
                   }
                   else {
                     break;
