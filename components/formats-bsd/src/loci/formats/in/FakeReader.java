@@ -32,6 +32,10 @@
 
 package loci.formats.in;
 
+import static ome.xml.model.Pixels.getPhysicalSizeXUnitXsdDefault;
+import static ome.xml.model.Pixels.getPhysicalSizeYUnitXsdDefault;
+import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -62,9 +68,14 @@ import loci.formats.services.OMEXMLService;
 import ome.specification.XMLMockObjects;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.OME;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
@@ -120,6 +131,9 @@ public class FakeReader extends FormatReader {
 
   /** exposure time per plane info */
   private Time exposureTime = null;
+
+  /* physical sizes */
+  private Length physicalSizeX, physicalSizeY, physicalSizeZ;
 
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
@@ -528,6 +542,9 @@ public class FakeReader extends FormatReader {
       else if (key.equals("annTag")) annTag = intValue;
       else if (key.equals("annTerm")) annTerm = intValue;
       else if (key.equals("annXml")) annXml = intValue;
+      else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
+      else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
+      else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
       else if (key.equals("color")) {
         defaultColor = parseColor(value);
       }
@@ -629,6 +646,7 @@ public class FakeReader extends FormatReader {
     String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
+    fillPhyiscalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
@@ -789,6 +807,19 @@ public class FakeReader extends FormatReader {
     }
   }
 
+  private void fillPhyiscalSizes(MetadataStore store) {
+    int oldSeries = getSeries();
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPixelsPhysicalSizeX(physicalSizeX, i);
+        store.setPixelsPhysicalSizeY(physicalSizeY, i);
+        store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
+      }
+      setSeries(oldSeries);
+    }
+  }
+
   private void fillExposureTime(MetadataStore store) {
     if (exposureTime == null) return;
     int oldSeries = getSeries();
@@ -941,4 +972,26 @@ public class FakeReader extends FormatReader {
     return 0;
   }
 
+  private Length parseLength(String value, String defaultUnit) {
+      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([\\D\\S]*)\\s*").matcher(value);
+      if (!m.matches()) {
+        throw new RuntimeException(String.format(
+                "%s does not match a physical size!", value));
+      }
+      String number = m.group(1);
+      String unit = m.group(2);
+      if (unit == null || unit.trim().length() == 0) {
+        unit = defaultUnit;
+      }
+
+      double d = Double.valueOf(number);
+      Unit<Length> l = null;
+      try {
+        l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
+      } catch (EnumerationException e) {
+        throw new RuntimeException(String.format(
+                "%s does not match a length unit!", unit));
+      }
+      return new Length(d, l);
+  }
 }

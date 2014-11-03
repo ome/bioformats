@@ -36,7 +36,7 @@ import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
- * A wrapper for the Power class from the units implimintation.
+ * A wrapper for the Power class from the units implementation.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
@@ -142,6 +142,6 @@ public class Power extends Quantity implements Comparable<Power>
 
   public Unit<ome.units.quantity.Power> unit()
   {
-    return UNITS.WATT;
+    return unit;
   }
 }

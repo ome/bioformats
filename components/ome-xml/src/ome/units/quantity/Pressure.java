@@ -36,7 +36,7 @@ import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
- * A wrapper for the Pressure class from the units implimintation.
+ * A wrapper for the Pressure class from the units implementation.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
@@ -142,6 +142,6 @@ public class Pressure extends Quantity implements Comparable<Pressure>
 
   public Unit<ome.units.quantity.Pressure> unit()
   {
-    return UNITS.PASCAL;
+    return unit;
   }
 }

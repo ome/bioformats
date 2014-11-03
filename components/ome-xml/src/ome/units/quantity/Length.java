@@ -36,7 +36,7 @@ import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
- * A wrapper for the Length class from the units implimintation.
+ * A wrapper for the Length class from the units implementation.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
@@ -142,6 +142,6 @@ public class Length extends Quantity implements Comparable<Length>
 
   public Unit<ome.units.quantity.Length> unit()
   {
-    return UNITS.METRE;
+    return unit;
   }
 }
