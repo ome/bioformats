@@ -42,7 +42,8 @@ valid commands.
 Compile-time dependencies -- Windows -- Boost
 ---------------------------------------------
 
-Download Boost from `http://www.boost.org/users/download/ <http://www.boost.org/users/download/>`_. 
+Download `Boost <http://www.boost.org/users/download/>`_. 
+
 You can either build and install from source using the instructions in the
 Boost documentation, or follow the link under 'Other downloads' to the
 prebuilt binaries for several Visual Studio versions.
