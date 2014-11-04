@@ -1132,8 +1132,6 @@ opennessRating = Poor
 presenceRating = Poor
 utilityRating = Poor
 reader = KhorosReader.java
-notes = .. seealso:: \n
-  `VisiQuest software overview (formerly known as KhorosPro) <http://www.accusoft.com/products/visiquest/>`_
 
 [Kodak BIP]
 extensions = .bip
