@@ -141,9 +141,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="WellOriginXUnit" use="optional" type="OME:UnitsLength">
+			<xsd:attribute name="WellOriginXUnit" use="optional" default="reference frame" type="OME:UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the well origin in X - default:none.</xsd:documentation>
+					<xsd:documentation>The units of the well origin in X - default:reference frame.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="WellOriginY" use="optional" type="xsd:float">
@@ -160,9 +160,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="WellOriginYUnit" use="optional" type="OME:UnitsLength">
+			<xsd:attribute name="WellOriginYUnit" use="optional" default="reference frame" type="OME:UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the well origin in Y - default:none.</xsd:documentation>
+					<xsd:documentation>The units of the well origin in Y - default:reference frame.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Rows" use="optional" type="OME:PositiveInt">
@@ -582,9 +582,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PositionXUnit" use="optional" type="OME:UnitsLength">
+			<xsd:attribute name="PositionXUnit" use="optional" default="reference frame" type="OME:UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the position in X - default:none.</xsd:documentation>
+					<xsd:documentation>The units of the position in X - default:reference frame.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
@@ -595,9 +595,9 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PositionYUnit" use="optional" type="OME:UnitsLength">
+			<xsd:attribute name="PositionYUnit" use="optional" default="reference frame" type="OME:UnitsLength">
 				<xsd:annotation>
-					<xsd:documentation>The units of the position in Y - default:none.</xsd:documentation>
+					<xsd:documentation>The units of the position in Y - default:reference frame.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Timepoint" use="optional" type="xsd:dateTime">
