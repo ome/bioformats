@@ -4,7 +4,6 @@ Version history
 5.0.6 (2014 November 11)
 ------------------------
 
-* Documentation improvements
 * Several bug fixes, including:
     - Pixel sign for DICOM images
     - Image dimensions for Zeiss CZI and Nikon ND2
