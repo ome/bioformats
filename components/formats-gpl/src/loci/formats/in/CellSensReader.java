@@ -33,6 +33,7 @@ import java.util.HashMap;
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -53,6 +54,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * CellSensReader is the file format reader for cellSens .vsi files.
@@ -337,11 +339,17 @@ public class CellSensReader extends FormatReader {
   private HashMap<String, Integer> dimensionOrdering =
     new HashMap<String, Integer>();
 
-  private double physicalSizeX, physicalSizeY;
-  private double originX, originY;
+  private ArrayList<Double> physicalSizeX = new ArrayList<Double>();
+  private ArrayList<Double> physicalSizeY = new ArrayList<Double>();
+  private ArrayList<Double> originX = new ArrayList<Double>();
+  private ArrayList<Double> originY = new ArrayList<Double>();
   private ArrayList<Double> magnifications = new ArrayList<Double>();
   private ArrayList<Integer> imageWidths = new ArrayList<Integer>();
   private ArrayList<Integer> imageHeights = new ArrayList<Integer>();
+  private ArrayList<String> channelNames = new ArrayList<String>();
+  private ArrayList<Long> exposureTimes = new ArrayList<Long>();
+  private ArrayList<Long> acquisitionTimes = new ArrayList<Long>();
+  private ArrayList<String> imageNames = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -525,11 +533,17 @@ public class CellSensReader extends FormatReader {
       foundChannelTag = false;
       dimensionTag = 0;
       dimensionOrdering.clear();
-      physicalSizeX = 0;
-      physicalSizeY = 0;
-      originX = 0;
-      originY = 0;
+      physicalSizeX.clear();
+      physicalSizeY.clear();
+      originX.clear();
+      originY.clear();
       magnifications.clear();
+      imageWidths.clear();
+      imageHeights.clear();
+      channelNames.clear();
+      exposureTimes.clear();
+      acquisitionTimes.clear();
+      imageNames.clear();
     }
   }
 
@@ -660,86 +674,51 @@ public class CellSensReader extends FormatReader {
     vsi.close();
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
-    // make sure magnification order matches resolution order
-
-    Double maxMag = magnifications.size() > 0 ? magnifications.get(0) : 0d;
-    if (magnifications.size() > 1) {
-      HashMap<Integer, Integer> xDims = new HashMap<Integer, Integer>();
-      int dimIndex = 0;
-      for (int i=0; i<core.size();) {
-        int key = core.get(i).sizeX;
-        while (xDims.containsKey(key)) {
-          key++;
-        }
-        xDims.put(key, dimIndex);
-        dimIndex++;
-        i += core.get(i).resolutionCount;
-        if (dimIndex >= files.size() - 1) {
-          break;
-        }
-      }
-
-      for (Double magnification : magnifications) {
-        if (magnification > maxMag) {
-          maxMag = magnification;
-        }
-      }
-
-      Integer[] keys = xDims.keySet().toArray(new Integer[xDims.size()]);
-      Arrays.sort(keys);
-      Double[] newMags = magnifications.toArray(new Double[magnifications.size()]);
-      Arrays.sort(newMags);
-
-      magnifications.clear();
-
-      for (int i=0; i<keys.length; i++) {
-        int magIndex = xDims.get(keys[i]);
-        if (magIndex < magnifications.size() && i < newMags.length) {
-          magnifications.set(magIndex, newMags[i]);
-        }
-        else {
-          while (magIndex > magnifications.size()) {
-            magnifications.add(1.0);
+    int nextSize = 0;
+    int channelIndex = 0;
+    for (int i=0; i<core.size();) {
+      int ii = coreIndexToSeries(i);
+      if (channelIndex < channelNames.size()) {
+        int nextPlane = 0;
+        for (int c=0; c<core.get(i).sizeC; c++) {
+          store.setChannelName(channelNames.get(channelIndex), ii, c);
+          if (channelIndex < exposureTimes.size()) {
+            for (int z=0; z<core.get(i).sizeZ; z++) {
+              for (int t=0; t<core.get(i).sizeT; t++) {
+                store.setPlaneExposureTime(exposureTimes.get(channelIndex) / 1000000.0,
+                  ii, nextPlane);
+                store.setPlanePositionX(originX.get(nextSize), ii, nextPlane);
+                store.setPlanePositionY(originY.get(nextSize), ii, nextPlane);
+                nextPlane++;
+              }
+            }
           }
-          Double newMag = i < newMags.length ? newMags[i] : maxMag;
-          if (magIndex < magnifications.size()) {
-            magnifications.set(magIndex, newMag);
-          }
-          else {
-            magnifications.add(newMag);
-          }
+          channelIndex++;
         }
       }
-
-      for (Double magnification : magnifications) {
-        addGlobalMetaList("Magnification", magnification);
-      }
-    }
-
-    if (physicalSizeX > 0 && physicalSizeY > 0) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
-
-      int nextMag = 0;
-      for (int i=0; i<core.size();) {
-        if (nextMag < magnifications.size()) {
-          double mult = maxMag / magnifications.get(nextMag);
-          int ii = coreIndexToSeries(i);
-          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX * mult), ii);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY * mult), ii);
-          nextMag++;
-          i += core.get(i).resolutionCount;
+      if (nextSize < imageNames.size()) {
+        String imageName = imageNames.get(nextSize);
+        if (!imageName.equals("Overview")) {
+          imageName += " #" + ii;
         }
-        else {
-          if (i == 0) {
-            store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
-            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
-          }
-          break;
-        }
+        store.setImageName(imageName, ii);
       }
+      if (nextSize < physicalSizeX.size()) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX.get(nextSize)), ii);
+      }
+      if (nextSize < physicalSizeY.size()) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY.get(nextSize)), ii);
+      }
+      if (nextSize < acquisitionTimes.size()) {
+        // acquisition time is stored in seconds
+        store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
+          acquisitionTimes.get(nextSize) * 1000, DateTools.UNIX)), ii);
+      }
+      nextSize += 2;
+
+      i += core.get(i).resolutionCount;
     }
   }
 
@@ -1268,12 +1247,14 @@ public class CellSensReader extends FormatReader {
               case FIELD_TYPE:
               case MEM_MODEL:
               case COLOR_SPACE:
-                value = String.valueOf(vsi.readInt());
+                int intValue = vsi.readInt();
+                value = String.valueOf(intValue);
                 break;
               case LONG:
               case ULONG:
               case TIMESTAMP:
-                value = String.valueOf(vsi.readLong());
+                long longValue = vsi.readLong();
+                value = String.valueOf(longValue);
                 break;
               case FLOAT:
                 value = String.valueOf(vsi.readFloat());
@@ -1290,21 +1271,15 @@ public class CellSensReader extends FormatReader {
                 value = vsi.readString(dataSize);
                 value = DataTools.stripString(value);
 
-                if (tag == 2011) {
-                  // this puts everything in terms of micrometers
-                  String v = value.substring(0, value.indexOf("m"));
-                  v = v.replaceAll("\\^", "e");
-                  double scale = Double.parseDouble(v);
-                  scale *= 1000000;
-
-                  physicalSizeX *= scale;
-                  physicalSizeY *= scale;
-                  originX *= scale;
-                  originY *= scale;
-                }
-                else if (tag == MAGNIFICATION) {
+                if (tag == MAGNIFICATION) {
                   magnifications.add(
                     new Double(value.substring(0, value.length() - 1)));
+                }
+                else if (tag == CHANNEL_NAME) {
+                  channelNames.add(value);
+                }
+                else if (tag == STACK_NAME && !value.equals("0")) {
+                  imageNames.add(value);
                 }
                 break;
               case INT_2:
@@ -1364,13 +1339,13 @@ public class CellSensReader extends FormatReader {
                   value += ")";
                 }
 
-                if (tag == PLANE_SCALE_RWC) {
-                  physicalSizeX = doubleValues[0];
-                  physicalSizeY = doubleValues[1];
+                if (tag == RWC_FRAME_SCALE) {
+                  physicalSizeX.add(doubleValues[0]);
+                  physicalSizeY.add(doubleValues[1]);
                 }
-                else if (tag == PLANE_ORIGIN_RWC) {
-                  originX = doubleValues[0];
-                  originY = doubleValues[1];
+                else if (tag == RWC_FRAME_ORIGIN) {
+                  originX.add(doubleValues[0]);
+                  originY.add(doubleValues[1]);
                 }
                 break;
               case RGB:
@@ -1391,30 +1366,36 @@ public class CellSensReader extends FormatReader {
           if (tag == STACK_TYPE) {
             value = getStackType(value);
           }
+          else if (tag == EXPOSURE_TIME) {
+            exposureTimes.add(new Long(value));
+          }
+          else if (tag == CREATION_TIME) {
+            acquisitionTimes.add(new Long(value));
+          }
 
           addGlobalMetaList(tagName, value);
 
         }
 
         if (inDimensionProperties) {
-          if (tag == 2012 && !dimensionOrdering.containsValue(dimensionTag)) {
+          if (tag == Z_START && !dimensionOrdering.containsValue(dimensionTag)) {
             dimensionOrdering.put("Z", dimensionTag);
           }
-          else if ((tag == 2100 || tag == DIMENSION_VALUE_ID) &&
+          else if ((tag == TIME_START || tag == DIMENSION_VALUE_ID) &&
             !dimensionOrdering.containsValue(dimensionTag))
           {
             dimensionOrdering.put("T", dimensionTag);
           }
-          else if (tag == 2039 && !dimensionOrdering.containsValue(dimensionTag))
+          else if (tag == LAMBDA_START && !dimensionOrdering.containsValue(dimensionTag))
           {
             dimensionOrdering.put("L", dimensionTag);
           }
-          else if (tag == 2008 && foundChannelTag &&
+          else if (tag == CHANNEL_PROPERTIES && foundChannelTag &&
             !dimensionOrdering.containsValue(dimensionTag))
           {
             dimensionOrdering.put("C", dimensionTag);
           }
-          else if (tag == 2008) {
+          else if (tag == CHANNEL_PROPERTIES) {
             foundChannelTag = true;
           }
         }
@@ -1455,7 +1436,7 @@ public class CellSensReader extends FormatReader {
       case SLIDE_NAME:
         return "Slide Name";
       case EXPOSURE_TIME:
-        return "Exposure time (ms)";
+        return "Exposure time (microseconds)";
       case CAMERA_GAIN:
         return "Camera gain";
       case CAMERA_OFFSET:
