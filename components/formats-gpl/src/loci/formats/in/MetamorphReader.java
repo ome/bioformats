@@ -465,9 +465,7 @@ public class MetamorphReader extends BaseTiffReader {
           creationTime = value;
         }
         else if (key.equals("ZStepSize")) {
-          char separator = new DecimalFormatSymbols().getDecimalSeparator();
-          value = value.replace('.', separator);
-          value = value.replace(',', separator);
+          value = value.replace(',', '.');
           stepSize = Double.parseDouble(value);
         }
         else if (key.equals("NStagePositions")) {
@@ -1178,9 +1176,7 @@ public class MetamorphReader extends BaseTiffReader {
               value = value.substring(0, value.indexOf(" "));
             }
             try {
-              char separator = new DecimalFormatSymbols().getDecimalSeparator();
-              value = value.replace('.', separator);
-              value = value.replace(',', separator);
+              value = value.replace(',', '.');
               double exposure = Double.parseDouble(value);
               exposureTime = new Double(exposure / 1000);
             }
