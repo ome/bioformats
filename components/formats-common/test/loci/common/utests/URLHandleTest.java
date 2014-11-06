@@ -60,6 +60,7 @@ public class URLHandleTest {
   // -- Fields --
 
   private URLHandle fileHandle;
+  private static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
   // -- Setup methods --
 
@@ -70,7 +71,8 @@ public class URLHandleTest {
     FileOutputStream out = new FileOutputStream(tmpFile);
     out.write("hello, world!\n".getBytes(Constants.ENCODING));
     out.close();
-    fileHandle = new URLHandle("file://" + tmpFile.getAbsolutePath());
+    String path = tmpFile.getAbsolutePath();
+    fileHandle = new URLHandle((IS_WINDOWS ? "file:/" : "file://") + path);
   }
 
   // -- Test methods --
