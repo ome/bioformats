@@ -1010,8 +1010,11 @@ public class FV1000Reader extends FormatReader {
       store.setDetectorSettingsID(detectorID, 0, channelIndex);
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
-      store.setDetectorVoltage(
-              new ElectricPotential(channel.voltage, UNITS.V), 0, channelIndex);
+      ElectricPotential theVoltage = FormatTools.createElectricPotential(channel.voltage, UNITS.V);
+      if (theVoltage != null) {
+        store.setDetectorVoltage(
+              theVoltage, 0, channelIndex);
+      }
       store.setDetectorType(getDetectorType("PMT"), 0, channelIndex);
 
       // populate LogicalChannel data

@@ -1601,9 +1601,14 @@ public class ICSReader extends FormatReader {
 
         store.setLaserManufacturer(laserManufacturer, 0, i);
         store.setLaserModel(laserModel, 0, i);
-        store.setLaserPower(new Power(laserPower, UNITS.MW), 0, i);
-        store.setLaserRepetitionRate(
-                new Frequency(laserRepetitionRate, UNITS.HZ), 0, i);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        if (theLaserPower != null) {
+          store.setLaserPower(theLaserPower, 0, i);
+        }
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        if (theLaserRepetitionRate != null) {
+          store.setLaserRepetitionRate(theLaserRepetitionRate, 0, i);
+        }
       }
 
       if (lasers.length == 0 && laserManufacturer != null) {
@@ -1612,9 +1617,14 @@ public class ICSReader extends FormatReader {
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
         store.setLaserManufacturer(laserManufacturer, 0, 0);
         store.setLaserModel(laserModel, 0, 0);
-        store.setLaserPower(new Power(laserPower, UNITS.MW), 0, 0);
-        store.setLaserRepetitionRate(
-                new Frequency(laserRepetitionRate, UNITS.HZ), 0, 0);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        if (theLaserPower != null) {
+          store.setLaserPower(theLaserPower, 0, 0);
+        }
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        if (theLaserRepetitionRate != null) {
+          store.setLaserRepetitionRate(theLaserRepetitionRate, 0, 0);
+        }
       }
 
       // populate FilterSet data

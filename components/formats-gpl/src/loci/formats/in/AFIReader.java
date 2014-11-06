@@ -276,6 +276,7 @@ public class AFIReader extends FormatReader {
         store.setObjectiveSettingsID(objective, i);
 
         if (i < physicalSizes.length &&
+          physicalSizes[i] != null &&
           physicalSizes[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0)
         {
           Length size = physicalSizes[i];
