@@ -449,8 +449,9 @@ public class MinimalTiffReader extends FormatReader {
     tiffParser.setAssumeEqualStrips(equalStrips);
     for (IFD ifd : ifds) {
       tiffParser.fillInIFD(ifd);
-      if (ifd.getCompression() == TiffCompression.JPEG_2000
-          || ifd.getCompression() == TiffCompression.JPEG_2000_LOSSY) {
+      if ((ifd.getCompression() == TiffCompression.JPEG_2000
+          || ifd.getCompression() == TiffCompression.JPEG_2000_LOSSY) &&
+          ifd.getImageWidth() == ifds.get(0).getImageWidth()) {
         LOGGER.debug("Found IFD with JPEG 2000 compression");
         long[] stripOffsets = ifd.getStripOffsets();
         long[] stripByteCounts = ifd.getStripByteCounts();
@@ -558,8 +559,8 @@ public class MinimalTiffReader extends FormatReader {
       }
 
       if (ifds.size() + 1 < ms0.sizeT) {
-        ms0.sizeT -= (ifds.size() + 1);
-        ms0.imageCount -= (ifds.size() + 1);
+        ms0.sizeT = subResolutionIFDs.size();
+        ms0.imageCount = ms0.sizeT;
       }
 
       if (ms0.sizeT <= 0) {
