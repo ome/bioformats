@@ -1042,8 +1042,8 @@ public class CellSensReader extends FormatReader {
 
         int previousX = core.get(core.size() - 1).sizeX;
         int previousY = core.get(core.size() - 1).sizeY;
-        int maxSizeX = tileX.get(tileX.size() - 1) * (maxX[i] <= 1 ? 1 : maxX[i] + 1);
-        int maxSizeY = tileY.get(tileY.size() - 1) * (maxY[i] <= 1 ? 1 : maxY[i] + 1);
+        int maxSizeX = tileX.get(tileX.size() - 1) * (maxX[i] < 1 ? 1 : maxX[i] + 1);
+        int maxSizeY = tileY.get(tileY.size() - 1) * (maxY[i] < 1 ? 1 : maxY[i] + 1);
 
         newResolution.sizeX = previousX / 2;
         if (previousX % 2 == 1 && newResolution.sizeX < maxSizeX) {
