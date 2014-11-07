@@ -763,6 +763,7 @@ public class ZeissCZIReader extends FormatReader {
       name = imageName;
     }
 
+    int indexLength = String.valueOf(getSeriesCount()).length();
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageInstrumentRef(MetadataTools.createLSID("Instrument", 0), i);
       if (acquiredDate != null) {
@@ -777,7 +778,12 @@ public class ZeissCZIReader extends FormatReader {
       if (experimenterID != null) {
         store.setImageExperimenterRef(experimenterID, i);
       }
-      store.setImageName(name + " #" + (i + 1), i);
+
+      String imageIndex = String.valueOf(i + 1);
+      while (imageIndex.length() < indexLength) {
+        imageIndex = "0" + imageIndex;
+      }
+      store.setImageName(name + " #" + imageIndex, i);
       if (description != null && description.length() > 0) {
         store.setImageDescription(description, i);
       }
