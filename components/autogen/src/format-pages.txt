@@ -1054,7 +1054,7 @@ developer = `Independent JPEG Group <http://www.ijg.org/>`_
 bsd = yes
 export = yes
 software = `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
-weHave = * a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) \n
+weHave = * a JPEG 2000 specification document (free draft from 2000, no longer available online) \n
 * a few .jp2 files
 pixelsRating = Very good
 metadataRating = Poor
