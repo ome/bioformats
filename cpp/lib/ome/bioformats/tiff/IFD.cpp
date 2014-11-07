@@ -1388,7 +1388,7 @@ namespace ome
         m->littleEndian = true;
 #endif // BOOST_BIG_ENDIAN
 
-        m->interleaved = ifd.getPlanarConfiguration() == tiff::CONTIG ? true : false;
+        m->interleaved = (ifd.getPlanarConfiguration() == tiff::CONTIG);
 
         if (samples == 1)
           {
