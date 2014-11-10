@@ -1373,6 +1373,7 @@ namespace ome
       {
         std::shared_ptr<CoreMetadata> m(std::make_shared<CoreMetadata>());
 
+        m->dimensionOrder = ome::xml::model::enums::DimensionOrder::XYCZT;
         m->sizeX = ifd.getImageWidth();
         m->sizeY = ifd.getImageHeight();
         m->pixelType = ifd.getPixelType();
@@ -1381,13 +1382,12 @@ namespace ome
         uint16_t samples = ifd.getSamplesPerPixel();
         tiff::PhotometricInterpretation photometric = ifd.getPhotometricInterpretation();
 
-        if (samples == 3 && photometric == tiff::RGB)
+        // Note that RGB does not mean photometric interpretation is
+        // RGB.  It's a way to force the subchannels into sizeC as
+        // addressable channels in the absence of an nD API.
+        if (samples > 1 || photometric == tiff::RGB)
           {
             m->rgb = true;
-            m->sizeC = 1;
-          }
-        else
-          {
             m->sizeC = samples;
           }
 
@@ -1400,34 +1400,40 @@ namespace ome
         m->littleEndian = true;
 #endif // BOOST_BIG_ENDIAN
 
-        m->interleaved = (ifd.getPlanarConfiguration() == tiff::CONTIG);
+        // This doesn't match the reality, but since subchannels are
+        // addressed as planes this is needed.
+        m->interleaved = false;
 
-        if (samples == 1)
+        // Indexed samples.
+        if (samples == 1 && photometric == tiff::PALETTE)
           {
-            if (photometric == tiff::PALETTE)
+            try
               {
-                try
+                std::array<std::vector<uint16_t>, 3> cmap;
+                ifd.getField(tiff::COLORMAP).get(cmap);
+                m->indexed = true;
+                m->rgb = false;
+              }
+            catch (...)
+              {
+              }
+          }
+        // Indexed samples for different photometric interpretations;
+        // not currently supported fully.
+        else
+          {
+            try
+              {
+                uint16_t indexed;
+                ifd.getField(tiff::INDEXED).get(indexed);
+                if (indexed)
                   {
-                    std::array<std::vector<uint16_t>, 3> cmap;
-                    ifd.getField(tiff::COLORMAP).get(cmap);
                     m->indexed = true;
-                  }
-                catch (...)
-                  {
+                    m->rgb = false;
                   }
               }
-            else
+            catch (...)
               {
-                try
-                  {
-                    uint16_t indexed;
-                    ifd.getField(tiff::INDEXED).get(indexed);
-                    if (indexed)
-                      m->indexed = true;
-                  }
-                catch (...)
-                  {
-                  }
               }
           }
 
