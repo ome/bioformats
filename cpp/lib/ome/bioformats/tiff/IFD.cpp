@@ -40,6 +40,8 @@
 #include <cstdarg>
 #include <cassert>
 
+#include <ome/internal/config.h>
+
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/Field.h>
