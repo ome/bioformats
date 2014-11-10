@@ -205,8 +205,8 @@ namespace
            ++row)
         {
           dimension_size_type row_width = rfull.w * copysamples;
-          if (row_width % 8)
-            row_width += 8 - (row_width % 8); // pad to next full byte
+          if (row_width % 8U)
+            row_width += 8U - (row_width % 8U); // pad to next full byte
           dimension_size_type yoffset = (row - rfull.y) * row_width;
 
           destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
@@ -215,14 +215,14 @@ namespace
           T::value_type *dest = &buffer->at(destidx);
           const uint8_t *src = reinterpret_cast<const uint8_t *>(tilebuf.data());
 
-          for (dimension_size_type sampleoffset = 0;
+          for (dimension_size_type sampleoffset = 0U;
                sampleoffset < (rclip.w * copysamples);
                ++sampleoffset)
             {
               dimension_size_type src_bit = yoffset + xoffset + sampleoffset;
-              const uint8_t *src_byte = src + (src_bit / 8);
-              const uint8_t bit_offset = 7 - (src_bit % 8);
-              const uint8_t mask = 1 << bit_offset;
+              const uint8_t *src_byte = src + (src_bit / 8U);
+              const uint8_t bit_offset = 7U - (src_bit % 8U);
+              const uint8_t mask = static_cast<uint8_t>(1U << bit_offset);
               assert(src_byte >= src && src_byte < src + tilebuf.size());
               *(dest+sampleoffset) = static_cast<T::value_type>(*src_byte & mask);
             }
@@ -271,7 +271,7 @@ namespace
           i != tiles.end();
           ++i)
         {
-          tstrile_t tile = *i;
+          tstrile_t tile = static_cast<tstrile_t>(*i);
           PlaneRegion rfull = tileinfo.tileRegion(tile);
           PlaneRegion rclip = tileinfo.tileRegion(tile, region);
           dimension_size_type sample = tileinfo.tileSample(tile);
@@ -286,7 +286,7 @@ namespace
 
           if (type == TILE)
             {
-              int bytesread = TIFFReadEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tmsize_t bytesread = TIFFReadEncodedTile(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               if (bytesread < 0)
                 sentry.error("Failed to read encoded tile");
               else if (static_cast<dimension_size_type>(bytesread) != tilebuf.size())
@@ -294,7 +294,7 @@ namespace
             }
           else
             {
-              int bytesread = TIFFReadEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tmsize_t bytesread = TIFFReadEncodedStrip(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               dimension_size_type expectedread = expected_read(buffer, rclip, copysamples);
               if (bytesread < 0)
                 sentry.error("Failed to read encoded strip");
@@ -346,7 +346,7 @@ namespace
       ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
       TileType type = tileinfo.tileType();
       PlaneRegion rimage(0, 0, ifd.getImageWidth(), ifd.getImageHeight());
-      dimension_size_type tile = ifd.getCurrentTile();
+      tstrile_t tile = static_cast<tstrile_t>(ifd.getCurrentTile());
 
       Sentry sentry;
       while(tile < tileinfo.tileCount())
@@ -364,7 +364,7 @@ namespace
           TileBuffer& tilebuf = *tilecache.find(tile);
           if (type == TILE)
             {
-              int byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tsize_t byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               if (byteswritten < 0)
                 sentry.error("Failed to write encoded tile");
               else if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
@@ -372,7 +372,7 @@ namespace
             }
           else
             {
-              int byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tsize_t byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               if (byteswritten < 0)
                 sentry.error("Failed to write encoded strip");
               else if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
@@ -478,7 +478,7 @@ namespace
 
               assert(dest_byte >= dest && dest_byte < dest + tilebuf.size());
               // Don't clear the bit since the tile will only be written once.
-              *dest_byte |= (*srcsample << bit_offset);
+              *dest_byte |= static_cast<uint8_t>(*srcsample << bit_offset);
             }
         }
     }
@@ -497,7 +497,7 @@ namespace
           i != tiles.end();
           ++i)
         {
-          tstrile_t tile = *i;
+          tstrile_t tile = static_cast<tstrile_t>(*i);
           PlaneRegion rfull = tileinfo.tileRegion(tile);
           PlaneRegion rclip = tileinfo.tileRegion(tile, region);
           dimension_size_type sample = tileinfo.tileSample(tile);
@@ -803,7 +803,7 @@ namespace ome
       void
       IFD::setCurrentTile(dimension_size_type tile)
       {
-        impl->ctile = tile;
+        impl->ctile = static_cast<tstrile_t>(tile);
       }
 
       TileInfo
@@ -1550,10 +1550,10 @@ namespace ome
             if (photometric == RGB ||
                 photometric == CFA_ARRAY)
               samples = 3;
-            uint32_t fullsamples(samples);
+            dimension_size_type fullsamples(samples);
             fullsamples += extra.size();
 
-            m->seriesMetadata.set("NumberOfChannels", samples);
+            m->seriesMetadata.set("NumberOfChannels", fullsamples);
           }
         catch (...)
           {
