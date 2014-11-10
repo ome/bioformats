@@ -1000,6 +1000,7 @@ Type "ant -p" for a list of targets.
       <arg value="--bioformats-version=${release.version}"/>
       <arg value="--bioformats-vcsrevision=${vcs.revision}"/>
       <arg value="--bioformats-vcsdate=${vcs.date}"/>
+      <arg value="--bioformats-vcsdate-unix=${vcs.date_unix}"/>
       <arg value="--target=${artifact.dir}"/>
     </exec>
   </target>
