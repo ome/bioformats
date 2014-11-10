@@ -173,11 +173,6 @@ namespace ome
             ret = TIFFTAG_CLEANFAXDATA;
 #endif
             break;
-          case COMPRESSION:
-#ifdef TIFFTAG_COMPRESSION
-            ret = TIFFTAG_COMPRESSION;
-#endif
-            break;
           case DATATYPE:
 #ifdef TIFFTAG_DATATYPE
             ret = TIFFTAG_DATATYPE;
@@ -246,6 +241,22 @@ namespace ome
             break;
           };
 
+        return ret;
+      }
+
+      tag_type
+      getWrappedTag(UInt16Compression1 tag)
+      {
+        tag_type ret = 0;
+
+        switch(tag)
+          {
+          case COMPRESSION:
+#ifdef TIFFTAG_COMPRESSION
+            ret = TIFFTAG_COMPRESSION;
+#endif
+            break;
+          };
         return ret;
       }
 

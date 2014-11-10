@@ -86,7 +86,6 @@ namespace ome
           CELLWIDTH,        ///< Width of dithering or halftoning matrix for bilevel data.
           CELLLENGTH,       ///< Height of dithering or halftoning matrix for bilevel data.
           CLEANFAXDATA,     ///< How bad scanlines were handled.
-          COMPRESSION,      ///< Compression scheme in use on the image data.
           DATATYPE,         ///< Use SAMPLEFORMAT [obsolete].
           GRAYRESPONSEUNIT, ///< Precision of GRAYRESPONSECURVE.
           INDEXED,          ///< Image uses indexed color in any color space.
@@ -103,6 +102,12 @@ namespace ome
       enum UInt16TagArray1
         {
           GRAYRESPONSECURVE ///< Optical density of greyscale pixel values.
+        };
+
+      /// Compression enum fields.
+      enum UInt16Compression1
+        {
+          COMPRESSION ///< Compression scheme in use on the image data.
         };
 
       /// Fill order enum fields.
@@ -423,6 +428,10 @@ namespace ome
 
       /// @copydoc getWrappedTag(StringTag1)
       tag_type
+      getWrappedTag(UInt16Compression1 tag);
+
+      /// @copydoc getWrappedTag(StringTag1)
+      tag_type
       getWrappedTag(UInt16FillOrder1 tag);
 
       /// @copydoc getWrappedTag(StringTag1)
@@ -548,6 +557,14 @@ namespace ome
         {
           /// uint16_t vector type.
           typedef std::vector<uint16_t> value_type;
+        };
+
+        /// Properties of UInt16Compression1 tags.
+        template<>
+        struct TagProperties< ::ome::bioformats::tiff::UInt16Compression1>
+        {
+          /// uint16_t type.
+          typedef ::ome::bioformats::tiff::Compression value_type;
         };
 
         /// Properties of UInt16FillOrder1 tags.

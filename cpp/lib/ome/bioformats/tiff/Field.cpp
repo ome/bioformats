@@ -1035,6 +1035,38 @@ namespace ome
       /// @copydoc Field::get()
       template<>
       void
+      Field<UInt16Compression1>::get(value_type& value) const
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        bool pc = passCount();
+        int rc = readCount();
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        bool pc = false;
+        int rc = 1;
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
+      }
+
+      /// @copydoc Field::set()
+      template<>
+      void
+      Field<UInt16Compression1>::set(const value_type& value)
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        bool pc = passCount();
+        int wc = writeCount();
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        bool pc = false;
+        int wc = 1;
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
+      }
+
+      /// @copydoc Field::get()
+      template<>
+      void
       Field<UInt16FillOrder1>::get(value_type& value) const
       {
 #if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)

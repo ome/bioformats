@@ -80,6 +80,43 @@ namespace ome
           TYPE_IFD8 = 18        ///< BigTIFF 64-bit unsigned integer (offset).
         };
 
+      /// Compression technique.
+      enum Compression
+        {
+          COMPRESSION_NONE = 1,            ///< No compression.
+          COMPRESSION_CCITTRLE = 2,        ///< CCITT modified Huffman RLE.
+          COMPRESSION_CCITTFAX3 = 3,       ///< CCITT Group 3 fax encoding (deprecated).
+          COMPRESSION_CCITT_T4 = 3,        ///< CCITT T.4 (TIFF 6 name).
+          COMPRESSION_CCITTFAX4 = 4,       ///< CCITT Group 4 fax encoding (deprecated).
+          COMPRESSION_CCITT_T6 = 4,        ///< CCITT T.6 (TIFF 6 name).
+          COMPRESSION_LZW = 5,             ///< Lempel-Ziv & Welch.
+          COMPRESSION_OJPEG = 6,           ///< JPEG (deprecated).
+          COMPRESSION_JPEG = 7,            ///< JPEG DCT compression.
+          COMPRESSION_ADOBE_DEFLATE = 8,   ///< Deflate compression (Adobe).
+          COMPRESSION_T85 = 9,             ///< TIFF/FX T.85 JBIG compression.
+          COMPRESSION_T43 = 10,            ///< TIFF/FX T.43 colour by layered JBIG compression.
+          COMPRESSION_NEXT = 32766,        ///< NeXT 2-bit RLE.
+          COMPRESSION_CCITTRLEW = 32771,   ///< 1 w/ word alignment.
+          COMPRESSION_PACKBITS = 32773,    ///< Macintosh RLE.
+          COMPRESSION_THUNDERSCAN = 32809, ///< ThunderScan RLE.
+          /// codes 32895-32898 are reserved for ANSI IT8 TIFF/IT <dkelly@apago.com).
+          COMPRESSION_IT8CTPAD = 32895,    ///< IT8 CT w/padding.
+          COMPRESSION_IT8LW = 32896,       ///< IT8 Linework RLE.
+          COMPRESSION_IT8MP = 32897,       ///< IT8 Monochrome picture.
+          COMPRESSION_IT8BL = 32898,       ///< IT8 Binary line art.
+          /// compression codes 32908-32911 are reserved for Pixar.
+          COMPRESSION_PIXARFILM = 32908,   ///< Pixar companded 10bit LZW.
+          COMPRESSION_PIXARLOG = 32909,    ///< Pixar companded 11bit ZIP.
+          COMPRESSION_DEFLATE = 32946,     ///< Deflate compression.
+          /// compression code 32947 is reserved for Oceana Matrix <dev@oceana.com>.
+          COMPRESSION_DCS = 32947,         ///< Kodak DCS encoding.
+          COMPRESSION_JBIG = 34661,        ///< ISO JBIG.
+          COMPRESSION_SGILOG = 34676,      ///< SGI Log Luminance RLE.
+          COMPRESSION_SGILOG24 = 34677,    ///< SGI Log 24-bit packed.
+          COMPRESSION_JP2000 = 34712,      ///< Leadtools JPEG2000.
+          COMPRESSION_LZMA = 34925         ///< LZMA2.
+        };
+
       /// Extra components description.
       enum ExtraSamples
         {

@@ -676,8 +676,6 @@ TEST(TIFFTest, FieldWrapUInt16)
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::BITSPERSAMPLE).get(value));
   ASSERT_EQ(8, value);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::CLEANFAXDATA).get(value), ome::bioformats::tiff::Exception);
-  ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::COMPRESSION).get(value));
-  ASSERT_EQ(1, value);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::DATATYPE).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::INDEXED).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::INKSET).get(value), ome::bioformats::tiff::Exception);
@@ -687,6 +685,22 @@ TEST(TIFFTest, FieldWrapUInt16)
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::RESOLUTIONUNIT).get(value), ome::bioformats::tiff::Exception);
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::SAMPLESPERPIXEL).get(value));
   ASSERT_EQ(1, value);
+}
+
+TEST(TIFFTest, FieldWrapCompression)
+{
+  std::shared_ptr<TIFF> t;
+  ASSERT_NO_THROW(t = TIFF::open(PROJECT_SOURCE_DIR "/components/specification/samples/2010-06/18x24y5z1t2c8b-text.ome.tiff", "r"));
+  ASSERT_TRUE(static_cast<bool>(t));
+
+  std::shared_ptr<IFD> ifd;
+  ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
+  ASSERT_TRUE(static_cast<bool>(ifd));
+
+  ome::bioformats::tiff::Compression value;
+
+  ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::COMPRESSION).get(value));
+  ASSERT_EQ(ome::bioformats::tiff::COMPRESSION_NONE, value);
 }
 
 TEST(TIFFTest, FieldWrapFillOrder)
