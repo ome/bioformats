@@ -385,8 +385,8 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
-  EXPECT_EQ(1U, r.getThumbSizeX());
-  EXPECT_EQ(1U, r.getThumbSizeY());
+  EXPECT_EQ(64U, r.getThumbSizeX());
+  EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_TRUE(r.isOrderCertain());
@@ -424,8 +424,8 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
-  EXPECT_EQ(1U, r.getThumbSizeX());
-  EXPECT_EQ(1U, r.getThumbSizeY());
+  EXPECT_EQ(64U, r.getThumbSizeX());
+  EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_TRUE(r.isOrderCertain());
@@ -463,8 +463,8 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
-  EXPECT_EQ(1U, r.getThumbSizeX());
-  EXPECT_EQ(1U, r.getThumbSizeY());
+  EXPECT_EQ(64U, r.getThumbSizeX());
+  EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_TRUE(r.isOrderCertain());
