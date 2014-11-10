@@ -1342,12 +1342,14 @@ namespace ome
         }
 
         template<typename TagCategory>
-        void
+        bool
         setMetadata(const IFD&         ifd,
                     CoreMetadata&      core,
                     const std::string& key,
                     TagCategory        tag)
         {
+          bool set = false;
+
           typedef typename ::ome::bioformats::detail::tiff::TagProperties<TagCategory>::value_type value_type;
 
           try
@@ -1355,10 +1357,13 @@ namespace ome
               value_type v;
               ifd.getField(tag).get(v);
               setMetadata(core, key, v);
+              set = true;
             }
           catch (...)
             {
             }
+
+          return set;
         }
 
       }
@@ -1478,14 +1483,29 @@ namespace ome
         setMetadata(ifd, *m, "GrayResponseUnit", GRAYRESPONSEUNIT);
         setMetadata(ifd, *m, "GrayResponseCurve", GRAYRESPONSECURVE);
 
-        setMetadata(ifd, *m, "T4Options", T4OPTIONS);
-        setMetadata(ifd, *m, "T6Options", T6OPTIONS);
+        try
+          {
+            Compression cmpr;
+            ifd.getField(COMPRESSION).get(cmpr);
+            m->seriesMetadata.set("Compression", cmpr);
+            if (cmpr == COMPRESSION_CCITT_T4)
+              setMetadata(ifd, *m, "T4Options", T4OPTIONS);
+            else if (cmpr == COMPRESSION_CCITT_T6)
+              setMetadata(ifd, *m, "T6Options", T6OPTIONS);
+            else if (cmpr == COMPRESSION_LZW)
+              setMetadata(ifd, *m, "Predictor", PREDICTOR);
+          }
+        catch (...)
+          {
+          }
 
         setMetadata(ifd, *m, "ResolutionUnit", RESOLUTIONUNIT);
 
         setMetadata(ifd, *m, "PageNumber", PAGENUMBER);
-        setMetadata(ifd, *m, "TransferFunction", TRANSFERFUNCTION);
-        setMetadata(ifd, *m, "Predictor", PREDICTOR);
+
+        // TransferRange only valid if TransferFunction set.
+        if (setMetadata(ifd, *m, "TransferFunction", TRANSFERFUNCTION))
+          setMetadata(ifd, *m, "TransferRange", TRANSFERRANGE);
 
         setMetadata(ifd, *m, "WhitePoint", WHITEPOINT);
         setMetadata(ifd, *m, "PrimaryChromacities", PRIMARYCHROMATICITIES);
@@ -1507,8 +1527,6 @@ namespace ome
 
         /// @todo sminsamplevalue
         /// @todo smaxsamplevalue
-
-        setMetadata(ifd, *m, "TransferRange", TRANSFERRANGE);
 
         setMetadata(ifd, *m, "StripOffsets", STRIPOFFSETS);
         setMetadata(ifd, *m, "StripByteCounts", STRIPBYTECOUNTS);
