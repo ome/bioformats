@@ -1382,7 +1382,14 @@ namespace ome
         tiff::PhotometricInterpretation photometric = ifd.getPhotometricInterpretation();
 
         if (samples == 3 && photometric == tiff::RGB)
-          m->rgb = true;
+          {
+            m->rgb = true;
+            m->sizeC = 1;
+          }
+        else
+          {
+            m->sizeC = samples;
+          }
 
         // libtiff does any needed endian conversion
         // automatically, so the data is always in the native
@@ -1399,7 +1406,15 @@ namespace ome
           {
             if (photometric == tiff::PALETTE)
               {
-                m->indexed = true;
+                try
+                  {
+                    std::array<std::vector<uint16_t>, 3> cmap;
+                    ifd.getField(tiff::COLORMAP).get(cmap);
+                    m->indexed = true;
+                  }
+                catch (...)
+                  {
+                  }
               }
             else
               {
