@@ -48,8 +48,8 @@ namespace ome
       sizeZ(1),
       sizeC(1),
       sizeT(1),
-      thumbSizeX(1),
-      thumbSizeY(1),
+      thumbSizeX(0),
+      thumbSizeY(0),
       pixelType(ome::xml::model::enums::PixelType::UINT8),
       bitsPerPixel(0), // Default to full size of pixelType
       imageCount(1),

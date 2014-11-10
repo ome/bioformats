@@ -123,6 +123,9 @@ TEST_P(TIFFTest, Series0Size)
   EXPECT_EQ(1U, tiff.getSizeZ());
   EXPECT_EQ(params.sizeT, tiff.getSizeT());
   EXPECT_EQ(1U, tiff.getSizeC());
+
+  EXPECT_EQ(18U, tiff.getThumbSizeX());
+  EXPECT_EQ(24U, tiff.getThumbSizeY());
 }
 
 TEST_P(TIFFTest, openBytes)
