@@ -140,7 +140,7 @@ namespace ome
           BOTTOM_RIGHT = 3, ///< Row 0 bottom, column 0 rhs.
           BOTTOM_LEFT  = 4, ///< Row 0 bottom, column 0 lhs.
           LEFT_TOP     = 5, ///< Row 0 lhs, column 0 top.
-          RIGH_TTOP    = 6, ///< Row 0 rhs, column 0 top.
+          RIGHT_TOP    = 6, ///< Row 0 rhs, column 0 top.
           RIGHT_BOTTOM = 7, ///< Row 0 rhs, column 0 bottom.
           LEFT_BOTTOM  = 8  ///< Row 0 lhs, column 0 bottom.
         };
