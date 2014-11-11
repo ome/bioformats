@@ -1573,8 +1573,8 @@ namespace ome
             if (photometric == RGB ||
                 photometric == CFA_ARRAY)
               samples = 3;
-            dimension_size_type fullsamples(samples);
-            fullsamples += extra.size();
+            uint16_t fullsamples(samples);
+            fullsamples += static_cast<uint16_t>(extra.size());
 
             m->seriesMetadata.set("NumberOfChannels", fullsamples);
           }
