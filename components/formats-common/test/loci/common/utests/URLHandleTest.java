@@ -35,8 +35,11 @@ package loci.common.utests;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.HandleException;
 import loci.common.URLHandle;
 
@@ -54,21 +57,22 @@ import org.testng.annotations.Test;
  */
 public class URLHandleTest {
 
-  // -- Constants --
-
-  /** The contents are "hello, world!". */
-  private static final String WEBSITE =
-    "http://dev.loci.wisc.edu/hello-world";
-
   // -- Fields --
 
   private URLHandle fileHandle;
+  private static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
   // -- Setup methods --
 
   @BeforeMethod
   public void setup() throws IOException {
-    fileHandle = new URLHandle(WEBSITE);
+    File tmpFile = File.createTempFile("urlhandle", "tmp");
+    tmpFile.deleteOnExit();
+    FileOutputStream out = new FileOutputStream(tmpFile);
+    out.write("hello, world!\n".getBytes(Constants.ENCODING));
+    out.close();
+    String path = tmpFile.getAbsolutePath();
+    fileHandle = new URLHandle((IS_WINDOWS ? "file:/" : "file://") + path);
   }
 
   // -- Test methods --
