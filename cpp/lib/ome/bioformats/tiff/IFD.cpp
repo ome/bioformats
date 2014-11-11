@@ -1564,23 +1564,30 @@ namespace ome
 
         try
           {
-            PhotometricInterpretation photometric;
-            ifd.getField(PHOTOMETRIC).get(photometric);
             uint16_t samples;
             ifd.getField(SAMPLESPERPIXEL).get(samples);
-            std::vector<ExtraSamples> extra;
-            ifd.getField(EXTRASAMPLES).get(extra);
+            PhotometricInterpretation photometric;
+            ifd.getField(PHOTOMETRIC).get(photometric);
             if (photometric == RGB ||
                 photometric == CFA_ARRAY)
               samples = 3;
-            uint16_t fullsamples(samples);
-            fullsamples += static_cast<uint16_t>(extra.size());
 
-            m->seriesMetadata.set("NumberOfChannels", fullsamples);
+            try
+              {
+                std::vector<ExtraSamples> extra;
+                ifd.getField(EXTRASAMPLES).get(extra);
+                samples += static_cast<uint16_t>(extra.size());
+              }
+            catch (...)
+              {
+              }
+
+            m->seriesMetadata.set("NumberOfChannels", samples);
           }
         catch (...)
           {
           }
+
         m->seriesMetadata.set("BitsPerSample", bitsPerPixel(ifd.getPixelType()));
 
         return m;
