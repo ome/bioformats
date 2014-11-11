@@ -40,6 +40,7 @@ import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -2119,6 +2120,16 @@ public class FormatReaderTest {
     }
     finally {
       if (memoFile != null) {
+        // log the memo file's size
+        try {
+          RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath());
+          LOGGER.warn("memo file size for {} = {} bytes", reader.getCurrentFile(), s.length());
+          s.close();
+        }
+        catch (IOException e) {
+          LOGGER.warn("memo file size not available");
+        }
+
         memoFile.delete();
         // recursively delete, as the original file's path is replicated
         // within the memo directory
