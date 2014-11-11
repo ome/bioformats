@@ -998,8 +998,11 @@ public class CellSensReader extends FormatReader {
       }
     }
 
-    ms.sizeX = imageWidths.get(s * (maxC[0] + 1) * (maxZ[0] + 1) * (maxT[0] + 1));
-    ms.sizeY = imageHeights.get(s * (maxC[0] + 1) * (maxZ[0] + 1) * (maxT[0] + 1));
+    int mult = imageWidths.size() / (usedFiles.length - 1);
+    int dimensionIndex = s * mult + 1;
+
+    ms.sizeX = imageWidths.get(dimensionIndex);
+    ms.sizeY = imageHeights.get(dimensionIndex);
     ms.sizeZ = maxZ[0] + 1;
     if (maxC[0] > 0) {
       ms.sizeC *= (maxC[0] + 1);
