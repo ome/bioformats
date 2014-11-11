@@ -577,7 +577,7 @@ public class CellSensReader extends FormatReader {
     RandomAccessInputStream vsi = new RandomAccessInputStream(id);
     vsi.order(parser.getStream().isLittleEndian());
     vsi.seek(8);
-    readTags(vsi);
+    readTags(vsi, false);
     vsi.seek(parser.getStream().getFilePointer());
 
     vsi.skipBytes(273);
@@ -1126,7 +1126,7 @@ public class CellSensReader extends FormatReader {
     }
   }
 
-  private void readTags(RandomAccessInputStream vsi) {
+  private void readTags(RandomAccessInputStream vsi, boolean populateMetadata) {
     try {
       // read the VSI header
       long fp = vsi.getFilePointer();
@@ -1207,7 +1207,7 @@ public class CellSensReader extends FormatReader {
             vsi.getFilePointer() < vsi.length())
           {
             long start = vsi.getFilePointer();
-            readTags(vsi);
+            readTags(vsi, populateMetadata);
             long end = vsi.getFilePointer();
             if (start == end) {
               break;
@@ -1224,7 +1224,7 @@ public class CellSensReader extends FormatReader {
             vsi.getFilePointer() < vsi.length())
           {
             long start = vsi.getFilePointer();
-            readTags(vsi);
+            readTags(vsi, tag != 2037);
             long end = vsi.getFilePointer();
             if (start == end) {
               break;
@@ -1376,8 +1376,9 @@ public class CellSensReader extends FormatReader {
             acquisitionTimes.add(new Long(value));
           }
 
-          addGlobalMetaList(tagName, value);
-
+          if (populateMetadata) {
+            addGlobalMetaList(tagName, value);
+          }
         }
 
         if (inDimensionProperties) {
