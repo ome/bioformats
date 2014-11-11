@@ -136,10 +136,14 @@ TEST_P(TIFFTest, openBytes)
 
   for (dimension_size_type s = 0; s < tiff.getSeriesCount(); ++s)
     {
-      VariantPixelBuffer buf;
       EXPECT_NO_THROW(tiff.setSeries(s));
       EXPECT_EQ(s, tiff.getSeries());
-      EXPECT_NO_THROW(tiff.openBytes(0, buf));
+      for (dimension_size_type p = 0; p < tiff.getImageCount(); ++p)
+        {
+          VariantPixelBuffer buf;
+          EXPECT_NO_THROW(tiff.openBytes(p, buf));
+          ASSERT_EQ(tiff.getSizeX() * tiff.getSizeY(), buf.num_elements());
+        }
     }
 }
 

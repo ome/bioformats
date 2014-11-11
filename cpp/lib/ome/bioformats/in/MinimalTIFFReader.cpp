@@ -208,16 +208,37 @@ namespace ome
           }
         const series_ifd_map_type::value_type range(series_ifd_map.at(series));
 
-        if (no >= (range.second - range.first))
+        // Compute timepoint and subchannel from plane number.
+        dimension_size_type T = no;
+        dimension_size_type S = 0U;
+        if (isRGB())
+          {
+            T = no / getSizeC();
+            S = no % getSizeC();
+          }
+        dimension_size_type ifdidx = range.first + T;
+        assert(range.first <= T && T < range.second);
+
+        if (T >= (range.second - range.first))
           {
             boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
-            fmt % no % series;
+            fmt % T % series;
             throw FormatException(fmt.str());
           }
 
-        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(range.first + no));
+        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
 
-        ifd->readImage(buf, x, y, w, h);
+        if (isRGB())
+          {
+            // Copy the desired subchannel into the destination buffer.
+            VariantPixelBuffer tmp;
+            ifd->readImage(tmp, x, y, w, h);
+
+            detail::CopySubchannelVisitor v(buf, S);
+            boost::apply_visitor(v, tmp.vbuffer());
+          }
+        else
+          ifd->readImage(buf, x, y, w, h);
       }
 
       std::shared_ptr<ome::bioformats::tiff::TIFF>

@@ -177,7 +177,16 @@ namespace ome
 
         if (!!ijmeta)
           {
-            const std::shared_ptr<IFD> ifd = tiff->getDirectoryByIndex(no);
+            // Compute plane and subchannel from plane number.
+            dimension_size_type plane = no;
+            dimension_size_type S = 0U;
+            if (isRGB())
+              {
+                 plane = no / getSizeC();
+                 S = no % getSizeC();
+              }
+
+            const std::shared_ptr<IFD> ifd = tiff->getDirectoryByIndex(plane);
 
             if (!ifd)
               {
@@ -186,7 +195,17 @@ namespace ome
                 throw FormatException(fmt.str());
               }
 
-            ifd->readImage(buf, x, y, w, h);
+            if (isRGB())
+              {
+                // Copy the desired subchannel into the destination buffer.
+                VariantPixelBuffer tmp;
+                ifd->readImage(tmp, x, y, w, h);
+
+                detail::CopySubchannelVisitor v(buf, S);
+                boost::apply_visitor(v, tmp.vbuffer());
+              }
+            else
+              ifd->readImage(buf, x, y, w, h);
           }
         else
           {
