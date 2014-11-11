@@ -916,6 +916,51 @@ namespace ome
         }
       };
 
+      /// Copy a single subchannel from a PixelBuffer.
+      struct CopySubchannelVisitor : public boost::static_visitor<>
+      {
+        /// Destination pixel buffer.
+        VariantPixelBuffer& dest;
+        /// Subchannel to copy.
+        dimension_size_type subC;
+
+        /**
+         * Constructor.
+         *
+         * @param dest the destination pixel buffer.
+         * @param subC the subchannel to copy.
+         */
+        CopySubchannelVisitor(VariantPixelBuffer& dest,
+                                dimension_size_type subC):
+          dest(dest),
+          subC(subC)
+        {}
+
+        /**
+         * Copy subchannel.
+         *
+         * @param v the PixelBuffer to use.
+         */
+        template<typename T>
+        void
+        operator()(const T& v)
+        {
+          std::array<VariantPixelBuffer::size_type, 9> dest_shape;
+          const VariantPixelBuffer::size_type *shape_ptr(v->shape());
+          std::copy(shape_ptr, shape_ptr + PixelBufferBase::dimensions,
+                    dest_shape.begin());
+          dest_shape[DIM_SUBCHANNEL] = 1;
+
+          dest.setBuffer(dest_shape, v->pixelType());
+
+          T& destbuf = boost::get<T>(dest.vbuffer());
+
+          typename boost::multi_array_types::index_gen indices;
+          typedef boost::multi_array_types::index_range range;
+          destbuf->array() = v->array()[boost::indices[range()][range()][range()][range()][range()][range(subC,subC+1)][range()][range()][range()]];
+        }
+      };
+
     }
 
     template<typename T>
