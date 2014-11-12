@@ -372,7 +372,22 @@ public class SVSReader extends BaseTiffReader {
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
-      store.setImageName("Series " + (i + 1), i);
+      if (hasFlattenedResolutions() || i > 2) {
+        store.setImageName("Series " + (i + 1), i);
+      }
+      else {
+        switch (i) {
+          case 0:
+            store.setImageName("", i);
+            break;
+          case 1:
+            store.setImageName("label image", i);
+            break;
+          case 2:
+            store.setImageName("macro image", i);
+            break;
+        }
+      }
       store.setImageDescription(comments[i], i);
 
       if (getDatestamp() != null) {
