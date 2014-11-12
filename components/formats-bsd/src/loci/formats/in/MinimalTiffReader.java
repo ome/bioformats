@@ -612,6 +612,14 @@ public class MinimalTiffReader extends FormatReader {
 
   /** Reinitialize the underlying TiffParser. */
   protected void initTiffParser() {
+    if (in == null) {
+      try {
+        in = new RandomAccessInputStream(getCurrentFile());
+      }
+      catch (IOException e) {
+        LOGGER.error("Could not initialize stream", e);
+      }
+    }
     tiffParser = new TiffParser(in);
     tiffParser.setDoCaching(false);
     tiffParser.setUse64BitOffsets(use64Bit);
