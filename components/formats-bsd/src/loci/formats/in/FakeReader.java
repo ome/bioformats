@@ -808,6 +808,7 @@ public class FakeReader extends FormatReader {
   }
 
   private void fillPhyiscalSizes(MetadataStore store) {
+    if (physicalSizeX == null && physicalSizeY == null && physicalSizeZ == null) return;
     int oldSeries = getSeries();
     for (int s=0; s<getSeriesCount(); s++) {
       setSeries(s);
