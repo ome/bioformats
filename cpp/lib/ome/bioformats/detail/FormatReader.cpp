@@ -853,7 +853,6 @@ namespace ome
       FormatReader::getUsedFiles(bool noPixels) const
       {
         SaveSeries sentry(*this);
-        dimension_size_type oldSeries = getSeries();
         std::set<std::string> files;
         for (dimension_size_type i = 0; i < getSeriesCount(); ++i)
           {
@@ -866,7 +865,6 @@ namespace ome
                 files.insert(*file);
               }
           }
-        setSeries(oldSeries);
         return std::vector<std::string>(files.begin(), files.end());
       }
 
@@ -1125,6 +1123,9 @@ namespace ome
                  i != core.end();
                  ++i, ++idx)
               {
+                if (series == idx)
+                  break;
+
                 if (*i)
                   index += (*i)->resolutionCount;
                 else
@@ -1140,6 +1141,12 @@ namespace ome
                     fmt % series % index;
                     throw std::logic_error(fmt.str());
                   }
+              }
+            if (series != idx)
+              {
+                boost::format fmt("Invalid series: %1%");
+                fmt % series;
+                throw std::logic_error(fmt.str());
               }
           }
 
