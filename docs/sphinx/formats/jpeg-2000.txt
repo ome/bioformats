@@ -27,7 +27,7 @@ Freely Available Software:
 
 We currently have:
 
-* a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) 
+* a JPEG 2000 specification document (free draft from 2000, no longer available online) 
 * a few .jp2 files
 
 We would like to have:
