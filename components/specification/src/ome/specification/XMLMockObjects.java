@@ -55,6 +55,9 @@ import java.util.List;
 //Third-party libraries
 
 //Application-internal dependencies
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.AffineTransform;
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
@@ -137,6 +140,12 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Power;
+import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -399,7 +408,7 @@ public class XMLMockObjects
     objective.setIris(true);
     objective.setLensNA(0.5);
     objective.setNominalMagnification(1.5);
-    objective.setWorkingDistance(1.0);
+    objective.setWorkingDistance(new Length(1.0, UNITS.MICROM));
     return objective;
   }
 
@@ -422,10 +431,10 @@ public class XMLMockObjects
     filter.setType(FILTER_TYPE);
 
     TransmittanceRange transmittance = new TransmittanceRange();
-    transmittance.setCutIn(new PositiveInteger(cutIn));
-    transmittance.setCutOut(new PositiveInteger(cutOut));
-    transmittance.setCutInTolerance(new NonNegativeInteger(1));
-    transmittance.setCutOutTolerance(new NonNegativeInteger(1));
+    transmittance.setCutIn(new Length(cutIn, UNITS.NM));
+    transmittance.setCutOut(new Length(cutOut, UNITS.NM));
+    transmittance.setCutInTolerance(new Length(1, UNITS.NM));
+    transmittance.setCutOutTolerance(new Length(1, UNITS.NM));
     filter.setTransmittanceRange(transmittance);
     return filter;
   }
@@ -446,7 +455,7 @@ public class XMLMockObjects
       laser.setManufacturer(COMPONENT_MANUFACTURER);
       laser.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       laser.setLotNumber(COMPONENT_LOT_NUMBER);
-      laser.setPower(LIGHTSOURCE_POWER);
+      laser.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       laser.setType(LASER_TYPE);
       return laser;
     } else if (Arc.class.getName().equals(type)) {
@@ -456,7 +465,7 @@ public class XMLMockObjects
       arc.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       arc.setLotNumber(COMPONENT_LOT_NUMBER);
       arc.setModel(COMPONENT_MODEL);
-      arc.setPower(LIGHTSOURCE_POWER);
+      arc.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       arc.setType(ARC_TYPE);
       return arc;
     } else if (Filament.class.getName().equals(type)) {
@@ -466,7 +475,7 @@ public class XMLMockObjects
       filament.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       filament.setLotNumber(COMPONENT_LOT_NUMBER);
       filament.setModel(COMPONENT_MODEL);
-      filament.setPower(LIGHTSOURCE_POWER);
+      filament.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       filament.setType(FILAMENT_TYPE);
       return filament;
     } else if (LightEmittingDiode.class.getName().equals(type)) {
@@ -476,7 +485,7 @@ public class XMLMockObjects
       light.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       light.setLotNumber(COMPONENT_LOT_NUMBER);
       light.setModel(COMPONENT_MODEL);
-      light.setPower(LIGHTSOURCE_POWER);
+      light.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       return light;
     }
     return null;
@@ -528,10 +537,10 @@ public class XMLMockObjects
   public ImagingEnvironment createImageEnvironment()
   {
     ImagingEnvironment env = new ImagingEnvironment();
-    env.setAirPressure(1.0);
+    env.setAirPressure(new Pressure(1.0, UNITS.MBAR));
     env.setCO2Percent(new PercentFraction(1.0f));
     env.setHumidity(new PercentFraction(1.0f));
-    env.setTemperature(1.0);
+    env.setTemperature(new Temperature(1.0, UNITS.DEGREEC));
     return env;
   }
 
@@ -545,9 +554,9 @@ public class XMLMockObjects
   {
     StageLabel label = new StageLabel();
     label.setName("StageLabel");
-    label.setX(1.0);
-    label.setY(1.0);
-    label.setZ(1.0);
+    label.setX(new Length(1.0, UNITS.REFERENCEFRAME));
+    label.setY(new Length(1.0, UNITS.REFERENCEFRAME));
+    label.setZ(new Length(1.0, UNITS.REFERENCEFRAME));
     return label;
   }
 
@@ -563,7 +572,7 @@ public class XMLMockObjects
     LightSourceSettings settings = new LightSourceSettings();
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
-    settings.setWavelength(new PositiveFloat(200.2));
+    settings.setWavelength(new Length(200.2, UNITS.NM));
     settings.setLightSource(instrument.copyLightSourceList().get(0));
     return settings;
   }
@@ -654,8 +663,8 @@ public class XMLMockObjects
     settings.setBinning(BINNING);
     settings.setGain(1.0);
     settings.setOffset(1.0);
-    settings.setReadOutRate(1.0);
-    settings.setVoltage(1.0);
+    settings.setReadOutRate(new Frequency(1.0, UNITS.HZ));
+    settings.setVoltage(new ElectricPotential(0, UNITS.V));
     return settings;
   }
 
@@ -903,8 +912,8 @@ public class XMLMockObjects
     plate.setColumns(new PositiveInteger(columns));
     plate.setRowNamingConvention(ROW_NAMING_CONVENTION);
     plate.setColumnNamingConvention(COLUMN_NAMING_CONVENTION);
-    plate.setWellOriginX(0.0);
-    plate.setWellOriginY(1.0);
+    plate.setWellOriginX(new Length(0.0, UNITS.MICROM));
+    plate.setWellOriginY(new Length(1.0, UNITS.MICROM));
     plate.setStatus("Plate status");
     PlateAcquisition pa = null;
     List<PlateAcquisition> pas = new ArrayList<PlateAcquisition>();
@@ -942,8 +951,8 @@ public class XMLMockObjects
         if (pas.size() == 0) {
           for (int field = 0; field < fields; field++) {
             sample = new WellSample();
-            sample.setPositionX(0.0);
-            sample.setPositionY(1.0);
+            sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
+            sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
             sample.setTimepoint(new Timestamp(TIME));
             sample.setID(String.format("WellSample:%d_%d_%d_%d",
                 index, row, column, field));
@@ -964,8 +973,8 @@ public class XMLMockObjects
             for (int field = 0; field < fields; field++) {
               v = kk+index*numberOfPlates;
               sample = new WellSample();
-              sample.setPositionX(0.0);
-              sample.setPositionY(1.0);
+              sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
+              sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
               sample.setTimepoint(new Timestamp(TIME));
               sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
                   index, row, column, field, v));
@@ -1002,9 +1011,9 @@ public class XMLMockObjects
     Plane plane = new Plane();
     plane.setDeltaT(new Time(0.1, UNITS.S));
     plane.setExposureTime(new Time(10.0, UNITS.S));
-    plane.setPositionX(1.0);
-    plane.setPositionY(1.0);
-    plane.setPositionZ(1.0);
+    plane.setPositionX(new Length(1.0, UNITS.REFERENCEFRAME));
+    plane.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
+    plane.setPositionZ(new Length(1.0, UNITS.REFERENCEFRAME));
     plane.setTheZ(new NonNegativeInteger(z));
     plane.setTheC(new NonNegativeInteger(c));
     plane.setTheT(new NonNegativeInteger(z));
@@ -1093,10 +1102,12 @@ public class XMLMockObjects
     channel.setColor(new ome.xml.model.primitives.Color(rgba));
     channel.setName("Name");
     channel.setIlluminationType(IlluminationType.OBLIQUE);
-    channel.setPinholeSize(0.5);
+    channel.setPinholeSize(new Length(0.5, UNITS.MICROM));
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-    channel.setEmissionWavelength(new PositiveFloat(300.3));
-    channel.setExcitationWavelength(new PositiveFloat(400.4));
+	PositiveFloat emWave = new PositiveFloat(300.3);
+    channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
+    PositiveFloat exWave = new PositiveFloat(400.3);
+    channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
     channel.setFluor("Fluor");
     channel.setNDFilter(1.0);
     channel.setPockelCellSetting(0);

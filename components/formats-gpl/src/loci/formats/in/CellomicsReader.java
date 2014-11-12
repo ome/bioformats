@@ -45,6 +45,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * Reader for Cellomics C01 files.
@@ -364,8 +365,8 @@ public class CellomicsReader extends FormatReader {
       double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
       double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(width);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(height);
+      Length sizeX = FormatTools.getPhysicalSizeX(width);
+      Length sizeY = FormatTools.getPhysicalSizeY(height);
       for (int i=0; i<getSeriesCount(); i++) {
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);

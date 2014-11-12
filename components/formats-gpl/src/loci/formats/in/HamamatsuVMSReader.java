@@ -50,6 +50,7 @@ import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * HamamatsuVMSReader is the file format reader for Hamamatsu VMS datasets.
@@ -292,13 +293,13 @@ public class HamamatsuVMSReader extends FormatReader {
     store.setImageName(path + " map", 2);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(physicalWidth / ms0.sizeX);
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(physicalHeight / ms0.sizeY);
-      PositiveFloat macroSizeX =
+      Length macroSizeX =
         FormatTools.getPhysicalSizeX(macroWidth / core.get(1).sizeX);
-      PositiveFloat macroSizeY =
+      Length macroSizeY =
         FormatTools.getPhysicalSizeY(macroHeight / core.get(1).sizeY);
 
       if (sizeX != null) {

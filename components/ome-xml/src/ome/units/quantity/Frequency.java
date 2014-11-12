@@ -36,7 +36,7 @@ import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
- * A wrapper for the Frequency class from the units implimintation.
+ * A wrapper for the Frequency class from the units implementation.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
@@ -46,19 +46,102 @@ import ome.units.UNITS;
  * </small>
  * @since 5.1
  */
-public class Frequency extends Quantity
+public class Frequency extends Quantity implements Comparable<Frequency>
 {
-  public Frequency(Number value, 
-    Unit<ome.units.quantity.Frequency> unit)
+  private static final int SEED1 = 34;
+  private static final int SEED2 = 45;
+  Number value;
+  Unit<ome.units.quantity.Frequency> unit;
+  private int hashCodeValue;
+
+  public Frequency(Number inValue,
+    Unit<ome.units.quantity.Frequency> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Frequency: Frequency cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
+    hashCodeValue = SEED1;
+    hashCodeValue = SEED2 * hashCodeValue + Float.floatToIntBits(value.floatValue());
+    hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
-    public Number value()
+
+  public Number value()
+  {
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Frequency> inUnit)
+  {
+    if (unit.equals(inUnit))
     {
-      return 1;
+      return value;
     }
-    
-    public Unit<ome.units.quantity.Frequency> unit()
+    if (unit.isConvertible(inUnit))
     {
-      return UNITS.HERTZ;
+      return unit.convertValue(value, inUnit);
     }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Frequency otherFrequency = (Frequency)other;
+    if (unit.equals(otherFrequency.unit))
+    {
+      // Frequencys use same unit so compare value
+      return value.equals(otherFrequency.value);
+    } else {
+      if (unit.isConvertible(otherFrequency.unit))
+      {
+        // Frequencys use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherFrequency.unit)).equals(otherFrequency.value);
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public int compareTo(Frequency other)
+  {
+    if (this == other) {
+      return 0;
+    }
+    return Double.compare(value.doubleValue(), other.value(unit).doubleValue());
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return hashCodeValue;
+  }
+  @Override
+  public String toString()
+  {
+    StringBuilder result = new StringBuilder();
+    result.append(this.getClass().getName());
+    result.append(": ");
+    result.append("value[");
+    result.append(value);
+    result.append("], unit[");
+    result.append(unit.getSymbol());
+    result.append("] stored as ");
+    result.append(value.getClass().getName());
+    return result.toString();
+  }
+
+  public Unit<ome.units.quantity.Frequency> unit()
+  {
+    return unit;
+  }
 }

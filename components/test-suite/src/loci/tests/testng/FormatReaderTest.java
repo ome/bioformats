@@ -62,6 +62,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -911,8 +912,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeX(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeX(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -936,8 +937,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeY(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeY(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -962,8 +963,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -1103,8 +1104,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveFloat realWavelength =
-          retrieve.getChannelEmissionWavelength(i, c);
+        Length realWavelength = retrieve.getChannelEmissionWavelength(i, c);
         Double expectedWavelength = config.getEmissionWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
@@ -1112,9 +1112,9 @@ public class FormatReaderTest {
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
+          Math.abs(expectedWavelength - realWavelength.value(UNITS.NM).doubleValue()) > Constants.EPSILON)
         {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
         }
       }
     }
@@ -1132,8 +1132,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveFloat realWavelength =
-          retrieve.getChannelExcitationWavelength(i, c);
+        Length realWavelength = retrieve.getChannelExcitationWavelength(i, c);
         Double expectedWavelength = config.getExcitationWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
@@ -1141,9 +1140,9 @@ public class FormatReaderTest {
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
+          Math.abs(expectedWavelength - realWavelength.value(UNITS.NM).doubleValue()) > Constants.EPSILON)
         {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
         }
       }
     }

@@ -52,12 +52,12 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -129,9 +129,9 @@ public class FlexReader extends FormatReader {
 
   private String plateAcqStartTime;
 
-  private ArrayList<Double> planePositionX = new ArrayList<Double>();
-  private ArrayList<Double> planePositionY = new ArrayList<Double>();
-  private ArrayList<Double> planePositionZ = new ArrayList<Double>();
+  private ArrayList<Length> planePositionX = new ArrayList<Length>();
+  private ArrayList<Length> planePositionY = new ArrayList<Length>();
+  private ArrayList<Length> planePositionZ = new ArrayList<Length>();
   private ArrayList<Double> planeExposureTime = new ArrayList<Double>();
   private ArrayList<Double> planeDeltaT = new ArrayList<Double>();
 
@@ -651,14 +651,14 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          PositiveFloat size =
+          Length size =
             FormatTools.getPhysicalSizeX(xSizes.get(seriesIndex));
           if (size != null) {
             store.setPixelsPhysicalSizeX(size, i);
           }
         }
         if (seriesIndex < ySizes.size()) {
-          PositiveFloat size =
+          Length size =
             FormatTools.getPhysicalSizeY(ySizes.get(seriesIndex));
           if (size != null) {
             store.setPixelsPhysicalSizeY(size, i);
@@ -671,12 +671,12 @@ public class FlexReader extends FormatReader {
         }
 
         if (pos[0] < xPositions.size()) {
-          store.setWellSamplePositionX(
-            xPositions.get(pos[0]), pos[2], well, pos[0]);
+          Length l = new Length(xPositions.get(pos[0]), UNITS.REFERENCEFRAME);
+          store.setWellSamplePositionX(l, pos[2], well, pos[0]);
         }
         if (pos[0] < yPositions.size()) {
-          store.setWellSamplePositionY(
-            yPositions.get(pos[0]), pos[2], well, pos[0]);
+          Length l = new Length(yPositions.get(pos[0]), UNITS.REFERENCEFRAME); 
+          store.setWellSamplePositionY(l, pos[2], well, pos[0]);
         }
 
         for (int image=0; image<getImageCount(); image++) {
@@ -1468,7 +1468,7 @@ public class FlexReader extends FormatReader {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
         Double wavelength = new Double(value);
-        PositiveFloat wave = FormatTools.getWavelength(wavelength);
+        Length wave = FormatTools.getWavelength(wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, 0, nextLaser);
         }
@@ -1550,18 +1550,18 @@ public class FlexReader extends FormatReader {
           ySizes.add(new Double(v));
         }
         else if (qName.equals("PositionX")) {
-          Double v = new Double(Double.parseDouble(value) * 1000000);
-          planePositionX.add(v);
+          final double v = Double.parseDouble(value) * 1000000;
+          planePositionX.add(new Length(v, UNITS.REFERENCEFRAME));
           addGlobalMetaList("X position for position", v);
         }
         else if (qName.equals("PositionY")) {
-          Double v = new Double(Double.parseDouble(value) * 1000000);
-          planePositionY.add(v);
+          final double v = Double.parseDouble(value) * 1000000;
+          planePositionY.add(new Length(v, UNITS.REFERENCEFRAME));
           addGlobalMetaList("Y position for position", v);
         }
         else if (qName.equals("PositionZ")) {
-          Double v = new Double(Double.parseDouble(value) * 1000000);
-          planePositionZ.add(v);
+          final double v = Double.parseDouble(value) * 1000000;
+          planePositionZ.add(new Length(v, UNITS.REFERENCEFRAME));
           addGlobalMetaList("Z position for position", v);
         }
         else if (qName.equals("TimepointOffsetUsed")) {

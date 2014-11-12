@@ -57,6 +57,8 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -706,9 +708,9 @@ public class LeicaReader extends FormatReader {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizes[i][0]);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizes[i][1]);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizes[i][2]);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizes[i][0]);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizes[i][1]);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizes[i][2]);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
@@ -1434,7 +1436,7 @@ public class LeicaReader extends FormatReader {
             }
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
-              PositiveInteger cutIn = FormatTools.getCutIn(wavelength);
+              Length cutIn = FormatTools.getCutIn(wavelength);
               if (cutIn != null) {
                 store.setTransmittanceRangeCutIn(cutIn, series, channel);
               }
@@ -1442,7 +1444,7 @@ public class LeicaReader extends FormatReader {
             }
             else if (tokens[3].equals("1") && !cutOutPopulated[series][index])
             {
-              PositiveInteger cutOut = FormatTools.getCutOut(wavelength);
+              Length cutOut = FormatTools.getCutOut(wavelength);
               if (cutOut != null) {
                 store.setTransmittanceRangeCutOut(cutOut, series, channel);
               }
@@ -1466,7 +1468,9 @@ public class LeicaReader extends FormatReader {
         // NB: there is only one stage position specified for each series
         if (tokens[2].equals("XPos")) {
           for (int q=0; q<ms.imageCount; q++) {
-            store.setPlanePositionX(new Double(data), series, q);
+            final Double number = Double.valueOf(data);
+            final Length length = new Length(number, UNITS.REFERENCEFRAME);
+            store.setPlanePositionX(length, series, q);
             if (q == 0) {
               addGlobalMetaList("X position for position", data);
             }
@@ -1474,24 +1478,28 @@ public class LeicaReader extends FormatReader {
         }
         else if (tokens[2].equals("YPos")) {
           for (int q=0; q<ms.imageCount; q++) {
-            store.setPlanePositionY(new Double(data), series, q);
+            final Double number = Double.valueOf(data);
+            final Length length = new Length(number, UNITS.REFERENCEFRAME);
+            store.setPlanePositionY(length, series, q);
             if (q == 0) {
               addGlobalMetaList("Y position for position", data);
             }
           }
         }
         else if (tokens[2].equals("ZPos")) {
+          final Double number = Double.valueOf(data);
+          final Length length = new Length(number, UNITS.REFERENCEFRAME);
           store.setStageLabelName("Position", series);
-          store.setStageLabelZ(new Double(data), series);
+          store.setStageLabelZ(length, series);
           addGlobalMetaList("Z position for position", data);
         }
       }
       else if (tokens[0].equals("CScanActuator") &&
         tokens[1].equals("Z Scan Actuator") && tokens[2].equals("Position"))
       {
-        double pos = Double.parseDouble(data) * 1000000;
+        final double pos = Double.parseDouble(data) * 1000000;
         store.setStageLabelName("Position", series);
-        store.setStageLabelZ(pos, series);
+        store.setStageLabelZ(new Length(pos, UNITS.REFERENCEFRAME), series);
         addGlobalMetaList("Z position for position", pos);
       }
 
@@ -1525,7 +1533,9 @@ public class LeicaReader extends FormatReader {
       // link Detector to Image, if the detector was actually used
       if (detector.active) {
         store.setDetectorOffset(detector.offset, series, nextDetector);
-        store.setDetectorVoltage(detector.voltage, series, nextDetector);
+        store.setDetectorVoltage(
+                new ElectricPotential(detector.voltage, UNITS.V), series,
+                nextDetector);
         store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
 
         String detectorID =
@@ -1576,20 +1586,20 @@ public class LeicaReader extends FormatReader {
         }
         if (channel < emWaves[i].size()) {
           Double wave = new Double(emWaves[i].get(channel).toString());
-          PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+          Length emission = FormatTools.getEmissionWavelength(wave);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, channel);
           }
         }
         if (channel < exWaves[i].size()) {
           Double wave = new Double(exWaves[i].get(channel).toString());
-          PositiveFloat ex = FormatTools.getExcitationWavelength(wave);
+          Length ex = FormatTools.getExcitationWavelength(wave);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, i, channel);
           }
         }
         if (i < pinhole.length) {
-          store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);
+          store.setChannelPinholeSize(new Length(pinhole[i], UNITS.MICROM), i, channel);
         }
         if (channel < channelColor[i].length) {
           store.setChannelColor(channelColor[i][channel], i, channel);

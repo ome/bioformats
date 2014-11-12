@@ -62,6 +62,9 @@ package loci.formats.out;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 
@@ -74,6 +77,9 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * WlzWriter is the file format writer for Woolz files.
@@ -169,9 +175,12 @@ public class WlzWriter extends FormatWriter {
       int oZ = 0;
       if((stageLabelName != null) &&
          stageLabelName.equals(wlz.getWlzOrgLabelName())) {
-	oX = (int )Math.rint(meta.getStageLabelX(0));
-        oY = (int )Math.rint(meta.getStageLabelY(0));
-        oZ = (int )Math.rint(meta.getStageLabelZ(0));
+        final Length stageX = meta.getStageLabelX(0);
+        final Length stageY = meta.getStageLabelY(0);
+        final Length stageZ = meta.getStageLabelZ(0);
+        oX = (int) Math.rint(stageX.value(UNITS.REFERENCEFRAME).doubleValue());
+        oY = (int) Math.rint(stageY.value(UNITS.REFERENCEFRAME).doubleValue());
+        oZ = (int) Math.rint(stageZ.value(UNITS.REFERENCEFRAME).doubleValue());
       }
       int nX = meta.getPixelsSizeX(series).getValue().intValue();
       int nY = meta.getPixelsSizeY(series).getValue().intValue();
@@ -182,13 +191,13 @@ public class WlzWriter extends FormatWriter {
       double vY = 1.0;
       double vZ = 1.0;
       if(meta.getPixelsPhysicalSizeX(0) != null) {
-        vX = meta.getPixelsPhysicalSizeX(0).getValue();
+        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeY(0) != null) {
-        vY = meta.getPixelsPhysicalSizeY(0).getValue();
+        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeZ(0) != null) {
-        vZ = meta.getPixelsPhysicalSizeZ(0).getValue();
+        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
 		  meta.getPixelsType(series).toString());

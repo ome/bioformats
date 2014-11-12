@@ -54,6 +54,10 @@ public class PercentFraction extends PrimitiveType<Float> implements PrimitiveNu
     }
   }
 
+  public Number getNumberValue() {
+    return value;
+  }
+
   /**
    * Returns an <code>PercentFraction</code> object holding the value of
    * the specified string.

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -55,7 +56,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
@@ -65,7 +65,7 @@ import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
-
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -123,8 +123,8 @@ public class LIFReader extends FormatReader {
   private Vector<String> lutNames = new Vector<String>();
   private Vector<Double> physicalSizeXs = new Vector<Double>();
   private Vector<Double> physicalSizeYs = new Vector<Double>();
-  private Vector<Double> fieldPosX = new Vector<Double>();
-  private Vector<Double> fieldPosY = new Vector<Double>();
+  private Vector<Length> fieldPosX = new Vector<Length>();
+  private Vector<Length> fieldPosY = new Vector<Length>();
 
   private String[] descriptions, microscopeModels, serialNumber;
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
@@ -137,7 +137,7 @@ public class LIFReader extends FormatReader {
 
   private String[] immersions, corrections, objectiveModels;
   private Double[] magnification;
-  private Double[] posX, posY, posZ;
+  private Length[] posX, posY, posZ;
   private Double[] refractiveIndex;
   private Vector[] cutIns, cutOuts, filterModels;
   private double[][] timestamps;
@@ -603,9 +603,9 @@ public class LIFReader extends FormatReader {
               (String) filterModels[index].get(filter), i, filter);
           }
           store.setTransmittanceRangeCutIn(
-            (PositiveInteger) cutIns[index].get(filter), i, filter);
+            (Length) cutIns[index].get(filter), i, filter);
           store.setTransmittanceRangeCutOut(
-            (PositiveInteger) cutOuts[index].get(filter), i, filter);
+            (Length) cutOuts[index].get(filter), i, filter);
         }
       }
 
@@ -630,7 +630,7 @@ public class LIFReader extends FormatReader {
           store.setLaserType(LaserType.OTHER, i, laser);
           store.setLaserLaserMedium(LaserMedium.OTHER, i, laser);
           Double wavelength = (Double) lasers.get(laser);
-          PositiveFloat wave = FormatTools.getWavelength(wavelength);
+          Length wave = FormatTools.getWavelength(wavelength);
           if (wave != null) {
             store.setLaserWavelength(wave, i, laser);
           }
@@ -684,8 +684,7 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
 
-              PositiveFloat ex =
-                FormatTools.getExcitationWavelength(wavelength);
+              Length ex = FormatTools.getExcitationWavelength(wavelength);
               if (ex != null) {
                 store.setChannelExcitationWavelength(ex, i, nextChannel);
               }
@@ -696,12 +695,12 @@ public class LIFReader extends FormatReader {
                   continue;
                 }
                 Integer cutIn =
-                  ((PositiveInteger) cutIns[index].get(nextFilter)).getValue();
+                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NM).intValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
                   if (nextFilter < cutIns[index].size()) {
-                    cutIn = ((PositiveInteger)
-                      cutIns[index].get(nextFilter)).getValue();
+                    cutIn = ((Length)
+                      cutIns[index].get(nextFilter)).value(UNITS.NM).intValue();
                   }
                   else {
                     break;
@@ -731,11 +730,11 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(imageNames[index].trim(), i);
 
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(physicalSizeXs.get(index));
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(physicalSizeYs.get(index));
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
@@ -833,10 +832,12 @@ public class LIFReader extends FormatReader {
         if (channelNames[index] != null) {
           store.setChannelName(channelNames[index][c], i, c);
         }
-        store.setChannelPinholeSize(pinholes[index], i, c);
+        if (pinholes[index] != null) {
+          store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROM), i, c);
+        }
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
-            PositiveFloat ex =
+            Length ex =
               FormatTools.getExcitationWavelength(exWaves[index][c]);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);
@@ -881,8 +882,8 @@ public class LIFReader extends FormatReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        Double xPos = posX[index];
-        Double yPos = posY[index];
+        Length xPos = posX[index];
+        Length yPos = posY[index];
         if (i < fieldPosX.size() && fieldPosX.get(i) != null) {
           xPos = fieldPosX.get(i);
         }
@@ -975,9 +976,9 @@ public class LIFReader extends FormatReader {
     immersions = new String[imageNodes.getLength()];
     corrections = new String[imageNodes.getLength()];
     objectiveModels = new String[imageNodes.getLength()];
-    posX = new Double[imageNodes.getLength()];
-    posY = new Double[imageNodes.getLength()];
-    posZ = new Double[imageNodes.getLength()];
+    posX = new Length[imageNodes.getLength()];
+    posY = new Length[imageNodes.getLength()];
+    posZ = new Length[imageNodes.getLength()];
     refractiveIndex = new Double[imageNodes.getLength()];
     cutIns = new Vector[imageNodes.getLength()];
     cutOuts = new Vector[imageNodes.getLength()];
@@ -1167,7 +1168,7 @@ public class LIFReader extends FormatReader {
               if (cutIns[image] == null) {
                 cutIns[image] = new Vector<PositiveInteger>();
               }
-              PositiveInteger in =
+              Length in =
                 FormatTools.getCutIn((int) Math.round(cutIn));
               if (in != null) {
                 cutIns[image].add(in);
@@ -1177,7 +1178,7 @@ public class LIFReader extends FormatReader {
               if (cutOuts[image] == null) {
                 cutOuts[image] = new Vector<PositiveInteger>();
               }
-              PositiveInteger out =
+              Length out =
                 FormatTools.getCutOut((int) Math.round(cutOut));
               if (out != null) {
                 cutOuts[image].add(out);
@@ -1532,13 +1533,16 @@ public class LIFReader extends FormatReader {
         refractiveIndex[image] = new Double(variant);
       }
       else if (attribute.equals("XPos")) {
-        posX[image] = new Double(variant);
+        final Double number = Double.valueOf(variant);
+        posX[image] = new Length(number, UNITS.REFERENCEFRAME);
       }
       else if (attribute.equals("YPos")) {
-        posY[image] = new Double(variant);
+        final Double number = Double.valueOf(variant);
+        posY[image] = new Length(number, UNITS.REFERENCEFRAME);
       }
       else if (attribute.equals("ZPos")) {
-        posZ[image] = new Double(variant);
+        final Double number = Double.valueOf(variant);
+        posZ[image] = new Length(number, UNITS.REFERENCEFRAME);
       }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
         Integer v = null;
@@ -1550,7 +1554,7 @@ public class LIFReader extends FormatReader {
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
           if (v != null && v > 0) {
-            PositiveInteger in = FormatTools.getCutIn(v);
+            Length in = FormatTools.getCutIn(v);
             if (in != null) {
               cutIns[image].add(in);
             }
@@ -1558,7 +1562,7 @@ public class LIFReader extends FormatReader {
         }
         else if (description.endsWith("(right)")) {
           if (v != null && v > 0) {
-            PositiveInteger out = FormatTools.getCutOut(v);
+            Length out = FormatTools.getCutOut(v);
             if (out != null) {
               cutOuts[image].add(out);
             }
@@ -1674,7 +1678,8 @@ public class LIFReader extends FormatReader {
 
           if (posX != null) {
             try {
-              fieldPosX.add(new Double(posX));
+              final Double number = Double.valueOf(posX);
+              fieldPosX.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -1683,7 +1688,8 @@ public class LIFReader extends FormatReader {
           }
           if (posY != null) {
             try {
-              fieldPosY.add(new Double(posY));
+              final Double number = Double.valueOf(posY);
+              fieldPosY.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -1970,14 +1976,15 @@ public class LIFReader extends FormatReader {
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
-          NonNegativeInteger fontSize = FormatTools.getFontSize(size);
+          Length fontSize = FormatTools.getFontSize(size);
           if (fontSize != null) {
             store.setLabelFontSize(fontSize, roi, 0);
           }
         }
         catch (NumberFormatException e) { }
       }
-      store.setLabelStrokeWidth(new Double(linewidth), roi, 0);
+      Length l = new Length(new Double(linewidth), UNITS.PIXEL);
+      store.setLabelStrokeWidth(l, roi, 0);
 
       if (!normalized) normalize();
 

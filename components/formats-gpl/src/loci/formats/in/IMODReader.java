@@ -36,7 +36,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
@@ -294,7 +295,7 @@ public class IMODReader extends FormatReader {
 
         if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
           boolean wild = (contourFlags & 0x10) == 0x10;
-
+          Length l;
           if (wild) {
             int r = colors[obj][0] & 0xff;
             int g = colors[obj][1] & 0xff;
@@ -306,8 +307,8 @@ public class IMODReader extends FormatReader {
               store.setPointID(shapeID, obj, nextShape);
               store.setPointStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              store.setPointStrokeWidth(
-                new Double(lineWidth2D), obj, nextShape);
+              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              store.setPointStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPointStrokeDashArray("5", obj, nextShape);
               }
@@ -341,13 +342,13 @@ public class IMODReader extends FormatReader {
                 sb.append(" ");
               }
             }
-
+            
             if (closed) {
               store.setPolygonID(shapeID, obj, nextShape);
               store.setPolygonStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              store.setPolygonStrokeWidth(
-                new Double(lineWidth2D), obj, nextShape);
+              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              store.setPolygonStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPolygonStrokeDashArray("5", obj, nextShape);
               }
@@ -362,8 +363,8 @@ public class IMODReader extends FormatReader {
               store.setPolylineID(shapeID, obj, nextShape);
               store.setPolylineStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              store.setPolylineStrokeWidth(
-                new Double(lineWidth2D), obj, nextShape);
+              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              store.setPolylineStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPolylineStrokeDashArray("5", obj, nextShape);
               }
@@ -440,15 +441,15 @@ public class IMODReader extends FormatReader {
 
       if (physicalX > 0) {
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalX)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalX), UNITS.MICROM), 0);
       }
       if (physicalY > 0) {
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalY)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalY), UNITS.MICROM), 0);
       }
       if (physicalZ > 0) {
         store.setPixelsPhysicalSizeZ(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalZ)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalZ), UNITS.MICROM), 0);
       }
     }
   }

@@ -38,6 +38,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
@@ -329,14 +331,16 @@ public class LeicaSCNReader extends BaseTiffReader {
       // Leica units are nanometres; convert to µm
       double sizeX = ((double) i.vSizeX) / 1000;
       double sizeY = ((double) i.vSizeY) / 1000;
-      double offsetX = ((double) i.vOffsetX) / 1000;
-      double offsetY = ((double) i.vOffsetY) / 1000;
+      final Length offsetX =
+              new Length(i.vOffsetX / 1000.0d, UNITS.REFERENCEFRAME);
+      final Length offsetY =
+              new Length(i.vOffsetY / 1000.0d, UNITS.REFERENCEFRAME);
       double sizeZ = (double) i.vSpacingZ / 1000;
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX/i.pixels.dimSizeX[0][0][r]), s);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY/i.pixels.dimSizeY[0][0][r]), s);
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX/i.pixels.dimSizeX[0][0][r]), s);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY/i.pixels.dimSizeY[0][0][r]), s);
       if (sizeZ > 0) // awful hack to cope with PositiveFloat
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), s);
+        store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(sizeZ), s);
 
       if (instruments.get(i.devModel) == null) {
         String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);

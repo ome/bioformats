@@ -50,6 +50,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -79,8 +80,8 @@ public abstract class BaseZeissReader extends FormatReader {
 
   protected Vector<String> tagsToParse;
   protected int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  protected Hashtable<Integer, Double> stageX = new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, Double> stageY = new Hashtable<Integer, Double>();
+  protected Hashtable<Integer, Length> stageX = new Hashtable<Integer, Length>();
+  protected Hashtable<Integer, Length> stageY = new Hashtable<Integer, Length>();
   protected int timepoint = 0;
 
   protected int[] channelColors;
@@ -91,10 +92,10 @@ public abstract class BaseZeissReader extends FormatReader {
       new Hashtable<Integer, Double>();
   protected Hashtable<Integer, Double> detectorOffset =
       new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, PositiveFloat> emWavelength =
-      new Hashtable<Integer, PositiveFloat>();
-  protected Hashtable<Integer, PositiveFloat> exWavelength =
-      new Hashtable<Integer, PositiveFloat>();
+  protected Hashtable<Integer, Length> emWavelength =
+      new Hashtable<Integer, Length>();
+  protected Hashtable<Integer, Length> exWavelength =
+      new Hashtable<Integer, Length>();
   protected Hashtable<Integer, String> channelName =
       new Hashtable<Integer, String>();
   protected Double physicalSizeX, physicalSizeY, physicalSizeZ;
@@ -358,9 +359,9 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setImageName("Tile #" + (i + 1), i);
         }
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+        Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+        Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);
@@ -866,7 +867,7 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1) {
             Double wave = new Double(value);
-            PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+            Length emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               emWavelength.put(cIndex, emission);
             }
@@ -875,8 +876,7 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1) {
             Double wave = new Double(Double.parseDouble(value));
-            PositiveFloat excitation =
-              FormatTools.getExcitationWavelength(wave);
+            Length excitation = FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               exWavelength.put(cIndex, excitation);
             }
@@ -935,7 +935,7 @@ public abstract class BaseZeissReader extends FormatReader {
           }
         }
         else if (key.startsWith("Objective Working Distance")) {
-          store.setObjectiveWorkingDistance(new Double(value), 0, 0);
+          store.setObjectiveWorkingDistance(new Length(new Double(value), UNITS.MICROM), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
           String immersion = "Other";
@@ -951,11 +951,13 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
         }
         else if (key.startsWith("Stage Position X")) {
-          stageX.put(image, new Double(value));
+          final Double number = Double.valueOf(value);
+          stageX.put(image, new Length(number, UNITS.REFERENCEFRAME));
           addGlobalMetaList("X position for position", value);
         }
         else if (key.startsWith("Stage Position Y")) {
-          stageY.put(image, new Double(value));
+          final Double number = Double.valueOf(value);
+          stageY.put(image, new Length(number, UNITS.REFERENCEFRAME));
           addGlobalMetaList("Y position for position", value);
         }
         else if (key.startsWith("Orca Analog Gain")) {

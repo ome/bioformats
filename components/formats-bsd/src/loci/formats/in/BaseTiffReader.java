@@ -52,6 +52,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -465,8 +466,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixY);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixY);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

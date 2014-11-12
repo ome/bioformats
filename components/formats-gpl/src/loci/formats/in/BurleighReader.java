@@ -36,6 +36,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * BurleighReader is the file format reader for Burleigh .img files.
@@ -182,9 +183,9 @@ public class BurleighReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xSize / getSizeX());
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(ySize / getSizeY());
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zSize / getSizeZ());
+      Length sizeX = FormatTools.getPhysicalSizeX(xSize / getSizeX());
+      Length sizeY = FormatTools.getPhysicalSizeY(ySize / getSizeY());
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize / getSizeZ());
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

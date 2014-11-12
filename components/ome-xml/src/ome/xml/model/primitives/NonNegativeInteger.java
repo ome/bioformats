@@ -54,6 +54,10 @@ public class NonNegativeInteger extends PrimitiveType<Integer> implements Primit
     }
   }
 
+  public Number getNumberValue() {
+    return value;
+  }
+
   /**
    * Returns an <code>NonNegativeInteger</code> object holding the value of
    * the specified string.

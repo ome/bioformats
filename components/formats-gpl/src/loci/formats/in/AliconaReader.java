@@ -35,7 +35,12 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.primitives.PositiveFloat;
+
 
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
@@ -234,7 +239,8 @@ public class AliconaReader extends FormatReader {
       // According to the spec, the voltage and magnification values are those
       // used when the dataset was acquired, i.e. detector settings.
       if (voltage != null) {
-        store.setDetectorSettingsVoltage(new Double(voltage), 0, 0);
+        store.setDetectorSettingsVoltage(
+                new ElectricPotential(new Double(voltage), UNITS.V), 0, 0);
 
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -253,7 +259,7 @@ public class AliconaReader extends FormatReader {
       }
 
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+        store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
       }
 
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
@@ -270,8 +276,8 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX) * 1000000;
         double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);

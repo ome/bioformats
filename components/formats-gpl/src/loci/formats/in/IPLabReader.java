@@ -38,6 +38,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -199,8 +200,8 @@ public class IPLabReader extends FormatReader {
       in.skipBytes(dataSize);
       parseTags(store);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

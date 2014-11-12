@@ -28,11 +28,14 @@ package loci.formats;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Region;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.units.quantity.Length;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,11 +239,11 @@ public class TileStitcher extends ReaderWrapper {
 
     ArrayList<TileCoordinate> tiles = new ArrayList<TileCoordinate>();
 
-    ArrayList<Double> uniqueX = new ArrayList<Double>();
-    ArrayList<Double> uniqueY = new ArrayList<Double>();
+    final List<Length> uniqueX = new ArrayList<Length>();
+    final List<Length> uniqueY = new ArrayList<Length>();
 
     boolean equalZs = true;
-    Double firstZ = meta.getPlanePositionZ(0, meta.getPlaneCount(0) - 1);
+    final Length firstZ = meta.getPlanePositionZ(0, meta.getPlaneCount(0) - 1);
 
     for (int i=0; i<reader.getSeriesCount(); i++) {
       TileCoordinate coord = new TileCoordinate();
@@ -256,7 +259,7 @@ public class TileStitcher extends ReaderWrapper {
         uniqueY.add(coord.y);
       }
 
-      Double zPos = meta.getPlanePositionZ(i, meta.getPlaneCount(i) - 1);
+      final Length zPos = meta.getPlanePositionZ(i, meta.getPlaneCount(i) - 1);
 
       if (firstZ == null) {
         if (zPos != null) {
@@ -279,9 +282,9 @@ public class TileStitcher extends ReaderWrapper {
 
     tileMap = new Integer[tileY][tileX];
 
-    Double[] xCoordinates = uniqueX.toArray(new Double[tileX]);
+    final Length[] xCoordinates = uniqueX.toArray(new Length[tileX]);
     Arrays.sort(xCoordinates);
-    Double[] yCoordinates = uniqueY.toArray(new Double[tileY]);
+    final Length[] yCoordinates = uniqueY.toArray(new Length[tileY]);
     Arrays.sort(yCoordinates);
 
     for (int row=0; row<tileMap.length; row++) {
@@ -309,8 +312,8 @@ public class TileStitcher extends ReaderWrapper {
   // -- Helper classes --
 
   class TileCoordinate {
-    public Double x;
-    public Double y;
+    public Length x;
+    public Length y;
 
     public boolean equals(Object o) {
       if (!(o instanceof TileCoordinate)) {

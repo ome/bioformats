@@ -58,6 +58,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -449,10 +450,8 @@ public class BDReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
 
-          PositiveFloat emission =
-            FormatTools.getEmissionWavelength(emWave[c]);
-          PositiveFloat excitation =
-            FormatTools.getExcitationWavelength(exWave[c]);
+          Length emission = FormatTools.getEmissionWavelength(emWave[c]);
+          Length excitation = FormatTools.getExcitationWavelength(exWave[c]);
 
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);

@@ -49,7 +49,6 @@ import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
@@ -57,6 +56,8 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
@@ -607,8 +608,10 @@ public class CellWorxReader extends FormatReader {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
               int field = fieldRow * fieldMap[fieldRow].length + fieldCol;
-              store.setWellSamplePositionX(posX, 0, well, field);
-              store.setWellSamplePositionY(posY, 0, well, field);
+              Length px = new Length(posX, UNITS.REFERENCEFRAME);
+              Length py = new Length(posY, UNITS.REFERENCEFRAME);
+              store.setWellSamplePositionX(px, 0, well, field);
+              store.setWellSamplePositionY(py, 0, well, field);
 
               addGlobalMetaList("X position for position", axes[0]);
               addGlobalMetaList("Y position for position", axes[1]);
@@ -623,8 +626,8 @@ public class CellWorxReader extends FormatReader {
           Double xSize = new Double(value.substring(0, s).trim());
           Double ySize = new Double(value.substring(s + 1, end).trim());
 
-          PositiveFloat x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
-          PositiveFloat y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
+          Length x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
+          Length y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
 
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
@@ -678,10 +681,8 @@ public class CellWorxReader extends FormatReader {
               Double emission = new Double(em);
               Double excitation = new Double(ex);
 
-              PositiveFloat exWave =
-                FormatTools.getExcitationWavelength(excitation);
-              PositiveFloat emWave =
-                FormatTools.getEmissionWavelength(emission);
+              Length exWave = FormatTools.getExcitationWavelength(excitation);
+              Length emWave = FormatTools.getEmissionWavelength(emission);
 
               for (int field=0; field<fieldCount; field++) {
                 if (exWave != null) {

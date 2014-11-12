@@ -50,6 +50,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
  *
@@ -346,19 +349,19 @@ public class NRRDReader extends FormatReader {
           try {
             Double d = new Double(pixelSizes[i].trim());
             if (i == 0) {
-              PositiveFloat x = FormatTools.getPhysicalSizeX(d);
+              Length x = FormatTools.getPhysicalSizeX(d);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
             }
             else if (i == 1) {
-              PositiveFloat y = FormatTools.getPhysicalSizeY(d);
+              Length y = FormatTools.getPhysicalSizeY(d);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
             }
             else if (i == 2) {
-              PositiveFloat z = FormatTools.getPhysicalSizeZ(d);
+              Length z = FormatTools.getPhysicalSizeZ(d);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }

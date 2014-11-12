@@ -35,9 +35,12 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
@@ -218,9 +221,9 @@ public class NikonTiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription("", 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -244,7 +247,7 @@ public class NikonTiffReader extends BaseTiffReader {
       if (correction == null) correction = "Other";
       store.setObjectiveCorrection(getCorrection(correction), 0, 0);
       store.setObjectiveLensNA(lensNA, 0, 0);
-      store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
       if (immersion == null) immersion = "Other";
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 
@@ -253,7 +256,7 @@ public class NikonTiffReader extends BaseTiffReader {
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
 
-        PositiveFloat wave = FormatTools.getWavelength(wavelength.get(i));
+        Length wave = FormatTools.getWavelength(wavelength.get(i));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
         }
@@ -268,17 +271,15 @@ public class NikonTiffReader extends BaseTiffReader {
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        store.setChannelPinholeSize(pinholeSize, 0, c);
+        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), 0, c);
         if (c < exWave.size()) {
-          PositiveFloat wave =
-            FormatTools.getExcitationWavelength(exWave.get(c));
+          Length wave = FormatTools.getExcitationWavelength(exWave.get(c));
           if (wave != null) {
             store.setChannelExcitationWavelength(wave, 0, c);
           }
         }
         if (c < emWave.size()) {
-          PositiveFloat wave =
-            FormatTools.getEmissionWavelength(emWave.get(c));
+          Length wave = FormatTools.getEmissionWavelength(emWave.get(c));
           if (wave != null) {
             store.setChannelEmissionWavelength(wave, 0, c);
           }

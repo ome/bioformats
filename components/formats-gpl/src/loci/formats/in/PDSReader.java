@@ -39,6 +39,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 /**
  * PDSReader is the file format reader for Perkin Elmer densitometer files.
@@ -194,7 +196,7 @@ public class PDSReader extends FormatReader {
     if (headerData.length == 1) {
       headerData = headerData[0].split("\r");
     }
-    Double xPos = null, yPos = null;
+    Length xPos = null, yPos = null;
     Double deltaX = null, deltaY = null;
     String date = null;
 
@@ -216,11 +218,13 @@ public class PDSReader extends FormatReader {
         m.sizeY = Integer.parseInt(value);
       }
       else if (key.equals("XPOS")) {
-        xPos = new Double(value);
+        final Double number = Double.valueOf(value);
+        xPos = new Length(number, UNITS.REFERENCEFRAME);
         addGlobalMeta("X position for position #1", xPos);
       }
       else if (key.equals("YPOS")) {
-        yPos = new Double(value);
+        final Double number = Double.valueOf(value);
+        yPos = new Length(number, UNITS.REFERENCEFRAME);
         addGlobalMeta("Y position for position #1", yPos);
       }
       else if (key.equals("SIGNX")) {
@@ -288,8 +292,8 @@ public class PDSReader extends FormatReader {
       store.setPlanePositionX(xPos, 0, 0);
       store.setPlanePositionY(yPos, 0, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(deltaX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(deltaY);
+      Length sizeX = FormatTools.getPhysicalSizeX(deltaX);
+      Length sizeY = FormatTools.getPhysicalSizeY(deltaY);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

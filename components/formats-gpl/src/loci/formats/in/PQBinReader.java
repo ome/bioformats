@@ -36,6 +36,9 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * PQBinReader is the file format reader for PicoQuant .bin files.
  *
@@ -259,7 +262,7 @@ public class PQBinReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     
-    PositiveFloat pRpf = new PositiveFloat((double)pixResol);
+    Length pRpf = FormatTools.getPhysicalSizeX((double)pixResol);
     store.setPixelsPhysicalSizeX(pRpf, 0);
     store.setPixelsPhysicalSizeY(pRpf, 0);
     

@@ -54,6 +54,10 @@ public class PositiveInteger extends NonNegativeInteger {
     }
   }
 
+  public Number getNumberValue() {
+    return value;
+  }
+
   /**
    * Returns an <code>PositiveInteger</code> object holding the value of
    * the specified string.
