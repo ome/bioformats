@@ -646,7 +646,7 @@ public class FakeReader extends FormatReader {
     String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
-    fillPhyiscalSizes(store);
+    fillPhysicalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
@@ -807,17 +807,12 @@ public class FakeReader extends FormatReader {
     }
   }
 
-  private void fillPhyiscalSizes(MetadataStore store) {
+  private void fillPhysicalSizes(MetadataStore store) {
     if (physicalSizeX == null && physicalSizeY == null && physicalSizeZ == null) return;
-    int oldSeries = getSeries();
     for (int s=0; s<getSeriesCount(); s++) {
-      setSeries(s);
-      for (int i=0; i<getImageCount(); i++) {
-        store.setPixelsPhysicalSizeX(physicalSizeX, i);
-        store.setPixelsPhysicalSizeY(physicalSizeY, i);
-        store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
-      }
-      setSeries(oldSeries);
+      store.setPixelsPhysicalSizeX(physicalSizeX, s);
+      store.setPixelsPhysicalSizeY(physicalSizeY, s);
+      store.setPixelsPhysicalSizeZ(physicalSizeZ, s);
     }
   }
 
@@ -829,8 +824,8 @@ public class FakeReader extends FormatReader {
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposureTime, s, i);
       }
-      setSeries(oldSeries);
     }
+    setSeries(oldSeries);
   }
 
 // -- Helper methods --
