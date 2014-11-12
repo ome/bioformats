@@ -1,6 +1,14 @@
 Version history
 ===============
 
+5.0.6 (2014 November 11)
+------------------------
+
+* Several bug fixes, including:
+    - Pixel sign for DICOM images
+    - Image dimensions for Zeiss CZI and Nikon ND2
+    - Support for Leica LIF files produced by LAS AF 4.0 and later
+
 5.0.5 (2014 September 23)
 -------------------------
 
