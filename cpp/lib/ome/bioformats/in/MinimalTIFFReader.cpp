@@ -209,20 +209,20 @@ namespace ome
         const series_ifd_map_type::value_type range(series_ifd_map.at(series));
 
         // Compute timepoint and subchannel from plane number.
-        dimension_size_type T = no;
+        dimension_size_type plane = no;
         dimension_size_type S = 0U;
         if (isRGB())
           {
-            T = no / getSizeC();
+            plane = no / getSizeC();
             S = no % getSizeC();
           }
-        dimension_size_type ifdidx = range.first + T;
-        assert(range.first <= T && T < range.second);
+        dimension_size_type ifdidx = range.first + plane;
+        assert(range.first <= plane && plane < range.second);
 
-        if (T >= (range.second - range.first))
+        if (plane >= (range.second - range.first))
           {
             boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
-            fmt % T % series;
+            fmt % plane % series;
             throw FormatException(fmt.str());
           }
 

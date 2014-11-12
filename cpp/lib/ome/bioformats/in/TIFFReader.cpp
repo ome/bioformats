@@ -165,54 +165,6 @@ namespace ome
           MinimalTIFFReader::readIFDs();
       }
 
-      void
-      TIFFReader::openBytesImpl(dimension_size_type no,
-                                VariantPixelBuffer& buf,
-                                dimension_size_type x,
-                                dimension_size_type y,
-                                dimension_size_type w,
-                                dimension_size_type h) const
-      {
-        assertId(currentId, true);
-
-        if (!!ijmeta)
-          {
-            // Compute plane and subchannel from plane number.
-            dimension_size_type plane = no;
-            dimension_size_type S = 0U;
-            if (isRGB())
-              {
-                 plane = no / getSizeC();
-                 S = no % getSizeC();
-              }
-
-            const std::shared_ptr<IFD> ifd = tiff->getDirectoryByIndex(plane);
-
-            if (!ifd)
-              {
-                boost::format fmt("Invalid IFD for plane number ‘%1%’ in series ‘%2%’");
-                fmt % no % getSeries();
-                throw FormatException(fmt.str());
-              }
-
-            if (isRGB())
-              {
-                // Copy the desired subchannel into the destination buffer.
-                VariantPixelBuffer tmp;
-                ifd->readImage(tmp, x, y, w, h);
-
-                detail::CopySubchannelVisitor v(buf, S);
-                boost::apply_visitor(v, tmp.vbuffer());
-              }
-            else
-              ifd->readImage(buf, x, y, w, h);
-          }
-        else
-          {
-            MinimalTIFFReader::openBytesImpl(no, buf, x, y, w, h);
-          }
-      }
-
     }
   }
 }
