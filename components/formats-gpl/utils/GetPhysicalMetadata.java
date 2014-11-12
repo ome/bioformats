@@ -33,7 +33,7 @@ import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -68,15 +68,18 @@ public class GetPhysicalMetadata {
 
   /** Outputs global timing details. */
   public static void printPhysicalDimensions(IMetadata meta, int series) {
-    PositiveFloat physicalSizeX = meta.getPixelsPhysicalSizeX(series);
-    PositiveFloat physicalSizeY = meta.getPixelsPhysicalSizeY(series);
-    PositiveFloat physicalSizeZ = meta.getPixelsPhysicalSizeZ(series);
+    Length physicalSizeX = meta.getPixelsPhysicalSizeX(series);
+    Length physicalSizeY = meta.getPixelsPhysicalSizeY(series);
+    Length physicalSizeZ = meta.getPixelsPhysicalSizeZ(series);
     Time timeIncrement = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Physical dimensions:");
-    System.out.println("\tX spacing = " + physicalSizeX + " microns");
-    System.out.println("\tY spacing = " + physicalSizeY + " microns");
-    System.out.println("\tZ spacing = " + physicalSizeZ + " microns");
+    System.out.println("\tX spacing = " +
+      physicalSizeX.value() + " " + physicalSizeX.unit().getSymbol());
+    System.out.println("\tY spacing = " +
+      physicalSizeY.value() + " " + physicalSizeY.unit().getSymbol());
+    System.out.println("\tZ spacing = " +
+      physicalSizeZ.value() + " " + physicalSizeZ.unit().getSymbol());
     System.out.println("\tTime increment = " + timeIncrement.value(UNITS.S).doubleValue() + " seconds");
   }
 
