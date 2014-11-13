@@ -41,6 +41,22 @@
 
 #include <ome/bioformats/MetadataTools.h>
 
+#include <ome/xml/meta/OMEXMLMetadataRoot.h>
+
+#include <ome/xml/model/Image.h>
+#include <ome/xml/model/MetadataOnly.h>
+#include <ome/xml/model/Pixels.h>
+
+using ome::xml::meta::Metadata;
+using ome::xml::meta::MetadataStore;
+using ome::xml::meta::MetadataRoot;
+using ome::xml::meta::OMEXMLMetadata;
+using ome::xml::meta::OMEXMLMetadataRoot;
+
+using ome::xml::model::Image;
+using ome::xml::model::MetadataOnly;
+using ome::xml::model::Pixels;
+
 namespace ome
 {
   namespace bioformats
@@ -92,11 +108,93 @@ namespace ome
       return fmt.str();
     }
 
-    void
-    fillMetadata(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store,
-                 const FormatReader& reader)
+    std::shared_ptr<Metadata>
+    createMetadata(const FormatReader& reader,
+                   bool                doPlane,
+                   bool                doImageName)
     {
+      std::shared_ptr<Metadata> metadata(std::make_shared<OMEXMLMetadata>());
+      std::shared_ptr<MetadataStore> store(std::static_pointer_cast<MetadataStore>(metadata));
+      fillMetadata(*store, reader, doPlane, doImageName);
+      return metadata;
     }
+
+    void
+    fillMetadata(::ome::xml::meta::MetadataStore& store,
+                 const FormatReader&              reader,
+                 bool                             doPlane,
+                 bool                             doImageName)
+    {
+      dimension_size_type oldseries = reader.getSeries();
+
+      for (dimension_size_type s = 0; s < reader.getSeriesCount(); ++s)
+        {
+          reader.setSeries(s);
+
+          std::ostringstream imageName;
+          if (doImageName)
+            {
+              imageName << reader.getCurrentFile();
+              if (reader.getSeriesCount() > 1)
+                imageName << " #" << (s + 1);
+            }
+
+          std::string pixelType = reader.getPixelType();
+
+          // pop
+
+          store.setPixelsInterleaved(reader.isInterleaved(), s);
+          store.setPixelsSignificantBits(reader.getBitsPerPixel(), s);
+
+          try
+            {
+              OMEXMLMetadata& omexml(dynamic_cast<OMEXMLMetadata&>(store));
+              addMetadataOnly(omexml, s);
+            }
+          catch (const std::bad_cast& e)
+            {
+            }
+
+          if (doPlane)
+            {
+              for (dimension_size_type p = 0; p < reader.getImageCount(); ++p)
+                {
+                  std::array<dimension_size_type, 3> coords = reader.getZCTCoords(p);
+                  // The cast to int here is nasty, but the data model
+                  // isn't using unsigned types…
+                  store.setPlaneTheZ(static_cast<int>(coords[0]), s, p);
+                  store.setPlaneTheC(static_cast<int>(coords[1]), s, p);
+                  store.setPlaneTheT(static_cast<int>(coords[2]), s, p);
+                }
+            }
+
+        }
+
+      reader.setSeries(oldseries);
+    }
+
+    void
+    addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type               series)
+    {
+      omexml.resolveReferences();
+      std::shared_ptr<MetadataRoot> root(omexml.getRoot());
+      std::shared_ptr<OMEXMLMetadataRoot> omexmlroot(std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root));
+      if (omexmlroot)
+        {
+          std::shared_ptr<Image> image = omexmlroot->getImage(series);
+          if (image)
+            {
+              std::shared_ptr<Pixels> pixels = image->getPixels();
+              if (pixels)
+                {
+                  std::shared_ptr<MetadataOnly> meta(std::make_shared<MetadataOnly>());
+                  pixels->setMetadataOnly(meta);
+                }
+            }
+        }
+    }
+
 
   }
 }

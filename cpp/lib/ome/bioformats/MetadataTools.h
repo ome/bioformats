@@ -40,7 +40,8 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
 
-#include <ome/xml/meta/MetadataStore.h>
+#include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/OMEXMLMetadata.h>
 
 #ifndef OME_BIOFORMATS_METADATATOOLS_H
 #define OME_BIOFORMATS_METADATATOOLS_H
@@ -109,9 +110,44 @@ namespace ome
              dimension_size_type idx3,
              dimension_size_type idx4);
 
+    /**
+     * Create OME-XML metadata from reader core metadata.
+     *
+     * @param reader the reader to use.
+     * @param doPlane create Plane elements if @c true.
+     * @param doImageName set image name if @c true.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createMetadata(const FormatReader& reader,
+                   bool                doPlane = false,
+                   bool                doImageName = true);
+
+    /**
+     * Fill OME-XML metadata store from reader core metadata.
+     *
+     * The metadata store is expected to be empty.
+     *
+     * @param store the OME-XML metadata store.
+     * @param reader the reader to use.
+     * @param doPlane create Plane elements if @c true.
+     * @param doImageName set image name if @c true.
+     */
     void
-    fillMetadata(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store,
-                 const FormatReader& reader);
+    fillMetadata(::ome::xml::meta::MetadataStore& store,
+                 const FormatReader&              reader,
+                 bool                             doPlane = false,
+                 bool                             doImageName = true);
+
+    /**
+     * Add a MetadataOnly element to Pixels for the specified series.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param series the series containing the Pixels element to add MetadataOnly to.
+     */
+    void
+    addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type               series);
 
   }
 }
