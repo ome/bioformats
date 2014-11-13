@@ -350,6 +350,7 @@ public class CellSensReader extends FormatReader {
   private ArrayList<Long> exposureTimes = new ArrayList<Long>();
   private ArrayList<Long> acquisitionTimes = new ArrayList<Long>();
   private ArrayList<String> imageNames = new ArrayList<String>();
+  private ArrayList<String> imageTypes = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -544,6 +545,7 @@ public class CellSensReader extends FormatReader {
       exposureTimes.clear();
       acquisitionTimes.clear();
       imageNames.clear();
+      imageTypes.clear();
     }
   }
 
@@ -683,7 +685,9 @@ public class CellSensReader extends FormatReader {
       if (channelIndex < channelNames.size()) {
         int nextPlane = 0;
         for (int c=0; c<core.get(i).sizeC; c++) {
-          store.setChannelName(channelNames.get(channelIndex), ii, c);
+          if (channelIndex < channelNames.size()) {
+            store.setChannelName(channelNames.get(channelIndex), ii, c);
+          }
           if (channelIndex < exposureTimes.size()) {
             for (int z=0; z<core.get(i).sizeZ; z++) {
               for (int t=0; t<core.get(i).sizeT; t++) {
@@ -698,12 +702,29 @@ public class CellSensReader extends FormatReader {
           channelIndex++;
         }
       }
+
+      String imageType = imageTypes.get(nextSize);
+      while (!imageType.equals("Macro image") &&
+        !imageType.equals("Overview image") &&
+        !imageType.equals("Default image"))
+      {
+        nextSize++;
+        if (nextSize < imageTypes.size()) {
+          imageType = imageTypes.get(nextSize);
+        }
+        else break;
+      }
+
       if (nextSize < imageNames.size()) {
         String imageName = imageNames.get(nextSize);
-        if (!imageName.equals("Overview")) {
+
+        if (!imageName.equals("Overview") && !imageName.equals("Label")) {
           imageName += " #" + ii;
         }
         store.setImageName(imageName, ii);
+      }
+      else {
+        store.setImageName("Macro Image", ii);
       }
       if (nextSize < physicalSizeX.size()) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX.get(nextSize)), ii);
@@ -716,7 +737,7 @@ public class CellSensReader extends FormatReader {
         store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
           acquisitionTimes.get(nextSize) * 1000, DateTools.UNIX)), ii);
       }
-      nextSize += 2;
+      nextSize++;
 
       i += core.get(i).resolutionCount;
     }
@@ -1368,6 +1389,7 @@ public class CellSensReader extends FormatReader {
 
           if (tag == STACK_TYPE) {
             value = getStackType(value);
+            imageTypes.add(value);
           }
           else if (tag == EXPOSURE_TIME) {
             exposureTimes.add(new Long(value));
