@@ -284,7 +284,7 @@ public class FlexReader extends FormatReader {
     TiffParser tp = new TiffParser(s);
     tp.fillInIFD(ifd);
     tp.getSamples(ifd, buf, x, y, w, h);
-    factor = file.factors[imageNumber];
+    factor = file.factors == null ? 1d : file.factors[imageNumber];
     tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
@@ -859,6 +859,7 @@ public class FlexReader extends FormatReader {
     // parse factor values
     file.factors = new double[totalPlanes];
     int max = 0;
+    boolean oneFactors = true;
     for (int i=0; i<fsize; i++) {
       String factor = f.get(i);
       double q = 1;
@@ -871,6 +872,10 @@ public class FlexReader extends FormatReader {
       if (i < file.factors.length) {
         file.factors[i] = q;
         if (q > file.factors[max]) max = i;
+
+        if (oneFactors && q != 1d) {
+          oneFactors = false;
+        }
       }
     }
     if (fsize < file.factors.length) {
@@ -890,6 +895,10 @@ public class FlexReader extends FormatReader {
 
     if (!firstFile) {
       fieldCount = originalFieldCount;
+    }
+
+    if (oneFactors) {
+      file.factors = null;
     }
   }
 
