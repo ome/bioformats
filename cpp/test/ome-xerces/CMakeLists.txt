@@ -43,7 +43,9 @@ if(BUILD_TESTS)
 
   add_test(ome-xerces/xerces xerces)
 
-  header_test_from_file(ome-xerces ome-xerces ome/xerces)
-  target_link_libraries(ome-xerces-headers ome-xerces)
-  add_test(ome-xerces/headers ome-xerces-headers)
+  if(extended-tests)
+    header_test_from_file(ome-xerces ome-xerces ome/xerces)
+    target_link_libraries(ome-xerces-headers ome-xerces)
+    add_test(ome-xerces/headers ome-xerces-headers)
+   endif(extended-tests)
 endif(BUILD_TESTS)

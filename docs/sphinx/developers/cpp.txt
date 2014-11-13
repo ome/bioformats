@@ -1,9 +1,23 @@
 C++ implementation
 ==================
 
-A completely native C++ interface is currently in development.  Unlike
-the BF-CPP bindings, this does not wrap the Java implementation.  This
-is a work in progress and not yet fully functional.
+A completely native Bio-Formats C++ interface is now available.
+Unlike the BF-CPP bindings, this does not wrap the Java
+implementation.  With this release, TIFF reading and writing are
+available.  OME-TIFF reading and writing will be available soon.  All
+other readers and writers from the Java implementation are currently
+unavailable; the intention is that support for these will be added
+over time.
+
+.. note::
+
+  The C++ implementation is functional in Bio-Formats version 5.1.
+  However, API stability will not be guaranteed until version 5.2
+  since it may be necessary to refactor certain parts of the API for
+  optimal usability, robustness and performance.  Applications built
+  against version 5.1 of the API may require updating to work with
+  version 5.2, if they make use of any part of the API which is
+  changed incompatibly.
 
 
 Prerequisites

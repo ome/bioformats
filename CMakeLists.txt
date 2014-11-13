@@ -81,3 +81,6 @@ if(WIN32)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config.bat)
 endif()
+
+message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")
+message("NOTE: API stability will not be guaranteed until version 5.2")
