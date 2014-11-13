@@ -703,16 +703,18 @@ public class CellSensReader extends FormatReader {
         }
       }
 
-      String imageType = imageTypes.get(nextSize);
-      while (!imageType.equals("Macro image") &&
-        !imageType.equals("Overview image") &&
-        !imageType.equals("Default image"))
-      {
-        nextSize++;
-        if (nextSize < imageTypes.size()) {
-          imageType = imageTypes.get(nextSize);
+      if (nextSize < imageTypes.size()) {
+        String imageType = imageTypes.get(nextSize);
+        while (!imageType.equals("Macro image") &&
+          !imageType.equals("Overview image") &&
+          !imageType.equals("Default image"))
+        {
+          nextSize++;
+          if (nextSize < imageTypes.size()) {
+            imageType = imageTypes.get(nextSize);
+          }
+          else break;
         }
-        else break;
       }
 
       if (nextSize < imageNames.size()) {
