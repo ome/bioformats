@@ -719,8 +719,15 @@ public class CellSensReader extends FormatReader {
 
       if (nextSize < imageNames.size()) {
         String imageName = imageNames.get(nextSize);
+        boolean duplicate = false;
+        for (int q=0; q<imageNames.size(); q++) {
+          if (q != nextSize && imageName.equals(imageNames.get(q))) {
+            duplicate = true;
+            break;
+          }
+        }
 
-        if (!imageName.equals("Overview") && !imageName.equals("Label")) {
+        if (!imageName.equals("Overview") && !imageName.equals("Label") && duplicate) {
           imageName += " #" + ii;
         }
         store.setImageName(imageName, ii);
