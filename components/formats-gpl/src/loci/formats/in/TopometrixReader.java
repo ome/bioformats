@@ -37,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * TopometrixReader is the file format reader for TopoMetrix .tfr, .ffr,
@@ -189,9 +190,9 @@ public class TopometrixReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX((double) xSize / getSizeX());
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY((double) ySize / getSizeY());
 
       if (sizeX != null) {

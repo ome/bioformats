@@ -48,12 +48,12 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
-
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
@@ -97,8 +97,8 @@ public class ScanrReader extends FormatReader {
   private MinimalTiffReader reader;
 
   private boolean foundPositions = false;
-  private double[] fieldPositionX;
-  private double[] fieldPositionY;
+  private Length[] fieldPositionX;
+  private Length[] fieldPositionY;
   private Vector<Double> exposures = new Vector<Double>();
   private Double deltaT = null;
 
@@ -639,8 +639,8 @@ public class ScanrReader extends FormatReader {
           store.setChannelName(channelNames.get(c), i, c);
         }
 
-        PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
-        PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+        Length x = FormatTools.getPhysicalSizeX(pixelSize);
+        Length y = FormatTools.getPhysicalSizeY(pixelSize);
         if (x != null) {
           store.setPixelsPhysicalSizeX(x, i);
         }
@@ -651,8 +651,11 @@ public class ScanrReader extends FormatReader {
         if (fieldPositionX != null && fieldPositionY != null) {
           int field = i % nFields;
           int well = i / nFields;
-          store.setWellSamplePositionX(fieldPositionX[field], 0, well, field);
-          store.setWellSamplePositionY(fieldPositionY[field], 0, well, field);
+          final Length posX = fieldPositionX[field];
+          final Length posY = fieldPositionY[field];
+          
+          store.setWellSamplePositionX(posX, 0, well, field);
+          store.setWellSamplePositionY(posY, 0, well, field);
           for (int c=0; c<getSizeC(); c++) {
             int image = getIndex(0, c, 0);
             store.setPlaneTheZ(new NonNegativeInteger(0), i, image);
@@ -733,8 +736,8 @@ public class ScanrReader extends FormatReader {
           fieldPositionX == null)
         {
           int nPositions = Integer.parseInt(v);
-          fieldPositionX = new double[nPositions];
-          fieldPositionY = new double[nPositions];
+          fieldPositionX = new Length[nPositions];
+          fieldPositionY = new Length[nPositions];
         }
         else if ("Rows".equals(key) && foundPlateLayout) {
           wellRows = Integer.parseInt(v);
@@ -805,12 +808,16 @@ public class ScanrReader extends FormatReader {
           else if (foundPositions) {
             if (nextXPos == nextYPos) {
               if (nextXPos < fieldPositionX.length) {
-                fieldPositionX[nextXPos++] = Double.parseDouble(v);
+                final Double number = Double.valueOf(v);
+                final Length length = new Length(number, UNITS.REFERENCEFRAME);
+                fieldPositionX[nextXPos++] = length;
               }
             }
             else {
               if (nextYPos < fieldPositionY.length) {
-                fieldPositionY[nextYPos++] = Double.parseDouble(v);
+                final Double number = Double.valueOf(v);
+                final Length length = new Length(number, UNITS.REFERENCEFRAME);
+                fieldPositionY[nextYPos++] = length;
               }
             }
           }

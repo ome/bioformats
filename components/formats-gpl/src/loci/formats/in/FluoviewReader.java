@@ -37,10 +37,13 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
-
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -423,9 +426,9 @@ public class FluoviewReader extends BaseTiffReader {
 
     // populate Dimensions
     for (int i=0; i<getSeriesCount(); i++) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(voxelX);
+      Length sizeY = FormatTools.getPhysicalSizeY(voxelY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
       }
@@ -466,9 +469,12 @@ public class FluoviewReader extends BaseTiffReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        store.setPlanePositionX(posX, i, image);
-        store.setPlanePositionY(posY, i, image);
-        store.setPlanePositionZ(posZ, i, image);
+        final Length xl = new Length(posX, UNITS.REFERENCEFRAME);
+        final Length yl = new Length(posY, UNITS.REFERENCEFRAME);
+        final Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
+        store.setPlanePositionX(xl, i, image);
+        store.setPlanePositionY(yl, i, image);
+        store.setPlanePositionZ(zl, i, image);
       }
     }
 
@@ -486,7 +492,8 @@ public class FluoviewReader extends BaseTiffReader {
 
     for (int i=0; i<getSizeC(); i++) {
       if (voltages != null && voltages[i] != null) {
-        store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, i);
+        store.setDetectorSettingsVoltage(
+                new ElectricPotential(new Double(voltages[i]), UNITS.V), 0, i);
       }
       if (gains != null && gains[i] != null) {
         store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
@@ -601,7 +608,7 @@ public class FluoviewReader extends BaseTiffReader {
   private void initAlternateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     store.setImagingEnvironmentTemperature(
-      new Double(temperature.floatValue()), 0);
+      new Temperature(new Double(temperature.floatValue()), UNITS.DEGREEC), 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -620,7 +627,7 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<getEffectiveSizeC(); i++) {
       store.setDetectorSettingsID(detectorID, 0, i);
       store.setDetectorSettingsReadOutRate(
-        new Double(readoutTime.floatValue()), 0, i);
+        new Frequency(new Double(readoutTime.floatValue()), UNITS.HZ), 0, i);
     }
   }
 

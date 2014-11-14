@@ -37,6 +37,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -217,9 +218,9 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
+      Length sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
+      Length sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
+      Length sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -236,7 +237,7 @@ public class ImarisReader extends FormatReader {
 
       for (int i=0; i<getSizeC(); i++) {
         if (pinholes[i] > 0) {
-          store.setChannelPinholeSize(new Double(pinholes[i]), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes[i], UNITS.MICROM), 0, i);
         }
       }
 

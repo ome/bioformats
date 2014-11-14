@@ -39,6 +39,8 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -213,7 +215,7 @@ public class KodakReader extends FormatReader {
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
 
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(size);
+        Length sizeY = FormatTools.getPhysicalSizeY(size);
         if (sizeY != null) {
           store.setPixelsPhysicalSizeY(sizeY, 0);
         }
@@ -226,14 +228,15 @@ public class KodakReader extends FormatReader {
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(size);
+        Length sizeX = FormatTools.getPhysicalSizeX(size);
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);
         }
       }
       else if (key.equals("CCD Temperature")) {
         Double temp = new Double(value.substring(0, value.indexOf(" ")));
-        store.setImagingEnvironmentTemperature(temp, 0);
+        store.setImagingEnvironmentTemperature(
+                new Temperature(temp, UNITS.DEGREEC), 0);
       }
     }
   }

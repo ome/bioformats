@@ -55,6 +55,9 @@ import loci.plugins.util.VirtualImagePlus;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * Logic for colorizing images.
  *
@@ -343,10 +346,10 @@ public class Colorizer {
                 color = new Color(r, g, b, a);
               }
               else {
-                PositiveFloat wavelength =
+                Length wavelength =
                   retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
                 if (wavelength != null) {
-                  double wave = wavelength.getValue();
+                  double wave = wavelength.value(UNITS.NM).doubleValue();
                   if (wave >= BLUE_MIN && wave < BLUE_TO_GREEN_MIN) {
                     color = Color.BLUE;
                   }

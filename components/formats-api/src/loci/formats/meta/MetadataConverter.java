@@ -38,7 +38,14 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Power;
+import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * A utility class containing a method for piping a source
@@ -415,7 +422,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              PositiveFloat wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
+              Length wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
               dest.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, i, q, p);
             }
             catch (NullPointerException e) { }
@@ -702,7 +709,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Double airPressure = src.getImagingEnvironmentAirPressure(i);
+        Pressure airPressure = src.getImagingEnvironmentAirPressure(i);
         dest.setImagingEnvironmentAirPressure(airPressure, i);
       }
       catch (NullPointerException e) { }
@@ -726,7 +733,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Double temperature = src.getImagingEnvironmentTemperature(i);
+        Temperature temperature = src.getImagingEnvironmentTemperature(i);
         dest.setImagingEnvironmentTemperature(temperature, i);
       }
       catch (NullPointerException e) { }
@@ -764,19 +771,19 @@ public final class MetadataConverter {
           dest.setStageLabelName(stageLabelName, i);
 
           try {
-            Double stageLabelX = src.getStageLabelX(i);
+            final Length stageLabelX = src.getStageLabelX(i);
             dest.setStageLabelX(stageLabelX, i);
           }
           catch (NullPointerException e) { }
 
           try {
-            Double stageLabelY = src.getStageLabelY(i);
+            final Length stageLabelY = src.getStageLabelY(i);
             dest.setStageLabelY(stageLabelY, i);
           }
           catch (NullPointerException e) { }
 
           try {
-            Double stageLabelZ = src.getStageLabelZ(i);
+            final Length stageLabelZ = src.getStageLabelZ(i);
             dest.setStageLabelZ(stageLabelZ, i);
           }
           catch (NullPointerException e) { }
@@ -795,19 +802,19 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat physicalSizeX = src.getPixelsPhysicalSizeX(i);
+          Length physicalSizeX = src.getPixelsPhysicalSizeX(i);
           dest.setPixelsPhysicalSizeX(physicalSizeX, i);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat physicalSizeY = src.getPixelsPhysicalSizeY(i);
+          Length physicalSizeY = src.getPixelsPhysicalSizeY(i);
           dest.setPixelsPhysicalSizeY(physicalSizeY, i);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
+          Length physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
           dest.setPixelsPhysicalSizeZ(physicalSizeZ, i);
         }
         catch (NullPointerException e) { }
@@ -933,13 +940,13 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat emWave = src.getChannelEmissionWavelength(i, c);
+          Length emWave = src.getChannelEmissionWavelength(i, c);
           dest.setChannelEmissionWavelength(emWave, i, c);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat exWave = src.getChannelExcitationWavelength(i, c);
+          Length exWave = src.getChannelExcitationWavelength(i, c);
           dest.setChannelExcitationWavelength(exWave, i, c);
         }
         catch (NullPointerException e) { }
@@ -975,7 +982,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double pinholeSize = src.getChannelPinholeSize(i, c);
+          Length pinholeSize = src.getChannelPinholeSize(i, c);
           dest.setChannelPinholeSize(pinholeSize, i, c);
         }
         catch (NullPointerException e) { }
@@ -1023,13 +1030,13 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              Double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
+              Frequency readOutRate = src.getDetectorSettingsReadOutRate(i, c);
               dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
             }
             catch (NullPointerException e) { }
 
             try {
-              Double voltage = src.getDetectorSettingsVoltage(i, c);
+              ElectricPotential voltage = src.getDetectorSettingsVoltage(i, c);
               dest.setDetectorSettingsVoltage(voltage, i, c);
             }
             catch (NullPointerException e) { }
@@ -1062,7 +1069,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              PositiveFloat wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
+              Length wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
               dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
             }
             catch (NullPointerException e) { }
@@ -1135,19 +1142,19 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double positionX = src.getPlanePositionX(i, p);
+          final Length positionX = src.getPlanePositionX(i, p);
           dest.setPlanePositionX(positionX, i, p);
         }
         catch (NullPointerException e) { }
 
         try {
-          Double positionY = src.getPlanePositionY(i, p);
+          final Length positionY = src.getPlanePositionY(i, p);
           dest.setPlanePositionY(positionY, i, p);
         }
         catch (NullPointerException e) { }
 
         try {
-          Double positionZ = src.getPlanePositionZ(i, p);
+          final Length positionZ = src.getPlanePositionZ(i, p);
           dest.setPlanePositionZ(positionZ, i, p);
         }
         catch (NullPointerException e) { }
@@ -1371,7 +1378,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double voltage = src.getDetectorVoltage(i, q);
+          ElectricPotential voltage = src.getDetectorVoltage(i, q);
           dest.setDetectorVoltage(voltage, i, q);
         }
         catch (NullPointerException e) { }
@@ -1499,25 +1506,25 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger cutIn = src.getTransmittanceRangeCutIn(i, q);
+          Length cutIn = src.getTransmittanceRangeCutIn(i, q);
           dest.setTransmittanceRangeCutIn(cutIn, i, q);
         }
         catch (NullPointerException e) { }
 
         try {
-          NonNegativeInteger cutInTolerance = src.getTransmittanceRangeCutInTolerance(i, q);
+          Length cutInTolerance = src.getTransmittanceRangeCutInTolerance(i, q);
           dest.setTransmittanceRangeCutInTolerance(cutInTolerance, i, q);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger cutOut = src.getTransmittanceRangeCutOut(i, q);
+          Length cutOut = src.getTransmittanceRangeCutOut(i, q);
           dest.setTransmittanceRangeCutOut(cutOut, i, q);
         }
         catch (NullPointerException e) { }
 
         try {
-          NonNegativeInteger cutOutTolerance = src.getTransmittanceRangeCutOutTolerance(i, q);
+          Length cutOutTolerance = src.getTransmittanceRangeCutOutTolerance(i, q);
           dest.setTransmittanceRangeCutOutTolerance(cutOutTolerance, i, q);
         }
         catch (NullPointerException e) { }
@@ -1617,7 +1624,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double workingDistance = src.getObjectiveWorkingDistance(i, q);
+          Length workingDistance = src.getObjectiveWorkingDistance(i, q);
           dest.setObjectiveWorkingDistance(workingDistance, i, q);
         }
         catch (NullPointerException e) { }
@@ -1948,13 +1955,13 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Double wellOriginX = src.getPlateWellOriginX(i);
+        Length wellOriginX = src.getPlateWellOriginX(i);
         dest.setPlateWellOriginX(wellOriginX, i);
       }
       catch (NullPointerException e) { }
 
       try {
-        Double wellOriginY = src.getPlateWellOriginY(i);
+        Length wellOriginY = src.getPlateWellOriginY(i);
         dest.setPlateWellOriginY(wellOriginY, i);
       }
       catch (NullPointerException e) { }
@@ -2055,13 +2062,13 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double positionX = src.getWellSamplePositionX(i, q, w);
+            Length positionX = src.getWellSamplePositionX(i, q, w);
             dest.setWellSamplePositionX(positionX, i, q, w);
           }
           catch (NullPointerException e) { }
 
           try {
-            Double positionY = src.getWellSamplePositionY(i, q, w);
+            Length positionY = src.getWellSamplePositionY(i, q, w);
             dest.setWellSamplePositionY(positionY, i, q, w);
           }
           catch (NullPointerException e) { }
@@ -2297,7 +2304,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getEllipseFontSize(i, q);
+            Length fontSize = src.getEllipseFontSize(i, q);
             dest.setEllipseFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2333,7 +2340,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getEllipseStrokeWidth(i, q);
+            Length strokeWidth = src.getEllipseStrokeWidth(i, q);
             dest.setEllipseStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2439,7 +2446,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getLabelFontSize(i, q);
+            Length fontSize = src.getLabelFontSize(i, q);
             dest.setLabelFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2475,7 +2482,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getLabelStrokeWidth(i, q);
+            Length strokeWidth = src.getLabelStrokeWidth(i, q);
             dest.setLabelStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2569,7 +2576,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getLineFontSize(i, q);
+            Length fontSize = src.getLineFontSize(i, q);
             dest.setLineFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2605,7 +2612,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getLineStrokeWidth(i, q);
+            Length strokeWidth = src.getLineStrokeWidth(i, q);
             dest.setLineStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2723,7 +2730,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getMaskFontSize(i, q);
+            Length fontSize = src.getMaskFontSize(i, q);
             dest.setMaskFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2759,7 +2766,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getMaskStrokeWidth(i, q);
+            Length strokeWidth = src.getMaskStrokeWidth(i, q);
             dest.setMaskStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2865,7 +2872,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getPointFontSize(i, q);
+            Length fontSize = src.getPointFontSize(i, q);
             dest.setPointFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -2901,7 +2908,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getPointStrokeWidth(i, q);
+            Length strokeWidth = src.getPointStrokeWidth(i, q);
             dest.setPointStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -2995,7 +3002,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getPolygonFontSize(i, q);
+            Length fontSize = src.getPolygonFontSize(i, q);
             dest.setPolygonFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -3031,7 +3038,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getPolygonStrokeWidth(i, q);
+            Length strokeWidth = src.getPolygonStrokeWidth(i, q);
             dest.setPolygonStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -3119,7 +3126,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getPolylineFontSize(i, q);
+            Length fontSize = src.getPolylineFontSize(i, q);
             dest.setPolylineFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -3155,7 +3162,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getPolylineStrokeWidth(i, q);
+            Length strokeWidth = src.getPolylineStrokeWidth(i, q);
             dest.setPolylineStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -3255,7 +3262,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            NonNegativeInteger fontSize = src.getRectangleFontSize(i, q);
+            Length fontSize = src.getRectangleFontSize(i, q);
             dest.setRectangleFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
@@ -3291,7 +3298,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Double strokeWidth = src.getRectangleStrokeWidth(i, q);
+            Length strokeWidth = src.getRectangleStrokeWidth(i, q);
             dest.setRectangleStrokeWidth(strokeWidth, i, q);
           }
           catch (NullPointerException e) { }
@@ -3793,7 +3800,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power = src.getArcPower(instrumentIndex, lightSource);
+          Power power = src.getArcPower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setArcPower(power, instrumentIndex, lightSource);
           }
@@ -3867,7 +3874,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power = src.getFilamentPower(instrumentIndex, lightSource);
+          Power power = src.getFilamentPower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setFilamentPower(power, instrumentIndex, lightSource);
           }
@@ -3948,7 +3955,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power =
+          Power power =
             src.getGenericExcitationSourcePower(instrumentIndex, lightSource);
           dest.setGenericExcitationSourcePower(power,
             instrumentIndex, lightSource);
@@ -4000,7 +4007,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power = src.getLaserPower(instrumentIndex, lightSource);
+          Power power = src.getLaserPower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setLaserPower(power, instrumentIndex, lightSource);
           }
@@ -4070,7 +4077,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double repetitionRate =
+          Frequency repetitionRate =
             src.getLaserRepetitionRate(instrumentIndex, lightSource);
           if (repetitionRate != null) {
             dest.setLaserRepetitionRate(
@@ -4088,7 +4095,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveFloat wavelength =
+          Length wavelength =
             src.getLaserWavelength(instrumentIndex, lightSource);
           if (wavelength != null) {
             dest.setLaserWavelength(wavelength, instrumentIndex, lightSource);
@@ -4151,7 +4158,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          Double power =
+          Power power =
             src.getLightEmittingDiodePower(instrumentIndex, lightSource);
           if (power != null) {
             dest.setLightEmittingDiodePower(

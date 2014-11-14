@@ -39,6 +39,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -259,11 +260,11 @@ public class NiftiReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
 
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(new Double(voxelWidth));
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(new Double(voxelHeight));
-      PositiveFloat sizeZ =
+      Length sizeZ =
         FormatTools.getPhysicalSizeZ(new Double(sliceThickness));
 
       if (sizeX != null) {

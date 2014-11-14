@@ -57,6 +57,9 @@ import ome.xml.model.primitives.Timestamp;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -300,9 +303,9 @@ public class MicromanagerReader extends FormatReader {
           store.setChannelName(p.channels[c], i, c);
         }
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(p.sliceThickness);
+        Length sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
+        Length sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(p.sliceThickness);
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);
         }
@@ -332,7 +335,8 @@ public class MicromanagerReader extends FormatReader {
           store.setDetectorSettingsBinning(getBinning(p.binning), i, c);
           store.setDetectorSettingsGain(new Double(p.gain), i, c);
           if (c < p.voltage.size()) {
-            store.setDetectorSettingsVoltage(p.voltage.get(c), i, c);
+            store.setDetectorSettingsVoltage(
+                    new ElectricPotential(p.voltage.get(c), UNITS.V), i, c);
           }
           store.setDetectorSettingsID(p.detectorID, i, c);
         }
@@ -352,7 +356,8 @@ public class MicromanagerReader extends FormatReader {
 
         if (p.cameraMode == null) p.cameraMode = "Other";
         store.setDetectorType(getDetectorType(p.cameraMode), 0, i);
-        store.setImagingEnvironmentTemperature(p.temperature, i);
+        store.setImagingEnvironmentTemperature(
+                new Temperature(p.temperature, UNITS.DEGREEC), i);
       }
     }
   }

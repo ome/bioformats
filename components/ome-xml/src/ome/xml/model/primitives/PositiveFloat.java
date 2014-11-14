@@ -54,6 +54,10 @@ public class PositiveFloat extends NonNegativeFloat {
     }
   }
 
+  public Number getNumberValue() {
+    return value;
+  }
+
   /**
    * Returns an <code>PositiveFloat</code> object holding the value of
    * the specified string.

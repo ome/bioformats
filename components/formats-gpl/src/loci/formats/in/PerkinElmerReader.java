@@ -47,6 +47,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -605,8 +606,8 @@ public class PerkinElmerReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -623,14 +624,13 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          PositiveFloat em = FormatTools.getEmissionWavelength(emWaves.get(i));
+          Length em = FormatTools.getEmissionWavelength(emWaves.get(i));
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (i < exWaves.size()) {
-          PositiveFloat ex =
-            FormatTools.getExcitationWavelength(exWaves.get(i));
+          Length ex = FormatTools.getExcitationWavelength(exWaves.get(i));
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);
           }
@@ -657,9 +657,18 @@ public class PerkinElmerReader extends FormatReader {
         }
 
         if (zct[0] < zPositions.size()) {
-          store.setPlanePositionX(0.0, 0, i);
-          store.setPlanePositionY(0.0, 0, i);
-          store.setPlanePositionZ(zPositions.get(zct[0]), 0, i);
+          final Double zPosition = zPositions.get(zct[0]);
+          final Length xl = new Length(0d, UNITS.REFERENCEFRAME);
+          final Length yl = new Length(0d, UNITS.REFERENCEFRAME);
+          final Length zl;
+          if (zPosition == null) {
+              zl = null;
+          } else {
+              zl = new Length(zPosition, UNITS.REFERENCEFRAME);
+          }
+          store.setPlanePositionX(xl, 0, i);
+          store.setPlanePositionY(yl, 0, i);
+          store.setPlanePositionZ(zl, 0, i);
         }
       }
     }

@@ -36,6 +36,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * Ecat7Reader is the file format reader for ECAT 7 files.
@@ -377,11 +378,11 @@ public class Ecat7Reader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(new Double(xPixelSize));
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(new Double(yPixelSize));
-      PositiveFloat sizeZ =
+      Length sizeZ =
         FormatTools.getPhysicalSizeZ(new Double(zPixelSize));
 
       if (sizeX != null) {

@@ -56,6 +56,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Power;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -819,7 +822,7 @@ public class ICSReader extends FormatReader {
     double[] sizes = null;
 
     Double[] emWaves = null, exWaves = null;
-    Double[] stagePos = null;
+    Length[] stagePos = null;
     String imageName = null, date = null, description = null;
     Double magnification = null, lensNA = null, workingDistance = null;
     String objectiveModel = null, immersion = null, lastName = null;
@@ -1094,10 +1097,11 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history stage_xyzum")) {
               String[] positions = value.split(" ");
-              stagePos = new Double[positions.length];
+              stagePos = new Length[positions.length];
               for (int n=0; n<stagePos.length; n++) {
                 try {
-                  stagePos[n] = new Double(positions[n]);
+                  final Double number = Double.valueOf(positions[n]);
+                  stagePos[n] = new Length(number, UNITS.REFERENCEFRAME);
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse stage position", e);
@@ -1106,21 +1110,24 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history stage positionx")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[0] = new Double(value); //TODO doubleValue
+              final Double number = Double.valueOf(value);
+              stagePos[0] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history stage positiony")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[1] = new Double(value);
+              final Double number = Double.valueOf(value);
+              stagePos[1] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history stage positionz")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[2] = new Double(value);
+              final Double number = Double.valueOf(value);
+              stagePos[2] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history other text")) {
               description = value;
@@ -1488,7 +1495,7 @@ public class ICSReader extends FormatReader {
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
+              Length x = FormatTools.getPhysicalSizeX(pixelSize);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
@@ -1496,7 +1503,7 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("y")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+              Length y = FormatTools.getPhysicalSizeY(pixelSize);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
@@ -1504,7 +1511,7 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("z")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSize);
+              Length z = FormatTools.getPhysicalSizeZ(pixelSize);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }
@@ -1522,14 +1529,14 @@ public class ICSReader extends FormatReader {
       }
       else if (sizes != null) {
         if (sizes.length > 0) {
-          PositiveFloat x = FormatTools.getPhysicalSizeX(sizes[0]);
+          Length x = FormatTools.getPhysicalSizeX(sizes[0]);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, 0);
           }
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          PositiveFloat y = FormatTools.getPhysicalSizeY(sizes[1]);
+          Length y = FormatTools.getPhysicalSizeY(sizes[1]);
           if (y != null) {
             store.setPixelsPhysicalSizeY(y, 0);
           }
@@ -1561,16 +1568,16 @@ public class ICSReader extends FormatReader {
           store.setChannelName(channelNames.get(i), 0, i);
         }
         if (pinholes.containsKey(i)) {
-          store.setChannelPinholeSize(pinholes.get(i), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes.get(i), UNITS.MICROM), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
-          PositiveFloat em = FormatTools.getEmissionWavelength(emWaves[i]);
+          Length em = FormatTools.getEmissionWavelength(emWaves[i]);
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (exWaves != null && i < exWaves.length) {
-          PositiveFloat ex = FormatTools.getExcitationWavelength(exWaves[i]);
+          Length ex = FormatTools.getExcitationWavelength(exWaves[i]);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);
           }
@@ -1584,7 +1591,7 @@ public class ICSReader extends FormatReader {
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
 
-        PositiveFloat wave =
+        Length wave =
           FormatTools.getWavelength(wavelengths.get(lasers[i]));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
@@ -1594,8 +1601,14 @@ public class ICSReader extends FormatReader {
 
         store.setLaserManufacturer(laserManufacturer, 0, i);
         store.setLaserModel(laserModel, 0, i);
-        store.setLaserPower(laserPower, 0, i);
-        store.setLaserRepetitionRate(laserRepetitionRate, 0, i);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        if (theLaserPower != null) {
+          store.setLaserPower(theLaserPower, 0, i);
+        }
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        if (theLaserRepetitionRate != null) {
+          store.setLaserRepetitionRate(theLaserRepetitionRate, 0, i);
+        }
       }
 
       if (lasers.length == 0 && laserManufacturer != null) {
@@ -1604,8 +1617,14 @@ public class ICSReader extends FormatReader {
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
         store.setLaserManufacturer(laserManufacturer, 0, 0);
         store.setLaserModel(laserModel, 0, 0);
-        store.setLaserPower(laserPower, 0, 0);
-        store.setLaserRepetitionRate(laserRepetitionRate, 0, 0);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        if (theLaserPower != null) {
+          store.setLaserPower(theLaserPower, 0, 0);
+        }
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        if (theLaserRepetitionRate != null) {
+          store.setLaserRepetitionRate(theLaserRepetitionRate, 0, 0);
+        }
       }
 
       // populate FilterSet data
@@ -1638,7 +1657,7 @@ public class ICSReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+        store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
       }
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);

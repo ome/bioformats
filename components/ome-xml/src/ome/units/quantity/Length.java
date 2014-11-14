@@ -36,7 +36,7 @@ import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
- * A wrapper for the Length class from the units implimintation.
+ * A wrapper for the Length class from the units implementation.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
@@ -46,19 +46,102 @@ import ome.units.UNITS;
  * </small>
  * @since 5.1
  */
-public class Length extends Quantity
+public class Length extends Quantity implements Comparable<Length>
 {
-  public Length(Number value, 
-    Unit<ome.units.quantity.Length> unit)
+  private static final int SEED1 = 45;
+  private static final int SEED2 = 56;
+  Number value;
+  Unit<ome.units.quantity.Length> unit;
+  private int hashCodeValue;
+
+  public Length(Number inValue,
+    Unit<ome.units.quantity.Length> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("Length: Length cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
+    hashCodeValue = SEED1;
+    hashCodeValue = SEED2 * hashCodeValue + Float.floatToIntBits(value.floatValue());
+    hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
-    public Number value()
+
+  public Number value()
+  {
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.Length> inUnit)
+  {
+    if (unit.equals(inUnit))
     {
-      return 1;
+      return value;
     }
-    
-    public Unit<ome.units.quantity.Length> unit()
+    if (unit.isConvertible(inUnit))
     {
-      return UNITS.METRE;
+      return unit.convertValue(value, inUnit);
     }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    Length otherLength = (Length)other;
+    if (unit.equals(otherLength.unit))
+    {
+      // Lengths use same unit so compare value
+      return value.equals(otherLength.value);
+    } else {
+      if (unit.isConvertible(otherLength.unit))
+      {
+        // Lengths use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherLength.unit)).equals(otherLength.value);
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public int compareTo(Length other)
+  {
+    if (this == other) {
+      return 0;
+    }
+    return Double.compare(value.doubleValue(), other.value(unit).doubleValue());
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return hashCodeValue;
+  }
+  @Override
+  public String toString()
+  {
+    StringBuilder result = new StringBuilder();
+    result.append(this.getClass().getName());
+    result.append(": ");
+    result.append("value[");
+    result.append(value);
+    result.append("], unit[");
+    result.append(unit.getSymbol());
+    result.append("] stored as ");
+    result.append(value.getClass().getName());
+    return result.toString();
+  }
+
+  public Unit<ome.units.quantity.Length> unit()
+  {
+    return unit;
+  }
 }

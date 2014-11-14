@@ -44,4 +44,5 @@ package ome.xml.model.primitives;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PrimitiveNumber.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface PrimitiveNumber{
+  public Number getNumberValue();
 }

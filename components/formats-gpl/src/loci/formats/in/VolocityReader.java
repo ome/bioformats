@@ -51,6 +51,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -736,9 +737,9 @@ public class VolocityReader extends FormatReader {
         }
       }
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(stack.physicalX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(stack.physicalY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(stack.physicalZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(stack.physicalX);
+      Length sizeY = FormatTools.getPhysicalSizeY(stack.physicalY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(stack.physicalZ);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
       }
@@ -767,11 +768,14 @@ public class VolocityReader extends FormatReader {
       for (int img=0; img<getImageCount(); img++) {
         int[] coords = getZCTCoords(img);
         int z = coords[0];
-        store.setPlanePositionX(stack.xLocation, i, img);
-        store.setPlanePositionY(stack.yLocation, i, img);
+        final Length xLoc = new Length(stack.xLocation, UNITS.REFERENCEFRAME);
+        final Length yLoc = new Length(stack.yLocation, UNITS.REFERENCEFRAME);
+        store.setPlanePositionX(xLoc, i, img);
+        store.setPlanePositionY(yLoc, i, img);
         if (stack.physicalZ != null) {
-          store.setPlanePositionZ(
-            stack.zLocation + z * stack.physicalZ, i, img);
+          final double zLocNumber = stack.zLocation + z * stack.physicalZ;
+          final Length zLoc = new Length(zLocNumber, UNITS.REFERENCEFRAME);
+          store.setPlanePositionZ(zLoc, i, img);
         }
 
         if (i < timestamps.size() && coords[2] < timestamps.get(i).length && timestamps.get(i)[coords[2]] != null) {

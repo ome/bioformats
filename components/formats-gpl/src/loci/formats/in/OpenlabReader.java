@@ -42,7 +42,10 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
@@ -597,8 +600,8 @@ public class OpenlabReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(new Double(xcal));
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(new Double(ycal));
+      Length sizeX = FormatTools.getPhysicalSizeX(new Double(xcal));
+      Length sizeY = FormatTools.getPhysicalSizeY(new Double(ycal));
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -639,9 +642,22 @@ public class OpenlabReader extends FormatReader {
         }
       }
 
-      Double stageX = xPos == null ? null : new Double(xPos);
-      Double stageY = yPos == null ? null : new Double(yPos);
-      Double stageZ = zPos == null ? null : new Double(zPos);
+      final Length stageX, stageY, stageZ;
+      if (xPos == null) {
+          stageX = null;
+      } else {
+          stageX = new Length(Double.valueOf(xPos), UNITS.REFERENCEFRAME);
+      }
+      if (yPos == null) {
+          stageY = null;
+      } else {
+          stageY = new Length(Double.valueOf(yPos), UNITS.REFERENCEFRAME);
+      }
+      if (zPos == null) {
+          stageZ = null;
+      } else {
+          stageZ = new Length(Double.valueOf(zPos), UNITS.REFERENCEFRAME);
+      }
 
       if (stageX != null || stageY != null || stageZ != null) {
         for (int series=0; series<getSeriesCount(); series++) {

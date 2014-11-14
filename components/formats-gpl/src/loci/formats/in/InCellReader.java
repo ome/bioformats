@@ -48,6 +48,8 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -90,7 +92,7 @@ public class InCellReader extends FormatReader {
 
   private int wellRows, wellCols;
   private Hashtable<Integer, int[]> wellCoordinates;
-  private Vector<Double> posX, posY;
+  private Vector<Length> posX, posY;
 
   private boolean[][] exclude;
 
@@ -101,7 +103,7 @@ public class InCellReader extends FormatReader {
   private Vector<String> metadataFiles;
 
   private Binning bin;
-  private PositiveFloat x, y;
+  private Length x, y;
   private Double gain;
   private Double temperature;
   private Double refractive;
@@ -341,8 +343,8 @@ public class InCellReader extends FormatReader {
     // parse metadata from the .xdce or .xml file
 
     wellCoordinates = new Hashtable<Integer, int[]>();
-    posX = new Vector<Double>();
-    posY = new Vector<Double>();
+    posX = new Vector<Length>();
+    posY = new Vector<Length>();
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -606,15 +608,14 @@ public class InCellReader extends FormatReader {
           }
           if (q < emWaves.size()) {
             Double wave = emWaves.get(q);
-            PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+            Length emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               store.setChannelEmissionWavelength(emission, i, q);
             }
           }
           if (q < exWaves.size()) {
             Double wave = exWaves.get(q);
-            PositiveFloat excitation =
-              FormatTools.getExcitationWavelength(wave);
+            Length excitation = FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               store.setChannelExcitationWavelength(excitation, i, q);
             }
@@ -631,15 +632,16 @@ public class InCellReader extends FormatReader {
           }
         }
         if (temperature != null) {
-          store.setImagingEnvironmentTemperature(temperature, i);
+          store.setImagingEnvironmentTemperature(
+                  new Temperature(temperature, UNITS.DEGREEC), i);
         }
       }
       setSeries(0);
 
       // populate Plate data
 
-      store.setPlateWellOriginX(0.5, 0);
-      store.setPlateWellOriginY(0.5, 0);
+      store.setPlateWellOriginX(new Length(0.5, UNITS.MICROM), 0);
+      store.setPlateWellOriginY(new Length(0.5, UNITS.MICROM), 0);
     }
   }
 
@@ -831,7 +833,8 @@ public class InCellReader extends FormatReader {
     private int currentRow = -1, currentCol = -1;
     private int currentField = 0;
     private int currentImage, currentPlane;
-    private Double timestamp, exposure, zPosition;
+    private Double timestamp, exposure;
+    private Length zPosition;
 
     public InCellHandler(MetadataStore store) {
       this.store = store;
@@ -902,7 +905,8 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("FocusPosition")) {
-        zPosition = new Double(attributes.getValue("z"));
+        final Double z = Double.valueOf(attributes.getValue("z"));
+        zPosition = new Length(z, UNITS.REFERENCEFRAME);
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd
@@ -998,8 +1002,8 @@ public class InCellReader extends FormatReader {
         String x = attributes.getValue("x");
         String y = attributes.getValue("y");
 
-        posX.add(new Double(x));
-        posY.add(new Double(y));
+        posX.add(new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
+        posY.add(new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
 
         addGlobalMetaList("X position for position", x);
         addGlobalMetaList("Y position for position", y);
@@ -1012,7 +1016,7 @@ public class InCellReader extends FormatReader {
     public String thumbnailFile;
     public boolean isTiff;
     public Double deltaT, exposure;
-    public Double zPosition;
+    public Length zPosition;
   }
 
 }

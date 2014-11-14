@@ -43,6 +43,8 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -364,9 +366,9 @@ public class OperettaReader extends FormatReader {
         }
 
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(planes[i][0].resolutionX), i);
+          FormatTools.getPhysicalSizeX(planes[i][0].resolutionX), i);
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(planes[i][0].resolutionY), i);
+          FormatTools.getPhysicalSizeY(planes[i][0].resolutionY), i);
 
         for (int p=0; p<getImageCount(); p++) {
           store.setPlanePositionX(planes[i][p].positionX, i, p);
@@ -514,15 +516,18 @@ public class OperettaReader extends FormatReader {
         }
         else if ("PositionX".equals(currentName)) {
           // position stored in meters
-          activePlane.positionX = Double.parseDouble(value) * 1000000;
+          final double meters = Double.parseDouble(value) * 1000000;
+          activePlane.positionX = new Length(meters, UNITS.REFERENCEFRAME);
         }
         else if ("PositionY".equals(currentName)) {
           // position stored in meters
-          activePlane.positionY = Double.parseDouble(value) * 1000000;
+          final double meters = Double.parseDouble(value) * 1000000;
+          activePlane.positionY = new Length(meters, UNITS.REFERENCEFRAME);
         }
         else if ("AbsPositionZ".equals(currentName)) {
           // position stored in meters
-          activePlane.positionZ = Double.parseDouble(value) * 1000000;
+          final double meters = Double.parseDouble(value) * 1000000;
+          activePlane.positionZ = new Length(meters, UNITS.REFERENCEFRAME);
         }
         else if ("ObjectiveMagnification".equals(currentName)) {
           activePlane.magnification = Double.parseDouble(value);
@@ -560,9 +565,9 @@ public class OperettaReader extends FormatReader {
     public String channelName;
     public double resolutionX;
     public double resolutionY;
-    public double positionX;
-    public double positionY;
-    public double positionZ;
+    public Length positionX;
+    public Length positionY;
+    public Length positionZ;
     public double emWavelength;
     public double exWavelength;
     public double magnification;

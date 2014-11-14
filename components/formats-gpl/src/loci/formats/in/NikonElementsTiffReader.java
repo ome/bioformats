@@ -43,6 +43,10 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -135,9 +139,9 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       return;
     }
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
-    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
+    Length sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+    Length sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+    Length sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }
@@ -153,9 +157,9 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     store.setImageInstrumentRef(instrument, 0);
 
     ArrayList<Double> exposureTimes = handler.getExposureTimes();
-    ArrayList<Double> posX = handler.getXPositions();
-    ArrayList<Double> posY = handler.getYPositions();
-    ArrayList<Double> posZ = handler.getZPositions();
+    ArrayList<Length> posX = handler.getXPositions();
+    ArrayList<Length> posY = handler.getYPositions();
+    ArrayList<Length> posZ = handler.getZPositions();
 
     for (int i=0; i<getImageCount(); i++) {
       int c = getZCTCoords(i)[1];
@@ -193,7 +197,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
       if (pinholeSize != null) {
-        store.setChannelPinholeSize(pinholeSize, 0, c);
+        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), 0, c);
       }
       if (c < channelNames.size()) {
         store.setChannelName(channelNames.get(c), 0, c);
@@ -203,13 +207,13 @@ public class NikonElementsTiffReader extends BaseTiffReader {
           getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
-        PositiveFloat em = FormatTools.getEmissionWavelength(emWave.get(c));
+        Length em = FormatTools.getEmissionWavelength(emWave.get(c));
         if (em != null) {
           store.setChannelEmissionWavelength(em, 0, c);
         }
       }
       if (c < exWave.size()) {
-        PositiveFloat ex = FormatTools.getExcitationWavelength(exWave.get(c));
+        Length ex = FormatTools.getExcitationWavelength(exWave.get(c));
         if (ex != null) {
           store.setChannelExcitationWavelength(ex, 0, c);
         }
@@ -221,18 +225,21 @@ public class NikonElementsTiffReader extends BaseTiffReader {
         store.setDetectorSettingsGain(gain.get(c), 0, c);
       }
       if (c < speed.size()) {
-        store.setDetectorSettingsReadOutRate(speed.get(c), 0, c);
+        store.setDetectorSettingsReadOutRate(
+                new Frequency(speed.get(c), UNITS.HZ), 0, c);
       }
       store.setDetectorSettingsID(detector, 0, c);
     }
 
     if (temperature.size() > 0) {
-      store.setImagingEnvironmentTemperature(temperature.get(0), 0);
+      store.setImagingEnvironmentTemperature(new Temperature(
+              temperature.get(0), UNITS.DEGREEC), 0);
     }
 
     Double voltage = handler.getVoltage();
     if (voltage != null) {
-      store.setDetectorSettingsVoltage(voltage, 0, 0);
+      store.setDetectorSettingsVoltage(
+              new ElectricPotential(voltage, UNITS.V), 0, 0);
     }
 
     Double na = handler.getNumericalAperture();

@@ -34,11 +34,15 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
+import loci.formats.FormatTools;
 
 import ome.xml.model.Image;
 import ome.xml.model.OME;
 import ome.xml.model.Pixels;
 import ome.xml.model.primitives.PositiveFloat;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -76,7 +80,7 @@ public class Upgrade201006Test {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2013-10-dev-4", service.getOMEXMLVersion(metadata));
+    assertEquals("2013-10-dev-5", service.getOMEXMLVersion(metadata));
   }
 
   @Test
@@ -85,8 +89,9 @@ public class Upgrade201006Test {
     Image image = ome.getImage(0);
     Pixels pixels = image.getPixels();
     // Pixels physical sizes are restricted to positive values
-    assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeX());
-    assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeY());
+    PositiveFloat positiveFloatValue = new PositiveFloat(10000.0);
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeX());
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeY());
     assertNull(pixels.getPhysicalSizeZ());
   }
 

@@ -54,12 +54,12 @@ import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
-
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -676,7 +676,8 @@ public class FV1000Reader extends FormatReader {
           if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
             ms0.dimensionOrder += "Z";
           }
-          plane.positionZ = Double.parseDouble(axis.get("AbsPositionValue"));
+          final Double number = Double.valueOf(axis.get("AbsPositionValue"));
+          plane.positionZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (dim == 4) {
           if (addAxis && getDimensionOrder().indexOf("T") == -1) {
@@ -691,14 +692,16 @@ public class FV1000Reader extends FormatReader {
           try {
             String xPos = axis.get("AbsPositionValueX");
             if (xPos != null) {
-              plane.positionX = Double.parseDouble(xPos);
+              final Double number = Double.valueOf(xPos);
+              plane.positionX = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
           catch (NumberFormatException e) { }
           try {
             String yPos = axis.get("AbsPositionValueY");
             if (yPos != null) {
-              plane.positionY = Double.parseDouble(yPos);
+              final Double number = Double.valueOf(yPos);
+              plane.positionY = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
           catch (NumberFormatException e) { }
@@ -953,14 +956,14 @@ public class FV1000Reader extends FormatReader {
 
       if (pixelSizeX != null) {
         Double sizeX = new Double(pixelSizeX);
-        PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+        Length size = FormatTools.getPhysicalSizeX(sizeX);
         if (size != null) {
           store.setPixelsPhysicalSizeX(size, i);
         }
       }
       if (pixelSizeY != null) {
         Double sizeY = new Double(pixelSizeY);
-        PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+        Length size = FormatTools.getPhysicalSizeY(sizeY);
         if (size != null) {
           store.setPixelsPhysicalSizeY(size, i);
         }
@@ -976,7 +979,7 @@ public class FV1000Reader extends FormatReader {
         pixelSizeT = 1d;
       }
 
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
@@ -1007,7 +1010,11 @@ public class FV1000Reader extends FormatReader {
       store.setDetectorSettingsID(detectorID, 0, channelIndex);
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
-      store.setDetectorVoltage(channel.voltage, 0, channelIndex);
+      ElectricPotential theVoltage = FormatTools.createElectricPotential(channel.voltage, UNITS.V);
+      if (theVoltage != null) {
+        store.setDetectorVoltage(
+              theVoltage, 0, channelIndex);
+      }
       store.setDetectorType(getDetectorType("PMT"), 0, channelIndex);
 
       // populate LogicalChannel data
@@ -1017,11 +1024,9 @@ public class FV1000Reader extends FormatReader {
         MetadataTools.createLSID("LightSource", 0, channelIndex);
       store.setChannelLightSourceSettingsID(lightSourceID, 0, channelIndex);
 
-      PositiveFloat emission =
-        FormatTools.getEmissionWavelength(channel.emWave);
-      PositiveFloat excitation =
-        FormatTools.getExcitationWavelength(channel.exWave);
-      PositiveFloat wavelength = FormatTools.getWavelength(channel.exWave);
+      Length wavelength = FormatTools.getWavelength(channel.exWave);
+      Length emission = FormatTools.getEmissionWavelength(channel.emWave);
+      Length excitation = FormatTools.getExcitationWavelength(channel.exWave);
 
       if (emission != null) {
         store.setChannelEmissionWavelength(emission, 0, channelIndex);
@@ -1049,8 +1054,8 @@ public class FV1000Reader extends FormatReader {
             Integer cutIn = new Integer(emValues[0]);
             Integer cutOut = new Integer(emValues[1]);
 
-            PositiveInteger in = FormatTools.getCutIn(cutIn);
-            PositiveInteger out = FormatTools.getCutOut(cutOut);
+            Length in = FormatTools.getCutIn(cutIn);
+            Length out = FormatTools.getCutOut(cutOut);
 
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, 0, channelIndex);
@@ -1084,7 +1089,7 @@ public class FV1000Reader extends FormatReader {
       store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
         0, channelIndex);
       if (channelIndex < wavelengths.size()) {
-        PositiveFloat wave =
+          Length wave =
           FormatTools.getWavelength(wavelengths.get(channelIndex));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, channelIndex);
@@ -1104,7 +1109,7 @@ public class FV1000Reader extends FormatReader {
       store.setObjectiveNominalMagnification(mag, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
     }
     store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
     store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -1181,7 +1186,7 @@ public class FV1000Reader extends FormatReader {
         fontName = fontAttributes[0];
         fontSize = Integer.parseInt(fontAttributes[1]);
 
-        NonNegativeInteger font = FormatTools.getFontSize(fontSize);
+        Length font = FormatTools.getFontSize(fontSize);
 
         lineWidth = Integer.parseInt(table.get("LINEWIDTH"));
         name = table.get("NAME");
@@ -1224,7 +1229,8 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setPointFontSize(font, nextROI, shape);
             }
-            store.setPointStrokeWidth(new Double(lineWidth), nextROI, shape);
+            Length l = new Length(new Double(lineWidth), UNITS.PIXEL);
+            store.setPointStrokeWidth(l, nextROI, shape);
 
             store.setPointX(new Double(xc[0]), nextROI, shape);
             store.setPointY(new Double(yc[0]), nextROI, shape);
@@ -1252,8 +1258,8 @@ public class FV1000Reader extends FormatReader {
                 if (font != null) {
                   store.setRectangleFontSize(font, nextROI, shape);
                 }
-                store.setRectangleStrokeWidth(
-                  new Double(lineWidth), nextROI, shape);
+                Length l = new Length(new Double(lineWidth), UNITS.PIXEL);
+                store.setRectangleStrokeWidth(l, nextROI, shape);
 
                 double centerX = realX + (width / 2);
                 double centerY = realY + (height / 2);
@@ -1277,7 +1283,8 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setLineFontSize(font, nextROI, shape);
             }
-            store.setLineStrokeWidth(new Double(lineWidth), nextROI, shape);
+            Length l = new Length(new Double(lineWidth), UNITS.PIXEL);
+            store.setLineStrokeWidth(l, nextROI, shape);
 
             int centerX = x + (width / 2);
             int centerY = y + (height / 2);
@@ -1300,7 +1307,8 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setEllipseFontSize(font, nextROI, shape);
             }
-            store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
+            Length l = new Length(new Double(lineWidth), UNITS.PIXEL);
+            store.setEllipseStrokeWidth(l, nextROI, shape);
             store.setEllipseTransform(
               getRotationTransform(angle), nextROI, shape);
           }
@@ -1326,8 +1334,8 @@ public class FV1000Reader extends FormatReader {
               if (font != null) {
                 store.setPolylineFontSize(font, nextROI, shape);
               }
-              store.setPolylineStrokeWidth(
-                new Double(lineWidth), nextROI, shape);
+              Length l = new Length(new Double(lineWidth), UNITS.PIXEL);
+              store.setPolylineStrokeWidth(l, nextROI, shape);
             }
             else {
               store.setPolygonID(shapeID, nextROI, shape);
@@ -1341,7 +1349,8 @@ public class FV1000Reader extends FormatReader {
               if (font != null) {
                 store.setPolygonFontSize(font, nextROI, shape);
               }
-              store.setPolygonStrokeWidth(new Double(lineWidth), nextROI, shape);
+              Length l = new Length(new Double(lineWidth), UNITS.PIXEL);
+              store.setPolygonStrokeWidth(l, nextROI, shape);
             }
           }
           else {
@@ -1696,9 +1705,9 @@ public class FV1000Reader extends FormatReader {
 
   class PlaneData {
     public Double deltaT;
-    public Double positionX;
-    public Double positionY;
-    public Double positionZ;
+    public Length positionX;
+    public Length positionY;
+    public Length positionZ;
   }
 
 }

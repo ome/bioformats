@@ -37,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * SpiderReader is the file format reader for SPIDER files.
@@ -262,8 +263,8 @@ public class SpiderReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double size = new Double(pixelSize * 0.0001);
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(size);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(size);
+      Length sizeX = FormatTools.getPhysicalSizeX(size);
+      Length sizeY = FormatTools.getPhysicalSizeY(size);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

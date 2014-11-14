@@ -35,8 +35,13 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * LEOReader is the file format reader for LEO EM files.
@@ -126,8 +131,8 @@ public class LEOReader extends BaseTiffReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xSize);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(xSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(xSize);
+      Length sizeY = FormatTools.getPhysicalSizeY(xSize);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -140,7 +145,7 @@ public class LEOReader extends BaseTiffReader {
       store.setImageInstrumentRef(instrument, 0);
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-      store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
     }

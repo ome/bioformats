@@ -37,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * BioRadGelReader is the file format reader for Bio-Rad gel files.
@@ -232,9 +233,9 @@ public class BioRadGelReader extends FormatReader {
       store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(physicalWidth / getSizeX());
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(physicalHeight / getSizeY());
 
       if (sizeX != null) {

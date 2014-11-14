@@ -48,6 +48,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -380,8 +381,8 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
+      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
+      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

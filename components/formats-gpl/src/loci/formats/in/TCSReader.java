@@ -49,6 +49,7 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -489,9 +490,9 @@ public class TCSReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelX);
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelY);
-    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
+    Length sizeX = FormatTools.getPhysicalSizeX(voxelX);
+    Length sizeY = FormatTools.getPhysicalSizeY(voxelY);
+    Length sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }

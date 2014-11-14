@@ -41,6 +41,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * InveonReader is the file format reader for Inveon files.
@@ -382,9 +383,9 @@ public class InveonReader extends FormatReader {
 
         store.setImageDescription(description, i);
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);

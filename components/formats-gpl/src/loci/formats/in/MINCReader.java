@@ -44,6 +44,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * MINCReader is the file format reader for MINC MRI files.
@@ -284,9 +285,9 @@ public class MINCReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(history, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalX);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalZ);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

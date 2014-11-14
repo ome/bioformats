@@ -48,6 +48,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * OBFReader is the file format reader for Imspector OBF files.
  *
@@ -171,7 +174,7 @@ public class OBFReader extends FormatReader
 				final double lengthX = Math.abs(lengths.get(0)) ;
 				if (lengthX > 0)
 				{
-					final PositiveFloat physicalSizeX = new PositiveFloat( lengthX / obf.sizeX ) ;
+					final Length physicalSizeX = FormatTools.createLength( lengthX / obf.sizeX , UNITS.MICROM) ;
 					ome.setPixelsPhysicalSizeX(physicalSizeX, series) ;
 				}
 			}
@@ -180,7 +183,7 @@ public class OBFReader extends FormatReader
 				final double lengthY = Math.abs(lengths.get(1)) ;
 				if (lengthY > 0)
 				{
-					final PositiveFloat physicalSizeY = new PositiveFloat( lengthY / obf.sizeY ) ;
+					final Length physicalSizeY = FormatTools.createLength( lengthY / obf.sizeY , UNITS.MICROM) ;
 					ome.setPixelsPhysicalSizeY(physicalSizeY, series) ;
 				}
 			}
@@ -189,7 +192,7 @@ public class OBFReader extends FormatReader
 				final double lengthZ = Math.abs(lengths.get(2)) ;
 				if (lengthZ > 0)
 				{
-					final PositiveFloat physicalSizeZ = new PositiveFloat( lengthZ / obf.sizeZ ) ;
+					final Length physicalSizeZ = FormatTools.createLength( lengthZ / obf.sizeZ  , UNITS.MICROM) ;
 					ome.setPixelsPhysicalSizeZ(physicalSizeZ, series) ;
 				}
 			}

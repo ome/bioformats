@@ -90,6 +90,9 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Power;
+import ome.units.UNITS;
+
 /**
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/SPWModelMock.java">Trac</a>,
@@ -334,13 +337,13 @@ public class SPWModelMock implements ModelMock {
       laser.setID(LIGHTSOURCE_LASER_ID);
       laser.setModel(LIGHTSOURCE_LASER_MODEL);
       laser.setType(LASER_TYPE);
-      laser.setPower(LIGHTSOURCE_LASER_POWER);
+      laser.setPower(new Power(LIGHTSOURCE_LASER_POWER, UNITS.MW));
       // with a <Pump/>
       Laser laserPump = new Laser();
       laserPump.setID(LIGHTSOURCE_PUMP_ID);
       laserPump.setModel(LIGHTSOURCE_PUMP_MODEL);
       laserPump.setType(LASER_TYPE);
-      laserPump.setPower(LIGHTSOURCE_PUMP_POWER);
+      laserPump.setPower(new Power(LIGHTSOURCE_PUMP_POWER, UNITS.MW));
 
       laser.linkPump(laserPump);
 
@@ -352,7 +355,7 @@ public class SPWModelMock implements ModelMock {
       arc.setID(LIGHTSOURCE_ARC_ID);
       arc.setModel(LIGHTSOURCE_ARC_MODEL);
       arc.setType(ARC_TYPE);
-      arc.setPower(LIGHTSOURCE_ARC_POWER);
+      arc.setPower(new Power(LIGHTSOURCE_ARC_POWER, UNITS.MW));
       instrument.addLightSource(arc);
 
       // Create <Filament/> under <Instrument/>
@@ -360,14 +363,14 @@ public class SPWModelMock implements ModelMock {
       filament.setID(LIGHTSOURCE_FILAMENT_ID);
       filament.setModel(LIGHTSOURCE_FILAMENT_MODEL);
       filament.setType(FILAMENT_TYPE);
-      filament.setPower(LIGHTSOURCE_FILAMENT_POWER);
+      filament.setPower(new Power(LIGHTSOURCE_FILAMENT_POWER, UNITS.MW));
       instrument.addLightSource(filament);
 
       // Create <LightEmittingDiode/> under <Instrument/>
       LightEmittingDiode led = new LightEmittingDiode();
       led.setID(LIGHTSOURCE_LED_ID);
       led.setModel(LIGHTSOURCE_LED_MODEL);
-      led.setPower(LIGHTSOURCE_LED_POWER);
+      led.setPower(new Power(LIGHTSOURCE_LED_POWER, UNITS.MW));
       instrument.addLightSource(led);
     }
 

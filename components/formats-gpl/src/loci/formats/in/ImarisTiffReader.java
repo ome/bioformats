@@ -44,6 +44,8 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+
 /**
  * ImarisTiffReader is the file format reader for
  * Bitplane Imaris 3 files (TIFF variant).
@@ -172,9 +174,8 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {
-        PositiveFloat emission =
-          FormatTools.getEmissionWavelength(emWave.get(i));
-        PositiveFloat excitation =
+        Length emission = FormatTools.getEmissionWavelength(emWave.get(i));
+        Length excitation =
           FormatTools.getExcitationWavelength(exWave.get(i));
 
         if (emission != null) {

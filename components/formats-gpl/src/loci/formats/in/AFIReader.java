@@ -46,6 +46,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -241,11 +242,11 @@ public class AFIReader extends FormatReader {
     }
 
     if (!minimalMetadata) {
-      PositiveFloat[] emission = new PositiveFloat[pixels.size()];
-      PositiveFloat[] excitation = new PositiveFloat[pixels.size()];
+      Length[] emission = new Length[pixels.size()];
+      Length[] excitation = new Length[pixels.size()];
       Double[] exposure = new Double[pixels.size()];
       Timestamp[] datestamp = new Timestamp[pixels.size()];
-      double[] physicalSizes = null;
+      Length[] physicalSizes = null;
       double magnification = Double.NaN;
 
       for (int c=0; c<pixels.size(); c++) {
@@ -275,9 +276,10 @@ public class AFIReader extends FormatReader {
         store.setObjectiveSettingsID(objective, i);
 
         if (i < physicalSizes.length &&
-          physicalSizes[i] - Constants.EPSILON > 0)
+          physicalSizes[i] != null &&
+          physicalSizes[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0)
         {
-          PositiveFloat size = new PositiveFloat(physicalSizes[i]);
+          Length size = physicalSizes[i];
           store.setPixelsPhysicalSizeX(size, i);
           store.setPixelsPhysicalSizeY(size, i);
         }
@@ -292,9 +294,7 @@ public class AFIReader extends FormatReader {
             store.setChannelExcitationWavelength(excitation[c], i, c);
           }
 
-          if (exposure[c] != null) {
-            store.setPlaneExposureTime(new Time(exposure[c], UNITS.S), i, c);
-          }
+          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.S), i, c);
         }
       }
     }

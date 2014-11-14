@@ -54,6 +54,7 @@ import loci.formats.tiff.TiffCompression;
 import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Time;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**
@@ -391,7 +392,7 @@ public class TiffReader extends BaseTiffReader {
     if (physicalSizeZ != null) {
       double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
-      PositiveFloat z = FormatTools.getPhysicalSizeZ(zDepth);
+      Length z = FormatTools.getPhysicalSizeZ(zDepth);
       if (z != null) {
         store.setPixelsPhysicalSizeZ(z, 0);
       }

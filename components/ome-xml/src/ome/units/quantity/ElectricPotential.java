@@ -36,7 +36,7 @@ import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
- * A wrapper for the ElectricPotential class from the units implimintation.
+ * A wrapper for the ElectricPotential class from the units implementation.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
@@ -46,19 +46,102 @@ import ome.units.UNITS;
  * </small>
  * @since 5.1
  */
-public class ElectricPotential extends Quantity
+public class ElectricPotential extends Quantity implements Comparable<ElectricPotential>
 {
-  public ElectricPotential(Number value, 
-    Unit<ome.units.quantity.ElectricPotential> unit)
+  private static final int SEED1 = 23;
+  private static final int SEED2 = 34;
+  Number value;
+  Unit<ome.units.quantity.ElectricPotential> unit;
+  private int hashCodeValue;
+
+  public ElectricPotential(Number inValue,
+    Unit<ome.units.quantity.ElectricPotential> inUnit)
   {
+    if (inValue == null)
+    {
+      throw new NullPointerException("ElectricPotential: ElectricPotential cannot be constructed with a null value.");
+    }
+    value = inValue;
+    unit = inUnit;
+    hashCodeValue = SEED1;
+    hashCodeValue = SEED2 * hashCodeValue + Float.floatToIntBits(value.floatValue());
+    hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
+
   public Number value()
   {
-    return 1;
+    return value;
+  }
+  
+  public Number value(Unit<ome.units.quantity.ElectricPotential> inUnit)
+  {
+    if (unit.equals(inUnit))
+    {
+      return value;
+    }
+    if (unit.isConvertible(inUnit))
+    {
+      return unit.convertValue(value, inUnit);
+    }
+    return null;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other == null)
+    {
+      return false;
+    }
+    if (this.getClass() != other.getClass())
+    {
+      return false;
+    }
+    ElectricPotential otherElectricPotential = (ElectricPotential)other;
+    if (unit.equals(otherElectricPotential.unit))
+    {
+      // ElectricPotentials use same unit so compare value
+      return value.equals(otherElectricPotential.value);
+    } else {
+      if (unit.isConvertible(otherElectricPotential.unit))
+      {
+        // ElectricPotentials use different compatible units so convert value then compare
+        return (unit.convertValue(value, otherElectricPotential.unit)).equals(otherElectricPotential.value);
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public int compareTo(ElectricPotential other)
+  {
+    if (this == other) {
+      return 0;
+    }
+    return Double.compare(value.doubleValue(), other.value(unit).doubleValue());
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return hashCodeValue;
+  }
+  @Override
+  public String toString()
+  {
+    StringBuilder result = new StringBuilder();
+    result.append(this.getClass().getName());
+    result.append(": ");
+    result.append("value[");
+    result.append(value);
+    result.append("], unit[");
+    result.append(unit.getSymbol());
+    result.append("] stored as ");
+    result.append(value.getClass().getName());
+    return result.toString();
   }
 
   public Unit<ome.units.quantity.ElectricPotential> unit()
   {
-    return UNITS.VOLT;
+    return unit;
   }
 }

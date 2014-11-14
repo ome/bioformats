@@ -56,6 +56,8 @@ import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * DicomReader is the file format reader for DICOM files.
@@ -736,7 +738,7 @@ public class DicomReader extends FormatReader {
         if (pixelSizeX != null) {
           Double sizeX = new Double(pixelSizeX);
           sizeX *= 1000;
-          PositiveFloat x = FormatTools.getPhysicalSizeX(sizeX);
+          Length x = FormatTools.getPhysicalSizeX(sizeX);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, i);
           }
@@ -744,14 +746,14 @@ public class DicomReader extends FormatReader {
         if (pixelSizeY != null) {
           Double sizeY = new Double(pixelSizeY);
           sizeY *= 1000;
-          PositiveFloat y = FormatTools.getPhysicalSizeY(sizeY);
+          Length y = FormatTools.getPhysicalSizeY(sizeY);
           if (y != null) {
             store.setPixelsPhysicalSizeY(y, i);
           }
         }
         if (pixelSizeZ != null) {
           pixelSizeZ *= 1000;
-          PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+          Length z = FormatTools.getPhysicalSizeZ(pixelSizeZ);
           if (z != null) {
             store.setPixelsPhysicalSizeZ(z, i);
           }
