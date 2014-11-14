@@ -180,6 +180,7 @@ namespace ome
             if (prev_core && prev_ifd && compare_ifd(*prev_ifd, **i))
               {
                 ++prev_core->sizeT;
+                prev_core->imageCount = prev_core->sizeT;
                 ++(series_ifd_map.back().second);
               }
             else

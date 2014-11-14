@@ -1392,6 +1392,7 @@ namespace ome
             m->rgb = true;
             m->sizeC = samples;
           }
+        m->sizeZ = m->sizeC = m->imageCount = 1;
 
         // libtiff does any needed endian conversion
         // automatically, so the data is always in the native
