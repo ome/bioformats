@@ -40,6 +40,8 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
 
+#include <ome/compat/filesystem.h>
+
 #include <ome/xml/meta/Metadata.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
@@ -148,6 +150,47 @@ namespace ome
     void
     addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
                     dimension_size_type               series);
+
+
+    /**
+     * Check if default creation date is enabled.
+     *
+     * @returns @c true if enabled, @c false otherwise.
+     */
+    bool
+    defaultCreationDateEnabled();
+
+    /**
+     * Enable or disable default creation date.
+     *
+     * This setting enables or disables the replacement of missing
+     * creation dates.
+     *
+     * @see setDefaultCreationDate().
+     *
+     * @param enabled @c true to enable, @c false to disable.
+     */
+    void
+    defaultCreationDateEnabled(bool enabled);
+
+    /**
+     * Set the creation data for a series.
+     *
+     * If the specified file exists, the modification time of this
+     * file will be used as the creation date.  If it does not exist,
+     * the current system time will be used as a fallback.
+     *
+     * This function will do nothing unless
+     * defaultCreationDateEnabled(bool) is enabled.
+     *
+     * @param store the OME-XML metadata store.
+     * @param series the series for which to set the creation date.
+     * @param id the filename for the series.
+     */
+    void
+    setDefaultCreationDate(::ome::xml::meta::MetadataStore& store,
+                           dimension_size_type              series,
+                           const boost::filesystem::path&   id);
 
   }
 }

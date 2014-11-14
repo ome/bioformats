@@ -47,6 +47,8 @@
 #include <ome/xml/model/MetadataOnly.h>
 #include <ome/xml/model/Pixels.h>
 
+#include <ome/xml/model/primitives/Timestamp.h>
+
 using ome::xml::meta::Metadata;
 using ome::xml::meta::MetadataStore;
 using ome::xml::meta::MetadataRoot;
@@ -56,6 +58,15 @@ using ome::xml::meta::OMEXMLMetadataRoot;
 using ome::xml::model::Image;
 using ome::xml::model::MetadataOnly;
 using ome::xml::model::Pixels;
+using ome::xml::model::primitives::Timestamp;
+
+namespace
+{
+
+  /// Use default creation date?
+  bool defaultCreationDate = false;
+
+}
 
 namespace ome
 {
@@ -195,6 +206,31 @@ namespace ome
         }
     }
 
+    bool
+    defaultCreationDateEnabled()
+    {
+      return defaultCreationDate;
+    }
+
+    void
+    defaultCreationDateEnabled(bool enabled)
+    {
+      defaultCreationDate = enabled;
+    }
+
+    void
+    setDefaultCreationDate(::ome::xml::meta::MetadataStore& store,
+                           dimension_size_type              series,
+                           const boost::filesystem::path&   id)
+    {
+      if (defaultCreationDateEnabled())
+        {
+          Timestamp cdate;
+          if (exists(id))
+            cdate = Timestamp(boost::posix_time::from_time_t(boost::filesystem::last_write_time(id)));
+          store.setImageAcquisitionDate(cdate, series);
+        }
+    }
 
   }
 }
