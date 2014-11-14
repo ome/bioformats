@@ -142,7 +142,7 @@ namespace ome
                  bool                             doImageName = true);
 
     /**
-     * Fill OME-XML metadata store Pixels elements from reader core metadata.
+     * Fill all OME-XML metadata store Pixels elements from reader core metadata.
      *
      * Set Pixels metadata for all series.
      *
@@ -150,22 +150,20 @@ namespace ome
      * @param reader the reader to use.
      */
     void
-    fillPixels(::ome::xml::meta::MetadataStore& store,
-               const FormatReader&              reader);
+    fillAllPixels(::ome::xml::meta::MetadataStore& store,
+                  const FormatReader&              reader);
 
     /**
      * Fill an OME-XML metadata store Pixels element from reader core metadata.
      *
-     * Set Pixels metadata for a single series.
+     * Set Pixels metadata for the reader's current series.
      *
      * @param store the OME-XML metadata store.
      * @param reader the reader to use.
-     * @param series the series to use.
      */
     void
     fillPixels(::ome::xml::meta::MetadataStore& store,
-               const FormatReader&              reader,
-               dimension_size_type              series);
+               const FormatReader&              reader);
 
     /**
      * Add a MetadataOnly element to Pixels for the specified series.

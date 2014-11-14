@@ -144,10 +144,12 @@ namespace ome
         {
           reader.setSeries(s);
 
+          const boost::optional<std::string>& cfile(reader.getCurrentFile());
+
           std::ostringstream nos;
-          if (doImageName)
+          if (doImageName && !!cfile)
             {
-              nos << reader.getCurrentFile();
+              nos << *cfile;
               if (reader.getSeriesCount() > 1)
                 nos << " #" << (s + 1);
             }
@@ -156,10 +158,11 @@ namespace ome
           std::string pixelType = reader.getPixelType();
 
           if (!imageName.empty())
-            store.setImageID(createLSID("Image", s), s);
-          setDefaultCreationDate(store, reader.getCurrentFile(), s);
+            store.setImageID(createID("Image", s), s);
+          if (!!cfile)
+            setDefaultCreationDate(store, s, boost::filesystem::path(*cfile));
 
-          fillPixels(store, reader, s);
+          fillPixels(store, reader);
 
           try
             {
@@ -189,29 +192,33 @@ namespace ome
     }
 
     void
-    fillPixels(::ome::xml::meta::MetadataStore& store,
-               const FormatReader&              reader)
+    fillAllPixels(::ome::xml::meta::MetadataStore& store,
+                  const FormatReader&              reader)
     {
+      dimension_size_type oldseries = reader.getSeries();
       for (dimension_size_type s = 0; s < reader.getSeriesCount(); ++s)
-        fillPixels(store, reader, s);
+        {
+          reader.setSeries(s);
+          fillPixels(store, reader);
+        }
+      reader.setSeries(oldseries);
     }
 
     void
     fillPixels(::ome::xml::meta::MetadataStore& store,
-               const FormatReader&              reader,
-               dimension_size_type              series)
+               const FormatReader&              reader)
     {
-      dimension_size_type oldseries = reader.getSeries();
-
-      reader.setSeries(series);
+      dimension_size_type series = reader.getSeries();
 
       store.setPixelsID(createID("Pixels", series), series);
       store.setPixelsBigEndian(!reader.isLittleEndian(), series);
-      store.setPixelsSignificantBits(reader.getBitsPerPixel(), s);
+      store.setPixelsSignificantBits(reader.getBitsPerPixel(), series);
       store.setPixelsDimensionOrder(reader.getDimensionOrder(), series);
-      store.setPixelsInterleaved(reader.isInterleaved(), s);
+      store.setPixelsInterleaved(reader.isInterleaved(), series);
       store.setPixelsType(reader.getPixelType(), series);
 
+      // The cast to int here is nasty, but the data model isn't using
+      // unsigned types…
       store.setPixelsSizeX(static_cast<PositiveInteger::value_type>(reader.getSizeX()), series);
       store.setPixelsSizeY(static_cast<PositiveInteger::value_type>(reader.getSizeY()), series);
       store.setPixelsSizeZ(static_cast<PositiveInteger::value_type>(reader.getSizeZ()), series);
@@ -225,7 +232,6 @@ namespace ome
           store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(reader.getRGBChannelCount()), series, c);
         }
 
-      reader.setSeries(oldseries);
     }
 
     void
