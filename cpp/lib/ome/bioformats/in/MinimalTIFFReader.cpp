@@ -39,6 +39,7 @@
 
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
+#include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/in/MinimalTIFFReader.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/TIFF.h>
@@ -46,6 +47,7 @@
 using ome::bioformats::detail::ReaderProperties;
 using ome::bioformats::tiff::TIFF;
 using ome::bioformats::tiff::IFD;
+using ome::xml::meta::MetadataStore;
 
 namespace ome
 {
@@ -133,6 +135,8 @@ namespace ome
           }
 
         readIFDs();
+
+        fillMetadata(*getMetadataStore(), *this);
       }
 
       namespace
