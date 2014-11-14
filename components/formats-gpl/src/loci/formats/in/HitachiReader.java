@@ -161,6 +161,12 @@ public class HitachiReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    helperReader.reopenFile();
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

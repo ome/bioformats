@@ -121,7 +121,8 @@ public class BMPReader extends FormatReader {
     }
 
     int rowsToSkip = invertY ? y : getSizeY() - (h + y);
-    int rowLength = getSizeX() * (isIndexed() ? 1 : getSizeC());
+    int rowLength = (getSizeX() * (isIndexed() ? 1 : getSizeC()) * bpp) / 8;
+
     in.seek(global + rowsToSkip * rowLength);
 
     int pad = ((rowLength * bpp) / 8) % 2;
@@ -131,7 +132,7 @@ public class BMPReader extends FormatReader {
     if (bpp >= 8) planeSize *= (bpp / 8);
     else planeSize /= (8 / bpp);
     planeSize += pad * h;
-    if (planeSize + in.getFilePointer() > in.length()) {
+    if (planeSize + in.getFilePointer() + rowsToSkip * pad > in.length()) {
       planeSize -= (pad * h);
 
       // sometimes we have RGB images with a single padding byte

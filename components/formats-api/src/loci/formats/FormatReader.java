@@ -215,6 +215,7 @@ public abstract class FormatReader extends FormatHandler
       in.close();
     }
     in = new RandomAccessInputStream(currentId);
+    in.order(isLittleEndian());
   }
 
   /**
