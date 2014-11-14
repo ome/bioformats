@@ -60,6 +60,7 @@ using ome::xml::model::Image;
 using ome::xml::model::MetadataOnly;
 using ome::xml::model::Pixels;
 using ome::xml::model::primitives::Timestamp;
+using ome::xml::model::primitives::PositiveInteger;
 
 namespace
 {
@@ -205,6 +206,44 @@ namespace ome
                 }
             }
         }
+    }
+
+    void
+    fillPixels(::ome::xml::meta::MetadataStore& store,
+               const FormatReader&              reader)
+    {
+      for (dimension_size_type s = 0; s < reader.getSeriesCount(); ++s)
+        fillPixels(store, reader, s);
+    }
+
+    void
+    fillPixels(::ome::xml::meta::MetadataStore& store,
+               const FormatReader&              reader,
+               dimension_size_type              series)
+    {
+      dimension_size_type oldseries = reader.getSeries();
+
+      reader.setSeries(series);
+
+      store.setPixelsID(createID("Pixels", series), series);
+      store.setPixelsBigEndian(!reader.isLittleEndian(), series);
+      store.setPixelsDimensionOrder(reader.getDimensionOrder(), series);
+      store.setPixelsType(reader.getPixelType(), series);
+
+      store.setPixelsSizeX(static_cast<PositiveInteger::value_type>(reader.getSizeX()), series);
+      store.setPixelsSizeY(static_cast<PositiveInteger::value_type>(reader.getSizeY()), series);
+      store.setPixelsSizeZ(static_cast<PositiveInteger::value_type>(reader.getSizeZ()), series);
+      store.setPixelsSizeT(static_cast<PositiveInteger::value_type>(reader.getSizeT()), series);
+      store.setPixelsSizeC(static_cast<PositiveInteger::value_type>(reader.getSizeC()), series);
+
+      dimension_size_type effSizeC = reader.getEffectiveSizeC();
+      for (dimension_size_type c = 0; c < effSizeC; ++c)
+        {
+          store.setChannelID(createID("Channel", series, c), series, c);
+          store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(reader.getRGBChannelCount()), series, c);
+        }
+
+      reader.setSeries(oldseries);
     }
 
     void
