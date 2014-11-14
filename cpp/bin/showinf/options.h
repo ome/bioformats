@@ -79,8 +79,10 @@ namespace bin
       bool validate;
       bool showsa;
       bool showused;
+      bool merge;
       bool group;
       bool stitch;
+      bool separate;
       bool flat;
       ome::bioformats::dimension_size_type series;
       ome::bioformats::dimension_size_type resolution;
