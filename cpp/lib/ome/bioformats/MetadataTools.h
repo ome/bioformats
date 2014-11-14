@@ -151,6 +151,16 @@ namespace ome
     addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
                     dimension_size_type               series);
 
+    /**
+     * Verify correctness of minimal amount of metadata in a series.
+     *
+     * @param retrieve the OME-XML metadata store.
+     * @param series the image series to verify.
+     * @throws FormatException if any metadata is missing.
+     */
+    void
+    verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
+                    dimension_size_type               series = 0U);
 
     /**
      * Check if default creation date is enabled.

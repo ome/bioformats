@@ -39,6 +39,7 @@
 
 #include <boost/format.hpp>
 
+#include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/MetadataTools.h>
 
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
@@ -202,6 +203,54 @@ namespace ome
                   std::shared_ptr<MetadataOnly> meta(std::make_shared<MetadataOnly>());
                   pixels->setMetadataOnly(meta);
                 }
+            }
+        }
+    }
+
+    void
+    verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
+                    dimension_size_type               series)
+    {
+      // The Java equivalent of this function checks whether various
+      // properties are null.  In the C++ implementation, most of the
+      // properties checked can not be null (they are plain value
+      // types) so the checks are not performed for these cases.  For
+      // the string values, these may be empty (if unset), so this is
+      // checked for in place of being null.
+
+      try
+        {
+          MetadataStore& store(dynamic_cast<MetadataStore&>(retrieve));
+          if (!store.getRoot())
+            throw FormatException("Metadata object has null root; call createRoot() first");
+        }
+      catch (const std::bad_cast& e)
+        {
+        }
+
+      if (retrieve.getImageID(series).empty())
+        {
+          boost::format fmt("Image ID #%1% is empty");
+          fmt % series;
+          throw FormatException(fmt.str());
+        }
+
+      if (retrieve.getPixelsID(series).empty())
+        {
+          boost::format fmt("Pixels ID #%1% is empty");
+          fmt % series;
+          throw FormatException(fmt.str());
+        }
+
+      for (Metadata::index_type channel = 0;
+           channel < retrieve.getChannelCount(series);
+           ++channel)
+        {
+          if (retrieve.getChannelID(series, channel).empty())
+            {
+              boost::format fmt("Channel ID #%1% in Image #%2% is empty");
+              fmt % channel % series;
+              throw FormatException(fmt.str());
             }
         }
     }
