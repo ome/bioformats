@@ -1724,7 +1724,6 @@ public class FlexReader extends FormatReader {
             MetadataTools.createLSID("Dichroic", 0, nextDichroic);
           if (dichroicMap.get(id) == null || !dichroicMap.get(id).equals(dichroicID)) {
             dichroicMap.put(id, dichroicID);
-            LOGGER.warn("setDichroicID({}, 0, {})", dichroicID, nextDichroic);
             store.setDichroicID(dichroicID, 0, nextDichroic);
             store.setDichroicModel(id, 0, nextDichroic);
           }
