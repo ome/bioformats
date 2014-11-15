@@ -1411,8 +1411,8 @@ public abstract class FormatReader extends FormatHandler
         for (int series=0; series<getSeriesCount(); series++) {
           setSeries(series);
 
-          if (getModuloZ().length() > 0 || getModuloC().length() > 0 ||
-            getModuloT().length() > 0)
+          if (getModuloZ().length() > 1 || getModuloC().length() > 1 ||
+            getModuloT().length() > 1)
           {
             service.addModuloAlong(
               (OMEXMLMetadata) store, core.get(series), series);
