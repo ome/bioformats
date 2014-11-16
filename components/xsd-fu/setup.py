@@ -19,7 +19,7 @@ ov = os.environ.get("BF_VERSION", "unknown")
 
 for tools in glob.glob("tempTOFIX/setuptools*.egg"):
     if tools.find(".".join(map(str, sys.version_info[0:2]))) > 0:
-       sys.path.insert(0, tools)
+        sys.path.insert(0, tools)
 
 from ez_setup import use_setuptools
 use_setuptools(to_dir='tempTOFIX')
@@ -30,18 +30,17 @@ if os.path.exists("target"):
 else:
     packages = [""]
 
-setup(name="xsd-fu",
-      version=ov,
-      description="Python tools for generating code from the OME specification",
-      long_description="""\
-Python tools for generating code from the OME specification",
-""",
-      author="The Open Microscopy Consortium",
-      author_email="ome-users@lists.openmicroscopy.org.uk",
-      url="http://trac.openmicroscopy.org.uk/ome/wiki/XsdFu",
-      download_url="http://trac.openmicroscopy.org.uk/ome/wiki/XsdFu",
-#      package_dir = {"": "target"},
-#      packages=packages,
-      test_suite='test.suite'
+setup(
+    name="xsd-fu",
+    version=ov,
+    description="Python tools for generating code from the OME specification",
+    long_description="""
+Python tools for generating code from the OME specification""",
+    author="The Open Microscopy Consortium",
+    author_email="ome-users@lists.openmicroscopy.org.uk",
+    url="http://trac.openmicroscopy.org.uk/ome/wiki/XsdFu",
+    download_url="http://trac.openmicroscopy.org.uk/ome/wiki/XsdFu",
+    # package_dir = {"": "target"},
+    # packages=packages,
+    test_suite='test.suite'
 )
-
