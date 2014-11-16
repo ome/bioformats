@@ -355,16 +355,6 @@ public class ImageReader implements IFormatReader {
     return getReader().getModuloT();
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    return getReader().getChannelDimLengths();
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    return getReader().getChannelDimTypes();
-  }
-
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
     return getReader().getThumbSizeX();

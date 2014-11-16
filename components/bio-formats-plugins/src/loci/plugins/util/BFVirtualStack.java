@@ -39,6 +39,7 @@ import loci.formats.ChannelMerger;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Modulo;
 import loci.formats.cache.Cache;
 import loci.formats.cache.CacheException;
 import loci.formats.cache.CacheStrategy;
@@ -112,7 +113,13 @@ public class BFVirtualStack extends VirtualStack {
     this.series = r.getSeries();
 
     // set up cache
-    int[] subC = r.getChannelDimLengths();
+    int[] subC;
+    Modulo moduloC = r.getModuloC();
+    if (moduloC.length() > 1) {
+      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+    } else {
+      subC = new int[] {r.getSizeC()};
+    }
     if (merge) subC = new int[] {new ChannelMerger(r).getEffectiveSizeC()};
     len = new int[subC.length + 2];
     System.arraycopy(subC, 0, len, 0, subC.length);

@@ -211,20 +211,6 @@ public class DimensionSwapper extends ReaderWrapper {
     return core.get(getCoreIndex()).sizeT;
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    int[] cLengths = core.get(getCoreIndex()).cLengths;
-    return cLengths == null ? super.getChannelDimLengths() : cLengths;
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    String[] cTypes = core.get(getCoreIndex()).cTypes;
-    return cTypes == null ? super.getChannelDimTypes() : cTypes;
-  }
-
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);

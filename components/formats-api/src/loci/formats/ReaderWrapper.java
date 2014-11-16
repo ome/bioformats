@@ -263,14 +263,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getModuloT();
   }
 
-  public int[] getChannelDimLengths() {
-    return reader.getChannelDimLengths();
-  }
-
-  public String[] getChannelDimTypes() {
-    return reader.getChannelDimTypes();
-  }
-
   public int getThumbSizeX() {
     return reader.getThumbSizeX();
   }

@@ -577,7 +577,7 @@ public class ICSReader extends FormatReader {
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     String[] domain = new String[] {FormatTools.GRAPHICS_DOMAIN};
-    if (getChannelDimLengths().length > 1) {
+    if (getModuloC().length() > 1) {
       domain[0] = FormatTools.FLIM_DOMAIN;
     }
     else if (hasInstrumentData) {
@@ -585,22 +585,6 @@ public class ICSReader extends FormatReader {
     }
 
     return domain;
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 1);
-    int[] len = new int[channelLengths.size()];
-    for (int i=0; i<len.length; i++) {
-      len[i] = channelLengths.get(i).intValue();
-    }
-    return len;
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 1);
-    return channelTypes.toArray(new String[channelTypes.size()]);
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
@@ -1376,6 +1360,37 @@ public class ICSReader extends FormatReader {
     if (getSizeZ() == 0) m.sizeZ = 1;
     if (getSizeC() == 0) m.sizeC = 1;
     if (getSizeT() == 0) m.sizeT = 1;
+
+    // Set up ModuloC.  It appears that for ICS, different channels
+    // can have different lengths, which isn't supported by ModuloC
+    // which requires all channels have the same length.  This could
+    // be rectified by setting SizeC=1 and allowing multiple Modulo
+    // annotations per dimension, but would require a model change.
+    // Here, ModuloC is only set if all channels are of the same
+    // length and type.
+    if (channelLengths.size() > 0) {
+      int clen0 = channelLengths.get(0);
+      String ctype0 = channelTypes.get(0);
+      boolean same = true;
+
+      for (Integer len : channelLengths) {
+	  if (clen0 != len) same = false;
+      }
+      for (String type : channelTypes) {
+	  if (!ctype0.equals(type)) same = false;
+      }
+
+      if (same) {
+	  m.moduloC.type = ctype0;
+	  if (FormatTools.LIFETIME.equals(ctype0)) {
+	    m.moduloC.parentType = FormatTools.SPECTRA;
+	  }
+	  m.moduloC.typeDescription = "TCSPC";
+	  m.moduloC.start = 0;
+	  m.moduloC.step = 1;
+	  m.moduloC.end = clen0;
+      }
+    }
 
     m.interleaved = isRGB();
     m.indexed = false;

@@ -165,14 +165,6 @@ public class FilePatternReader extends FormatReader {
     return helper.getModuloT();
   }
 
-  public int[] getChannelDimLengths() {
-    return helper.getChannelDimLengths();
-  }
-
-  public String[] getChannelDimTypes() {
-    return helper.getChannelDimTypes();
-  }
-
   public int getThumbSizeX() {
     return helper.getThumbSizeX();
   }
