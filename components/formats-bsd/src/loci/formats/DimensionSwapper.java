@@ -258,16 +258,6 @@ public class DimensionSwapper extends ReaderWrapper {
     return FormatTools.getIndex(this, z, c, t);
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
-  @Override
-  public CoreMetadata[] getCoreMetadata() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return core.toArray(new CoreMetadata[0]);
-  }
-
   /* @see IFormatReader#getCoreMetadataList() */
   @Override
   public List<CoreMetadata> getCoreMetadataList() {

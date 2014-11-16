@@ -551,11 +551,4 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /** Set whether or not to flatten resolutions into individual series. */
   void setFlattenedResolutions(boolean flatten);
-
-  // -- Deprecated methods --
-
-  /** Obtains the core metadata values for the current file.
-   * @deprecated Use #getCoreMetadataList instead.
-   */
-  CoreMetadata[] getCoreMetadata();
 }

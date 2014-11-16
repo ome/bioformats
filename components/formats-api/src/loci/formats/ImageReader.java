@@ -508,14 +508,6 @@ public class ImageReader implements IFormatReader {
     return getReader().getSeriesMetadata();
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadata()
-   */
-  public CoreMetadata[] getCoreMetadata() {
-    return getCoreMetadataList().toArray(new CoreMetadata[0]);
-  }
-
   /* @see IFormatReader#getCoreMetadataList() */
   public List<CoreMetadata> getCoreMetadataList() {
     return getReader().getCoreMetadataList();

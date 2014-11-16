@@ -1064,15 +1064,6 @@ public abstract class FormatReader extends FormatHandler
     return core.get(getCoreIndex()).seriesMetadata;
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
-  public CoreMetadata[] getCoreMetadata() {
-    FormatTools.assertId(currentId, true, 1);
-    return core.toArray(new CoreMetadata[0]);
-  }
-
   /* @see IFormatReader#getCoreMetadataList() */
   public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(currentId, true, 1);
