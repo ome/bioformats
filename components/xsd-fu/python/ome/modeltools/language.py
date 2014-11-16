@@ -2,10 +2,10 @@ import copy
 import os
 
 from ome.modeltools.exceptions import ModelProcessingError
-from ome.modeltools import config
 
 TYPE_SOURCE = "source"
 TYPE_HEADER = "header"
+
 
 class Language(object):
     """
@@ -113,7 +113,8 @@ class Language(object):
         return self.template_dir
 
     def templatepath(self, template):
-        return os.path.join(self._templatepath, self.getTemplateDirectory(), self.getTemplate(template))
+        return os.path.join(self._templatepath, self.getTemplateDirectory(),
+                            self.getTemplate(template))
 
     def generatedFilename(self, name, type):
         gen_name = None
@@ -123,7 +124,8 @@ class Language(object):
             gen_name = name + self.header_suffix
         else:
             raise ModelProcessingError(
-                "Invalid language/filetype combination: %s/%s" % (self.name, type))
+                "Invalid language/filetype combination: %s/%s"
+                % (self.name, type))
         return gen_name
 
     def hasBaseType(self, type):
@@ -143,7 +145,8 @@ class Language(object):
         return False
 
     def hasPrimitiveType(self, type):
-        if type in self.primitive_type_map.values() or type in self.primitive_types:
+        if type in self.primitive_type_map.values() or \
+                type in self.primitive_types:
             return True
         return False
 
@@ -184,6 +187,7 @@ class Language(object):
 
     def index_argname(self, signature, dummy=False):
         return signature['argname']
+
 
 class Java(Language):
     def __init__(self, namespace, templatepath):
@@ -236,20 +240,23 @@ class Java(Language):
 
         self.omexml_model_package = "ome.xml.model"
         self.omexml_model_enums_package = "ome.xml.model.enums"
-        self.omexml_model_omexml_model_enum_handlers_package = "ome.xml.model.enums.handlers"
+        self.omexml_model_omexml_model_enum_handlers_package = \
+            "ome.xml.model.enums.handlers"
         self.metadata_package = "ome.xml.meta"
         self.omexml_metadata_package = "ome.xml.meta"
 
         # use ome implementation
         # self.units_implementation_is = "ome"
         # self.units_package = "org.unitsofmeasurement"
-        # self.units_implementation_imports = "import ome.units.quantity.*;\nimport ome.units.*;"
+        # self.units_implementation_imports = \
+        #   "import ome.units.quantity.*;\nimport ome.units.*;"
         # self.model_unit_map['UnitsTime'] = 'Time'
 
         # use ome-standalone implementation
         self.units_implementation_is = "ome"
         self.units_package = "ome.units"
-        self.units_implementation_imports = "import ome.units.quantity.*;\nimport ome.units.*;"
+        self.units_implementation_imports = \
+            "import ome.units.quantity.*;\nimport ome.units.*;"
         self.model_unit_map['UnitsTime'] = 'Time'
 
     def getDefaultModelBaseClass(self):
@@ -269,6 +276,7 @@ class Java(Language):
 
         return sig
 
+
 class CXX(Language):
     def __init__(self, namespace, templatepath):
         super(CXX, self).__init__(namespace, templatepath)
@@ -277,27 +285,29 @@ class CXX(Language):
 
         self.template_map['OMEXML_METADATA'] = 'OMEXMLMetadata.template'
 
-        self.fundamental_types = set(["bool",
-                                      "char", "signed char", "unsigned char",
-                                      "short", "signed short", "unsigned short",
-                                      "int", "signed int", "unsigned int",
-                                      "long", "signed long", "unsigned long",
-                                      "long long", "signed long long", "unsigned long long",
-                                      "float", "double", "long double",
-                                      "int8_t", "uint8_t",
-                                      "int16_t", "uint16_t",
-                                      "int32_t", "uint32_t",
-                                      "int64_t", "uint64_t"])
+        self.fundamental_types = set([
+            "bool",
+            "char", "signed char", "unsigned char",
+            "short", "signed short", "unsigned short",
+            "int", "signed int", "unsigned int",
+            "long", "signed long", "unsigned long",
+            "long long", "signed long long", "unsigned long long",
+            "float", "double", "long double",
+            "int8_t", "uint8_t",
+            "int16_t", "uint16_t",
+            "int32_t", "uint32_t",
+            "int64_t", "uint64_t"])
 
-        self.primitive_types = self.primitive_types.union(set(["Color",
-                                                               "NonNegativeFloat",
-                                                               "NonNegativeInteger",
-                                                               "NonNegativeLong",
-                                                               "PercentFraction",
-                                                               "PositiveFloat",
-                                                               "PositiveInteger",
-                                                               "PositiveLong",
-                                                               "Timestamp"]))
+        self.primitive_types = self.primitive_types.union(set([
+            "Color",
+            "NonNegativeFloat",
+            "NonNegativeInteger",
+            "NonNegativeLong",
+            "PercentFraction",
+            "PositiveFloat",
+            "PositiveInteger",
+            "PositiveLong",
+            "Timestamp"]))
 
         self.primitive_type_map[namespace + 'boolean'] = 'bool'
         self.primitive_type_map[namespace + 'string'] = 'std::string'
@@ -325,7 +335,8 @@ class CXX(Language):
 
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"
-        self.omexml_model_omexml_model_enum_handlers_package = "ome::xml::model::enums::handlers"
+        self.omexml_model_omexml_model_enum_handlers_package = \
+            "ome::xml::model::enums::handlers"
         self.metadata_package = "ome::xml::meta"
         self.omexml_metadata_package = "ome::xml::meta"
 
@@ -335,13 +346,14 @@ class CXX(Language):
     def typeToUnitsType(self, valueType):
         return "Unit<" + valueType + ">"
 
-    def index_signature(self, name, max_occurs, level, dummy = False):
+    def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a C++ method signature dictionary from an index name."""
 
         sig = super(CXX, self).index_signature(name, max_occurs, level, dummy)
         sig['argtype'] = 'index_type'
 
         return sig
+
 
 def create(language, namespace, templatepath):
     """
