@@ -1,9 +1,13 @@
+import sys
+import keyword
 import logging
 import generateDS.generateDS
-from generateDS.generateDS import *
+from generateDS.generateDS import XschemaHandler, set_type_constants
+from ome.modeltools.exceptions import ModelProcessingError
 from xml import sax
 
 from ome.modeltools.model import OMEModel
+
 
 def parse(opts):
     """
@@ -31,6 +35,7 @@ def parse(opts):
             "No model objects found, have you set the correct namespace?")
     root.annotate()
     return OMEModel.process(ch, opts)
+
 
 def reset():
     """
