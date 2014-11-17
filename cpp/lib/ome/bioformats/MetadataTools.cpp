@@ -315,7 +315,7 @@ namespace ome
 
     void
     verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
-                    dimension_size_type               series)
+                  dimension_size_type                 series)
     {
       // The Java equivalent of this function checks whether various
       // properties are null.  In the C++ implementation, most of the
