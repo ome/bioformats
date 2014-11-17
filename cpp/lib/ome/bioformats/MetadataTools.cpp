@@ -188,6 +188,12 @@ namespace ome
       /// @todo Implement validation and root namespace setting.
     }
 
+    bool
+    validateOMEXML(const std::string& document)
+    {
+      /// @todo Implement validation.
+      return false;
+    }
 
     void
     fillMetadata(::ome::xml::meta::MetadataStore& store,

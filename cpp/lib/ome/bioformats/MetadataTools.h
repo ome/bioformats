@@ -169,6 +169,15 @@ namespace ome
     getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml);
 
     /**
+     * Validate an OME-XML document.
+     *
+     * @param document the XML document source.
+     * @returns @c true if valid, @c false if invalid.
+     */
+    bool
+    validateOMEXML(const std::string& document);
+
+    /**
      * Fill OME-XML metadata store from reader core metadata.
      *
      * The metadata store is expected to be empty.
