@@ -178,6 +178,17 @@ namespace ome
       return ret;
     }
 
+    std::string
+    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml)
+    {
+      /// @todo Implement OME-XML conversion to string.
+
+      return omexml.dumpXML();
+
+      /// @todo Implement validation and root namespace setting.
+    }
+
+
     void
     fillMetadata(::ome::xml::meta::MetadataStore& store,
                  const FormatReader&              reader,

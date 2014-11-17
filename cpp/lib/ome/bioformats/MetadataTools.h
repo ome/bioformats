@@ -157,6 +157,18 @@ namespace ome
     getOMEXMLMetadata(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve);
 
     /**
+     * Get OME-XML document from OME-XML metadata.
+     *
+     * This will convert the OME-XML metadata to an XML document
+     * string.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @returns the OME-XML metadata as an XML document string.
+     */
+    std::string
+    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml);
+
+    /**
      * Fill OME-XML metadata store from reader core metadata.
      *
      * The metadata store is expected to be empty.
