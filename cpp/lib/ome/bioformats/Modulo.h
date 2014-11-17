@@ -57,7 +57,7 @@ namespace ome
     class Modulo {
     public:
       /// Size of the subdimension.
-      typedef uint32_t size_type;
+      typedef std::vector<std::string>::size_type size_type;
 
       /// Parent dimension being subdivided.
       std::string parentDimension;
