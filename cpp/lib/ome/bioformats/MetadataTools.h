@@ -194,6 +194,15 @@ namespace ome
     bool
     defaultCreationDateEnabled();
 
+
+    /**
+     * Get the currently-supported OME Data Model version.
+     *
+     * @returns the model version.
+     */
+    std::string
+    getModelVersion();
+
     /**
      * Enable or disable default creation date.
      *

@@ -42,6 +42,8 @@
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/MetadataTools.h>
 
+#include <ome/internal/version.h>
+
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
 
 #include <ome/xml/model/Image.h>
@@ -302,6 +304,12 @@ namespace ome
               throw FormatException(fmt.str());
             }
         }
+    }
+
+    std::string
+    getModelVersion()
+    {
+      return OME_MODEL_VERSION;
     }
 
     bool
