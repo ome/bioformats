@@ -142,12 +142,10 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
-import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
-import ome.units.UNITS;
 
 /**
  * Creates XML objects for the 2010-06 schema.
