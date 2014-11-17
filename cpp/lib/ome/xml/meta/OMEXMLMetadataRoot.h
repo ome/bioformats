@@ -55,7 +55,7 @@ namespace ome
        * OME-XML metadata root node.
        */
       class OMEXMLMetadataRoot : public ::ome::xml::model::OME,
-				 public ::ome::xml::meta::MetadataRoot
+				 virtual public ::ome::xml::meta::MetadataRoot
       {
       public:
         /// Constructor.
