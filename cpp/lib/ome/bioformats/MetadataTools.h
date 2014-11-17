@@ -154,7 +154,7 @@ namespace ome
      * @returns the OME-XML metadata.
      */
     std::shared_ptr< ::ome::xml::meta::Metadata>
-    getOMEXMLMetadata(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve);
+    getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
 
     /**
      * Get OME-XML document from OME-XML metadata.
