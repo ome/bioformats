@@ -319,6 +319,17 @@ namespace ome
         }
     }
 
+    Modulo
+    getModulo(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+              const std::string&                      tag,
+              dimension_size_type                     image)
+    {
+      // @todo Implement Modulo retrieval.
+
+      throw std::runtime_error("Unimplemented");
+      return Modulo(tag); // Incorrect placeholder.
+    }
+
     void
     verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
                   dimension_size_type                 series)

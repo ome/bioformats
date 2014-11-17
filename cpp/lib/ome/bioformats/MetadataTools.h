@@ -228,6 +228,19 @@ namespace ome
                     dimension_size_type               series);
 
     /**
+     * Get Modulo annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param tag the Modulo annotation XML tag name.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModulo(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+              const std::string&                      tag,
+              dimension_size_type                     image);
+
+    /**
      * Verify correctness of minimal amount of metadata in a series.
      *
      * @param retrieve the OME-XML metadata store.
@@ -246,7 +259,6 @@ namespace ome
     bool
     defaultCreationDateEnabled();
 
-
     /**
      * Get the currently-supported OME Data Model version.
      *
@@ -261,7 +273,7 @@ namespace ome
      * @returns the model version.
      */
     std::string
-    getModelVersion(const std::string& document)
+    getModelVersion(const std::string& document);
 
     /**
      * Transform an OME-XML document to the latest model version
