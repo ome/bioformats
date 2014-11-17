@@ -856,7 +856,16 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   /** @see OMEXMLService#addMetadataOnly(OMEXMLMetadata, int) */
   @Override
   public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image) {
-    omexmlMeta.resolveReferences();
+    addMetadataOnly(omexmlMeta, image, true);
+  }
+
+  /** @see OMEXMLService#addMetadataOnly(OMEXMLMetadata, int, boolean) */
+  public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image,
+    boolean resolve)
+  {
+    if (resolve) {
+      omexmlMeta.resolveReferences();
+    }
     MetadataOnly meta = new MetadataOnly();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     Pixels pix = root.getImage(image).getPixels();

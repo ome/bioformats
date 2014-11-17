@@ -150,7 +150,7 @@ public final class MetadataTools {
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
               if (omeMeta.getTiffDataCount(i) == 0) {
-                service.addMetadataOnly(omeMeta, i);
+                service.addMetadataOnly(omeMeta, i, i == 0);
               }
             }
             catch (ServiceException e) {
