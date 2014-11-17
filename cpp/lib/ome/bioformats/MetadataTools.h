@@ -43,6 +43,7 @@
 #include <ome/compat/filesystem.h>
 
 #include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/MetadataRoot.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
 #ifndef OME_BIOFORMATS_METADATATOOLS_H
@@ -113,6 +114,15 @@ namespace ome
              dimension_size_type idx4);
 
     /**
+     * Create OME-XML metadata from XML document.
+     *
+     * @param document the XML document source.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const std::string& document);
+
+    /**
      * Create OME-XML metadata from reader core metadata.
      *
      * @param reader the reader to use.
@@ -121,9 +131,30 @@ namespace ome
      * @returns the OME-XML metadata.
      */
     std::shared_ptr< ::ome::xml::meta::Metadata>
-    createMetadata(const FormatReader& reader,
-                   bool                doPlane = false,
-                   bool                doImageName = true);
+    createOMEXMLMetadata(const FormatReader& reader,
+                         bool                doPlane = false,
+                         bool                doImageName = true);
+
+
+    /**
+     * Create OME-XML metadata root from XML document.
+     *
+     * @param document the XML document source.
+     * @returns the OME-XML metadata root.
+     */
+    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    createOMEXMLRoot(const std::string& document);
+
+    /**
+     * Get OME-XML metadata from metadata.
+     *
+     * This will convert the metadata to OME-XML metadata if required.
+     *
+     * @param retrieve the metadata to use.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    getOMEXMLMetadata(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve);
 
     /**
      * Fill OME-XML metadata store from reader core metadata.
@@ -202,6 +233,23 @@ namespace ome
      */
     std::string
     getModelVersion();
+
+    /**
+     * Get the model version used by an OME-XML document
+     *
+     * @returns the model version.
+     */
+    std::string
+    getModelVersion(const std::string& document)
+
+    /**
+     * Transform an OME-XML document to the latest model version
+     *
+     * @param string the OME-XML document.
+     * @returns the transformed OME-XML document.
+     */
+    std::string
+    transformToLatestModelVersion(const std::string& document);
 
     /**
      * Enable or disable default creation date.

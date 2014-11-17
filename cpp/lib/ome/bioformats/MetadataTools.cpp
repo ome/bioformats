@@ -48,8 +48,8 @@
 
 #include <ome/xml/model/Image.h>
 #include <ome/xml/model/MetadataOnly.h>
+#include <ome/xml/model/OMEModel.h>
 #include <ome/xml/model/Pixels.h>
-
 #include <ome/xml/model/primitives/Timestamp.h>
 
 using ome::xml::meta::Metadata;
@@ -61,6 +61,7 @@ using ome::xml::meta::OMEXMLMetadataRoot;
 using ome::xml::model::Image;
 using ome::xml::model::MetadataOnly;
 using ome::xml::model::Pixels;
+using ome::xml::model::OMEModel;
 using ome::xml::model::primitives::Timestamp;
 using ome::xml::model::primitives::PositiveInteger;
 
@@ -123,15 +124,58 @@ namespace ome
       return fmt.str();
     }
 
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const std::string& document)
+    {
+      /// @todo Parse OME-XML document.
+      return std::shared_ptr< ::ome::xml::meta::Metadata>();
+    }
+
     std::shared_ptr<Metadata>
-    createMetadata(const FormatReader& reader,
-                   bool                doPlane,
-                   bool                doImageName)
+    createOMEXMLMetadata(const FormatReader& reader,
+                         bool                doPlane,
+                         bool                doImageName)
     {
       std::shared_ptr<Metadata> metadata(std::make_shared<OMEXMLMetadata>());
       std::shared_ptr<MetadataStore> store(std::static_pointer_cast<MetadataStore>(metadata));
       fillMetadata(*store, reader, doPlane, doImageName);
       return metadata;
+    }
+
+    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    createOMEXMLRoot(const std::string& document)
+    {
+      /// @todo Implement model transforms.
+
+      // OMEModel model;
+      // std::shared_ptr<OMEXMLMetadataRoot> root(new OMEXMLMetadataRoot(xml, model));
+      // model.resolveReferences();
+      // return root;
+
+      return std::shared_ptr< ::ome::xml::meta::MetadataRoot>();
+    }
+
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    getOMEXMLMetadata(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve)
+    {
+      std::shared_ptr<Metadata> ret;
+
+      if (retrieve)
+        {
+          std::shared_ptr<OMEXMLMetadata> omexml(std::dynamic_pointer_cast<OMEXMLMetadata>(retrieve));
+          if (omexml)
+            {
+              ret = std::static_pointer_cast<Metadata>(omexml);
+            }
+          else
+            {
+              ret = std::shared_ptr<Metadata>(new OMEXMLMetadata());
+              // @todo Implement convertMetadata.
+              // convertMetadata(metadata, ret);
+            }
+        }
+
+      return ret;
     }
 
     void
@@ -310,6 +354,21 @@ namespace ome
     getModelVersion()
     {
       return OME_MODEL_VERSION;
+    }
+
+    std::string
+    getModelVersion(const std::string& document)
+    {
+      /// @todo Parse model version.
+
+      return getModelVersion();
+    }
+
+    std::string
+    transformToLatestModelVersion(const std::string& document)
+    {
+      /// @todo Implement model transforms.
+      return document;
     }
 
     bool
