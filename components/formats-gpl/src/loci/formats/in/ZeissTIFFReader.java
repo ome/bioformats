@@ -216,13 +216,34 @@ public class ZeissTIFFReader extends BaseZeissReader {
     FormatTools.assertId(currentId, true, 1);
     ArrayList<String> files = new ArrayList<String>();
 
-    files.add(tiffInfo.xmlname);
-    if (!noPixels && tiffInfo.origname != null) {
-      files.add(tiffInfo.origname);
+    try {
+      if (new CaseInsensitiveLocation(tiffInfo.xmlname).exists()) {
+        files.add(tiffInfo.xmlname);
+      }
+    }
+    catch (IOException e) {
+      LOGGER.debug("Error checking existence of " + tiffInfo.xmlname, e);
+    }
+    try {
+      if (!noPixels && tiffInfo.origname != null &&
+        new CaseInsensitiveLocation(tiffInfo.origname).exists())
+      {
+        files.add(tiffInfo.origname);
+      }
+    }
+    catch (IOException e) {
+      LOGGER.debug("Error checking existence of " + tiffInfo.origname, e);
     }
     if (!noPixels) {
       for (String tiff : imageFiles) {
-        files.add(tiff);
+        try {
+          if (new CaseInsensitiveLocation(tiff).exists()) {
+            files.add(tiff);
+          }
+        }
+        catch (IOException e) {
+          LOGGER.debug("Error checking existence of " + tiff, e);
+        }
       }
     }
     return files.toArray(new String[files.size()]);
@@ -363,7 +384,12 @@ public class ZeissTIFFReader extends BaseZeissReader {
   protected void initFile(String id) throws FormatException, IOException {
     CaseInsensitiveLocation.invalidateCache();
     TIFFInfo info = evalFile(id);
-    super.initFile(info.origname);
+    if (new CaseInsensitiveLocation(info.origname).exists()) {
+      super.initFile(info.origname);
+    }
+    else {
+      super.initFile(id);
+    }
     this.tiffInfo = info;
     super.initFileMain(info.origname);
   }
