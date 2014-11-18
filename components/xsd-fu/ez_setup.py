@@ -15,8 +15,8 @@ This file can also be run as a script to install or upgrade setuptools.
 """
 import sys
 DEFAULT_VERSION = "0.6c11"
-DEFAULT_URL = "http://pypi.python.org/packages/%s/s/setuptools/" \
-    % sys.version[:3]
+DEFAULT_URL = ("http://pypi.python.org/packages/%s/s/setuptools/"
+               % sys.version[:3])
 
 md5_data = {
     'setuptools-0.6b1-py2.3.egg': '8822caf901250d848b996b7f25c6e6ca',
@@ -96,8 +96,8 @@ def use_setuptools(version=DEFAULT_VERSION, download_base=DEFAULT_URL,
     this routine will print a message to ``sys.stderr`` and raise SystemExit in
     an attempt to abort the calling script.
     """
-    was_imported = 'pkg_resources' in sys.modules or \
-        'setuptools' in sys.modules
+    was_imported = ('pkg_resources' in sys.modules or
+                    'setuptools' in sys.modules)
 
     def do_download():
         egg = download_setuptools(
@@ -221,8 +221,8 @@ def main(argv, version=DEFAULT_VERSION):
             from setuptools.command.easy_install import main
             main(argv)
         else:
-            print "Setuptools version", version, \
-                "or greater has been installed."
+            print ("Setuptools version", version,
+                   "or greater has been installed.")
             print '(Run "ez_setup.py -U setuptools" to reinstall or upgrade.)'
 
 

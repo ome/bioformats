@@ -175,9 +175,9 @@ class OMEModel(object):
             if e_name not in self.parents:
                 self.parents[e_name] = list()
             self.parents[e_name].append(parent.getName())
-        if not e.isExplicitDefine() \
-           and (e_name not in config.EXPLICIT_DEFINE_OVERRIDE and
-                not e.topLevel):
+        if (not e.isExplicitDefine()
+            and (e_name not in config.EXPLICIT_DEFINE_OVERRIDE and
+                 not e.topLevel)):
             logging.info(
                 "Element %s.%s not an explicit define, skipping."
                 % (parent, e))

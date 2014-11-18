@@ -85,8 +85,8 @@ class OMEModelProperty(OMEModelEntity):
             if self.delegate.getUse() == "optional":
                 return 0
             return 1
-        if hasattr(self.delegate, 'choice') \
-           and self.delegate.choice is not None:
+        if (hasattr(self.delegate, 'choice')
+                and self.delegate.choice is not None):
             return self.delegate.choice.getMinOccurs()
         return self.delegate.getMinOccurs()
     minOccurs = property(
@@ -123,13 +123,13 @@ class OMEModelProperty(OMEModelEntity):
         name = self.instanceType
         if isinstance(self.model.opts.lang, language.CXX):
             if self.isEnumeration:
-                name = "%s::enums::%s" \
-                    % (self.model.opts.lang.omexml_model_package, name)
+                name = ("%s::enums::%s"
+                        % (self.model.opts.lang.omexml_model_package, name))
             elif (self.model.opts.lang.hasPrimitiveType(name) and
                   not self.model.opts.lang.hasFundamentalType(name) and
                   name != "std::string"):
-                name = "%s::primitives::%s" \
-                    % (self.model.opts.lang.omexml_model_package, name)
+                name = ("%s::primitives::%s"
+                        % (self.model.opts.lang.omexml_model_package, name))
             elif (name != self.instanceType or
                   self.model.getObjectByName(self.instanceType) is not None):
                 name = "%s::%s" % (self.model.opts.lang.omexml_model_package,
@@ -177,8 +177,8 @@ class OMEModelProperty(OMEModelEntity):
         if name is None:
             # Hand back the type of references or complex types with the
             # useless OME XML 'Ref' suffix removed.
-            if self.isBackReference or \
-               (not self.isAttribute and self.delegate.isComplex()):
+            if (self.isBackReference or
+                    (not self.isAttribute and self.delegate.isComplex())):
                 name = config.REF_REGEX.sub('', self.type)
             # Hand back the type of complex types
             elif not self.isAttribute and self.delegate.isComplex():
@@ -201,17 +201,17 @@ class OMEModelProperty(OMEModelEntity):
         name = self.langType
         if isinstance(self.model.opts.lang, language.CXX):
             if self.isEnumeration:
-                name = "%s::enums::%s" \
-                    % (self.model.opts.lang.omexml_model_package, name)
+                name = ("%s::enums::%s"
+                        % (self.model.opts.lang.omexml_model_package, name))
             elif (self.model.opts.lang.hasPrimitiveType(name) and
                   not self.model.opts.lang.hasFundamentalType(name) and
                   name != "std::string"):
-                name = "%s::primitives::%s" \
-                    % (self.model.opts.lang.omexml_model_package, name)
+                name = ("%s::primitives::%s"
+                        % (self.model.opts.lang.omexml_model_package, name))
             elif (name != self.langType or
                   self.model.getObjectByName(self.langType) is not None):
-                name = "%s::%s" \
-                    % (self.model.opts.lang.omexml_model_package, name)
+                name = ("%s::%s"
+                        % (self.model.opts.lang.omexml_model_package, name))
 
         return name
     langTypeNS = property(
@@ -231,8 +231,8 @@ class OMEModelProperty(OMEModelEntity):
                 # TODO: Handle different arg/mstype = types
                 # TODO: Allow the model namespace to be configured
                 # independently of the metadata namespace.
-                mstype = "const ::%s::AffineTransform&" \
-                    % (self.model.opts.lang.omexml_model_package)
+                mstype = ("const ::%s::AffineTransform&"
+                          % (self.model.opts.lang.omexml_model_package))
 
         if isinstance(self.model.opts.lang, language.Java):
             if (mstype is None and not self.isPrimitive and
@@ -265,8 +265,8 @@ class OMEModelProperty(OMEModelEntity):
                 # TODO: Handle different arg/mstype = types
                 # TODO: Allow the model namespace to be configured
                 # independently of the metadata namespace.
-                mstype = "const ::%s::AffineTransform&" \
-                    % (self.model.opts.lang.omexml_model_package)
+                mstype = ("const ::%s::AffineTransform&"
+                          % (self.model.opts.lang.omexml_model_package))
 
         if isinstance(self.model.opts.lang, language.Java):
             if (mstype is None and not self.isPrimitive and
@@ -672,12 +672,14 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 if self.isEnumeration:
                     if self.minOccurs == 0:
-                        idefault = "std::shared_ptr<%s>(new %s(%s::%s))" \
+                        idefault = (
+                            "std::shared_ptr<%s>(new %s(%s::%s))"
                             % (ns_sep, self.langTypeNS, self.langTypeNS,
-                               self.defaultValue.upper())
+                               self.defaultValue.upper()))
                     else:
-                        idefault = "%s::%s" \
-                            % (self.langTypeNS, self.defaultValue.upper())
+                        idefault = (
+                            "%s::%s"
+                            % (self.langTypeNS, self.defaultValue.upper()))
                 else:
                     pass
             elif self.maxOccurs == 1 and (
@@ -688,8 +690,9 @@ class OMEModelProperty(OMEModelEntity):
                     if self.minOccurs == 0:
                         pass
                     else:
-                        idefault = "%s::%s" \
-                            % (self.langTypeNS, self.defaultValue.upper())
+                        idefault = (
+                            "%s::%s"
+                            % (self.langTypeNS, self.defaultValue.upper()))
                 else:
                     pass
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
@@ -701,8 +704,8 @@ class OMEModelProperty(OMEModelEntity):
         doc="""The property's Java instance variable type.""")
 
     def _get_instanceVariableComment(self):
-        icomment = "*** WARNING *** Unhandled or skipped property %s" \
-            % self.name
+        icomment = ("*** WARNING *** Unhandled or skipped property %s"
+                    % self.name)
 
         if self.isReference and self.maxOccurs > 1:
             icomment = "%s reference (occurs more than once)" % self.name
@@ -756,8 +759,8 @@ class OMEModelProperty(OMEModelEntity):
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         header = "ome/xml/model/%s.h" % path
-                    elif self.maxOccurs > 1 and \
-                            not self.parent.isAbstractProprietary:
+                    elif (self.maxOccurs > 1 and
+                            not self.parent.isAbstractProprietary):
                         pass
             elif (self.model.opts.lang.hasPrimitiveType(self.langType) and
                   not self.model.opts.lang.hasFundamentalType(self.langType)
@@ -809,8 +812,8 @@ class OMEModelProperty(OMEModelEntity):
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         deps.add("ome/xml/model/%s.h" % path)
-                    elif self.maxOccurs > 1 and \
-                            not self.parent.isAbstractProprietary:
+                    elif (self.maxOccurs > 1 and
+                            not self.parent.isAbstractProprietary):
                         deps.add("ome/xml/model/%s.h" % path)
                 if self.isReference:
                     # Make sure that the reference is a real generated object.
@@ -847,8 +850,8 @@ class OMEModelProperty(OMEModelEntity):
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         pass
-                    elif self.maxOccurs > 1 and \
-                            not self.parent.isAbstractProprietary:
+                    elif (self.maxOccurs > 1 and
+                            not self.parent.isAbstractProprietary):
                         fwd.add(self.langType)
         return fwd
     forward = property(

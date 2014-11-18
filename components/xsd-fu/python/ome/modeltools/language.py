@@ -145,8 +145,8 @@ class Language(object):
         return False
 
     def hasPrimitiveType(self, type):
-        if type in self.primitive_type_map.values() or \
-                type in self.primitive_types:
+        if (type in self.primitive_type_map.values() or
+                type in self.primitive_types):
             return True
         return False
 

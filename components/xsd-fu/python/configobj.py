@@ -1263,8 +1263,8 @@ class ConfigObj(Section):
         if self._errors:
             info = "at line %s." % self._errors[0].line_number
             if len(self._errors) > 1:
-                msg = "Parsing failed with several errors.\nFirst error %s" \
-                    % info
+                msg = ("Parsing failed with several errors.\nFirst error %s"
+                       % info)
                 error = ConfigObjError(msg)
             else:
                 error = self._errors[0]
@@ -1578,8 +1578,8 @@ class ConfigObj(Section):
                                 value = unrepr(value)
                             except Exception, e:
                                 if type(e) == UnknownType:
-                                    msg = 'Unknown name or type in value at'\
-                                        ' line %s.'
+                                    msg = ('Unknown name or type in value at'
+                                           ' line %s.')
                                 else:
                                     msg = 'Parse error in value at line %s.'
                                 self._handle_error(msg, UnreprError, infile,
@@ -1592,8 +1592,8 @@ class ConfigObj(Section):
                             value = unrepr(value)
                         except Exception, e:
                             if isinstance(e, UnknownType):
-                                msg = 'Unknown name or type in value at line"\
-                                    " %s.'
+                                msg = ('Unknown name or type in value at line'
+                                       ' %s.')
                             else:
                                 msg = 'Parse error in value at line %s.'
                             self._handle_error(msg, UnreprError, infile,
@@ -1716,14 +1716,14 @@ class ConfigObj(Section):
         if not value:
             return '""'
 
-        no_lists_no_quotes = not self.list_values and '\n' not in value and \
-            '#' not in value
+        no_lists_no_quotes = (not self.list_values and '\n' not in value and
+                              '#' not in value)
         need_triple = multiline and ((("'" in value) and ('"' in value)) or
                                      ('\n' in value))
-        hash_triple_quote = multiline and not need_triple and ("'" in value) \
-            and ('"' in value) and ('#' in value)
-        check_for_single = (no_lists_no_quotes or not need_triple) and \
-            not hash_triple_quote
+        hash_triple_quote = (multiline and not need_triple and ("'" in value)
+                             and ('"' in value) and ('#' in value))
+        check_for_single = ((no_lists_no_quotes or not need_triple)
+                            and not hash_triple_quote)
 
         if check_for_single:
             if not self.list_values:
