@@ -678,6 +678,14 @@ public class CellSensReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
+    String instrument = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrument, 0);
+
+    for (int i=0; i<magnifications.size(); i++) {
+      store.setObjectiveID(MetadataTools.createLSID("Objective", 0, i), 0, i);
+      store.setObjectiveNominalMagnification(magnifications.get(i), 0, i);
+    }
+
     int nextSize = 0;
     int channelIndex = 0;
     for (int i=0; i<core.size();) {
@@ -717,6 +725,8 @@ public class CellSensReader extends FormatReader {
         }
       }
 
+      store.setImageInstrumentRef(instrument, ii);
+
       if (nextSize < imageNames.size()) {
         String imageName = imageNames.get(nextSize);
         boolean duplicate = false;
@@ -731,6 +741,23 @@ public class CellSensReader extends FormatReader {
           imageName += " #" + ii;
         }
         store.setImageName(imageName, ii);
+
+        int mag = magnifications.size() - 1;
+        if (imageNames.get(nextSize).endsWith("x")) {
+          int nameMag = 0;
+          try {
+            imageName = imageName.substring(0, imageName.indexOf("x"));
+            nameMag = Integer.parseInt(imageName);
+          }
+          catch (NumberFormatException e) {
+          }
+          for (int magnification=0; magnification<magnifications.size(); magnification++) {
+            if (magnifications.get(magnification).intValue() == nameMag) {
+              mag = magnification;
+            }
+          }
+        }
+        store.setObjectiveSettingsID(MetadataTools.createLSID("Objective", 0, mag), ii);
       }
       else {
         store.setImageName("Macro Image", ii);
