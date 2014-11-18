@@ -694,13 +694,13 @@ public class LIFReader extends FormatReader {
                 {
                   continue;
                 }
-                Integer cutIn =
-                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NM).intValue();
+                Double cutIn =
+                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
                   if (nextFilter < cutIns[index].size()) {
                     cutIn = ((Length)
-                      cutIns[index].get(nextFilter)).value(UNITS.NM).intValue();
+                      cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
                   }
                   else {
                     break;
@@ -1166,20 +1166,20 @@ public class LIFReader extends FormatReader {
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
             if ((int) cutIn > 0) {
               if (cutIns[image] == null) {
-                cutIns[image] = new Vector<PositiveInteger>();
+                cutIns[image] = new Vector<PositiveFloat>();
               }
               Length in =
-                FormatTools.getCutIn((int) Math.round(cutIn));
+                FormatTools.getCutIn((double) Math.round(cutIn));
               if (in != null) {
                 cutIns[image].add(in);
               }
             }
             if ((int) cutOut > 0) {
               if (cutOuts[image] == null) {
-                cutOuts[image] = new Vector<PositiveInteger>();
+                cutOuts[image] = new Vector<PositiveFloat>();
               }
               Length out =
-                FormatTools.getCutOut((int) Math.round(cutOut));
+                FormatTools.getCutOut((double) Math.round(cutOut));
               if (out != null) {
                 cutOuts[image].add(out);
               }
@@ -1457,8 +1457,8 @@ public class LIFReader extends FormatReader {
     if (filterSettings == null) return;
 
     activeDetector[image] = new Vector<Boolean>();
-    cutIns[image] = new Vector<PositiveInteger>();
-    cutOuts[image] = new Vector<PositiveInteger>();
+    cutIns[image] = new Vector<PositiveFloat>();
+    cutOuts[image] = new Vector<PositiveFloat>();
     filterModels[image] = new Vector<String>();
     detectorIndexes[image] = new HashMap<Integer, String>();
 
@@ -1545,9 +1545,9 @@ public class LIFReader extends FormatReader {
         posZ[image] = new Length(number, UNITS.REFERENCEFRAME);
       }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
-        Integer v = null;
+        Double v = null;
         try {
-          v = new Integer((int) Double.parseDouble(variant));
+          v = Double.parseDouble(variant);
         }
         catch (NumberFormatException e) { }
         String description = filterSetting.getAttribute("Description");
