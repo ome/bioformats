@@ -2150,7 +2150,7 @@
 					<xsd:documentation>The units of the CutOut - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutInTolerance" use="optional" type="NonNegativeInt" >
+			<xsd:attribute name="CutInTolerance" use="optional" type="NonNegativeFloat" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutInTolerance. Units are set by CutInToleranceUnit.
@@ -2162,7 +2162,7 @@
 					<xsd:documentation>The units of the CutInTolerance - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutOutTolerance" use="optional" type="NonNegativeInt" >
+			<xsd:attribute name="CutOutTolerance" use="optional" type="NonNegativeFloat" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutOutTolerance. Units are set by CutOutToleranceUnit.
