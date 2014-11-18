@@ -9,7 +9,7 @@
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5
 	http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd">
 	<Instrument ID="Instrument:0">
-		<Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3"
+		<Microscope Type="Inverted" Manufacturer="OME Instruments" Model="Lab Mk3"
 			SerialNumber="L3-1234"/>
 		<LightSource ID="LightSource:0" Power="200" Manufacturer="OME Lights"
 			Model="Ruby60" SerialNumber="A654321">
