@@ -352,6 +352,8 @@ public class CellSensReader extends FormatReader {
   private ArrayList<String> imageNames = new ArrayList<String>();
   private ArrayList<String> imageTypes = new ArrayList<String>();
 
+  private HashMap<Integer, byte[]> backgroundColor = new HashMap<Integer, byte[]>();
+
   // -- Constructor --
 
   /** Constructs a new cellSens reader. */
@@ -546,6 +548,7 @@ public class CellSensReader extends FormatReader {
       acquisitionTimes.clear();
       imageNames.clear();
       imageTypes.clear();
+      backgroundColor.clear();
     }
   }
 
@@ -835,7 +838,19 @@ public class CellSensReader extends FormatReader {
 
     Integer index = (Integer) tileMap.get(getCoreIndex()).get(t);
     if (index == null) {
-      return new byte[getTileSize()];
+      // fill in the tile with the stored background color
+      // usually this is either black or white
+      byte[] tile = new byte[getTileSize()];
+      byte[] color = backgroundColor.get(getCoreIndex());
+      /* debug */ System.out.println("color.length = " + color.length);
+      if (color != null) {
+        for (int q=0; q<getTileSize(); q+=color.length) {
+          for (int i=0; i<color.length; i++) {
+            tile[q + i] = color[i];
+          }
+        }
+      }
+      return tile;
     }
 
     Long offset = tileOffsets.get(getCoreIndex())[index];
@@ -943,7 +958,14 @@ public class CellSensReader extends FormatReader {
     tileY.add(etsFile.readInt());
     int tileZ = etsFile.readInt();
     etsFile.skipBytes(4 * 17); // pixel info hints
-    etsFile.skipBytes(4 * 10); // background color
+
+    byte[] color = new byte[
+      ms.sizeC * FormatTools.getBytesPerPixel(convertPixelType(pixelType))];
+    etsFile.read(color);
+
+    backgroundColor.put(getCoreIndex(), color);
+
+    etsFile.skipBytes(4 * 10 - color.length); // background color
     etsFile.skipBytes(4); // component order
     boolean usePyramid = etsFile.readInt() != 0;
 
@@ -1149,6 +1171,7 @@ public class CellSensReader extends FormatReader {
         tileMap.add(map);
         nDimensions.add(nDimensions.get(nDimensions.size() - 1));
         tileOffsets.add(tileOffsets.get(tileOffsets.size() - 1));
+        backgroundColor.put(core.size() - 1, color);
       }
 
       ms.resolutionCount = finalResolution;
