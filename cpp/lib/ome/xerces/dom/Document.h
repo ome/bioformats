@@ -40,12 +40,16 @@
 #define OME_XERCES_DOM_DOCUMENT_H
 
 #include <ome/compat/config.h>
+#include <ome/compat/memory.h>
 
 #include <cassert>
+#include <istream>
 #include <string>
 #include <ostream>
 
 #include <xercesc/dom/DOMDocument.hpp>
+
+#include <ome/compat/filesystem.h>
 
 #include <ome/xerces/dom/Element.h>
 #include <ome/xerces/String.h>
@@ -69,12 +73,78 @@ namespace ome
        */
       class Document
       {
+      protected:
+        class Wrapper
+        {
+        private:
+          xercesc::DOMDocument *document;
+
+        public:
+          Wrapper():
+            document()
+          {}
+
+          Wrapper(xercesc::DOMDocument *document):
+            document(document)
+          {}
+
+          ~Wrapper()
+          {
+            if (document)
+              document->release();
+          }
+
+          xercesc::DOMDocument&
+          operator * ()
+          {
+            if (!document)
+              throw std::logic_error("Accessing null DOM document");
+            return *document;
+          };
+
+          const xercesc::DOMDocument&
+          operator * () const
+          {
+            if (!document)
+              throw std::logic_error("Accessing null DOM document");
+            return *document;
+          };
+
+          xercesc::DOMDocument *
+          operator -> ()
+          {
+            if (!document)
+              throw std::logic_error("Accessing null DOM document");
+            return document;
+          };
+
+          const xercesc::DOMDocument *
+          operator -> () const
+          {
+            if (!document)
+              throw std::logic_error("Accessing null DOM document");
+            return document;
+          };
+
+          xercesc::DOMDocument *
+          get()
+          { return document; }
+
+          const xercesc::DOMDocument *
+          get() const
+          { return document; }
+
+          void
+          reset()
+          { document = 0; }
+        };
+
       public:
         /**
          * Construct a NULL Document.
          */
         Document ():
-          xmldoc()
+          xmldoc(std::shared_ptr<Wrapper>(new Wrapper()))
         {
         }
 
@@ -94,9 +164,30 @@ namespace ome
          * @param document the Document to wrap.
          */
         Document (xercesc::DOMDocument *document):
-          xmldoc(document)
+          xmldoc(std::shared_ptr<Wrapper>(new Wrapper(document)))
         {
         }
+
+        /**
+         * Construct a Document from the content of a file.
+         *
+         * @param file the file to read.
+         */
+        Document (const boost::filesystem::path& file);
+
+        /**
+         * Construct a Document from the content of an input stream.
+         *
+         * @param file the file to read.
+         */
+        Document (std::istream& stream);
+
+        /**
+         * Construct a Document from the content of a string.
+         *
+         * @param text the string to use.
+         */
+        Document (const std::string& text);
 
         /// Destructor.
         ~Document ()
@@ -113,7 +204,7 @@ namespace ome
         xercesc::DOMDocument*
         get()
         {
-          return xmldoc;
+          return xmldoc->get();
         }
 
         /**
@@ -126,7 +217,7 @@ namespace ome
         const xercesc::DOMDocument*
         get() const
         {
-          return xmldoc;
+          return xmldoc->get();
         }
 
         /**
@@ -143,7 +234,7 @@ namespace ome
           xerces::String xns(ns);
           xerces::String xname(name);
 
-          return xmldoc->createElementNS(xns, xname);
+          return (*xmldoc)->createElementNS(xns, xname);
         }
 
         /**
@@ -168,7 +259,7 @@ namespace ome
         Document&
         operator= (xercesc::DOMDocument *document)
         {
-          this->xmldoc = document;
+          this->xmldoc = std::shared_ptr<Wrapper>(new Wrapper(document));
           return *this;
         }
 
@@ -180,8 +271,7 @@ namespace ome
         xercesc::DOMDocument&
         operator* () noexcept
         {
-          assert(xmldoc != 0);
-          return *xmldoc;
+          return **xmldoc;
         }
 
         /**
@@ -192,8 +282,7 @@ namespace ome
         const xercesc::DOMDocument&
         operator* () const noexcept
         {
-          assert(xmldoc != 0);
-          return *xmldoc;
+          return **xmldoc;
         }
 
         /**
@@ -204,8 +293,7 @@ namespace ome
         xercesc::DOMDocument *
         operator-> () noexcept
         {
-          assert(xmldoc != 0);
-          return xmldoc;
+          return xmldoc->get();
         }
 
         /**
@@ -216,8 +304,7 @@ namespace ome
         const xercesc::DOMDocument *
         operator-> () const noexcept
         {
-          assert(xmldoc != 0);
-          return xmldoc;
+          return xmldoc->get();
         }
 
         /**
@@ -227,12 +314,12 @@ namespace ome
          */
         operator bool () const
         {
-          return xmldoc != 0;
+          return xmldoc.get() != 0;
         }
 
       private:
         /// The wrapped xercesc::DOMDocument.
-        xercesc::DOMDocument *xmldoc;
+        std::shared_ptr<Wrapper> xmldoc;
       };
 
     }

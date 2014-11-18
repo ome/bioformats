@@ -38,55 +38,52 @@
 
 #include <ome/xerces/String.h>
 #include <ome/xerces/Platform.h>
-#include <ome/xerces/ErrorReporter.h>
+#include <ome/xerces/dom/Document.h>
 
 #include <ome/test/config.h>
 
-// #include <ome/xerces/dom/Document.h>
-// #include <ome/xerces/dom/Node.h>
-// #include <ome/xerces/dom/Element.h>
-// #include <ome/xerces/dom/NodeList.h>
-
-#include <xercesc/dom/DOM.hpp>
-
-#include <xercesc/framework/StdOutFormatTarget.hpp>
-#include <xercesc/framework/LocalFileFormatTarget.hpp>
-#include <xercesc/parsers/XercesDOMParser.hpp>
-#include <xercesc/util/OutOfMemoryException.hpp>
-#include <xercesc/util/XMLException.hpp>
-
 #include <ome/test/test.h>
 
+#include <fstream>
 #include <stdexcept>
 
 namespace xml = ome::xerces;
 
-TEST(Xerces, ValidateOMEXML)
+TEST(Xerces, DocumentFromFile)
 {
-  const char *filename = PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome";
-
   xml::Platform xmlplat;
 
-  xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto;  // Val_Always;
-  bool do_ns = true;
-  bool do_schema = true;
-  //bool do_valid = false;
-  bool do_fullcheck = true;
-  bool do_create = true;
+  std::string filename(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome");
 
-  xercesc::XercesDOMParser parser;
-  parser.setValidationScheme(vscheme);
-  parser.setDoNamespaces(do_ns);
-  parser.setDoSchema(do_schema);
-  parser.setHandleMultipleImports (true);
-  parser.setValidationSchemaFullChecking(do_fullcheck);
-  parser.setCreateEntityReferenceNodes(do_create);
+  xml::dom::Document doc(boost::filesystem::path(filename));
+}
 
-  xml::ErrorReporter er;
-  parser.setErrorHandler(&er);
+TEST(Xerces, DocumentFromStream)
+{
+  xml::Platform xmlplat;
 
-  parser.parse(filename);
+  std::string filename(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome");
 
-  if (er)
-    throw std::runtime_error("Parse error");
+  std::ifstream in(filename);
+
+  xml::dom::Document doc(in);
+}
+
+TEST(Xerces, DocumentFromString)
+{
+  xml::Platform xmlplat;
+
+  std::string filename(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome");
+
+  std::string data;
+
+  std::ifstream in(filename);
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  xml::dom::Document doc(data);
 }
