@@ -40,11 +40,11 @@
 
 #include <ome/internal/version.h>
 
+#include <ome/test/test.h>
+
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
-
-#include <gtest/gtest.h>
 
 TEST(Version, CorrectVersion)
 {

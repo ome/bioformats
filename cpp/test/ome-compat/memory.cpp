@@ -38,7 +38,7 @@
 
 #include <ome/compat/memory.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 class base
 {
@@ -72,64 +72,64 @@ public:
 TEST(Memory, CreateShared)
 {
   std::shared_ptr<inh> p(std::make_shared<inh>());
-  ASSERT_TRUE(p != 0);
+  ASSERT_TRUE(static_cast<bool>(p));
 }
 
 TEST(Memory, CreateWeak)
 {
   std::shared_ptr<inh> p(std::make_shared<inh>());
-  ASSERT_TRUE(p != 0);
+  ASSERT_TRUE(static_cast<bool>(p));
 
   std::shared_ptr<inh> w(p);
   std::shared_ptr<inh> p2(w);
-  ASSERT_TRUE(p2 != 0);
+  ASSERT_TRUE(static_cast<bool>(p2));
 }
 
 TEST(Memory, StaticPointerCast)
 {
   std::shared_ptr<inh> p(std::make_shared<inh>());
-  ASSERT_TRUE(p != 0);
+  ASSERT_TRUE(static_cast<bool>(p));
 
   std::shared_ptr<base> b(std::static_pointer_cast<base>(p));
-  ASSERT_TRUE(b != 0);
+  ASSERT_TRUE(static_cast<bool>(b));
 }
 
 TEST(Memory, DynamicPointerCast)
 {
   std::shared_ptr<base> b(std::make_shared<inh>());
-  ASSERT_TRUE(b != 0);
+  ASSERT_TRUE(static_cast<bool>(b));
 
   std::shared_ptr<inh> p = std::dynamic_pointer_cast<inh>(b);
-  ASSERT_TRUE(p != 0);
+  ASSERT_TRUE(static_cast<bool>(p));
 }
 
 TEST(Memory, DynamicPointerCastFail)
 {
   std::shared_ptr<base> b(std::make_shared<inh>());
-  ASSERT_TRUE(b != 0);
+  ASSERT_TRUE(static_cast<bool>(b));
 
   std::shared_ptr<fail> f = std::dynamic_pointer_cast<fail>(b);
-  ASSERT_TRUE(f == 0);
+  ASSERT_FALSE(static_cast<bool>(f));
 }
 
 TEST(Memory, ConstPointerCast)
 {
   std::shared_ptr<base> b(std::make_shared<inh>());
-  ASSERT_TRUE(b != 0);
+  ASSERT_TRUE(static_cast<bool>(b));
 
   std::shared_ptr<const base> c = std::const_pointer_cast<base>(b);
-  ASSERT_TRUE(c != 0);
+  ASSERT_TRUE(static_cast<bool>(c));
 }
 
 TEST(Memory, EnableSharedFromThis)
 {
   std::shared_ptr<cshared> c(std::make_shared<cshared>());
-  ASSERT_TRUE(c != 0);
+  ASSERT_TRUE(static_cast<bool>(c));
   ASSERT_EQ(c.use_count(), 1);
 
   {
     std::shared_ptr<cshared> c2 = c->getptr();
-    ASSERT_TRUE(c2 != 0);
+    ASSERT_TRUE(static_cast<bool>(c2));
     ASSERT_EQ(c.use_count(), 2);
     ASSERT_EQ(c2.use_count(), 2);
   }

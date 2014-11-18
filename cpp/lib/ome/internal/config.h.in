@@ -51,5 +51,14 @@
 #cmakedefine TIFF_HAVE_FIELDINFO 1
 #cmakedefine TIFF_HAVE_MERGEFIELDINFO 1
 #cmakedefine TIFF_HAVE_MERGEFIELDINFO_RETURN 1
+#cmakedefine TIFF_HAVE_TMSIZE_T 1
+#cmakedefine TIFF_HAVE_TSIZE_T 1
+
+#ifndef TIFF_HAVE_TMSIZE_T
+typedef signed long tmsize_t;
+#endif // ! TIFF_HAVE_TMSIZE_T
+#ifndef TIFF_HAVE_TSIZE_T
+typedef unsigned long tsize_t;
+#endif // !TIFF_HAVE_TSIZE_T
 
 #endif // OME_INTERNAL_CONFIG_H

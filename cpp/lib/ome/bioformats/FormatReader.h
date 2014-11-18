@@ -134,6 +134,14 @@ namespace ome
       FormatReader()
       {}
 
+    private:
+      /// Copy constructor (deleted).
+      FormatReader (const FormatReader&);
+
+      /// Assignment operator (deleted).
+      FormatReader&
+      operator= (const FormatReader&);
+
     public:
       /// Destructor.
       virtual
@@ -144,7 +152,7 @@ namespace ome
       virtual
       bool
       isThisType(const std::string& name,
-                 bool               open = true) = 0;
+                 bool               open = true) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -161,7 +169,7 @@ namespace ome
       virtual
       bool
       isThisType(const uint8_t *begin,
-                 const uint8_t *end) = 0;
+                 const uint8_t *end) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -178,7 +186,7 @@ namespace ome
       virtual
       bool
       isThisType(const uint8_t *begin,
-                 std::size_t    length) = 0;
+                 std::size_t    length) const = 0;
 
       /**
        * Check if the given input stream is a valid stream for this file format.
@@ -190,7 +198,7 @@ namespace ome
        */
       virtual
       bool
-      isThisType(std::istream& stream) = 0;
+      isThisType(std::istream& stream) const = 0;
 
       /**
        * Determine the number of image planes in the current file.
@@ -335,15 +343,11 @@ namespace ome
       isFalseColor() const = 0;
 
       /**
-       * Get the 8-bit color lookup table associated with the most
-       * recently opened image.
+       * Get the color lookup table associated with the most recently
+       * opened image.
        *
        * If no image planes have been opened, or if isIndexed()
-       * returns @c false, then this may throw an exception. If
-       * getPixelType() returns anything other
-       * ome::xml::model::enums::PixelType::UINT8 or
-       * ome::xml::model::enums::PixelType::INT8 this method will
-       * throw an exception.
+       * returns @c false, then this may throw an exception.
        *
        * @param buf the destination pixel buffer.
        *
@@ -352,27 +356,7 @@ namespace ome
        */
       virtual
       void
-      get8BitLookupTable(VariantPixelBuffer& buf) const = 0;
-
-      /**
-       * Get the 16-bit color lookup table associated with the most
-       * recently opened image.
-       *
-       * If no image planes have been opened, or if isIndexed()
-       * returns @c false, then this may throw an exception. Also, if
-       * getPixelType() returns anything other than
-       * ome::xml::model::enums::PixelType::UINT16 or
-       * ome::xml::model::enums::PixelType::INT16 this method will
-       * throw an exception.
-       *
-       * @param buf the destination pixel buffer.
-       *
-       * @todo use a more specific buffer type.
-       * @todo throw on failure.
-       */
-      virtual
-      void
-      get16BitLookupTable(VariantPixelBuffer& buf) const = 0;
+      getLookupTable(VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -597,15 +581,13 @@ namespace ome
       openThumbBytes(dimension_size_type no,
                      VariantPixelBuffer& buf) const = 0;
 
-      // Documented in superclass.
-      //virtual
-      //void
-      //close(bool fileOnly) = 0;
-
       /**
        * Get the number of image series in this file.
        *
        * @returns the number of image series.
+       * @throws std::logic_error if the subresolution metadata (if
+       * any) is invalid; this will only occur if the reader sets
+       * invalid metadata.
        */
       virtual
       dimension_size_type
@@ -620,6 +602,8 @@ namespace ome
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
+       *
+       * @throws std::logic_error if the series is invalid.
        */
       virtual
       void
@@ -1083,6 +1067,8 @@ namespace ome
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
+       *
+       * @throws std::logic_error if the index is invalid.
        */
       virtual
       void
@@ -1110,6 +1096,8 @@ namespace ome
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
+       *
+       * @throws std::logic_error if the resolution is invalid.
        */
       virtual
       void

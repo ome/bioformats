@@ -55,9 +55,9 @@
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/util/XMLException.hpp>
 
-#include <stdexcept>
+#include <ome/test/test.h>
 
-#include <gtest/gtest.h>
+#include <stdexcept>
 
 namespace xml = ome::xerces;
 

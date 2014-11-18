@@ -37,7 +37,13 @@
 
 #include <string>
 
+#include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
+
+#include <ome/xml/meta/MetadataStore.h>
+
+#ifndef OME_BIOFORMATS_METADATATOOLS_H
+#define OME_BIOFORMATS_METADATATOOLS_H
 
 namespace ome
 {
@@ -103,5 +109,17 @@ namespace ome
              dimension_size_type idx3,
              dimension_size_type idx4);
 
+    void
+    fillMetadata(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store,
+                 const FormatReader& reader);
+
   }
 }
+
+#endif // OME_BIOFORMATS_METADATATOOLS_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

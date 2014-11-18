@@ -2,9 +2,9 @@
 #include <ome/xml/model/enums/LaserType.h>
 #include <ome/xml/model/enums/PixelType.h>
 
-#include <sstream>
+#include <ome/test/test.h>
 
-#include <gtest/gtest.h>
+#include <sstream>
 
 using ome::xml::model::enums::LaserType;
 using ome::xml::model::enums::PixelType;
@@ -419,6 +419,7 @@ TEST(Enum, PixelTypeInvalid)
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,

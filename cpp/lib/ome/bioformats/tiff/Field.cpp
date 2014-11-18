@@ -846,6 +846,42 @@ namespace ome
         generic_get1(getIFD(), impl->tag, pc, rc, value);
       }
 
+      /// @copydoc Field::get()
+      template<>
+      void
+      Field<UInt16TagArray1>::get(value_type& value) const
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        if (impl->tag != TIFFTAG_IMAGEJ_META_DATA_BYTE_COUNTS && // private
+            type() != TYPE_SHORT)
+          throw Exception("FieldInfo mismatch with Field handler");
+
+        int rc = readCount();
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        int rc = TIFF_VARIABLE2; // IMAGEJ_META_DATA_BYTE_COUNTS and RICHTIFFIPTC
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_array_get1(getIFD(), impl->tag, rc, value);
+      }
+
+      /// @copydoc Field::set()
+      template<>
+      void
+      Field<UInt16TagArray1>::set(const value_type& value)
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        if (impl->tag != TIFFTAG_IMAGEJ_META_DATA_BYTE_COUNTS && // private
+            type() != TYPE_SHORT)
+          throw Exception("FieldInfo mismatch with Field handler");
+
+        int wc = writeCount();
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        int wc =  TIFF_VARIABLE2; // IMAGEJ_META_DATA_BYTE_COUNTS and RICHTIFFIPTC
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_array_set1(getIFD(), impl->tag, wc, value);
+      }
+
       /// @copydoc Field::set()
       template<>
       void
@@ -984,6 +1020,38 @@ namespace ome
       template<>
       void
       Field<UInt16Predictor1>::set(const value_type& value)
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        bool pc = passCount();
+        int wc = writeCount();
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        bool pc = false;
+        int wc = 1;
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
+      }
+
+      /// @copydoc Field::get()
+      template<>
+      void
+      Field<UInt16Compression1>::get(value_type& value) const
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        bool pc = passCount();
+        int rc = readCount();
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        bool pc = false;
+        int rc = 1;
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
+      }
+
+      /// @copydoc Field::set()
+      template<>
+      void
+      Field<UInt16Compression1>::set(const value_type& value)
       {
 #if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
@@ -1165,6 +1233,49 @@ namespace ome
 #endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set2(getIFD(), impl->tag, pc, wc, value);
+      }
+
+      /// @copydoc Field::get()
+      template<>
+      void
+      Field<UInt16Tag6>::get(value_type& value) const
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        bool pc = passCount();
+        int rc = readCount();
+
+        if (type() != TYPE_SHORT &&
+            pc != false &&
+            ((impl->tag != BITSPERSAMPLE && rc != TIFF_VARIABLE) &&
+             rc != 6))
+          throw Exception("FieldInfo mismatch with Field handler");
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        bool pc = false;
+        int rc = 6;
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_get6(getIFD(), impl->tag, pc, rc, value);
+      }
+
+      /// @copydoc Field::set()
+      template<>
+      void
+      Field<UInt16Tag6>::set(const value_type& value)
+      {
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
+        bool pc = passCount();
+        int wc = writeCount();
+
+        if (type() != TYPE_SHORT &&
+            pc != false &&
+            wc != 6)
+          throw Exception("FieldInfo mismatch with Field handler");
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
+        bool pc = false;
+        int wc = 6;
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
+
+        generic_set6(getIFD(), impl->tag, pc, wc, value);
       }
 
       /// @copydoc Field::get()
