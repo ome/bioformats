@@ -36,6 +36,7 @@
  * #L%
  */
 
+#include <ome/xerces/EntityResolver.h>
 #include <ome/xerces/ErrorReporter.h>
 #include <ome/xerces/Platform.h>
 #include <ome/xerces/String.h>
@@ -73,6 +74,9 @@ namespace
   {
     ome::xerces::ErrorReporter er;
     parser.setErrorHandler(&er);
+
+    ome::xerces::EntityResolver res;
+    parser.setXMLEntityResolver(&res);
 
     parser.parse(source);
 
