@@ -36,6 +36,7 @@
  * #L%
  */
 
+#include <ome/xerces/EntityResolver.h>
 #include <ome/xerces/String.h>
 #include <ome/xerces/Platform.h>
 #include <ome/xerces/dom/Document.h>
@@ -46,38 +47,76 @@
 
 #include <fstream>
 #include <stdexcept>
+#include <vector>
 
 namespace xml = ome::xerces;
 
-TEST(Xerces, DocumentFromFile)
+class XercesTestParameters
 {
-  xml::Platform xmlplat;
+public:
+  std::string filename;
 
-  std::string filename(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome");
+  XercesTestParameters(const std::string& filename):
+    filename(filename)
+  {}
+};
 
-  xml::dom::Document doc(boost::filesystem::path(filename));
+class XercesTest : public ::testing::TestWithParam<XercesTestParameters>
+{
+public:
+  xml::Platform plat;
+
+  std::vector<xml::EntityResolver::RegisterEntity> entities;
+
+  virtual void SetUp()
+  {
+    entities.push_back(xml::EntityResolver::RegisterEntity("http://www.w3.org/2001/XMLSchema",
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/additions/jar/XMLSchema.xsd")));
+
+    entities.push_back(xml::EntityResolver::RegisterEntity("http://www.w3.org/2001/xml.xsd",
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/additions/jar/xml.xsd")));
+
+    entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd",
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/ome.xsd")));
+
+    entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/BinaryFile.xsd",
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/BinaryFile.xsd")));
+
+    entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/SA.xsd",
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/SA.xsd")));
+
+    entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/SPW.xsd",
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/SPW.xsd")));
+
+    entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/ROI.xsd",
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/ROI.xsd")));
+
+  }
+};
+
+TEST_P(XercesTest, DocumentFromFile)
+{
+  const XercesTestParameters& params = GetParam();
+
+  xml::dom::Document doc(boost::filesystem::path(params.filename));
 }
 
-TEST(Xerces, DocumentFromStream)
+TEST_P(XercesTest, DocumentFromStream)
 {
-  xml::Platform xmlplat;
+  const XercesTestParameters& params = GetParam();
 
-  std::string filename(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome");
-
-  std::ifstream in(filename);
+  std::ifstream in(params.filename.c_str());
 
   xml::dom::Document doc(in);
 }
 
-TEST(Xerces, DocumentFromString)
+TEST_P(XercesTest, DocumentFromString)
 {
-  xml::Platform xmlplat;
-
-  std::string filename(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome");
+  const XercesTestParameters& params = GetParam();
 
   std::string data;
 
-  std::ifstream in(filename);
+  std::ifstream in(params.filename.c_str());
   in.seekg(0, std::ios::end);
   data.reserve(in.tellg());
   in.seekg(0, std::ios::beg);
@@ -87,3 +126,19 @@ TEST(Xerces, DocumentFromString)
 
   xml::dom::Document doc(data);
 }
+
+XercesTestParameters params[] =
+  {
+    XercesTestParameters(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome")
+  };
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
+#endif
+
+INSTANTIATE_TEST_CASE_P(XercesVariants, XercesTest, ::testing::ValuesIn(params));
