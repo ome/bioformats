@@ -191,5 +191,12 @@ classdef TestBfGetReader < ReaderTest
             assertEqual(p.value(ome.units.UNITS.MICROM).doubleValue(), .2);
             assertEqual(p.value(ome.units.UNITS.NM).intValue(), 200);
         end
+        
+        % Acquisition date
+        function testAcquisitionDate(self)
+            self.reader = bfGetReader('date-test&acquisitionDate=2014-11-19_05-56-01.fake');
+            date = self.reader.getMetadataStore().getImageAcquisitionDate(0);
+            assertEqual(date.getValue(), '2014-11-19T05:56:01');
+        end
     end
 end
