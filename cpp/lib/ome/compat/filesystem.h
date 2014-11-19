@@ -62,6 +62,10 @@
 
 namespace ome
 {
+
+  /**
+   * OME compatibility functions and classes.
+   */
   namespace compat
   {
 
