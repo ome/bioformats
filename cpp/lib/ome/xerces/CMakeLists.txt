@@ -38,10 +38,12 @@ include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${Xerces_INCLUDE_DIRS})
 
 set(ome_xerces_sources
+    EntityResolver.cpp
     ErrorReporter.cpp
     dom/Document.cpp)
 
 set(ome_xerces_base_headers
+    EntityResolver.h
     ErrorReporter.h
     Platform.h
     String.h)
