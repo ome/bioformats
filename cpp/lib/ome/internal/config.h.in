@@ -86,6 +86,8 @@
 
 #cmakedefine OME_HAVE_CSTDARG 1
 
+#cmakedefine OME_HAVE_DLADDR 1
+
 #cmakedefine TIFF_HAVE_BIGTIFF 1
 #cmakedefine TIFF_HAVE_FIELD 1
 #cmakedefine TIFF_HAVE_FIELDINFO 1

@@ -69,6 +69,7 @@ set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_
 set(OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_SCHEMADIR}")
 
 include(CompilerChecks)
+include(PlatformChecks)
 include(BoostChecks)
 include(RegexChecks)
 include(ThreadChecks)
