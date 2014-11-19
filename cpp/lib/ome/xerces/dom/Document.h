@@ -94,6 +94,15 @@ namespace ome
               document->release();
           }
 
+        private:
+          /// Copy constructor (deleted).
+          Wrapper (const Wrapper&);
+
+          /// Assignment operator (deleted).
+          Wrapper&
+          operator= (const Wrapper&);
+
+        public:
           xercesc::DOMDocument&
           operator * ()
           {
