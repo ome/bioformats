@@ -31,6 +31,7 @@
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+	xmlns:RD="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1"
@@ -41,6 +42,8 @@
 		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5/RD.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5/ROI.xsd"/>
 
@@ -91,6 +94,7 @@
 						<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
 						<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
 						<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="RD:RenderingDefinitions" minOccurs="0" maxOccurs="1"/>
 					</xsd:sequence>
 					<!-- Or: Single BinaryOnly element -->
 					<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">

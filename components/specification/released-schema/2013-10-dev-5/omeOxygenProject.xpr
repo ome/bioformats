@@ -6,8 +6,15 @@
             <serialized version="15.1" xml:space="preserve">
                 <map>
                     <entry>
-                        <String>allow.dt.page.setting.to.override.general.settings</String>
-                        <Boolean>true</Boolean>
+                        <String>catalogs.v5</String>
+                        <String-array>
+                            <String>file:/Users/andrew/Work/bioformats/components/specification/released-schema/2013-10-dev-5/dev-catalog.xml</String>
+                            <String>file:/Users/andrew/Work/bioformats/components/specification/released-schema/2013-10-dev-4/dev-catalog.xml</String>
+                            <String>file:/Users/andrew/Work/bioformats/components/specification/released-schema/2013-10-dev-3/dev-catalog.xml</String>
+                            <String>file:/Users/andrew/Work/bioformats/components/specification/released-schema/2013-10-dev-2/dev-catalog.xml</String>
+                            <String>file:/Users/andrew/Work/bioformats/components/specification/released-schema/2013-10-dev-1/dev-catalog.xml</String>
+                            <String>file:/Applications/oxygen/frameworks/catalog.xml</String>
+                        </String-array>
                     </entry>
                     <entry>
                         <String>editor.page.association</String>
@@ -89,6 +96,14 @@
                     <entry>
                         <String>key.editor.pages.option.pane.group</String>
                         <Boolean>true</Boolean>
+                    </entry>
+                    <entry>
+                        <String>key.xml.catalog.option.pane</String>
+                        <Boolean>true</Boolean>
+                    </entry>
+                    <entry>
+                        <String>prefer</String>
+                        <String>system</String>
                     </entry>
                     <entry>
                         <String>scenario.associations</String>

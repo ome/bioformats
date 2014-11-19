@@ -1,0 +1,310 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    # Copyright (C) 2014 Open Microscopy Environment
+    #       Massachusetts Institute of Technology,
+    #       National Institutes of Health,
+    #       University of Dundee,
+    #       University of Wisconsin at Madison
+    #
+    # This work is licensed under the
+    #       Creative Commons Attribution 3.0 Unported License.
+    # To view a copy of this license, visit
+    #       http://creativecommons.org/licenses/by/3.0/
+    # or send a letter to
+    #       Creative Commons, 444 Castro Street, Suite 900,
+    #       Mountain View, California, 94041, USA.
+    # For attribution instructions, visit
+    #       http://www.openmicroscopy.org/info/attribution
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Written by:  Andrew J Patterson
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd"/>
+
+	<xsd:element name="RenderingDefinitions">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation> An unordered collection of render definitions attached to objects in
+				the OME data model. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="LookUpTable" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="Renderer" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="VirtualChannel" minOccurs="1" maxOccurs="1"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	<!--
+	<xsd:element name="RenderRef"> <!- - top level definition - ->
+		<xsd:annotation>
+			<xsd:documentation>
+				The RenderRef element is a reference to rendering information.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:Reference">
+					<xsd:attribute name="ID" use="required" type="RenderID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+<xsd:simpleType name="RenderID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Render:\S+)|(Render:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+-->
+
+	<xsd:element name="LookUpTable">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>LookUpTables</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:documentation> A . </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the . [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="LookUpTableID"/>
+			<xsd:attribute name="Name" use="required" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="LookUpTableID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern
+				value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:LookUpTable:\S+)|(LookUpTable:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="Renderer">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Renderer</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:documentation> A . </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the . [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:sequence> </xsd:sequence>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="RendererID"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="RendererSettings">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>RendererSettingsCombinations</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> This holds the setting applied to a renderer as well as a reference
+				to the renderer. The ID is the renderer used in this case. The values stored in
+				RendererSettings represent the variable that describe how the Renderer is to be
+				applied to the image. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:Settings">
+					<xsd:attribute name="ID" use="required" type="RendererID"/>
+					<xsd:attribute name="XXXX" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation> The XXXX of the renderer </xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="RendererID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Renderer:\S+)|(Renderer:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="VirtualChannel">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>VirtualChannels</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:documentation> A . </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the . [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:sequence> </xsd:sequence>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="VirtualChannelID"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="VirtualChannelID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern
+				value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:VirtualChannel:\S+)|(VirtualChannel:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="Normalizer">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Normalizers</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:documentation> A . </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the . [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:sequence> </xsd:sequence>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="NormalizerID"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="NormalizerID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Normalizer:\S+)|(Normalizer:\S+)"
+			/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="Processor">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Processors</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:documentation> A . </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the . [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:sequence> </xsd:sequence>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="ProcessorID"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="ProcessorID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Processor:\S+)|(Processor:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+	<xsd:element name="OutputRenderer">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>OutputRenderers</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:documentation> A . </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the . [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:sequence> </xsd:sequence>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="OutputRendererID"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="OutputRendererID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern
+				value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:OutputRenderer:\S+)|(OutputRenderer:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="Compositor">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Compositors</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:documentation> A . </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the . [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:sequence> </xsd:sequence>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="CompositorID"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="CompositorID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Compositor:\S+)|(Compositor:\S+)"
+			/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
+
