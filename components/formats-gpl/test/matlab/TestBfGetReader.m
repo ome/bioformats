@@ -169,5 +169,27 @@ classdef TestBfGetReader < ReaderTest
             self.reader = bfGetReader('interleaved-test&interleaved=false.fake');
             assertFalse(self.reader.isInterleaved());
         end
+        
+        % Physical pixel size tests
+        function testPhysicalPixelSizeX(self)
+            self.reader = bfGetReader('physical-test&physicalSizeX=.2.fake');
+            p = self.reader.getMetadataStore().getPixelsPhysicalSizeX(0);
+            assertEqual(p.value(ome.units.UNITS.MICROM).doubleValue(), .2);
+            assertEqual(p.value(ome.units.UNITS.NM).intValue(), 200);
+        end
+        
+        function testPhysicalPixelSizeY(self)
+            self.reader = bfGetReader('physical-test&physicalSizeY=.2.fake');
+            p = self.reader.getMetadataStore().getPixelsPhysicalSizeY(0);
+            assertEqual(p.value(ome.units.UNITS.MICROM).doubleValue(), .2);
+            assertEqual(p.value(ome.units.UNITS.NM).intValue(), 200);
+        end
+        
+        function testPhysicalPixelSizeZ(self)
+            self.reader = bfGetReader('physical-test&physicalSizeZ=.2.fake');
+            p = self.reader.getMetadataStore().getPixelsPhysicalSizeZ(0);
+            assertEqual(p.value(ome.units.UNITS.MICROM).doubleValue(), .2);
+            assertEqual(p.value(ome.units.UNITS.NM).intValue(), 200);
+        end
     end
 end
