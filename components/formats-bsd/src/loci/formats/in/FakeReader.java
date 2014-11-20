@@ -67,6 +67,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.specification.XMLMockObjects;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
@@ -694,9 +695,9 @@ public class FakeReader extends FormatReader {
         nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
         store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
         store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-        Map<String, String> mapValue = new HashMap<String,String>();
+        List<MapPair> mapValue = new ArrayList<MapPair>();
         for (int keyNum=0; keyNum<10; keyNum++) {
-          mapValue.put("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1));
+          mapValue.add(new MapPair("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
         }
         store.setMapAnnotationValue(mapValue, annotationMapCount);
         store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);

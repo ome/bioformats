@@ -294,19 +294,19 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this annotation */
-	public java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex)
+	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
 		return null;
 	}
 
 	/** Gets the Map value associated with this generic light source */
-	public java.util.Map<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
 		return null;
 	}
 
 	/** Gets the Map value associated with this imaging environment */
-	public java.util.Map<String, String> getImagingEnvironmentMap(int imageIndex)
+	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
 	{
 		return null;
 	}
@@ -421,17 +421,17 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
+	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
 	{
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
 	}
 
 	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.Map<String, String> map, int imageIndex)
+	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
 	{
 	}
 

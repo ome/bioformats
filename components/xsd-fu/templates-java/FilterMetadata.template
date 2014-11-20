@@ -224,19 +224,19 @@ public class FilterMetadata implements MetadataStore
 	}
 
 	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
+	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
 	{
 		store.setMapAnnotationValue(value, mapAnnotationIndex);
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
 		store.setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
 	}
 
 	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.Map<String, String> map, int imageIndex)
+	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
 	{
 		store.setImagingEnvironmentMap(map, imageIndex);
 	}

@@ -188,11 +188,11 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 	Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
 
-	java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex);
+	java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex);
 
-	java.util.Map<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex);
+	java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex);
 
-	java.util.Map<String, String> getImagingEnvironmentMap(int imageIndex);
+	java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex);
 
 	/** Gets the UUID associated with this collection of metadata. */
 	String getUUID();
