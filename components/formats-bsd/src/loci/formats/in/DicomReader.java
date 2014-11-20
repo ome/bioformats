@@ -690,10 +690,13 @@ public class DicomReader extends FormatReader {
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
 
+    if (seriesCount > 1) {
+      core.clear();
+    }
+
     for (int i=0; i<seriesCount; i++) {
-      CoreMetadata ms;
       if (seriesCount == 1) {
-        ms = core.get(i);
+        CoreMetadata ms = core.get(i);
         ms.sizeZ = imagesPerFile * fileList.get(keys[i]).size();
         if (ms.sizeC == 0) ms.sizeC = 1;
         ms.rgb = ms.sizeC > 1;
@@ -702,14 +705,16 @@ public class DicomReader extends FormatReader {
         ms.metadataComplete = true;
         ms.falseColor = false;
         if (isRLE) core.get(i).interleaved = false;
+        ms.imageCount = ms.sizeZ;
       }
       else {
+        helper.close();
         helper.setId(fileList.get(keys[i]).get(0));
-        ms = helper.getCoreMetadataList().get(0);
-        core.add(ms);
+        CoreMetadata ms = helper.getCoreMetadataList().get(0);
         ms.sizeZ *= fileList.get(keys[i]).size();
+        ms.imageCount = ms.sizeZ;
+        core.add(ms);
       }
-      ms.imageCount = core.get(i).sizeZ;
     }
 
     // The metadata store we're working with.
@@ -1120,7 +1125,7 @@ public class DicomReader extends FormatReader {
         }
       }
     }
-    else if (fileList == null) {
+    else if (fileList == null || !isGroupFiles()) {
       fileList = new Hashtable<Integer, Vector<String>>();
       fileList.put(new Integer(0), new Vector<String>());
       fileList.get(0).add(currentId);
@@ -1239,9 +1244,11 @@ public class DicomReader extends FormatReader {
         if (position < fileList.get(fileSeries).size()) {
           fileList.get(fileSeries).setElementAt(file, position);
         }
-        else fileList.get(fileSeries).add(file);
+        else if (!fileList.get(fileSeries).contains(file)) {
+          fileList.get(fileSeries).add(file);
+        }
       }
-      else {
+      else if (!fileList.get(fileSeries).contains(file)) {
         while (position > fileList.get(fileSeries).size()) {
           fileList.get(fileSeries).add(null);
         }
