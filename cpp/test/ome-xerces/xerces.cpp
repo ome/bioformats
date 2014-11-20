@@ -98,7 +98,7 @@ TEST_P(XercesTest, DocumentFromFile)
 {
   const XercesTestParameters& params = GetParam();
 
-  xml::dom::Document doc(boost::filesystem::path(params.filename));
+  xml::dom::Document doc(ome::xerces::dom::createDocument(boost::filesystem::path(params.filename)));
 }
 
 TEST_P(XercesTest, DocumentFromStream)
@@ -107,7 +107,7 @@ TEST_P(XercesTest, DocumentFromStream)
 
   std::ifstream in(params.filename.c_str());
 
-  xml::dom::Document doc(in);
+  xml::dom::Document doc(ome::xerces::dom::createDocument(in));
 }
 
 TEST_P(XercesTest, DocumentFromString)
@@ -124,7 +124,7 @@ TEST_P(XercesTest, DocumentFromString)
   data.assign(std::istreambuf_iterator<char>(in),
               std::istreambuf_iterator<char>());
 
-  xml::dom::Document doc(data);
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
 }
 
 XercesTestParameters params[] =

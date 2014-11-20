@@ -49,10 +49,12 @@ set(ome_xerces_base_headers
     String.h)
 
 set(ome_xerces_dom_headers
+    dom/Base.h
     dom/Document.h
     dom/Element.h
     dom/Node.h
-    dom/NodeList.h)
+    dom/NodeList.h
+    dom/Wrapper.h)
 
 set(ome_xerces_static_headers
     ${ome_xerces_base_headers}

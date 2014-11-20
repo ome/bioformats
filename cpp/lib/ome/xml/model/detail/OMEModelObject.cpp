@@ -99,11 +99,16 @@ namespace ome
                ++pos)
             {
               // Note that this will be null if not an element node.
-              xerces::dom::Element child(*pos);
-              if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName()))) {
-                xerces::dom::Element c2(child);
-                ret.push_back(child);
-              }
+              xercesc::DOMElement *elem = dynamic_cast<xercesc::DOMElement *>(pos->get());
+              if (elem)
+                {
+                  xerces::dom::Element child(elem);
+                  if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName())))
+                    {
+                      xerces::dom::Element c2(child);
+                      ret.push_back(child);
+                    }
+                }
             }
           return ret;
         }

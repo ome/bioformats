@@ -93,7 +93,8 @@ namespace ome
     namespace dom
     {
 
-      Document::Document(const boost::filesystem::path& file)
+      Document
+      createDocument(const boost::filesystem::path& file)
       {
         Platform xmlplat;
 
@@ -103,10 +104,11 @@ namespace ome
         setup_parser(parser);
         read_source(parser, source);
 
-        xmldoc = std::shared_ptr<Wrapper>(new Wrapper(parser.adoptDocument()));
+        return parser.adoptDocument();
       }
 
-      Document::Document(const std::string& text)
+      Document
+      createDocument(const std::string& text)
       {
         Platform xmlplat;
 
@@ -118,10 +120,11 @@ namespace ome
         setup_parser(parser);
         read_source(parser, source);
 
-        xmldoc = std::shared_ptr<Wrapper>(new Wrapper(parser.adoptDocument()));
+        return parser.adoptDocument();
       }
 
-      Document::Document (std::istream& stream)
+      Document
+      createDocument(std::istream& stream)
       {
         Platform xmlplat;
 
@@ -147,7 +150,7 @@ namespace ome
         setup_parser(parser);
         read_source(parser, source);
 
-        xmldoc = std::shared_ptr<Wrapper>(new Wrapper(parser.adoptDocument()));
+        return parser.adoptDocument();
       }
 
     }

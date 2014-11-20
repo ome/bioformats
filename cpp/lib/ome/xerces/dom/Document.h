@@ -52,6 +52,8 @@
 #include <ome/compat/filesystem.h>
 
 #include <ome/xerces/dom/Element.h>
+#include <ome/xerces/dom/NodeList.h>
+#include <ome/xerces/dom/Wrapper.h>
 #include <ome/xerces/String.h>
 
 namespace ome
@@ -71,147 +73,15 @@ namespace ome
        * wrapped object.  It can also be cast to a pointer to the
        * wrapped object, so can substitute for it directly.
        */
-      class Document
+      template<int S>
+      class DocumentWrapper : public Wrapper<xercesc::DOMDocument, NodeWrapper<S> >
       {
-      protected:
-        /**
-         * Internal wrapper owning the wrapped resource.
-         *
-         * Only to be used via a shared_ptr since it's non-copyable.
-         */
-        class Wrapper
-        {
-        private:
-          /// The managed resource.
-          xercesc::DOMDocument *document;
-
-        public:
-          /// Constructor.
-          Wrapper():
-            document()
-          {}
-
-          /**
-           * Construct from pointer to resource.
-           *
-           * @param document the resource to manage.
-           */
-          Wrapper(xercesc::DOMDocument *document):
-            document(document)
-          {}
-
-          /**
-           * Destructor.
-           *
-           * The managed resource (if any) will be released.
-           */
-          ~Wrapper()
-          {
-            if (document)
-              document->release();
-          }
-
-        private:
-          /// Copy constructor (deleted).
-          Wrapper (const Wrapper&);
-
-          /// Assignment operator (deleted).
-          Wrapper&
-          operator= (const Wrapper&);
-
-        public:
-          /**
-           * Get the managed resource.
-           *
-           * @returns a reference to the managed resource.
-           * @throws a @c std::logic_error if there is no managed resource.
-           */
-          xercesc::DOMDocument&
-          operator * ()
-          {
-            if (!document)
-              throw std::logic_error("Accessing null DOM document");
-            return *document;
-          };
-
-          /**
-           * Get the managed resource.
-           *
-           * @returns a reference to the managed resource.
-           * @throws a @c std::logic_error if there is no managed resource.
-           */
-          const xercesc::DOMDocument&
-          operator * () const
-          {
-            if (!document)
-              throw std::logic_error("Accessing null DOM document");
-            return *document;
-          };
-
-          /**
-           * Get the managed resource.
-           *
-           * @returns a pointer to the managed resource.
-           * @throws a @c std::logic_error if there is no managed resource.
-           */
-          xercesc::DOMDocument *
-          operator -> ()
-          {
-            if (!document)
-              throw std::logic_error("Accessing null DOM document");
-            return document;
-          };
-
-          /**
-           * Get the managed resource.
-           *
-           * @returns a pointer to the managed resource.
-           * @throws a @c std::logic_error if there is no managed resource.
-           */
-          const xercesc::DOMDocument *
-          operator -> () const
-          {
-            if (!document)
-              throw std::logic_error("Accessing null DOM document");
-            return document;
-          };
-
-          /**
-           * Get the managed resource.
-           *
-           * @returns a pointer to the managed resource.
-           */
-          xercesc::DOMDocument *
-          get()
-          { return document; }
-
-          /**
-           * Get the managed resource.
-           *
-           * @returns a pointer to the managed resource.
-           */
-          const xercesc::DOMDocument *
-          get() const
-          { return document; }
-
-          /**
-           * Release the managed resource.
-           *
-           * @note This will not free the resource.  Only use this to
-           * transfer ownership and prevent the resource being
-           * destroyed when this object is destroyed.
-           */
-          void
-          reset()
-          { document = 0; }
-        };
-
       public:
         /**
          * Construct a NULL Document.
          */
-        Document ():
-          xmldoc(std::shared_ptr<Wrapper>(new Wrapper()))
+        DocumentWrapper ():
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >()
         {
         }
 
@@ -220,8 +90,28 @@ namespace ome
          *
          * @param document the Document to copy.
          */
-        Document (const Document& document):
-          xmldoc(document.xmldoc)
+        DocumentWrapper (const DocumentWrapper& document):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(document)
+        {
+        }
+
+        /**
+         * Copy construct a Document.
+         *
+         * @param base the base type to copy (must be a Document).
+         */
+        DocumentWrapper (const typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_type& base):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
+        {
+        }
+
+        /**
+         * Construct a Document from a xercesc::DOMNode *.
+         *
+         * @param base the DOMNode to wrap.
+         */
+        DocumentWrapper (const typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_element_type *base):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
         {
         }
 
@@ -230,61 +120,27 @@ namespace ome
          *
          * @param document the Document to wrap.
          */
-        Document (xercesc::DOMDocument *document):
-          xmldoc(std::shared_ptr<Wrapper>(new Wrapper(document)))
+        DocumentWrapper (typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::element_type *document):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(document)
         {
         }
-
-        /**
-         * Construct a Document from the content of a file.
-         *
-         * @param file the file to read.
-         */
-        Document (const boost::filesystem::path& file);
-
-        /**
-         * Construct a Document from the content of an input stream.
-         *
-         * @param stream the stream to read.
-         */
-        Document (std::istream& stream);
-
-        /**
-         * Construct a Document from the content of a string.
-         *
-         * @param text the string to use.
-         */
-        Document (const std::string& text);
 
         /// Destructor.
-        ~Document ()
+        ~DocumentWrapper ()
         {
         }
 
         /**
-         * Get wrapped xercesc::DOMDocument *.
+         * Assign a Document.
          *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
+         * @param wrapped the Document to assign.
+         * @returns the Document.
          */
-        xercesc::DOMDocument*
-        get()
+        DocumentWrapper&
+        operator= (const DocumentWrapper& wrapped)
         {
-          return xmldoc->get();
-        }
-
-        /**
-         * Get wrapped xercesc::DOMDocument *.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        const xercesc::DOMDocument*
-        get() const
-        {
-          return xmldoc->get();
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::operator=(wrapped);
+          return *this;
         }
 
         /**
@@ -301,93 +157,56 @@ namespace ome
           xerces::String xns(ns);
           xerces::String xname(name);
 
-          return (*xmldoc)->createElementNS(xns, xname);
+          return (*this)->createElementNS(xns, xname);
         }
 
         /**
-         * Assign a Document.
+         * Create Element with namespace.
          *
-         * @param document the Document to assign.
-         * @returns the Document.
+         * @param ns the namespace.
+         * @param name the element name.
+         * @returns the created Element.
          */
-        Document&
-        operator= (Document& document)
+        NodeList
+        getChildNodes()
         {
-          this->xmldoc = document.xmldoc;
-          return *this;
+          return (*this)->getChildNodes();
         }
-
-        /**
-         * Assign a xercesc::DOMDocument *.
-         *
-         * @param document the Document to assign.
-         * @returns the Document.
-         */
-        Document&
-        operator= (xercesc::DOMDocument *document)
-        {
-          this->xmldoc = std::shared_ptr<Wrapper>(new Wrapper(document));
-          return *this;
-        }
-
-        /**
-         * Dereference to xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        xercesc::DOMDocument&
-        operator* () noexcept
-        {
-          return **xmldoc;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        const xercesc::DOMDocument&
-        operator* () const noexcept
-        {
-          return **xmldoc;
-        }
-
-        /**
-         * Dereference to xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        xercesc::DOMDocument *
-        operator-> () noexcept
-        {
-          return xmldoc->get();
-        }
-
-        /**
-         * Dereference to const xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        const xercesc::DOMDocument *
-        operator-> () const noexcept
-        {
-          return xmldoc->get();
-        }
-
-        /**
-         * Check if the wrapped Document is NULL.
-         *
-         * @returns true if valid, false if NULL.
-         */
-        operator bool () const
-        {
-          return xmldoc.get() != 0;
-        }
-
-      private:
-        /// The wrapped xercesc::DOMDocument.
-        std::shared_ptr<Wrapper> xmldoc;
       };
+
+      /// Managed Document.
+      typedef DocumentWrapper<MANAGED> ManagedDocument;
+      /// Unmanaged Document.
+      typedef DocumentWrapper<UNMANAGED> UnmanagedDocument;
+      /// Default Document.
+      typedef ManagedDocument Document;
+
+      /**
+       * Construct a Document from the content of a file.
+       *
+       * @param file the file to read.
+       * @returns the new Document.
+       */
+      Document
+      createDocument(const boost::filesystem::path& file);
+
+      /**
+       * Construct a Document from the content of a string.
+       *
+       * @param text the string to use.
+       * @returns the new Document.
+       */
+      Document
+      createDocument(const std::string& text);
+
+      /**
+       * Construct a Document from the content of an input stream.
+       *
+       * @param stream the stream to read.
+       * @returns the new Document.
+       */
+      Document
+      createDocument(std::istream& stream);
 
     }
   }
