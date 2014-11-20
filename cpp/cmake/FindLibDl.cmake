@@ -51,11 +51,10 @@ mark_as_advanced(LibDl_LIBRARY)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibDl
-                                  FOUND_VAR LibDl_FOUND
                                   REQUIRED_VARS LibDl_INCLUDE_DIR
                                   FAIL_MESSAGE "Failed to find libdl")
 
-if(LibDl_FOUND)
+if(LIBDL_FOUND)
   set(LibDl_INCLUDE_DIRS "${LibDl_INCLUDE_DIR}")
   if(LibDl_LIBRARY)
     set(LibDl_LIBRARIES "${LibDl_LIBRARY}")
