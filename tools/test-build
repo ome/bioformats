@@ -57,6 +57,7 @@ cppwrap()
 sphinx()
 {
     (
+        flake8 -v .
         export SPHINXOPTS="-W"
         ant -Dsphinx.opts=$SPHINXOPTS clean-docs-sphinx
         ant -Dsphinx.opts=$SPHINXOPTS docs-sphinx
