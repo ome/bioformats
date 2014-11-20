@@ -270,6 +270,7 @@ namespace ome
     /**
      * Get the model version used by an OME-XML document
      *
+     * @param document the OME-XML document.
      * @returns the model version.
      */
     std::string
@@ -278,7 +279,7 @@ namespace ome
     /**
      * Transform an OME-XML document to the latest model version
      *
-     * @param string the OME-XML document.
+     * @param document the OME-XML document.
      * @returns the transformed OME-XML document.
      */
     std::string
