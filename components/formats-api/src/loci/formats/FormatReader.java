@@ -1406,6 +1406,7 @@ public abstract class FormatReader extends FormatHandler
       }
 
       if (store instanceof OMEXMLMetadata) {
+        ((OMEXMLMetadata) store).resolveReferences();
         setupService();
 
         for (int series=0; series<getSeriesCount(); series++) {
