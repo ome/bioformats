@@ -39,10 +39,10 @@ import ij.plugin.frame.RoiManager;
 import java.awt.Color;
 import java.awt.Rectangle;
 
+import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
-
 import ome.xml.model.Ellipse;
 import ome.xml.model.Image;
 import ome.xml.model.OME;
@@ -67,199 +67,262 @@ import ome.xml.model.Union;
  */
 public class ROIHandler {
 
-  // -- ROIHandler API methods --
+    // -- ROIHandler API methods --
 
-  /**
-   * Look for ROIs in the given OMEXMLMetadata; if any are present, apply
-   * them to the given images and display them in the ROI manager.
-   */
-  public static void openROIs(IMetadata retrieve, ImagePlus[] images) {
-    if (!(retrieve instanceof OMEXMLMetadata)) return;
-    int nextRoi = 0;
-    RoiManager manager = RoiManager.getInstance();
+    /**
+     * Look for ROIs in the given OMEXMLMetadata; if any are present, apply
+     * them to the given images and display them in the ROI manager.
+     */
+    public static void openROIs(IMetadata retrieve, ImagePlus[] images) {
+        if (!(retrieve instanceof OMEXMLMetadata)) return;
+        int nextRoi = 0;
+        RoiManager manager = RoiManager.getInstance();
 
-    OME root = (OME) retrieve.getRoot();
+        OME root = (OME) retrieve.getRoot();
 
-    int imageCount = images.length;
-    for (int imageNum=0; imageNum<imageCount; imageNum++) {
-      int roiCount = root.sizeOfROIList();
-      if (roiCount > 0 && manager == null) {
-        manager = new RoiManager();
-      }
-      for (int roiNum=0; roiNum<roiCount; roiNum++) {
-        Union shapeSet = root.getROI(roiNum).getUnion();
-        int shapeCount = shapeSet.sizeOfShapeList();
+        int imageCount = images.length;
+        for (int imageNum=0; imageNum<imageCount; imageNum++) {
+            int roiCount = root.sizeOfROIList();
+            if (roiCount > 0 && manager == null) {
+                manager = new RoiManager();
+            }
+            for (int roiNum=0; roiNum<roiCount; roiNum++) {
+                Union shapeSet = root.getROI(roiNum).getUnion();
+                int shapeCount = shapeSet.sizeOfShapeList();
 
-        for (int shape=0; shape<shapeCount; shape++) {
-          Shape shapeObject = shapeSet.getShape(shape);
+                for (int shape=0; shape<shapeCount; shape++) {
+                    Shape shapeObject = shapeSet.getShape(shape);
 
-          Roi roi = null;
+                    Roi roi = null;
 
-          if (shapeObject instanceof Ellipse) {
-            Ellipse ellipse = (Ellipse) shapeObject;
-            int cx = ellipse.getX().intValue();
-            int cy = ellipse.getY().intValue();
-            int rx = ellipse.getRadiusX().intValue();
-            int ry = ellipse.getRadiusY().intValue();
-            roi = new OvalRoi(cx - rx, cy - ry, rx * 2, ry * 2);
-          }
-          else if (shapeObject instanceof ome.xml.model.Line) {
-            ome.xml.model.Line line = (ome.xml.model.Line) shapeObject;
-            int x1 = line.getX1().intValue();
-            int x2 = line.getX2().intValue();
-            int y1 = line.getY1().intValue();
-            int y2 = line.getY2().intValue();
-            roi = new Line(x1, y1, x2, y2);
-          }
-          else if (shapeObject instanceof Point) {
-            Point point = (Point) shapeObject;
-            int x = point.getX().intValue();
-            int y = point.getY().intValue();
-            roi = new OvalRoi(x, y, 0, 0);
-          }
-          else if (shapeObject instanceof Polyline) {
-            Polyline polyline = (Polyline) shapeObject;
-            String points = polyline.getPoints();
-            int[][] coordinates = parsePoints(points);
-            roi = new PolygonRoi(coordinates[0], coordinates[1],
-              coordinates[0].length, Roi.POLYLINE);
-          }
-          else if (shapeObject instanceof Polygon) {
-            Polygon polygon = (Polygon) shapeObject;
-            String points = polygon.getPoints();
-            int[][] coordinates = parsePoints(points);
-            roi = new PolygonRoi(coordinates[0], coordinates[1],
-              coordinates[0].length, Roi.POLYGON);
-          }
-          else if (shapeObject instanceof ome.xml.model.Rectangle) {
-            ome.xml.model.Rectangle rectangle =
-              (ome.xml.model.Rectangle) shapeObject;
-            int x = rectangle.getX().intValue();
-            int y = rectangle.getY().intValue();
-            int w = rectangle.getWidth().intValue();
-            int h = rectangle.getHeight().intValue();
-            String label = shapeObject.getText();
-            if (label != null) {
-              roi = new TextRoi(x, y, label);
+                    if (shapeObject instanceof Ellipse) {
+                        Ellipse ellipse = (Ellipse) shapeObject;
+                        int cx = ellipse.getX().intValue();
+                        int cy = ellipse.getY().intValue();
+                        int rx = ellipse.getRadiusX().intValue();
+                        int ry = ellipse.getRadiusY().intValue();
+                        roi = new OvalRoi(cx - rx, cy - ry, rx * 2, ry * 2);
+                    }
+                    else if (shapeObject instanceof ome.xml.model.Line) {
+                        ome.xml.model.Line line = (ome.xml.model.Line) shapeObject;
+                        int x1 = line.getX1().intValue();
+                        int x2 = line.getX2().intValue();
+                        int y1 = line.getY1().intValue();
+                        int y2 = line.getY2().intValue();
+                        roi = new Line(x1, y1, x2, y2);
+                    }
+                    else if (shapeObject instanceof Point) {
+                        Point point = (Point) shapeObject;
+                        int x = point.getX().intValue();
+                        int y = point.getY().intValue();
+                        roi = new OvalRoi(x, y, 0, 0);
+                    }
+                    else if (shapeObject instanceof Polyline) {
+                        Polyline polyline = (Polyline) shapeObject;
+                        String points = polyline.getPoints();
+                        int[][] coordinates = parsePoints(points);
+                        roi = new PolygonRoi(coordinates[0], coordinates[1],
+                                coordinates[0].length, Roi.POLYLINE);
+                    }
+                    else if (shapeObject instanceof Polygon) {
+                        Polygon polygon = (Polygon) shapeObject;
+                        String points = polygon.getPoints();
+                        int[][] coordinates = parsePoints(points);
+                        roi = new PolygonRoi(coordinates[0], coordinates[1],
+                                coordinates[0].length, Roi.POLYGON);
+                    }
+                    else if (shapeObject instanceof ome.xml.model.Rectangle) {
+                        ome.xml.model.Rectangle rectangle =
+                                (ome.xml.model.Rectangle) shapeObject;
+                        int x = rectangle.getX().intValue();
+                        int y = rectangle.getY().intValue();
+                        int w = rectangle.getWidth().intValue();
+                        int h = rectangle.getHeight().intValue();
+                        String label = shapeObject.getText();
+                        if (label != null) {
+                            roi = new TextRoi(x, y, label);
+                        }
+                        else {
+                            roi = new Roi(x, y, w, h);
+                        }
+                    }
+
+                    if (roi != null) {
+                        Roi.setColor(Color.WHITE);
+                        roi.setImage(images[imageNum]);
+                        manager.add(images[imageNum], roi, nextRoi++);
+                    }
+                }
+            }
+        }
+    }
+
+    public static Roi[] readFromRoiManager(){
+
+        RoiManager manager = RoiManager.getInstance();
+        Roi[] rois = manager.getRoisAsArray();
+        return rois;
+    }
+
+    /** Save ROIs in the ROI manager to the given MetadataStore. */
+    public static void saveROIs(MetadataStore store) {
+        Roi[] rois = readFromRoiManager();
+
+        String roiID = null;
+        for (int i=0; i<rois.length; i++) {
+
+            String polylineID = MetadataTools.createLSID("Shape", i, 0);
+            roiID = MetadataTools.createLSID("ROI", i, 0);
+
+            if (rois[i] instanceof Line) {
+                store.setLineID(polylineID, i, 0);
+                storeLine((Line) rois[i], store, i, 0);
+            }
+            else if (rois[i] instanceof PolygonRoi) {
+                if (rois[i].getTypeAsString().matches("Polyline") || rois[i].getTypeAsString().matches("Freeline")){
+                    store.setPolylineID(polylineID, i, 0);
+                }
+                else{
+                    store.setPolygonID(polylineID, i, 0);
+                }
+                storePolygon((PolygonRoi) rois[i], store, i, 0);
+            }
+
+            else if (rois[i] instanceof ShapeRoi) {
+                Roi[] subRois = ((ShapeRoi) rois[i]).getRois();
+                for (int q=0; q<subRois.length; q++) {
+
+                    polylineID = MetadataTools.createLSID("Shape", i, q);
+                    roiID = MetadataTools.createLSID("ROI", i, q);
+
+                    if (subRois[q] instanceof Line) {
+                        store.setLineID(polylineID, i, q);
+                        storeLine((Line) subRois[q], store, i, q);
+                    }
+                    else if (subRois[q] instanceof PolygonRoi) {
+                        if (subRois[q].getTypeAsString().matches("Polyline") || subRois[q].getTypeAsString().matches("Freeline")){
+                            store.setPolylineID(polylineID, i, q);
+                        }
+                        else{
+                            store.setPolygonID(polylineID, i, q);
+                        }
+                        storePolygon((PolygonRoi) subRois[q], store, i, q);
+                    }
+                    else if (subRois[q] instanceof OvalRoi) {
+                        store.setEllipseID(polylineID, i, q);
+                        storeOval((OvalRoi) subRois[q], store, i, q);
+                    }
+                    else {
+                        store.setRectangleID(polylineID, i, q);
+                        storeRectangle(subRois[q], store, i, q);
+                    }
+                }
+            }
+            else if (rois[i] instanceof OvalRoi) {
+                store.setEllipseID(polylineID, i, 0);
+                storeOval((OvalRoi) rois[i], store, i, 0);
             }
             else {
-              roi = new Roi(x, y, w, h);
+                store.setRectangleID(polylineID, i, 0);
+                storeRectangle(rois[i], store, i, 0);
             }
-          }
-
-          if (roi != null) {
-            Roi.setColor(Color.WHITE);
-            roi.setImage(images[imageNum]);
-            manager.add(images[imageNum], roi, nextRoi++);
-          }
+            //Save Roi's using ROIHandler
+            if (roiID != null) {
+                store.setROIID(roiID, i);
+                store.setImageROIRef(roiID, 0, i);
+            }
         }
-      }
     }
-  }
 
-  /** Save ROIs in the ROI manager to the given MetadataStore. */
-  public static void saveROIs(MetadataStore store) {
-    RoiManager manager = RoiManager.getInstance();
-    if (manager == null) return;
+    // -- Helper methods --
 
-    Roi[] rois = manager.getRoisAsArray();
-    for (int i=0; i<rois.length; i++) {
-      if (rois[i] instanceof Line) {
-        storeLine((Line) rois[i], store, i, 0);
-      }
-      else if (rois[i] instanceof PolygonRoi) {
-        storePolygon((PolygonRoi) rois[i], store, i, 0);
-      }
-      else if (rois[i] instanceof ShapeRoi) {
-        Roi[] subRois = ((ShapeRoi) rois[i]).getRois();
-        for (int q=0; q<subRois.length; q++) {
-          if (subRois[q] instanceof Line) {
-            storeLine((Line) subRois[q], store, i, q);
-          }
-          else if (subRois[q] instanceof PolygonRoi) {
-            storePolygon((PolygonRoi) subRois[q], store, i, q);
-          }
-          else if (subRois[q] instanceof OvalRoi) {
-            storeOval((OvalRoi) subRois[q], store, i, q);
-          }
-          else storeRectangle(subRois[q], store, i, q);
+    /** Store a Line ROI in the given MetadataStore. */
+    private static void storeLine(Line roi, MetadataStore store,
+            int roiNum, int shape)
+    {
+        store.setLineX1(new Double(roi.x1), roiNum, shape);
+        store.setLineX2(new Double(roi.x2), roiNum, shape);
+        store.setLineY1(new Double(roi.y1), roiNum, shape);
+        store.setLineY2(new Double(roi.y2), roiNum, shape);
+    }
+
+    /** Store an Roi (rectangle) in the given MetadataStore. */
+    private static void storeRectangle(Roi roi, MetadataStore store,
+            int roiNum, int shape)
+    {
+        Rectangle bounds = roi.getBounds();
+        store.setRectangleX(new Double(bounds.x), roiNum, shape);
+        store.setRectangleY(new Double(bounds.y), roiNum, shape);
+        store.setRectangleWidth(new Double(bounds.width), roiNum, shape);
+        store.setRectangleHeight(new Double(bounds.height), roiNum, shape);
+    }
+
+    /** Store a Polygon ROI in the given MetadataStore. */
+    private static void storePolygon(PolygonRoi roi, MetadataStore store,
+            int roiNum, int shape)
+    {
+        Rectangle bounds = roi.getBounds();
+        int[] xCoordinates = roi.getXCoordinates();
+        int[] yCoordinates = roi.getYCoordinates();
+        StringBuffer points = new StringBuffer();
+        for (int i=0; i<xCoordinates.length; i++) {
+            points.append(xCoordinates[i] + bounds.x);
+            points.append(",");
+            points.append(yCoordinates[i] + bounds.y);
+            if (i < xCoordinates.length - 1) points.append(" ");
         }
-      }
-      else if (rois[i] instanceof OvalRoi) {
-        storeOval((OvalRoi) rois[i], store, i, 0);
-      }
-      else storeRectangle(rois[i], store, i, 0);
+        String st1 = roi.getTypeAsString();
+        if (st1.matches("Polyline") || st1.matches("Freeline")) {
+            store.setPolylinePoints(points.toString(), roiNum, shape);
+        }
+        else if (st1.matches("Polygon") || st1.matches("Angle") || st1.matches("Freehand")){
+            store.setPolygonPoints(points.toString(), roiNum, shape);
+        }
+        else if (st1.matches("Point")){
+            store.setPointX((double) xCoordinates[0], roiNum, shape);
+            store.setPointY((double) yCoordinates[0], roiNum, shape);
+        }
     }
-  }
 
-  // -- Helper methods --
+    /** Store an Oval ROI in the given MetadataStore. */
+    @SuppressWarnings("unused")
+    private static void storeOval(OvalRoi roi,
+            MetadataStore store, int roiNum, int shape)
+    {
+        Rectangle vnRectBounds = roi.getPolygon().getBounds();
+        int x = vnRectBounds.x;
+        int y = vnRectBounds.y;
+        int rx = vnRectBounds.width;
+        int ry = vnRectBounds.height;
 
-  /** Store a Line ROI in the given MetadataStore. */
-  private static void storeLine(Line roi, MetadataStore store,
-    int roiNum, int shape)
-  {
-    store.setLineX1(new Double(roi.x1), roiNum, shape);
-    store.setLineX2(new Double(roi.x2), roiNum, shape);
-    store.setLineY1(new Double(roi.y1), roiNum, shape);
-    store.setLineY2(new Double(roi.y2), roiNum, shape);
-  }
-
-  /** Store an Roi (rectangle) in the given MetadataStore. */
-  private static void storeRectangle(Roi roi, MetadataStore store,
-    int roiNum, int shape)
-  {
-    Rectangle bounds = roi.getBounds();
-    store.setRectangleX(new Double(bounds.x), roiNum, shape);
-    store.setRectangleY(new Double(bounds.y), roiNum, shape);
-    store.setRectangleWidth(new Double(bounds.width), roiNum, shape);
-    store.setRectangleHeight(new Double(bounds.height), roiNum, shape);
-  }
-
-  /** Store a Polygon ROI in the given MetadataStore. */
-  private static void storePolygon(PolygonRoi roi, MetadataStore store,
-    int roiNum, int shape)
-  {
-    Rectangle bounds = roi.getBounds();
-    int[] xCoordinates = roi.getXCoordinates();
-    int[] yCoordinates = roi.getYCoordinates();
-    StringBuffer points = new StringBuffer();
-    for (int i=0; i<xCoordinates.length; i++) {
-      points.append(xCoordinates[i] + bounds.x);
-      points.append(",");
-      points.append(yCoordinates[i] + bounds.y);
-      if (i < xCoordinates.length - 1) points.append(" ");
+        store.setEllipseX((double) x, roiNum, shape);
+        store.setEllipseY((double) y, roiNum, shape);
+        store.setEllipseRadiusX((double) rx, roiNum, shape);
+        store.setEllipseRadiusY((double) ry, roiNum, shape);
+        // TODO: storeOval
+        // TODO: storeOval
     }
-    store.setPolygonPoints(points.toString(), roiNum, shape);
-  }
 
-  /** Store an Oval ROI in the given MetadataStore. */
-  @SuppressWarnings("unused")
-  private static void storeOval(OvalRoi roi,
-    MetadataStore store, int roiNum, int shape)
-  {
-    // TODO: storeOval
-  }
+    /**
+     * Parse (x, y) coordinates from a String returned by
+     * MetadataRetrieve.getPolygonpoints(...) or
+     * MetadataRetrieve.getPolylinepoints(...)
+     */
+    private static int[][] parsePoints(String points) {
+        // assuming points are stored like this:
+        // x0,y0 x1,y1 x2,y2 ...
+        String[] pointList = points.split(" ");
+        int[][] coordinates = new int[2][pointList.length];
 
-  /**
-   * Parse (x, y) coordinates from a String returned by
-   * MetadataRetrieve.getPolygonpoints(...) or
-   * MetadataRetrieve.getPolylinepoints(...)
-   */
-  private static int[][] parsePoints(String points) {
-    // assuming points are stored like this:
-    // x0,y0 x1,y1 x2,y2 ...
-    String[] pointList = points.split(" ");
-    int[][] coordinates = new int[2][pointList.length];
-
-    for (int q=0; q<pointList.length; q++) {
-      pointList[q] = pointList[q].trim();
-      int delim = pointList[q].indexOf(",");
-      coordinates[0][q] =
-        (int) Double.parseDouble(pointList[q].substring(0, delim));
-      coordinates[1][q] =
-        (int) Double.parseDouble(pointList[q].substring(delim + 1));
+        for (int q=0; q<pointList.length; q++) {
+            pointList[q] = pointList[q].trim();
+            int delim = pointList[q].indexOf(",");
+            coordinates[0][q] =
+                    (int) Double.parseDouble(pointList[q].substring(0, delim));
+            coordinates[1][q] =
+                    (int) Double.parseDouble(pointList[q].substring(delim + 1));
+        }
+        return coordinates;
     }
-    return coordinates;
-  }
 
 }
