@@ -74,20 +74,37 @@ namespace ome
       class Document
       {
       protected:
+        /**
+         * Internal wrapper owning the wrapped resource.
+         *
+         * Only to be used via a shared_ptr since it's non-copyable.
+         */
         class Wrapper
         {
         private:
+          /// The managed resource.
           xercesc::DOMDocument *document;
 
         public:
+          /// Constructor.
           Wrapper():
             document()
           {}
 
+          /**
+           * Construct from pointer to resource.
+           *
+           * @param document the resource to manage.
+           */
           Wrapper(xercesc::DOMDocument *document):
             document(document)
           {}
 
+          /**
+           * Destructor.
+           *
+           * The managed resource (if any) will be released.
+           */
           ~Wrapper()
           {
             if (document)
@@ -103,6 +120,12 @@ namespace ome
           operator= (const Wrapper&);
 
         public:
+          /**
+           * Get the managed resource.
+           *
+           * @returns a reference to the managed resource.
+           * @throws a @c std::logic_error if there is no managed resource.
+           */
           xercesc::DOMDocument&
           operator * ()
           {
@@ -111,6 +134,12 @@ namespace ome
             return *document;
           };
 
+          /**
+           * Get the managed resource.
+           *
+           * @returns a reference to the managed resource.
+           * @throws a @c std::logic_error if there is no managed resource.
+           */
           const xercesc::DOMDocument&
           operator * () const
           {
@@ -119,6 +148,12 @@ namespace ome
             return *document;
           };
 
+          /**
+           * Get the managed resource.
+           *
+           * @returns a pointer to the managed resource.
+           * @throws a @c std::logic_error if there is no managed resource.
+           */
           xercesc::DOMDocument *
           operator -> ()
           {
@@ -127,6 +162,12 @@ namespace ome
             return document;
           };
 
+          /**
+           * Get the managed resource.
+           *
+           * @returns a pointer to the managed resource.
+           * @throws a @c std::logic_error if there is no managed resource.
+           */
           const xercesc::DOMDocument *
           operator -> () const
           {
@@ -135,14 +176,31 @@ namespace ome
             return document;
           };
 
+          /**
+           * Get the managed resource.
+           *
+           * @returns a pointer to the managed resource.
+           */
           xercesc::DOMDocument *
           get()
           { return document; }
 
+          /**
+           * Get the managed resource.
+           *
+           * @returns a pointer to the managed resource.
+           */
           const xercesc::DOMDocument *
           get() const
           { return document; }
 
+          /**
+           * Release the managed resource.
+           *
+           * @note This will not free the resource.  Only use this to
+           * transfer ownership and prevent the resource being
+           * destroyed when this object is destroyed.
+           */
           void
           reset()
           { document = 0; }
@@ -187,7 +245,7 @@ namespace ome
         /**
          * Construct a Document from the content of an input stream.
          *
-         * @param file the file to read.
+         * @param stream the stream to read.
          */
         Document (std::istream& stream);
 

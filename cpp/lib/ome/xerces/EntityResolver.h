@@ -62,14 +62,10 @@ namespace ome
     class EntityResolver : public xercesc::XMLEntityResolver
     {
     public:
-      /**
-       * Construct an EntityResolver.
-       *
-       * @param stream the stream to output exception details to.
-       */
+      /// Constructor.
       EntityResolver();
 
-      /// The destructor.
+      /// Destructor.
       ~EntityResolver();
 
       /**
@@ -86,6 +82,11 @@ namespace ome
       /// Entity mapping type.
       typedef std::map<std::string, std::string> entity_map_type;
 
+      /**
+       * Get entity mappings.
+       *
+       * @returns a reference to the current entity map.
+       */
       static
       entity_map_type&
       entities();
