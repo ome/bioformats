@@ -302,9 +302,13 @@ public class ROIHandler {
         if (st1.matches("Polyline") || st1.matches("Freeline")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
         }
-        else if (st1.matches("Polygon") || st1.matches("Angle") || st1.matches("Freehand")){
+        else if (st1.matches("Polygon") || st1.matches("Angle") || st1.matches("Freehand") || st1.matches("Traced")){
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
+        else{
+            store.setPolygonPoints(points.toString(), roiNum, shape);
+        }
+            
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
