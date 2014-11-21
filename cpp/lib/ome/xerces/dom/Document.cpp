@@ -63,7 +63,7 @@ namespace
     parser.setValidationScheme(vscheme);
     parser.setDoNamespaces(do_ns);
     parser.setDoSchema(do_schema);
-    parser.setHandleMultipleImports (true);
+    parser.setHandleMultipleImports(true);
     parser.setValidationSchemaFullChecking(do_fullcheck);
     parser.setCreateEntityReferenceNodes(do_create);
   }
