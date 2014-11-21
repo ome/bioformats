@@ -160,6 +160,12 @@ namespace ome
           return (*this)->createElementNS(xns, xname);
         }
 
+        Element
+        getDocumentElement()
+        {
+          return (*this)->getDocumentElement();
+        }
+
         /**
          * Create Element with namespace.
          *
@@ -180,6 +186,9 @@ namespace ome
       typedef DocumentWrapper<UNMANAGED> UnmanagedDocument;
       /// Default Document.
       typedef ManagedDocument Document;
+
+      Document
+      createEmptyDocument(const std::string& qualifiedName);
 
       /**
        * Construct a Document from the content of a file.

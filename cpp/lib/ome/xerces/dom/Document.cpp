@@ -40,9 +40,10 @@
 #include <ome/xerces/ErrorReporter.h>
 #include <ome/xerces/Platform.h>
 #include <ome/xerces/String.h>
-
 #include <ome/xerces/dom/Document.h>
 
+#include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMImplementationRegistry.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
@@ -92,6 +93,16 @@ namespace ome
   {
     namespace dom
     {
+
+      Document
+      createEmptyDocument(const std::string& qualifiedName)
+      {
+
+        xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(String("LS"));
+
+        return impl->createDocument(0, String(qualifiedName), 0);
+
+      }
 
       Document
       createDocument(const boost::filesystem::path& file)
