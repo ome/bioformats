@@ -292,13 +292,14 @@ public class ROIHandler {
         Rectangle vnRectBounds = roi.getPolygon().getBounds();
         int x = vnRectBounds.x;
         int y = vnRectBounds.y;
-        int rx = vnRectBounds.width;
-        int ry = vnRectBounds.height;
+        
+        double rx = vnRectBounds.getWidth();
+        double ry = vnRectBounds.getHeight();
 
-        store.setEllipseX((double) x, roiNum, shape);
-        store.setEllipseY((double) y, roiNum, shape);
-        store.setEllipseRadiusX((double) rx, roiNum, shape);
-        store.setEllipseRadiusY((double) ry, roiNum, shape);
+        store.setEllipseX(((double) x + rx/2), roiNum, shape);
+        store.setEllipseY(((double) y + ry/2), roiNum, shape);
+        store.setEllipseRadiusX((double) rx/2, roiNum, shape);
+        store.setEllipseRadiusY((double) ry/2, roiNum, shape);
         // TODO: storeOval
         // TODO: storeOval
     }
