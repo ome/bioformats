@@ -63,6 +63,9 @@ import loci.formats.services.OMEXMLServiceImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.DefaultHandler;
+import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteStreams;
+
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
@@ -153,8 +156,10 @@ public class OMEXMLReader extends FormatReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    byte[] pixels = new Base64Codec().decompress(in, options);
-
+    //byte[] pixels = new Base64Codec().decompress(in, options);
+    byte[] data = ByteStreams.toByteArray(in);
+    String encoded = BaseEncoding.base64().encode(data);//encode everything
+    byte[] pixels =  BaseEncoding.base64().decode(encoded);
     // return a blank plane if no pixel data was stored
     if (pixels.length == 0) {
       LOGGER.debug("No pixel data for plane #{}", no);
