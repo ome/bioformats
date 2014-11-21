@@ -30,6 +30,7 @@ package loci.plugins.util;
 import ij.ImagePlus;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
+import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
@@ -182,10 +183,18 @@ public class ROIHandler {
                 if (rois[i].getTypeAsString().matches("Polyline") || rois[i].getTypeAsString().matches("Freeline")){
                     store.setPolylineID(polylineID, i, 0);
                 }
-                else{
-                    store.setPolygonID(polylineID, i, 0);
+                else if (rois[i].getTypeAsString().matches("Point")){
+                    store.setPointID(polylineID, i, 0);
                 }
-                storePolygon((PolygonRoi) rois[i], store, i, 0);
+                else{
+                    store.setPolygonID(polylineID, i, 0);                    
+                }
+                if (rois[i].getTypeAsString().matches("Point")){
+                    storePoint((PointRoi) rois[i], store, i, 0);
+                }
+                else{
+                    storePolygon((PolygonRoi) rois[i], store, i, 0);
+                }
             }
 
             else if (rois[i] instanceof ShapeRoi) {
@@ -203,10 +212,18 @@ public class ROIHandler {
                         if (subRois[q].getTypeAsString().matches("Polyline") || subRois[q].getTypeAsString().matches("Freeline")){
                             store.setPolylineID(polylineID, i, q);
                         }
+                        else if (rois[i].getTypeAsString().matches("Point")){
+                            store.setPointID(polylineID, i, q);
+                        }
                         else{
                             store.setPolygonID(polylineID, i, q);
                         }
-                        storePolygon((PolygonRoi) subRois[q], store, i, q);
+                        if (rois[i].getTypeAsString().matches("Point")){
+                            storePoint((PointRoi) rois[i], store, i, q);
+                        }
+                        else{
+                            storePolygon((PolygonRoi) rois[i], store, i, q);
+                        }
                     }
                     else if (subRois[q] instanceof OvalRoi) {
                         store.setEllipseID(polylineID, i, q);
@@ -235,6 +252,16 @@ public class ROIHandler {
     }
 
     // -- Helper methods --
+
+    private static void storePoint(PointRoi roi, MetadataStore store,
+            int roiNum, int shape) {
+        
+        int[] xCoordinates = roi.getXCoordinates();
+        int[] yCoordinates = roi.getYCoordinates();
+        
+        store.setPointX((double) xCoordinates[0], roiNum, shape);
+        store.setPointY((double) yCoordinates[0], roiNum, shape);
+    }
 
     /** Store a Line ROI in the given MetadataStore. */
     private static void storeLine(Line roi, MetadataStore store,
@@ -278,10 +305,6 @@ public class ROIHandler {
         else if (st1.matches("Polygon") || st1.matches("Angle") || st1.matches("Freehand")){
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
-        else if (st1.matches("Point")){
-            store.setPointX((double) xCoordinates[0], roiNum, shape);
-            store.setPointY((double) yCoordinates[0], roiNum, shape);
-        }
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
@@ -292,7 +315,7 @@ public class ROIHandler {
         Rectangle vnRectBounds = roi.getPolygon().getBounds();
         int x = vnRectBounds.x;
         int y = vnRectBounds.y;
-        
+
         double rx = vnRectBounds.getWidth();
         double ry = vnRectBounds.getHeight();
 
