@@ -82,6 +82,44 @@ namespace ome
   namespace compat
   {
 
+    /* TESTING NOTE
+     * ────────────
+     *
+     * This code can't be unit tested since it is used after
+     * installation.  This section documents the expected paths for
+     * different configurations.
+     *
+     * CMAKE_INSTALL_PREFIX=$install_path
+     * - will fail unless "make install" has run and the install tree
+     *   is present.
+     * - will work in the install tree and build tree if "make"
+     *   install has run.
+     * - BIOFORMATS_HOME can override the hardcoded install prefix,
+     *   but only if the new path contains an install tree.
+     *
+     * CMAKE_INSTALL_PREFIX=  [no install prefix for self-contained distributions]
+     * - used for prepackaged zips
+     * - will fail in the build tree since there is no valid install
+     * - will work in the install tree since it will introspect the
+     *   correct path
+     * - BIOFORMATS_HOME can override the hardcoded install prefix,
+     *   but only if the new path contains an install tree.
+     *
+     * Testing:
+     * - With and without CMAKE_INSTALL_PREFIX set [default is /usr/local]
+     * - In the install and build trees
+     * - With and without BIOFORMATS_HOME
+     * - With and without BIOFORMATS_HOME set to a valid path
+     *
+     * Testing in the build tree verifies it fails correctly.
+     *
+     * The sequence of checking is:
+     * - BIOFORMATS_HOME [if set]
+     * - INSTALL_PREFIX [if set]
+     * - introspection [if possible]
+     * - throw exception
+     */
+
     fs::path
     module_runtime_prefix()
     {
