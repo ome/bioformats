@@ -97,21 +97,40 @@ public:
 TEST_P(XercesTest, Node)
 {
   xml::dom::Node node;
+  ASSERT_FALSE(node);
 }
 
 TEST_P(XercesTest, DefaultElement)
 {
   xml::dom::Element element;
+  ASSERT_FALSE(element);
 }
 
 TEST_P(XercesTest, DefaultNodeList)
 {
   xml::dom::NodeList nodelist;
+  ASSERT_FALSE(nodelist);
 }
 
 TEST_P(XercesTest, DefaultDocument)
 {
   xml::dom::Document document;
+  ASSERT_FALSE(document);
+}
+
+TEST_P(XercesTest, EmptyDocument)
+{
+  xml::dom::Document document(ome::xerces::dom::createEmptyDocument("root"));
+  ASSERT_TRUE(document);
+}
+
+TEST_P(XercesTest, EmptyDocumentCreateElement)
+{
+  xml::dom::Document document(ome::xerces::dom::createEmptyDocument("root"));
+  ASSERT_TRUE(document);
+  xml::dom::Element e(document.createElementNS("http://example.com/test/namespace", "test"));
+  xml::dom::Element root(document.getDocumentElement());
+  root.appendChild(e);
 }
 
 TEST_P(XercesTest, DocumentFromFile)
@@ -119,6 +138,7 @@ TEST_P(XercesTest, DocumentFromFile)
   const XercesTestParameters& params = GetParam();
 
   xml::dom::Document doc(ome::xerces::dom::createDocument(boost::filesystem::path(params.filename)));
+  ASSERT_TRUE(doc);
 }
 
 TEST_P(XercesTest, DocumentFromStream)
@@ -128,6 +148,7 @@ TEST_P(XercesTest, DocumentFromStream)
   std::ifstream in(params.filename.c_str());
 
   xml::dom::Document doc(ome::xerces::dom::createDocument(in));
+  ASSERT_TRUE(doc);
 }
 
 TEST_P(XercesTest, DocumentFromString)
