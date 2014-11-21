@@ -108,7 +108,7 @@ namespace ome
          *
          * @param base the DOMNode to wrap.
          */
-        ElementWrapper (const typename Wrapper<xercesc::DOMElement, NodeWrapper<S> >::base_element_type *base):
+        ElementWrapper (typename Wrapper<xercesc::DOMElement, NodeWrapper<S> >::base_element_type *base):
           Wrapper<xercesc::DOMElement, NodeWrapper<S> >(base)
         {
         }

@@ -106,22 +106,22 @@ namespace ome
         }
 
         /**
-         * Construct a Document from a xercesc::DOMNode *.
-         *
-         * @param base the DOMNode to wrap.
-         */
-        DocumentWrapper (const typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_element_type *base):
-          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
-        {
-        }
-
-        /**
          * Construct a Document from a xercesc::DOMDocument *.
          *
          * @param document the Document to wrap.
          */
         DocumentWrapper (typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::element_type *document):
           Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(document)
+        {
+        }
+
+        /**
+         * Construct a Document from a xercesc::DOMNode *.
+         *
+         * @param base the DOMNode to wrap.
+         */
+        DocumentWrapper (typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_element_type *base):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
         {
         }
 
