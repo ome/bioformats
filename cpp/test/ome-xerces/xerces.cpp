@@ -94,6 +94,26 @@ public:
   }
 };
 
+TEST_P(XercesTest, Node)
+{
+  xml::dom::Node node;
+}
+
+TEST_P(XercesTest, DefaultElement)
+{
+  xml::dom::Element element;
+}
+
+TEST_P(XercesTest, DefaultNodeList)
+{
+  xml::dom::NodeList nodelist;
+}
+
+TEST_P(XercesTest, DefaultDocument)
+{
+  xml::dom::Document document;
+}
+
 TEST_P(XercesTest, DocumentFromFile)
 {
   const XercesTestParameters& params = GetParam();
@@ -125,6 +145,35 @@ TEST_P(XercesTest, DocumentFromString)
               std::istreambuf_iterator<char>());
 
   xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+}
+
+TEST_P(XercesTest, ReleaseDocument)
+{
+  const XercesTestParameters& params = GetParam();
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(boost::filesystem::path(params.filename)));
+
+  ASSERT_TRUE(doc);
+  ASSERT_TRUE(doc.get() != 0);
+  xercesc::DOMNode *xdoc = 0;
+  ASSERT_NO_THROW(xdoc = doc.release());
+  ASSERT_TRUE(xdoc != 0);
+  xdoc->release();
+  ASSERT_FALSE(doc);
+  ASSERT_TRUE(doc.get() == 0);
+}
+
+TEST_P(XercesTest, ResetDocument)
+{
+  const XercesTestParameters& params = GetParam();
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(boost::filesystem::path(params.filename)));
+
+  ASSERT_TRUE(doc);
+  ASSERT_TRUE(doc.get() != 0);
+  ASSERT_NO_THROW(doc.reset());
+  ASSERT_FALSE(doc);
+  ASSERT_TRUE(doc.get() == 0);
 }
 
 XercesTestParameters params[] =

@@ -147,6 +147,20 @@ namespace ome
           wrapped = 0;
           return ret;
         }
+
+        /**
+         * Reset the managed resource.
+         *
+         * The managed resource will be null after this method
+         * returns.
+         *
+         * @note This will free the resource if it is the last
+         * reference to it.
+         */
+        void
+        reset()
+        {
+        }
       };
 
       /**
@@ -238,6 +252,17 @@ namespace ome
           return this->wrapped->release();
         }
 
+        /**
+         * Free the managed resource.
+         *
+         * The managed resource will be freed and made null.
+         */
+        void
+        reset()
+        {
+          wrapped = std::shared_ptr<manager_type>(new manager_type());
+        }
+
       private:
         /// Managed reference.
         std::shared_ptr<manager_type> wrapped;
@@ -315,6 +340,16 @@ namespace ome
           return ret;
         }
 
+        /**
+         * Free the managed resource.
+         *
+         * The unmanaged resource will be made null.
+         */
+        void
+        reset()
+        {
+          this->wrapped = 0;
+        }
       private:
         /// Unmanaged reference.
         element_type *wrapped;
@@ -387,7 +422,7 @@ namespace ome
          */
         operator bool () const
         {
-          return base.get() != 0;
+          return get() != 0;
         }
 
         /**
@@ -404,7 +439,9 @@ namespace ome
         T *
         release()
         {
-          return base.release();
+          T *ret = base.release();
+          assign(0);
+          return ret;
         }
 
         /**
@@ -415,7 +452,8 @@ namespace ome
         void
         reset()
         {
-          release();
+          base.reset();
+          assign(0);
         }
 
       protected:
@@ -459,8 +497,8 @@ namespace ome
         assign_check(base_element_type *newbase)
         {
           D *newderived = dynamic_cast<D *>(newbase);
-          if (!newderived)
-            throw std::logic_error("Failed to assigning incompatible wrapped DOM type");
+          if (newbase && !newderived)
+            throw std::logic_error("Failed to assign incompatible wrapped DOM type");
           return newderived;
         }
 
