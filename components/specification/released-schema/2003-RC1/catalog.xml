@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <uri name="http://www.openmicroscopy.org/XMLschemas/AnalysisChain/RC1/AnalysisChain.xsd" uri="AnalysisChain.xsd"/>
+  <uri name="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd" uri="AnalysisModule.xsd"/>
+  <uri name="http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd" uri="BinaryFile.xsd"/>
+  <uri name="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd" uri="CA.xsd"/>
+  <uri name="http://www.openmicroscopy.org/XMLschemas/CLI/RC1/CLI.xsd" uri="CLI.xsd"/>
+  <uri name="http://www.openmicroscopy.org/XMLschemas/STD/RC1/STD.xsd" uri="STD.xsd"/>
+</catalog>
