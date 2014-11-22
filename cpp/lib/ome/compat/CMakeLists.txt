@@ -35,7 +35,8 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS})
+                    ${Boost_INCLUDE_DIRS}
+                    ${LibDl_INCLUDE_DIRS})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/config.h)
@@ -46,6 +47,7 @@ set(ome_compat_static_headers
     filesystem.h
     endian.h
     memory.h
+    module.h
     mstream.h
     regex.h
     string.h
@@ -73,11 +75,20 @@ set(ome_compat_headers
     ${ome_compat_generated_headers})
 
 set(ome_compat_sources
-    dummy.cpp)
+    module.cpp)
 
-add_library(ome-compat STATIC ${ome_compat_sources} ${ome_compat_headers})
-target_link_libraries(ome-compat ${REGEX_LIBRARY} ${THREAD_LIBRARY})
+add_library(ome-compat SHARED ${ome_compat_sources} ${ome_compat_headers})
+target_link_libraries(ome-compat
+                      ${REGEX_LIBRARY}
+                      ${THREAD_LIBRARY}
+                      ${Boost_FILESYSTEM_LIBRARY_RELEASE}
+                      ${Boost_SYSTEM_LIBRARY_RELEASE}
+                      ${LibDl_LIBRARIES})
 set_target_properties(ome-compat PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(ome-compat PROPERTIES VERSION ${OME_VERSION_SHORT})
+
+install(TARGETS ome-compat LIBRARY
+        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 set(ome_compat_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/compat")
 
