@@ -374,17 +374,15 @@ public class ZeissTIFFReader extends BaseZeissReader {
       info.basedir = b.getAbsolutePath();
       l = b;
     }
-    String basename = l.getParent() + "/" + info.prefix + ".tif";
-    l = new CaseInsensitiveLocation (basename);
-    if (l.exists())
-      info.origname = l.getAbsolutePath();
+    l = new CaseInsensitiveLocation (l.getParent(), info.prefix + ".tif");
+    info.origname = l.getAbsolutePath();
 
     return info;
   }
   protected void initFile(String id) throws FormatException, IOException {
     CaseInsensitiveLocation.invalidateCache();
     TIFFInfo info = evalFile(id);
-    if (new CaseInsensitiveLocation(info.origname).exists()) {
+    if (new CaseInsensitiveLocation(info.origname).getAbsoluteFile().exists()) {
       super.initFile(info.origname);
     }
     else {

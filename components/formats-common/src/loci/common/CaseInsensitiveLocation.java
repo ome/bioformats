@@ -93,7 +93,7 @@ public class CaseInsensitiveLocation extends Location {
     // The file we're looking for doesn't exist, so look for it in the
     // same directory in a case-insensitive manner.  Note that this will
     // throw an exception if multiple copies are found.
-    return cache.lookup(name).getAbsolutePath();
+    return cache.lookup(name.getAbsoluteFile()).getAbsolutePath();
   }
 
   // Helper class
