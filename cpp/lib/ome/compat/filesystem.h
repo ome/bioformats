@@ -62,6 +62,10 @@
 
 namespace ome
 {
+
+  /**
+   * OME compatibility functions and classes.
+   */
   namespace compat
   {
 
@@ -93,6 +97,7 @@ namespace ome
      *
      * @param p the path to make canonical.
      * @param base the base directory, defaulting to the current path.
+     * @param ec pointer to storage for an error code (optional).
      * @returns the canonical path.
      */
     inline
