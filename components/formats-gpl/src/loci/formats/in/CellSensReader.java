@@ -390,8 +390,8 @@ public class CellSensReader extends FormatReader {
 
   private HashMap<Integer, byte[]> backgroundColor = new HashMap<Integer, byte[]>();
 
-  private int stackPropertiesCount = -1;
-  private int metadataIndex = 0;
+  private int metadataIndex = -1;
+  private int previousTag = 0;
 
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
 
@@ -578,8 +578,8 @@ public class CellSensReader extends FormatReader {
       dimensionTag = 0;
       dimensionOrdering.clear();
       backgroundColor.clear();
-      stackPropertiesCount = -1;
-      metadataIndex = 0;
+      metadataIndex = -1;
+      previousTag = 0;
     }
   }
 
@@ -763,8 +763,11 @@ public class CellSensReader extends FormatReader {
             store.setChannelName(pyramid.channelNames.get(c), ii, c);
           }
           if (c < pyramid.channelWavelengths.size()) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(pyramid.channelWavelengths.get(c).intValue()), ii, c);
+            int wave = pyramid.channelWavelengths.get(c).intValue();
+            if (wave > 0) {
+              store.setChannelEmissionWavelength(
+                new PositiveInteger(wave), ii, c);
+            }
           }
           if (c < pyramid.exposureTimes.size()) {
             for (int z=0; z<core.get(i).sizeZ; z++) {
@@ -801,8 +804,12 @@ public class CellSensReader extends FormatReader {
         store.setObjectiveSettingsID(MetadataTools.createLSID("Objective", 0, nextPyramid - 1), ii);
         store.setObjectiveSettingsRefractiveIndex(pyramid.refractiveIndex, ii);
 
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pyramid.physicalSizeX), ii);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pyramid.physicalSizeY), ii);
+        if (pyramid.physicalSizeX > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(pyramid.physicalSizeX), ii);
+        }
+        if (pyramid.physicalSizeY > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(pyramid.physicalSizeY), ii);
+        }
 
         if (pyramid.acquisitionTime != null) {
           // acquisition time is stored in seconds
@@ -1112,8 +1119,12 @@ public class CellSensReader extends FormatReader {
       }
     }
 
-    ms.sizeX = pyramids.get(s).width;
-    ms.sizeY = pyramids.get(s).height;
+    if (pyramids.get(s).width != null) {
+      ms.sizeX = pyramids.get(s).width;
+    }
+    if (pyramids.get(s).height != null) {
+      ms.sizeY = pyramids.get(s).height;
+    }
     ms.sizeZ = maxZ[0] + 1;
     if (maxC[0] > 0) {
       ms.sizeC *= (maxC[0] + 1);
@@ -1303,21 +1314,20 @@ public class CellSensReader extends FormatReader {
         LOGGER.debug("  realType = {}", realType);
 
         if (tag < 0) {
-          if (!inlineData) {
+          if (!inlineData && dataSize + vsi.getFilePointer() < vsi.length()) {
             vsi.skipBytes(dataSize);
           }
           return;
         }
 
-        if (tag == MULTIDIM_STACK_PROPERTIES) {
-          stackPropertiesCount++;
-          if (stackPropertiesCount > 0 && stackPropertiesCount % 2 == 0) {
-            metadataIndex++;
-          }
+        if (tag == EXTERNAL_FILE_PROPERTIES && previousTag == IMAGE_FRAME_VOLUME) {
+          metadataIndex++;
         }
         else if (tag == DOCUMENT_PROPERTIES) {
           metadataIndex = -1;
         }
+
+        previousTag = tag;
 
         while (metadataIndex >= pyramids.size()) {
           pyramids.add(new Pyramid());
@@ -1447,7 +1457,7 @@ public class CellSensReader extends FormatReader {
                 }
 
                 if (tag == IMAGE_BOUNDARY) {
-                  if (pyramid != null) {
+                  if (pyramid != null && pyramid.width == null) {
                     pyramid.width = intValues[2];
                     pyramid.height = intValues[3];
                   }
