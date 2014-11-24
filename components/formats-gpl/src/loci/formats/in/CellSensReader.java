@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -388,6 +389,12 @@ public class CellSensReader extends FormatReader {
 
   private HashMap<Integer, byte[]> backgroundColor = new HashMap<Integer, byte[]>();
 
+  private int stackPropertiesCount = -1;
+  private int metadataIndex = 0;
+
+  private ArrayList<Hashtable<String, Object>> originalMetadata =
+    new ArrayList<Hashtable<String, Object>>();
+
   // -- Constructor --
 
   /** Constructs a new cellSens reader. */
@@ -583,6 +590,9 @@ public class CellSensReader extends FormatReader {
       imageNames.clear();
       imageTypes.clear();
       backgroundColor.clear();
+      stackPropertiesCount = -1;
+      metadataIndex = 0;
+      originalMetadata.clear();
     }
   }
 
@@ -682,6 +692,10 @@ public class CellSensReader extends FormatReader {
           }
         }
         index += ms.resolutionCount;
+
+        if (s < originalMetadata.size()) {
+          ms.seriesMetadata = originalMetadata.get(s);
+        }
 
         setCoreIndex(0);
       }
@@ -1307,6 +1321,20 @@ public class CellSensReader extends FormatReader {
           return;
         }
 
+        if (tag == MULTIDIM_STACK_PROPERTIES) {
+          stackPropertiesCount++;
+          if (stackPropertiesCount > 0 && stackPropertiesCount % 2 == 0) {
+            metadataIndex++;
+          }
+
+          while (metadataIndex >= originalMetadata.size()) {
+            originalMetadata.add(new Hashtable<String, Object>());
+          }
+        }
+        else if (tag == DOCUMENT_PROPERTIES) {
+          metadataIndex = -1;
+        }
+
         if (extendedField && realType == NEW_VOLUME_HEADER) {
           if (tag == DIMENSION_DESCRIPTION_VOLUME) {
             dimensionTag = secondTag;
@@ -1492,7 +1520,12 @@ public class CellSensReader extends FormatReader {
           }
 
           if (tagName != null && populateMetadata) {
-            addGlobalMetaList(tagPrefix + tagName, value);
+            if (metadataIndex >= 0) {
+              addMetaList(tagPrefix + tagName, value, originalMetadata.get(metadataIndex));
+            }
+            else {
+              addGlobalMetaList(tagPrefix + tagName, value);
+            }
           }
         }
 
