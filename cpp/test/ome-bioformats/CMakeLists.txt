@@ -117,6 +117,18 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/tiff tiff)
 
+  add_executable(minimaltiffreader minimaltiffreader.cpp)
+  target_link_libraries(minimaltiffreader ome-bioformats)
+  target_link_libraries(minimaltiffreader ome-test)
+
+  add_test(ome-bioformats/minimaltiffreader minimaltiffreader)
+
+  add_executable(tiffreader tiffreader.cpp)
+  target_link_libraries(tiffreader ome-bioformats)
+  target_link_libraries(tiffreader ome-test)
+
+  add_test(ome-bioformats/tiffreader tiffreader)
+
   add_executable(variantpixelbuffer variantpixelbuffer.cpp)
   target_link_libraries(variantpixelbuffer ome-bioformats)
   target_link_libraries(variantpixelbuffer ome-test)

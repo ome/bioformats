@@ -215,8 +215,15 @@ foreach(flag ${test_flags})
   endif (${test_cxx_flag})
 endforeach(flag ${test_flags})
 
-check_include_file_cxx(tuple OME_HAVE_TUPLE)
-check_include_file_cxx(tr1/tuple OME_HAVE_TR1_TUPLE)
+check_cxx_source_compiles("
+#include <tuple>
+int main() { std::tuple<int,double> t; }
+" OME_HAVE_TUPLE)
+
+check_cxx_source_compiles("
+#include <tr1/tuple>
+int main() { std::tr1::tuple<int,double> t; }
+" OME_HAVE_TR1_TUPLE)
 
 check_cxx_source_compiles("
 #include <cstdint>

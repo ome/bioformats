@@ -39,16 +39,15 @@
 #ifndef TEST_PIXELBUFFER_H
 #define TEST_PIXELBUFFER_H
 
+#include <ome/bioformats/PixelBuffer.h>
+
+#include <ome/test/test.h>
+
+#include "pixel.h"
+
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
-
-#include <ome/bioformats/PixelBuffer.h>
-
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
-
-#include "pixel.h"
 
 using ome::bioformats::Dimensions;
 using ome::bioformats::PixelEndianProperties;

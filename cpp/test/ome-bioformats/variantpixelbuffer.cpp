@@ -41,8 +41,7 @@
 
 #include <ome/bioformats/VariantPixelBuffer.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+#include <ome/test/test.h>
 
 #include "pixel.h"
 
@@ -1038,6 +1037,7 @@ VariantPixelBufferTestParameters variant_params[] =
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(VariantPixelBufferVariants, VariantPixelBufferTest, ::testing::ValuesIn(variant_params));

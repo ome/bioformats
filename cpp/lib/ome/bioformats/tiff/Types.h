@@ -80,6 +80,43 @@ namespace ome
           TYPE_IFD8 = 18        ///< BigTIFF 64-bit unsigned integer (offset).
         };
 
+      /// Compression technique.
+      enum Compression
+        {
+          COMPRESSION_NONE = 1,            ///< No compression.
+          COMPRESSION_CCITTRLE = 2,        ///< CCITT modified Huffman RLE.
+          COMPRESSION_CCITTFAX3 = 3,       ///< CCITT Group 3 fax encoding (deprecated).
+          COMPRESSION_CCITT_T4 = 3,        ///< CCITT T.4 (TIFF 6 name).
+          COMPRESSION_CCITTFAX4 = 4,       ///< CCITT Group 4 fax encoding (deprecated).
+          COMPRESSION_CCITT_T6 = 4,        ///< CCITT T.6 (TIFF 6 name).
+          COMPRESSION_LZW = 5,             ///< Lempel-Ziv & Welch.
+          COMPRESSION_OJPEG = 6,           ///< JPEG (deprecated).
+          COMPRESSION_JPEG = 7,            ///< JPEG DCT compression.
+          COMPRESSION_ADOBE_DEFLATE = 8,   ///< Deflate compression (Adobe).
+          COMPRESSION_T85 = 9,             ///< TIFF/FX T.85 JBIG compression.
+          COMPRESSION_T43 = 10,            ///< TIFF/FX T.43 colour by layered JBIG compression.
+          COMPRESSION_NEXT = 32766,        ///< NeXT 2-bit RLE.
+          COMPRESSION_CCITTRLEW = 32771,   ///< 1 w/ word alignment.
+          COMPRESSION_PACKBITS = 32773,    ///< Macintosh RLE.
+          COMPRESSION_THUNDERSCAN = 32809, ///< ThunderScan RLE.
+          /// codes 32895-32898 are reserved for ANSI IT8 TIFF/IT <dkelly@apago.com).
+          COMPRESSION_IT8CTPAD = 32895,    ///< IT8 CT w/padding.
+          COMPRESSION_IT8LW = 32896,       ///< IT8 Linework RLE.
+          COMPRESSION_IT8MP = 32897,       ///< IT8 Monochrome picture.
+          COMPRESSION_IT8BL = 32898,       ///< IT8 Binary line art.
+          /// compression codes 32908-32911 are reserved for Pixar.
+          COMPRESSION_PIXARFILM = 32908,   ///< Pixar companded 10bit LZW.
+          COMPRESSION_PIXARLOG = 32909,    ///< Pixar companded 11bit ZIP.
+          COMPRESSION_DEFLATE = 32946,     ///< Deflate compression.
+          /// compression code 32947 is reserved for Oceana Matrix <dev@oceana.com>.
+          COMPRESSION_DCS = 32947,         ///< Kodak DCS encoding.
+          COMPRESSION_JBIG = 34661,        ///< ISO JBIG.
+          COMPRESSION_SGILOG = 34676,      ///< SGI Log Luminance RLE.
+          COMPRESSION_SGILOG24 = 34677,    ///< SGI Log 24-bit packed.
+          COMPRESSION_JP2000 = 34712,      ///< Leadtools JPEG2000.
+          COMPRESSION_LZMA = 34925         ///< LZMA2.
+        };
+
       /// Extra components description.
       enum ExtraSamples
         {
@@ -103,7 +140,7 @@ namespace ome
           BOTTOM_RIGHT = 3, ///< Row 0 bottom, column 0 rhs.
           BOTTOM_LEFT  = 4, ///< Row 0 bottom, column 0 lhs.
           LEFT_TOP     = 5, ///< Row 0 lhs, column 0 top.
-          RIGH_TTOP    = 6, ///< Row 0 rhs, column 0 top.
+          RIGHT_TOP    = 6, ///< Row 0 rhs, column 0 top.
           RIGHT_BOTTOM = 7, ///< Row 0 rhs, column 0 bottom.
           LEFT_BOTTOM  = 8  ///< Row 0 lhs, column 0 bottom.
         };
@@ -111,18 +148,19 @@ namespace ome
       /// Photometric interpretation of pixel data.
       enum PhotometricInterpretation
         {
-          MIN_IS_WHITE = 0, ///< Minimum value is white.
-          MIN_IS_BLACK = 1, ///< Minimum value is black.
-          RGB = 2,          ///< RGB subchannels.
-          PALETTE = 3,      ///< Indexed colour with colormap.
-          MASK = 4,         ///< Mask.
-          SEPARATED = 5,    ///< Color separations.
-          YCBCR = 6,        ///< CCIR 601.
-          CIELAB = 8,       ///< 1976 CIE L*a*b*.
-          ICCLAB = 9,       ///< ICC L*a*b*.
-          ITULAB = 10,      ///< ITU L*a*b*.
-          LOGL = 32844,     ///< CIE log2(L).
-          LOGLUV = 32845    ///< CIE log2(L) (u',v').
+          MIN_IS_WHITE = 0,  ///< Minimum value is white.
+          MIN_IS_BLACK = 1,  ///< Minimum value is black.
+          RGB = 2,           ///< RGB subchannels.
+          PALETTE = 3,       ///< Indexed colour with colormap.
+          MASK = 4,          ///< Mask.
+          SEPARATED = 5,     ///< Color separations.
+          YCBCR = 6,         ///< CCIR 601.
+          CIELAB = 8,        ///< 1976 CIE L*a*b*.
+          ICCLAB = 9,        ///< ICC L*a*b*.
+          ITULAB = 10,       ///< ITU L*a*b*.
+          CFA_ARRAY = 32803, ///< Color Filter Array.
+          LOGL = 32844,      ///< CIE log2(L).
+          LOGLUV = 32845     ///< CIE log2(L) (u',v').
         };
 
       /// Planar configuration of samples.

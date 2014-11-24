@@ -42,8 +42,7 @@
 
 #include <ome/bioformats/PixelBuffer.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+#include <ome/test/test.h>
 
 #include "pixel.h"
 
@@ -202,6 +201,7 @@ DimensionOrderTestParameters dimension_params[] =
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(DimensionOrderVariants, DimensionOrderTest, ::testing::ValuesIn(dimension_params));

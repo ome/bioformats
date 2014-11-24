@@ -134,7 +134,7 @@ namespace ome
 
       bool
       FormatWriter::isThisType(const std::string& name,
-                               bool               /* open */)
+                               bool               /* open */) const
       {
         return checkSuffix(name,
                            writerProperties.suffixes,
@@ -142,13 +142,7 @@ namespace ome
       }
 
       void
-      FormatWriter::set8BitLookupTable(const VariantPixelBuffer& /* buf */)
-      {
-        assertId(currentId, true);
-      }
-
-      void
-      FormatWriter::set16BitLookupTable(const VariantPixelBuffer& /* buf */)
+      FormatWriter::setLookupTable(const VariantPixelBuffer& /* buf */)
       {
         assertId(currentId, true);
       }

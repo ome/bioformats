@@ -192,6 +192,14 @@ namespace ome
         virtual
         ~FormatReader();
 
+      private:
+        /// Copy constructor (deleted).
+        FormatReader (const FormatReader&);
+
+        /// Assignment operator (deleted).
+        FormatReader&
+        operator= (const FormatReader&);
+
       protected:
         /**
          * Initialize the given file.
@@ -348,22 +356,56 @@ namespace ome
         // Documented in superclass.
         bool
         isThisType(const std::string& name,
-                   bool               open = true);
+                   bool               open = true) const;
 
         // Documented in superclass.
         bool
         isThisType(const uint8_t *begin,
-                   std::size_t    length);
+                   std::size_t    length) const;
 
         // Documented in superclass.
         bool
         isThisType(const uint8_t *begin,
-                   const uint8_t *end);
+                   const uint8_t *end) const;
 
         // Documented in superclass.
         bool
-        isThisType(std::istream& stream);
+        isThisType(std::istream& stream) const;
 
+      protected:
+        /**
+         * isThisType file implementation for readers.
+         *
+         * Readers which require opening a file in order to determine
+         * its type should override this method with their own
+         * implementation.  Reader implementations should open the
+         * specified file using their preferred method and check its
+         * validity.
+         *
+         * @param name the file to open for checking.
+         * @returns @c true if the file is valid, @c false otherwise.
+         */
+        virtual
+        bool
+        isFilenameThisTypeImpl(const std::string& name) const;
+
+        /**
+         * isThisType stream implementation for readers.
+         *
+         * Readers which require opening a file in order to determine
+         * its type, and which can handle @c istream data, should
+         * override this method with their own implementation.  Reader
+         * implementations should check the validity of the stream
+         * data.
+         *
+         * @param stream the input stream to check.
+         * @returns @c true if the stream is valid, @c false otherwise.
+         */
+        virtual
+        bool
+        isStreamThisTypeImpl(std::istream& stream) const;
+
+      public:
         // Documented in superclass.
         dimension_size_type
         getImageCount() const;
@@ -418,11 +460,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        get8BitLookupTable(VariantPixelBuffer& buf) const;
-
-        // Documented in superclass.
-        void
-        get16BitLookupTable(VariantPixelBuffer& buf) const;
+        getLookupTable(VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         Modulo&
@@ -503,8 +541,22 @@ namespace ome
                   dimension_size_type x,
                   dimension_size_type y,
                   dimension_size_type w,
-                  dimension_size_type h) const = 0;
+                  dimension_size_type h) const;
 
+      protected:
+        /**
+         * @copydoc ome::bioformats::FormatReader::openBytes(dimension_size_type,VariantPixelBuffer&,dimension_size_type,dimension_size_type,dimension_size_type,dimension_size_type)const
+         */
+        virtual
+        void
+        openBytesImpl(dimension_size_type no,
+                      VariantPixelBuffer& buf,
+                      dimension_size_type x,
+                      dimension_size_type y,
+                      dimension_size_type w,
+                      dimension_size_type h) const = 0;
+
+      public:
         // Documented in superclass.
         void
         openThumbBytes(dimension_size_type no,
