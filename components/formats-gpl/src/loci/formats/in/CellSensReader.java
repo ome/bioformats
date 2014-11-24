@@ -55,6 +55,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -347,6 +348,19 @@ public class CellSensReader extends FormatReader {
   private static final int PLANE_SCALE_RWC = 20007;
   private static final int CHANNEL_OVERFLOW = 2073;
 
+  // Objective data
+  private static final int OBJECTIVE_MAG = 120060;
+  private static final int NUMERICAL_APERTURE = 120061;
+  private static final int WORKING_DISTANCE = 120062;
+  private static final int OBJECTIVE_NAME = 120063;
+  private static final int OBJECTIVE_TYPE = 120064;
+  private static final int REFRACTIVE_INDEX = 120079;
+
+  private static final int DEVICE_NAME = 120116;
+  private static final int DEVICE_ID = 120129;
+  private static final int DEVICE_SUBTYPE = 120130;
+  private static final int VALUE = 268435458;
+
   // -- Fields --
 
   private String[] usedFiles;
@@ -374,26 +388,12 @@ public class CellSensReader extends FormatReader {
   private HashMap<String, Integer> dimensionOrdering =
     new HashMap<String, Integer>();
 
-  private ArrayList<Double> physicalSizeX = new ArrayList<Double>();
-  private ArrayList<Double> physicalSizeY = new ArrayList<Double>();
-  private ArrayList<Double> originX = new ArrayList<Double>();
-  private ArrayList<Double> originY = new ArrayList<Double>();
-  private ArrayList<Double> magnifications = new ArrayList<Double>();
-  private ArrayList<Integer> imageWidths = new ArrayList<Integer>();
-  private ArrayList<Integer> imageHeights = new ArrayList<Integer>();
-  private ArrayList<String> channelNames = new ArrayList<String>();
-  private ArrayList<Long> exposureTimes = new ArrayList<Long>();
-  private ArrayList<Long> acquisitionTimes = new ArrayList<Long>();
-  private ArrayList<String> imageNames = new ArrayList<String>();
-  private ArrayList<String> imageTypes = new ArrayList<String>();
-
   private HashMap<Integer, byte[]> backgroundColor = new HashMap<Integer, byte[]>();
 
   private int stackPropertiesCount = -1;
   private int metadataIndex = 0;
 
-  private ArrayList<Hashtable<String, Object>> originalMetadata =
-    new ArrayList<Hashtable<String, Object>>();
+  private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
 
   // -- Constructor --
 
@@ -577,22 +577,9 @@ public class CellSensReader extends FormatReader {
       foundChannelTag = false;
       dimensionTag = 0;
       dimensionOrdering.clear();
-      physicalSizeX.clear();
-      physicalSizeY.clear();
-      originX.clear();
-      originY.clear();
-      magnifications.clear();
-      imageWidths.clear();
-      imageHeights.clear();
-      channelNames.clear();
-      exposureTimes.clear();
-      acquisitionTimes.clear();
-      imageNames.clear();
-      imageTypes.clear();
       backgroundColor.clear();
       stackPropertiesCount = -1;
       metadataIndex = 0;
-      originalMetadata.clear();
     }
   }
 
@@ -693,8 +680,8 @@ public class CellSensReader extends FormatReader {
         }
         index += ms.resolutionCount;
 
-        if (s < originalMetadata.size()) {
-          ms.seriesMetadata = originalMetadata.get(s);
+        if (s < pyramids.size()) {
+          ms.seriesMetadata = pyramids.get(s).originalMetadata;
         }
 
         setCoreIndex(0);
@@ -729,57 +716,79 @@ public class CellSensReader extends FormatReader {
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);
 
-    for (int i=0; i<magnifications.size(); i++) {
+    for (int i=0; i<pyramids.size(); i++) {
+      Pyramid pyramid = pyramids.get(i);
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, i), 0, i);
-      store.setObjectiveNominalMagnification(magnifications.get(i), 0, i);
+      store.setObjectiveNominalMagnification(pyramid.magnification, 0, i);
+      store.setObjectiveWorkingDistance(pyramid.workingDistance, 0, i);
+
+      for (int q=0; q<pyramid.objectiveTypes.size(); q++) {
+        if (pyramid.objectiveTypes.get(q) == 1) {
+          store.setObjectiveModel(pyramid.objectiveNames.get(q), 0, i);
+          break;
+        }
+      }
+      store.setObjectiveLensNA(pyramid.numericalAperture, 0, i);
+
+      store.setDetectorID(MetadataTools.createLSID("Detector", 0, i), 0, i);
+      store.setDetectorOffset(pyramid.offset, 0, i);
+      store.setDetectorGain(pyramid.gain, 0, i);
+
+      for (int q=0; q<pyramid.deviceTypes.size(); q++) {
+        if (pyramid.deviceTypes.get(q).equals("Camera")) {
+          store.setDetectorModel(pyramid.deviceNames.get(q), 0, i);
+          store.setDetectorSerialNumber(pyramid.deviceIDs.get(q), 0, i);
+          break;
+        }
+      }
     }
 
-    int nextSize = 0;
-    int channelIndex = 0;
+    int nextPyramid = 0;
     for (int i=0; i<core.size();) {
+      Pyramid pyramid = null;
+      if (nextPyramid < pyramids.size()) {
+        pyramid = pyramids.get(nextPyramid++);
+      }
       int ii = coreIndexToSeries(i);
-      if (channelIndex < channelNames.size()) {
-        int nextPlane = 0;
+
+      if (pyramid != null) {
+       int nextPlane = 0;
         for (int c=0; c<core.get(i).sizeC; c++) {
-          if (channelIndex < channelNames.size()) {
-            store.setChannelName(channelNames.get(channelIndex), ii, c);
+          store.setDetectorSettingsID(
+            MetadataTools.createLSID("Detector", 0, nextPyramid - 1), ii, c);
+          store.setDetectorSettingsBinning(
+            getBinning(pyramid.binningX + "x" + pyramid.binningY), ii, c);
+
+          if (c < pyramid.channelNames.size()) {
+            store.setChannelName(pyramid.channelNames.get(c), ii, c);
           }
-          if (channelIndex < exposureTimes.size()) {
+          if (c < pyramid.channelWavelengths.size()) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(pyramid.channelWavelengths.get(c).intValue()), ii, c);
+          }
+          if (c < pyramid.exposureTimes.size()) {
             for (int z=0; z<core.get(i).sizeZ; z++) {
               for (int t=0; t<core.get(i).sizeT; t++) {
-                store.setPlaneExposureTime(exposureTimes.get(channelIndex) / 1000000.0,
-                  ii, nextPlane);
-                store.setPlanePositionX(originX.get(nextSize), ii, nextPlane);
-                store.setPlanePositionY(originY.get(nextSize), ii, nextPlane);
+                store.setPlaneExposureTime(
+                  pyramid.exposureTimes.get(c) / 1000000.0, ii, nextPlane);
+                store.setPlanePositionX(pyramid.originX, ii, nextPlane);
+                store.setPlanePositionY(pyramid.originY, ii, nextPlane);
                 nextPlane++;
               }
             }
           }
-          channelIndex++;
-        }
-      }
-
-      if (nextSize < imageTypes.size()) {
-        String imageType = imageTypes.get(nextSize);
-        while (!imageType.equals("Macro image") &&
-          !imageType.equals("Overview image") &&
-          !imageType.equals("Default image"))
-        {
-          nextSize++;
-          if (nextSize < imageTypes.size()) {
-            imageType = imageTypes.get(nextSize);
-          }
-          else break;
         }
       }
 
       store.setImageInstrumentRef(instrument, ii);
 
-      if (nextSize < imageNames.size()) {
-        String imageName = imageNames.get(nextSize);
+      if (pyramid != null) {
+        String imageName = pyramid.name;
         boolean duplicate = false;
-        for (int q=0; q<imageNames.size(); q++) {
-          if (q != nextSize && imageName.equals(imageNames.get(q))) {
+        for (int q=0; q<pyramids.size(); q++) {
+          if (q != (nextPyramid - 1) &&
+            imageName.equals(pyramids.get(q).name))
+          {
             duplicate = true;
             break;
           }
@@ -789,39 +798,21 @@ public class CellSensReader extends FormatReader {
           imageName += " #" + ii;
         }
         store.setImageName(imageName, ii);
+        store.setObjectiveSettingsID(MetadataTools.createLSID("Objective", 0, nextPyramid - 1), ii);
+        store.setObjectiveSettingsRefractiveIndex(pyramid.refractiveIndex, ii);
 
-        int mag = magnifications.size() - 1;
-        if (imageNames.get(nextSize).endsWith("x")) {
-          int nameMag = 0;
-          try {
-            imageName = imageName.substring(0, imageName.indexOf("x"));
-            nameMag = Integer.parseInt(imageName);
-          }
-          catch (NumberFormatException e) {
-          }
-          for (int magnification=0; magnification<magnifications.size(); magnification++) {
-            if (magnifications.get(magnification).intValue() == nameMag) {
-              mag = magnification;
-            }
-          }
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pyramid.physicalSizeX), ii);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pyramid.physicalSizeY), ii);
+
+        if (pyramid.acquisitionTime != null) {
+          // acquisition time is stored in seconds
+          store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
+            pyramid.acquisitionTime * 1000, DateTools.UNIX)), ii);
         }
-        store.setObjectiveSettingsID(MetadataTools.createLSID("Objective", 0, mag), ii);
       }
       else {
         store.setImageName("Macro Image", ii);
       }
-      if (nextSize < physicalSizeX.size()) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX.get(nextSize)), ii);
-      }
-      if (nextSize < physicalSizeY.size()) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY.get(nextSize)), ii);
-      }
-      if (nextSize < acquisitionTimes.size()) {
-        // acquisition time is stored in seconds
-        store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
-          acquisitionTimes.get(nextSize) * 1000, DateTools.UNIX)), ii);
-      }
-      nextSize++;
 
       i += core.get(i).resolutionCount;
     }
@@ -1121,11 +1112,8 @@ public class CellSensReader extends FormatReader {
       }
     }
 
-    int mult = imageWidths.size() / (usedFiles.length - 1);
-    int dimensionIndex = s * mult + 1;
-
-    ms.sizeX = imageWidths.get(dimensionIndex);
-    ms.sizeY = imageHeights.get(dimensionIndex);
+    ms.sizeX = pyramids.get(s).width;
+    ms.sizeY = pyramids.get(s).height;
     ms.sizeZ = maxZ[0] + 1;
     if (maxC[0] > 0) {
       ms.sizeC *= (maxC[0] + 1);
@@ -1326,13 +1314,13 @@ public class CellSensReader extends FormatReader {
           if (stackPropertiesCount > 0 && stackPropertiesCount % 2 == 0) {
             metadataIndex++;
           }
-
-          while (metadataIndex >= originalMetadata.size()) {
-            originalMetadata.add(new Hashtable<String, Object>());
-          }
         }
         else if (tag == DOCUMENT_PROPERTIES) {
           metadataIndex = -1;
+        }
+
+        while (metadataIndex >= pyramids.size()) {
+          pyramids.add(new Pyramid());
         }
 
         if (extendedField && realType == NEW_VOLUME_HEADER) {
@@ -1376,6 +1364,10 @@ public class CellSensReader extends FormatReader {
         else {
           String tagName = getTagName(tag);
           String value = inlineData ? String.valueOf(dataSize) : " ";
+
+          Pyramid pyramid =
+            metadataIndex < 0 ? null : pyramids.get(metadataIndex);
+
           if (!inlineData && dataSize > 0) {
             switch (realType) {
               case CHAR:
@@ -1416,15 +1408,15 @@ public class CellSensReader extends FormatReader {
                 value = vsi.readString(dataSize);
                 value = DataTools.stripString(value);
 
-                if (tag == MAGNIFICATION) {
-                  magnifications.add(
-                    new Double(value.substring(0, value.length() - 1)));
-                }
-                else if (tag == CHANNEL_NAME) {
-                  channelNames.add(value);
+                if (tag == CHANNEL_NAME) {
+                  if (pyramid != null) {
+                    pyramid.channelNames.add(value);
+                  }
                 }
                 else if (tag == STACK_NAME && !value.equals("0")) {
-                  imageNames.add(value);
+                  if (pyramid != null && pyramid.name == null) {
+                    pyramid.name = value;
+                  }
                 }
                 break;
               case INT_2:
@@ -1455,8 +1447,10 @@ public class CellSensReader extends FormatReader {
                 }
 
                 if (tag == IMAGE_BOUNDARY) {
-                  imageWidths.add(intValues[2]);
-                  imageHeights.add(intValues[3]);
+                  if (pyramid != null) {
+                    pyramid.width = intValues[2];
+                    pyramid.height = intValues[3];
+                  }
                 }
                 break;
               case COMPLEX:
@@ -1485,12 +1479,16 @@ public class CellSensReader extends FormatReader {
                 }
 
                 if (tag == RWC_FRAME_SCALE) {
-                  physicalSizeX.add(doubleValues[0]);
-                  physicalSizeY.add(doubleValues[1]);
+                  if (pyramid != null && pyramid.physicalSizeX == null) {
+                    pyramid.physicalSizeX = doubleValues[0];
+                    pyramid.physicalSizeY = doubleValues[1];
+                  }
                 }
                 else if (tag == RWC_FRAME_ORIGIN) {
-                  originX.add(doubleValues[0]);
-                  originY.add(doubleValues[1]);
+                  if (pyramid != null && pyramid.originX == null) {
+                    pyramid.originX = doubleValues[0];
+                    pyramid.originY = doubleValues[1];
+                  }
                 }
                 break;
               case RGB:
@@ -1508,20 +1506,83 @@ public class CellSensReader extends FormatReader {
             }
           }
 
-          if (tag == STACK_TYPE) {
-            value = getStackType(value);
-            imageTypes.add(value);
+          if (metadataIndex >= 0) {
+            try {
+              if (tag == STACK_TYPE) {
+                value = getStackType(value);
+              }
+              else if (tag == DEVICE_SUBTYPE) {
+                value = getDeviceSubtype(value);
+                pyramid.deviceTypes.add(value);
+              }
+              else if (tag == DEVICE_ID) {
+                pyramid.deviceIDs.add(value);
+              }
+              else if (tag == DEVICE_NAME) {
+                pyramid.deviceNames.add(value);
+              }
+              else if (tag == EXPOSURE_TIME) {
+                pyramid.exposureTimes.add(new Long(value));
+              }
+              else if (tag == CREATION_TIME && pyramid.acquisitionTime == null) {
+                pyramid.acquisitionTime = new Long(value);
+              }
+              else if (tag == REFRACTIVE_INDEX) {
+                pyramid.refractiveIndex = new Double(value);
+              }
+              else if (tag == OBJECTIVE_MAG) {
+                pyramid.magnification = new Double(value);
+              }
+              else if (tag == NUMERICAL_APERTURE) {
+                pyramid.numericalAperture = new Double(value);
+              }
+              else if (tag == WORKING_DISTANCE) {
+                pyramid.workingDistance = new Double(value);
+              }
+              else if (tag == OBJECTIVE_NAME) {
+                pyramid.objectiveNames.add(value);
+              }
+              else if (tag == OBJECTIVE_TYPE) {
+                pyramid.objectiveTypes.add(new Integer(value));
+              }
+              else if (tag == BIT_DEPTH) {
+                pyramid.bitDepth = new Integer(value);
+              }
+              else if (tag == X_BINNING) {
+                pyramid.binningX = new Integer(value);
+              }
+              else if (tag == Y_BINNING) {
+                pyramid.binningY = new Integer(value);
+              }
+              else if (tag == CAMERA_GAIN) {
+                pyramid.gain = new Double(value);
+              }
+              else if (tag == CAMERA_OFFSET) {
+                pyramid.offset = new Double(value);
+              }
+              else if (tag == VALUE) {
+                if (tagPrefix.equals("Channel Wavelength ")) {
+                  pyramid.channelWavelengths.add(new Double(value));
+                }
+                else if (tagPrefix.startsWith("Objective Working Distance")) {
+                  pyramid.workingDistance = new Double(value);
+                }
+              }
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("Could not parse tag " + tag, e);
+            }
           }
-          else if (tag == EXPOSURE_TIME) {
-            exposureTimes.add(new Long(value));
-          }
-          else if (tag == CREATION_TIME) {
-            acquisitionTimes.add(new Long(value));
+
+          if (tag == DOCUMENT_TIME || tag == CREATION_TIME) {
+            value = DateTools.convertDate(
+              Long.parseLong(value) * 1000, DateTools.UNIX);
           }
 
           if (tagName != null && populateMetadata) {
             if (metadataIndex >= 0) {
-              addMetaList(tagPrefix + tagName, value, originalMetadata.get(metadataIndex));
+              addMetaList(tagPrefix + tagName, value,
+                pyramids.get(metadataIndex).originalMetadata);
             }
             else {
               addGlobalMetaList(tagPrefix + tagName, value);
@@ -1585,7 +1646,7 @@ public class CellSensReader extends FormatReader {
         return "Microscope ";
       case 2417:
         return "Channel Wavelength ";
-      case 120062:
+      case WORKING_DISTANCE:
         return "Objective Working Distance ";
     }
     LOGGER.debug("Unhandled volume {}", tag);
@@ -1856,15 +1917,15 @@ public class CellSensReader extends FormatReader {
         return "Version number";
       case CHANNEL_NAME:
         return "Channel name";
-      case 120060:
+      case OBJECTIVE_MAG:
         return "Magnification";
-      case 120061:
+      case NUMERICAL_APERTURE:
         return "Numerical Aperture";
-      case 120062:
+      case WORKING_DISTANCE:
         return "Objective Working Distance";
-      case 120063:
+      case OBJECTIVE_NAME:
         return "Objective Name";
-      case 120064:
+      case OBJECTIVE_TYPE:
         return "Objective Type";
       case 120065:
         return "Objective Description";
@@ -1892,7 +1953,7 @@ public class CellSensReader extends FormatReader {
         return "Product Name";
       case 35:
         return "Product Version";
-      case 120116:
+      case DEVICE_NAME:
         return "Device Name";
       case BIT_DEPTH:
         return "Camera Actual Bit Depth";
@@ -1900,13 +1961,13 @@ public class CellSensReader extends FormatReader {
         return "Device Position";
       case 120050:
         return "TV Adapter Magnification";
-      case 120079:
+      case REFRACTIVE_INDEX:
         return "Objective Refractive Index";
       case 120117:
         return "Device Type";
-      case 120129:
+      case DEVICE_ID:
         return "Device Unit ID";
-      case 120130:
+      case DEVICE_SUBTYPE:
         return "Device Subtype";
       case 120132:
         return "Device Model";
@@ -1918,7 +1979,7 @@ public class CellSensReader extends FormatReader {
         return "Laser/Lamp Intensity";
       case 268435456:
         return "Units";
-      case 268435458:
+      case VALUE:
         return "Value";
       case 175208:
         return "Snapshot Count";
@@ -1997,6 +2058,49 @@ public class CellSensReader extends FormatReader {
     }
     LOGGER.debug("Unhandled tag {}", tag);
     return null;
+  }
+
+  private String getDeviceSubtype(String type) {
+    int deviceType = Integer.parseInt(type);
+    switch (deviceType) {
+      case 0:
+        return "Camera";
+      case 10000:
+        return "Stage";
+      case 20000:
+        return "Objective revolver";
+      case 20001:
+        return "TV Adapter";
+      case 20002:
+        return "Filter Wheel";
+      case 20003:
+        return "Lamp";
+      case 20004:
+        return "Aperture Stop";
+      case 20005:
+        return "Shutter";
+      case 20006:
+        return "Objective";
+      case 20007:
+        return "Objective Changer";
+      case 20008:
+        return "TopLens";
+      case 20009:
+        return "Prism";
+      case 20010:
+        return "Zoom";
+      case 20011:
+        return "DSU";
+      case 20012:
+        return "ZDC";
+      case 20050:
+        return "Stage Insert";
+      case 30000:
+        return "Slide Loader";
+      case 40000:
+        return "Manual Control";
+    }
+    return type;
   }
 
   private String getStackType(String type) {
@@ -2091,6 +2195,44 @@ public class CellSensReader extends FormatReader {
       b.append("}");
       return b.toString();
     }
+  }
+
+  class Pyramid {
+    public String name;
+
+    public Double magnification;
+    public Double numericalAperture;
+    public String objectiveName;
+    public Double refractiveIndex;
+    public Double workingDistance;
+
+    public Integer width;
+    public Integer height;
+    public Double originX;
+    public Double originY;
+    public Double physicalSizeX;
+    public Double physicalSizeY;
+    public Long acquisitionTime;
+    public Integer bitDepth;
+
+    public Integer binningX;
+    public Integer binningY;
+    public Double gain;
+    public Double offset;
+
+    public ArrayList<String> channelNames = new ArrayList<String>();
+    public ArrayList<Double> channelWavelengths = new ArrayList<Double>();
+    public ArrayList<Long> exposureTimes = new ArrayList<Long>();
+
+    public ArrayList<String> objectiveNames = new ArrayList<String>();
+    public ArrayList<Integer> objectiveTypes = new ArrayList<Integer>();
+
+    public ArrayList<String> deviceNames = new ArrayList<String>();
+    public ArrayList<String> deviceTypes = new ArrayList<String>();
+    public ArrayList<String> deviceIDs = new ArrayList<String>();
+
+    public Hashtable<String, Object> originalMetadata =
+      new Hashtable<String, Object>();
   }
 
 }
