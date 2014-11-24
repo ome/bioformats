@@ -222,6 +222,40 @@ public class CellSensReader extends FormatReader {
   private static final int ACCUMULATION_MODE = 100039;
   private static final int AUTOEXPOSURE = 100043;
   private static final int EXPOSURE_METERING_MODE = 100044;
+  private static final int FRAME_SIZE = 100048;
+  private static final int BIT_DEPTH = 100049;
+  private static final int HDRI_ON = 100055;
+  private static final int HDRI_FRAMES = 100056;
+  private static final int HDRI_EXPOSURE_RANGE = 100057;
+  private static final int HDRI_MAP_MODE = 100058;
+  private static final int CUSTOM_GRAYSCALE = 100059;
+  private static final int SATURATION = 100060;
+  private static final int WB_PRESET_ID = 100061;
+  private static final int WB_PRESET_NAME = 100062;
+  private static final int WB_MODE = 100063;
+  private static final int CCD_SENSITIVITY = 100064;
+  private static final int ENHANCED_DYNAMIC_RANGE = 100065;
+  private static final int PIXEL_CLOCK = 100066;
+  private static final int COLORSPACE = 100067;
+  private static final int COOLING_ON = 100068;
+  private static final int FAN_SPEED = 100069;
+  private static final int TEMPERATURE_TARGET = 100070;
+  private static final int GAIN_UNIT = 100071;
+  private static final int EM_GAIN = 100072;
+  private static final int PHOTON_IMAGING_MODE = 100073;
+  private static final int FRAME_TRANSFER = 100074;
+  private static final int ANDOR_SHIFT_SPEED = 100075;
+  private static final int VCLOCK_AMPLITUDE = 100076;
+  private static final int SPURIOUS_NOISE_REMOVAL = 100077;
+  private static final int SIGNAL_OUTPUT = 100078;
+  private static final int BASELINE_OFFSET_CLAMP = 100079;
+  private static final int DP80_FRAME_CENTERING = 100080;
+  private static final int HOT_PIXEL_CORRECTION = 100081;
+  private static final int NOISE_REDUCTION = 100082;
+  private static final int WIDER = 100083;
+  private static final int PHOTOBLEACHING = 100084;
+  private static final int PREAMP_GAIN_VALUE = 100085;
+  private static final int WIDER_ENABLED = 100086;
 
   // Dimension properties
   private static final int Z_START = 2012;
@@ -582,10 +616,8 @@ public class CellSensReader extends FormatReader {
     RandomAccessInputStream vsi = new RandomAccessInputStream(id);
     vsi.order(parser.getStream().isLittleEndian());
     vsi.seek(8);
-    readTags(vsi, false);
-    vsi.seek(parser.getStream().getFilePointer());
-
-    vsi.skipBytes(273);
+    readTags(vsi, false, "");
+    vsi.close();
 
     ArrayList<String> files = new ArrayList<String>();
     Location file = new Location(id).getAbsoluteFile();
@@ -676,7 +708,6 @@ public class CellSensReader extends FormatReader {
       ms.metadataComplete = true;
       ms.dimensionOrder = "XYCZT";
     }
-    vsi.close();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
@@ -842,7 +873,6 @@ public class CellSensReader extends FormatReader {
       // usually this is either black or white
       byte[] tile = new byte[getTileSize()];
       byte[] color = backgroundColor.get(getCoreIndex());
-      /* debug */ System.out.println("color.length = " + color.length);
       if (color != null) {
         for (int q=0; q<getTileSize(); q+=color.length) {
           for (int i=0; i<color.length; i++) {
@@ -1206,7 +1236,7 @@ public class CellSensReader extends FormatReader {
     }
   }
 
-  private void readTags(RandomAccessInputStream vsi, boolean populateMetadata) {
+  private void readTags(RandomAccessInputStream vsi, boolean populateMetadata, String tagPrefix) {
     try {
       // read the VSI header
       long fp = vsi.getFilePointer();
@@ -1249,7 +1279,7 @@ public class CellSensReader extends FormatReader {
         long nextField = vsi.readInt() & 0xffffffffL;
         int dataSize = vsi.readInt();
 
-        LOGGER.debug("tag #{}: fieldType={}, tag={}, nextField={}, dataSize={}",
+        LOGGER.debug("  tag #{}: fieldType={}, tag={}, nextField={}, dataSize={}",
           new Object[] {i, fieldType, tag, nextField, dataSize});
 
         boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
@@ -1287,7 +1317,7 @@ public class CellSensReader extends FormatReader {
             vsi.getFilePointer() < vsi.length())
           {
             long start = vsi.getFilePointer();
-            readTags(vsi, populateMetadata);
+            readTags(vsi, populateMetadata, getVolumeName(tag));
             long end = vsi.getFilePointer();
             if (start == end) {
               break;
@@ -1298,13 +1328,17 @@ public class CellSensReader extends FormatReader {
             foundChannelTag = false;
           }
         }
-        else if (extendedField && realType == PROPERTY_SET_VOLUME) {
+        else if (extendedField && (realType == PROPERTY_SET_VOLUME ||
+          realType == NEW_MDIM_VOLUME_HEADER))
+        {
           long endPointer = vsi.getFilePointer() + nextField;
           while (vsi.getFilePointer() < endPointer &&
             vsi.getFilePointer() < vsi.length())
           {
             long start = vsi.getFilePointer();
-            readTags(vsi, tag != 2037);
+            String tagName = realType == NEW_MDIM_VOLUME_HEADER ?
+              getVolumeName(tag) : tagPrefix;
+            readTags(vsi, tag != 2037, tagName);
             long end = vsi.getFilePointer();
             if (start == end) {
               break;
@@ -1313,7 +1347,7 @@ public class CellSensReader extends FormatReader {
         }
         else {
           String tagName = getTagName(tag);
-          String value = inlineData ? String.valueOf(dataSize) : null;
+          String value = inlineData ? String.valueOf(dataSize) : " ";
           if (!inlineData && dataSize > 0) {
             switch (realType) {
               case CHAR:
@@ -1457,8 +1491,8 @@ public class CellSensReader extends FormatReader {
             acquisitionTimes.add(new Long(value));
           }
 
-          if (populateMetadata) {
-            addGlobalMetaList(tagName, value);
+          if (tagName != null && populateMetadata) {
+            addGlobalMetaList(tagPrefix + tagName, value);
           }
         }
 
@@ -1500,6 +1534,31 @@ public class CellSensReader extends FormatReader {
     }
   }
 
+  private String getVolumeName(int tag) {
+    switch (tag) {
+      case COLLECTION_VOLUME:
+      case MULTIDIM_IMAGE_VOLUME:
+      case IMAGE_FRAME_VOLUME:
+      case DIMENSION_SIZE:
+      case IMAGE_COLLECTION_PROPERTIES:
+      case MULTIDIM_STACK_PROPERTIES:
+      case FRAME_PROPERTIES:
+      case DIMENSION_DESCRIPTION_VOLUME:
+      case CHANNEL_PROPERTIES:
+      case DISPLAY_MAPPING_VOLUME:
+      case LAYER_INFO_PROPERTIES:
+        return "";
+      case OPTICAL_PATH:
+        return "Microscope ";
+      case 2417:
+        return "Channel Wavelength ";
+      case 120062:
+        return "Objective Working Distance ";
+    }
+    LOGGER.debug("Unhandled volume {}", tag);
+    return "";
+  }
+
   private String getTagName(int tag) {
     switch (tag) {
       case Y_PLANE_DIMENSION_UNIT:
@@ -1527,7 +1586,7 @@ public class CellSensReader extends FormatReader {
       case CAMERA_OFFSET:
         return "Camera offset";
       case CAMERA_GAMMA:
-        return "Camera gamma";
+        return "Gamma";
       case SHARPNESS:
         return "Sharpness";
       case RED_GAIN:
@@ -1553,9 +1612,9 @@ public class CellSensReader extends FormatReader {
       case CLIPPING:
         return "Clipping";
       case MIRROR_H:
-        return "Horizontally mirrored";
+        return "Mirror (horizontal)";
       case MIRROR_V:
-        return "Vertically mirrored";
+        return "Mirror (vertical)";
       case CLIPPING_STATE:
         return "Clipping state";
       case ICC_ENABLED:
@@ -1631,19 +1690,17 @@ public class CellSensReader extends FormatReader {
       case CREATION_TIME:
         return "Creation time (UTC)";
       case RWC_FRAME_ORIGIN:
-        return "Frame origin (real-world coordinates)";
+        return "Origin";
       case RWC_FRAME_SCALE:
-        return "Frame scale (real-world coordinates)";
+        return "Calibration";
       case RWC_FRAME_UNIT:
-        return "Frame units (real-world coordinates)";
+        return "Calibration units";
       case STACK_NAME:
-        return "Stack name";
+        return "Layer";
       case CHANNEL_DIM:
         return "Channel dimension";
-      case OPTICAL_PATH:
-        return "Optical path";
       case STACK_TYPE:
-        return "Stack type";
+        return "Image Type";
       case LIVE_OVERFLOW:
         return "Live overflow";
       case IS_TRANSMISSION:
@@ -1725,15 +1782,15 @@ public class CellSensReader extends FormatReader {
       case MAGNIFICATION:
         return "Original magnification";
       case DOCUMENT_NAME:
-        return "Document name";
+        return "Document Name";
       case DOCUMENT_NOTE:
-        return "Document note";
+        return "Document Note";
       case DOCUMENT_TIME:
-        return "Document creation time";
+        return "Document Creation Time";
       case DOCUMENT_AUTHOR:
-        return "Document author";
+        return "Document Author";
       case DOCUMENT_COMPANY:
-        return "Document company";
+        return "Document Company";
       case DOCUMENT_CREATOR_NAME:
         return "Document creator name";
       case DOCUMENT_CREATOR_MAJOR_VERSION:
@@ -1743,7 +1800,7 @@ public class CellSensReader extends FormatReader {
       case DOCUMENT_CREATOR_SUB_VERSION:
         return "Document creator sub version";
       case DOCUMENT_CREATOR_BUILD_NUMBER:
-        return "Document creator build number";
+        return "Product Build Number";
       case DOCUMENT_CREATOR_PACKAGE:
         return "Document creator package";
       case DOCUMENT_PRODUCT:
@@ -1766,8 +1823,147 @@ public class CellSensReader extends FormatReader {
         return "Version number";
       case CHANNEL_NAME:
         return "Channel name";
+      case 120060:
+        return "Magnification";
+      case 120061:
+        return "Numerical Aperture";
+      case 120062:
+        return "Objective Working Distance";
+      case 120063:
+        return "Objective Name";
+      case 120064:
+        return "Objective Type";
+      case 120065:
+        return "Objective Description";
+      case 120066:
+        return "Objective Subtype";
+      case 120069:
+        return "Brightness Correction";
+      case 120070:
+        return "Objective Lens";
+      case 120075:
+        return "Objective X Shift";
+      case 120076:
+        return "Objective Y Shift";
+      case 120077:
+        return "Objective Z Shift";
+      case 120078:
+        return "Objective Gear Setting";
+      case 120635:
+        return "Slide Bar Code";
+      case 120638:
+        return "Tray No.";
+      case 120637:
+        return "Slide No.";
+      case 34:
+        return "Product Name";
+      case 35:
+        return "Product Version";
+      case 120116:
+        return "Device Name";
+      case BIT_DEPTH:
+        return "Camera Actual Bit Depth";
+      case 120001:
+        return "Device Position";
+      case 120050:
+        return "TV Adapter Magnification";
+      case 120079:
+        return "Objective Refractive Index";
+      case 120117:
+        return "Device Type";
+      case 120129:
+        return "Device Unit ID";
+      case 120130:
+        return "Device Subtype";
+      case 120132:
+        return "Device Model";
+      case 120133:
+        return "Device Manufacturer";
+      case 121102:
+        return "Stage Insert Position";
+      case 121131:
+        return "Laser/Lamp Intensity";
+      case 268435456:
+        return "Units";
+      case 268435458:
+        return "Value";
+      case 175208:
+        return "Snapshot Count";
+      case 120210:
+        return "Device Configuration Position";
+      case 120211:
+        return "Device Configuration Index";
+      case 124000:
+        return "Aperture Max Mode";
+      case FRAME_SIZE:
+        return "Camera Maximum Frame Size";
+      case HDRI_ON:
+        return "Camera HDRI Enabled";
+      case HDRI_FRAMES:
+        return "Camera Images per HDRI image";
+      case HDRI_EXPOSURE_RANGE:
+        return "Camera HDRI Exposure Ratio";
+      case HDRI_MAP_MODE:
+        return "Camera HDRI Mapping Mode";
+      case CUSTOM_GRAYSCALE:
+        return "Camera Custom Grayscale Value";
+      case SATURATION:
+        return "Camera Saturation";
+      case WB_PRESET_ID:
+        return "Camera White Balance Preset ID";
+      case WB_PRESET_NAME:
+        return "Camera White Balance Preset Name";
+      case WB_MODE:
+        return "Camera White Balance Mode";
+      case CCD_SENSITIVITY:
+        return "Camera CCD Sensitivity";
+      case ENHANCED_DYNAMIC_RANGE:
+        return "Camera Enhanced Dynamic Range";
+      case PIXEL_CLOCK:
+        return "Camera Pixel Clock (MHz)";
+      case COLORSPACE:
+        return "Camera Colorspace";
+      case COOLING_ON:
+        return "Camera Cooling Enabled";
+      case FAN_SPEED:
+        return "Camera Cooling Fan Speed";
+      case TEMPERATURE_TARGET:
+        return "Camera Cooling Temperature Target";
+      case GAIN_UNIT:
+        return "Camera Gain Unit";
+      case EM_GAIN:
+        return "Camera EM Gain";
+      case PHOTON_IMAGING_MODE:
+        return "Camera Photon Imaging Mode";
+      case FRAME_TRANSFER:
+        return "Camera Frame Transfer Enabled";
+      case ANDOR_SHIFT_SPEED:
+        return "Camera iXon Shift Speed";
+      case VCLOCK_AMPLITUDE:
+        return "Camera Vertical Clock Amplitude";
+      case SPURIOUS_NOISE_REMOVAL:
+        return "Camera Spurious Noise Removal Enabled";
+      case SIGNAL_OUTPUT:
+        return "Camera Signal Output";
+      case BASELINE_OFFSET_CLAMP:
+        return "Camera Baseline Offset Clamp";
+      case DP80_FRAME_CENTERING:
+        return "Camera DP80 Frame Centering";
+      case HOT_PIXEL_CORRECTION:
+        return "Camera Hot Pixel Correction Enabled";
+      case NOISE_REDUCTION:
+        return "Camera Noise Reduction";
+      case WIDER:
+        return "Camera WiDER";
+      case PHOTOBLEACHING:
+        return "Camera Photobleaching Enabled";
+      case PREAMP_GAIN_VALUE:
+        return "Camera Preamp Gain";
+      case WIDER_ENABLED:
+        return "Camera WiDER Enabled";
     }
-    return "tag " + tag;
+    LOGGER.debug("Unhandled tag {}", tag);
+    return null;
   }
 
   private String getStackType(String type) {
