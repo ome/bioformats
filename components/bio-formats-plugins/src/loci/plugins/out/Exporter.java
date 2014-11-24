@@ -73,18 +73,16 @@ import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
 import loci.plugins.LociExporter;
+import loci.plugins.util.ROIHandler;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
-
+import ome.units.UNITS;
+import ome.units.quantity.Time;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
-
-import ome.units.quantity.Time;
-import ome.units.UNITS;
 
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
@@ -481,6 +479,7 @@ public class Exporter {
         }
       }
 
+      ROIHandler.saveROIs(store);
       w.setMetadataRetrieve(store);
 
       // prompt for options
