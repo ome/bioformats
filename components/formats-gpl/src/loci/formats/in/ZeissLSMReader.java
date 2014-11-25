@@ -1386,7 +1386,7 @@ public class ZeissLSMReader extends FormatReader {
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
           try {
-            Integer cutIn = new Integer(v[0].trim());
+            Double cutIn = new Double(v[0].trim());
             Length in = FormatTools.getCutIn(cutIn);
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, instrument, nextFilter);
@@ -1395,7 +1395,7 @@ public class ZeissLSMReader extends FormatReader {
           catch (NumberFormatException e) { }
           if (v.length > 1) {
             try {
-              Integer cutOut = new Integer(v[1].trim());
+             Double cutOut = new Double(v[1].trim());
               Length out = FormatTools.getCutOut(cutOut);
               if (out != null) {
                 store.setTransmittanceRangeCutOut(out, instrument, nextFilter);

@@ -142,12 +142,10 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
-import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
-import ome.units.UNITS;
 
 /**
  * Creates XML objects for the 2010-06 schema.
@@ -300,10 +298,10 @@ public class XMLMockObjects
   public static final String TIME = "2006-05-04T18:13:51.0Z";
 
   /** The default cut-in. */
-  public static final int CUT_IN = 200;
+  public static final Double CUT_IN = 200.0;
 
   /** The default cut-out. */
-  public static final int CUT_OUT = 300;
+  public static final Double CUT_OUT = 300.0;
 
   /** Root of the file. */
   protected OME ome;
@@ -417,10 +415,10 @@ public class XMLMockObjects
    *
    * @param index The index of the objective in the file.
    * @param cutIn The cut in value.
-     * @param cutOut The cut out value.
+   * @param cutOut The cut out value.
    * @return See above.
    */
-  public Filter createFilter(int index, int cutIn, int cutOut)
+  public Filter createFilter(int index, double cutIn, double cutOut)
   {
     Filter filter = new Filter();
     filter.setID("Filter:"+index);
