@@ -169,5 +169,34 @@ classdef TestBfGetReader < ReaderTest
             self.reader = bfGetReader('interleaved-test&interleaved=false.fake');
             assertFalse(self.reader.isInterleaved());
         end
+        
+        % Physical pixel size tests
+        function testPhysicalPixelSizeX(self)
+            self.reader = bfGetReader('physical-test&physicalSizeX=.2.fake');
+            p = self.reader.getMetadataStore().getPixelsPhysicalSizeX(0);
+            assertEqual(p.value(ome.units.UNITS.MICROM).doubleValue(), .2);
+            assertEqual(p.value(ome.units.UNITS.NM).intValue(), 200);
+        end
+        
+        function testPhysicalPixelSizeY(self)
+            self.reader = bfGetReader('physical-test&physicalSizeY=.2.fake');
+            p = self.reader.getMetadataStore().getPixelsPhysicalSizeY(0);
+            assertEqual(p.value(ome.units.UNITS.MICROM).doubleValue(), .2);
+            assertEqual(p.value(ome.units.UNITS.NM).intValue(), 200);
+        end
+        
+        function testPhysicalPixelSizeZ(self)
+            self.reader = bfGetReader('physical-test&physicalSizeZ=.2.fake');
+            p = self.reader.getMetadataStore().getPixelsPhysicalSizeZ(0);
+            assertEqual(p.value(ome.units.UNITS.MICROM).doubleValue(), .2);
+            assertEqual(p.value(ome.units.UNITS.NM).intValue(), 200);
+        end
+        
+        % Acquisition date
+        function testAcquisitionDate(self)
+            self.reader = bfGetReader('date-test&acquisitionDate=2014-11-19_05-56-01.fake');
+            date = self.reader.getMetadataStore().getImageAcquisitionDate(0);
+            assertEqual(date.getValue(), '2014-11-19T05:56:01');
+        end
     end
 end
