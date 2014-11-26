@@ -1327,7 +1327,7 @@ public class CellSensReader extends FormatReader {
         if (tag == EXTERNAL_FILE_PROPERTIES && previousTag == IMAGE_FRAME_VOLUME) {
           metadataIndex++;
         }
-        else if (tag == DOCUMENT_PROPERTIES) {
+        else if (tag == DOCUMENT_PROPERTIES || tag == SLIDE_PROPERTIES) {
           metadataIndex = -1;
         }
 
@@ -1601,7 +1601,7 @@ public class CellSensReader extends FormatReader {
               addMetaList(tagPrefix + tagName, value,
                 pyramids.get(metadataIndex).originalMetadata);
             }
-            else {
+            else if (tag != VALUE || tagPrefix.length() > 0) {
               addGlobalMetaList(tagPrefix + tagName, value);
             }
           }
@@ -2116,6 +2116,8 @@ public class CellSensReader extends FormatReader {
         return "Slide Loader";
       case 40000:
         return "Manual Control";
+      case 40500:
+        return "Microscope Frame";
     }
     return type;
   }
