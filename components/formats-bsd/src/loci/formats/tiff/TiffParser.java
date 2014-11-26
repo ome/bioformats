@@ -664,6 +664,11 @@ public class TiffParser {
     {
       stripByteCounts[countIndex] *= pixel;
     }
+    else if (stripByteCounts[countIndex] < 0 && countIndex > 0) {
+      LOGGER.debug("byte count #{} was {}; correcting to {}", countIndex,
+        stripByteCounts[countIndex], stripByteCounts[countIndex - 1]);
+      stripByteCounts[countIndex] = stripByteCounts[countIndex - 1];
+    }
 
     long stripOffset = 0;
     long nStrips = 0;
