@@ -359,6 +359,7 @@ public class CellSensReader extends FormatReader {
   private static final int DEVICE_NAME = 120116;
   private static final int DEVICE_ID = 120129;
   private static final int DEVICE_SUBTYPE = 120130;
+  private static final int DEVICE_MANUFACTURER = 120133;
   private static final int VALUE = 268435458;
 
   // -- Fields --
@@ -738,6 +739,8 @@ public class CellSensReader extends FormatReader {
         if (pyramid.deviceTypes.get(q).equals("Camera")) {
           store.setDetectorModel(pyramid.deviceNames.get(q), 0, i);
           store.setDetectorSerialNumber(pyramid.deviceIDs.get(q), 0, i);
+          store.setDetectorManufacturer(pyramid.deviceManufacturers.get(q), 0, i);
+          store.setDetectorType(getDetectorType("CCD"), 0, i);
           break;
         }
       }
@@ -1532,6 +1535,9 @@ public class CellSensReader extends FormatReader {
               else if (tag == DEVICE_NAME) {
                 pyramid.deviceNames.add(value);
               }
+              else if (tag == DEVICE_MANUFACTURER) {
+                pyramid.deviceManufacturers.add(value);
+              }
               else if (tag == EXPOSURE_TIME) {
                 pyramid.exposureTimes.add(new Long(value));
               }
@@ -1982,7 +1988,7 @@ public class CellSensReader extends FormatReader {
         return "Device Subtype";
       case 120132:
         return "Device Model";
-      case 120133:
+      case DEVICE_MANUFACTURER:
         return "Device Manufacturer";
       case 121102:
         return "Stage Insert Position";
@@ -2241,6 +2247,7 @@ public class CellSensReader extends FormatReader {
     public ArrayList<String> deviceNames = new ArrayList<String>();
     public ArrayList<String> deviceTypes = new ArrayList<String>();
     public ArrayList<String> deviceIDs = new ArrayList<String>();
+    public ArrayList<String> deviceManufacturers = new ArrayList<String>();
 
     public Hashtable<String, Object> originalMetadata =
       new Hashtable<String, Object>();
