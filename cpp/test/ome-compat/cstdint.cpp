@@ -38,7 +38,7 @@
 
 #include <ome/compat/cstdint.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 TEST(Cstdint, Types)
 {

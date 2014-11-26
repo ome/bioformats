@@ -71,7 +71,7 @@ public class TiffParser {
   // -- Fields --
 
   /** Input source from which to parse TIFF data. */
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
 
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;
@@ -663,6 +663,11 @@ public class TiffParser {
       pixel > 1)
     {
       stripByteCounts[countIndex] *= pixel;
+    }
+    else if (stripByteCounts[countIndex] < 0 && countIndex > 0) {
+      LOGGER.debug("byte count #{} was {}; correcting to {}", countIndex,
+        stripByteCounts[countIndex], stripByteCounts[countIndex - 1]);
+      stripByteCounts[countIndex] = stripByteCounts[countIndex - 1];
     }
 
     long stripOffset = 0;

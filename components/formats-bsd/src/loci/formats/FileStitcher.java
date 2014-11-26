@@ -772,6 +772,16 @@ public class FileStitcher extends ReaderWrapper {
     return list.toArray(new IFormatReader[0]);
   }
 
+  /* @see IFormatReader#reopenFile) */
+  public void reopenFile() throws IOException {
+    reader.reopenFile();
+    for (ExternalSeries s : externals) {
+      for (DimensionSwapper r : s.getReaders()) {
+        r.reopenFile();
+      }
+    }
+  }
+
   /* @see IFormatReader#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     close();

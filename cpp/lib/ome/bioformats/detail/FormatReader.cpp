@@ -246,7 +246,6 @@ namespace ome
           void
           operator()(T& v)
           {
-            const ome::xml::model::enums::PixelType type(reader.getPixelType());
             EndianType endian = reader.isLittleEndian() ? ENDIAN_LITTLE : ENDIAN_BIG;
 
             const uint32_t bpp(bytesPerPixel(reader.getPixelType()));
@@ -416,7 +415,7 @@ namespace ome
 
       bool
       FormatReader::isThisType(const std::string& name,
-                               bool               open)
+                               bool               open) const
       {
         // if file extension ID is insufficient and we can't open the file, give up
         if (!suffixSufficient && !open)
@@ -441,16 +440,12 @@ namespace ome
         if (!open)
           return false; // not allowed to open any files
 
-        std::ifstream ifs(name.c_str());
-        if (!ifs)
-          return false;
-
-        return isThisType(ifs);
+        return isFilenameThisTypeImpl(name);
       }
 
       bool
       FormatReader::isThisType(const uint8_t *begin,
-                               const uint8_t *end)
+                               const uint8_t *end) const
       {
         imstream ims(reinterpret_cast<const char *>(begin),
                      reinterpret_cast<const char *>(end));
@@ -459,14 +454,26 @@ namespace ome
 
       bool
       FormatReader::isThisType(const uint8_t *begin,
-                               std::size_t    length)
+                               std::size_t    length) const
       {
         imstream ims(reinterpret_cast<const char *>(begin), length);
         return isThisType(ims);
       }
 
       bool
-      FormatReader::isThisType(std::istream& /* stream */)
+      FormatReader::isThisType(std::istream& stream) const
+      {
+        return isStreamThisTypeImpl(stream);
+      }
+
+      bool
+      FormatReader::isFilenameThisTypeImpl(const std::string& /* name */) const
+      {
+        return false;
+      }
+
+      bool
+      FormatReader::isStreamThisTypeImpl(std::istream& /* stream */) const
       {
         return false;
       }
@@ -584,15 +591,9 @@ namespace ome
       }
 
       void
-      FormatReader::get8BitLookupTable(VariantPixelBuffer& /* buf */) const
+      FormatReader::getLookupTable(VariantPixelBuffer& /* buf */) const
       {
-        throw std::runtime_error("Reader does not implement 8-bit lookup tables");
-      }
-
-      void
-      FormatReader::get16BitLookupTable(VariantPixelBuffer& /* buf */) const
-      {
-        throw std::runtime_error("Reader does not implement 16-bit lookup tables");
+        throw std::runtime_error("Reader does not implement lookup tables");
       }
 
       Modulo&
@@ -736,6 +737,17 @@ namespace ome
       }
 
       void
+      FormatReader::openBytes(dimension_size_type no,
+                              VariantPixelBuffer& buf,
+                              dimension_size_type x,
+                              dimension_size_type y,
+                              dimension_size_type w,
+                              dimension_size_type h) const
+      {
+        openBytesImpl(no, buf, x, y, w, h);
+      }
+
+      void
       FormatReader::openThumbBytes(dimension_size_type /* no */,
                                    VariantPixelBuffer& /* buf */) const
       {
@@ -841,7 +853,6 @@ namespace ome
       FormatReader::getUsedFiles(bool noPixels) const
       {
         SaveSeries sentry(*this);
-        dimension_size_type oldSeries = getSeries();
         std::set<std::string> files;
         for (dimension_size_type i = 0; i < getSeriesCount(); ++i)
           {
@@ -854,7 +865,6 @@ namespace ome
                 files.insert(*file);
               }
           }
-        setSeries(oldSeries);
         return std::vector<std::string>(files.begin(), files.end());
       }
 
@@ -1113,6 +1123,9 @@ namespace ome
                  i != core.end();
                  ++i, ++idx)
               {
+                if (series == idx)
+                  break;
+
                 if (*i)
                   index += (*i)->resolutionCount;
                 else
@@ -1128,6 +1141,12 @@ namespace ome
                     fmt % series % index;
                     throw std::logic_error(fmt.str());
                   }
+              }
+            if (series != idx)
+              {
+                boost::format fmt("Invalid series: %1%");
+                fmt % series;
+                throw std::logic_error(fmt.str());
               }
           }
 

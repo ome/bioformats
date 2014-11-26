@@ -67,6 +67,12 @@ if(BUILD_TESTS)
 
   add_test(ome-compat/memory memory)
 
+  add_executable(module module.cpp)
+  target_link_libraries(module ome-compat)
+  target_link_libraries(module ome-test)
+
+  add_test(ome-compat/module module)
+
   add_executable(mstream mstream.cpp)
   target_link_libraries(mstream ome-compat)
   target_link_libraries(mstream ome-test)

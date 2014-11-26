@@ -139,6 +139,102 @@ namespace ome
 
     }
 
+    // No switch default to avoid -Wunreachable-code errors.
+    // However, this then makes -Wswitch-default complain.  Disable
+    // temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
+    const std::string&
+    getDomain(Domain domain)
+    {
+      static const std::string unk("Unknown");
+
+      switch(domain)
+        {
+        case UNKNOWN:
+          {
+            return unk;
+          }
+          break;
+        case HCS:
+          {
+            static const std::string hcs("High-Content Screening (HCS)");
+            return hcs;
+          }
+          break;
+        case LM:
+          {
+            static const std::string lm("Light Microscopy (LM)");
+            return lm;
+          }
+          break;
+        case EM:
+          {
+            static const std::string em("Electron Microscopy (EM)");
+            return em;
+          }
+          break;
+        case SPM:
+          {
+            static const std::string spm("Scanning Probe Microscopy (SPM)");
+            return spm;
+          }
+          break;
+        case SEM:
+          {
+            static const std::string sem("Scanning Electron Microscopy (SEM)");
+            return sem;
+          }
+          break;
+        case FLIM:
+          {
+            static const std::string flim("Fluorescence-Lifetime Imaging (FLIM)");
+            return flim;
+          }
+          break;
+        case MEDICAL:
+          {
+            static const std::string mi("Medical Imaging");
+            return mi;
+          }
+          break;
+        case HISTOLOGY:
+          {
+            static const std::string hs("Histology");
+            return hs;
+          }
+          break;
+        case GEL:
+          {
+            static const std::string gel("Gel/Blot Imaging");
+            return gel;
+          }
+          break;
+        case ASTRONOMY:
+          {
+            static const std::string astronomy("Astronomy");
+            return astronomy;
+          }
+          break;
+        case GRAPHICS:
+          {
+            static const std::string graphics("Graphics");
+            return graphics;
+          }
+          break;
+        }
+
+      // Fallback if enum is unknown.
+      return unk;
+    }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
+
     dimension_size_type
     getIndex(const std::string& order,
              dimension_size_type zSize,

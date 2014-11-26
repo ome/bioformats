@@ -1,0 +1,220 @@
+#include <ome/bioformats/in/TIFFReader.h>
+
+#include <ome/xml/meta/MetadataStore.h>
+#include <ome/xml/meta/MetadataRetrieve.h>
+#include <ome/xml/meta/OMEXMLMetadata.h>
+#include <ome/xml/model/primitives/Timestamp.h>
+
+#include "ImageInfo.h"
+
+using namespace ome::bioformats;
+using ome::xml::model::primitives::Timestamp;
+
+namespace bin
+{
+  namespace showinf
+  {
+
+    ImageInfo::ImageInfo (const std::string &file,
+                          const options&     opts):
+      file(file),
+      opts(opts),
+      reader()
+    {
+    }
+
+    ImageInfo::~ImageInfo ()
+    {
+    }
+
+    void
+    ImageInfo::setReader(std::shared_ptr<FormatReader>& reader)
+    {
+      this->reader = reader;
+    }
+
+    void
+    ImageInfo::testRead(std::ostream& stream)
+    {
+      if (!reader)
+        reader = std::make_shared<in::TIFFReader>();
+
+      preInit(stream);
+
+      Timestamp t1;
+      reader->setId(file);
+      Timestamp t2;
+      stream << "Reader setup took "
+             << static_cast<Timestamp::value_type>(t2) - static_cast<Timestamp::value_type>(t1)
+             << '\n';
+
+      postInit(stream);
+      checkWarnings(stream);
+      if (opts.showcore)
+        readCoreMetadata(stream);
+    }
+
+    void
+    ImageInfo::preInit(std::ostream& stream)
+    {
+      if (opts.showomexml)
+        {
+          reader->setOriginalMetadataPopulated(opts.showsa);
+          std::shared_ptr<ome::xml::meta::MetadataStore> store(std::make_shared<ome::xml::meta::OMEXMLMetadata>());
+          reader->setMetadataStore(store);
+        }
+
+      /// @todo ImageReader format detection.
+      std::shared_ptr<ome::bioformats::detail::FormatReader> detail = std::dynamic_pointer_cast<ome::bioformats::detail::FormatReader>(reader);
+      if (detail)
+        stream << "Using reader: " << detail->getFormat()
+               << " (" << detail->getFormatDescription() << ")\n";
+      else
+        stream << "Unknown reader\n";
+
+      if (opts.stitch)
+        {
+          /// @todo Stitching
+          stream << "Stiching not implemented\n";
+        }
+      /// @todo ChannelFiller
+      /// @todo ChannelSeparator
+      /// @todo ChannelMerger
+      /// @todo MinMaxCalc
+      /// @todo BufferedImageReader
+
+      reader->close();
+      reader->setMetadataFiltered(opts.filter);
+      reader->setGroupFiles(opts.group);
+      MetadataOptions mopts(opts.showcore ? MetadataOptions::METADATA_ALL : MetadataOptions::METADATA_MINIMUM);
+      reader->setMetadataOptions(mopts);
+      reader->setFlattenedResolutions(opts.flat);
+    }
+
+    void
+    ImageInfo::postInit(std::ostream& /* stream */)
+    {
+    }
+
+    void
+    ImageInfo::checkWarnings(std::ostream& /* stream */)
+    {
+    }
+
+    void
+    ImageInfo::readCoreMetadata(std::ostream& stream)
+    {
+      stream << "\nReading core metadata\n";
+      if (opts.stitch)
+        stream << "File pattern = " << file << '\n';
+      else
+        stream << "Filename = "
+               << (reader->getCurrentFile() ? *reader->getCurrentFile() : "null")
+               << '\n';
+
+      /// @todo Log mapped filename (if any)
+
+      if (opts.showused)
+        {
+          const std::vector<std::string> used(reader->getUsedFiles());
+          if (used.empty())
+            {
+              stream << "Used files = []";
+            }
+          else if (used.size() == 1)
+            {
+              stream << "Used files = [" << used.at(0) << "]\n";
+            }
+          else
+            {
+              stream << "Used files\n";
+              for (std::vector<std::string>::const_iterator i = used.begin();
+                   i != used.end();
+                   ++i)
+                {
+                  stream << '\t' << *i << '\n';
+                }
+            }
+        }
+
+      dimension_size_type seriesCount(reader->getSeriesCount());
+      stream << "Series count = " << seriesCount << '\n' << '\n';
+
+      for (dimension_size_type s = 0; s < seriesCount; ++s)
+        {
+          reader->setSeries(s);
+
+          /// @todo Get image name from metadata store
+          //          std::string imageName(mr ? mr->getImageName(s) : "");
+          stream << "Series #" << s << ":\n";
+          // << (imageName.empty() ? "" : " -- ")
+          // << imageName
+          // << ':' << '\n';
+
+          stream << "\tImage count = " << reader->getImageCount() << '\n'
+                 << "\tRGB = " << reader->getRGBChannelCount() << '\n'
+                 << "\tInterleaved = " << (reader->isInterleaved() ? "true" : "false") << '\n'
+                 << "\tIndexed = " << (reader->isIndexed() ? "true" : "false") << '\n'
+                 << "\tWidth = " << reader->getSizeX() << '\n'
+                 << "\tHeight = " << reader->getSizeY() << '\n'
+                 << "\tSizeZ = " << reader->getSizeZ() << '\n'
+                 << "\tSizeT = " << reader->getSizeT() << '\n'
+                 << "\tSizeC = " << reader->getSizeC() << '\n'
+                 << "\tThumbnail size = " << reader->getThumbSizeX() << " × " << reader->getThumbSizeY() << '\n'
+                 << "\tEndianness = " << (reader->isLittleEndian() ? "little" : "big") << '\n'
+                 << "\tDimensionOrder = " << reader->getDimensionOrder() << " (" << (reader->isOrderCertain() ? "certain" : "not certain") << ")\n"
+                 << "\tPixelType = " << reader->getPixelType() << '\n'
+                 << "\tBits per Pixel = " << reader->getBitsPerPixel() << '\n'
+                 << "\tMetadataComplete = " << (reader->isMetadataComplete() ? "true" : "false") << '\n'
+                 << "\tThumbnailSeries = " << (reader->isThumbnailSeries() ? "true" : "false") << '\n'
+                 << '\n';
+        }
+
+      const ome::bioformats::MetadataMap global = reader->getGlobalMetadata().flatten();
+      if (global.empty())
+        {
+          stream << "No global metadata\n\n";
+        }
+      else
+        {
+          stream << "Global metadata:\n";
+          for (ome::bioformats::MetadataMap::const_iterator i = global.begin();
+               i != global.end();
+               ++i)
+            {
+              std::cout << '\t' << i->first << ": " << i->second << '\n';
+            }
+          stream << '\n';
+        }
+
+      for (dimension_size_type s = 0; s < seriesCount; ++s)
+        {
+          reader->setSeries(s);
+
+          const ome::bioformats::MetadataMap series = reader->getSeriesMetadata().flatten();
+          if (!series.empty())
+            {
+              stream << "Series #" << s << " metadata:\n";
+              for (ome::bioformats::MetadataMap::const_iterator i = series.begin();
+                   i != series.end();
+                   ++i)
+                {
+                  std::cout << '\t' << i->first << ": " << i->second << '\n';
+                }
+            }
+          stream << '\n';
+        }
+
+      try
+        {
+          std::shared_ptr<ome::xml::meta::MetadataStore> ms(reader->getMetadataStore());
+          std::shared_ptr<ome::xml::meta::MetadataRetrieve> mr(std::dynamic_pointer_cast<ome::xml::meta::MetadataRetrieve>(ms));
+        }
+      catch (const std::exception& e)
+        {
+          std::cerr << "Failed to get metadata: " << e.what() << '\n';
+        }
+    }
+
+  }
+}

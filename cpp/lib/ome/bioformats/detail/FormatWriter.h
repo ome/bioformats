@@ -121,6 +121,14 @@ namespace ome
         /// Constructor.
         FormatWriter(const WriterProperties&);
 
+      private:
+        /// Copy constructor (deleted).
+        FormatWriter (const FormatWriter&);
+
+        /// Assignment operator (deleted).
+        FormatWriter&
+        operator= (const FormatWriter&);
+
       public:
         /// Destructor.
         virtual
@@ -129,15 +137,11 @@ namespace ome
         // Documented in superclass.
         bool
         isThisType(const std::string& name,
-                   bool               open = true);
+                   bool               open = true) const;
 
         // Documented in superclass.
         void
-        set8BitLookupTable(const VariantPixelBuffer& buf);
-
-        // Documented in superclass.
-        void
-        set16BitLookupTable(const VariantPixelBuffer& buf);
+        setLookupTable(const VariantPixelBuffer& buf);
 
         // Documented in superclass.
         void

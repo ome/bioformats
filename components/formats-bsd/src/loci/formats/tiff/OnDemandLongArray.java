@@ -45,7 +45,7 @@ import loci.common.RandomAccessInputStream;
  */
 public class OnDemandLongArray {
 
-  private RandomAccessInputStream stream;
+  private transient RandomAccessInputStream stream;
   private int size;
   private long start;
 

@@ -40,6 +40,8 @@
 #include <cstdarg>
 #include <cassert>
 
+#include <ome/internal/config.h>
+
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/Field.h>
@@ -205,8 +207,8 @@ namespace
            ++row)
         {
           dimension_size_type row_width = rfull.w * copysamples;
-          if (row_width % 8)
-            row_width += 8 - (row_width % 8); // pad to next full byte
+          if (row_width % 8U)
+            row_width += 8U - (row_width % 8U); // pad to next full byte
           dimension_size_type yoffset = (row - rfull.y) * row_width;
 
           destidx[ome::bioformats::DIM_SPATIAL_X] = rclip.x - region.x;
@@ -215,14 +217,14 @@ namespace
           T::value_type *dest = &buffer->at(destidx);
           const uint8_t *src = reinterpret_cast<const uint8_t *>(tilebuf.data());
 
-          for (dimension_size_type sampleoffset = 0;
+          for (dimension_size_type sampleoffset = 0U;
                sampleoffset < (rclip.w * copysamples);
                ++sampleoffset)
             {
               dimension_size_type src_bit = yoffset + xoffset + sampleoffset;
-              const uint8_t *src_byte = src + (src_bit / 8);
-              const uint8_t bit_offset = 7 - (src_bit % 8);
-              const uint8_t mask = 1 << bit_offset;
+              const uint8_t *src_byte = src + (src_bit / 8U);
+              const uint8_t bit_offset = 7U - (src_bit % 8U);
+              const uint8_t mask = static_cast<uint8_t>(1U << bit_offset);
               assert(src_byte >= src && src_byte < src + tilebuf.size());
               *(dest+sampleoffset) = static_cast<T::value_type>(*src_byte & mask);
             }
@@ -271,7 +273,7 @@ namespace
           i != tiles.end();
           ++i)
         {
-          tstrile_t tile = *i;
+          tstrile_t tile = static_cast<tstrile_t>(*i);
           PlaneRegion rfull = tileinfo.tileRegion(tile);
           PlaneRegion rclip = tileinfo.tileRegion(tile, region);
           dimension_size_type sample = tileinfo.tileSample(tile);
@@ -286,7 +288,7 @@ namespace
 
           if (type == TILE)
             {
-              int bytesread = TIFFReadEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tmsize_t bytesread = TIFFReadEncodedTile(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               if (bytesread < 0)
                 sentry.error("Failed to read encoded tile");
               else if (static_cast<dimension_size_type>(bytesread) != tilebuf.size())
@@ -294,7 +296,7 @@ namespace
             }
           else
             {
-              int bytesread = TIFFReadEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tmsize_t bytesread = TIFFReadEncodedStrip(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               dimension_size_type expectedread = expected_read(buffer, rclip, copysamples);
               if (bytesread < 0)
                 sentry.error("Failed to read encoded strip");
@@ -346,7 +348,7 @@ namespace
       ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
       TileType type = tileinfo.tileType();
       PlaneRegion rimage(0, 0, ifd.getImageWidth(), ifd.getImageHeight());
-      dimension_size_type tile = ifd.getCurrentTile();
+      tstrile_t tile = static_cast<tstrile_t>(ifd.getCurrentTile());
 
       Sentry sentry;
       while(tile < tileinfo.tileCount())
@@ -364,7 +366,7 @@ namespace
           TileBuffer& tilebuf = *tilecache.find(tile);
           if (type == TILE)
             {
-              int byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tsize_t byteswritten = TIFFWriteEncodedTile(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               if (byteswritten < 0)
                 sentry.error("Failed to write encoded tile");
               else if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
@@ -372,7 +374,7 @@ namespace
             }
           else
             {
-              int byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), tilebuf.size());
+              tsize_t byteswritten = TIFFWriteEncodedStrip(tiffraw, tile, tilebuf.data(), static_cast<tsize_t>(tilebuf.size()));
               if (byteswritten < 0)
                 sentry.error("Failed to write encoded strip");
               else if (static_cast<dimension_size_type>(byteswritten) != tilebuf.size())
@@ -478,7 +480,7 @@ namespace
 
               assert(dest_byte >= dest && dest_byte < dest + tilebuf.size());
               // Don't clear the bit since the tile will only be written once.
-              *dest_byte |= (*srcsample << bit_offset);
+              *dest_byte |= static_cast<uint8_t>(*srcsample << bit_offset);
             }
         }
     }
@@ -497,7 +499,7 @@ namespace
           i != tiles.end();
           ++i)
         {
-          tstrile_t tile = *i;
+          tstrile_t tile = static_cast<tstrile_t>(*i);
           PlaneRegion rfull = tileinfo.tileRegion(tile);
           PlaneRegion rclip = tileinfo.tileRegion(tile, region);
           dimension_size_type sample = tileinfo.tileSample(tile);
@@ -510,8 +512,10 @@ namespace
               dest_subchannel = sample;
             }
 
+          // Note boost::make_shared makes arguments const, so can't use
+          // here.
           if (!tilecache.find(tile))
-            tilecache.insert(tile, std::make_shared<TileBuffer>(tileinfo.bufferSize()));
+            tilecache.insert(tile, std::shared_ptr<TileBuffer>(new TileBuffer(tileinfo.bufferSize())));
           assert(tilecache.find(tile));
           TileBuffer& tilebuf = *tilecache.find(tile);
 
@@ -801,7 +805,7 @@ namespace ome
       void
       IFD::setCurrentTile(dimension_size_type tile)
       {
-        impl->ctile = tile;
+        impl->ctile = static_cast<tstrile_t>(tile);
       }
 
       TileInfo
@@ -1284,6 +1288,309 @@ namespace ome
         makeCurrent();
 
         return TIFFLastDirectory(tiffraw) != 0;
+      }
+
+      namespace
+      {
+
+        // Scalar
+        template<typename T>
+        void
+        setMetadata(CoreMetadata&      core,
+                    const std::string& key,
+                    const T&           value)
+        {
+          core.seriesMetadata.set(key, value);
+        }
+
+        // Vector
+        template <typename T>
+        void
+        setMetadata(CoreMetadata&         core,
+                    const std::string&    key,
+                    const std::vector<T>& value)
+        {
+          std::ostringstream os;
+          for (typename std::vector<T>::const_iterator i = value.begin();
+               i != value.end();
+               ++i)
+            {
+              os << *i;
+              if (i + 1 != value.end())
+                os << ", ";
+            }
+          core.seriesMetadata.set(key, os.str());
+        }
+
+        // Array
+        template <template <typename, std::size_t> class C,
+                  typename T,
+                  std::size_t S>
+        void
+        setMetadata(CoreMetadata&      core,
+                    const std::string& key,
+                    const C<T, S>&     value)
+        {
+          std::ostringstream os;
+          for (typename C<T, S>::const_iterator i = value.begin();
+               i != value.end();
+               ++i)
+            {
+              os << *i;
+              if (i + 1 != value.end())
+                os << ", ";
+            }
+          core.seriesMetadata.set(key, os.str());
+        }
+
+        template<typename TagCategory>
+        bool
+        setMetadata(const IFD&         ifd,
+                    CoreMetadata&      core,
+                    const std::string& key,
+                    TagCategory        tag)
+        {
+          bool set = false;
+
+          typedef typename ::ome::bioformats::detail::tiff::TagProperties<TagCategory>::value_type value_type;
+
+          try
+            {
+              value_type v;
+              ifd.getField(tag).get(v);
+              setMetadata(core, key, v);
+              set = true;
+            }
+          catch (...)
+            {
+            }
+
+          return set;
+        }
+
+      }
+
+      std::shared_ptr<CoreMetadata>
+      makeCoreMetadata(const IFD& ifd)
+      {
+        std::shared_ptr<CoreMetadata> m(std::make_shared<CoreMetadata>());
+
+        m->dimensionOrder = ome::xml::model::enums::DimensionOrder::XYCZT;
+        m->sizeX = ifd.getImageWidth();
+        m->sizeY = ifd.getImageHeight();
+        m->pixelType = ifd.getPixelType();
+        m->bitsPerPixel = bitsPerPixel(m->pixelType);
+
+        uint16_t samples = ifd.getSamplesPerPixel();
+        tiff::PhotometricInterpretation photometric = ifd.getPhotometricInterpretation();
+
+        // Note that RGB does not mean photometric interpretation is
+        // RGB.  It's a way to force the subchannels into sizeC as
+        // addressable channels in the absence of an nD API.
+        if (samples > 1 || photometric == tiff::RGB)
+          {
+            m->rgb = true;
+            m->sizeC = samples;
+          }
+
+        // libtiff does any needed endian conversion
+        // automatically, so the data is always in the native
+        // byte order.
+#ifdef BOOST_BIG_ENDIAN
+        m->littleEndian = false;
+#else // ! BOOST_BIG_ENDIAN
+        m->littleEndian = true;
+#endif // BOOST_BIG_ENDIAN
+
+        // This doesn't match the reality, but since subchannels are
+        // addressed as planes this is needed.
+        m->interleaved = false;
+
+        // Indexed samples.
+        if (samples == 1 && photometric == tiff::PALETTE)
+          {
+            try
+              {
+                std::array<std::vector<uint16_t>, 3> cmap;
+                ifd.getField(tiff::COLORMAP).get(cmap);
+                m->indexed = true;
+                m->rgb = false;
+              }
+            catch (...)
+              {
+              }
+          }
+        // Indexed samples for different photometric interpretations;
+        // not currently supported fully.
+        else
+          {
+            try
+              {
+                uint16_t indexed;
+                ifd.getField(tiff::INDEXED).get(indexed);
+                if (indexed)
+                  {
+                    m->indexed = true;
+                    m->rgb = false;
+                  }
+              }
+            catch (...)
+              {
+              }
+          }
+
+        // Add series metadata from tags.
+        setMetadata(ifd, *m, "PageName #", PAGENAME);
+        setMetadata(ifd, *m, "ImageWidth", IMAGEWIDTH);
+        setMetadata(ifd, *m, "ImageLength", IMAGELENGTH);
+        setMetadata(ifd, *m, "BitsPerSample", BITSPERSAMPLE);
+
+        /// @todo EXIF IFDs
+
+        setMetadata(ifd, *m, "PhotometricInterpretation", PHOTOMETRIC);
+
+        /// @todo Text stream output for Tag enums.
+        /// @todo Metadata type for PhotometricInterpretation.
+
+        try
+          {
+            setMetadata(ifd, *m, "Artist", ARTIST);
+            Threshholding th;
+            ifd.getField(THRESHHOLDING).get(th);
+            m->seriesMetadata.set("Threshholding", th);
+            if (th == HALFTONE)
+              {
+                setMetadata(ifd, *m, "CellWidth", CELLWIDTH);
+                setMetadata(ifd, *m, "CellLength", CELLLENGTH);
+              }
+          }
+        catch (...)
+          {
+          }
+
+        setMetadata(ifd, *m, "Orientation", ORIENTATION);
+
+        /// @todo Image orientation (storage order and direction) from
+        /// ORIENTATION; fix up width and length from orientation.
+
+        setMetadata(ifd, *m, "SamplesPerPixel", SAMPLESPERPIXEL);
+        setMetadata(ifd, *m, "Software", SOFTWARE);
+        setMetadata(ifd, *m, "Instrument Make", MAKE);
+        setMetadata(ifd, *m, "Instrument Model", MODEL);
+        setMetadata(ifd, *m, "Make", MAKE);
+        setMetadata(ifd, *m, "Model", MODEL);
+        setMetadata(ifd, *m, "Document Name", DOCUMENTNAME);
+        setMetadata(ifd, *m, "Date Time", DATETIME);
+        setMetadata(ifd, *m, "Artist", ARTIST);
+
+        setMetadata(ifd, *m, "Host Computer", HOSTCOMPUTER);
+        setMetadata(ifd, *m, "Copyright", COPYRIGHT);
+
+        setMetadata(ifd, *m, "Subfile Type", SUBFILETYPE);
+        setMetadata(ifd, *m, "Fill Order", FILLORDER);
+
+        setMetadata(ifd, *m, "Min Sample Value", MINSAMPLEVALUE);
+        setMetadata(ifd, *m, "Max Sample Value", MAXSAMPLEVALUE);
+
+        setMetadata(ifd, *m, "XResolution", XRESOLUTION);
+        setMetadata(ifd, *m, "YResolution", YRESOLUTION);
+
+        setMetadata(ifd, *m, "Planar Configuration", PLANARCONFIG);
+
+        setMetadata(ifd, *m, "XPosition", XPOSITION);
+        setMetadata(ifd, *m, "YPosition", YPOSITION);
+
+        setMetadata(ifd, *m, "FreeOffsets", FREEOFFSETS);
+        setMetadata(ifd, *m, "FreeByteCounts", FREEBYTECOUNTS);
+
+        setMetadata(ifd, *m, "GrayResponseUnit", GRAYRESPONSEUNIT);
+        setMetadata(ifd, *m, "GrayResponseCurve", GRAYRESPONSECURVE);
+
+        try
+          {
+            Compression cmpr;
+            ifd.getField(COMPRESSION).get(cmpr);
+            m->seriesMetadata.set("Compression", cmpr);
+            if (cmpr == COMPRESSION_CCITT_T4)
+              setMetadata(ifd, *m, "T4Options", T4OPTIONS);
+            else if (cmpr == COMPRESSION_CCITT_T6)
+              setMetadata(ifd, *m, "T6Options", T6OPTIONS);
+            else if (cmpr == COMPRESSION_LZW)
+              setMetadata(ifd, *m, "Predictor", PREDICTOR);
+          }
+        catch (...)
+          {
+          }
+
+        setMetadata(ifd, *m, "ResolutionUnit", RESOLUTIONUNIT);
+
+        setMetadata(ifd, *m, "PageNumber", PAGENUMBER);
+
+        // TransferRange only valid if TransferFunction set.
+        if (setMetadata(ifd, *m, "TransferFunction", TRANSFERFUNCTION))
+          setMetadata(ifd, *m, "TransferRange", TRANSFERRANGE);
+
+        setMetadata(ifd, *m, "WhitePoint", WHITEPOINT);
+        setMetadata(ifd, *m, "PrimaryChromacities", PRIMARYCHROMATICITIES);
+        setMetadata(ifd, *m, "HalftoneHints", HALFTONEHINTS);
+
+        setMetadata(ifd, *m, "TileWidth", TILEWIDTH);
+        setMetadata(ifd, *m, "TileLength", TILELENGTH);
+        setMetadata(ifd, *m, "TileOffsets", TILEOFFSETS);
+        setMetadata(ifd, *m, "TileByteCounts", TILEBYTECOUNTS);
+
+        setMetadata(ifd, *m, "InkSet", INKSET);
+        setMetadata(ifd, *m, "InkNames", INKNAMES);
+        setMetadata(ifd, *m, "NumberOfInks", NUMBEROFINKS);
+        setMetadata(ifd, *m, "DotRange", DOTRANGE);
+        setMetadata(ifd, *m, "TargetPrinter", TARGETPRINTER);
+        setMetadata(ifd, *m, "ExtraSamples", EXTRASAMPLES);
+
+        setMetadata(ifd, *m, "SampleFormat", SAMPLEFORMAT);
+
+        /// @todo sminsamplevalue
+        /// @todo smaxsamplevalue
+
+        setMetadata(ifd, *m, "StripOffsets", STRIPOFFSETS);
+        setMetadata(ifd, *m, "StripByteCounts", STRIPBYTECOUNTS);
+
+
+        /// @todo JPEG tags
+
+        setMetadata(ifd, *m, "YCbCrCoefficients", YCBCRCOEFFICIENTS);
+        setMetadata(ifd, *m, "YCbCrSubSampling", YCBCRSUBSAMPLING);
+        setMetadata(ifd, *m, "YCbCrPositioning", YCBCRPOSITIONING);
+        setMetadata(ifd, *m, "ReferenceBlackWhite", REFERENCEBLACKWHITE);
+
+        try
+          {
+            uint16_t samples;
+            ifd.getField(SAMPLESPERPIXEL).get(samples);
+            PhotometricInterpretation photometric;
+            ifd.getField(PHOTOMETRIC).get(photometric);
+            if (photometric == RGB ||
+                photometric == CFA_ARRAY)
+              samples = 3;
+
+            try
+              {
+                std::vector<ExtraSamples> extra;
+                ifd.getField(EXTRASAMPLES).get(extra);
+                samples += static_cast<uint16_t>(extra.size());
+              }
+            catch (...)
+              {
+              }
+
+            m->seriesMetadata.set("NumberOfChannels", samples);
+          }
+        catch (...)
+          {
+          }
+
+        m->seriesMetadata.set("BitsPerSample", bitsPerPixel(ifd.getPixelType()));
+
+        return m;
       }
 
     }

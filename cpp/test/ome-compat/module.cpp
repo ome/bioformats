@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,5 +36,20 @@
  * #L%
  */
 
-// This file exists solely to satisfy the mach linker, which doesn't like
-// empty .a archives.
+#include <ome/compat/module.h>
+#include <ome/internal/config.h>
+
+#include <ome/test/test.h>
+
+TEST(Module, Check)
+{
+  // This won't necessarily work in the build tree, so catch any
+  // exception.  It will only error on segfaults.
+  try
+    {
+      ome::compat::module_runtime_prefix();
+    }
+  catch (const std::runtime_error& e)
+    {
+    }
+}

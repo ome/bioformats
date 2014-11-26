@@ -125,7 +125,7 @@ public class MetamorphHandler extends BaseHandler {
   {
     String id = attributes.getValue("id");
     String value = attributes.getValue("value");
-    String delim = "&#13;&#10;";
+    String delim = " #13; #10;";
     if (id != null && value != null) {
       if (id.equals("Description")) {
         if (metadata != null) metadata.remove("Comment");

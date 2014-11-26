@@ -701,9 +701,9 @@ public class LeicaHandler extends BaseHandler {
         if (numChannels == 0) zPos.add(posZl);
       }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
-        Integer v = null;
+        Double v = null;
         try {
-          v = new Integer((int) Double.parseDouble(variant));
+          v = Double.parseDouble(variant);
         }
         catch (NumberFormatException e) { }
         if (attributes.getValue("Description").endsWith("(left)")) {
@@ -936,9 +936,9 @@ public class LeicaHandler extends BaseHandler {
       MultiBand m = new MultiBand();
       m.dyeName = attributes.getValue("DyeName");
       m.channel = Integer.parseInt(attributes.getValue("Channel"));
-      m.cutIn = (int)
+      m.cutIn = (double)
         Math.round(Double.parseDouble(attributes.getValue("LeftWorld")));
-      m.cutOut = (int)
+      m.cutOut = (double)
         Math.round(Double.parseDouble(attributes.getValue("RightWorld")));
 
       multiBands.add(m);
@@ -1167,8 +1167,8 @@ public class LeicaHandler extends BaseHandler {
 
   class MultiBand {
     public int channel;
-    public int cutIn;
-    public int cutOut;
+    public double cutIn;
+    public double cutOut;
     public String dyeName;
   }
 

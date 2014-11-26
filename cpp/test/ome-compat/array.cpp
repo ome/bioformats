@@ -38,7 +38,7 @@
 
 #include <ome/compat/array.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 TEST(Array, DefaultConstruct)
 {
