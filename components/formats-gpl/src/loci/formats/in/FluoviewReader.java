@@ -156,6 +156,10 @@ public class FluoviewReader extends BaseTiffReader {
   {
     int image = getImageIndex(no);
 
+    if (tiffParser == null) {
+      initTiffParser();
+    }
+
     if (getSizeY() == ifds.get(0).getImageLength()) {
       tiffParser.getSamples(ifds.get(image), buf, x, y, w, h);
     }

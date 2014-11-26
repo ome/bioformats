@@ -66,8 +66,9 @@ public class ZeissZVIReader extends BaseZeissReader {
 
   // -- Fields --
 
-  protected POIService poi;
+  protected transient POIService poi;
   protected String[] files;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -94,6 +95,10 @@ public class ZeissZVIReader extends BaseZeissReader {
     throws FormatException, IOException {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     lastPlane = no;
+
+    if (poi == null) {
+      initPOIService();
+    }
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bytes * getRGBChannelCount();
@@ -202,6 +207,11 @@ public class ZeissZVIReader extends BaseZeissReader {
 
   protected void initVars(String id) throws FormatException, IOException {
     super.initVars(id);
+    initPOIService();
+    countImages();
+  }
+
+  private void initPOIService() throws FormatException, IOException {
     try {
       ServiceFactory factory = new ServiceFactory();
       poi = factory.getInstance(POIService.class);
@@ -209,8 +219,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     catch (DependencyException de) {
       throw new FormatException("POI library not found", de);
     }
-    poi.initialize(Location.getMappedId(id));
-    countImages();
+    poi.initialize(Location.getMappedId(getCurrentFile()));
   }
 
   /* @see loci.formats.FormatReader#initFile(String) */

@@ -71,7 +71,7 @@ public class TiffParser {
   // -- Fields --
 
   /** Input source from which to parse TIFF data. */
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
 
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;

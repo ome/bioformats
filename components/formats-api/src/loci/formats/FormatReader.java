@@ -129,7 +129,7 @@ public abstract class FormatReader extends FormatHandler
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
 
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable<String, Object> metadata;
@@ -208,6 +208,15 @@ public abstract class FormatReader extends FormatHandler
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    if (in != null) {
+      in.close();
+    }
+    in = new RandomAccessInputStream(currentId);
+    in.order(isLittleEndian());
+  }
 
   /**
    * Initializes the given file (parsing header information, etc.).
@@ -1305,6 +1314,7 @@ public abstract class FormatReader extends FormatHandler
     coreIndex = no;
     series = coreIndexToSeries(no);
   }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

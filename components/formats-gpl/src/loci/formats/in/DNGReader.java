@@ -135,6 +135,10 @@ public class DNGReader extends BaseTiffReader {
       // the pixel type of the image as stored in the TIFF is UINT8,
       // but we need to expand it out to UINT16 (based upon the white balance)
 
+      if (tiffParser == null) {
+        initTiffParser();
+      }
+
       byte[] b = new byte[buf.length / 2];
       tiffParser.getSamples(ifds.get(0), b, x, y, w, h);
 

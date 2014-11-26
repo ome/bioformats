@@ -78,7 +78,7 @@ public class FlowSightReader extends FormatReader {
     CHANNEL_DESCS_TAG
   };
 
-  private TiffParser tiffParser;
+  private transient TiffParser tiffParser;
   private long [] ifdOffsets;
 
   private String [] channelNames;
@@ -221,6 +221,14 @@ public class FlowSightReader extends FormatReader {
     ifdOffsets = null;
     channelNames = null;
     channelDescs = null;
+  }
+
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    tiffParser = new TiffParser(in);
+    tiffParser.setDoCaching(false);
+    tiffParser.setUse64BitOffsets(false);
   }
 
   @Override

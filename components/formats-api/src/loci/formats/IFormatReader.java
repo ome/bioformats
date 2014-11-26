@@ -569,6 +569,13 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Set whether or not to flatten resolutions into individual series. */
   void setFlattenedResolutions(boolean flatten);
 
+  /**
+   * Reopen any files that were closed, and which are expected to be open
+   * while the reader is open.  This assumes that {@link setId} has been called,
+   * but close(false) has not been called.
+   */
+  void reopenFile() throws IOException;
+
   // -- Deprecated methods --
 
   /** Obtains the core metadata values for the current file.

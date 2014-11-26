@@ -55,7 +55,7 @@ public class ImagicReader extends FormatReader {
   // -- Fields --
 
   private String pixels;
-  private RandomAccessInputStream pixelsFile;
+  private transient RandomAccessInputStream pixelsFile;
 
   // -- Constructor --
 
@@ -128,6 +128,14 @@ public class ImagicReader extends FormatReader {
       }
       pixelsFile = null;
       pixels = null;
+    }
+  }
+
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (pixelsFile == null) {
+      pixelsFile = new RandomAccessInputStream(pixels);
     }
   }
 
