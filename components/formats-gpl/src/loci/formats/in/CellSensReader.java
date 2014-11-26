@@ -763,6 +763,19 @@ public class CellSensReader extends FormatReader {
           store.setDetectorSettingsBinning(
             getBinning(pyramid.binningX + "x" + pyramid.binningY), ii, c);
 
+          if (c == 0) {
+            store.setDetectorSettingsGain(pyramid.redGain, ii, c);
+            store.setDetectorSettingsOffset(pyramid.redOffset, ii, c);
+          }
+          else if (c == 1) {
+            store.setDetectorSettingsGain(pyramid.greenGain, ii, c);
+            store.setDetectorSettingsOffset(pyramid.greenOffset, ii, c);
+          }
+          else if (c == 2) {
+            store.setDetectorSettingsGain(pyramid.blueGain, ii, c);
+            store.setDetectorSettingsOffset(pyramid.blueOffset, ii, c);
+          }
+
           if (c < pyramid.channelNames.size()) {
             store.setChannelName(pyramid.channelNames.get(c), ii, c);
           }
@@ -1347,7 +1360,7 @@ public class CellSensReader extends FormatReader {
             vsi.getFilePointer() < vsi.length())
           {
             long start = vsi.getFilePointer();
-            readTags(vsi, populateMetadata, getVolumeName(tag));
+            readTags(vsi, populateMetadata || inDimensionProperties, getVolumeName(tag));
             long end = vsi.getFilePointer();
             if (start == end) {
               break;
@@ -1538,7 +1551,7 @@ public class CellSensReader extends FormatReader {
               else if (tag == DEVICE_MANUFACTURER) {
                 pyramid.deviceManufacturers.add(value);
               }
-              else if (tag == EXPOSURE_TIME) {
+              else if (tag == EXPOSURE_TIME && tagPrefix.length() == 0) {
                 pyramid.exposureTimes.add(new Long(value));
               }
               else if (tag == CREATION_TIME && pyramid.acquisitionTime == null) {
@@ -1576,6 +1589,24 @@ public class CellSensReader extends FormatReader {
               }
               else if (tag == CAMERA_OFFSET) {
                 pyramid.offset = new Double(value);
+              }
+              else if (tag == RED_GAIN) {
+                pyramid.redGain = new Double(value);
+              }
+              else if (tag == GREEN_GAIN) {
+                pyramid.greenGain = new Double(value);
+              }
+              else if (tag == BLUE_GAIN) {
+                pyramid.blueGain = new Double(value);
+              }
+              else if (tag == RED_OFFSET) {
+                pyramid.redOffset = new Double(value);
+              }
+              else if (tag == GREEN_OFFSET) {
+                pyramid.greenOffset = new Double(value);
+              }
+              else if (tag == BLUE_OFFSET) {
+                pyramid.blueOffset = new Double(value);
               }
               else if (tag == VALUE) {
                 if (tagPrefix.equals("Channel Wavelength ")) {
@@ -2238,6 +2269,13 @@ public class CellSensReader extends FormatReader {
     public Integer binningY;
     public Double gain;
     public Double offset;
+
+    public Double redGain;
+    public Double greenGain;
+    public Double blueGain;
+    public Double redOffset;
+    public Double greenOffset;
+    public Double blueOffset;
 
     public ArrayList<String> channelNames = new ArrayList<String>();
     public ArrayList<Double> channelWavelengths = new ArrayList<Double>();
