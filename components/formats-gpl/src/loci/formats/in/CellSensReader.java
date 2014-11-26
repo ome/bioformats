@@ -752,8 +752,9 @@ public class CellSensReader extends FormatReader {
       int ii = coreIndexToSeries(i);
 
       if (pyramid != null) {
-       int nextPlane = 0;
-        for (int c=0; c<core.get(i).sizeC; c++) {
+        int nextPlane = 0;
+        int effectiveSizeC = core.get(i).rgb ? 1 : core.get(i).sizeC;
+        for (int c=0; c<effectiveSizeC; c++) {
           store.setDetectorSettingsID(
             MetadataTools.createLSID("Detector", 0, nextPyramid - 1), ii, c);
           store.setDetectorSettingsBinning(
