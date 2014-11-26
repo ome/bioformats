@@ -2031,6 +2031,8 @@ public class CellSensReader extends FormatReader {
         return "Value";
       case 175208:
         return "Snapshot Count";
+      case 175209:
+        return "Scanning Time (seconds)";
       case 120210:
         return "Device Configuration Position";
       case 120211:
