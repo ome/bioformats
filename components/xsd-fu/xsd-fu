@@ -271,7 +271,7 @@ def enum_value_name(value, isUnitsEnum):
         value = re.sub("^M", "mega", value)
         value = re.sub("^G", "giga", value)
         value = re.sub("^T(?!o)", "tera", value)
-        value = re.sub("^P", "peta", value)
+        value = re.sub("^P(?!a)", "peta", value)
         value = re.sub("^E", "exa", value)
         value = re.sub("^Z", "zetta", value)
         value = re.sub("^Y", "yotta", value)

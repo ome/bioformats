@@ -1422,7 +1422,7 @@ public class LeicaReader extends FormatReader {
         int channel = Integer.parseInt(tokens[1].substring(ndx + 1)) - 1;
 
         if (tokens[2].equals("Wavelength")) {
-          Integer wavelength = new Integer((int) Double.parseDouble(data));
+          Double wavelength = Double.parseDouble(data);
           store.setFilterModel(tokens[1], series, channel);
 
           String filterID = MetadataTools.createLSID("Filter", series, channel);

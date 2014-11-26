@@ -189,7 +189,7 @@ public final class UNITS
   public static final ome.units.unit.Unit<Pressure> KPA =     KILO(PASCAL);
   public static final ome.units.unit.Unit<Pressure> HPA =     HECTO(PASCAL);
   public static final ome.units.unit.Unit<Pressure> DAPA =    DEKA(PASCAL);
-  public static final ome.units.unit.Unit<Pressure> PETAA =   PASCAL;
+  public static final ome.units.unit.Unit<Pressure> PA =      PASCAL;
   public static final ome.units.unit.Unit<Pressure> DPA =     DECI(PASCAL);
   public static final ome.units.unit.Unit<Pressure> CPA =     CENTI(PASCAL);
   public static final ome.units.unit.Unit<Pressure> MPA =     MILLI(PASCAL);

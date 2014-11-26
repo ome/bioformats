@@ -1051,8 +1051,8 @@ public class FV1000Reader extends FormatReader {
             emValues[i] = emValues[i].replaceAll("\\D", "");
           }
           try {
-            Integer cutIn = new Integer(emValues[0]);
-            Integer cutOut = new Integer(emValues[1]);
+            Double cutIn = new Double(emValues[0]);
+            Double cutOut = new Double(emValues[1]);
 
             Length in = FormatTools.getCutIn(cutIn);
             Length out = FormatTools.getCutOut(cutOut);

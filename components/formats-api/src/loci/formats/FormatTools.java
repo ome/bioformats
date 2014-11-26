@@ -1292,7 +1292,7 @@ public final class FormatTools {
     return null;
   }
 
-  public static Length getCutIn(Integer value) {
+  public static Length getCutIn(Double value) {
     if (value != null && value > 0) {
       return new Length(value, UNITS.NM);
     }
@@ -1300,7 +1300,7 @@ public final class FormatTools {
     return null;
   }
 
-  public static Length getCutOut(Integer value) {
+  public static Length getCutOut(Double value) {
     if (value != null && value > 0) {
       return new Length(value, UNITS.NM);
     }
