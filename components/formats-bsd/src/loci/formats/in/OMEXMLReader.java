@@ -219,7 +219,7 @@ public class OMEXMLReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
-
+    in.setEncoding("ASCII");
     binData = new Vector<BinData>();
     binDataOffsets = new Vector<Long>();
     compression = new Vector<String>();
