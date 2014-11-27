@@ -612,6 +612,9 @@ public class FlexReader extends FormatReader {
           if (seriesIndex > 0 && channelNames.length == getEffectiveSizeC() * getSeriesCount()) {
             channelIndex = i * getEffectiveSizeC() + c;
           }
+          if (channelNames != null && channelIndex >= channelNames.length) {
+            channelIndex = c;
+          }
           if (channelNames != null && channelIndex < channelNames.length) {
             store.setChannelName(channelNames[channelIndex], i, c);
           }
