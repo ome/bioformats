@@ -316,6 +316,11 @@
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element ref="RD:RendererSettings" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ImageID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>

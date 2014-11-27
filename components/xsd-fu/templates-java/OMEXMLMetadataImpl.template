@@ -182,6 +182,8 @@ ${customContent[obj.name][prop.name]}
 {% end %}\
 \
 {% python
+	import logging
+
 	def is_abstract(name):
 		o = model.getObjectByName(name)
 		if o is not None and \

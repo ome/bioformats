@@ -194,6 +194,15 @@ class OMEModelProperty(OMEModelEntity):
                               % (self, self.delegate.__dict__))
                 raise ModelProcessingError(
                     "Unable to find %s type for %s" % (self.name, self.type))
+
+        if name is None:
+            # Final check to make sure we have a name
+            logging.debug("%s dump: %s" % (self, self.__dict__))
+            logging.debug("%s delegate dump: %s"
+                          % (self, self.delegate.__dict__))
+            raise ModelProcessingError(
+                "Unable to find %s type for %s" % (self.name, self.type))
+
         return name
     langType = property(_get_langType, doc="""The property's type.""")
 
@@ -313,7 +322,7 @@ class OMEModelProperty(OMEModelEntity):
         doc="""Whether or not the property is an enumeration.""")
 
     def _get_isUnitsEnumeration(self):
-        if self.langType.startswith("Units"):
+        if self.langType is not None and self.langType.startswith("Units"):
             return True
         return False
     isUnitsEnumeration = property(
@@ -572,7 +581,7 @@ class OMEModelProperty(OMEModelEntity):
                     if plural is None:
                         plural = self.model.getObjectByName(
                             self.methodName).plural
-                        return self.lowerCasePrefix(plural)
+                    return self.lowerCasePrefix(plural)
             except AttributeError:
                 pass
             if self.isBackReference:

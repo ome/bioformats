@@ -72,7 +72,7 @@
 	<xsd:element name="LookUpTable">
 		<!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>LookUpTables</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>LookUpTables</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> A . </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -91,6 +91,7 @@
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="LookUpTableID"/>
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
+			<xsd:attribute name="XXXXX" use="required" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name="LookUpTableID">
@@ -103,7 +104,7 @@
 	<xsd:element name="Renderer">
 		<!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>Renderer</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>Renderers</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> A . </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -122,6 +123,7 @@
 				<xsd:sequence> </xsd:sequence>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="RendererID"/>
+			<xsd:attribute name="XXXXX" use="required" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="RendererSettings">
@@ -136,6 +138,27 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="OME:Settings">
+					<xsd:sequence>
+						<xsd:element name="ChannelMapping" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><plural>ChannelMappings</plural></xsdfu></xsd:appinfo>
+								<xsd:documentation>This defines how the channels mentioned in the renderer map to those in the image.
+								If these elements are not specified the mapping is assumed to be direct (0->0, 1->1, etc.) </xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:attribute name="ImageChannel" type="OME:NonNegativeInt" use="required">
+									<xsd:annotation>
+										<xsd:documentation>The number of the channel in the image</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="RendererChannel" type="OME:NonNegativeInt" use="required">
+									<xsd:annotation>
+										<xsd:documentation>The number of the channel in the renderer</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="RendererID"/>
 					<xsd:attribute name="XXXX" use="optional" type="xsd:float">
 						<xsd:annotation>
@@ -155,7 +178,7 @@
 	<xsd:element name="VirtualChannel">
 		<!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>VirtualChannels</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>VirtualChannels</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> A . </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -171,9 +194,9 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:sequence> </xsd:sequence>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="VirtualChannelID"/>
+			<xsd:attribute name="XXXXX" use="required" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name="VirtualChannelID">
@@ -186,7 +209,7 @@
 	<xsd:element name="Normalizer">
 		<!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>Normalizers</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>Normalizers</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> A . </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -202,9 +225,9 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:sequence> </xsd:sequence>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="NormalizerID"/>
+			<xsd:attribute name="XXXXX" use="required" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name="NormalizerID">
@@ -217,7 +240,7 @@
 	<xsd:element name="Processor">
 		<!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>Processors</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>Processors</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> A . </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -233,9 +256,9 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:sequence> </xsd:sequence>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ProcessorID"/>
+			<xsd:attribute name="XXXXX" use="required" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name="ProcessorID">
@@ -248,7 +271,7 @@
 	<xsd:element name="OutputRenderer">
 		<!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>OutputRenderers</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>OutputRenderers</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> A . </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -264,9 +287,9 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:sequence> </xsd:sequence>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OutputRendererID"/>
+			<xsd:attribute name="XXXXX" use="required" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name="OutputRendererID">
@@ -279,7 +302,7 @@
 	<xsd:element name="Compositor">
 		<!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>Compositors</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>Compositors</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> A . </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -295,9 +318,9 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:sequence> </xsd:sequence>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="CompositorID"/>
+			<xsd:attribute name="XXXXX" use="required" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name="CompositorID">

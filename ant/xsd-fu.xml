@@ -14,6 +14,7 @@ Include this in components generating sources using xsd-fu.
   <property name="xsdfu.schema.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>
   <property name="xsdfu.schema.roi" value="${xsdfu.schemapath}/ROI.xsd"/>
   <property name="xsdfu.schema.sa" value="${xsdfu.schemapath}/SA.xsd"/>
+  <property name="xsdfu.schema.rd" value="${xsdfu.schemapath}/RD.xsd"/>
   <property name="xsdfu.schema.spw" value="${xsdfu.schemapath}/SPW.xsd"/>
 
   <macrodef name="xsd_fu" description="Run xsd_fu">
@@ -42,6 +43,7 @@ Include this in components generating sources using xsd-fu.
 	<arg value="${xsdfu.schema.binaryfile}"/>
 	<arg value="${xsdfu.schema.roi}"/>
 	<arg value="${xsdfu.schema.sa}"/>
+	<arg value="${xsdfu.schema.rd}"/>
 	<arg value="${xsdfu.schema.spw}"/>
       </exec>
     </sequential>
