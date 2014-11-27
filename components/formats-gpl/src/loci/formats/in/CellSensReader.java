@@ -792,15 +792,18 @@ public class CellSensReader extends FormatReader {
                 new PositiveInteger(wave), ii, c);
             }
           }
-          if (c < pyramid.exposureTimes.size()) {
-            for (int z=0; z<core.get(i).sizeZ; z++) {
-              for (int t=0; t<core.get(i).sizeT; t++) {
-                store.setPlaneExposureTime(
-                  pyramid.exposureTimes.get(c) / 1000000.0, ii, nextPlane);
-                store.setPlanePositionX(pyramid.originX, ii, nextPlane);
-                store.setPlanePositionY(pyramid.originY, ii, nextPlane);
-                nextPlane++;
+          for (int z=0; z<core.get(i).sizeZ; z++) {
+            for (int t=0; t<core.get(i).sizeT; t++) {
+              Long exp = pyramid.defaultExposureTime;
+              if (c < pyramid.exposureTimes.size()) {
+                exp = pyramid.exposureTimes.get(c);
               }
+              if (exp != null) {
+                store.setPlaneExposureTime(exp / 1000000.0, ii, nextPlane);
+              }
+              store.setPlanePositionX(pyramid.originX, ii, nextPlane);
+              store.setPlanePositionY(pyramid.originY, ii, nextPlane);
+              nextPlane++;
             }
           }
         }
@@ -1560,6 +1563,9 @@ public class CellSensReader extends FormatReader {
               else if (tag == EXPOSURE_TIME && tagPrefix.length() == 0) {
                 pyramid.exposureTimes.add(new Long(value));
               }
+              else if (tag == EXPOSURE_TIME) {
+                pyramid.defaultExposureTime = new Long(value);
+              }
               else if (tag == CREATION_TIME && pyramid.acquisitionTime == null) {
                 pyramid.acquisitionTime = new Long(value);
               }
@@ -2288,6 +2294,7 @@ public class CellSensReader extends FormatReader {
     public ArrayList<String> channelNames = new ArrayList<String>();
     public ArrayList<Double> channelWavelengths = new ArrayList<Double>();
     public ArrayList<Long> exposureTimes = new ArrayList<Long>();
+    public Long defaultExposureTime;
 
     public ArrayList<String> objectiveNames = new ArrayList<String>();
     public ArrayList<Integer> objectiveTypes = new ArrayList<Integer>();
