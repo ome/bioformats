@@ -737,9 +737,15 @@ public class CellSensReader extends FormatReader {
 
       for (int q=0; q<pyramid.deviceTypes.size(); q++) {
         if (pyramid.deviceTypes.get(q).equals("Camera")) {
-          store.setDetectorModel(pyramid.deviceNames.get(q), 0, i);
-          store.setDetectorSerialNumber(pyramid.deviceIDs.get(q), 0, i);
-          store.setDetectorManufacturer(pyramid.deviceManufacturers.get(q), 0, i);
+          if (q < pyramid.deviceNames.size()) {
+            store.setDetectorModel(pyramid.deviceNames.get(q), 0, i);
+          }
+          if (q < pyramid.deviceIDs.size()) {
+            store.setDetectorSerialNumber(pyramid.deviceIDs.get(q), 0, i);
+          }
+          if (q < pyramid.deviceManufacturers.size()) {
+            store.setDetectorManufacturer(pyramid.deviceManufacturers.get(q), 0, i);
+          }
           store.setDetectorType(getDetectorType("CCD"), 0, i);
           break;
         }
