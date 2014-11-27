@@ -121,6 +121,7 @@ public class Exporter {
         Boolean splitZ = null;
         Boolean splitC = null;
         Boolean splitT = null;
+        Boolean saveRoi = null;
 
         if (plugin.arg != null) {
             outfile = Macro.getValue(plugin.arg, "outfile", null);
@@ -128,10 +129,12 @@ public class Exporter {
             String z = Macro.getValue(plugin.arg, "splitZ", null);
             String c = Macro.getValue(plugin.arg, "splitC", null);
             String t = Macro.getValue(plugin.arg, "splitT", null);
+            String sr = Macro.getValue(plugin.arg, "saveRoi", null);
 
             splitZ = z == null ? null : Boolean.valueOf(z);
             splitC = c == null ? null : Boolean.valueOf(c);
             splitT = t == null ? null : Boolean.valueOf(t);
+            saveRoi = sr == null ? null : Boolean.valueOf(sr);
             plugin.arg = null;
         }
 
@@ -209,7 +212,7 @@ public class Exporter {
                         // append chosen extension
                         name = name + "." + ext[0];
                     }
-                    
+
                     f = fc.getSelectedFile();
                     String filePath = f.getAbsolutePath();
                     if(!filePath.endsWith("." + ext[0])) {
@@ -222,7 +225,7 @@ public class Exporter {
                                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                         if (ret1 != JOptionPane.OK_OPTION) f = null;
                     }
-                    
+
                 }
                 if (f == null) {
                     Macro.abort();
@@ -499,9 +502,6 @@ public class Exporter {
                 }
             }
 
-            //      ROIHandler.saveROIs(store);
-//            w.setMetadataRetrieve(store);
-
             // prompt for options
 
             String[] codecs = w.getCompressionTypes();
@@ -521,7 +521,7 @@ public class Exporter {
                 IJ.error("Pixel type (" + FormatTools.getPixelTypeString(thisType) +
                         ") not supported by this format.");
             }
-            boolean saveRoi = false;
+
             if (codecs != null && codecs.length > 1) {
                 GenericDialog gd =
                         new GenericDialog("Bio-Formats Exporter Options");
@@ -529,18 +529,16 @@ public class Exporter {
 
                 gd.addChoice("Compression type: ", codecs, codecs[0]);
                 gd.addCheckbox("Export ROI's", false);
-                saveRoi = gd.getNextBoolean();
-                //        String [] exportopts = {"Yes" , "NO"};
-                //        
-                //        gd.addChoice("Export ROI's", exportopts, exportopts[0]);
                 gd.showDialog();
+                saveRoi = gd.getNextBoolean();
+
                 if (gd.wasCanceled()) return;
 
                 w.setCompression(gd.getNextChoice());
             }
 
             //Save ROI's
-            if (saveRoi == true){
+            if (saveRoi.booleanValue()==true){
                 ROIHandler.saveROIs(store);
             }
             w.setMetadataRetrieve(store);
