@@ -13,7 +13,7 @@ METADATA_OBJECT_IGNORE = ('BinData', 'External', 'MapPairs', 'M')
 # Type counts which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
 # to these interfaces and implementations.
-METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
+METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef'], 'BaseProcessor': ['AnnotationRef']}
 
 # Types which have not been recognized as explicit defines (XML Schema
 # definitions that warrant a the creation of a first class model object) that

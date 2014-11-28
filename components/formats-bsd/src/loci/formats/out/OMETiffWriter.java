@@ -342,7 +342,7 @@ public class OMETiffWriter extends TiffWriter {
         Integer ifdIndex = ifdCounts.get(filename);
         int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
 
-        omeMeta.setUUIDFileName(filename, series, nextPlane);
+        omeMeta.setTiffDataUUIDFileName(filename, series, nextPlane);
         String uuid = "urn:uuid:" + getUUID(filename);
         omeMeta.setUUIDValue(uuid, series, nextPlane);
 

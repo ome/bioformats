@@ -1240,8 +1240,8 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          String filename = src.getUUIDFileName(i, q);
-          dest.setUUIDFileName(filename, i, q);
+          String filename = src.getTiffDataUUIDFileName(i, q);
+          dest.setTiffDataUUIDFileName(filename, i, q);
         }
         catch (NullPointerException e) { }
 

@@ -144,7 +144,11 @@
 							channel and they will be applied in order.</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element ref="Processor" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Processor" type="BaseProcessor" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><plural>Processors</plural></xsdfu></xsd:appinfo>						
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="OutputRenderer" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="Compositor" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
@@ -230,7 +234,11 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:element ref="Processor" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element name="VirtualProcessor" type="BaseProcessor" minOccurs="1" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><plural>VirtualProcessors</plural></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
@@ -341,56 +349,54 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="Processor"> <!-- top level definition -->
+	<xsd:complexType name="BaseProcessor"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Processors</plural></xsdfu></xsd:appinfo>
-			<xsd:documentation> A pixel value processor working in the 0-1 normalised space. </xsd:documentation>
+			<xsd:documentation> A pixel value processor working in the 0-1 normalised space.
+			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation> A description for the processor. [plane text multi-line string]
-						</xsd:documentation>
-					</xsd:annotation>
-					<xsd:simpleType>
-						<xsd:restriction base="xsd:string">
-							<xsd:whiteSpace value="preserve"/>
-						</xsd:restriction>
-					</xsd:simpleType>
-				</xsd:element>
-				<xsd:element ref="OME:Map" minOccurs="0" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation> A collection of settings for the processor.</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
-					<xsd:annotation>
-						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
-					</xsd:annotation>
-				</xsd:element>
-			</xsd:sequence>
-			<xsd:attribute name="Name" use="required" type="xsd:string">
+		<xsd:sequence>
+			<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 				<xsd:annotation>
-					<xsd:documentation> A name for the processor.</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="ProcessorType" use="required">
-				<xsd:annotation>
-					<xsd:documentation>
-						The method used to process the channel.
-						TODO: Is this required?
-					</xsd:documentation>
+					<xsd:documentation> A description for the processor. [plane text multi-line
+						string] </xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="XXXXX"/>
-						<xsd:enumeration value="Other"/>
+						<xsd:whiteSpace value="preserve"/>
 					</xsd:restriction>
 				</xsd:simpleType>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+			</xsd:element>
+			<xsd:element ref="OME:Map" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> A collection of settings for the
+						processor.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="Name" use="required" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation> A name for the processor.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ProcessorType" use="required">
+			<xsd:annotation>
+				<xsd:documentation> The method used to process the channel. TODO: Is this required?
+				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="XXXXX"/>
+					<xsd:enumeration value="Other"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
 
 	<xsd:element name="OutputRenderer"> <!-- top level definition -->
 		<xsd:annotation>
