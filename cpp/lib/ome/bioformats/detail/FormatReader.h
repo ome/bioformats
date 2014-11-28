@@ -343,7 +343,7 @@ namespace ome
 
         // Documented in superclass.
         const MetadataMap::value_type&
-        getMetadataValue(const std::string& field);
+        getMetadataValue(const std::string& field) const;
 
         // Documented in superclass.
         const MetadataMap&
@@ -351,7 +351,7 @@ namespace ome
 
         // Documented in superclass.
         const MetadataMap::value_type&
-        getSeriesMetadataValue(const MetadataMap::key_type& field);
+        getSeriesMetadataValue(const MetadataMap::key_type& field) const;
 
         // Documented in superclass.
         bool
@@ -634,11 +634,11 @@ namespace ome
         dimension_size_type
         getIndex(dimension_size_type z,
                  dimension_size_type c,
-                 dimension_size_type t);
+                 dimension_size_type t) const;
 
         // Documented in superclass.
         std::array<dimension_size_type, 3>
-        getZCTCoords(dimension_size_type index);
+        getZCTCoords(dimension_size_type index) const;
 
         // Documented in superclass.
         const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> >&

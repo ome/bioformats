@@ -35,80 +35,27 @@
  * #L%
  */
 
-#include <algorithm>
-#include <cmath>
+#include <ome/bioformats/XMLTools.h>
 
-#include <ome/bioformats/Modulo.h>
+#include <ome/xerces/ErrorReporter.h>
+#include <ome/xerces/Platform.h>
+#include <ome/xerces/String.h>
+
+namespace xml = ome::xerces;
+
+namespace
+{
+
+  const std::string xsi_ns("http://www.w3.org/2001/XMLSchema-instance");
+  const std::string xml_schema_path("http://www.w3.org/2001/XMLSchema");
+
+}
 
 namespace ome
 {
   namespace bioformats
   {
 
-    Modulo::Modulo(std::string dimension):
-      parentDimension(dimension),
-      start(0.0),
-      step(1.0),
-      end(0.0),
-      parentType(),
-      type(),
-      typeDescription(),
-      unit(),
-      labels()
-    {
-    }
-
-    Modulo::size_type
-    Modulo::size() const
-    {
-      if (!labels.empty())
-        return labels.size();
-
-      /**
-       * @todo Use proper rounding (compat function for round(3)).
-       */
-      return static_cast<size_type>(floor(((end - start) / step) + 0.5) + 1.0);
-    }
-
-   std::string
-   Modulo::toXMLAnnotation() const
-   {
-     std::ostringstream os;
-
-     // NOTE: This lowercasing operation only works with 7-bit ASCII, not UTF-8.
-     std::string ltype(type);
-     std::transform(ltype.begin(), ltype.end(), ltype.begin(), std::ptr_fun(::tolower));
-
-     os << "<ModuloAlong" << parentDimension
-        << " Type=\"" << ltype << "\"";
-     if (!typeDescription.empty())
-       os << " TypeDescription=\"" << typeDescription << "\"";
-     if (!unit.empty())
-       os << " Unit=\"" << unit << "\"";
-     if (end > start)
-       {
-         os << " Start=\"" << start
-            << "\" Step=\"" << step
-               << "\" End=\"" << end << "\"";
-       }
-     if (labels.size() > 0)
-       {
-         os << ">";
-         for (std::vector<std::string>::const_iterator label = labels.begin();
-              label != labels.end();
-              ++label)
-           {
-             os << "\n<Label>" << *label << "</Label>";
-           }
-         os << "\n</ModuloAlong" << parentDimension << ">";
-       }
-     else
-       {
-         os << "/>";
-       }
-
-     return os.str();
-   }
 
   }
 }

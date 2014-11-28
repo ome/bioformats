@@ -51,7 +51,8 @@ set(OME_BIOFORMATS_SOURCES
     UnknownFormatException.cpp
     UnsupportedCompressionException.cpp
     VariantPixelBuffer.cpp
-    Version.cpp)
+    Version.cpp
+    XMLTools.cpp)
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
@@ -72,7 +73,8 @@ set(OME_BIOFORMATS_HEADERS
     UnknownFormatException.h
     UnsupportedCompressionException.h
     VariantPixelBuffer.h
-    Version.h)
+    Version.h
+    XMLTools.h)
 
 set(OME_BIOFORMATS_DETAIL_SOURCES
     detail/FormatReader.cpp

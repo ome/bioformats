@@ -38,11 +38,13 @@
 
 #include <ome/bioformats/MetadataTools.h>
 
+#include <ome/internal/version.h>
+
 #include <ome/test/test.h>
 
 using ome::bioformats::createID;
 
-TEST(MetadataToolsTest, createID1)
+TEST(MetadataToolsTest, CreateID1)
 {
   std::string e1(createID("Instrument", 0));
   ASSERT_EQ(std::string("Instrument:0"), e1);
@@ -54,7 +56,7 @@ TEST(MetadataToolsTest, createID1)
   ASSERT_EQ(std::string("Image:4"), i1);
 }
 
-TEST(MetadataToolsTest, createID2)
+TEST(MetadataToolsTest, CreateID2)
 {
   std::string d1(createID("Detector", 0, 0));
   ASSERT_EQ(std::string("Detector:0:0"), d1);
@@ -66,7 +68,7 @@ TEST(MetadataToolsTest, createID2)
   ASSERT_EQ(std::string("Shape:4:3"), i1);
 }
 
-TEST(MetadataToolsTest, createID3)
+TEST(MetadataToolsTest, CreateID3)
 {
   std::string m1(createID("Mask", 0, 0, 0));
   ASSERT_EQ(std::string("Mask:0:0:0"), m1);
@@ -78,7 +80,7 @@ TEST(MetadataToolsTest, createID3)
   ASSERT_EQ(std::string("Mask:92:329:892"), m3);
 }
 
-TEST(MetadataToolsTest, createID4)
+TEST(MetadataToolsTest, CreateID4)
 {
   std::string u1(createID("Unknown", 0, 0, 0, 0));
   ASSERT_EQ(std::string("Unknown:0:0:0:0"), u1);
@@ -88,4 +90,9 @@ TEST(MetadataToolsTest, createID4)
 
   std::string u3(createID("Unknown", 9, 2, 4, 2));
   ASSERT_EQ(std::string("Unknown:9:2:4:2"), u3);
+}
+
+TEST(MetadataToolsTest, ModelVersion)
+{
+  ASSERT_EQ(std::string(OME_MODEL_VERSION), ome::bioformats::getModelVersion());
 }

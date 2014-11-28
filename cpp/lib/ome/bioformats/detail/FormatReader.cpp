@@ -944,7 +944,7 @@ namespace ome
       dimension_size_type
       FormatReader::getIndex(dimension_size_type z,
                              dimension_size_type c,
-                             dimension_size_type t)
+                             dimension_size_type t) const
       {
         assertId(currentId, true);
         return ome::bioformats::getIndex(getDimensionOrder(),
@@ -956,7 +956,7 @@ namespace ome
       }
 
       std::array<dimension_size_type, 3>
-      FormatReader::getZCTCoords(dimension_size_type index)
+      FormatReader::getZCTCoords(dimension_size_type index) const
       {
         assertId(currentId, true);
         return ome::bioformats::getZCTCoords(getDimensionOrder(),
@@ -968,13 +968,13 @@ namespace ome
       }
 
       const MetadataMap::value_type&
-      FormatReader::getMetadataValue(const std::string& field)
+      FormatReader::getMetadataValue(const std::string& field) const
       {
         return metadata.get<MetadataMap::value_type>(field);
       }
 
       const MetadataMap::value_type&
-      FormatReader::getSeriesMetadataValue(const MetadataMap::key_type& field)
+      FormatReader::getSeriesMetadataValue(const MetadataMap::key_type& field) const
       {
         assertId(currentId, true);
         return getSeriesMetadata().get<MetadataMap::value_type>(field);
