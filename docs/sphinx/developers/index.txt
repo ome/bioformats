@@ -38,6 +38,7 @@ Examples
     export2
     conversion
     matlab-dev
+    python-dev
 
 Interfacing from non-Java code
 ==============================
