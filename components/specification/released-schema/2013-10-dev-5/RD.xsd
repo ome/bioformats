@@ -28,9 +28,12 @@
 	targetNamespace="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1" elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5/SA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd"/>
 
@@ -68,10 +71,13 @@
 				</xsd:element>
 				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="1"/>
-					<!-- Something like tiff-data that points at lookup table in the tiff file
 					<xsd:element ref="OME:TiffLookupTable" minOccurs="1" maxOccurs="1"/>
-					-->
 				</xsd:choice>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="LookupTableID"/>
 			<xsd:attribute name="Name" use="required" type="xsd:string">
@@ -141,6 +147,11 @@
 				<xsd:element ref="Processor" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="OutputRenderer" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="Compositor" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="RendererID"/>
 			<xsd:attribute name="Name" use="required" type="xsd:string">
@@ -220,6 +231,11 @@
 					</xsd:simpleType>
 				</xsd:element>
 				<xsd:element ref="Processor" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="VirtualChannelID"/>
 			<xsd:attribute name="VirtualChannelType" use="required">
@@ -346,6 +362,11 @@
 				<xsd:element ref="OME:Map" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation> A collection of settings for the processor.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
 			</xsd:sequence>
