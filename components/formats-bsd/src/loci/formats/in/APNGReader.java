@@ -89,6 +89,7 @@ public class APNGReader extends FormatReader {
 
   private byte[] lastImage;
   private int lastImageIndex = -1;
+  private int lastImageRow = -1;
 
   private int compression;
   private int interlace;
@@ -136,7 +137,7 @@ public class APNGReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (no == lastImageIndex && lastImage != null) {
+    if (no == lastImageIndex && lastImage != null && y + h <= lastImageRow) {
       RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
       readPlane(s, x, y, w, h, buf);
       s.close();
@@ -164,12 +165,19 @@ public class APNGReader extends FormatReader {
 
       s.close();
 
-      lastImage = decode(s.toByteArray());
+      LOGGER.warn("height = " + (y + h));
+
+      lastImage = decode(s.toByteArray(), getSizeX(), y + h);
       lastImageIndex = 0;
+      lastImageRow = y + h;
 
       RandomAccessInputStream pix = new RandomAccessInputStream(lastImage);
       readPlane(pix, x, y, w, h, buf);
       pix.close();
+
+      if (y + h < getSizeY()) {
+        lastImage = null;
+      }
       return buf;
     }
 
@@ -215,6 +223,7 @@ public class APNGReader extends FormatReader {
 
     s.close();
     lastImage = openBytes(0);
+    lastImageRow = getSizeY();
     byte[] newImage = decode(s.toByteArray(), coords[2], coords[3]);
 
     // paste current image onto first image
@@ -258,6 +267,7 @@ public class APNGReader extends FormatReader {
       blocks = null;
       lastImage = null;
       lastImageIndex = -1;
+      lastImageRow = -1;
     }
   }
 
@@ -445,6 +455,13 @@ public class APNGReader extends FormatReader {
 
       int nRowBlocks = height / 8;
       int nColBlocks = width / 8;
+
+      if (nRowBlocks <= 0) {
+        nRowBlocks = 1;
+      }
+      if (nColBlocks <= 0) {
+        nColBlocks = 1;
+      }
 
       image = new byte[FormatTools.getPlaneSize(this)];
 
