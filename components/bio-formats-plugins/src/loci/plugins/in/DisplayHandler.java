@@ -44,7 +44,9 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Modulo;
 import loci.formats.gui.XMLWindow;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -148,9 +150,19 @@ public class DisplayHandler implements StatusListener {
 
   public void displayDataBrowser(ImagePlus imp) {
     IFormatReader r = process.getReader();
-    String[] dimTypes = r.getChannelDimTypes();
-    int[] dimLengths = r.getChannelDimLengths();
-    new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
+
+    int[] subC;
+    String[] subCTypes;
+    Modulo moduloC = r.getModuloC();
+    if (moduloC.length() > 1) {
+      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+      subCTypes = new String[] {moduloC.parentType, moduloC.type};
+    } else {
+      subC = new int[] {r.getSizeC()};
+      subCTypes = new String[] {FormatTools.CHANNEL};
+    }
+
+    new DataBrowser(imp, null, subCTypes, subC, xmlWindow);
   }
 
   public void displayImage5D(ImagePlus imp) {

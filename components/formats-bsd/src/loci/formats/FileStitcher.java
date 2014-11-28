@@ -370,26 +370,6 @@ public class FileStitcher extends ReaderWrapper {
       getReader(getCoreIndex(), 0).get16BitLookupTable();
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    if (noStitch) return reader.getChannelDimLengths();
-    if (core.get(getCoreIndex()).cLengths == null) {
-      return new int[] {core.get(getCoreIndex()).sizeC};
-    }
-    return core.get(getCoreIndex()).cLengths;
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    if (noStitch) return reader.getChannelDimTypes();
-    if (core.get(getCoreIndex()).cTypes == null) {
-      return new String[] {FormatTools.CHANNEL};
-    }
-    return core.get(getCoreIndex()).cTypes;
-  }
-
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -754,15 +734,6 @@ public class FileStitcher extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return noStitch ? reader.getSeriesMetadata() :
       core.get(getCoreIndex()).seriesMetadata;
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
-  public CoreMetadata[] getCoreMetadata() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadataList().toArray(new CoreMetadata[0]);
   }
 
   /* @see IFormatReader#getCoreMetadataList() */

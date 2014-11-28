@@ -355,16 +355,6 @@ public class ImageReader implements IFormatReader {
     return getReader().getModuloT();
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    return getReader().getChannelDimLengths();
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    return getReader().getChannelDimTypes();
-  }
-
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
     return getReader().getThumbSizeX();
@@ -516,14 +506,6 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#getSeriesMetadata() */
   public Hashtable<String, Object> getSeriesMetadata() {
     return getReader().getSeriesMetadata();
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadata()
-   */
-  public CoreMetadata[] getCoreMetadata() {
-    return getCoreMetadataList().toArray(new CoreMetadata[0]);
   }
 
   /* @see IFormatReader#getCoreMetadataList() */
