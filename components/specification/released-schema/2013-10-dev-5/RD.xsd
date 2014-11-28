@@ -206,6 +206,14 @@
 								rendering sparse data.</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
+					<xsd:attribute name="RendererSettingsOwner" use="optional" type="OME:ExperimenterID">
+						<xsd:annotation>
+							<xsd:documentation>
+								The RendererSettingsOwner is the person who attached these
+								render settings to the image.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
