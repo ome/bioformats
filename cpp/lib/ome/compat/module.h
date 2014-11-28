@@ -60,12 +60,13 @@ namespace ome
      * This is intended primarily for internal use, to allow discovery
      * of the location of datafiles, loadable modules, etc.
      *
+     * @param dtype the directory type to query.
      * @returns the installation prefix path.
      * @throws a @c std::runtime_error if the path could not be
      * determined.
      */
     boost::filesystem::path
-    module_runtime_prefix();
+    module_runtime_path(const std::string& dtype);
 
   }
 }
