@@ -275,11 +275,22 @@ public class DicomReader extends FormatReader {
         if (bpp > 1) {
           int plane = bytes / (bpp * ec);
           byte[][] tmp = new byte[bpp][];
+          long start = in.getFilePointer();
           for (int i=0; i<bpp; i++) {
+            // one or more extra 0 bytes can be inserted between
+            // the planes, but there isn't a good way to know in advance
+            // only way to know is to see if decompressing produces the
+            // correct number of bytes
             tmp[i] = codec.decompress(in, options);
+            if (i > 0 && tmp[i].length > options.maxBytes) {
+              in.seek(start);
+              tmp[i] = codec.decompress(in, options);
+            }
             if (no < imagesPerFile - 1 || i < bpp - 1) {
+              start = in.getFilePointer();
               while (in.read() == 0);
-              in.seek(in.getFilePointer() - 1);
+              long end = in.getFilePointer();
+              in.seek(end - 1);
             }
           }
           t = new byte[bytes / ec];
