@@ -29,7 +29,7 @@
 		<SA:LongAnnotation ID="Annotation:4" Namespace="ome-xml.org/example">
 			<SA:Value>1</SA:Value>
 		</SA:LongAnnotation>
-		<!-- Second Comment -->
+		<!-- First List -->
 		<SA:ListAnnotation ID="Annotation:4" Namespace="ome-xml.org/example">
 			<SA:AnnotationRef ID="Annotation:1"/>
 			<SA:AnnotationRef ID="Annotation:2"/>
