@@ -38,6 +38,8 @@
 
 #include <fstream>
 
+#include <boost/format.hpp>
+
 #include <ome/xerces/EntityResolver.h>
 #include <ome/xerces/String.h>
 
@@ -123,14 +125,26 @@ namespace ome
       std::string data;
 
       std::ifstream in(file.generic_string().c_str());
-      in.seekg(0, std::ios::end);
-      data.reserve(in.tellg());
-      in.seekg(0, std::ios::beg);
+      if (in)
+        {
+          std::ios::pos_type pos = in.tellg();
+          in.seekg(0, std::ios::end);
+          std::ios::pos_type len = in.tellg() - pos;
+          if (len)
+            data.reserve(len);
+          in.seekg(0, std::ios::beg);
 
-      data.assign(std::istreambuf_iterator<char>(in),
-                  std::istreambuf_iterator<char>());
+          data.assign(std::istreambuf_iterator<char>(in),
+                      std::istreambuf_iterator<char>());
 
-      EntityResolver::entities().insert(std::make_pair(id, data));
+          EntityResolver::entities().insert(std::make_pair(id, data));
+        }
+      else
+        {
+          boost::format fmt("Failed to load XML schema id ‘%1%’ from file ‘%2%’");
+          fmt % id % file.generic_string();
+          throw std::runtime_error(fmt.str());
+        }
     }
 
     EntityResolver::AutoRegisterEntity::~AutoRegisterEntity()
@@ -142,7 +156,6 @@ namespace ome
                                                    const std::string& data):
       registration(new AutoRegisterEntity(id, data))
     {
-      EntityResolver::entities().insert(std::make_pair(id, data));
     }
 
     EntityResolver::RegisterEntity::RegisterEntity(const std::string&             id,
