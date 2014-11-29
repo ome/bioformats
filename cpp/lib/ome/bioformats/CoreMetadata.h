@@ -70,10 +70,9 @@ namespace ome
      *
      * @todo We may want to consider refactoring the FormatReader
      * getter methods that fill in missing CoreMetadata fields on the
-     * fly (getChannelDimLengths, getChannelDimTypes, getThumbSizeX,
-     * getThumbSizeY) to avoid doing so -- one alternate approach
-     * would be to have this class use getter methods instead of
-     * public fields.
+     * fly (getThumbSizeX, getThumbSizeY) to avoid doing so -- one
+     * alternate approach would be to have this class use getter
+     * methods instead of public fields.
      */
     class CoreMetadata
     {

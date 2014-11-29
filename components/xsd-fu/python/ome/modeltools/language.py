@@ -58,6 +58,7 @@ class Language(object):
             'PositiveLong': 'PositiveLong',
             'NonNegativeLong': 'NonNegativeLong',
             'PositiveFloat': 'PositiveFloat',
+            'NonNegativeFloat': 'NonNegativeFloat',
             'PercentFraction': 'PercentFraction',
             'Color': 'Color',
             'Text': 'Text',

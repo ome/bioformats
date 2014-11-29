@@ -36,8 +36,8 @@
 
 include(CheckCXXSourceRuns)
 
-function(regex_test namespace header library outvar outlib)
-  set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+function(regex_test namespace header includedirs library outvar outlib)
+  set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${includedirs})
   set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${library})
   check_cxx_source_runs(
 "#include <${header}>
@@ -69,19 +69,17 @@ int main() {
 }"
 ${outvar})
 
-  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
-
   set(${outvar} ${${outvar}} PARENT_SCOPE)
   if (${outvar})
     set(${outlib} ${library} PARENT_SCOPE)
   endif(${outvar})
 endfunction(regex_test)
 
-regex_test(std::regex regex "" OME_HAVE_REGEX REGEX_LIBRARY)
+regex_test(std::regex regex "" "" OME_HAVE_REGEX REGEX_LIBRARY)
 if(NOT OME_HAVE_REGEX)
-  regex_test(std::tr1::regex tr1/regex "" OME_HAVE_TR1_REGEX REGEX_LIBRARY)
+  regex_test(std::tr1::regex tr1/regex "" "" OME_HAVE_TR1_REGEX REGEX_LIBRARY)
   if(NOT OME_HAVE_TR1_REGEX)
-    regex_test(boost::regex boost/regex.hpp "${Boost_REGEX_LIBRARY_RELEASE}" OME_HAVE_BOOST_REGEX REGEX_LIBRARY)
+    regex_test(boost::regex boost/regex.hpp "${Boost_INCLUDE_DIRS}" "${Boost_REGEX_LIBRARY_RELEASE}" OME_HAVE_BOOST_REGEX REGEX_LIBRARY)
     if(NOT OME_HAVE_BOOST_REGEX)
       message(FATAL_ERROR "No working regular expression implementation found")
     endif(NOT OME_HAVE_BOOST_REGEX)

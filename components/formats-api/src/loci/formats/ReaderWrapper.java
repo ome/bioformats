@@ -263,14 +263,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getModuloT();
   }
 
-  public int[] getChannelDimLengths() {
-    return reader.getChannelDimLengths();
-  }
-
-  public String[] getChannelDimTypes() {
-    return reader.getChannelDimTypes();
-  }
-
   public int getThumbSizeX() {
     return reader.getThumbSizeX();
   }
@@ -431,14 +423,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
-  public CoreMetadata[] getCoreMetadata() {
-    return getCoreMetadataList().toArray(new CoreMetadata[0]);
-  }
-
   public List<CoreMetadata> getCoreMetadataList() {
     // Only used for determining the object type.
     List<CoreMetadata> oldcore = reader.getCoreMetadataList();
@@ -567,6 +551,10 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public void setId(String id) throws FormatException, IOException {
     reader.setId(id);
+  }
+
+  public void reopenFile() throws IOException {
+    reader.reopenFile();
   }
 
   public void close() throws IOException {

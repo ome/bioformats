@@ -52,6 +52,7 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Modulo;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.Slicer;
@@ -575,9 +576,19 @@ public class ImagePlusReader implements StatusReporter {
     r.setSeries(series);
 
     final int[] zct = r.getZCTCoords(ndx);
-    final int[] subC = r.getChannelDimLengths();
-    final String[] subCTypes = r.getChannelDimTypes();
+    final int sizeC = r.getSizeC();
     final StringBuffer sb = new StringBuffer();
+
+    int[] subC;
+    String[] subCTypes;
+    Modulo moduloC = r.getModuloC();
+    if (moduloC.length() > 1) {
+      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+      subCTypes = new String[] {moduloC.parentType, moduloC.type};
+    } else {
+      subC = new int[] {r.getSizeC()};
+      subCTypes = new String[] {FormatTools.CHANNEL};
+    }
 
     boolean first = true;
     if (cCount > 1) {

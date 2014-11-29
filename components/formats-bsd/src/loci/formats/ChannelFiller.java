@@ -128,39 +128,6 @@ public class ChannelFiller extends ReaderWrapper {
     return null;
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  @Override
-  public int[] getChannelDimLengths() {
-    int[] cLengths = reader.getChannelDimLengths();
-    if (!isFilled()) return cLengths;
-
-    // in the case of a single channel, replace rather than append
-    if (cLengths.length == 1 && cLengths[0] == 1) cLengths = new int[0];
-
-    // append filled dimension to channel dim lengths
-    int[] newLengths = new int[1 + cLengths.length];
-    newLengths[0] = lutLength;
-    System.arraycopy(cLengths, 0, newLengths, 1, cLengths.length);
-    return newLengths;
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  @Override
-  public String[] getChannelDimTypes() {
-    String[] cTypes = reader.getChannelDimTypes();
-    if (!isFilled()) return cTypes;
-
-    // in the case of a single channel, leave type unchanged
-    int[] cLengths = reader.getChannelDimLengths();
-    if (cLengths.length == 1 && cLengths[0] == 1) return cTypes;
-
-    // append filled dimension to channel dim types
-    String[] newTypes = new String[1 + cTypes.length];
-    newTypes[0] = FormatTools.CHANNEL;
-    System.arraycopy(cTypes, 0, newTypes, 1, cTypes.length);
-    return newTypes;
-  }
-
   /* @see IFormatReader#openBytes(int) */
   @Override
   public byte[] openBytes(int no) throws FormatException, IOException {

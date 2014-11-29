@@ -782,7 +782,7 @@ namespace ome
       dimension_size_type
       getIndex(dimension_size_type z,
                dimension_size_type c,
-               dimension_size_type t) = 0;
+               dimension_size_type t) const = 0;
 
       /**
        * Get the @c Z, @c C and @c T coordinate of a linear index.
@@ -794,7 +794,7 @@ namespace ome
        */
       virtual
       std::array<dimension_size_type, 3>
-      getZCTCoords(dimension_size_type index) = 0;
+      getZCTCoords(dimension_size_type index) const = 0;
 
       /**
        * Get a global metadata value.
@@ -809,7 +809,7 @@ namespace ome
        */
       virtual
       const MetadataMap::value_type&
-      getMetadataValue(const std::string& field) = 0;
+      getMetadataValue(const std::string& field) const = 0;
 
       /**
        * Get a series metadata value.
@@ -824,7 +824,7 @@ namespace ome
        */
       virtual
       const MetadataMap::value_type&
-      getSeriesMetadataValue(const MetadataMap::key_type& field) = 0;
+      getSeriesMetadataValue(const MetadataMap::key_type& field) const = 0;
 
       /**
        * Get global metadata map.

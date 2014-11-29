@@ -1392,6 +1392,7 @@ namespace ome
             m->rgb = true;
             m->sizeC = samples;
           }
+        m->sizeZ = m->sizeC = m->imageCount = 1;
 
         // libtiff does any needed endian conversion
         // automatically, so the data is always in the native
@@ -1500,8 +1501,9 @@ namespace ome
         setMetadata(ifd, *m, "XPosition", XPOSITION);
         setMetadata(ifd, *m, "YPosition", YPOSITION);
 
-        setMetadata(ifd, *m, "FreeOffsets", FREEOFFSETS);
-        setMetadata(ifd, *m, "FreeByteCounts", FREEBYTECOUNTS);
+        /// @todo Only set if debugging/verbose.
+        // setMetadata(ifd, *m, "FreeOffsets", FREEOFFSETS);
+        // setMetadata(ifd, *m, "FreeByteCounts", FREEBYTECOUNTS);
 
         setMetadata(ifd, *m, "GrayResponseUnit", GRAYRESPONSEUNIT);
         setMetadata(ifd, *m, "GrayResponseCurve", GRAYRESPONSECURVE);
@@ -1536,8 +1538,10 @@ namespace ome
 
         setMetadata(ifd, *m, "TileWidth", TILEWIDTH);
         setMetadata(ifd, *m, "TileLength", TILELENGTH);
-        setMetadata(ifd, *m, "TileOffsets", TILEOFFSETS);
-        setMetadata(ifd, *m, "TileByteCounts", TILEBYTECOUNTS);
+
+        /// @todo Only set if debugging/verbose.
+        // setMetadata(ifd, *m, "TileOffsets", TILEOFFSETS);
+        // setMetadata(ifd, *m, "TileByteCounts", TILEBYTECOUNTS);
 
         setMetadata(ifd, *m, "InkSet", INKSET);
         setMetadata(ifd, *m, "InkNames", INKNAMES);
@@ -1551,9 +1555,9 @@ namespace ome
         /// @todo sminsamplevalue
         /// @todo smaxsamplevalue
 
-        setMetadata(ifd, *m, "StripOffsets", STRIPOFFSETS);
-        setMetadata(ifd, *m, "StripByteCounts", STRIPBYTECOUNTS);
-
+        /// @todo Only set if debugging/verbose.
+        // setMetadata(ifd, *m, "StripOffsets", STRIPOFFSETS);
+        // setMetadata(ifd, *m, "StripByteCounts", STRIPBYTECOUNTS);
 
         /// @todo JPEG tags
 

@@ -41,15 +41,127 @@
 
 #include <ome/test/test.h>
 
-TEST(Module, Check)
+class ModulePathTestParameters
 {
+public:
+  std::string dtype;
+  std::string envvar;
+  bool        logic_error;
+
+  ModulePathTestParameters(std::string dtype,
+                           std::string envvar,
+                           bool        logic_error):
+    dtype(dtype),
+    envvar(envvar),
+    logic_error(logic_error)
+  {}
+};
+
+class ModulePathTest : public ::testing::TestWithParam<ModulePathTestParameters>
+{
+public:
+  bool verbose;
+
+  void
+  SetUp()
+  {
+    verbose = (getenv("BIOFORMATS_TEST_VERBOSE")
+               && std::string(getenv("BIOFORMATS_TEST_VERBOSE")) == "true");
+  }
+};
+
+TEST_P(ModulePathTest, CheckPath)
+{
+  const ModulePathTestParameters& params = GetParam();
+
   // This won't necessarily work in the build tree, so catch any
   // exception.  It will only error on segfaults.
   try
     {
-      ome::compat::module_runtime_prefix();
+      boost::filesystem::path path(ome::compat::module_runtime_path(params.dtype));
+      if (verbose)
+        std::cout << params.dtype << " path is: " << path << '\n';
     }
   catch (const std::runtime_error& e)
     {
+      if (verbose)
+        std::cout << params.dtype << " threw a runtime_error: " << e.what() << '\n';
+      ASSERT_FALSE(params.logic_error);
+    }
+  catch (const std::logic_error& e)
+    {
+      if (verbose)
+        std::cout << params.dtype << " threw a logic_error: " << e.what() << '\n';
+      ASSERT_TRUE(params.logic_error);
     }
 }
+
+TEST_P(ModulePathTest, ValidEnv)
+{
+  const ModulePathTestParameters& params = GetParam();
+
+  setenv(params.envvar.c_str(), PROJECT_BINARY_DIR, 1);
+
+  if (!params.logic_error)
+    ASSERT_NO_THROW(ome::compat::module_runtime_path(params.dtype));
+  else
+    ASSERT_THROW(ome::compat::module_runtime_path(params.dtype), std::logic_error);
+}
+
+TEST_P(ModulePathTest, InvalidEnv)
+{
+  const ModulePathTestParameters& params = GetParam();
+
+  setenv(params.envvar.c_str(), PROJECT_BINARY_DIR "/invalid-path", 1);
+
+  try
+    {
+      ome::compat::module_runtime_path(params.dtype);
+    }
+  catch (const std::runtime_error& e)
+    {
+      ASSERT_FALSE(params.logic_error);
+    }
+  catch (const std::logic_error& e)
+    {
+      ASSERT_TRUE(params.logic_error);
+    }
+}
+ModulePathTestParameters params[] =
+  {
+    ModulePathTestParameters("bin",          "BIOFORMATS_BINDIR",         false),
+    ModulePathTestParameters("sbin",         "BIOFORMATS_SBINDIR",        false),
+    ModulePathTestParameters("libexec",      "BIOFORMATS_LIBEXECDIR",     false),
+    ModulePathTestParameters("sysconf",      "BIOFORMATS_SYSCONFDIR",     false),
+    ModulePathTestParameters("sharedstate",  "BIOFORMATS_SHAREDSTATEDIR", false),
+    ModulePathTestParameters("localstate",   "BIOFORMATS_LOCALSTATEDIR",  false),
+    ModulePathTestParameters("lib",          "BIOFORMATS_LIBDIR",         false),
+    ModulePathTestParameters("include",      "BIOFORMATS_INCLUDEDIR",     false),
+    ModulePathTestParameters("oldinclude",   "BIOFORMATS_OLDINCLUDEDIR",  false),
+    ModulePathTestParameters("dataroot",     "BIOFORMATS_DATAROOTDIR",    false),
+    ModulePathTestParameters("data",         "BIOFORMATS_SYSDATADIR",     false),
+    ModulePathTestParameters("info",         "BIOFORMATS_INFODIR",        false),
+    ModulePathTestParameters("locale",       "BIOFORMATS_LOCALEDIR",      false),
+    ModulePathTestParameters("man",          "BIOFORMATS_MANDIR",         false),
+    ModulePathTestParameters("doc",          "BIOFORMATS_DOCDIR",         false),
+
+    ModulePathTestParameters("bf-root",      "BIOFORMATS_ROOTDIR",        false),
+    ModulePathTestParameters("bf-data",      "BIOFORMATS_DATADIR",        false),
+    ModulePathTestParameters("bf-icon",      "BIOFORMATS_ICONDIR",        false),
+    ModulePathTestParameters("bf-schema",    "BIOFORMATS_SCHEMADIR",      false),
+    ModulePathTestParameters("bf-transform", "BIOFORMATS_TRANSFORMDIR",   false),
+
+    // Invalid dtype throws logic_error
+    ModulePathTestParameters("bf-invalid",   "BIOFORMATS_INVALID",        true),
+  };
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
+#endif
+
+INSTANTIATE_TEST_CASE_P(ModulePathVariants, ModulePathTest, ::testing::ValuesIn(params));

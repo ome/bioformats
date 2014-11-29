@@ -65,6 +65,16 @@ namespace bin
       void
       readCoreMetadata(std::ostream& stream);
 
+      /**
+       * Print a single dimension.
+       */
+      void
+      printDimension(std::ostream&                        stream,
+                     const std::string&                   dim,
+                     ome::bioformats::dimension_size_type size,
+                     ome::bioformats::dimension_size_type effectiveSize,
+                     const ome::bioformats::Modulo&       modulo);
+
       /// File to open with FormatReader::setId.
       std::string file;
       /// Command-line options.

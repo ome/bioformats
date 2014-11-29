@@ -1588,8 +1588,8 @@ public class ZeissCZIReader extends FormatReader {
 
           String cutIn = getFirstNodeValue(transmittance, "CutIn");
           String cutOut = getFirstNodeValue(transmittance, "CutOut");
-          Integer inWave = cutIn == null ? 0 : new Integer(cutIn);
-          Integer outWave = cutOut == null ? 0 : new Integer(cutOut);
+          Double inWave = cutIn == null ? 0 : new Double(cutIn);
+          Double outWave = cutOut == null ? 0 : new Double(cutOut);
 
           Length in = FormatTools.getCutIn(inWave);
           Length out = FormatTools.getCutOut(outWave);
@@ -1606,13 +1606,13 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(transmittance, "CutOutTolerance");
 
           if (inTolerance != null) {
-            Integer cutInTolerance = new Integer(inTolerance);
+            Double cutInTolerance = new Double(inTolerance);
             store.setTransmittanceRangeCutInTolerance(
               new Length(cutInTolerance, UNITS.NM), 0, i);
           }
 
           if (outTolerance != null) {
-            Integer cutOutTolerance = new Integer(outTolerance);
+            Double cutOutTolerance = new Double(outTolerance);
             store.setTransmittanceRangeCutOutTolerance(
               new Length(cutOutTolerance, UNITS.NM), 0, i);
           }

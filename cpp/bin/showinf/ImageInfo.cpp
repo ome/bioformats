@@ -8,7 +8,15 @@
 #include "ImageInfo.h"
 
 using namespace ome::bioformats;
+using ome::bioformats::dimension_size_type;
 using ome::xml::model::primitives::Timestamp;
+
+namespace
+{
+
+  const char * const stars = "************";
+
+}
 
 namespace bin
 {
@@ -151,16 +159,30 @@ namespace bin
           // << imageName
           // << ':' << '\n';
 
+          dimension_size_type rc = reader->getResolutionCount();
+          if (!opts.flat && rc > 1)
+            {
+              stream << "\tResolutions = " << rc << '\n';
+              for (dimension_size_type r = 0; r < rc; ++r)
+                {
+                  reader->setResolution(r);
+                  stream << "\t\t#" << r << " = " << reader->getSizeX() << " × " << reader->getSizeY() << '\n';
+                }
+              reader->setResolution(0);
+            }
+
           stream << "\tImage count = " << reader->getImageCount() << '\n'
-                 << "\tRGB = " << reader->getRGBChannelCount() << '\n'
+                 << "\tRGB = " << (reader->isRGB() ? "true" : "false")
+                 << " (" << reader->getRGBChannelCount() << ") "
+                 << (opts.merge ? "merged" : opts.separate ? "separated" : "") << '\n'
                  << "\tInterleaved = " << (reader->isInterleaved() ? "true" : "false") << '\n'
                  << "\tIndexed = " << (reader->isIndexed() ? "true" : "false") << '\n'
                  << "\tWidth = " << reader->getSizeX() << '\n'
-                 << "\tHeight = " << reader->getSizeY() << '\n'
-                 << "\tSizeZ = " << reader->getSizeZ() << '\n'
-                 << "\tSizeT = " << reader->getSizeT() << '\n'
-                 << "\tSizeC = " << reader->getSizeC() << '\n'
-                 << "\tThumbnail size = " << reader->getThumbSizeX() << " × " << reader->getThumbSizeY() << '\n'
+                 << "\tHeight = " << reader->getSizeY() << '\n';
+          printDimension(stream, "SizeZ", reader->getSizeZ(), reader->getSizeZ(), reader->getModuloZ());
+          printDimension(stream, "SizeT", reader->getSizeT(), reader->getSizeT(), reader->getModuloT());
+          printDimension(stream, "SizeC", reader->getSizeC(), reader->getEffectiveSizeC(), reader->getModuloC());
+          stream << "\tThumbnail size = " << reader->getThumbSizeX() << " × " << reader->getThumbSizeY() << '\n'
                  << "\tEndianness = " << (reader->isLittleEndian() ? "little" : "big") << '\n'
                  << "\tDimensionOrder = " << reader->getDimensionOrder() << " (" << (reader->isOrderCertain() ? "certain" : "not certain") << ")\n"
                  << "\tPixelType = " << reader->getPixelType() << '\n'
@@ -214,6 +236,37 @@ namespace bin
         {
           std::cerr << "Failed to get metadata: " << e.what() << '\n';
         }
+    }
+
+    void
+    ImageInfo::printDimension(std::ostream&                        stream,
+                              const std::string&                   dim,
+                              ome::bioformats::dimension_size_type size,
+                              ome::bioformats::dimension_size_type effectiveSize,
+                              const ome::bioformats::Modulo&       modulo)
+    {
+      stream << '\t' << dim << " = " << size;
+      if (effectiveSize)
+        stream << " (effectively " << effectiveSize << ')';
+
+      dimension_size_type product = 1;
+
+      if (modulo.size() == 1)
+        {
+          product = size;
+        }
+      else
+        {
+          stream << " (" << size / modulo.size()
+                 << " " << modulo.parentType
+                 << " × " << modulo.size()
+                 << " " << modulo.type
+                 << ')';
+        }
+      stream << '\n';
+
+      if (product != size)
+        std::cerr << "\t" << stars << ' ' << dim << " dimension mismatch " << stars << '\n';
     }
 
   }

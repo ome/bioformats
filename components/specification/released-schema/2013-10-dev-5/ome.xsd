@@ -1427,10 +1427,20 @@
 			<xsd:length value="20"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="NonNegativeFloat">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to a float between >=0 and max 32-bit float {i.e. (2−2^-23) × 2^27 ≈ 3.4 × 10^38}
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:long">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="NonNegativeLong">
 		<xsd:annotation>
 			<xsd:documentation>
-				A simple type that restricts the value to an integer between 0 and 9223372036854775807 (inclusive).
+				A simple type that restricts the value to a long between 0 and 9223372036854775807 (inclusive).
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:long">
@@ -2126,7 +2136,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="CutIn" use="optional" type="PositiveInt" >
+			<xsd:attribute name="CutIn" use="optional" type="PositiveFloat" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units are set by CutInUnit.
@@ -2138,7 +2148,7 @@
 					<xsd:documentation>The units of the CutIn - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutOut" use="optional" type="PositiveInt" >
+			<xsd:attribute name="CutOut" use="optional" type="PositiveFloat" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units are set by CutOutUnit.
@@ -2150,7 +2160,7 @@
 					<xsd:documentation>The units of the CutOut - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutInTolerance" use="optional" type="NonNegativeInt" >
+			<xsd:attribute name="CutInTolerance" use="optional" type="NonNegativeFloat" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutInTolerance. Units are set by CutInToleranceUnit.
@@ -2162,7 +2172,7 @@
 					<xsd:documentation>The units of the CutInTolerance - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutOutTolerance" use="optional" type="NonNegativeInt" >
+			<xsd:attribute name="CutOutTolerance" use="optional" type="NonNegativeFloat" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutOutTolerance. Units are set by CutOutToleranceUnit.

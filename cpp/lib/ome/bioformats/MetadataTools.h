@@ -40,7 +40,11 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
 
-#include <ome/xml/meta/MetadataStore.h>
+#include <ome/compat/filesystem.h>
+
+#include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/MetadataRoot.h>
+#include <ome/xml/meta/OMEXMLMetadata.h>
 
 #ifndef OME_BIOFORMATS_METADATATOOLS_H
 #define OME_BIOFORMATS_METADATATOOLS_H
@@ -109,9 +113,209 @@ namespace ome
              dimension_size_type idx3,
              dimension_size_type idx4);
 
+    /**
+     * Create OME-XML metadata from XML document.
+     *
+     * @param document the XML document source.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const std::string& document);
+
+    /**
+     * Create OME-XML metadata from reader core metadata.
+     *
+     * @param reader the reader to use.
+     * @param doPlane create Plane elements if @c true.
+     * @param doImageName set image name if @c true.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const FormatReader& reader,
+                         bool                doPlane = false,
+                         bool                doImageName = true);
+
+
+    /**
+     * Create OME-XML metadata root from XML document.
+     *
+     * @param document the XML document source.
+     * @returns the OME-XML metadata root.
+     */
+    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    createOMEXMLRoot(const std::string& document);
+
+    /**
+     * Get OME-XML metadata from metadata.
+     *
+     * This will convert the metadata to OME-XML metadata if required.
+     *
+     * @param retrieve the metadata to use.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+
+    /**
+     * Get OME-XML document from OME-XML metadata.
+     *
+     * This will convert the OME-XML metadata to an XML document
+     * string.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @returns the OME-XML metadata as an XML document string.
+     */
+    std::string
+    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml);
+
+    /**
+     * Validate an OME-XML document.
+     *
+     * @param document the XML document source.
+     * @returns @c true if valid, @c false if invalid.
+     */
+    bool
+    validateOMEXML(const std::string& document);
+
+    /**
+     * Fill OME-XML metadata store from reader core metadata.
+     *
+     * The metadata store is expected to be empty.
+     *
+     * @param store the OME-XML metadata store.
+     * @param reader the reader to use.
+     * @param doPlane create Plane elements if @c true.
+     * @param doImageName set image name if @c true.
+     */
     void
-    fillMetadata(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store,
-                 const FormatReader& reader);
+    fillMetadata(::ome::xml::meta::MetadataStore& store,
+                 const FormatReader&              reader,
+                 bool                             doPlane = false,
+                 bool                             doImageName = true);
+
+    /**
+     * Fill all OME-XML metadata store Pixels elements from reader core metadata.
+     *
+     * Set Pixels metadata for all series.
+     *
+     * @param store the OME-XML metadata store.
+     * @param reader the reader to use.
+     */
+    void
+    fillAllPixels(::ome::xml::meta::MetadataStore& store,
+                  const FormatReader&              reader);
+
+    /**
+     * Fill an OME-XML metadata store Pixels element from reader core metadata.
+     *
+     * Set Pixels metadata for the reader's current series.
+     *
+     * @param store the OME-XML metadata store.
+     * @param reader the reader to use.
+     */
+    void
+    fillPixels(::ome::xml::meta::MetadataStore& store,
+               const FormatReader&              reader);
+
+    /**
+     * Add a MetadataOnly element to Pixels for the specified series.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param series the series containing the Pixels element to add MetadataOnly to.
+     */
+    void
+    addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type               series);
+
+    /**
+     * Get Modulo annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param tag the Modulo annotation XML tag name.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModulo(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+              const std::string&                      tag,
+              dimension_size_type                     image);
+
+    /**
+     * Verify correctness of minimal amount of metadata in a series.
+     *
+     * @param retrieve the OME-XML metadata store.
+     * @param series the image series to verify.
+     * @throws FormatException if any metadata is missing.
+     */
+    void
+    verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
+                    dimension_size_type               series = 0U);
+
+    /**
+     * Check if default creation date is enabled.
+     *
+     * @returns @c true if enabled, @c false otherwise.
+     */
+    bool
+    defaultCreationDateEnabled();
+
+    /**
+     * Get the currently-supported OME Data Model version.
+     *
+     * @returns the model version.
+     */
+    std::string
+    getModelVersion();
+
+    /**
+     * Get the model version used by an OME-XML document
+     *
+     * @param document the OME-XML document.
+     * @returns the model version.
+     */
+    std::string
+    getModelVersion(const std::string& document);
+
+    /**
+     * Transform an OME-XML document to the latest model version
+     *
+     * @param document the OME-XML document.
+     * @returns the transformed OME-XML document.
+     */
+    std::string
+    transformToLatestModelVersion(const std::string& document);
+
+    /**
+     * Enable or disable default creation date.
+     *
+     * This setting enables or disables the replacement of missing
+     * creation dates.
+     *
+     * @see setDefaultCreationDate().
+     *
+     * @param enabled @c true to enable, @c false to disable.
+     */
+    void
+    defaultCreationDateEnabled(bool enabled);
+
+    /**
+     * Set the creation data for a series.
+     *
+     * If the specified file exists, the modification time of this
+     * file will be used as the creation date.  If it does not exist,
+     * the current system time will be used as a fallback.
+     *
+     * This function will do nothing unless
+     * defaultCreationDateEnabled(bool) is enabled.
+     *
+     * @param store the OME-XML metadata store.
+     * @param series the series for which to set the creation date.
+     * @param id the filename for the series.
+     */
+    void
+    setDefaultCreationDate(::ome::xml::meta::MetadataStore& store,
+                           dimension_size_type              series,
+                           const boost::filesystem::path&   id);
 
   }
 }

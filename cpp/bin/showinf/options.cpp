@@ -17,8 +17,10 @@ namespace bin
       validate(false),
       showsa(true),
       showused(true),
+      merge(false),
       group(false),
       stitch(false),
+      separate(false),
       flat(false),
       series(0),
       resolution(0),
@@ -87,10 +89,14 @@ namespace bin
          "Use the specified format reader")
         ("flat", opt::value<bool>(&this->flat),
          "Flatten subresolutions")
+        ("merge", opt::value<bool>(&this->merge),
+         "Combine separate channels into an RGB image")
         ("group", opt::value<bool>(&this->group),
          "Files in multi-file datasets are treated as a single dataset")
         ("stitch", opt::value<bool>(&this->stitch),
          "Group files with similar names")
+        ("separate", opt::value<bool>(&this->separate),
+         "Separate RGB image into separate channels")
         ("series", opt::value<ome::bioformats::dimension_size_type>(&this->series),
          "Use the specified series")
         ("resolution", opt::value<ome::bioformats::dimension_size_type>(&this->resolution),

@@ -211,20 +211,6 @@ public class DimensionSwapper extends ReaderWrapper {
     return core.get(getCoreIndex()).sizeT;
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    int[] cLengths = core.get(getCoreIndex()).cLengths;
-    return cLengths == null ? super.getChannelDimLengths() : cLengths;
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    String[] cTypes = core.get(getCoreIndex()).cTypes;
-    return cTypes == null ? super.getChannelDimTypes() : cTypes;
-  }
-
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -270,16 +256,6 @@ public class DimensionSwapper extends ReaderWrapper {
   /* @see IFormatReader#getIndex(int, int, int) */
   public int getIndex(int z, int c, int t) {
     return FormatTools.getIndex(this, z, c, t);
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
-  @Override
-  public CoreMetadata[] getCoreMetadata() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return core.toArray(new CoreMetadata[0]);
   }
 
   /* @see IFormatReader#getCoreMetadataList() */
