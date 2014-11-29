@@ -71,10 +71,10 @@ public:
   virtual void SetUp()
   {
     entities.push_back(xml::EntityResolver::RegisterEntity("http://www.w3.org/2001/XMLSchema",
-                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/additions/jar/XMLSchema.xsd")));
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/external/XMLSchema.xsd")));
 
     entities.push_back(xml::EntityResolver::RegisterEntity("http://www.w3.org/2001/xml.xsd",
-                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/additions/jar/xml.xsd")));
+                                                           boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/external/xml.xsd")));
 
     entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd",
                                                            boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/ome.xsd")));
