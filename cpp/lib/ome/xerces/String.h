@@ -173,6 +173,43 @@ namespace ome
         return narrow;
       }
 
+      bool
+      operator== (const char *rhs)
+      {
+        return this->narrow != 0 && strcmp(this->narrow, rhs) == 0;
+      }
+
+      bool
+      operator== (const std::string& rhs)
+      {
+        return this->narrow != 0 && strcmp(this->narrow, rhs.c_str()) == 0;
+      }
+
+      bool
+      operator== (const String& rhs)
+      {
+        return this->narrow != 0 && rhs.narrow != 0 &&
+          strcmp(this->narrow, rhs.narrow) == 0;
+      }
+
+      bool
+      operator!= (const char *rhs)
+      {
+        return !(*this == rhs);
+      }
+
+      bool
+      operator!= (const std::string& rhs)
+      {
+        return !(*this == rhs);
+      }
+
+      bool
+      operator!= (const String& rhs)
+      {
+        return !(*this == rhs);
+      }
+
     private:
       /// The char * string representation.
       char *narrow;
