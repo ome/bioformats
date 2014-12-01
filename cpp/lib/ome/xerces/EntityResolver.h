@@ -80,7 +80,21 @@ namespace ome
 
     private:
       /// Entity mapping type.
-      typedef std::map<std::string, std::string> entity_map_type;
+      typedef std::map<std::string, boost::filesystem::path> entity_map_type;
+
+      /**
+       * Get input source from file.
+       *
+       * Open and read the contents of the file, then return this as
+       * an InputSource.
+       *
+       * @param resource the resource to resolve (for information only).
+       * @param file the file to read.
+       * @returns the input source for the file, or null on failure.
+       */
+      xercesc::InputSource *
+      getSource(const std::string&             resource,
+                const boost::filesystem::path& file);
 
       /**
        * Get entity mappings.

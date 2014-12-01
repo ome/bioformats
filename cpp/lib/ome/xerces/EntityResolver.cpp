@@ -36,12 +36,19 @@
  * #L%
  */
 
+#include <cassert>
+#include <deque>
 #include <fstream>
+#include <set>
 
 #include <boost/format.hpp>
 
 #include <ome/xerces/EntityResolver.h>
 #include <ome/xerces/String.h>
+
+#include <ome/xerces/dom/Document.h>
+#include <ome/xerces/dom/Element.h>
+#include <ome/xerces/dom/NodeList.h>
 
 #include <xercesc/sax/InputSource.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
@@ -74,26 +81,16 @@ namespace ome
               {
                 entity_map_type& cache(entities());
                 entity_map_type::const_iterator i = cache.find(String(resource->getSchemaLocation()));
-                const std::string& data(i->second);
                 if (i != cache.end())
-                  {
-                    ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
-                                                         static_cast<XMLSize_t>(data.size()),
-                                                         resource->getSchemaLocation());
-                  }
+                  ret = getSource(i->first, i->second);
               }
               break;
             case xercesc::XMLResourceIdentifier::ExternalEntity:
               {
                 entity_map_type& cache(entities());
                 entity_map_type::const_iterator i = cache.find(String(resource->getSystemId()));
-                const std::string& data(i->second);
                 if (i != cache.end())
-                  {
-                    ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
-                                                         static_cast<XMLSize_t>(data.size()),
-                                                         resource->getSystemId());
-                  }
+                  ret = getSource(i->first, i->second);
               }
               break;
             default:
@@ -104,24 +101,12 @@ namespace ome
       return ret;
     }
 
-    EntityResolver::entity_map_type&
-    EntityResolver::entities()
+    xercesc::InputSource *
+    EntityResolver::getSource(const std::string&             resource,
+                              const boost::filesystem::path& file)
     {
-      static entity_map_type entity_map;
-      return entity_map;
-    }
+      xercesc::InputSource *ret = 0;
 
-    EntityResolver::AutoRegisterEntity::AutoRegisterEntity(const std::string& id,
-                                                           const std::string& data):
-      id(id)
-    {
-      EntityResolver::entities().insert(std::make_pair(id, data));
-    }
-
-    EntityResolver::AutoRegisterEntity::AutoRegisterEntity(const std::string&             id,
-                                                           const boost::filesystem::path& file):
-      id(id)
-    {
       std::string data;
 
       std::ifstream in(file.generic_string().c_str());
@@ -137,13 +122,40 @@ namespace ome
           data.assign(std::istreambuf_iterator<char>(in),
                       std::istreambuf_iterator<char>());
 
-          EntityResolver::entities().insert(std::make_pair(id, data));
+          ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
+                                               static_cast<XMLSize_t>(data.size()),
+                                               String(file.generic_string()));
         }
       else
         {
           boost::format fmt("Failed to load XML schema id ‘%1%’ from file ‘%2%’");
+          fmt % resource % file.generic_string();
+          std::cerr << fmt.str() << '\n';
+        }
+
+      return ret;
+    }
+
+    EntityResolver::entity_map_type&
+    EntityResolver::entities()
+    {
+      static entity_map_type entity_map;
+      return entity_map;
+    }
+
+    EntityResolver::AutoRegisterEntity::AutoRegisterEntity(const std::string&             id,
+                                                           const boost::filesystem::path& file):
+      id(id)
+    {
+      if (boost::filesystem::exists(file))
+        {
+          EntityResolver::entities().insert(std::make_pair(id, file));
+        }
+      else
+        {
+          boost::format fmt("XML catalogue entity file ‘%2%’ does not exist");
           fmt % id % file.generic_string();
-          throw std::runtime_error(fmt.str());
+          std::cerr << fmt.str() << '\n';
         }
     }
 
@@ -155,15 +167,76 @@ namespace ome
     EntityResolver::AutoRegisterCatalog::AutoRegisterCatalog(const boost::filesystem::path& catalog):
       registration()
     {
-      std::ifstream in(catalog.generic_string().c_str());
-      if (in)
+      std::set<boost::filesystem::path> visited;
+      std::deque<boost::filesystem::path> pending;
+
+      pending.push_back(ome::compat::canonical(catalog));
+
+      while(!pending.empty())
         {
-        }
-      else
-        {
-          boost::format fmt("Failed to load XML catalog from file ‘%2%’");
-          fmt % catalog.generic_string();
-          throw std::runtime_error(fmt.str());
+          boost::filesystem::path current(pending.front());
+          assert(!current.empty());
+          pending.pop_front();
+
+          if (visited.find(current) != visited.end())
+            {
+              boost::format fmt("XML catalog ‘%1%’ contains a recursive reference");
+              fmt % current.generic_string();
+              std::cerr << fmt.str() << '\n';
+              continue; // This has already been processed; break loop
+            }
+
+          boost::filesystem::path currentdir(current.parent_path());
+          assert(!currentdir.empty());
+
+          std::ifstream in(current.generic_string().c_str());
+          if (in)
+            {
+              dom::Document doc(dom::createDocument(in));
+              dom::Element root(doc.getDocumentElement());
+              dom::NodeList nodes(root->getChildNodes());
+              for (dom::NodeList::iterator i = nodes.begin();
+                   i != nodes.end();
+                   ++i)
+                {
+                  if (i->getNodeType() == xercesc::DOMNode::ELEMENT_NODE)
+                    {
+                      dom::Element e(i->get());
+                      if (e)
+                        {
+                          if (e.getTagName() == "uri")
+                            {
+                              if (e.hasAttribute("uri") && e.hasAttribute("name"))
+                                {
+                                  boost::filesystem::path newid(currentdir / static_cast<std::string>(e.getAttribute("uri")));
+                                  registration.push_back(std::shared_ptr<AutoRegisterEntity>(new AutoRegisterEntity(static_cast<std::string>(e.getAttribute("name")),
+                                                                                                                    ome::compat::canonical(newid))));
+                                }
+                            }
+                          if (e.getTagName() == "nextCatalog")
+                            {
+                              if (e.hasAttribute("catalog"))
+                                {
+                                  boost::filesystem::path newcatalog(currentdir / static_cast<std::string>(e.getAttribute("catalog")));
+                                  pending.push_back(ome::compat::canonical(newcatalog));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+#ifndef NDEBUG
+          // Don't make failure hard in release builds; just skip.
+          else
+            {
+              boost::format fmt("Failed to load XML catalog from file ‘%1%’");
+              fmt % catalog.generic_string();
+              throw std::runtime_error(fmt.str());
+            }
+#endif
+
+          // Mark this file visited.
+          visited.insert(current);
         }
     }
 
@@ -177,12 +250,6 @@ namespace ome
     }
 
     EntityResolver::RegisterCatalog::~RegisterCatalog()
-    {
-    }
-
-    EntityResolver::RegisterEntity::RegisterEntity(const std::string& id,
-                                                   const std::string& data):
-      registration(new AutoRegisterEntity(id, data))
     {
     }
 
