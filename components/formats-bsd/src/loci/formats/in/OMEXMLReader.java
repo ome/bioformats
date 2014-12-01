@@ -156,7 +156,8 @@ public class OMEXMLReader extends FormatReader {
     options.interleaved = isInterleaved();
 
     String encoded = in.readString("<");
-    if (encoded.length() == 0) {
+    encoded = encoded.trim();
+    if (encoded.length() == 0 || encoded.equals("<")) {
       LOGGER.debug("No pixel data for plane #{}", no);
       return buf;
     }
