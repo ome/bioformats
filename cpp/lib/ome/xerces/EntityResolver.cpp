@@ -107,30 +107,33 @@ namespace ome
     {
       xercesc::InputSource *ret = 0;
 
-      std::string data;
-
-      std::ifstream in(file.generic_string().c_str());
-      if (in)
+      if (boost::filesystem::exists(file))
         {
-          std::ios::pos_type pos = in.tellg();
-          in.seekg(0, std::ios::end);
-          std::ios::pos_type len = in.tellg() - pos;
-          if (len)
-            data.reserve(len);
-          in.seekg(0, std::ios::beg);
+          std::string data;
 
-          data.assign(std::istreambuf_iterator<char>(in),
-                      std::istreambuf_iterator<char>());
+          std::ifstream in(file.generic_string().c_str());
+          if (in)
+            {
+              std::ios::pos_type pos = in.tellg();
+              in.seekg(0, std::ios::end);
+              std::ios::pos_type len = in.tellg() - pos;
+              if (len)
+                data.reserve(len);
+              in.seekg(0, std::ios::beg);
 
-          ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
-                                               static_cast<XMLSize_t>(data.size()),
-                                               String(file.generic_string()));
-        }
-      else
-        {
-          boost::format fmt("Failed to load XML schema id ‘%1%’ from file ‘%2%’");
-          fmt % resource % file.generic_string();
-          std::cerr << fmt.str() << '\n';
+              data.assign(std::istreambuf_iterator<char>(in),
+                          std::istreambuf_iterator<char>());
+
+              ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
+                                                   static_cast<XMLSize_t>(data.size()),
+                                                   String(file.generic_string()));
+            }
+          else
+            {
+              boost::format fmt("Failed to load XML schema id ‘%1%’ from file ‘%2%’");
+              fmt % resource % file.generic_string();
+              std::cerr << fmt.str() << '\n';
+            }
         }
 
       return ret;
@@ -147,16 +150,7 @@ namespace ome
                                                            const boost::filesystem::path& file):
       id(id)
     {
-      if (boost::filesystem::exists(file))
-        {
-          EntityResolver::entities().insert(std::make_pair(id, file));
-        }
-      else
-        {
-          boost::format fmt("XML catalogue entity file ‘%2%’ does not exist");
-          fmt % id % file.generic_string();
-          std::cerr << fmt.str() << '\n';
-        }
+      EntityResolver::entities().insert(std::make_pair(id, file));
     }
 
     EntityResolver::AutoRegisterEntity::~AutoRegisterEntity()
