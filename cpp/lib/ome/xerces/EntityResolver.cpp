@@ -152,6 +152,34 @@ namespace ome
       EntityResolver::entities().erase(id);
     }
 
+    EntityResolver::AutoRegisterCatalog::AutoRegisterCatalog(const boost::filesystem::path& catalog):
+      registration()
+    {
+      std::ifstream in(catalog.generic_string().c_str());
+      if (in)
+        {
+        }
+      else
+        {
+          boost::format fmt("Failed to load XML catalog from file ‘%2%’");
+          fmt % catalog.generic_string();
+          throw std::runtime_error(fmt.str());
+        }
+    }
+
+    EntityResolver::AutoRegisterCatalog::~AutoRegisterCatalog()
+    {
+    }
+
+    EntityResolver::RegisterCatalog::RegisterCatalog(const boost::filesystem::path& catalog):
+      registration(new AutoRegisterCatalog(catalog))
+    {
+    }
+
+    EntityResolver::RegisterCatalog::~RegisterCatalog()
+    {
+    }
+
     EntityResolver::RegisterEntity::RegisterEntity(const std::string& id,
                                                    const std::string& data):
       registration(new AutoRegisterEntity(id, data))

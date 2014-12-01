@@ -91,7 +91,6 @@ namespace ome
       entity_map_type&
       entities();
 
-    private:
       /**
        * Automatically register and unregister an entity with the entity resolver.
        */
@@ -105,7 +104,7 @@ namespace ome
          * @param data the text data of the entity.
          */
         AutoRegisterEntity(const std::string& id,
-                       const std::string& data);
+                           const std::string& data);
 
         /**
          * Register a file with the entity resolver.
@@ -114,7 +113,7 @@ namespace ome
          * @param file the filename of the entity.
          */
         AutoRegisterEntity(const std::string&             id,
-                       const boost::filesystem::path& file);
+                           const boost::filesystem::path& file);
 
         /**
          * Destructor.
@@ -133,6 +132,42 @@ namespace ome
 
         /// XML system ID.
         std::string id;
+      };
+
+      /**
+       * Automatically register and unregister an XML catalog with the entity resolver.
+       */
+      class AutoRegisterCatalog
+      {
+      public:
+        /**
+         * Register a catalog file with the entity resolver.
+         *
+         * The catalog will be read, and any entities in it will be
+         * registered.  This will be done recursively for all
+         * referenced catalogs.
+         *
+         * @param catalog the filename of the catalog.
+         */
+        AutoRegisterCatalog(const boost::filesystem::path& catalog);
+
+        /**
+         * Destructor.
+         *
+         * The entity will be unregistered with the entity resolver.
+         */
+        ~AutoRegisterCatalog();
+
+      private:
+        /// Copy constructor (deleted).
+        AutoRegisterCatalog (const AutoRegisterCatalog&);
+
+        /// Assignment operator (deleted).
+        AutoRegisterCatalog&
+        operator= (const AutoRegisterCatalog&);
+
+        /// Registered entities from this catalog.
+        std::vector<std::shared_ptr<AutoRegisterEntity> > registration;
       };
 
     public:
@@ -168,7 +203,33 @@ namespace ome
         std::shared_ptr<AutoRegisterEntity> registration;        
       };
 
+      /**
+       * Register an XML catalog with the entity resolver.
+       */
+      class RegisterCatalog
+      {
+      public:
+        /**
+         * Register a catalog file with the entity resolver.
+         *
+         * The catalog will be read, and any entities in it will be
+         * registered.  This will be done recursively for all
+         * referenced catalogs.
+         *
+         * @param catalog the filename of the catalog.
+         */
+        RegisterCatalog(const boost::filesystem::path& catalog);
+
+        /// Destructor.
+        ~RegisterCatalog();
+
+      private:
+        /// Automatic registration.
+        std::shared_ptr<AutoRegisterCatalog> registration;
+      };
+
       friend class RegisterEntity;
+      friend class RegisterCatalog;
     };
 
   }
