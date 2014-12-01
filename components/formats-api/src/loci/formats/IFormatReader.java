@@ -171,23 +171,6 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   Modulo getModuloT();
 
-  /**
-   * Gets the lengths of each subdimension of C,
-   * in fastest-to-slowest rasterization order.
-   *
-   * @deprecated
-   */
-  int[] getChannelDimLengths();
-
-  /**
-   * Gets the name of each subdimension of C,
-   * in fastest-to-slowest rasterization order.
-   * Common subdimensional types are enumerated in {@link FormatTools}.
-   *
-   * @deprecated
-   */
-  String[] getChannelDimTypes();
-
   /** Get the size of the X dimension for the thumbnail. */
   int getThumbSizeX();
 
@@ -569,10 +552,10 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Set whether or not to flatten resolutions into individual series. */
   void setFlattenedResolutions(boolean flatten);
 
-  // -- Deprecated methods --
-
-  /** Obtains the core metadata values for the current file.
-   * @deprecated Use #getCoreMetadataList instead.
+  /**
+   * Reopen any files that were closed, and which are expected to be open
+   * while the reader is open.  This assumes that {@link setId} has been called,
+   * but close(false) has not been called.
    */
-  CoreMetadata[] getCoreMetadata();
+  void reopenFile() throws IOException;
 }

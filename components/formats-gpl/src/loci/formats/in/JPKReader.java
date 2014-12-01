@@ -69,6 +69,11 @@ public class JPKReader extends BaseTiffReader {
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     int ifd = getSeries() == 0 ? 0 : no + 1;
+
+    if (tiffParser == null) {
+      initTiffParser();
+    }
+
     tiffParser.fillInIFD(ifds.get(ifd));
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;

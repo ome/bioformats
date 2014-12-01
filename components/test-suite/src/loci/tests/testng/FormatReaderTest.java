@@ -40,6 +40,7 @@ import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -2183,6 +2184,63 @@ public class FormatReaderTest {
       success = false;
     }
     result(testName, success, msg);
+  }
+
+  @Test(groups = {"all",  "automated"})
+  public void testMemoFileUsage() {
+    String testName = "testMemoFileUsage";
+    if (!initFile()) result(testName, false, "initFile");
+    File memoFile = null;
+    File memoDir = null;
+    try {
+      // this should prevent conflicts when running multiple tests
+      // on the same system and/or in multiple threads
+      String tmpdir = System.getProperty("java.io.tmpdir");
+      memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
+      memoDir.mkdir();
+      Memoizer memo = new Memoizer(0, memoDir);
+      memo.setId(reader.getCurrentFile());
+      memo.close();
+      memoFile = memo.getMemoFile(reader.getCurrentFile());
+      if (!memo.isSavedToMemo()) {
+        result(testName, false, "Memo file not saved");
+      }
+      memo.setId(reader.getCurrentFile());
+      if (!memo.isLoadedFromMemo()) {
+        result(testName, false, "Memo file could not be loaded");
+      }
+      memo.openBytes(0, 0, 0, 1, 1);
+      memo.close();
+      result(testName, true);
+    }
+    catch (Throwable t) {
+      LOGGER.warn("", t);
+      result(testName, false, t.getMessage());
+    }
+    finally {
+      if (memoFile != null) {
+        // log the memo file's size
+        try {
+          RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath());
+          LOGGER.warn("memo file size for {} = {} bytes", reader.getCurrentFile(), s.length());
+          s.close();
+        }
+        catch (IOException e) {
+          LOGGER.warn("memo file size not available");
+        }
+
+        memoFile.delete();
+        // recursively delete, as the original file's path is replicated
+        // within the memo directory
+        while (!memoFile.getParentFile().equals(memoDir)) {
+          memoFile = memoFile.getParentFile();
+          memoFile.delete();
+        }
+      }
+      if (memoDir != null) {
+        memoDir.delete();
+      }
+    }
   }
 
   @Test(groups = {"config"})

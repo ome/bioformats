@@ -64,7 +64,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private RandomAccessInputStream tag;
+  private transient RandomAccessInputStream tag;
   private long[] layerOffset;
   private int[] compression;
   private int[][] channelOrder;

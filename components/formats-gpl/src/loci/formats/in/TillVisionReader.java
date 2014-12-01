@@ -82,7 +82,7 @@ public class TillVisionReader extends FormatReader {
   // -- Fields --
 
   private String[] pixelsFiles;
-  private RandomAccessInputStream pixelsStream;
+  private transient RandomAccessInputStream pixelsStream;
   private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
   private long[] embeddedOffset;

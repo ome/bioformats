@@ -1606,13 +1606,13 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(transmittance, "CutOutTolerance");
 
           if (inTolerance != null) {
-            Integer cutInTolerance = new Integer(inTolerance);
+            Double cutInTolerance = new Double(inTolerance);
             store.setTransmittanceRangeCutInTolerance(
               new Length(cutInTolerance, UNITS.NM), 0, i);
           }
 
           if (outTolerance != null) {
-            Integer cutOutTolerance = new Integer(outTolerance);
+            Double cutOutTolerance = new Double(outTolerance);
             store.setTransmittanceRangeCutOutTolerance(
               new Length(cutOutTolerance, UNITS.NM), 0, i);
           }

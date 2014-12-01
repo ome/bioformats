@@ -129,7 +129,7 @@ public abstract class FormatReader extends FormatHandler
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
 
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable<String, Object> metadata;
@@ -208,6 +208,15 @@ public abstract class FormatReader extends FormatHandler
   }
 
   // -- Internal FormatReader API methods --
+
+  /* @see IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    if (in != null) {
+      in.close();
+    }
+    in = new RandomAccessInputStream(currentId);
+    in.order(isLittleEndian());
+  }
 
   /**
    * Initializes the given file (parsing header information, etc.).
@@ -756,33 +765,6 @@ public abstract class FormatReader extends FormatHandler
     return core.get(getCoreIndex()).moduloT;
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 1);
-    int length = core.get(getCoreIndex()).moduloC.length();
-    if (length > 1) {
-      return new int[] {getSizeC() / length, length};
-    }
-    else if (core.get(getCoreIndex()).cLengths == null) {
-      return new int[] {core.get(getCoreIndex()).sizeC};
-     }
-    return core.get(getCoreIndex()).cLengths;
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 1);
-    int length = core.get(getCoreIndex()).moduloC.length();
-    if (length > 1) {
-      return new String[] {core.get(getCoreIndex()).moduloC.parentType,
-        core.get(getCoreIndex()).moduloC.type};
-    }
-    else if (core.get(getCoreIndex()).cTypes == null) {
-      return new String[] {FormatTools.CHANNEL};
-    }
-    return core.get(getCoreIndex()).cTypes;
-  }
-
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
     FormatTools.assertId(currentId, true, 1);
@@ -1091,15 +1073,6 @@ public abstract class FormatReader extends FormatHandler
     return core.get(getCoreIndex()).seriesMetadata;
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
-  public CoreMetadata[] getCoreMetadata() {
-    FormatTools.assertId(currentId, true, 1);
-    return core.toArray(new CoreMetadata[0]);
-  }
-
   /* @see IFormatReader#getCoreMetadataList() */
   public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(currentId, true, 1);
@@ -1305,6 +1278,7 @@ public abstract class FormatReader extends FormatHandler
     coreIndex = no;
     series = coreIndexToSeries(no);
   }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

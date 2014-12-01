@@ -50,16 +50,16 @@ namespace ome
 
       OMEXMLMetadataRoot::OMEXMLMetadataRoot():
         ome::xml::model::OMEModelObject(),
-	OME(),
-	MetadataRoot()
+	MetadataRoot(),
+	OME()
       {
       }
 
       OMEXMLMetadataRoot::OMEXMLMetadataRoot(::ome::xerces::dom::Element& element,
 					     ::ome::xml::model::OMEModel& model):
         ome::xml::model::OMEModelObject(),
-	OME(element, model),
-	MetadataRoot()
+	MetadataRoot(),
+	OME(element, model)
       {
       }
 
@@ -69,15 +69,15 @@ namespace ome
 
       OMEXMLMetadataRoot::OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy):
         ome::xml::model::OMEModelObject(),
-	OME(copy),
-	MetadataRoot()
+	MetadataRoot(),
+	OME(copy)
       {
       }
 
       OMEXMLMetadataRoot::OMEXMLMetadataRoot(const xml::model::OME& copy):
         ome::xml::model::OMEModelObject(),
-	OME(copy),
-	MetadataRoot()
+	MetadataRoot(),
+	OME(copy)
       {
       }
 

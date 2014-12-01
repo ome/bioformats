@@ -44,6 +44,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Modulo;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -155,15 +156,26 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void getChannelDimCount(Double[] channelDimCount) {
-    channelDimCount[0] = new Double(r.getChannelDimLengths().length);
+    Modulo moduloC = r.getModuloC();
+    channelDimCount[0] = new Double(moduloC.length() > 1 ? 2 : 1);
   }
 
   public void getChannelDimLength(Double i, Double[] channelDimLength) {
-    channelDimLength[0] = new Double(r.getChannelDimLengths()[i.intValue()]);
+    Modulo moduloC = r.getModuloC();
+    if (i.intValue() == 0) { // index 0
+      channelDimLength[0] = new Double(moduloC.length() > 1 ? r.getSizeC() / moduloC.length() : r.getSizeC());
+    } else { // index 1
+      channelDimLength[0] = new Double(moduloC.length());
+    }
   }
 
   public void getChannelDimType(Double i, Double[] channelDimType) {
-    channelDimType[0] = new Double(r.getChannelDimTypes()[i.intValue()]);
+    Modulo moduloC = r.getModuloC();
+    if (i.intValue() == 0) { // index 0
+      channelDimType[0] = new Double(moduloC.length() > 1 ? moduloC.parentType : FormatTools.CHANNEL);
+    } else { // index 1
+      channelDimType[0] = new Double(moduloC.type);
+    }
   }
 
 //  public void getThumbSizeX(Double[] thumbSizeX) {

@@ -45,11 +45,11 @@ public class CoreMetadata implements Cloneable {
 
   // -- Fields --
 
-  // TODO: We may want to consider refactoring the FormatReader getter methods
-  // that populate missing CoreMetadata fields on the fly
-  // (getChannelDimLengths, getChannelDimTypes, getThumbSizeX, getThumbSizeY)
-  // to avoid doing so -- one alternate approach would be to have this class
-  // use getter methods instead of public fields.
+  // TODO: We may want to consider refactoring the FormatReader getter
+  // methods that populate missing CoreMetadata fields on the fly
+  // (getThumbSizeX, getThumbSizeY) to avoid doing so -- one alternate
+  // approach would be to have this class use getter methods instead
+  // of public fields.
 
   /** Width (in pixels) of images in this series. */
   public int sizeX;
@@ -87,20 +87,6 @@ public class CoreMetadata implements Cloneable {
   public Modulo moduloZ = new Modulo("Z");
   public Modulo moduloC = new Modulo("C");
   public Modulo moduloT = new Modulo("T");
-
-  /**
-   * Length of each subdimension of C.
-   *
-   * @deprecated use {@link #moduloC} instead
-   */
-  public int[] cLengths;
-
-  /**
-   * Name of each subdimension of C.
-   *
-   * @deprecated use {@link #moduloC} instead
-   */
-  public String[] cTypes;
 
   /**
    * Order in which dimensions are stored.  Must be one of the following:<ul>
@@ -178,8 +164,6 @@ public class CoreMetadata implements Cloneable {
     pixelType = r.getPixelType();
     bitsPerPixel = r.getBitsPerPixel();
     imageCount = r.getImageCount();
-    cLengths = r.getChannelDimLengths();
-    cTypes = r.getChannelDimTypes();
     dimensionOrder = r.getDimensionOrder();
     orderCertain = r.isOrderCertain();
     rgb = r.isRGB();
@@ -209,8 +193,6 @@ public class CoreMetadata implements Cloneable {
     pixelType = c.pixelType;
     bitsPerPixel = c.bitsPerPixel;
     imageCount = c.imageCount;
-    cLengths = c.cLengths;
-    cTypes = c.cTypes;
     dimensionOrder = c.dimensionOrder;
     orderCertain = c.orderCertain;
     rgb = c.rgb;
@@ -242,12 +224,6 @@ public class CoreMetadata implements Cloneable {
     sb.append("\n\tpixelType = " + FormatTools.getPixelTypeString(pixelType));
     sb.append("\n\tbitsPerPixel = " + bitsPerPixel);
     sb.append("\n\timageCount = " + imageCount);
-    sb.append("\n\tcLengths =");
-    if (cLengths == null) sb.append(" null");
-    else for (int i=0; i<cLengths.length; i++) sb.append(" " + cLengths[i]);
-    sb.append("\n\tcTypes =");
-    if (cTypes == null) sb.append(" null");
-    else for (int i=0; i<cTypes.length; i++) sb.append(" " + cTypes[i]);
     sb.append("\n\tdimensionOrder = " + dimensionOrder);
     sb.append("\n\torderCertain = " + orderCertain);
     sb.append("\n\trgb = " + rgb);

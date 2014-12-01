@@ -104,6 +104,10 @@ public class ImaconReader extends BaseTiffReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    if (tiffParser == null) {
+      initTiffParser();
+    }
+
     tiffParser.getSamples(ifds.get(getSeries()), buf, x, y, w, h);
     return buf;
   }

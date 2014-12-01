@@ -46,13 +46,24 @@ namespace ome
   {
 
     Modulo::Modulo(std::string dimension):
-      parentDimension(dimension)
+      parentDimension(dimension),
+      start(0.0),
+      step(1.0),
+      end(0.0),
+      parentType(),
+      type(),
+      typeDescription(),
+      unit(),
+      labels()
     {
     }
 
     Modulo::size_type
     Modulo::size() const
     {
+      if (!labels.empty())
+        return labels.size();
+
       /**
        * @todo Use proper rounding (compat function for round(3)).
        */

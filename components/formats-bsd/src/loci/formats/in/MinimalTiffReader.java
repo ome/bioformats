@@ -88,7 +88,7 @@ public class MinimalTiffReader extends FormatReader {
    */
   protected List<IFDList> subResolutionIFDs;
 
-  protected TiffParser tiffParser;
+  protected transient TiffParser tiffParser;
 
   protected boolean equalStrips = false;
 
@@ -240,6 +240,9 @@ public class MinimalTiffReader extends FormatReader {
     if (thumbnailIFDs == null || thumbnailIFDs.size() <= no) {
       return super.openThumbBytes(no);
     }
+    if (tiffParser == null) {
+      initTiffParser();
+    }
     tiffParser.fillInIFD(thumbnailIFDs.get(no));
     int[] bps = null;
     try {
@@ -283,6 +286,13 @@ public class MinimalTiffReader extends FormatReader {
         ifd = subResolutionIFDs.get(no).get(getCoreIndex() - 1);
       }
       setResolutionLevel(ifd);
+    }
+
+    if (tiffParser == null) {
+      if (in == null) {
+        in = new RandomAccessInputStream(getCurrentFile());
+      }
+      initTiffParser();
     }
 
     tiffParser.getSamples(ifd, buf, x, y, w, h);
@@ -409,9 +419,7 @@ public class MinimalTiffReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    tiffParser = new TiffParser(in);
-    tiffParser.setDoCaching(false);
-    tiffParser.setUse64BitOffsets(use64Bit);
+    initTiffParser();
     Boolean littleEndian = tiffParser.checkHeader();
     if (littleEndian == null) {
       throw new FormatException("Invalid TIFF file");
@@ -592,9 +600,29 @@ public class MinimalTiffReader extends FormatReader {
    * IFD if <code>currentSeries > 0</code>.
    */
   protected void setResolutionLevel(IFD ifd) {
+    if (tiffParser == null) {
+      initTiffParser();
+    }
     j2kCodecOptions.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     LOGGER.debug("Using JPEG 2000 resolution level {}",
         j2kCodecOptions.resolution);
     tiffParser.setCodecOptions(j2kCodecOptions);
   }
+
+
+  /** Reinitialize the underlying TiffParser. */
+  protected void initTiffParser() {
+    if (in == null) {
+      try {
+        in = new RandomAccessInputStream(getCurrentFile());
+      }
+      catch (IOException e) {
+        LOGGER.error("Could not initialize stream", e);
+      }
+    }
+    tiffParser = new TiffParser(in);
+    tiffParser.setDoCaching(false);
+    tiffParser.setUse64BitOffsets(use64Bit);
+  }
+
 }

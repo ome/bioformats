@@ -1,21 +1,22 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
- * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * OME-BIOFORMATS C++ library for image IO.
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
- *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,54 +28,34 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
  * #L%
  */
 
-package loci.formats.tiff;
+#include <ome/bioformats/XMLTools.h>
 
-import java.io.IOException;
-import loci.common.RandomAccessInputStream;
+#include <ome/xerces/ErrorReporter.h>
+#include <ome/xerces/Platform.h>
+#include <ome/xerces/String.h>
 
-/**
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/OnDemandLongArray.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/OnDemandLongArray.java;hb=HEAD">Gitweb</a></dd></dl>
- *
- * @author Melissa Linkert <melissa at glencoesoftware.com>
- */
-public class OnDemandLongArray {
+namespace xml = ome::xerces;
 
-  private transient RandomAccessInputStream stream;
-  private int size;
-  private long start;
+namespace
+{
 
-  public OnDemandLongArray(RandomAccessInputStream in) throws IOException {
-    stream = in;
-    start = stream.getFilePointer();
+  const std::string xsi_ns("http://www.w3.org/2001/XMLSchema-instance");
+  const std::string xml_schema_path("http://www.w3.org/2001/XMLSchema");
+
+}
+
+namespace ome
+{
+  namespace bioformats
+  {
+
+
   }
-
-  public void setSize(int size) {
-    this.size = size;
-  }
-
-  public long get(int index) throws IOException {
-    long fp = stream.getFilePointer();
-    stream.seek(start + index * 8);
-    long value = stream.readLong();
-    stream.seek(fp);
-    return value;
-  }
-
-  public long size() {
-    return size;
-  }
-
-  public void close() throws IOException {
-    stream.close();
-    stream = null;
-    size = 0;
-    start = 0;
-  }
-
 }

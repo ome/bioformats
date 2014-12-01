@@ -169,6 +169,9 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    if (tiffParser == null) {
+      initTiffParser();
+    }
     int ifd = ifdmap[getCoreIndex()];
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
