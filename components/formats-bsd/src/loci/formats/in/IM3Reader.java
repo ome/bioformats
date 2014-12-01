@@ -41,6 +41,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataStore;
 
 /**
  * @author Lee Kamentsky
@@ -382,7 +383,8 @@ public class IM3Reader extends FormatReader {
 				records.add(rec);
 			}
 		}
-		MetadataTools.populatePixels(getMetadataStore(), this);
+    MetadataStore store = makeFilterMetadata();
+		MetadataTools.populatePixels(store, this);
 	}
 	static private final String EMPTY_STRING = new String();
 	/**
