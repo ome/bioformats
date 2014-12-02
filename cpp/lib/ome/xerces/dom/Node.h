@@ -65,6 +65,7 @@ namespace ome
       class NodeWrapper : public Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >
       {
       public:
+        /// The derived object type of a node.
         typedef xercesc::DOMNode::NodeType node_type;
 
         /**

@@ -190,6 +190,12 @@ namespace ome
       /// Default Document.
       typedef ManagedDocument Document;
 
+      /**
+       * Construct an empty Document.
+       *
+       * @param qualifiedName the qualified name of the document type.
+       * @returns the new Document.
+       */
       Document
       createEmptyDocument(const std::string& qualifiedName);
 
