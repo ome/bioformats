@@ -39,6 +39,7 @@
 #include <cassert>
 #include <deque>
 #include <fstream>
+#include <iostream>
 #include <set>
 
 #include <boost/format.hpp>
@@ -119,7 +120,7 @@ namespace ome
                       in.seekg(0, std::ios::end);
                       std::ios::pos_type len = in.tellg() - pos;
                       if (len)
-                        data.reserve(len);
+                        data.reserve(static_cast<std::string::size_type>(len));
                       in.seekg(0, std::ios::beg);
 
                       data.assign(std::istreambuf_iterator<char>(in),
