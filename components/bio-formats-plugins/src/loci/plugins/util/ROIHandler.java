@@ -152,6 +152,9 @@ public class ROIHandler {
                             roi = new Roi(x, y, w, h);
                         }
                     }
+                    else if (shapeObject instanceof ome.xml.model.Label){
+                        //add support for TextROI's
+                    }
 
                     if (roi != null) {
                         Roi.setColor(Color.WHITE);
@@ -185,7 +188,11 @@ public class ROIHandler {
                 if (rois[i].getTypeAsString().matches("Text")){
                     store.setLabelID(polylineID, i, 0);
                     TextRoi c1 = (TextRoi) rois[i];
+
                     store.setLabelText(c1.getText(), i, 0);
+                    store.setLabelX(c1.getPolygon().getBounds().getX(), i, 0);
+                    store.setLabelY(c1.getPolygon().getBounds().getY(), i, 0);
+
                 }
                 else if (rois[i].getTypeAsString().matches("Rectangle")){
                     store.setRectangleID(polylineID, i, 0);
