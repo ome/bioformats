@@ -79,22 +79,22 @@ namespace ome
       resolveEntity(xercesc::XMLResourceIdentifier* resource);
 
     private:
+      /// Cached entity (path and content).
+      typedef std::pair<boost::filesystem::path, std::string> entity_cache;
       /// Entity mapping type.
-      typedef std::map<std::string, boost::filesystem::path> entity_map_type;
+      typedef std::map<std::string, entity_cache> entity_map_type;
 
       /**
        * Get input source from file.
        *
        * Open and read the contents of the file, then return this as
-       * an InputSource.
+       * an InputSource.  Use cached content if possible.
        *
-       * @param resource the resource to resolve (for information only).
-       * @param file the file to read.
+       * @param resource the resource to resolve.
        * @returns the input source for the file, or null on failure.
        */
       xercesc::InputSource *
-      getSource(const std::string&             resource,
-                const boost::filesystem::path& file);
+      getSource(const std::string& resource);
 
       /**
        * Get entity mappings.

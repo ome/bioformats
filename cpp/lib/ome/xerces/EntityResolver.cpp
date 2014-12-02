@@ -79,18 +79,12 @@ namespace ome
             case xercesc::XMLResourceIdentifier::SchemaGrammar:
             case xercesc::XMLResourceIdentifier::SchemaImport:
               {
-                entity_map_type& cache(entities());
-                entity_map_type::const_iterator i = cache.find(String(resource->getSchemaLocation()));
-                if (i != cache.end())
-                  ret = getSource(i->first, i->second);
+                ret = getSource(String(resource->getSchemaLocation()));
               }
               break;
             case xercesc::XMLResourceIdentifier::ExternalEntity:
               {
-                entity_map_type& cache(entities());
-                entity_map_type::const_iterator i = cache.find(String(resource->getSystemId()));
-                if (i != cache.end())
-                  ret = getSource(i->first, i->second);
+                ret = getSource(String(resource->getSystemId()));
               }
               break;
             default:
@@ -102,37 +96,50 @@ namespace ome
     }
 
     xercesc::InputSource *
-    EntityResolver::getSource(const std::string&             resource,
-                              const boost::filesystem::path& file)
+    EntityResolver::getSource(const std::string& resource)
     {
       xercesc::InputSource *ret = 0;
 
-      if (boost::filesystem::exists(file))
+      entity_map_type& cache(entities());
+      entity_map_type::iterator i = cache.find(resource);
+      if (i != cache.end())
         {
-          std::string data;
+          std::string& data(i->second.second);
 
-          std::ifstream in(file.generic_string().c_str());
-          if (in)
+          if (data.empty())
             {
-              std::ios::pos_type pos = in.tellg();
-              in.seekg(0, std::ios::end);
-              std::ios::pos_type len = in.tellg() - pos;
-              if (len)
-                data.reserve(len);
-              in.seekg(0, std::ios::beg);
+              const boost::filesystem::path& file(i->second.first);
 
-              data.assign(std::istreambuf_iterator<char>(in),
-                          std::istreambuf_iterator<char>());
+              if (boost::filesystem::exists(file))
+                {
+                  std::ifstream in(file.generic_string().c_str());
+                  if (in)
+                    {
+                      std::ios::pos_type pos = in.tellg();
+                      in.seekg(0, std::ios::end);
+                      std::ios::pos_type len = in.tellg() - pos;
+                      if (len)
+                        data.reserve(len);
+                      in.seekg(0, std::ios::beg);
 
+                      data.assign(std::istreambuf_iterator<char>(in),
+                                  std::istreambuf_iterator<char>());
+
+                    }
+                  else
+                    {
+                      boost::format fmt("Failed to load XML schema id ‘%1%’ from file ‘%2%’");
+                      fmt % resource % file.generic_string();
+                      std::cerr << fmt.str() << '\n';
+                    }
+                }
+            }
+
+          if (!data.empty())
+            {
               ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
                                                    static_cast<XMLSize_t>(data.size()),
-                                                   String(file.generic_string()));
-            }
-          else
-            {
-              boost::format fmt("Failed to load XML schema id ‘%1%’ from file ‘%2%’");
-              fmt % resource % file.generic_string();
-              std::cerr << fmt.str() << '\n';
+                                                   String(i->second.first.generic_string()));
             }
         }
 
@@ -150,7 +157,7 @@ namespace ome
                                                            const boost::filesystem::path& file):
       id(id)
     {
-      EntityResolver::entities().insert(std::make_pair(id, file));
+      EntityResolver::entities().insert(std::make_pair(id, entity_cache(file, std::string())));
     }
 
     EntityResolver::AutoRegisterEntity::~AutoRegisterEntity()
