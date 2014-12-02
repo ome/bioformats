@@ -1286,6 +1286,27 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
+[I2IReader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Pixels.BigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.Interleaved = Yes
+Pixels.SignificantBits = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
 [ImaconReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
@@ -4397,6 +4418,9 @@ Pixels.BigEndian = Yes
 Pixels.DimensionOrder = Yes
 Pixels.ID = Yes
 Pixels.Interleaved = Yes
+Pixels.PhysicalSizeX = Yes
+Pixels.PhysicalSizeY = Yes
+Pixels.PhysicalSizeZ = Yes
 Pixels.SignificantBits = Yes
 Pixels.SizeC = Yes
 Pixels.SizeT = Yes
