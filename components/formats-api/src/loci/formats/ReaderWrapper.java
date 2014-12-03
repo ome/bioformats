@@ -49,9 +49,6 @@ import loci.formats.meta.MetadataStore;
  * Abstract superclass of reader logic that wraps other readers.
  * All methods are simply delegated to the wrapped reader.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ReaderWrapper.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ReaderWrapper.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class ReaderWrapper implements IFormatReader {
 

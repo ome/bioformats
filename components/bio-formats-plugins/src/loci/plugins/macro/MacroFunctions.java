@@ -44,9 +44,6 @@ import loci.plugins.util.WindowTools;
  * It uses reflection to create an extension method for each public method in
  * the implementing subclass. See {@link LociFunctions} for an example.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/macro/MacroFunctions.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/macro/MacroFunctions.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

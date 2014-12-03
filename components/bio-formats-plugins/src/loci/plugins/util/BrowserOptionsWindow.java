@@ -38,9 +38,6 @@ import loci.formats.gui.CacheComponent;
 /**
  * Extension of JFrame that allows the user to adjust caching settings.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/util/BrowserOptionsWindow.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/util/BrowserOptionsWindow.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class BrowserOptionsWindow extends JFrame {
 

@@ -49,9 +49,6 @@ import ome.units.quantity.Length;
  * two values are encoded as channels, so that channel 0 represents east-west
  * speed and channel 1 represents north-south speed.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/HRDGDFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/HRDGDFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see http://www.aoml.noaa.gov/hrd/data_sub/wind.html
  *

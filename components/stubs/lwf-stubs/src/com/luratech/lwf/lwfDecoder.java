@@ -39,9 +39,6 @@ import java.io.InputStream;
  * Stub of the Luratech LuraWave&reg; Java decoder class.
  * NOTE: This class contains <b>NO</b> real implementation.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class lwfDecoder {
 

@@ -42,9 +42,6 @@ import loci.formats.IFormatReader;
  * Superclass of cache sources that retrieve image planes
  * from a data source (e.g., a file) using Bio-Formats.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/cache/CacheSource.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/cache/CacheSource.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class CacheSource implements ICacheSource {
 

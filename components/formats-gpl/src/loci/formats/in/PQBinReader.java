@@ -42,9 +42,6 @@ import ome.units.UNITS;
 /**
  * PQBinReader is the file format reader for PicoQuant .bin files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PQBinReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PQBinReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * Please Note: This format holds FLIM data arranged so that each decay is stored contiguously. 
  * Therefore, as in other FLIM format readers e.g. SDTReader.java, on the first call to openBytes

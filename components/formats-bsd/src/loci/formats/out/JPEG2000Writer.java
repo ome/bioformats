@@ -44,9 +44,6 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * JPEG2000Writer is the file format writer for JPEG2000 files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/JPEG2000Writer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/JPEG2000Writer.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEG2000Writer extends FormatWriter {
 

@@ -40,9 +40,6 @@ import loci.formats.tiff.TiffCompression;
  * <code>PackBits</code>
  * <code>LuraWave</code>
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/CompressDecompressTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/CompressDecompressTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Jean-Marie Burel <j dot burel at dundee dot ac dot uk>
  */

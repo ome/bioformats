@@ -54,9 +54,6 @@ import loci.formats.services.OMEXMLService;
 /**
  * A plugin for opening life sciences files in MIPAV using Bio-Formats.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/mipav/PlugInBioFormatsImporter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/mipav/PlugInBioFormatsImporter.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

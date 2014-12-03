@@ -38,9 +38,6 @@ import loci.formats.services.OMEXMLService;
  * Uses Bio-Formats to extract lens numerical aperture
  * in a format-independent manner from a dataset.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/PrintLensNA.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/PrintLensNA.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PrintLensNA {
 

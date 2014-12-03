@@ -33,9 +33,6 @@ import loci.formats.tiff.TiffSaver;
  * tailored to a specific need by editing the commented out code below to
  * make desired alterations to the comment.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/CommentSurgery.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/CommentSurgery.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CommentSurgery {
   public static void main(String[] args) throws Exception {

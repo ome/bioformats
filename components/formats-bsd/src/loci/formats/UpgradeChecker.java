@@ -50,9 +50,6 @@ import org.slf4j.LoggerFactory;
  * Class that allows checking for new versions of Bio-Formats, as well as
  * updating to the latest stable, daily, or trunk version.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/UpgradeChecker.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/UpgradeChecker.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class UpgradeChecker {
 

@@ -53,9 +53,6 @@ import loci.formats.meta.MetadataRetrieve;
  * Much of this code was based on the QuickTime Movie Writer for ImageJ
  * (available at http://rsb.info.nih.gov/ij/plugins/movie-writer.html).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/LegacyQTWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/LegacyQTWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class LegacyQTWriter extends FormatWriter {
 

@@ -45,9 +45,6 @@ import loci.formats.meta.MetadataStore;
  * DelegateReader is a file format reader that selects which reader to use
  * for a format if there are two readers which handle the same format.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/DelegateReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/DelegateReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class DelegateReader extends FormatReader {
 

@@ -46,9 +46,6 @@ import loci.formats.FormatException;
 /**
  * AmiraParameters handles parsing and writing of AmiraMesh headers.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/AmiraParameters.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/AmiraParameters.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de

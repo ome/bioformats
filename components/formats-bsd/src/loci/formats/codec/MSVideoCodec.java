@@ -44,9 +44,6 @@ import loci.formats.UnsupportedCompressionException;
  * See http://wiki.multimedia.cx/index.php?title=Microsoft_Video_1 for an
  * excellent description of MSV1.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/MSVideoCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/MSVideoCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MSVideoCodec extends BaseCodec {
 

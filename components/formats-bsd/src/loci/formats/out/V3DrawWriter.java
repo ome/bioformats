@@ -49,11 +49,8 @@ import static loci.common.DataTools.unpackBytes;
  * href="http://vaa3d.org">Vaa3D</a>, an open-source 3D visualization and
  * analysis toolkit.
  *
- * <dl><dt><b>Source code: (after merge) </b></dt>
  * <dd><a
- * href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/V3DrawWriter.java">Trac</a>,
  * <a
- * href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/V3DrawWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class V3DrawWriter extends FormatWriter {
 

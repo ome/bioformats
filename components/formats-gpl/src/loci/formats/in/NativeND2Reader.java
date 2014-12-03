@@ -68,9 +68,6 @@ import ome.units.UNITS;
  *
  * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NativeND2Reader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NativeND2Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NativeND2Reader extends FormatReader {
 

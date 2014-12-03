@@ -30,9 +30,6 @@ import java.util.HashMap;
  * It has a list of default attributes (key/value pairs),
  * as well as a list of version overrides for those attributes.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/autogen/src/Entity.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/autogen/src/Entity.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see {EntityList}
  *

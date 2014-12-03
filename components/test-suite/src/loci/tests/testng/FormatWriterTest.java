@@ -59,9 +59,6 @@ import org.testng.annotations.Test;
  * To run tests:
  * ant -Dtestng.directory="/path" -Dtestng.multiplier="1.0" test-all
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/FormatWriterTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/FormatWriterTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FormatWriterTest {
 

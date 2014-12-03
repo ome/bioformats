@@ -48,9 +48,6 @@ import ome.xml.model.primitives.Timestamp;
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/L2DReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/L2DReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class L2DReader extends FormatReader {
 

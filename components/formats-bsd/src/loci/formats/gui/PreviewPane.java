@@ -61,9 +61,6 @@ import org.slf4j.LoggerFactory;
  * PreviewPane is a panel for use as a JFileChooser accessory, displaying
  * a thumbnail for the selected image, loaded in a separate thread.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/PreviewPane.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/PreviewPane.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PreviewPane extends JPanel
   implements PropertyChangeListener, Runnable

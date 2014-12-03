@@ -38,9 +38,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * PovrayReader is the file format reader for POV-Ray .df3 files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PovrayReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PovrayReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see http://www.povray.org/documentation/view/3.6.1/374/
  */

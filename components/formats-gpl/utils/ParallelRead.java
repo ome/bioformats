@@ -33,9 +33,6 @@ import loci.formats.services.OMEXMLService;
  * Reads all files in given directory in parallel,
  * using a separate thread for each.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/ParallelRead.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/ParallelRead.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ParallelRead implements Runnable {
   private String id;

@@ -53,9 +53,6 @@ import loci.formats.services.JPEGTurboServiceImpl;
  * This reader is useful for reading very large JPEG images, as it supports
  * tile-based access.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TileJPEGReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/TileJPEGReader.java;hb=HEAD">Gitweb</a></dd></dl>
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 

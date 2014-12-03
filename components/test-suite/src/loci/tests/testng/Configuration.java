@@ -54,9 +54,6 @@ import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/Configuration.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/Configuration.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Configuration {
 

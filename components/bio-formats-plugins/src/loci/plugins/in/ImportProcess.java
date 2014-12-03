@@ -74,9 +74,6 @@ import ome.xml.model.enums.EnumerationException;
  * an {@link ImagePlusReader} to read in the actual {@link ij.ImagePlus}
  * objects.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/ImportProcess.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImportProcess implements StatusReporter {
 
