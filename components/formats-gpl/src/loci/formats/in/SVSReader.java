@@ -324,6 +324,26 @@ public class SVSReader extends BaseTiffReader {
 
     // repopulate core metadata
 
+    // remove any invalid pyramid resolutions
+    IFD firstIFD = ifds.get(getIFDIndex(0));
+    for (int s=1; s<getSeriesCount() - 2; s++) {
+      int index = getIFDIndex(s);
+      IFD ifd = ifds.get(index);
+      if (ifd.getPixelType() != firstIFD.getPixelType()) {
+        ifds.set(index, null);
+      }
+    }
+    for (int s=0; s<ifds.size(); ) {
+      if (ifds.get(s) != null) {
+        s++;
+      }
+      else {
+        ifds.remove(s);
+        core.remove(s);
+      }
+    }
+    seriesCount = ifds.size();
+
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = core.get(s);
       if (s == 0 && getSeriesCount() > 2) {
@@ -368,6 +388,7 @@ public class SVSReader extends BaseTiffReader {
     store.setObjectiveID(objective, 0, 0);
     store.setObjectiveNominalMagnification(magnification, 0, 0);
 
+    int lastImage = core.size() - 1;
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
@@ -381,7 +402,13 @@ public class SVSReader extends BaseTiffReader {
             store.setImageName("", i);
             break;
           case 1:
-            store.setImageName("label image", i);
+            // if there are only two images, assume that there is no label
+            if (lastImage == 1) {
+              store.setImageName("macro image", i);
+            }
+            else {
+              store.setImageName("label image", i);
+            }
             break;
           case 2:
             store.setImageName("macro image", i);
