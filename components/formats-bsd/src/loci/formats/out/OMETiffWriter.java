@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,7 +41,6 @@ import java.util.UUID;
 
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
-
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
@@ -78,10 +77,10 @@ public class OMETiffWriter extends TiffWriter {
   // -- Fields --
 
   private List<Integer> seriesMap;
-  private String[][] imageLocations;
-  private OMEXMLMetadata omeMeta;
-  private OMEXMLService service;
-  private Map<String, Integer> ifdCounts = new HashMap<String, Integer>();
+  protected String[][] imageLocations;
+  protected OMEXMLMetadata omeMeta;
+  protected OMEXMLService service;
+  protected Map<String, Integer> ifdCounts = new HashMap<String, Integer>();
 
   private Map<String, String> uuids = new HashMap<String, String>();
 
@@ -93,7 +92,11 @@ public class OMETiffWriter extends TiffWriter {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#close() */
+  public OMETiffWriter(String readerName, String[] extensions) {
+    super(readerName, extensions);
+  }
+
+/* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     try {
       if (currentId != null) {
@@ -228,7 +231,7 @@ public class OMETiffWriter extends TiffWriter {
   // -- Helper methods --
 
   /** Gets the UUID corresponding to the given filename. */
-  private String getUUID(String filename) {
+  protected String getUUID(String filename) {
     String uuid = uuids.get(filename);
     if (uuid == null) {
       uuid = UUID.randomUUID().toString();
@@ -237,7 +240,7 @@ public class OMETiffWriter extends TiffWriter {
     return uuid;
   }
 
-  private void setupServiceAndMetadata()
+  protected void setupServiceAndMetadata()
     throws DependencyException, ServiceException
   {
     // extract OME-XML string from metadata object
@@ -252,7 +255,12 @@ public class OMETiffWriter extends TiffWriter {
     omeMeta = service.createOMEXMLMetadata(omexml);
   }
 
-  private String getOMEXML(String file) throws FormatException, IOException {
+  protected String getOMEXML(String file) throws FormatException, IOException {
+    return getOMEXML(file, WARNING_COMMENT);
+  }
+
+  protected String getOMEXML(String file, String warningComment)
+      throws FormatException, IOException {
     // generate UUID and add to OME element
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
     omeMeta.setUUID(uuid);
@@ -268,10 +276,10 @@ public class OMETiffWriter extends TiffWriter {
     // insert warning comment
     String prefix = xml.substring(0, xml.indexOf(">") + 1);
     String suffix = xml.substring(xml.indexOf(">") + 1);
-    return prefix + WARNING_COMMENT + suffix;
+    return prefix + warningComment + suffix;
   }
 
-  private void saveComment(String file, String xml) throws IOException {
+  protected void saveComment(String file, String xml) throws IOException {
     if (out != null) out.close();
     out = new RandomAccessOutputStream(file);
     RandomAccessInputStream in = null;
@@ -304,7 +312,7 @@ public class OMETiffWriter extends TiffWriter {
     omeMeta.setTiffDataPlaneCount(new NonNegativeInteger(1), series, plane);
   }
 
-  private void populateImage(OMEXMLMetadata omeMeta, int series) {
+  protected void populateImage(OMEXMLMetadata omeMeta, int series) {
     String dimensionOrder = omeMeta.getPixelsDimensionOrder(series).toString();
     int sizeZ = omeMeta.getPixelsSizeZ(series).getValue().intValue();
     int sizeC = omeMeta.getPixelsSizeC(series).getValue().intValue();
@@ -367,6 +375,10 @@ public class OMETiffWriter extends TiffWriter {
     }
 
     return z * c * t;
+  }
+
+  public void closeParentWriter() throws IOException {
+    super.close();
   }
 
 }
