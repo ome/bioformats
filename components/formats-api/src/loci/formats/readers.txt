@@ -89,6 +89,7 @@ loci.formats.in.ImspectorReader       # msr
 loci.formats.in.BioRadSCNReader       # scn
 loci.formats.in.PQBinReader           # bin
 loci.formats.in.FlowSightReader       # cif
+loci.formats.in.IM3Reader             # im3
 loci.formats.in.I2IReader             # i2i
 
 # multi-extension messes
