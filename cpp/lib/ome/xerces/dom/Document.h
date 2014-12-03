@@ -160,6 +160,11 @@ namespace ome
           return (*this)->createElementNS(xns, xname);
         }
 
+        /**
+         * Get the root element of this document.
+         *
+         * @returns the root element.
+         */
         Element
         getDocumentElement()
         {
@@ -167,11 +172,9 @@ namespace ome
         }
 
         /**
-         * Create Element with namespace.
+         * Get child nodes.
          *
-         * @param ns the namespace.
-         * @param name the element name.
-         * @returns the created Element.
+         * @returns the child nodes (if any).
          */
         NodeList
         getChildNodes()
@@ -187,6 +190,12 @@ namespace ome
       /// Default Document.
       typedef ManagedDocument Document;
 
+      /**
+       * Construct an empty Document.
+       *
+       * @param qualifiedName the qualified name of the document type.
+       * @returns the new Document.
+       */
       Document
       createEmptyDocument(const std::string& qualifiedName);
 
