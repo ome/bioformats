@@ -50,34 +50,134 @@ namespace
   typedef ome::xml::meta::BaseMetadata::index_type index_type;
   typedef ome::xml::model::MapPairs::map_type map_pairs_map_type;
 
+  template<typename T>
+  bool
+  transfer(const MetadataRetrieve&                         src,
+           MetadataStore&                                  dest,
+           T                          (MetadataRetrieve::* get)() const,
+           void                       (MetadataStore::*    set)(T value))
+  {
+    bool ok = true;
+    try
+      {
+        (dest.*set)((src.*get)());
+      }
+    catch (const std::runtime_error& /* e */)
+      {
+        ok = false;
+      }
+    return ok;
+  }
+
+  template<typename T, typename P>
+  bool
+  transfer(const MetadataRetrieve&                         src,
+           MetadataStore&                                  dest,
+           T                          (MetadataRetrieve::* get)(P param) const,
+           void                       (MetadataStore::*    set)(T value, P param),
+           P                                               param)
+  {
+    bool ok = true;
+    try
+      {
+        (dest.*set)((src.*get)(param),
+                    param);
+      }
+    catch (const std::runtime_error& /* e */)
+      {
+        ok = false;
+      }
+    return ok;
+  }
+
+  template<typename T, typename P>
+  bool
+  transfer(const MetadataRetrieve&                         src,
+           MetadataStore&                                  dest,
+           T                          (MetadataRetrieve::* get)(P param1,
+                                                                P param2) const,
+           void                       (MetadataStore::*    set)(T value,
+                                                                P param1,
+                                                                P param2),
+           P                                               param1,
+           P                                               param2)
+  {
+    bool ok = true;
+    try
+      {
+        (dest.*set)((src.*get)(param1, param2),
+                    param1, param2);
+      }
+    catch (const std::runtime_error& /* e */)
+      {
+        ok = false;
+      }
+    return ok;
+  }
+
+  template<typename T, typename P>
+  bool
+  transfer(const MetadataRetrieve&                         src,
+           MetadataStore&                                  dest,
+           T                          (MetadataRetrieve::* get)(P param1,
+                                                                P param2,
+                                                                P param3) const,
+           void                       (MetadataStore::*    set)(T value,
+                                                                P param1,
+                                                                P param2,
+                                                                P param3),
+           P                                               param1,
+           P                                               param2,
+           P                                               param3)
+  {
+    bool ok = true;
+    try
+      {
+        (dest.*set)((src.*get)(param1, param2, param3),
+                    param1, param2, param3);
+      }
+    catch (const std::runtime_error& /* e */)
+      {
+        ok = false;
+      }
+    return ok;
+  }
+
   void
   convertBooleanAnnotations(const MetadataRetrieve& src,
                             MetadataStore&          dest)
   {
-    index_type booleanAnnotationCount = src.getBooleanAnnotationCount();
+    index_type booleanAnnotationCount(src.getBooleanAnnotationCount());
     for (index_type i = 0; i < booleanAnnotationCount; ++i)
       {
-        std::string id = src.getBooleanAnnotationID(i);
-        dest.setBooleanAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBooleanAnnotationID,
+                 &MetadataStore::setBooleanAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBooleanAnnotationDescription,
+                 &MetadataStore::setBooleanAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBooleanAnnotationNamespace,
+                 &MetadataStore::setBooleanAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBooleanAnnotationValue,
+                 &MetadataStore::setBooleanAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBooleanAnnotationAnnotator,
+                 &MetadataStore::setBooleanAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getBooleanAnnotationDescription(i);
-        dest.setBooleanAnnotationDescription(description, i);
-
-        std::string ns = src.getBooleanAnnotationNamespace(i);
-        dest.setBooleanAnnotationNamespace(ns, i);
-
-        bool value = src.getBooleanAnnotationValue(i);
-        dest.setBooleanAnnotationValue(value, i);
-
-        std::string annotator = src.getBooleanAnnotationAnnotator(i);
-        dest.setBooleanAnnotationAnnotator(annotator, i);
-
-        index_type annotationRefCount = 0;
-        annotationRefCount = src.getBooleanAnnotationAnnotationCount(i);
+        index_type annotationRefCount(src.getBooleanAnnotationAnnotationCount(i));
         for (index_type a = 0; a < annotationRefCount; ++a)
           {
-            std::string id = src.getBooleanAnnotationAnnotationRef(i, a);
-            dest.setBooleanAnnotationAnnotationRef(id, i, a);
+            transfer(src, dest,
+                     &MetadataRetrieve::getBooleanAnnotationAnnotationRef,
+                     &MetadataStore::setBooleanAnnotationAnnotationRef,
+                     i, a);
           }
       }
   }
@@ -86,31 +186,37 @@ namespace
   convertCommentAnnotations(const MetadataRetrieve& src,
                             MetadataStore&          dest)
   {
-    index_type commentAnnotationCount = 0;
-    commentAnnotationCount = src.getCommentAnnotationCount();
+    index_type commentAnnotationCount(src.getCommentAnnotationCount());
     for (index_type i = 0; i < commentAnnotationCount; ++i)
       {
-        std::string id = src.getCommentAnnotationID(i);
-        dest.setCommentAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getCommentAnnotationID,
+                 &MetadataStore::setCommentAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getCommentAnnotationDescription,
+                 &MetadataStore::setCommentAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getCommentAnnotationNamespace,
+                 &MetadataStore::setCommentAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getCommentAnnotationValue,
+                 &MetadataStore::setCommentAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getCommentAnnotationAnnotator,
+                 &MetadataStore::setCommentAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getCommentAnnotationDescription(i);
-        dest.setCommentAnnotationDescription(description, i);
-
-        std::string ns = src.getCommentAnnotationNamespace(i);
-        dest.setCommentAnnotationNamespace(ns, i);
-
-        std::string value = src.getCommentAnnotationValue(i);
-        dest.setCommentAnnotationValue(value, i);
-
-        std::string annotator = src.getCommentAnnotationAnnotator(i);
-        dest.setCommentAnnotationAnnotator(annotator, i);
-
-        index_type annotationRefCount = 0;
-        annotationRefCount = src.getCommentAnnotationAnnotationCount(i);
+        index_type annotationRefCount(src.getCommentAnnotationAnnotationCount(i));
         for (index_type a = 0; a < annotationRefCount; ++a)
           {
-            std::string id = src.getCommentAnnotationAnnotationRef(i, a);
-            dest.setCommentAnnotationAnnotationRef(id, i, a);
+            transfer(src, dest,
+                     &MetadataRetrieve::getCommentAnnotationAnnotationRef,
+                     &MetadataStore::setCommentAnnotationAnnotationRef,
+                     i, a);
           }
       }
   }
@@ -119,37 +225,46 @@ namespace
   convertDatasets(const MetadataRetrieve& src,
                   MetadataStore&          dest)
   {
-    index_type datasets = 0;
-    datasets = src.getDatasetCount();
+    index_type datasets(src.getDatasetCount());
     for (index_type i = 0; i < datasets; ++i)
       {
-        std::string id = src.getDatasetID(i);
-        dest.setDatasetID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDatasetID,
+                 &MetadataStore::setDatasetID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDatasetDescription,
+                 &MetadataStore::setDatasetDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDatasetExperimenterGroupRef,
+                 &MetadataStore::setDatasetExperimenterGroupRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDatasetExperimenterRef,
+                 &MetadataStore::setDatasetExperimenterRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDatasetName,
+                 &MetadataStore::setDatasetName,
+                 i);
 
-        std::string description = src.getDatasetDescription(i);
-        dest.setDatasetDescription(description, i);
-
-        std::string experimenterGroupRef = src.getDatasetExperimenterGroupRef(i);
-        dest.setDatasetExperimenterGroupRef(experimenterGroupRef, i);
-
-        std::string experimenterRef = src.getDatasetExperimenterRef(i);
-        dest.setDatasetExperimenterRef(experimenterRef, i);
-
-        std::string name = src.getDatasetName(i);
-        dest.setDatasetName(name, i);
-
-        index_type imageRefCount = src.getDatasetImageRefCount(i);
+        index_type imageRefCount(src.getDatasetImageRefCount(i));
         for (index_type q = 0; q < imageRefCount; ++q)
           {
-            std::string imageRef = src.getDatasetImageRef(i, q);
-            dest.setDatasetImageRef(imageRef, i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getDatasetImageRef,
+                     &MetadataStore::setDatasetImageRef,
+                     i, q);
           }
 
         index_type annotationRefCount = src.getDatasetAnnotationRefCount(i);
         for (index_type q = 0; q < annotationRefCount; ++q)
           {
-            std::string annotationRef = src.getDatasetAnnotationRef(i, q);
-            dest.setDatasetAnnotationRef(annotationRef, i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getDatasetAnnotationRef,
+                     &MetadataStore::setDatasetAnnotationRef,
+                     i, q);
           }
       }
   }
@@ -158,31 +273,37 @@ namespace
   convertDoubleAnnotations(const MetadataRetrieve& src,
                            MetadataStore&          dest)
   {
-    index_type doubleAnnotationCount = 0;
-    doubleAnnotationCount = src.getDoubleAnnotationCount();
+    index_type doubleAnnotationCount(src.getDoubleAnnotationCount());
     for (index_type i = 0; i < doubleAnnotationCount; ++i)
       {
-        std::string id = src.getDoubleAnnotationID(i);
-        dest.setDoubleAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDoubleAnnotationID,
+                 &MetadataStore::setDoubleAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDoubleAnnotationDescription,
+                 &MetadataStore::setDoubleAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDoubleAnnotationNamespace,
+                 &MetadataStore::setDoubleAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDoubleAnnotationValue,
+                 &MetadataStore::setDoubleAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getDoubleAnnotationAnnotator,
+                 &MetadataStore::setDoubleAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getDoubleAnnotationDescription(i);
-        dest.setDoubleAnnotationDescription(description, i);
-
-        std::string ns = src.getDoubleAnnotationNamespace(i);
-        dest.setDoubleAnnotationNamespace(ns, i);
-
-        double value = src.getDoubleAnnotationValue(i);
-        dest.setDoubleAnnotationValue(value, i);
-
-        std::string annotator = src.getDoubleAnnotationAnnotator(i);
-        dest.setDoubleAnnotationAnnotator(annotator, i);
-
-        index_type annotationRefCount = 0;
-        annotationRefCount = src.getDoubleAnnotationAnnotationCount(i);
+        index_type annotationRefCount(src.getDoubleAnnotationAnnotationCount(i));
         for (index_type a = 0; a < annotationRefCount; ++a)
           {
-          std::string id = src.getDoubleAnnotationAnnotationRef(i, a);
-          dest.setDoubleAnnotationAnnotationRef(id, i, a);
+            transfer(src, dest,
+                     &MetadataRetrieve::getDoubleAnnotationAnnotationRef,
+                     &MetadataStore::setDoubleAnnotationAnnotationRef,
+                     i, a);
           }
       }
   }
@@ -191,61 +312,74 @@ namespace
   convertExperiments(const MetadataRetrieve& src,
                      MetadataStore&          dest)
   {
-    index_type experimentCount = 0;
-    experimentCount = src.getExperimentCount();
+    index_type experimentCount(src.getExperimentCount());
     for (index_type i = 0; i < experimentCount; ++i)
       {
-        std::string id = src.getExperimentID(i);
-        dest.setExperimentID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimentID,
+                 &MetadataStore::setExperimentID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimentDescription,
+                 &MetadataStore::setExperimentDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimentDescription,
+                 &MetadataStore::setExperimentDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimentExperimenterRef,
+                 &MetadataStore::setExperimentExperimenterRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimentType,
+                 &MetadataStore::setExperimentType,
+                 i);
 
-        std::string description = src.getExperimentDescription(i);
-        dest.setExperimentDescription(description, i);
-
-        std::string experimenterRef = src.getExperimentExperimenterRef(i);
-        dest.setExperimentExperimenterRef(experimenterRef, i);
-
-        ExperimentType type = src.getExperimentType(i);
-        dest.setExperimentType(type, i);
-
-        index_type microbeamCount = 0;
-        microbeamCount = src.getMicrobeamManipulationCount(i);
+        index_type microbeamCount(src.getMicrobeamManipulationCount(i));
         for (index_type q = 0; q < microbeamCount; ++q)
           {
-            std::string microbeamID = src.getMicrobeamManipulationID(i, q);
-            dest.setMicrobeamManipulationID(microbeamID, i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getMicrobeamManipulationID,
+                     &MetadataStore::setMicrobeamManipulationID,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getMicrobeamManipulationDescription,
+                     &MetadataStore::setMicrobeamManipulationDescription,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getMicrobeamManipulationExperimenterRef,
+                     &MetadataStore::setMicrobeamManipulationExperimenterRef,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getMicrobeamManipulationType,
+                     &MetadataStore::setMicrobeamManipulationType,
+                     i, q);
 
-            std::string microbeamDescription = src.getMicrobeamManipulationDescription(i, q);
-            dest.setMicrobeamManipulationDescription(microbeamDescription, i, q);
-
-            std::string microbeamExperimenterRef = src.getMicrobeamManipulationExperimenterRef(i, q);
-            dest.setMicrobeamManipulationExperimenterRef(microbeamExperimenterRef, i, q);
-
-            MicrobeamManipulationType microbeamType = src.getMicrobeamManipulationType(i, q);
-            dest.setMicrobeamManipulationType(microbeamType, i, q);
-
-            index_type lightSourceCount = 0;
-            lightSourceCount = src.getMicrobeamManipulationLightSourceSettingsCount(i, q);
+            index_type lightSourceCount(src.getMicrobeamManipulationLightSourceSettingsCount(i, q));
             for (index_type p = 0; p < lightSourceCount; ++p)
               {
-                std::string lightSourceID = src.getMicrobeamManipulationLightSourceSettingsID(i, q, p);
-                if (!lightSourceID.empty())
-                  {
-                    dest.setMicrobeamManipulationLightSourceSettingsID(lightSourceID, i, q, p);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMicrobeamManipulationLightSourceSettingsID,
+                         &MetadataStore::setMicrobeamManipulationLightSourceSettingsID,
+                         i, q, p);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMicrobeamManipulationLightSourceSettingsAttenuation,
+                         &MetadataStore::setMicrobeamManipulationLightSourceSettingsAttenuation,
+                         i, q, p);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMicrobeamManipulationLightSourceSettingsWavelength,
+                         &MetadataStore::setMicrobeamManipulationLightSourceSettingsWavelength,
+                         i, q, p);
+              }
 
-                    PercentFraction attenuation = src.getMicrobeamManipulationLightSourceSettingsAttenuation(i, q, p);
-                    dest.setMicrobeamManipulationLightSourceSettingsAttenuation(attenuation, i, q, p);
-                  }
-
-                PositiveFloat wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
-                dest.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, i, q, p);
-
-                index_type roiRefCount = 0;
-                roiRefCount = src.getMicrobeamManipulationROIRefCount(i, q);
-                for (index_type p = 0; p < roiRefCount; ++p)
-                  {
-                    std::string roiRef = src.getMicrobeamManipulationROIRef(i, q, p);
-                    dest.setMicrobeamManipulationROIRef(roiRef, i, q, p);
-                  }
+            index_type roiRefCount(src.getMicrobeamManipulationROIRefCount(i, q));
+            for (index_type p = 0; p < roiRefCount; ++p)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getMicrobeamManipulationROIRef,
+                         &MetadataStore::setMicrobeamManipulationROIRef,
+                         i, q, p);
               }
           }
       }
@@ -255,457 +389,566 @@ namespace
   convertExperimenters(const MetadataRetrieve& src,
                        MetadataStore&          dest)
   {
-    index_type experimenterCount = 0;
-    experimenterCount = src.getExperimenterCount();
+    index_type experimenterCount(src.getExperimenterCount());
     for (index_type i = 0; i < experimenterCount; ++i)
       {
-        std::string id = src.getExperimenterID(i);
-        dest.setExperimenterID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterID,
+                 &MetadataStore::setExperimenterID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterEmail,
+                 &MetadataStore::setExperimenterEmail,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterFirstName,
+                 &MetadataStore::setExperimenterFirstName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterInstitution,
+                 &MetadataStore::setExperimenterInstitution,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterLastName,
+                 &MetadataStore::setExperimenterLastName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterMiddleName,
+                 &MetadataStore::setExperimenterMiddleName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterUserName,
+                 &MetadataStore::setExperimenterUserName,
+                 i);
 
-        std::string email = src.getExperimenterEmail(i);
-        dest.setExperimenterEmail(email, i);
-
-        std::string firstName = src.getExperimenterFirstName(i);
-        dest.setExperimenterFirstName(firstName, i);
-
-        std::string institution = src.getExperimenterInstitution(i);
-        dest.setExperimenterInstitution(institution, i);
-
-        std::string lastName = src.getExperimenterLastName(i);
-        dest.setExperimenterLastName(lastName, i);
-
-        std::string middleName = src.getExperimenterMiddleName(i);
-        dest.setExperimenterMiddleName(middleName, i);
-
-        std::string userName = src.getExperimenterUserName(i);
-        dest.setExperimenterUserName(userName, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getExperimenterAnnotationRefCount(i);
-      for (index_type q = 0; q < annotationRefCount; ++q)
-        {
-          std::string annotationRef = src.getExperimenterAnnotationRef(i, q);
-          dest.setExperimenterAnnotationRef(annotationRef, i, q);
+        index_type annotationRefCount(src.getExperimenterAnnotationRefCount(i));
+        for (index_type q = 0; q < annotationRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getExperimenterAnnotationRef,
+                     &MetadataStore::setExperimenterAnnotationRef,
+                     i, q);
+          }
       }
-    }
   }
 
   void
   convertExperimenterGroups(const MetadataRetrieve& src,
                             MetadataStore&          dest)
   {
-    index_type experimenterGroupCount = 0;
-    experimenterGroupCount = src.getExperimenterGroupCount();
+    index_type experimenterGroupCount(src.getExperimenterGroupCount());
     for (index_type i = 0; i < experimenterGroupCount; ++i)
       {
-        std::string id = src.getExperimenterGroupID(i);
-        dest.setExperimenterGroupID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterGroupID,
+                 &MetadataStore::setExperimenterGroupID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterGroupDescription,
+                 &MetadataStore::setExperimenterGroupDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getExperimenterGroupName,
+                 &MetadataStore::setExperimenterGroupName,
+                 i);
 
-        std::string description = src.getExperimenterGroupDescription(i);
-        dest.setExperimenterGroupDescription(description, i);
+        index_type annotationRefCount(src.getExperimenterGroupAnnotationRefCount(i));
+        for (index_type q = 0; q < annotationRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getExperimenterGroupAnnotationRef,
+                     &MetadataStore::setExperimenterGroupAnnotationRef,
+                     i, q);
+          }
 
-        std::string name = src.getExperimenterGroupName(i);
-        dest.setExperimenterGroupName(name, i);
+        index_type experimenterRefCount(src.getExperimenterGroupExperimenterRefCount(i));
+        for (index_type q = 0; q < experimenterRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getExperimenterGroupExperimenterRef,
+                     &MetadataStore::setExperimenterGroupExperimenterRef,
+                     i, q);
+          }
 
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getExperimenterGroupAnnotationRefCount(i);
-      for (index_type q = 0; q < annotationRefCount; ++q)
-        {
-          std::string annotationRef = src.getExperimenterGroupAnnotationRef(i, q);
-          dest.setExperimenterGroupAnnotationRef(annotationRef, i, q);
+        index_type leaderCount(src.getLeaderCount(i));
+        for (index_type q = 0; q < leaderCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getExperimenterGroupLeader,
+                     &MetadataStore::setExperimenterGroupLeader,
+                     i, q);
+          }
       }
-
-      index_type experimenterRefCount = 0;
-        experimenterRefCount = src.getExperimenterGroupExperimenterRefCount(i);
-      for (index_type q = 0; q < experimenterRefCount; ++q)
-        {
-          std::string experimenterRef = src.getExperimenterGroupExperimenterRef(i, q);
-          dest.setExperimenterGroupExperimenterRef(experimenterRef, i, q);
-      }
-
-      index_type leaderCount = 0;
-        leaderCount = src.getLeaderCount(i);
-      for (index_type q = 0; q < leaderCount; ++q)
-        {
-          std::string leader = src.getExperimenterGroupLeader(i, q);
-          dest.setExperimenterGroupLeader(leader, i, q);
-      }
-    }
   }
 
   void
   convertFileAnnotations(const MetadataRetrieve& src,
                          MetadataStore&          dest)
   {
-    index_type fileAnnotationCount = 0;
-      fileAnnotationCount = src.getFileAnnotationCount();
+    index_type fileAnnotationCount(src.getFileAnnotationCount());
     for (index_type i = 0; i < fileAnnotationCount; ++i)
       {
-        std::string id = src.getFileAnnotationID(i);
-        dest.setFileAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getFileAnnotationID,
+                 &MetadataStore::setFileAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getFileAnnotationDescription,
+                 &MetadataStore::setFileAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getFileAnnotationNamespace,
+                 &MetadataStore::setFileAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getFileAnnotationAnnotator,
+                 &MetadataStore::setFileAnnotationAnnotator,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBinaryFileFileName,
+                 &MetadataStore::setBinaryFileFileName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBinaryFileMIMEType,
+                 &MetadataStore::setBinaryFileMIMEType,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getBinaryFileSize,
+                 &MetadataStore::setBinaryFileSize,
+                 i);
 
-        std::string description = src.getFileAnnotationDescription(i);
-        dest.setFileAnnotationDescription(description, i);
-
-        std::string ns = src.getFileAnnotationNamespace(i);
-        dest.setFileAnnotationNamespace(ns, i);
-
-        std::string annotator = src.getFileAnnotationAnnotator(i);
-        dest.setFileAnnotationAnnotator(annotator, i);
-
-        std::string fileName = src.getBinaryFileFileName(i);
-        dest.setBinaryFileFileName(fileName, i);
-
-        std::string mimeType = src.getBinaryFileMIMEType(i);
-        dest.setBinaryFileMIMEType(mimeType, i);
-
-        NonNegativeLong fileSize = src.getBinaryFileSize(i);
-        dest.setBinaryFileSize(fileSize, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getFileAnnotationAnnotationCount(i);
-      for (index_type a = 0; a < annotationRefCount; ++a)
-        {
-          std::string id = src.getFileAnnotationAnnotationRef(i, a);
-          dest.setFileAnnotationAnnotationRef(id, i, a);
+        index_type annotationRefCount(src.getFileAnnotationAnnotationCount(i));
+        for (index_type a = 0; a < annotationRefCount; ++a)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getFileAnnotationAnnotationRef,
+                     &MetadataStore::setFileAnnotationAnnotationRef,
+                     i, a);
+          }
       }
-    }
   }
 
   void
   convertImages(const MetadataRetrieve& src,
                 MetadataStore&          dest)
   {
-    index_type imageCount = 0;
-    imageCount = src.getImageCount();
+    index_type imageCount(src.getImageCount());
     for (index_type i = 0; i < imageCount; ++i)
       {
-        std::string id = src.getImageID(i);
-        dest.setImageID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageID,
+                 &MetadataStore::setImageID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageAcquisitionDate,
+                 &MetadataStore::setImageAcquisitionDate,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageDescription,
+                 &MetadataStore::setImageDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageExperimentRef,
+                 &MetadataStore::setImageExperimentRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageExperimenterGroupRef,
+                 &MetadataStore::setImageExperimenterGroupRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageExperimenterRef,
+                 &MetadataStore::setImageExperimenterRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageInstrumentRef,
+                 &MetadataStore::setImageInstrumentRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImageName,
+                 &MetadataStore::setImageName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImagingEnvironmentAirPressure,
+                 &MetadataStore::setImagingEnvironmentAirPressure,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImagingEnvironmentCO2Percent,
+                 &MetadataStore::setImagingEnvironmentCO2Percent,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImagingEnvironmentHumidity,
+                 &MetadataStore::setImagingEnvironmentHumidity,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImagingEnvironmentMap,
+                 &MetadataStore::setImagingEnvironmentMap,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getImagingEnvironmentTemperature,
+                 &MetadataStore::setImagingEnvironmentTemperature,
+                 i);
 
-        Timestamp date = src.getImageAcquisitionDate(i);
-        dest.setImageAcquisitionDate(date, i);
-
-        std::string description = src.getImageDescription(i);
-        dest.setImageDescription(description, i);
-
-        std::string experimentRef = src.getImageExperimentRef(i);
-        dest.setImageExperimentRef(experimentRef, i);
-
-        std::string experimenterGroupRef = src.getImageExperimenterGroupRef(i);
-        dest.setImageExperimenterGroupRef(experimenterGroupRef, i);
-
-        std::string experimenterRef = src.getImageExperimenterRef(i);
-        dest.setImageExperimenterRef(experimenterRef, i);
-
-        std::string instrumentRef = src.getImageInstrumentRef(i);
-        dest.setImageInstrumentRef(instrumentRef, i);
-
-        std::string name = src.getImageName(i);
-        dest.setImageName(name, i);
-
-        double airPressure = src.getImagingEnvironmentAirPressure(i);
-        dest.setImagingEnvironmentAirPressure(airPressure, i);
-
-        PercentFraction co2 = src.getImagingEnvironmentCO2Percent(i);
-        dest.setImagingEnvironmentCO2Percent(co2, i);
-
-        PercentFraction humidity = src.getImagingEnvironmentHumidity(i);
-        dest.setImagingEnvironmentHumidity(humidity, i);
-
-        const map_pairs_map_type& map = src.getImagingEnvironmentMap(i);
-        dest.setImagingEnvironmentMap(map, i);
-
-        double temperature = src.getImagingEnvironmentTemperature(i);
-        dest.setImagingEnvironmentTemperature(temperature, i);
-
-        std::string objectiveID = src.getObjectiveSettingsID(i);
-        if (!objectiveID.empty())
+        if (transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveSettingsID,
+                     &MetadataStore::setObjectiveSettingsID,
+                     i))
           {
-            dest.setObjectiveSettingsID(objectiveID, i);
-
-            double correction = src.getObjectiveSettingsCorrectionCollar(i);
-            dest.setObjectiveSettingsCorrectionCollar(correction, i);
-
-            Medium medium = src.getObjectiveSettingsMedium(i);
-            dest.setObjectiveSettingsMedium(medium, i);
-
-            double refractiveIndex = src.getObjectiveSettingsRefractiveIndex(i);
-            dest.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveSettingsCorrectionCollar,
+                     &MetadataStore::setObjectiveSettingsCorrectionCollar,
+                     i);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveSettingsMedium,
+                     &MetadataStore::setObjectiveSettingsMedium,
+                     i);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveSettingsRefractiveIndex,
+                     &MetadataStore::setObjectiveSettingsRefractiveIndex,
+                     i);
           }
 
-        std::string stageLabelName = src.getStageLabelName(i);
-        if (!stageLabelName.empty())
+        if (transfer(src, dest,
+                     &MetadataRetrieve::getStageLabelName,
+                     &MetadataStore::setStageLabelName,
+                     i))
           {
-            dest.setStageLabelName(stageLabelName, i);
-
-            double stageLabelX = src.getStageLabelX(i);
-            dest.setStageLabelX(stageLabelX, i);
-
-            double stageLabelY = src.getStageLabelY(i);
-            dest.setStageLabelY(stageLabelY, i);
-
-            double stageLabelZ = src.getStageLabelZ(i);
-            dest.setStageLabelZ(stageLabelZ, i);
+            transfer(src, dest,
+                     &MetadataRetrieve::getStageLabelX,
+                     &MetadataStore::setStageLabelX,
+                     i);
+            transfer(src, dest,
+                     &MetadataRetrieve::getStageLabelY,
+                     &MetadataStore::setStageLabelY,
+                     i);
+            transfer(src, dest,
+                     &MetadataRetrieve::getStageLabelZ,
+                     &MetadataStore::setStageLabelZ,
+                     i);
           }
 
-        std::string pixelsID = src.getPixelsID(i);
-        dest.setPixelsID(pixelsID, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsID,
+                 &MetadataStore::setPixelsID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsDimensionOrder,
+                 &MetadataStore::setPixelsDimensionOrder,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsPhysicalSizeX,
+                 &MetadataStore::setPixelsPhysicalSizeX,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsPhysicalSizeY,
+                 &MetadataStore::setPixelsPhysicalSizeY,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsPhysicalSizeZ,
+                 &MetadataStore::setPixelsPhysicalSizeZ,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsSizeX,
+                 &MetadataStore::setPixelsSizeX,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsSizeY,
+                 &MetadataStore::setPixelsSizeY,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsSizeZ,
+                 &MetadataStore::setPixelsSizeZ,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsSizeT,
+                 &MetadataStore::setPixelsSizeT,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsSizeC,
+                 &MetadataStore::setPixelsSizeC,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsTimeIncrement,
+                 &MetadataStore::setPixelsTimeIncrement,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsType,
+                 &MetadataStore::setPixelsType,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsBigEndian,
+                 &MetadataStore::setPixelsBigEndian,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsInterleaved,
+                 &MetadataStore::setPixelsInterleaved,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPixelsSignificantBits,
+                 &MetadataStore::setPixelsSignificantBits,
+                 i);
 
-          DimensionOrder order = src.getPixelsDimensionOrder(i);
-          dest.setPixelsDimensionOrder(order, i);
-
-          PositiveFloat physicalSizeX = src.getPixelsPhysicalSizeX(i);
-          dest.setPixelsPhysicalSizeX(physicalSizeX, i);
-
-          PositiveFloat physicalSizeY = src.getPixelsPhysicalSizeY(i);
-          dest.setPixelsPhysicalSizeY(physicalSizeY, i);
-
-          PositiveFloat physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
-          dest.setPixelsPhysicalSizeZ(physicalSizeZ, i);
-
-          PositiveInteger sizeC = src.getPixelsSizeC(i);
-          dest.setPixelsSizeC(sizeC, i);
-
-          PositiveInteger sizeT = src.getPixelsSizeT(i);
-          dest.setPixelsSizeT(sizeT, i);
-
-          PositiveInteger sizeX = src.getPixelsSizeX(i);
-          dest.setPixelsSizeX(sizeX, i);
-
-          PositiveInteger sizeY = src.getPixelsSizeY(i);
-          dest.setPixelsSizeY(sizeY, i);
-
-          PositiveInteger sizeZ = src.getPixelsSizeZ(i);
-          dest.setPixelsSizeZ(sizeZ, i);
-
-          double timeIncrement = src.getPixelsTimeIncrement(i);
-          dest.setPixelsTimeIncrement(timeIncrement, i);
-
-          PixelType type = src.getPixelsType(i);
-          dest.setPixelsType(type, i);
-
-          bool bigEndian = src.getPixelsBigEndian(i);
-          dest.setPixelsBigEndian(bigEndian, i);
-
-          bool interleaved = src.getPixelsInterleaved(i);
-          dest.setPixelsInterleaved(interleaved, i);
-
-          PositiveInteger significantBits = src.getPixelsSignificantBits(i);
-          dest.setPixelsSignificantBits(significantBits, i);
-
-        index_type binDataCount = 0;
-          binDataCount = src.getPixelsBinDataCount(i);
+        index_type binDataCount(src.getPixelsBinDataCount(i));
         for (index_type q = 0; q < binDataCount; ++q)
           {
-            bool bigEndian = src.getPixelsBinDataBigEndian(i, q);
-            dest.setPixelsBinDataBigEndian(bigEndian, i, q);
-        }
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getImageAnnotationRefCount(i);
-      for (index_type q = 0; q < annotationRefCount; ++q)
-        {
-          std::string annotationRef = src.getImageAnnotationRef(i, q);
-          dest.setImageAnnotationRef(annotationRef, i, q);
-      }
-
-      index_type channelCount = 0;
-        channelCount = src.getChannelCount(i);
-      for (index_type c = 0; c < channelCount; ++c)
-        {
-          std::string channelID = src.getChannelID(i, c);
-          dest.setChannelID(channelID, i, c);
-
-          AcquisitionMode mode = src.getChannelAcquisitionMode(i, c);
-          dest.setChannelAcquisitionMode(mode, i, c);
-
-          Color color = src.getChannelColor(i, c);
-          dest.setChannelColor(color, i, c);
-
-          ContrastMethod method = src.getChannelContrastMethod(i, c);
-          dest.setChannelContrastMethod(method, i, c);
-
-          PositiveFloat emWave = src.getChannelEmissionWavelength(i, c);
-          dest.setChannelEmissionWavelength(emWave, i, c);
-
-          PositiveFloat exWave = src.getChannelExcitationWavelength(i, c);
-          dest.setChannelExcitationWavelength(exWave, i, c);
-
-          std::string filterSetRef = src.getChannelFilterSetRef(i, c);
-          dest.setChannelFilterSetRef(filterSetRef, i, c);
-
-          std::string fluor = src.getChannelFluor(i, c);
-          dest.setChannelFluor(fluor, i, c);
-
-          IlluminationType illumType = src.getChannelIlluminationType(i, c);
-          dest.setChannelIlluminationType(illumType, i, c);
-
-          double ndFilter = src.getChannelNDFilter(i, c);
-          dest.setChannelNDFilter(ndFilter, i, c);
-
-          std::string channelName = src.getChannelName(i, c);
-          dest.setChannelName(channelName, i, c);
-
-          double pinholeSize = src.getChannelPinholeSize(i, c);
-          dest.setChannelPinholeSize(pinholeSize, i, c);
-
-          int32_t pockelCell = src.getChannelPockelCellSetting(i, c);
-          dest.setChannelPockelCellSetting(pockelCell, i, c);
-
-          PositiveInteger samplesPerPixel = src.getChannelSamplesPerPixel(i, c);
-          dest.setChannelSamplesPerPixel(samplesPerPixel, i, c);
-
-          std::string detectorSettingsID = src.getDetectorSettingsID(i, c);
-          if (!detectorSettingsID.empty()) {
-            dest.setDetectorSettingsID(detectorSettingsID, i, c);
-
-              Binning binning = src.getDetectorSettingsBinning(i, c);
-              dest.setDetectorSettingsBinning(binning, i, c);
-
-              double gain = src.getDetectorSettingsGain(i, c);
-              dest.setDetectorSettingsGain(gain, i, c);
-
-              PositiveInteger integration =
-                src.getDetectorSettingsIntegration(i, c);
-              dest.setDetectorSettingsIntegration(integration, i, c);
-
-              double offset = src.getDetectorSettingsOffset(i, c);
-              dest.setDetectorSettingsOffset(offset, i, c);
-
-              double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
-              dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
-
-              double voltage = src.getDetectorSettingsVoltage(i, c);
-              dest.setDetectorSettingsVoltage(voltage, i, c);
-
-              double zoom = src.getDetectorSettingsZoom(i, c);
-              dest.setDetectorSettingsZoom(zoom, i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPixelsBinDataBigEndian,
+                     &MetadataStore::setPixelsBinDataBigEndian,
+                     i, q);
           }
 
-          std::string dichroicRef = src.getLightPathDichroicRef(i, c);
-          dest.setLightPathDichroicRef(dichroicRef, i, c);
-
-          std::string lightSourceID = src.getChannelLightSourceSettingsID(i, c);
-          if (!lightSourceID.empty())
-            {
-            dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
-
-              PercentFraction attenuation =
-                src.getChannelLightSourceSettingsAttenuation(i, c);
-              dest.setChannelLightSourceSettingsAttenuation(attenuation, i, c);
-
-              PositiveFloat wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
-              dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+        index_type annotationRefCount(src.getImageAnnotationRefCount(i));
+        for (index_type q = 0; q < annotationRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getImageAnnotationRef,
+                     &MetadataStore::setImageAnnotationRef,
+                     i, q);
           }
 
-        index_type channelAnnotationRefCount = 0;
-          channelAnnotationRefCount = src.getChannelAnnotationRefCount(i, c);
-        for (index_type q = 0; q < channelAnnotationRefCount; ++q)
+        index_type channelCount(src.getChannelCount(i));
+        for (index_type c = 0; c < channelCount; ++c)
           {
-            std::string channelAnnotationRef = src.getChannelAnnotationRef(i, c, q);
-            dest.setChannelAnnotationRef(channelAnnotationRef, i, c, q);
-        }
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelID,
+                     &MetadataStore::setChannelID,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelAcquisitionMode,
+                     &MetadataStore::setChannelAcquisitionMode,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelColor,
+                     &MetadataStore::setChannelColor,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelContrastMethod,
+                     &MetadataStore::setChannelContrastMethod,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelEmissionWavelength,
+                     &MetadataStore::setChannelEmissionWavelength,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelExcitationWavelength,
+                     &MetadataStore::setChannelExcitationWavelength,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelFilterSetRef,
+                     &MetadataStore::setChannelFilterSetRef,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelFluor,
+                     &MetadataStore::setChannelFluor,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelIlluminationType,
+                     &MetadataStore::setChannelIlluminationType,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelNDFilter,
+                     &MetadataStore::setChannelNDFilter,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelName,
+                     &MetadataStore::setChannelName,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelPinholeSize,
+                     &MetadataStore::setChannelPinholeSize,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelPockelCellSetting,
+                     &MetadataStore::setChannelPockelCellSetting,
+                     i, c);
+            transfer(src, dest,
+                     &MetadataRetrieve::getChannelSamplesPerPixel,
+                     &MetadataStore::setChannelSamplesPerPixel,
+                     i, c);
 
-        index_type emFilterRefCount = 0;
-          emFilterRefCount = src.getLightPathEmissionFilterRefCount(i, c);
-        for (index_type q = 0; q < emFilterRefCount; ++q)
+            if (transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsID,
+                         &MetadataStore::setDetectorSettingsID,
+                         i, c))
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsBinning,
+                         &MetadataStore::setDetectorSettingsBinning,
+                         i, c);
+                transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsGain,
+                         &MetadataStore::setDetectorSettingsGain,
+                         i, c);
+                transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsIntegration,
+                         &MetadataStore::setDetectorSettingsIntegration,
+                         i, c);
+                transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsOffset,
+                         &MetadataStore::setDetectorSettingsOffset,
+                         i, c);
+                transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsReadOutRate,
+                         &MetadataStore::setDetectorSettingsReadOutRate,
+                         i, c);
+                transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsVoltage,
+                         &MetadataStore::setDetectorSettingsVoltage,
+                         i, c);
+                transfer(src, dest,
+                         &MetadataRetrieve::getDetectorSettingsZoom,
+                         &MetadataStore::setDetectorSettingsZoom,
+                         i, c);
+              }
+
+            transfer(src, dest,
+                     &MetadataRetrieve::getLightPathDichroicRef,
+                     &MetadataStore::setLightPathDichroicRef,
+                     i, c);
+
+            if (transfer(src, dest,
+                         &MetadataRetrieve::getChannelLightSourceSettingsID,
+                         &MetadataStore::setChannelLightSourceSettingsID,
+                         i, c))
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getChannelLightSourceSettingsAttenuation,
+                         &MetadataStore::setChannelLightSourceSettingsAttenuation,
+                         i, c);
+                transfer(src, dest,
+                         &MetadataRetrieve::getChannelLightSourceSettingsWavelength,
+                         &MetadataStore::setChannelLightSourceSettingsWavelength,
+                         i, c);
+              }
+
+            index_type channelAnnotationRefCount(src.getChannelAnnotationRefCount(i, c));
+            for (index_type q = 0; q < channelAnnotationRefCount; ++q)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getChannelAnnotationRef,
+                         &MetadataStore::setChannelAnnotationRef,
+                         i, c, q);
+              }
+
+            index_type emFilterRefCount(src.getLightPathEmissionFilterRefCount(i, c));
+            for (index_type q = 0; q < emFilterRefCount; ++q)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getLightPathEmissionFilterRef,
+                         &MetadataStore::setLightPathEmissionFilterRef,
+                         i, c, q);
+              }
+
+            index_type exFilterRefCount(src.getLightPathExcitationFilterRefCount(i, c));
+            for (index_type q = 0; q < exFilterRefCount; ++q)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getLightPathExcitationFilterRef,
+                         &MetadataStore::setLightPathExcitationFilterRef,
+                         i, c, q);
+              }
+          }
+
+        index_type planeCount(src.getPlaneCount(i));
+        for (index_type p = 0; p < planeCount; ++p)
           {
-            std::string emFilterRef = src.getLightPathEmissionFilterRef(i, c, q);
-            dest.setLightPathEmissionFilterRef(emFilterRef, i, c, q);
-        }
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlaneDeltaT,
+                     &MetadataStore::setPlaneDeltaT,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlaneExposureTime,
+                     &MetadataStore::setPlaneExposureTime,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlaneHashSHA1,
+                     &MetadataStore::setPlaneHashSHA1,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlanePositionX,
+                     &MetadataStore::setPlanePositionX,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlanePositionY,
+                     &MetadataStore::setPlanePositionY,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlanePositionZ,
+                     &MetadataStore::setPlanePositionZ,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlaneTheZ,
+                     &MetadataStore::setPlaneTheZ,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlaneTheT,
+                     &MetadataStore::setPlaneTheT,
+                     i, p);
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlaneTheC,
+                     &MetadataStore::setPlaneTheC,
+                     i, p);
 
-        index_type exFilterRefCount = 0;
-          exFilterRefCount = src.getLightPathExcitationFilterRefCount(i, c);
-        for (index_type q = 0; q < exFilterRefCount; ++q)
+            index_type planeAnnotationRefCount(src.getPlaneAnnotationRefCount(i, p));
+            for (index_type q = 0; q < planeAnnotationRefCount; ++q)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getPlaneAnnotationRef,
+                         &MetadataStore::setPlaneAnnotationRef,
+                         i, p, q);
+              }
+          }
+
+        index_type microbeamCount(src.getMicrobeamManipulationRefCount(i));
+        for (index_type q = 0; q < microbeamCount; ++q)
           {
-            std::string exFilterRef = src.getLightPathExcitationFilterRef(i, c, q);
-            dest.setLightPathExcitationFilterRef(exFilterRef, i, c, q);
-        }
-      }
+            transfer(src, dest,
+                     &MetadataRetrieve::getImageMicrobeamManipulationRef,
+                     &MetadataStore::setImageMicrobeamManipulationRef,
+                     i, q);
+          }
 
-      index_type planeCount = 0;
-        planeCount = src.getPlaneCount(i);
-      for (index_type p = 0; p < planeCount; ++p)
-        {
-          double deltaT = src.getPlaneDeltaT(i, p);
-          dest.setPlaneDeltaT(deltaT, i, p);
-
-          double exposureTime = src.getPlaneExposureTime(i, p);
-          dest.setPlaneExposureTime(exposureTime, i, p);
-
-          std::string sha1 = src.getPlaneHashSHA1(i, p);
-          dest.setPlaneHashSHA1(sha1, i, p);
-
-          double positionX = src.getPlanePositionX(i, p);
-          dest.setPlanePositionX(positionX, i, p);
-
-          double positionY = src.getPlanePositionY(i, p);
-          dest.setPlanePositionY(positionY, i, p);
-
-          double positionZ = src.getPlanePositionZ(i, p);
-          dest.setPlanePositionZ(positionZ, i, p);
-
-          NonNegativeInteger theC = src.getPlaneTheC(i, p);
-          dest.setPlaneTheC(theC, i, p);
-
-          NonNegativeInteger theT = src.getPlaneTheT(i, p);
-          dest.setPlaneTheT(theT, i, p);
-
-          NonNegativeInteger theZ = src.getPlaneTheZ(i, p);
-          dest.setPlaneTheZ(theZ, i, p);
-
-        index_type planeAnnotationRefCount = 0;
-          planeAnnotationRefCount = src.getPlaneAnnotationRefCount(i, p);
-        for (index_type q = 0; q < planeAnnotationRefCount; ++q)
+        index_type roiRefCount(src.getImageROIRefCount(i));
+        for (index_type q = 0; q < roiRefCount; ++q)
           {
-            std::string planeAnnotationRef = src.getPlaneAnnotationRef(i, p, q);
-            dest.setPlaneAnnotationRef(planeAnnotationRef, i, p, q);
-        }
+            transfer(src, dest,
+                     &MetadataRetrieve::getImageROIRef,
+                     &MetadataStore::setImageROIRef,
+                     i, q);
+          }
+
+        index_type tiffDataCount(src.getTiffDataCount(i));
+        for (index_type q = 0; q < tiffDataCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getUUIDValue,
+                     &MetadataStore::setUUIDValue,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getUUIDFileName,
+                     &MetadataStore::setUUIDFileName,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTiffDataFirstZ,
+                     &MetadataStore::setTiffDataFirstZ,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTiffDataFirstT,
+                     &MetadataStore::setTiffDataFirstT,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTiffDataFirstC,
+                     &MetadataStore::setTiffDataFirstC,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTiffDataIFD,
+                     &MetadataStore::setTiffDataIFD,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTiffDataPlaneCount,
+                     &MetadataStore::setTiffDataPlaneCount,
+                     i, q);
+          }
       }
-
-      index_type microbeamCount = 0;
-        microbeamCount = src.getMicrobeamManipulationRefCount(i);
-      for (index_type q = 0; q < microbeamCount; ++q)
-        {
-          std::string microbeamRef = src.getImageMicrobeamManipulationRef(i, q);
-          dest.setImageMicrobeamManipulationRef(microbeamRef, i, q);
-      }
-
-      index_type roiRefCount = 0;
-        roiRefCount = src.getImageROIRefCount(i);
-      for (index_type q = 0; q < roiRefCount; ++q)
-        {
-          std::string roiRef = src.getImageROIRef(i, q);
-          dest.setImageROIRef(roiRef, i, q);
-      }
-
-      index_type tiffDataCount = 0;
-        tiffDataCount = src.getTiffDataCount(i);
-      for (index_type q = 0; q < tiffDataCount; ++q)
-        {
-          std::string uuid = src.getUUIDValue(i, q);
-          dest.setUUIDValue(uuid, i, q);
-
-          std::string filename = src.getUUIDFileName(i, q);
-          dest.setUUIDFileName(filename, i, q);
-
-          NonNegativeInteger firstC = src.getTiffDataFirstC(i, q);
-          dest.setTiffDataFirstC(firstC, i, q);
-
-          NonNegativeInteger firstT = src.getTiffDataFirstT(i, q);
-          dest.setTiffDataFirstT(firstT, i, q);
-
-          NonNegativeInteger firstZ = src.getTiffDataFirstZ(i, q);
-          dest.setTiffDataFirstZ(firstZ, i, q);
-
-          NonNegativeInteger ifd = src.getTiffDataIFD(i, q);
-          dest.setTiffDataIFD(ifd, i, q);
-
-          NonNegativeInteger tiffDataPlaneCount = src.getTiffDataPlaneCount(i, q);
-          dest.setTiffDataPlaneCount(tiffDataPlaneCount, i, q);
-      }
-    }
   }
 
   void
@@ -713,564 +956,637 @@ namespace
                       MetadataStore&          dest,
                       index_type              instrumentIndex)
   {
-    index_type lightSourceCount = 0;
-      lightSourceCount = src.getLightSourceCount(instrumentIndex);
+    index_type lightSourceCount(src.getLightSourceCount(instrumentIndex));
 
     for (index_type lightSource = 0; lightSource < lightSourceCount; ++lightSource)
       {
-      std::string type = src.getLightSourceType(instrumentIndex, lightSource);
-      if (type == "Arc") {
-          std::string id = src.getArcID(instrumentIndex, lightSource);
-          if (!id.empty()) dest.setArcID(id, instrumentIndex, lightSource);
-
-          std::string lotNumber = src.getArcLotNumber(instrumentIndex, lightSource);
-          if (!lotNumber.empty()) {
-            dest.setArcLotNumber(lotNumber, instrumentIndex, lightSource);
-          }
-
-          std::string manufacturer =
-            src.getArcManufacturer(instrumentIndex, lightSource);
-          if (!manufacturer.empty()) {
-            dest.setArcManufacturer(manufacturer, instrumentIndex, lightSource);
-          }
-
-          std::string model = src.getArcModel(instrumentIndex, lightSource);
-          if (!model.empty()) {
-            dest.setArcModel(model, instrumentIndex, lightSource);
-          }
-
-          double power = src.getArcPower(instrumentIndex, lightSource);
-          dest.setArcPower(power, instrumentIndex, lightSource);
-
-          std::string serialNumber =
-            src.getArcSerialNumber(instrumentIndex, lightSource);
-          if (!serialNumber.empty()) {
-            dest.setArcSerialNumber(serialNumber, instrumentIndex, lightSource);
-          }
-
-          ArcType arcType = src.getArcType(instrumentIndex, lightSource);
-          dest.setArcType(arcType, instrumentIndex, lightSource);
-
-        index_type lightSourceAnnotationRefCount = 0;
-          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
-        for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+        std::string type(src.getLightSourceType(instrumentIndex, lightSource));
+        if (type == "Arc")
           {
-            std::string lightSourceAnnotationRef = src.getArcAnnotationRef(instrumentIndex, lightSource, r);
-            dest.setArcAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
-        }
-      }
-      else if (type == "Filament") {
-          std::string id = src.getFilamentID(instrumentIndex, lightSource);
-          if (!id.empty()) dest.setFilamentID(id, instrumentIndex, lightSource);
+            if (transfer(src, dest,
+                         &MetadataRetrieve::getArcID,
+                         &MetadataStore::setArcID,
+                         instrumentIndex, lightSource))
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getArcLotNumber,
+                         &MetadataStore::setArcLotNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getArcManufacturer,
+                         &MetadataStore::setArcManufacturer,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getArcModel,
+                         &MetadataStore::setArcModel,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getArcPower,
+                         &MetadataStore::setArcPower,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getArcSerialNumber,
+                         &MetadataStore::setArcSerialNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getArcType,
+                         &MetadataStore::setArcType,
+                         instrumentIndex, lightSource);
 
-          std::string lotNumber =
-            src.getFilamentLotNumber(instrumentIndex, lightSource);
-          if (!lotNumber.empty()) {
-            dest.setFilamentLotNumber(lotNumber, instrumentIndex, lightSource);
+                index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
+                for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getArcAnnotationRef,
+                             &MetadataStore::setArcAnnotationRef,
+                             instrumentIndex, lightSource, r);
+                  }
+              }
           }
-
-          std::string manufacturer =
-            src.getFilamentManufacturer(instrumentIndex, lightSource);
-          if (!manufacturer.empty()) {
-            dest.setFilamentManufacturer(
-              manufacturer, instrumentIndex, lightSource);
-          }
-
-          std::string model = src.getFilamentModel(instrumentIndex, lightSource);
-          if (!model.empty()) {
-            dest.setFilamentModel(model, instrumentIndex, lightSource);
-          }
-
-          double power = src.getFilamentPower(instrumentIndex, lightSource);
-            dest.setFilamentPower(power, instrumentIndex, lightSource);
-
-          std::string serialNumber =
-            src.getFilamentSerialNumber(instrumentIndex, lightSource);
-          if (!serialNumber.empty()) {
-            dest.setFilamentSerialNumber(
-              serialNumber, instrumentIndex, lightSource);
-          }
-
-          FilamentType filamentType =
-            src.getFilamentType(instrumentIndex, lightSource);
-            dest.setFilamentType(filamentType, instrumentIndex, lightSource);
-
-        index_type lightSourceAnnotationRefCount = 0;
-          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
-        for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+        else if (type == "Filament")
           {
-            std::string lightSourceAnnotationRef = src.getFilamentAnnotationRef(instrumentIndex, lightSource, r);
-            dest.setFilamentAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
-        }
-      }
-      else if (type == "GenericExcitationSource") {
-          std::string id =
-            src.getGenericExcitationSourceID(instrumentIndex, lightSource);
-            dest.setGenericExcitationSourceID(id, instrumentIndex, lightSource);
+            if (transfer(src, dest,
+                         &MetadataRetrieve::getFilamentID,
+                         &MetadataStore::setFilamentID,
+                         instrumentIndex, lightSource))
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilamentID,
+                         &MetadataStore::setFilamentID,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilamentLotNumber,
+                         &MetadataStore::setFilamentLotNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilamentManufacturer,
+                         &MetadataStore::setFilamentManufacturer,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilamentModel,
+                         &MetadataStore::setFilamentModel,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilamentPower,
+                         &MetadataStore::setFilamentPower,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilamentSerialNumber,
+                         &MetadataStore::setFilamentSerialNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilamentType,
+                         &MetadataStore::setFilamentType,
+                         instrumentIndex, lightSource);
 
-            const map_pairs_map_type& map =
-              src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
-            dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
-
-          std::string lotNumber = src.getGenericExcitationSourceLotNumber(
-            instrumentIndex, lightSource);
-          dest.setGenericExcitationSourceLotNumber(lotNumber,
-            instrumentIndex, lightSource);
-
-          std::string manufacturer = src.getGenericExcitationSourceManufacturer(
-            instrumentIndex, lightSource);
-          dest.setGenericExcitationSourceManufacturer(manufacturer,
-            instrumentIndex, lightSource);
-
-          std::string model =
-            src.getGenericExcitationSourceModel(instrumentIndex, lightSource);
-          dest.setGenericExcitationSourceModel(model,
-            instrumentIndex, lightSource);
-
-          double power =
-            src.getGenericExcitationSourcePower(instrumentIndex, lightSource);
-          dest.setGenericExcitationSourcePower(power,
-            instrumentIndex, lightSource);
-
-          std::string serialNumber = src.getGenericExcitationSourceSerialNumber(
-            instrumentIndex, lightSource);
-          dest.setGenericExcitationSourceSerialNumber(serialNumber,
-            instrumentIndex, lightSource);
-      }
-      else if (type == "Laser") {
-          std::string id = src.getLaserID(instrumentIndex, lightSource);
-          if (!id.empty()) dest.setLaserID(id, instrumentIndex, lightSource);
-
-          std::string lotNumber =
-            src.getLaserLotNumber(instrumentIndex, lightSource);
-          if (!lotNumber.empty()) {
-            dest.setLaserLotNumber(lotNumber, instrumentIndex, lightSource);
+                index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
+                for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getFilamentAnnotationRef,
+                             &MetadataStore::setFilamentAnnotationRef,
+                             instrumentIndex, lightSource, r);
+                  }
+              }
           }
-
-          std::string manufacturer =
-            src.getLaserManufacturer(instrumentIndex, lightSource);
-          if (!manufacturer.empty()) {
-            dest.setLaserManufacturer(
-              manufacturer, instrumentIndex, lightSource);
-          }
-
-          std::string model = src.getLaserModel(instrumentIndex, lightSource);
-          if (!model.empty()) {
-            dest.setLaserModel(model, instrumentIndex, lightSource);
-          }
-
-          double power = src.getLaserPower(instrumentIndex, lightSource);
-            dest.setLaserPower(power, instrumentIndex, lightSource);
-
-            std::string serialNumber =
-            src.getLaserSerialNumber(instrumentIndex, lightSource);
-          if (!serialNumber.empty()) {
-            dest.setLaserSerialNumber(
-              serialNumber, instrumentIndex, lightSource);
-          }
-
-          LaserType laserType = src.getLaserType(instrumentIndex, lightSource);
-            dest.setLaserType(laserType, instrumentIndex, lightSource);
-
-          PositiveInteger frequencyMultiplication =
-            src.getLaserFrequencyMultiplication(instrumentIndex, lightSource);
-            dest.setLaserFrequencyMultiplication(
-              frequencyMultiplication, instrumentIndex, lightSource);
-
-          LaserMedium medium =
-            src.getLaserLaserMedium(instrumentIndex, lightSource);
-            dest.setLaserLaserMedium(medium, instrumentIndex, lightSource);
-
-          bool pockelCell =
-            src.getLaserPockelCell(instrumentIndex, lightSource);
-            dest.setLaserPockelCell(pockelCell, instrumentIndex, lightSource);
-
-          Pulse pulse = src.getLaserPulse(instrumentIndex, lightSource);
-            dest.setLaserPulse(pulse, instrumentIndex, lightSource);
-
-          std::string pump = src.getLaserPump(instrumentIndex, lightSource);
-            dest.setLaserPump(pump, instrumentIndex, lightSource);
-
-          double repetitionRate =
-            src.getLaserRepetitionRate(instrumentIndex, lightSource);
-            dest.setLaserRepetitionRate(
-              repetitionRate, instrumentIndex, lightSource);
-
-          bool tuneable = src.getLaserTuneable(instrumentIndex, lightSource);
-          dest.setLaserTuneable(tuneable, instrumentIndex, lightSource);
-
-          PositiveFloat wavelength =
-            src.getLaserWavelength(instrumentIndex, lightSource);
-          dest.setLaserWavelength(wavelength, instrumentIndex, lightSource);
-
-          index_type lightSourceAnnotationRefCount = 0;
-          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
-        for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+        else if (type == "GenericExcitationSource")
           {
-            std::string lightSourceAnnotationRef = src.getLaserAnnotationRef(instrumentIndex, lightSource, r);
-            dest.setLaserAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
-        }
-      }
-      else if (type == "LightEmittingDiode") {
-          std::string id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
-          if (!id.empty()) {
-            dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
+            if (transfer(src, dest,
+                         &MetadataRetrieve::getGenericExcitationSourceID,
+                         &MetadataStore::setGenericExcitationSourceID,
+                         instrumentIndex, lightSource))
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getGenericExcitationSourceMap,
+                         &MetadataStore::setGenericExcitationSourceMap,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getGenericExcitationSourceLotNumber,
+                         &MetadataStore::setGenericExcitationSourceLotNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getGenericExcitationSourceManufacturer,
+                         &MetadataStore::setGenericExcitationSourceManufacturer,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getGenericExcitationSourceModel,
+                         &MetadataStore::setGenericExcitationSourceModel,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getGenericExcitationSourcePower,
+                         &MetadataStore::setGenericExcitationSourcePower,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getGenericExcitationSourceSerialNumber,
+                         &MetadataStore::setGenericExcitationSourceSerialNumber,
+                         instrumentIndex, lightSource);
+
+                index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
+                for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getGenericExcitationSourceAnnotationRef,
+                             &MetadataStore::setGenericExcitationSourceAnnotationRef,
+                             instrumentIndex, lightSource, r);
+                  }
+              }
           }
-
-          std::string lotNumber =
-            src.getLightEmittingDiodeLotNumber(instrumentIndex, lightSource);
-          if (!lotNumber.empty()) {
-            dest.setLightEmittingDiodeLotNumber(
-              lotNumber, instrumentIndex, lightSource);
-          }
-
-          std::string manufacturer =
-            src.getLightEmittingDiodeManufacturer(instrumentIndex, lightSource);
-          if (!manufacturer.empty()) {
-            dest.setLightEmittingDiodeManufacturer(
-              manufacturer, instrumentIndex, lightSource);
-          }
-
-          std::string model =
-            src.getLightEmittingDiodeModel(instrumentIndex, lightSource);
-          if (!model.empty()) {
-            dest.setLightEmittingDiodeModel(
-              model, instrumentIndex, lightSource);
-          }
-
-          double power =
-            src.getLightEmittingDiodePower(instrumentIndex, lightSource);
-            dest.setLightEmittingDiodePower(
-              power, instrumentIndex, lightSource);
-
-          std::string serialNumber =
-            src.getLightEmittingDiodeSerialNumber(instrumentIndex, lightSource);
-          if (!serialNumber.empty()) {
-            dest.setLightEmittingDiodeSerialNumber(
-              serialNumber, instrumentIndex, lightSource);
-          }
-
-        index_type lightSourceAnnotationRefCount = 0;
-          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
-        for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+        else if (type == "Laser")
           {
-            std::string lightSourceAnnotationRef = src.getLightEmittingDiodeAnnotationRef(instrumentIndex, lightSource, r);
-            dest.setLightEmittingDiodeAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
-        }
+            if (transfer(src, dest,
+                         &MetadataRetrieve::getLaserID,
+                         &MetadataStore::setLaserID,
+                         instrumentIndex, lightSource))
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserLotNumber,
+                         &MetadataStore::setLaserLotNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserManufacturer,
+                         &MetadataStore::setLaserManufacturer,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserLotNumber,
+                         &MetadataStore::setLaserLotNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserModel,
+                         &MetadataStore::setLaserModel,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserPower,
+                         &MetadataStore::setLaserPower,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserSerialNumber,
+                         &MetadataStore::setLaserSerialNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserType,
+                         &MetadataStore::setLaserType,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserFrequencyMultiplication,
+                         &MetadataStore::setLaserFrequencyMultiplication,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserLaserMedium,
+                         &MetadataStore::setLaserLaserMedium,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserPockelCell,
+                         &MetadataStore::setLaserPockelCell,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserPulse,
+                         &MetadataStore::setLaserPulse,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserPump,
+                         &MetadataStore::setLaserPump,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserRepetitionRate,
+                         &MetadataStore::setLaserRepetitionRate,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserTuneable,
+                         &MetadataStore::setLaserTuneable,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLaserWavelength,
+                         &MetadataStore::setLaserWavelength,
+                         instrumentIndex, lightSource);
+
+                index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
+                for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getLaserAnnotationRef,
+                             &MetadataStore::setLaserAnnotationRef,
+                             instrumentIndex, lightSource, r);
+                  }
+              }
+          }
+        else if (type == "LightEmittingDiode")
+          {
+            if (transfer(src, dest,
+                         &MetadataRetrieve::getLightEmittingDiodeID,
+                         &MetadataStore::setLightEmittingDiodeID,
+                         instrumentIndex, lightSource))
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getLightEmittingDiodeLotNumber,
+                         &MetadataStore::setLightEmittingDiodeLotNumber,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLightEmittingDiodeManufacturer,
+                         &MetadataStore::setLightEmittingDiodeManufacturer,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLightEmittingDiodeModel,
+                         &MetadataStore::setLightEmittingDiodeModel,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLightEmittingDiodePower,
+                         &MetadataStore::setLightEmittingDiodePower,
+                         instrumentIndex, lightSource);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLightEmittingDiodeSerialNumber,
+                         &MetadataStore::setLightEmittingDiodeSerialNumber,
+                         instrumentIndex, lightSource);
+
+                index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
+                for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getLightEmittingDiodeAnnotationRef,
+                             &MetadataStore::setLightEmittingDiodeAnnotationRef,
+                             instrumentIndex, lightSource, r);
+                  }
+              }
+          }
       }
-    }
   }
 
   void
   convertInstruments(const MetadataRetrieve& src,
                      MetadataStore&          dest)
   {
-    index_type instrumentCount = 0;
-      instrumentCount = src.getInstrumentCount();
+    index_type instrumentCount(src.getInstrumentCount());
     for (index_type i = 0; i < instrumentCount; ++i)
       {
-        std::string id = src.getInstrumentID(i);
-        dest.setInstrumentID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getInstrumentID,
+                 &MetadataStore::setInstrumentID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getMicroscopeLotNumber,
+                 &MetadataStore::setMicroscopeLotNumber,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getMicroscopeManufacturer,
+                 &MetadataStore::setMicroscopeManufacturer,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getMicroscopeModel,
+                 &MetadataStore::setMicroscopeModel,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getMicroscopeSerialNumber,
+                 &MetadataStore::setMicroscopeSerialNumber,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getMicroscopeType,
+                 &MetadataStore::setMicroscopeType,
+                 i);
 
-        std::string microscopeLotNumber = src.getMicroscopeLotNumber(i);
-        dest.setMicroscopeLotNumber(microscopeLotNumber, i);
-
-        std::string microscopeManufacturer = src.getMicroscopeManufacturer(i);
-        dest.setMicroscopeManufacturer(microscopeManufacturer, i);
-
-        std::string microscopeModel = src.getMicroscopeModel(i);
-        dest.setMicroscopeModel(microscopeModel, i);
-
-        std::string microscopeSerialNumber = src.getMicroscopeSerialNumber(i);
-        dest.setMicroscopeSerialNumber(microscopeSerialNumber, i);
-
-        MicroscopeType microscopeType = src.getMicroscopeType(i);
-        dest.setMicroscopeType(microscopeType, i);
-
-      index_type detectorCount = 0;
-        detectorCount = src.getDetectorCount(i);
-      for (index_type q = 0; q < detectorCount; ++q)
+        index_type detectorCount(src.getDetectorCount(i));
+        for (index_type q = 0; q < detectorCount; ++q)
         {
-          std::string detectorID = src.getDetectorID(i, q);
-          dest.setDetectorID(detectorID, i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorID,
+                   &MetadataStore::setDetectorID,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorAmplificationGain,
+                   &MetadataStore::setDetectorAmplificationGain,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorGain,
+                   &MetadataStore::setDetectorGain,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorLotNumber,
+                   &MetadataStore::setDetectorLotNumber,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorManufacturer,
+                   &MetadataStore::setDetectorManufacturer,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorModel,
+                   &MetadataStore::setDetectorModel,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorOffset,
+                   &MetadataStore::setDetectorOffset,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorSerialNumber,
+                   &MetadataStore::setDetectorSerialNumber,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorType,
+                   &MetadataStore::setDetectorType,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorVoltage,
+                   &MetadataStore::setDetectorVoltage,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getDetectorZoom,
+                   &MetadataStore::setDetectorZoom,
+                   i, q);
 
-          double amplificationGain = src.getDetectorAmplificationGain(i, q);
-          dest.setDetectorAmplificationGain(amplificationGain, i, q);
-
-          double gain = src.getDetectorGain(i, q);
-          dest.setDetectorGain(gain, i, q);
-
-          std::string lotNumber = src.getDetectorLotNumber(i, q);
-          dest.setDetectorLotNumber(lotNumber, i, q);
-
-          std::string manufacturer = src.getDetectorManufacturer(i, q);
-          dest.setDetectorManufacturer(manufacturer, i, q);
-
-          std::string model = src.getDetectorModel(i, q);
-          dest.setDetectorModel(model, i, q);
-
-          double offset = src.getDetectorOffset(i, q);
-          dest.setDetectorOffset(offset, i, q);
-
-          std::string serialNumber = src.getDetectorSerialNumber(i, q);
-          dest.setDetectorSerialNumber(serialNumber, i, q);
-
-          DetectorType detectorType = src.getDetectorType(i, q);
-          dest.setDetectorType(detectorType, i, q);
-
-          double voltage = src.getDetectorVoltage(i, q);
-          dest.setDetectorVoltage(voltage, i, q);
-
-          double zoom = src.getDetectorZoom(i, q);
-          dest.setDetectorZoom(zoom, i, q);
-
-        index_type detectorAnnotationRefCount = 0;
-          detectorAnnotationRefCount = src.getDetectorAnnotationRefCount(i, q);
-        for (index_type r = 0; r < detectorAnnotationRefCount; ++r)
-          {
-            std::string detectorAnnotationRef = src.getDetectorAnnotationRef(i, q, r);
-            dest.setDetectorAnnotationRef(detectorAnnotationRef, i, q, r);
+          index_type detectorAnnotationRefCount(src.getDetectorAnnotationRefCount(i, q));
+          for (index_type r = 0; r < detectorAnnotationRefCount; ++r)
+            {
+              transfer(src, dest,
+                       &MetadataRetrieve::getDetectorAnnotationRef,
+                       &MetadataStore::setDetectorAnnotationRef,
+                       i, q, r);
+            }
         }
+
+        index_type dichroicCount(src.getDichroicCount(i));
+        for (index_type q = 0; q < dichroicCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getDichroicID,
+                     &MetadataStore::setDichroicID,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getDichroicLotNumber,
+                     &MetadataStore::setDichroicLotNumber,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getDichroicManufacturer,
+                     &MetadataStore::setDichroicManufacturer,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getDichroicModel,
+                     &MetadataStore::setDichroicModel,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getDichroicSerialNumber,
+                     &MetadataStore::setDichroicSerialNumber,
+                     i, q);
+
+            index_type dichroicAnnotationRefCount(src.getDichroicAnnotationRefCount(i,q));
+            for (index_type r = 0; r < dichroicAnnotationRefCount; ++r)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getDichroicAnnotationRef,
+                         &MetadataStore::setDichroicAnnotationRef,
+                         i, q, r);
+              }
+          }
+
+        index_type filterCount(src.getFilterCount(i));
+        for (index_type q = 0; q < filterCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterID,
+                     &MetadataStore::setFilterID,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterFilterWheel,
+                     &MetadataStore::setFilterFilterWheel,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterLotNumber,
+                     &MetadataStore::setFilterLotNumber,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterManufacturer,
+                     &MetadataStore::setFilterManufacturer,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterModel,
+                     &MetadataStore::setFilterModel,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterSerialNumber,
+                     &MetadataStore::setFilterSerialNumber,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterType,
+                     &MetadataStore::setFilterType,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTransmittanceRangeCutIn,
+                     &MetadataStore::setTransmittanceRangeCutIn,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTransmittanceRangeCutInTolerance,
+                     &MetadataStore::setTransmittanceRangeCutInTolerance,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTransmittanceRangeCutOut,
+                     &MetadataStore::setTransmittanceRangeCutOut,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTransmittanceRangeCutOutTolerance,
+                     &MetadataStore::setTransmittanceRangeCutOutTolerance,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getTransmittanceRangeTransmittance,
+                     &MetadataStore::setTransmittanceRangeTransmittance,
+                     i, q);
+
+            index_type filterAnnotationRefCount(src.getFilterAnnotationRefCount(i, q));
+            for (index_type r = 0; r < filterAnnotationRefCount; ++r)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilterAnnotationRef,
+                         &MetadataStore::setFilterAnnotationRef,
+                         i, q, r);
+              }
+          }
+
+        index_type objectiveCount(src.getObjectiveCount(i));
+        for (index_type q = 0; q < objectiveCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveID,
+                     &MetadataStore::setObjectiveID,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveCalibratedMagnification,
+                     &MetadataStore::setObjectiveCalibratedMagnification,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveCorrection,
+                     &MetadataStore::setObjectiveCorrection,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveImmersion,
+                     &MetadataStore::setObjectiveImmersion,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveIris,
+                     &MetadataStore::setObjectiveIris,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveLensNA,
+                     &MetadataStore::setObjectiveLensNA,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveLotNumber,
+                     &MetadataStore::setObjectiveLotNumber,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveManufacturer,
+                     &MetadataStore::setObjectiveManufacturer,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveModel,
+                     &MetadataStore::setObjectiveModel,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveNominalMagnification,
+                     &MetadataStore::setObjectiveNominalMagnification,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveSerialNumber,
+                     &MetadataStore::setObjectiveSerialNumber,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getObjectiveWorkingDistance,
+                     &MetadataStore::setObjectiveWorkingDistance,
+                     i, q);
+
+            index_type objectiveAnnotationRefCount(src.getObjectiveAnnotationRefCount(i, q));
+            for (index_type r = 0; r < objectiveAnnotationRefCount; ++r)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getObjectiveAnnotationRef,
+                         &MetadataStore::setObjectiveAnnotationRef,
+                         i, q, r);
+              }
+          }
+
+        index_type filterSetCount(src.getFilterSetCount(i));
+        for (index_type q = 0; q < filterSetCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterSetID,
+                     &MetadataStore::setFilterSetID,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterSetDichroicRef,
+                     &MetadataStore::setFilterSetDichroicRef,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterSetLotNumber,
+                     &MetadataStore::setFilterSetLotNumber,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterSetManufacturer,
+                     &MetadataStore::setFilterSetManufacturer,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterSetModel,
+                     &MetadataStore::setFilterSetModel,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getFilterSetSerialNumber,
+                     &MetadataStore::setFilterSetSerialNumber,
+                     i, q);
+
+            index_type emFilterCount(src.getFilterSetEmissionFilterRefCount(i, q));
+            for (index_type f = 0; f < emFilterCount; ++f)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilterSetEmissionFilterRef,
+                         &MetadataStore::setFilterSetEmissionFilterRef,
+                         i, q, f);
+              }
+
+            index_type exFilterCount(src.getFilterSetExcitationFilterRefCount(i, q));
+            for (index_type f = 0; f < exFilterCount; ++f)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getFilterSetExcitationFilterRef,
+                         &MetadataStore::setFilterSetExcitationFilterRef,
+                         i, q, f);
+              }
+          }
+        convertLightSources(src, dest, i);
       }
-
-      index_type dichroicCount = 0;
-        dichroicCount = src.getDichroicCount(i);
-      for (index_type q = 0; q < dichroicCount; ++q)
-        {
-          std::string dichroicID = src.getDichroicID(i, q);
-          dest.setDichroicID(dichroicID, i, q);
-
-          std::string lotNumber = src.getDichroicLotNumber(i, q);
-          dest.setDichroicLotNumber(lotNumber, i, q);
-
-          std::string manufacturer = src.getDichroicManufacturer(i, q);
-          dest.setDichroicManufacturer(manufacturer, i, q);
-
-          std::string model = src.getDichroicModel(i, q);
-          dest.setDichroicModel(model, i, q);
-
-          std::string serialNumber = src.getDichroicSerialNumber(i, q);
-          dest.setDichroicSerialNumber(serialNumber, i, q);
-
-        index_type dichroicAnnotationRefCount = 0;
-          dichroicAnnotationRefCount = src.getDichroicAnnotationRefCount(i,q);
-        for (index_type r = 0; r < dichroicAnnotationRefCount; ++r)
-          {
-            std::string dichroicAnnotationRef = src.getDichroicAnnotationRef(i, q, r);
-            dest.setDichroicAnnotationRef(dichroicAnnotationRef, i, q, r);
-        }
-      }
-
-      index_type filterCount = 0;
-        filterCount = src.getFilterCount(i);
-      for (index_type q = 0; q < filterCount; ++q)
-        {
-          std::string filterID = src.getFilterID(i, q);
-          dest.setFilterID(filterID, i, q);
-
-          std::string filterWheel = src.getFilterFilterWheel(i, q);
-          dest.setFilterFilterWheel(filterWheel, i, q);
-
-          std::string lotNumber = src.getFilterLotNumber(i, q);
-          dest.setFilterLotNumber(lotNumber, i, q);
-
-          std::string manufacturer = src.getFilterManufacturer(i, q);
-          dest.setFilterManufacturer(manufacturer, i, q);
-
-          std::string model = src.getFilterModel(i, q);
-          dest.setFilterModel(model, i, q);
-
-          std::string serialNumber = src.getFilterSerialNumber(i, q);
-          dest.setFilterSerialNumber(serialNumber, i, q);
-
-          FilterType filterType = src.getFilterType(i, q);
-          dest.setFilterType(filterType, i, q);
-
-          PositiveInteger cutIn = src.getTransmittanceRangeCutIn(i, q);
-          dest.setTransmittanceRangeCutIn(cutIn, i, q);
-
-          NonNegativeInteger cutInTolerance = src.getTransmittanceRangeCutInTolerance(i, q);
-          dest.setTransmittanceRangeCutInTolerance(cutInTolerance, i, q);
-
-          PositiveInteger cutOut = src.getTransmittanceRangeCutOut(i, q);
-          dest.setTransmittanceRangeCutOut(cutOut, i, q);
-
-          NonNegativeInteger cutOutTolerance = src.getTransmittanceRangeCutOutTolerance(i, q);
-          dest.setTransmittanceRangeCutOutTolerance(cutOutTolerance, i, q);
-
-          PercentFraction transmittance = src.getTransmittanceRangeTransmittance(i, q);
-          dest.setTransmittanceRangeTransmittance(transmittance, i, q);
-
-        index_type filterAnnotationRefCount = 0;
-          filterAnnotationRefCount = src.getFilterAnnotationRefCount(i, q);
-        for (index_type r = 0; r < filterAnnotationRefCount; ++r)
-          {
-            std::string filterAnnotationRef = src.getFilterAnnotationRef(i, q, r);
-            dest.setFilterAnnotationRef(filterAnnotationRef, i, q, r);
-        }
-      }
-
-      index_type objectiveCount = 0;
-        objectiveCount = src.getObjectiveCount(i);
-      for (index_type q = 0; q < objectiveCount; ++q)
-        {
-          std::string objectiveID = src.getObjectiveID(i, q);
-          dest.setObjectiveID(objectiveID, i, q);
-
-          double calibratedMag = src.getObjectiveCalibratedMagnification(i, q);
-          dest.setObjectiveCalibratedMagnification(calibratedMag, i, q);
-
-          Correction correction = src.getObjectiveCorrection(i, q);
-          dest.setObjectiveCorrection(correction, i, q);
-
-          Immersion immersion = src.getObjectiveImmersion(i, q);
-          dest.setObjectiveImmersion(immersion, i, q);
-
-          bool iris = src.getObjectiveIris(i, q);
-          dest.setObjectiveIris(iris, i, q);
-
-          double lensNA = src.getObjectiveLensNA(i, q);
-          dest.setObjectiveLensNA(lensNA, i, q);
-
-          std::string lotNumber = src.getObjectiveLotNumber(i, q);
-          dest.setObjectiveLotNumber(lotNumber, i, q);
-
-          std::string manufacturer = src.getObjectiveManufacturer(i, q);
-          dest.setObjectiveManufacturer(manufacturer, i, q);
-
-          std::string model = src.getObjectiveModel(i, q);
-          dest.setObjectiveModel(model, i, q);
-
-          double nominalMag = src.getObjectiveNominalMagnification(i, q);
-          dest.setObjectiveNominalMagnification(nominalMag, i, q);
-
-          std::string serialNumber = src.getObjectiveSerialNumber(i, q);
-          dest.setObjectiveSerialNumber(serialNumber, i, q);
-
-          double workingDistance = src.getObjectiveWorkingDistance(i, q);
-          dest.setObjectiveWorkingDistance(workingDistance, i, q);
-
-        index_type objectiveAnnotationRefCount = 0;
-          objectiveAnnotationRefCount = src.getObjectiveAnnotationRefCount(i, q);
-
-        for (index_type r = 0; r < objectiveAnnotationRefCount; ++r)
-          {
-            std::string objectiveAnnotationRef = src.getObjectiveAnnotationRef(i, q, r);
-            dest.setObjectiveAnnotationRef(objectiveAnnotationRef, i, q, r);
-        }
-      }
-
-      index_type filterSetCount = 0;
-      filterSetCount = src.getFilterSetCount(i);
-      for (index_type q = 0; q < filterSetCount; ++q)
-        {
-          std::string filterSetID = src.getFilterSetID(i, q);
-          dest.setFilterSetID(filterSetID, i, q);
-
-          std::string dichroicRef = src.getFilterSetDichroicRef(i, q);
-          dest.setFilterSetDichroicRef(dichroicRef, i, q);
-
-          std::string lotNumber = src.getFilterSetLotNumber(i, q);
-          dest.setFilterSetLotNumber(lotNumber, i, q);
-
-          std::string manufacturer = src.getFilterSetManufacturer(i, q);
-          dest.setFilterSetManufacturer(manufacturer, i, q);
-
-          std::string model = src.getFilterSetModel(i, q);
-          dest.setFilterSetModel(model, i, q);
-
-          std::string serialNumber = src.getFilterSetSerialNumber(i, q);
-          dest.setFilterSetSerialNumber(serialNumber, i, q);
-
-        index_type emFilterCount = 0;
-          emFilterCount = src.getFilterSetEmissionFilterRefCount(i, q);
-        for (index_type f = 0; f < emFilterCount; ++f)
-          {
-            std::string emFilterRef = src.getFilterSetEmissionFilterRef(i, q, f);
-            dest.setFilterSetEmissionFilterRef(emFilterRef, i, q, f);
-        }
-
-        index_type exFilterCount = 0;
-          exFilterCount = src.getFilterSetExcitationFilterRefCount(i, q);
-        for (index_type f = 0; f < exFilterCount; ++f)
-          {
-            std::string exFilterRef = src.getFilterSetExcitationFilterRef(i, q, f);
-            dest.setFilterSetExcitationFilterRef(exFilterRef, i, q, f);
-        }
-      }
-      convertLightSources(src, dest, i);
-    }
   }
 
   void
   convertListAnnotations(const MetadataRetrieve& src,
                          MetadataStore&          dest)
   {
-    index_type listAnnotationCount = 0;
-      listAnnotationCount = src.getListAnnotationCount();
+    index_type listAnnotationCount(src.getListAnnotationCount());
     for (index_type i = 0; i < listAnnotationCount; ++i)
       {
-        std::string id = src.getListAnnotationID(i);
-        dest.setListAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getListAnnotationID,
+                 &MetadataStore::setListAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getListAnnotationDescription,
+                 &MetadataStore::setListAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getListAnnotationNamespace,
+                 &MetadataStore::setListAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getListAnnotationAnnotator,
+                 &MetadataStore::setListAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getListAnnotationDescription(i);
-        dest.setListAnnotationDescription(description, i);
-
-        std::string ns = src.getListAnnotationNamespace(i);
-        dest.setListAnnotationNamespace(ns, i);
-
-        std::string annotator = src.getListAnnotationAnnotator(i);
-        dest.setListAnnotationAnnotator(annotator, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getListAnnotationAnnotationCount(i);
-      for (index_type a = 0; a < annotationRefCount; ++a)
-        {
-          std::string id = src.getListAnnotationAnnotationRef(i, a);
-          dest.setListAnnotationAnnotationRef(id, i, a);
+        index_type annotationRefCount(src.getListAnnotationAnnotationCount(i));
+        for (index_type a = 0; a < annotationRefCount; ++a)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getListAnnotationAnnotationRef,
+                     &MetadataStore::setListAnnotationAnnotationRef,
+                     i, a);
+          }
       }
-    }
   }
 
   void
   convertLongAnnotations(const MetadataRetrieve& src,
                          MetadataStore&          dest)
   {
-    index_type longAnnotationCount = 0;
-      longAnnotationCount = src.getLongAnnotationCount();
+    index_type longAnnotationCount(src.getLongAnnotationCount());
     for (index_type i = 0; i < longAnnotationCount; ++i)
       {
-        std::string id = src.getLongAnnotationID(i);
-        dest.setLongAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getLongAnnotationID,
+                 &MetadataStore::setLongAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getLongAnnotationDescription,
+                 &MetadataStore::setLongAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getLongAnnotationNamespace,
+                 &MetadataStore::setLongAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getLongAnnotationValue,
+                 &MetadataStore::setLongAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getLongAnnotationAnnotator,
+                 &MetadataStore::setLongAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getLongAnnotationDescription(i);
-        dest.setLongAnnotationDescription(description, i);
-
-        std::string ns = src.getLongAnnotationNamespace(i);
-        dest.setLongAnnotationNamespace(ns, i);
-
-        int64_t value = src.getLongAnnotationValue(i);
-        dest.setLongAnnotationValue(value, i);
-
-        std::string annotator = src.getLongAnnotationAnnotator(i);
-        dest.setLongAnnotationAnnotator(annotator, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getLongAnnotationAnnotationCount(i);
-      for (index_type a = 0; a < annotationRefCount; ++a)
-        {
-          std::string id = src.getLongAnnotationAnnotationRef(i, a);
-          dest.setLongAnnotationAnnotationRef(id, i, a);
+        index_type annotationRefCount(src.getLongAnnotationAnnotationCount(i));
+        for (index_type a = 0; a < annotationRefCount; ++a)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getLongAnnotationAnnotationRef,
+                     &MetadataStore::setLongAnnotationAnnotationRef,
+                     i, a);
+          }
       }
-    }
   }
 
   void
   convertMapAnnotations(const MetadataRetrieve& src,
                         MetadataStore&          dest)
   {
-    index_type mapAnnotationCount = 0;
-      mapAnnotationCount = src.getMapAnnotationCount();
+    index_type mapAnnotationCount(src.getMapAnnotationCount());
     for (index_type i = 0; i < mapAnnotationCount; ++i)
       {
         std::string id = src.getMapAnnotationID(i);
@@ -1288,8 +1604,7 @@ namespace
         std::string annotator = src.getMapAnnotationAnnotator(i);
         dest.setMapAnnotationAnnotator(annotator, i);
 
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getMapAnnotationAnnotationCount(i);
+        index_type annotationRefCount(src.getMapAnnotationAnnotationCount(i));
       for (index_type a = 0; a < annotationRefCount; ++a)
         {
           std::string id = src.getMapAnnotationAnnotationRef(i, a);
@@ -1302,1017 +1617,1290 @@ namespace
   convertPlates(const MetadataRetrieve& src,
                 MetadataStore&          dest)
   {
-    index_type plateCount = 0;
-      plateCount = src.getPlateCount();
+    index_type plateCount(src.getPlateCount());
     for (index_type i = 0; i < plateCount; ++i)
       {
-        std::string id = src.getPlateID(i);
-        dest.setPlateID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateID,
+                 &MetadataStore::setPlateID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateColumnNamingConvention,
+                 &MetadataStore::setPlateColumnNamingConvention,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateColumns,
+                 &MetadataStore::setPlateColumns,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateDescription,
+                 &MetadataStore::setPlateDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateExternalIdentifier,
+                 &MetadataStore::setPlateExternalIdentifier,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateFieldIndex,
+                 &MetadataStore::setPlateFieldIndex,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateName,
+                 &MetadataStore::setPlateName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateRowNamingConvention,
+                 &MetadataStore::setPlateRowNamingConvention,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateRows,
+                 &MetadataStore::setPlateRows,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateStatus,
+                 &MetadataStore::setPlateStatus,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateWellOriginX,
+                 &MetadataStore::setPlateWellOriginX,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getPlateWellOriginY,
+                 &MetadataStore::setPlateWellOriginY,
+                 i);
 
-        NamingConvention columnConvention = src.getPlateColumnNamingConvention(i);
-        dest.setPlateColumnNamingConvention(columnConvention, i);
+        index_type wellCount(src.getWellCount(i));
+        for (index_type q = 0; q < wellCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellID,
+                     &MetadataStore::setWellID,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellColor,
+                     &MetadataStore::setWellColor,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellColumn,
+                     &MetadataStore::setWellColumn,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellExternalDescription,
+                     &MetadataStore::setWellExternalDescription,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellExternalIdentifier,
+                     &MetadataStore::setWellExternalIdentifier,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellReagentRef,
+                     &MetadataStore::setWellReagentRef,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellRow,
+                     &MetadataStore::setWellRow,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getWellType,
+                     &MetadataStore::setWellType,
+                     i, q);
 
-        PositiveInteger columns = src.getPlateColumns(i);
-        dest.setPlateColumns(columns, i);
+            index_type wellAnnotationRefCount(src.getWellAnnotationRefCount(i, q));
+            for (index_type a = 0; a < wellAnnotationRefCount; ++a)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getWellAnnotationRef,
+                         &MetadataStore::setWellAnnotationRef,
+                         i, q, a);
+              }
 
-        std::string description = src.getPlateDescription(i);
-        dest.setPlateDescription(description, i);
+            index_type wellSampleCount(src.getWellSampleCount(i, q));
+            for (index_type w = 0; w < wellSampleCount; ++w)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getWellSampleID,
+                         &MetadataStore::setWellSampleID,
+                         i, q, w);
+                transfer(src, dest,
+                         &MetadataRetrieve::getWellSampleIndex,
+                         &MetadataStore::setWellSampleIndex,
+                         i, q, w);
+                transfer(src, dest,
+                         &MetadataRetrieve::getWellSampleImageRef,
+                         &MetadataStore::setWellSampleImageRef,
+                         i, q, w);
+                transfer(src, dest,
+                         &MetadataRetrieve::getWellSamplePositionX,
+                         &MetadataStore::setWellSamplePositionX,
+                         i, q, w);
+                transfer(src, dest,
+                         &MetadataRetrieve::getWellSamplePositionY,
+                         &MetadataStore::setWellSamplePositionY,
+                         i, q, w);
+                transfer(src, dest,
+                         &MetadataRetrieve::getWellSampleTimepoint,
+                         &MetadataStore::setWellSampleTimepoint,
+                         i, q, w);
+              }
+          }
 
-        std::string externalID = src.getPlateExternalIdentifier(i);
-        dest.setPlateExternalIdentifier(externalID, i);
-
-        NonNegativeInteger fieldIndex = src.getPlateFieldIndex(i);
-        dest.setPlateFieldIndex(fieldIndex, i);
-
-        std::string name = src.getPlateName(i);
-        dest.setPlateName(name, i);
-
-        NamingConvention rowConvention = src.getPlateRowNamingConvention(i);
-        dest.setPlateRowNamingConvention(rowConvention, i);
-
-        PositiveInteger rows = src.getPlateRows(i);
-        dest.setPlateRows(rows, i);
-
-        std::string status = src.getPlateStatus(i);
-        dest.setPlateStatus(status, i);
-
-        double wellOriginX = src.getPlateWellOriginX(i);
-        dest.setPlateWellOriginX(wellOriginX, i);
-
-        double wellOriginY = src.getPlateWellOriginY(i);
-        dest.setPlateWellOriginY(wellOriginY, i);
-
-      index_type wellCount = 0;
-      wellCount = src.getWellCount(i);
-      for (index_type q = 0; q < wellCount; ++q)
+        index_type plateAcquisitionCount(src.getPlateAcquisitionCount(i));
+        for (index_type q = 0; q < plateAcquisitionCount; ++q)
         {
-          std::string wellID = src.getWellID(i, q);
-          dest.setWellID(wellID, i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getPlateAcquisitionID,
+                   &MetadataStore::setPlateAcquisitionID,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getPlateAcquisitionDescription,
+                   &MetadataStore::setPlateAcquisitionDescription,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getPlateAcquisitionEndTime,
+                   &MetadataStore::setPlateAcquisitionEndTime,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getPlateAcquisitionMaximumFieldCount,
+                   &MetadataStore::setPlateAcquisitionMaximumFieldCount,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getPlateAcquisitionName,
+                   &MetadataStore::setPlateAcquisitionName,
+                   i, q);
+          transfer(src, dest,
+                   &MetadataRetrieve::getPlateAcquisitionStartTime,
+                   &MetadataStore::setPlateAcquisitionStartTime,
+                   i, q);
 
-          Color color = src.getWellColor(i, q);
-          dest.setWellColor(color, i, q);
+          index_type plateAcquisitionAnnotationRefCount(src.getPlateAcquisitionAnnotationRefCount(i, q));
+          for (index_type a = 0; a < plateAcquisitionAnnotationRefCount; ++a)
+            {
+              transfer(src, dest,
+                       &MetadataRetrieve::getPlateAcquisitionAnnotationRef,
+                       &MetadataStore::setPlateAcquisitionAnnotationRef,
+                       i, q, a);
+            }
 
-          NonNegativeInteger column = src.getWellColumn(i, q);
-          dest.setWellColumn(column, i, q);
-
-          std::string externalDescription = src.getWellExternalDescription(i, q);
-          dest.setWellExternalDescription(externalDescription, i, q);
-
-          std::string wellExternalID = src.getWellExternalIdentifier(i, q);
-          dest.setWellExternalIdentifier(wellExternalID, i, q);
-
-          std::string reagentRef = src.getWellReagentRef(i, q);
-          dest.setWellReagentRef(reagentRef, i, q);
-
-          NonNegativeInteger row = src.getWellRow(i, q);
-          dest.setWellRow(row, i, q);
-
-          std::string type = src.getWellType(i, q);
-          dest.setWellType(type, i, q);
-
-        index_type wellAnnotationRefCount = 0;
-          src.getWellAnnotationRefCount(i, q);
-        for (index_type a = 0; a < wellAnnotationRefCount; ++a)
-          {
-            std::string wellAnnotationRef = src.getWellAnnotationRef(i, q, a);
-            dest.setWellAnnotationRef(wellAnnotationRef, i, q, a);
+          index_type wellSampleRefCount(src.getWellSampleRefCount(i, q));
+          for (index_type w = 0; w < wellSampleRefCount; ++w)
+            {
+              transfer(src, dest,
+                       &MetadataRetrieve::getPlateAcquisitionWellSampleRef,
+                       &MetadataStore::setPlateAcquisitionWellSampleRef,
+                       i, q, w);
+            }
         }
 
-        index_type wellSampleCount = 0;
-          wellSampleCount = src.getWellSampleCount(i, q);
-        for (index_type w = 0; w < wellSampleCount; ++w)
+        index_type plateAnnotationRefCount(src.getPlateAnnotationRefCount(i));
+        for (index_type q = 0; q < plateAnnotationRefCount; ++q)
           {
-            std::string wellSampleID = src.getWellSampleID(i, q, w);
-            dest.setWellSampleID(wellSampleID, i, q, w);
-
-            NonNegativeInteger index = src.getWellSampleIndex(i, q, w);
-            dest.setWellSampleIndex(index, i, q, w);
-
-            std::string imageRef = src.getWellSampleImageRef(i, q, w);
-            dest.setWellSampleImageRef(imageRef, i, q, w);
-
-            double positionX = src.getWellSamplePositionX(i, q, w);
-            dest.setWellSamplePositionX(positionX, i, q, w);
-
-            double positionY = src.getWellSamplePositionY(i, q, w);
-            dest.setWellSamplePositionY(positionY, i, q, w);
-
-            Timestamp timepoint= src.getWellSampleTimepoint(i, q, w);
-            dest.setWellSampleTimepoint(timepoint, i, q, w);
-        }
+            transfer(src, dest,
+                     &MetadataRetrieve::getPlateAnnotationRef,
+                     &MetadataStore::setPlateAnnotationRef,
+                     i, q);
+          }
       }
-
-      index_type plateAcquisitionCount = 0;
-      plateAcquisitionCount = src.getPlateAcquisitionCount(i);
-      for (index_type q = 0; q < plateAcquisitionCount; ++q)
-        {
-          std::string plateAcquisitionID = src.getPlateAcquisitionID(i, q);
-          dest.setPlateAcquisitionID(plateAcquisitionID, i, q);
-
-          std::string acquisitionDescription = src.getPlateAcquisitionDescription(i, q);
-          dest.setPlateAcquisitionDescription(acquisitionDescription, i, q);
-
-          Timestamp endTime = src.getPlateAcquisitionEndTime(i, q);
-          dest.setPlateAcquisitionEndTime(endTime, i, q);
-
-          PositiveInteger maximumFields = src.getPlateAcquisitionMaximumFieldCount(i, q);
-          dest.setPlateAcquisitionMaximumFieldCount(maximumFields, i, q);
-
-          std::string acquisitionName = src.getPlateAcquisitionName(i, q);
-          dest.setPlateAcquisitionName(acquisitionName, i, q);
-
-          Timestamp startTime = src.getPlateAcquisitionStartTime(i, q);
-          dest.setPlateAcquisitionStartTime(startTime, i, q);
-
-          index_type plateAcquisitionAnnotationRefCount = 0;
-        plateAcquisitionAnnotationRefCount = src.getPlateAcquisitionAnnotationRefCount(i, q);
-        for (index_type a = 0; a < plateAcquisitionAnnotationRefCount; ++a)
-          {
-            std::string plateAcquisitionAnnotationRef = src.getPlateAcquisitionAnnotationRef(i, q, a);
-            dest.setPlateAcquisitionAnnotationRef(plateAcquisitionAnnotationRef, i, q, a);
-        }
-
-        index_type wellSampleRefCount = 0;
-          wellSampleRefCount = src.getWellSampleRefCount(i, q);
-        for (index_type w = 0; w < wellSampleRefCount; ++w)
-          {
-            std::string wellSampleRef = src.getPlateAcquisitionWellSampleRef(i, q, w);
-            dest.setPlateAcquisitionWellSampleRef(wellSampleRef, i, q, w);
-        }
-      }
-
-      index_type plateAnnotationRefCount = 0;
-        plateAnnotationRefCount = src.getPlateAnnotationRefCount(i);
-      for (index_type q = 0; q < plateAnnotationRefCount; ++q)
-        {
-          std::string annotationRef = src.getPlateAnnotationRef(i, q);
-          dest.setPlateAnnotationRef(annotationRef, i, q);
-      }
-    }
   }
 
   void
   convertProjects(const MetadataRetrieve& src,
                   MetadataStore&          dest)
   {
-    index_type projectCount = 0;
-      projectCount = src.getProjectCount();
+    index_type projectCount(src.getProjectCount());
     for (index_type i = 0; i < projectCount; ++i)
       {
-        std::string projectID = src.getProjectID(i);
-        dest.setProjectID(projectID, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getProjectID,
+                 &MetadataStore::setProjectID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getProjectDescription,
+                 &MetadataStore::setProjectDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getProjectExperimenterGroupRef,
+                 &MetadataStore::setProjectExperimenterGroupRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getProjectExperimenterRef,
+                 &MetadataStore::setProjectExperimenterRef,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getProjectName,
+                 &MetadataStore::setProjectName,
+                 i);
 
-        std::string description = src.getProjectDescription(i);
-        dest.setProjectDescription(description, i);
+        index_type annotationRefCount(src.getProjectAnnotationRefCount(i));
+        for (index_type q = 0; q < annotationRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getProjectAnnotationRef,
+                     &MetadataStore::setProjectAnnotationRef,
+                     i, q);
+          }
 
-        std::string experimenterGroupRef = src.getProjectExperimenterGroupRef(i);
-        dest.setProjectExperimenterGroupRef(experimenterGroupRef, i);
-
-        std::string experimenterRef = src.getProjectExperimenterRef(i);
-        dest.setProjectExperimenterRef(experimenterRef, i);
-
-        std::string name = src.getProjectName(i);
-        dest.setProjectName(name, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getProjectAnnotationRefCount(i);
-      for (index_type q = 0; q < annotationRefCount; ++q)
-        {
-          std::string annotationRef = src.getProjectAnnotationRef(i, q);
-          dest.setProjectAnnotationRef(annotationRef, i, q);
+        index_type datasetRefCount(src.getDatasetRefCount(i));
+        for (index_type q = 0; q < datasetRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getProjectDatasetRef,
+                     &MetadataStore::setProjectDatasetRef,
+                     i, q);
+          }
       }
-
-      index_type datasetRefCount = 0;
-        datasetRefCount = src.getDatasetRefCount(i);
-      for (index_type q = 0; q < datasetRefCount; ++q)
-        {
-          std::string datasetRef = src.getProjectDatasetRef(i, q);
-          dest.setProjectDatasetRef(datasetRef, i, q);
-      }
-    }
   }
 
   void
   convertROIs(const MetadataRetrieve& src,
               MetadataStore&          dest)
   {
-    index_type roiCount = 0;
-      roiCount = src.getROICount();
+    index_type roiCount(src.getROICount());
     for (index_type i = 0; i < roiCount; ++i)
       {
-        std::string id = src.getROIID(i);
-        dest.setROIID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getROIID,
+                 &MetadataStore::setROIID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getROIName,
+                 &MetadataStore::setROIName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getROIDescription,
+                 &MetadataStore::setROIDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getROINamespace,
+                 &MetadataStore::setROINamespace,
+                 i);
 
-        std::string name = src.getROIName(i);
-        dest.setROIName(name, i);
+        index_type shapeCount(src.getShapeCount(i));
+        for (index_type q = 0; q < shapeCount; ++q)
+          {
+            std::string type = src.getShapeType(i, q);
 
-        std::string description = src.getROIDescription(i);
-        dest.setROIDescription(description, i);
+            if (type == "Ellipse")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseID,
+                         &MetadataStore::setEllipseID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseFillColor,
+                         &MetadataStore::setEllipseFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseFillRule,
+                         &MetadataStore::setEllipseFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseFontFamily,
+                         &MetadataStore::setEllipseFontFamily,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseFontSize,
+                         &MetadataStore::setEllipseFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseFontStyle,
+                         &MetadataStore::setEllipseFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseLineCap,
+                         &MetadataStore::setEllipseLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseLocked,
+                         &MetadataStore::setEllipseLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseStrokeColor,
+                         &MetadataStore::setEllipseStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseStrokeDashArray,
+                         &MetadataStore::setEllipseStrokeDashArray,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseStrokeWidth,
+                         &MetadataStore::setEllipseStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseText,
+                         &MetadataStore::setEllipseText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseTheZ,
+                         &MetadataStore::setEllipseTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseTheT,
+                         &MetadataStore::setEllipseTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseTheC,
+                         &MetadataStore::setEllipseTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseTransform,
+                         &MetadataStore::setEllipseTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseVisible,
+                         &MetadataStore::setEllipseVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseRadiusX,
+                         &MetadataStore::setEllipseRadiusX,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseRadiusY,
+                         &MetadataStore::setEllipseRadiusY,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseX,
+                         &MetadataStore::setEllipseX,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getEllipseY,
+                         &MetadataStore::setEllipseY,
+                         i, q);
 
-        std::string ns = src.getROINamespace(i);
-        dest.setROINamespace(ns, i);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getEllipseAnnotationRef,
+                             &MetadataStore::setEllipseAnnotationRef,
+                             i, q, r);
+                  }
+              }
+            else if (type == "Label")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelID,
+                         &MetadataStore::setLabelID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelFillColor,
+                         &MetadataStore::setLabelFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelFillRule,
+                         &MetadataStore::setLabelFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelFontFamily,
+                         &MetadataStore::setLabelFontFamily,
+                         i, q);
+                transfer(src, dest,
+                     &MetadataRetrieve::getLabelFontSize,
+                         &MetadataStore::setLabelFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelFontStyle,
+                         &MetadataStore::setLabelFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelLineCap,
+                         &MetadataStore::setLabelLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelLocked,
+                         &MetadataStore::setLabelLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelStrokeColor,
+                         &MetadataStore::setLabelStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelStrokeDashArray,
+                         &MetadataStore::setLabelStrokeDashArray,
+                     i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelStrokeWidth,
+                         &MetadataStore::setLabelStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelText,
+                         &MetadataStore::setLabelText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelTheZ,
+                         &MetadataStore::setLabelTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelTheT,
+                         &MetadataStore::setLabelTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelTheC,
+                         &MetadataStore::setLabelTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelTransform,
+                         &MetadataStore::setLabelTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelVisible,
+                         &MetadataStore::setLabelVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelX,
+                         &MetadataStore::setLabelX,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLabelY,
+                         &MetadataStore::setLabelY,
+                         i, q);
 
-      index_type shapeCount = 0;
-        shapeCount = src.getShapeCount(i);
-      for (index_type q = 0; q < shapeCount; ++q)
-        {
-        std::string type = src.getShapeType(i, q);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getLabelAnnotationRef,
+                             &MetadataStore::setLabelAnnotationRef,
+                             i, q, r);
+                  }
+              }
+            else if (type == "Line")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineID,
+                         &MetadataStore::setLineID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineFillColor,
+                         &MetadataStore::setLineFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineFillRule,
+                         &MetadataStore::setLineFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineFontFamily,
+                         &MetadataStore::setLineFontFamily,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineFontSize,
+                         &MetadataStore::setLineFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineFontStyle,
+                         &MetadataStore::setLineFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineLineCap,
+                         &MetadataStore::setLineLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineLocked,
+                         &MetadataStore::setLineLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineStrokeColor,
+                         &MetadataStore::setLineStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineStrokeDashArray,
+                         &MetadataStore::setLineStrokeDashArray,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineStrokeWidth,
+                         &MetadataStore::setLineStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineText,
+                         &MetadataStore::setLineText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineTheZ,
+                         &MetadataStore::setLineTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineTheT,
+                         &MetadataStore::setLineTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineTheC,
+                         &MetadataStore::setLineTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineTransform,
+                         &MetadataStore::setLineTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineVisible,
+                         &MetadataStore::setLineVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineMarkerEnd,
+                         &MetadataStore::setLineMarkerEnd,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineMarkerStart,
+                         &MetadataStore::setLineMarkerStart,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineX1,
+                         &MetadataStore::setLineX1,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineX2,
+                         &MetadataStore::setLineX2,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineY1,
+                         &MetadataStore::setLineY1,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getLineY2,
+                         &MetadataStore::setLineY2,
+                         i, q);
 
-        if (type =="Ellipse") {
-            std::string shapeID = src.getEllipseID(i, q);
-            dest.setEllipseID(shapeID, i, q);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getLineAnnotationRef,
+                             &MetadataStore::setLineAnnotationRef,
+                             i, q, r);
+                  }
+              }
+            else if (type == "Mask")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskID,
+                         &MetadataStore::setMaskID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskFillColor,
+                         &MetadataStore::setMaskFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskFillRule,
+                         &MetadataStore::setMaskFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskFontFamily,
+                         &MetadataStore::setMaskFontFamily,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskFontSize,
+                         &MetadataStore::setMaskFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskFontStyle,
+                         &MetadataStore::setMaskFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskLineCap,
+                         &MetadataStore::setMaskLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskLocked,
+                         &MetadataStore::setMaskLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskStrokeColor,
+                         &MetadataStore::setMaskStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskStrokeDashArray,
+                         &MetadataStore::setMaskStrokeDashArray,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskStrokeWidth,
+                         &MetadataStore::setMaskStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskText,
+                         &MetadataStore::setMaskText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskTheZ,
+                         &MetadataStore::setMaskTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskTheT,
+                         &MetadataStore::setMaskTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskTheC,
+                         &MetadataStore::setMaskTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskTransform,
+                         &MetadataStore::setMaskTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskVisible,
+                         &MetadataStore::setMaskVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskHeight,
+                         &MetadataStore::setMaskHeight,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskWidth,
+                         &MetadataStore::setMaskWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskX,
+                         &MetadataStore::setMaskX,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getMaskY,
+                         &MetadataStore::setMaskY,
+                         i, q);
 
-            Color fillColor = src.getEllipseFillColor(i, q);
-            dest.setEllipseFillColor(fillColor, i, q);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getMaskAnnotationRef,
+                             &MetadataStore::setMaskAnnotationRef,
+                             i, q, r);
+                  }
+              }
+            else if (type == "Point")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointID,
+                         &MetadataStore::setPointID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointFillColor,
+                         &MetadataStore::setPointFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointFillRule,
+                         &MetadataStore::setPointFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointFontFamily,
+                         &MetadataStore::setPointFontFamily,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointFontSize,
+                         &MetadataStore::setPointFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointFontStyle,
+                         &MetadataStore::setPointFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointLineCap,
+                         &MetadataStore::setPointLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointLocked,
+                         &MetadataStore::setPointLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointStrokeColor,
+                         &MetadataStore::setPointStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointStrokeDashArray,
+                         &MetadataStore::setPointStrokeDashArray,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointStrokeWidth,
+                         &MetadataStore::setPointStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointText,
+                         &MetadataStore::setPointText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointTheZ,
+                         &MetadataStore::setPointTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointTheT,
+                         &MetadataStore::setPointTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointTheC,
+                         &MetadataStore::setPointTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointTransform,
+                         &MetadataStore::setPointTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointVisible,
+                         &MetadataStore::setPointVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointX,
+                         &MetadataStore::setPointX,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointY,
+                         &MetadataStore::setPointY,
+                         i, q);
 
-            FillRule fillRule = src.getEllipseFillRule(i, q);
-            dest.setEllipseFillRule(fillRule, i, q);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                transfer(src, dest,
+                         &MetadataRetrieve::getPointAnnotationRef,
+                         &MetadataStore::setPointAnnotationRef,
+                         i, q, r);
+                  }
+              }
+            else if (type == "Polygon")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonID,
+                         &MetadataStore::setPolygonID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonFillColor,
+                         &MetadataStore::setPolygonFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonFillRule,
+                         &MetadataStore::setPolygonFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonFontFamily,
+                         &MetadataStore::setPolygonFontFamily,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonFontSize,
+                         &MetadataStore::setPolygonFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonFontStyle,
+                         &MetadataStore::setPolygonFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonLineCap,
+                         &MetadataStore::setPolygonLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonLocked,
+                         &MetadataStore::setPolygonLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonStrokeColor,
+                         &MetadataStore::setPolygonStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonStrokeDashArray,
+                         &MetadataStore::setPolygonStrokeDashArray,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonStrokeWidth,
+                         &MetadataStore::setPolygonStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonText,
+                         &MetadataStore::setPolygonText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonTheZ,
+                         &MetadataStore::setPolygonTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonTheT,
+                         &MetadataStore::setPolygonTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonTheC,
+                         &MetadataStore::setPolygonTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonTransform,
+                         &MetadataStore::setPolygonTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonVisible,
+                         &MetadataStore::setPolygonVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolygonPoints,
+                         &MetadataStore::setPolygonPoints,
+                         i, q);
 
-            FontFamily fontFamily = src.getEllipseFontFamily(i, q);
-            dest.setEllipseFontFamily(fontFamily, i, q);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getPolygonAnnotationRef,
+                             &MetadataStore::setPolygonAnnotationRef,
+                             i, q, r);
+                  }
+              }
+            else if (type == "Polyline")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineID,
+                         &MetadataStore::setPolylineID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineFillColor,
+                         &MetadataStore::setPolylineFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineFillRule,
+                         &MetadataStore::setPolylineFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineFontFamily,
+                         &MetadataStore::setPolylineFontFamily,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineFontSize,
+                         &MetadataStore::setPolylineFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineFontStyle,
+                         &MetadataStore::setPolylineFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineLineCap,
+                         &MetadataStore::setPolylineLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineLocked,
+                         &MetadataStore::setPolylineLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineStrokeColor,
+                         &MetadataStore::setPolylineStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineStrokeDashArray,
+                         &MetadataStore::setPolylineStrokeDashArray,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineStrokeWidth,
+                         &MetadataStore::setPolylineStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineText,
+                         &MetadataStore::setPolylineText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineTheZ,
+                         &MetadataStore::setPolylineTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineTheT,
+                         &MetadataStore::setPolylineTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineTheC,
+                         &MetadataStore::setPolylineTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineTransform,
+                         &MetadataStore::setPolylineTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineVisible,
+                         &MetadataStore::setPolylineVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineMarkerEnd,
+                         &MetadataStore::setPolylineMarkerEnd,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylineMarkerStart,
+                         &MetadataStore::setPolylineMarkerStart,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getPolylinePoints,
+                         &MetadataStore::setPolylinePoints,
+                         i, q);
 
-            NonNegativeInteger fontSize = src.getEllipseFontSize(i, q);
-            dest.setEllipseFontSize(fontSize, i, q);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getPolylineAnnotationRef,
+                             &MetadataStore::setPolylineAnnotationRef,
+                             i, q, r);
+                  }
+              }
+            else if (type == "Rectangle")
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleID,
+                         &MetadataStore::setRectangleID,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleFillColor,
+                         &MetadataStore::setRectangleFillColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleFillRule,
+                         &MetadataStore::setRectangleFillRule,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleFontFamily,
+                         &MetadataStore::setRectangleFontFamily,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleFontSize,
+                         &MetadataStore::setRectangleFontSize,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleFontStyle,
+                         &MetadataStore::setRectangleFontStyle,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleLineCap,
+                         &MetadataStore::setRectangleLineCap,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleLocked,
+                         &MetadataStore::setRectangleLocked,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleStrokeColor,
+                         &MetadataStore::setRectangleStrokeColor,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleStrokeDashArray,
+                         &MetadataStore::setRectangleStrokeDashArray,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleStrokeWidth,
+                         &MetadataStore::setRectangleStrokeWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleText,
+                         &MetadataStore::setRectangleText,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleTheZ,
+                         &MetadataStore::setRectangleTheZ,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleTheT,
+                         &MetadataStore::setRectangleTheT,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleTheC,
+                         &MetadataStore::setRectangleTheC,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleTransform,
+                         &MetadataStore::setRectangleTransform,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleVisible,
+                         &MetadataStore::setRectangleVisible,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleHeight,
+                         &MetadataStore::setRectangleHeight,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleWidth,
+                         &MetadataStore::setRectangleWidth,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleX,
+                         &MetadataStore::setRectangleX,
+                         i, q);
+                transfer(src, dest,
+                         &MetadataRetrieve::getRectangleY,
+                         &MetadataStore::setRectangleY,
+                         i, q);
 
-            FontStyle fontStyle = src.getEllipseFontStyle(i, q);
-            dest.setEllipseFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getEllipseLineCap(i, q);
-            dest.setEllipseLineCap(lineCap, i, q);
-
-            bool locked = src.getEllipseLocked(i, q);
-            dest.setEllipseLocked(locked, i, q);
-
-            Color strokeColor = src.getEllipseStrokeColor(i, q);
-            dest.setEllipseStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getEllipseStrokeDashArray(i, q);
-            dest.setEllipseStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getEllipseStrokeWidth(i, q);
-            dest.setEllipseStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getEllipseText(i, q);
-            dest.setEllipseText(text, i, q);
-
-            NonNegativeInteger theC = src.getEllipseTheC(i, q);
-            dest.setEllipseTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getEllipseTheT(i, q);
-            dest.setEllipseTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getEllipseTheZ(i, q);
-            dest.setEllipseTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getEllipseTransform(i, q);
-            dest.setEllipseTransform(transform, i, q);
-
-            bool visible = src.getEllipseVisible(i, q);
-            dest.setEllipseVisible(visible, i, q);
-
-          double radiusX = src.getEllipseRadiusX(i, q);
-          dest.setEllipseRadiusX(radiusX, i, q);
-
-            double radiusY = src.getEllipseRadiusY(i, q);
-            dest.setEllipseRadiusY(radiusY, i, q);
-
-            double x = src.getEllipseX(i, q);
-            dest.setEllipseX(x, i, q);
-
-            double y = src.getEllipseY(i, q);
-            dest.setEllipseY(y, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getEllipseAnnotationRef(i, q, r);
-              dest.setEllipseAnnotationRef(shapeAnnotationRef, i, q, r);
+                index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
+                for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
+                  {
+                    transfer(src, dest,
+                             &MetadataRetrieve::getRectangleAnnotationRef,
+                             &MetadataStore::setRectangleAnnotationRef,
+                             i, q, r);
+                  }
+              }
           }
-        }
-        else if (type == "Label") {
-            std::string shapeID = src.getLabelID(i, q);
-            dest.setLabelID(shapeID, i, q);
 
-            Color fillColor = src.getLabelFillColor(i, q);
-            dest.setLabelFillColor(fillColor, i, q);
-
-            FillRule fillRule = src.getLabelFillRule(i, q);
-            dest.setLabelFillRule(fillRule, i, q);
-
-            FontFamily fontFamily = src.getLabelFontFamily(i, q);
-            dest.setLabelFontFamily(fontFamily, i, q);
-
-            NonNegativeInteger fontSize = src.getLabelFontSize(i, q);
-            dest.setLabelFontSize(fontSize, i, q);
-
-            FontStyle fontStyle = src.getLabelFontStyle(i, q);
-            dest.setLabelFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getLabelLineCap(i, q);
-            dest.setLabelLineCap(lineCap, i, q);
-
-            bool locked = src.getLabelLocked(i, q);
-            dest.setLabelLocked(locked, i, q);
-
-            Color strokeColor = src.getLabelStrokeColor(i, q);
-            dest.setLabelStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getLabelStrokeDashArray(i, q);
-            dest.setLabelStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getLabelStrokeWidth(i, q);
-            dest.setLabelStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getLabelText(i, q);
-            dest.setLabelText(text, i, q);
-
-            NonNegativeInteger theC = src.getLabelTheC(i, q);
-            dest.setLabelTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getLabelTheT(i, q);
-            dest.setLabelTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getLabelTheZ(i, q);
-            dest.setLabelTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getLabelTransform(i, q);
-            dest.setLabelTransform(transform, i, q);
-
-            bool visible = src.getLabelVisible(i, q);
-            dest.setLabelVisible(visible, i, q);
-
-            double x = src.getLabelX(i, q);
-            dest.setLabelX(x, i, q);
-
-            double y = src.getLabelY(i, q);
-            dest.setLabelY(y, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getLabelAnnotationRef(i, q, r);
-              dest.setLabelAnnotationRef(shapeAnnotationRef, i, q, r);
+        index_type annotationRefCount(src.getROIAnnotationRefCount(i));
+        for (index_type q = 0; q < annotationRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getROIAnnotationRef,
+                     &MetadataStore::setROIAnnotationRef,
+                     i, q);
           }
-        }
-        else if (type == "Line") {
-            std::string shapeID = src.getLineID(i, q);
-            dest.setLineID(shapeID, i, q);
-
-            Color fillColor = src.getLineFillColor(i, q);
-            dest.setLineFillColor(fillColor, i, q);
-
-            FillRule fillRule = src.getLineFillRule(i, q);
-            dest.setLineFillRule(fillRule, i, q);
-
-            FontFamily fontFamily = src.getLineFontFamily(i, q);
-            dest.setLineFontFamily(fontFamily, i, q);
-
-            NonNegativeInteger fontSize = src.getLineFontSize(i, q);
-            dest.setLineFontSize(fontSize, i, q);
-
-            FontStyle fontStyle = src.getLineFontStyle(i, q);
-            dest.setLineFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getLineLineCap(i, q);
-            dest.setLineLineCap(lineCap, i, q);
-
-            bool locked = src.getLineLocked(i, q);
-            dest.setLineLocked(locked, i, q);
-
-            Color strokeColor = src.getLineStrokeColor(i, q);
-            dest.setLineStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getLineStrokeDashArray(i, q);
-            dest.setLineStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getLineStrokeWidth(i, q);
-            dest.setLineStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getLineText(i, q);
-            dest.setLineText(text, i, q);
-
-            NonNegativeInteger theC = src.getLineTheC(i, q);
-            dest.setLineTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getLineTheT(i, q);
-            dest.setLineTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getLineTheZ(i, q);
-            dest.setLineTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getLineTransform(i, q);
-            dest.setLineTransform(transform, i, q);
-
-            bool visible = src.getLineVisible(i, q);
-            dest.setLineVisible(visible, i, q);
-
-            Marker end = src.getLineMarkerEnd(i, q);
-            dest.setLineMarkerEnd(end, i, q);
-
-            Marker start = src.getLineMarkerStart(i, q);
-            dest.setLineMarkerStart(start, i, q);
-
-            double x1 = src.getLineX1(i, q);
-            dest.setLineX1(x1, i, q);
-
-            double x2 = src.getLineX2(i, q);
-            dest.setLineX2(x2, i, q);
-
-            double y1 = src.getLineY1(i, q);
-            dest.setLineY1(y1, i, q);
-
-            double y2 = src.getLineY2(i, q);
-            dest.setLineY2(y2, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getLineAnnotationRef(i, q, r);
-              dest.setLineAnnotationRef(shapeAnnotationRef, i, q, r);
-          }
-        }
-        else if (type == "Mask") {
-            std::string shapeID = src.getMaskID(i, q);
-            dest.setMaskID(shapeID, i, q);
-
-            Color fillColor = src.getMaskFillColor(i, q);
-            dest.setMaskFillColor(fillColor, i, q);
-
-            FillRule fillRule = src.getMaskFillRule(i, q);
-            dest.setMaskFillRule(fillRule, i, q);
-
-            FontFamily fontFamily = src.getMaskFontFamily(i, q);
-            dest.setMaskFontFamily(fontFamily, i, q);
-
-            NonNegativeInteger fontSize = src.getMaskFontSize(i, q);
-            dest.setMaskFontSize(fontSize, i, q);
-
-            FontStyle fontStyle = src.getMaskFontStyle(i, q);
-            dest.setMaskFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getMaskLineCap(i, q);
-            dest.setMaskLineCap(lineCap, i, q);
-
-            bool locked = src.getMaskLocked(i, q);
-            dest.setMaskLocked(locked, i, q);
-
-            Color strokeColor = src.getMaskStrokeColor(i, q);
-            dest.setMaskStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getMaskStrokeDashArray(i, q);
-            dest.setMaskStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getMaskStrokeWidth(i, q);
-            dest.setMaskStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getMaskText(i, q);
-            dest.setMaskText(text, i, q);
-
-            NonNegativeInteger theC = src.getMaskTheC(i, q);
-            dest.setMaskTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getMaskTheT(i, q);
-            dest.setMaskTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getMaskTheZ(i, q);
-            dest.setMaskTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getMaskTransform(i, q);
-            dest.setMaskTransform(transform, i, q);
-
-            bool visible = src.getMaskVisible(i, q);
-            dest.setMaskVisible(visible, i, q);
-
-            double height = src.getMaskHeight(i, q);
-            dest.setMaskHeight(height, i, q);
-
-            double width = src.getMaskWidth(i, q);
-            dest.setMaskWidth(width, i, q);
-
-            double x = src.getMaskX(i, q);
-            dest.setMaskX(x, i, q);
-
-            double y = src.getMaskY(i, q);
-            dest.setMaskY(y, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getMaskAnnotationRef(i, q, r);
-              dest.setMaskAnnotationRef(shapeAnnotationRef, i, q, r);
-          }
-        }
-        else if (type == "Point") {
-            std::string shapeID = src.getPointID(i, q);
-            dest.setPointID(shapeID, i, q);
-
-            Color fillColor = src.getPointFillColor(i, q);
-            dest.setPointFillColor(fillColor, i, q);
-
-            FillRule fillRule = src.getPointFillRule(i, q);
-            dest.setPointFillRule(fillRule, i, q);
-
-            FontFamily fontFamily = src.getPointFontFamily(i, q);
-            dest.setPointFontFamily(fontFamily, i, q);
-
-            NonNegativeInteger fontSize = src.getPointFontSize(i, q);
-            dest.setPointFontSize(fontSize, i, q);
-
-            FontStyle fontStyle = src.getPointFontStyle(i, q);
-            dest.setPointFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getPointLineCap(i, q);
-            dest.setPointLineCap(lineCap, i, q);
-
-            bool locked = src.getPointLocked(i, q);
-            dest.setPointLocked(locked, i, q);
-
-            Color strokeColor = src.getPointStrokeColor(i, q);
-            dest.setPointStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getPointStrokeDashArray(i, q);
-            dest.setPointStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getPointStrokeWidth(i, q);
-            dest.setPointStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getPointText(i, q);
-            dest.setPointText(text, i, q);
-
-            NonNegativeInteger theC = src.getPointTheC(i, q);
-            dest.setPointTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getPointTheT(i, q);
-            dest.setPointTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getPointTheZ(i, q);
-            dest.setPointTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getPointTransform(i, q);
-            dest.setPointTransform(transform, i, q);
-
-            bool visible = src.getPointVisible(i, q);
-            dest.setPointVisible(visible, i, q);
-
-            double x = src.getPointX(i, q);
-            dest.setPointX(x, i, q);
-
-            double y = src.getPointY(i, q);
-            dest.setPointY(y, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-          shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getPointAnnotationRef(i, q, r);
-              dest.setPointAnnotationRef(shapeAnnotationRef, i, q, r);
-          }
-        }
-        else if (type == "Polygon") {
-            std::string shapeID = src.getPolygonID(i, q);
-            dest.setPolygonID(shapeID, i, q);
-
-            Color fillColor = src.getPolygonFillColor(i, q);
-            dest.setPolygonFillColor(fillColor, i, q);
-
-            FillRule fillRule = src.getPolygonFillRule(i, q);
-            dest.setPolygonFillRule(fillRule, i, q);
-
-            FontFamily fontFamily = src.getPolygonFontFamily(i, q);
-            dest.setPolygonFontFamily(fontFamily, i, q);
-
-            NonNegativeInteger fontSize = src.getPolygonFontSize(i, q);
-            dest.setPolygonFontSize(fontSize, i, q);
-
-            FontStyle fontStyle = src.getPolygonFontStyle(i, q);
-            dest.setPolygonFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getPolygonLineCap(i, q);
-            dest.setPolygonLineCap(lineCap, i, q);
-
-            bool locked = src.getPolygonLocked(i, q);
-            dest.setPolygonLocked(locked, i, q);
-
-            Color strokeColor = src.getPolygonStrokeColor(i, q);
-            dest.setPolygonStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getPolygonStrokeDashArray(i, q);
-            dest.setPolygonStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getPolygonStrokeWidth(i, q);
-            dest.setPolygonStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getPolygonText(i, q);
-            dest.setPolygonText(text, i, q);
-
-            NonNegativeInteger theC = src.getPolygonTheC(i, q);
-            dest.setPolygonTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getPolygonTheT(i, q);
-            dest.setPolygonTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getPolygonTheZ(i, q);
-            dest.setPolygonTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getPolygonTransform(i, q);
-            dest.setPolygonTransform(transform, i, q);
-
-            bool visible = src.getPolygonVisible(i, q);
-            dest.setPolygonVisible(visible, i, q);
-
-            std::string points = src.getPolygonPoints(i, q);
-            dest.setPolygonPoints(points, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getPolygonAnnotationRef(i, q, r);
-              dest.setPolygonAnnotationRef(shapeAnnotationRef, i, q, r);
-          }
-        }
-        else if (type == "Polyline") {
-            std::string shapeID = src.getPolylineID(i, q);
-            dest.setPolylineID(shapeID, i, q);
-
-            Color fillColor = src.getPolylineFillColor(i, q);
-            dest.setPolylineFillColor(fillColor, i, q);
-
-            FillRule fillRule = src.getPolylineFillRule(i, q);
-            dest.setPolylineFillRule(fillRule, i, q);
-
-            FontFamily fontFamily = src.getPolylineFontFamily(i, q);
-            dest.setPolylineFontFamily(fontFamily, i, q);
-
-            NonNegativeInteger fontSize = src.getPolylineFontSize(i, q);
-            dest.setPolylineFontSize(fontSize, i, q);
-
-            FontStyle fontStyle = src.getPolylineFontStyle(i, q);
-            dest.setPolylineFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getPolylineLineCap(i, q);
-            dest.setPolylineLineCap(lineCap, i, q);
-
-            bool locked = src.getPolylineLocked(i, q);
-            dest.setPolylineLocked(locked, i, q);
-
-            Color strokeColor = src.getPolylineStrokeColor(i, q);
-            dest.setPolylineStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getPolylineStrokeDashArray(i, q);
-            dest.setPolylineStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getPolylineStrokeWidth(i, q);
-            dest.setPolylineStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getPolylineText(i, q);
-            dest.setPolylineText(text, i, q);
-
-            NonNegativeInteger theC = src.getPolylineTheC(i, q);
-            dest.setPolylineTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getPolylineTheT(i, q);
-            dest.setPolylineTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getPolylineTheZ(i, q);
-            dest.setPolylineTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getPolylineTransform(i, q);
-            dest.setPolylineTransform(transform, i, q);
-
-            bool visible = src.getPolylineVisible(i, q);
-            dest.setPolylineVisible(visible, i, q);
-
-            Marker end = src.getPolylineMarkerEnd(i, q);
-            dest.setPolylineMarkerEnd(end, i, q);
-
-            Marker start = src.getPolylineMarkerStart(i, q);
-            dest.setPolylineMarkerStart(start, i, q);
-
-            std::string points = src.getPolylinePoints(i, q);
-            dest.setPolylinePoints(points, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getPolylineAnnotationRef(i, q, r);
-              dest.setPolylineAnnotationRef(shapeAnnotationRef, i, q, r);
-          }
-        }
-        else if (type == "Rectangle") {
-            std::string shapeID = src.getRectangleID(i, q);
-            dest.setRectangleID(shapeID, i, q);
-
-            Color fillColor = src.getRectangleFillColor(i, q);
-            dest.setRectangleFillColor(fillColor, i, q);
-
-            FillRule fillRule = src.getRectangleFillRule(i, q);
-            dest.setRectangleFillRule(fillRule, i, q);
-
-            FontFamily fontFamily = src.getRectangleFontFamily(i, q);
-            dest.setRectangleFontFamily(fontFamily, i, q);
-
-            NonNegativeInteger fontSize = src.getRectangleFontSize(i, q);
-            dest.setRectangleFontSize(fontSize, i, q);
-
-            FontStyle fontStyle = src.getRectangleFontStyle(i, q);
-            dest.setRectangleFontStyle(fontStyle, i, q);
-
-            LineCap lineCap = src.getRectangleLineCap(i, q);
-            dest.setRectangleLineCap(lineCap, i, q);
-
-            bool locked = src.getRectangleLocked(i, q);
-            dest.setRectangleLocked(locked, i, q);
-
-            Color strokeColor = src.getRectangleStrokeColor(i, q);
-            dest.setRectangleStrokeColor(strokeColor, i, q);
-
-            std::string dashArray = src.getRectangleStrokeDashArray(i, q);
-            dest.setRectangleStrokeDashArray(dashArray, i, q);
-
-            double strokeWidth = src.getRectangleStrokeWidth(i, q);
-            dest.setRectangleStrokeWidth(strokeWidth, i, q);
-
-            std::string text = src.getRectangleText(i, q);
-            dest.setRectangleText(text, i, q);
-
-            NonNegativeInteger theC = src.getRectangleTheC(i, q);
-            dest.setRectangleTheC(theC, i, q);
-
-            NonNegativeInteger theT = src.getRectangleTheT(i, q);
-            dest.setRectangleTheT(theT, i, q);
-
-            NonNegativeInteger theZ = src.getRectangleTheZ(i, q);
-            dest.setRectangleTheZ(theZ, i, q);
-
-            AffineTransform transform = src.getRectangleTransform(i, q);
-            dest.setRectangleTransform(transform, i, q);
-
-            bool visible = src.getRectangleVisible(i, q);
-            dest.setRectangleVisible(visible, i, q);
-
-            double height = src.getRectangleHeight(i, q);
-            dest.setRectangleHeight(height, i, q);
-
-            double width = src.getRectangleWidth(i, q);
-            dest.setRectangleWidth(width, i, q);
-
-            double x = src.getRectangleX(i, q);
-            dest.setRectangleX(x, i, q);
-
-            double y = src.getRectangleY(i, q);
-            dest.setRectangleY(y, i, q);
-
-          index_type shapeAnnotationRefCount = 0;
-            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
-          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-            {
-              std::string shapeAnnotationRef = src.getRectangleAnnotationRef(i, q, r);
-              dest.setRectangleAnnotationRef(shapeAnnotationRef, i, q, r);
-          }
-        }
       }
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getROIAnnotationRefCount(i);
-      for (index_type q = 0; q < annotationRefCount; ++q)
-        {
-          std::string annotationRef = src.getROIAnnotationRef(i, q);
-          dest.setROIAnnotationRef(annotationRef, i, q);
-      }
-    }
   }
 
   void
   convertScreens(const MetadataRetrieve& src,
                  MetadataStore&          dest)
   {
-    index_type screenCount = 0;
-      screenCount = src.getScreenCount();
+    index_type screenCount(src.getScreenCount());
     for (index_type i = 0; i < screenCount; ++i)
       {
-        std::string id = src.getScreenID(i);
-        dest.setScreenID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenID,
+                 &MetadataStore::setScreenID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenName,
+                 &MetadataStore::setScreenName,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenDescription,
+                 &MetadataStore::setScreenDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenProtocolDescription,
+                 &MetadataStore::setScreenProtocolDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenProtocolIdentifier,
+                 &MetadataStore::setScreenProtocolIdentifier,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenReagentSetDescription,
+                 &MetadataStore::setScreenReagentSetDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenReagentSetIdentifier,
+                 &MetadataStore::setScreenReagentSetIdentifier,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getScreenType,
+                 &MetadataStore::setScreenType,
+                 i);
 
-        std::string description = src.getScreenDescription(i);
-        dest.setScreenDescription(description, i);
-
-        std::string name = src.getScreenName(i);
-        dest.setScreenName(name, i);
-
-        std::string protocolDescription = src.getScreenProtocolDescription(i);
-        dest.setScreenProtocolDescription(protocolDescription, i);
-
-        std::string protocolIdentifier = src.getScreenProtocolIdentifier(i);
-        dest.setScreenProtocolIdentifier(protocolIdentifier, i);
-
-        std::string reagentSetDescription = src.getScreenReagentSetDescription(i);
-        dest.setScreenReagentSetDescription(reagentSetDescription, i);
-
-        std::string reagentSetIdentifier = src.getScreenReagentSetIdentifier(i);
-        dest.setScreenReagentSetIdentifier(reagentSetIdentifier, i);
-
-        std::string type = src.getScreenType(i);
-        dest.setScreenType(type, i);
-
-      index_type plateRefCount = 0;
-        plateRefCount = src.getPlateRefCount(i);
-      for (index_type q = 0; q < plateRefCount; ++q)
-        {
-          std::string plateRef = src.getScreenPlateRef(i, q);
-          dest.setScreenPlateRef(plateRef, i, q);
-      }
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getScreenAnnotationRefCount(i);
-      for (index_type q = 0; q < annotationRefCount; ++q)
-        {
-          std::string annotationRef = src.getScreenAnnotationRef(i, q);
-          dest.setScreenAnnotationRef(annotationRef, i, q);
-      }
-
-      index_type reagentCount = 0;
-        reagentCount = src.getReagentCount(i);
-      for (index_type q = 0; q < reagentCount; ++q)
-        {
-          std::string reagentID = src.getReagentID(i, q);
-          dest.setReagentID(reagentID, i, q);
-
-          std::string reagentDescription = src.getReagentDescription(i, q);
-          dest.setReagentDescription(reagentDescription, i, q);
-
-          std::string reagentName = src.getReagentName(i, q);
-          dest.setReagentName(reagentName, i, q);
-
-          std::string reagentIdentifier = src.getReagentReagentIdentifier(i, q);
-          dest.setReagentReagentIdentifier(reagentIdentifier, i ,q);
-
-        index_type reagentAnnotationRefCount = 0;
-          reagentAnnotationRefCount = src.getReagentAnnotationRefCount(i, q);
-        for (index_type r = 0; r < reagentAnnotationRefCount; ++r)
+        index_type plateRefCount(src.getPlateRefCount(i));
+        for (index_type q = 0; q < plateRefCount; ++q)
           {
-            std::string reagentAnnotationRef = src.getReagentAnnotationRef(i, q, r);
-            dest.setReagentAnnotationRef(reagentAnnotationRef, i, q, r);
-        }
+            transfer(src, dest,
+                     &MetadataRetrieve::getScreenPlateRef,
+                     &MetadataStore::setScreenPlateRef,
+                     i, q);
+          }
+
+        index_type annotationRefCount(src.getScreenAnnotationRefCount(i));
+        for (index_type q = 0; q < annotationRefCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getScreenAnnotationRef,
+                     &MetadataStore::setScreenAnnotationRef,
+                     i, q);
+          }
+
+        index_type reagentCount(src.getReagentCount(i));
+        for (index_type q = 0; q < reagentCount; ++q)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getReagentID,
+                     &MetadataStore::setReagentID,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getReagentDescription,
+                     &MetadataStore::setReagentDescription,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getReagentName,
+                     &MetadataStore::setReagentName,
+                     i, q);
+            transfer(src, dest,
+                     &MetadataRetrieve::getReagentReagentIdentifier,
+                     &MetadataStore::setReagentReagentIdentifier,
+                     i, q);
+
+            index_type reagentAnnotationRefCount(src.getReagentAnnotationRefCount(i, q));
+            for (index_type r = 0; r < reagentAnnotationRefCount; ++r)
+              {
+                transfer(src, dest,
+                         &MetadataRetrieve::getReagentAnnotationRef,
+                         &MetadataStore::setReagentAnnotationRef,
+                         i, q, r);
+              }
+          }
       }
-    }
   }
 
   void
   convertTagAnnotations(const MetadataRetrieve& src,
                         MetadataStore&          dest)
   {
-    index_type tagAnnotationCount = 0;
-      tagAnnotationCount = src.getTagAnnotationCount();
+    index_type tagAnnotationCount(src.getTagAnnotationCount());
     for (index_type i = 0; i < tagAnnotationCount; ++i)
       {
-        std::string id = src.getTagAnnotationID(i);
-        dest.setTagAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTagAnnotationID,
+                 &MetadataStore::setTagAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTagAnnotationDescription,
+                 &MetadataStore::setTagAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTagAnnotationNamespace,
+                 &MetadataStore::setTagAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTagAnnotationValue,
+                 &MetadataStore::setTagAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTagAnnotationAnnotator,
+                 &MetadataStore::setTagAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getTagAnnotationDescription(i);
-        dest.setTagAnnotationDescription(description, i);
-
-        std::string ns = src.getTagAnnotationNamespace(i);
-        dest.setTagAnnotationNamespace(ns, i);
-
-        std::string value = src.getTagAnnotationValue(i);
-        dest.setTagAnnotationValue(value, i);
-
-        std::string annotator = src.getTagAnnotationAnnotator(i);
-        dest.setTagAnnotationAnnotator(annotator, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getTagAnnotationAnnotationCount(i);
-      for (index_type a = 0; a < annotationRefCount; ++a)
-        {
-          std::string id = src.getTagAnnotationAnnotationRef(i, a);
-          dest.setTagAnnotationAnnotationRef(id, i, a);
+        index_type annotationRefCount(src.getTagAnnotationAnnotationCount(i));
+        for (index_type a = 0; a < annotationRefCount; ++a)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getTagAnnotationAnnotationRef,
+                     &MetadataStore::setTagAnnotationAnnotationRef,
+                     i, a);
+          }
       }
-    }
   }
 
   void
   convertTermAnnotations(const MetadataRetrieve& src,
                          MetadataStore&          dest)
   {
-    index_type termAnnotationCount = 0;
-      termAnnotationCount = src.getTermAnnotationCount();
+    index_type termAnnotationCount(src.getTermAnnotationCount());
     for (index_type i = 0; i < termAnnotationCount; ++i)
       {
-        std::string id = src.getTermAnnotationID(i);
-        dest.setTermAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTermAnnotationID,
+                 &MetadataStore::setTermAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTermAnnotationDescription,
+                 &MetadataStore::setTermAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTermAnnotationNamespace,
+                 &MetadataStore::setTermAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTermAnnotationValue,
+                 &MetadataStore::setTermAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTermAnnotationAnnotator,
+                 &MetadataStore::setTermAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getTermAnnotationDescription(i);
-        dest.setTermAnnotationDescription(description, i);
-
-        std::string ns = src.getTermAnnotationNamespace(i);
-        dest.setTermAnnotationNamespace(ns, i);
-
-        std::string value = src.getTermAnnotationValue(i);
-        dest.setTermAnnotationValue(value, i);
-
-        std::string annotator = src.getTermAnnotationAnnotator(i);
-        dest.setTermAnnotationAnnotator(annotator, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getTermAnnotationAnnotationCount(i);
-      for (index_type a = 0; a < annotationRefCount; ++a)
-        {
-          std::string id = src.getTermAnnotationAnnotationRef(i, a);
-          dest.setTermAnnotationAnnotationRef(id, i, a);
+        index_type annotationRefCount(src.getTermAnnotationAnnotationCount(i));
+        for (index_type a = 0; a < annotationRefCount; ++a)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getTermAnnotationAnnotationRef,
+                     &MetadataStore::setTermAnnotationAnnotationRef,
+                     i, a);
+          }
       }
-    }
   }
 
   void
   convertTimestampAnnotations(const MetadataRetrieve& src,
                               MetadataStore&          dest)
   {
-    index_type timestampAnnotationCount = 0;
-      timestampAnnotationCount = src.getTimestampAnnotationCount();
+    index_type timestampAnnotationCount(src.getTimestampAnnotationCount());
     for (index_type i = 0; i < timestampAnnotationCount; ++i)
       {
-        std::string id = src.getTimestampAnnotationID(i);
-        dest.setTimestampAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTimestampAnnotationID,
+                 &MetadataStore::setTimestampAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTimestampAnnotationDescription,
+                 &MetadataStore::setTimestampAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTimestampAnnotationNamespace,
+                 &MetadataStore::setTimestampAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTimestampAnnotationValue,
+                 &MetadataStore::setTimestampAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getTimestampAnnotationAnnotator,
+                 &MetadataStore::setTimestampAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getTimestampAnnotationDescription(i);
-        dest.setTimestampAnnotationDescription(description, i);
-
-        std::string ns = src.getTimestampAnnotationNamespace(i);
-        dest.setTimestampAnnotationNamespace(ns, i);
-
-        Timestamp value = src.getTimestampAnnotationValue(i);
-        dest.setTimestampAnnotationValue(value, i);
-
-        std::string annotator = src.getTimestampAnnotationAnnotator(i);
-        dest.setTimestampAnnotationAnnotator(annotator, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getTimestampAnnotationAnnotationCount(i);
-      for (index_type a = 0; a < annotationRefCount; ++a)
-        {
-          std::string id = src.getTimestampAnnotationAnnotationRef(i, a);
-          dest.setTimestampAnnotationAnnotationRef(id, i, a);
+        index_type annotationRefCount(src.getTimestampAnnotationAnnotationCount(i));
+        for (index_type a = 0; a < annotationRefCount; ++a)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getTimestampAnnotationAnnotationRef,
+                     &MetadataStore::setTimestampAnnotationAnnotationRef,
+                     i, a);
+          }
       }
-    }
   }
 
   void
   convertXMLAnnotations(const MetadataRetrieve& src,
                         MetadataStore&          dest)
   {
-    index_type xmlAnnotationCount = 0;
-      xmlAnnotationCount = src.getXMLAnnotationCount();
+    index_type xmlAnnotationCount(src.getXMLAnnotationCount());
     for (index_type i = 0; i < xmlAnnotationCount; ++i)
       {
-        std::string id = src.getXMLAnnotationID(i);
-        dest.setXMLAnnotationID(id, i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getXMLAnnotationID,
+                 &MetadataStore::setXMLAnnotationID,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getXMLAnnotationDescription,
+                 &MetadataStore::setXMLAnnotationDescription,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getXMLAnnotationNamespace,
+                 &MetadataStore::setXMLAnnotationNamespace,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getXMLAnnotationValue,
+                 &MetadataStore::setXMLAnnotationValue,
+                 i);
+        transfer(src, dest,
+                 &MetadataRetrieve::getXMLAnnotationAnnotator,
+                 &MetadataStore::setXMLAnnotationAnnotator,
+                 i);
 
-        std::string description = src.getXMLAnnotationDescription(i);
-        dest.setXMLAnnotationDescription(description, i);
-
-        std::string ns = src.getXMLAnnotationNamespace(i);
-        dest.setXMLAnnotationNamespace(ns, i);
-
-        std::string value = src.getXMLAnnotationValue(i);
-        dest.setXMLAnnotationValue(value, i);
-
-        std::string annotator = src.getXMLAnnotationAnnotator(i);
-        dest.setXMLAnnotationAnnotator(annotator, i);
-
-      index_type annotationRefCount = 0;
-        annotationRefCount = src.getXMLAnnotationAnnotationCount(i);
-      for (index_type a = 0; a < annotationRefCount; ++a)
-        {
-          std::string id = src.getXMLAnnotationAnnotationRef(i, a);
-          dest.setXMLAnnotationAnnotationRef(id, i, a);
+        index_type annotationRefCount(src.getXMLAnnotationAnnotationCount(i));
+        for (index_type a = 0; a < annotationRefCount; ++a)
+          {
+            transfer(src, dest,
+                     &MetadataRetrieve::getXMLAnnotationAnnotationRef,
+                     &MetadataStore::setXMLAnnotationAnnotationRef,
+                     i, a);
+          }
       }
-    }
   }
 
   void
   convertRootAttributes(const MetadataRetrieve& src,
                         MetadataStore&          dest)
   {
-    std::string uuid = src.getUUID();
-    dest.setUUID(uuid);
-
-    std::string rightsHeld = src.getRightsRightsHeld();
-    dest.setRightsRightsHeld(rightsHeld);
-
-    std::string rightsHolder = src.getRightsRightsHolder();
-    dest.setRightsRightsHolder(rightsHolder);
-
-    std::string metadataFile = src.getBinaryOnlyMetadataFile();
-    dest.setBinaryOnlyMetadataFile(metadataFile);
-
-    std::string buuid = src.getBinaryOnlyUUID();
-        dest.setBinaryOnlyUUID(buuid);
+    transfer(src, dest,
+             &MetadataRetrieve::getUUID,
+             &MetadataStore::setUUID);
+    transfer(src, dest,
+             &MetadataRetrieve::getRightsRightsHeld,
+             &MetadataStore::setRightsRightsHeld);
+    transfer(src, dest,
+             &MetadataRetrieve::getRightsRightsHolder,
+             &MetadataStore::setRightsRightsHolder);
+    transfer(src, dest,
+             &MetadataRetrieve::getBinaryOnlyMetadataFile,
+             &MetadataStore::setBinaryOnlyMetadataFile);
+    transfer(src, dest,
+             &MetadataRetrieve::getBinaryOnlyUUID,
+             &MetadataStore::setBinaryOnlyUUID);
   }
 
 }
