@@ -277,7 +277,7 @@ class OMEModelProperty(OMEModelEntity):
         elif isinstance(self.model.opts.lang, language.CXX):
             if (mstype is None and not self.isPrimitive and
                     not self.isEnumeration):
-                mstype = "std::string"  # TODO: could it be a const reference?
+                mstype = "const std::string&"
             if mstype is None:
                 mstype = self.langTypeNS
         return mstype
@@ -496,8 +496,7 @@ class OMEModelProperty(OMEModelEntity):
                     itype = {' const': "std::shared_ptr<const %s>" % ns_sep,
                              '':       "std::shared_ptr<%s>" % ns_sep}
                 else:
-                    itype = {' const': "const %s&" % self.langTypeNS,
-                             '':       "%s&" % self.langTypeNS}
+                    itype = {' const': "const %s&" % self.langTypeNS}
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
                 itype = {' const': "std::shared_ptr<const %s>" % ns_sep,
                          '':      "std::shared_ptr<%s>" % ns_sep}
