@@ -50,7 +50,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
-import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
@@ -156,9 +155,13 @@ public class OMEXMLReader extends FormatReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    //byte[] pixels = new Base64Codec().decompress(in, options);
-    byte[] data = ByteStreams.toByteArray(in);
-    String encoded = BaseEncoding.base64().encode(data);//encode everything
+    String encoded = in.readString("<");
+    encoded = encoded.trim();
+    if (encoded.length() == 0 || encoded.equals("<")) {
+      LOGGER.debug("No pixel data for plane #{}", no);
+      return buf;
+    }
+    encoded = encoded.substring(0, encoded.length() - 1);
     byte[] pixels =  BaseEncoding.base64().decode(encoded);
     // return a blank plane if no pixel data was stored
     if (pixels.length == 0) {
@@ -221,7 +224,7 @@ public class OMEXMLReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
-
+    in.setEncoding("ASCII");
     binData = new Vector<BinData>();
     binDataOffsets = new Vector<Long>();
     compression = new Vector<String>();
