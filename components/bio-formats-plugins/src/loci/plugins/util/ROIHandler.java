@@ -29,6 +29,7 @@ package loci.plugins.util;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.EllipseRoi;
 import ij.gui.Line;
 import ij.gui.MessageDialog;
 import ij.gui.OvalRoi;
@@ -178,132 +179,136 @@ public class ROIHandler {
         Roi[] rois = readFromRoiManager();
 
         List<String> discardList = new ArrayList<String>();
-        String roiID = null;
+        String roiID = null;int cntr = 0;
         for (int i=0; i<rois.length; i++) {
 
-            String polylineID = MetadataTools.createLSID("Shape", i, 0);
-            roiID = MetadataTools.createLSID("ROI", i, 0);
+            String polylineID = MetadataTools.createLSID("Shape", cntr, 0);
+            roiID = MetadataTools.createLSID("ROI", cntr, 0);
+            Roi ijRoi = rois[i];
 
-            if (rois[i].isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
-                if (rois[i].getTypeAsString().matches("Text")){
-                    store.setLabelID(polylineID, i, 0);
-                    TextRoi c1 = (TextRoi) rois[i];
+            if (ijRoi.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
+                if (ijRoi.getTypeAsString().matches("Text")){
+                    store.setLabelID(polylineID, cntr, 0);
+                    TextRoi c1 = (TextRoi) ijRoi;
 
                     store.setLabelText(c1.getText(), i, 0);
                     store.setLabelX(c1.getPolygon().getBounds().getX(), i, 0);
                     store.setLabelY(c1.getPolygon().getBounds().getY(), i, 0);
 
                 }
-                else if (rois[i].getTypeAsString().matches("Rectangle")){
-                    store.setRectangleID(polylineID, i, 0);
-                    storeRectangle(rois[i], store, i, 0);
+
+                else if (rois[cntr].getTypeAsString().matches("Rectangle")){
+                    store.setRectangleID(polylineID, cntr, 0);
+                    storeRectangle(ijRoi, store, cntr, 0);
                 }
                 else {
                     roiID = null;
-                    String type = rois[i].getName();
+                    String type = ijRoi.getName();
                     IJ.log("ROI ID : " + type + " ROI type : " +  "Arrow (Drawing Tool) is not supported");
                 }
             }
-            else if (rois[i] instanceof Line) {
-                boolean checkpoint = rois[i].isDrawingTool();
+            else if (ijRoi instanceof OvalRoi) {//Check if its an oval or ellipse ROI
+                store.setEllipseID(polylineID, cntr, 0);
+                storeOval((OvalRoi) ijRoi, store, cntr, 0);
+            }
+
+
+            else if (ijRoi instanceof Line) { //Check if its a Line or Arrow ROI
+                boolean checkpoint = ijRoi.isDrawingTool();
                 if (checkpoint != true){
-                    store.setLineID(polylineID, i, 0);
-                    storeLine((Line) rois[i], store, i, 0);
+                    store.setLineID(polylineID, cntr, 0);
+                    storeLine((Line) ijRoi, store, cntr, 0);
                 }
                 else {
                     roiID = null;
-                    String type = rois[i].getName();
+                    String type = ijRoi.getName();
                     IJ.log("ROI ID : " + type + " ROI type : " +  "Arrow (Drawing Tool) is not supported");
                 }
             }
-            else if (rois[i] instanceof PolygonRoi) {
-                if (rois[i].getTypeAsString().matches("Polyline") || rois[i].getTypeAsString().matches("Freeline")){
-                    store.setPolylineID(polylineID, i, 0);
-                    storePolygon((PolygonRoi) rois[i], store, i, 0);
+            else if (ijRoi instanceof PolygonRoi || ijRoi instanceof EllipseRoi) {
+                if (ijRoi.getTypeAsString().matches("Polyline") || ijRoi.getTypeAsString().matches("Freeline") || ijRoi.getTypeAsString().matches("Angle")){
+                    store.setPolylineID(polylineID, cntr, 0);
+                    storePolygon((PolygonRoi) ijRoi, store, cntr, 0);
                 }
-                else if (rois[i].getTypeAsString().matches("Point")){
-                    store.setPointID(polylineID, i, 0);
-                    storePoint((PointRoi) rois[i], store, i, 0);
+                else if (ijRoi.getTypeAsString().matches("Point")){
+                    store.setPointID(polylineID, cntr, 0);
+                    storePoint((PointRoi) ijRoi, store, cntr, 0);
                 }
-                else if (rois[i].getTypeAsString().matches("Polygon") || rois[i].getTypeAsString().matches("Angle") || rois[i].getTypeAsString().matches("Freehand") || rois[i].getTypeAsString().matches("Traced")){
-                    store.setPolygonID(polylineID, i, 0);
-                    storePolygon((PolygonRoi) rois[i], store, i, 0);
+                else if (ijRoi.getTypeAsString().matches("Polygon") || ijRoi.getTypeAsString().matches("Freehand") || ijRoi.getTypeAsString().matches("Traced") || ijRoi.getTypeAsString().matches("Oval")){
+                    store.setPolygonID(polylineID, cntr, 0);
+                    storePolygon((PolygonRoi) ijRoi, store, cntr, 0);
                 }
-
             }
 
-            else if (rois[i] instanceof ShapeRoi) {
-                Roi[] subRois = ((ShapeRoi) rois[i]).getRois();
+            else if (ijRoi instanceof ShapeRoi) {
+                Roi[] subRois = ((ShapeRoi) ijRoi).getRois();
                 for (int q=0; q<subRois.length; q++) {
 
-                    polylineID = MetadataTools.createLSID("Shape", i, q);
-                    roiID = MetadataTools.createLSID("ROI", i, q);
+                    polylineID = MetadataTools.createLSID("Shape", cntr, q);
+                    roiID = MetadataTools.createLSID("ROI", cntr, q);
+                    Roi ijShape = subRois[q];
 
-                    if (subRois[q] instanceof Line) {
-                        boolean checkpoint = subRois[i].isDrawingTool();
+                    if (ijShape instanceof Line) {
+                        boolean checkpoint = ijShape.isDrawingTool();
                         if (checkpoint != true){
-                            store.setLineID(polylineID, i, 0);
-                            storeLine((Line) rois[i], store, i, 0);
+                            store.setLineID(polylineID, cntr, 0);
+                            storeLine((Line) ijShape, store, cntr, 0);
                         }
                         else {
                             roiID = null;
-                            String type1 = subRois[i].getName();
+                            String type1 = ijShape.getName();
                             discardList.add(type1);
                             IJ.log("ROI ID : " + type1 + " ROI type : " + "Arrow (DrawingTool) is not supported");
                         }
                     }
-                    else if (subRois[q] instanceof PolygonRoi) {
-                        if (subRois[q].getTypeAsString().matches("Polyline") || subRois[q].getTypeAsString().matches("Freeline")){
-                            store.setPolylineID(polylineID, i, q);
-                            storePolygon((PolygonRoi) subRois[q], store, i, q);
-                        }
-                        else if (subRois[q].getTypeAsString().matches("Point")){
-                            store.setPointID(polylineID, i, q);
-                            storePoint((PointRoi) subRois[q], store, i, q);
-                        }
-                        else if (subRois[q].getTypeAsString().matches("Polygon") || subRois[q].getTypeAsString().matches("Angle") || subRois[q].getTypeAsString().matches("Freehand") || subRois[q].getTypeAsString().matches("Traced")){
-
-                            store.setPolygonID(polylineID, i, q);
-                            storePolygon((PolygonRoi) subRois[q], store, i, q);
-                        }
-
-
+                    else if (ijShape instanceof OvalRoi) {
+                        store.setEllipseID(polylineID, cntr, q);
+                        storeOval((OvalRoi) ijShape, store, cntr, q);
                     }
-                    else if (subRois[q] instanceof OvalRoi) {
-                        store.setEllipseID(polylineID, i, q);
-                        storeOval((OvalRoi) subRois[q], store, i, q);
+                    else if (ijShape instanceof PolygonRoi || ijShape instanceof EllipseRoi) {
+                        if (ijShape.getTypeAsString().matches("Polyline") || ijShape.getTypeAsString().matches("Freeline") || ijShape.getTypeAsString().matches("Angle")){
+                            store.setPolylineID(polylineID, cntr, q);
+                            storePolygon((PolygonRoi) ijShape, store, cntr, q);
+                        }
+                        else if (ijShape.getTypeAsString().matches("Point")){
+                            store.setPointID(polylineID, cntr, q);
+                            storePoint((PointRoi) ijShape, store, cntr, q);
+                        }
+                        else if (ijShape.getTypeAsString().matches("Polygon") || ijShape.getTypeAsString().matches("Freehand") || ijShape.getTypeAsString().matches("Traced") || ijShape.getTypeAsString().matches("Oval")){
+
+                            store.setPolygonID(polylineID, cntr, q);
+                            storePolygon((PolygonRoi) ijShape, store, cntr, q);
+                        }
                     }
-                    else if (subRois[q] instanceof Roi){
-                        store.setRectangleID(polylineID, i, q);
-                        storeRectangle(subRois[q], store, i, q);
+
+                    else if (ijShape.getTypeAsString().matches("Rectangle")){
+                        store.setRectangleID(polylineID, cntr, q);
+                        storeRectangle(ijShape, store, cntr, q);
                     }
                     else {
                         roiID = null;
-                        String type = subRois[i].getName();
-                        IJ.log("ROI ID : " + type + " ROI type : " + subRois[i].getTypeAsString() + "is not supported");
+                        String type = ijShape.getName();
+                        IJ.log("ROI ID : " + type + " ROI type : " + ijShape.getTypeAsString() + "is not supported");
                     }
                 }
             }
-            else if (rois[i] instanceof OvalRoi) {
-                store.setEllipseID(polylineID, i, 0);
-                storeOval((OvalRoi) rois[i], store, i, 0);
-            }
-            else if(rois[i] instanceof Roi){
-                store.setRectangleID(polylineID, i, 0);
-                storeRectangle(rois[i], store, i, 0);
+
+            else if(ijRoi.getTypeAsString().matches("Rectangle")){//Check if its a Rectangle or Rounded Rectangle ROI
+                store.setRectangleID(polylineID, cntr, 0);
+                storeRectangle(ijRoi, store, cntr, 0);
+
             }
             else {
-
                 roiID = null;
-                String type = rois[i].getName();
-                IJ.log("ROI ID : " + type + " ROI type : " + rois[i].getTypeAsString() + "is not supported");
-
+                String type = ijRoi.getName();
+                IJ.log("ROI ID : " + type + " ROI type : " + rois[cntr].getTypeAsString() + "is not supported");
             }
 
             //Save Roi's using ROIHandler
             if (roiID != null) {
                 store.setROIID(roiID, i);
                 store.setImageROIRef(roiID, 0, i);
+                cntr++;
             }
         }
     }
@@ -350,27 +355,41 @@ public class ROIHandler {
     private static void storePolygon(PolygonRoi roi, MetadataStore store,
             int roiNum, int shape)
     {
-        Rectangle bounds = roi.getBounds();
-        int[] xCoordinates = roi.getXCoordinates();
-        int[] yCoordinates = roi.getYCoordinates();
-        StringBuffer points = new StringBuffer();
-        for (int i=0; i<xCoordinates.length; i++) {
-            points.append(xCoordinates[i] + bounds.x);
-            points.append(",");
-            points.append(yCoordinates[i] + bounds.y);
-            if (i < xCoordinates.length - 1) points.append(" ");
-        }
+
+//        Rectangle bounds = roi.getBounds();
+//        int[] xCoordinates = roi.getXCoordinates();
+//        int[] yCoordinates = roi.getYCoordinates();
+//        StringBuffer points = new StringBuffer();
+//        for (int i=0; i<xCoordinates.length; i++) {
+//            points.append(xCoordinates[i] + bounds.x);
+//            points.append(",");
+//            points.append(yCoordinates[i] + bounds.y);
+//            if (i < xCoordinates.length - 1) points.append(" ");
+//        }
+        
+        int[] xCoordinates = roi.getPolygon().xpoints;
+        int[] yCoordinates = roi.getPolygon().ypoints;
         String st1 = roi.getTypeAsString();
-        if (st1.matches("Polyline") || st1.matches("Freeline")) {
+        String points = "1";
+        for (int i=0 ; i<xCoordinates.length ; i++){
+            System.out.println(xCoordinates[i] + "," + yCoordinates[i]);  
+            if(i==0){                    
+                points = (xCoordinates[i] + "," + yCoordinates[i]);
+            }else{
+                points= (points + " " + xCoordinates[i] + "," + yCoordinates[i]);
+            }
+        }
+        
+        if (st1.matches("Polyline") || st1.matches("Freeline") || st1.matches("Angle")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
         }
-        else if (st1.matches("Polygon") || st1.matches("Angle") || st1.matches("Freehand") || st1.matches("Traced")){
+        else if (st1.matches("Polygon") || st1.matches("Freehand") || st1.matches("Traced")){
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
         else{
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
-
+            
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
