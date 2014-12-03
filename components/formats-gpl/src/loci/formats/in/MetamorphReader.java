@@ -1141,6 +1141,12 @@ public class MetamorphReader extends BaseTiffReader {
       StringBuffer sb = new StringBuffer();
       for (int i=0; i<lines.length; i++) {
         String line = lines[i].trim();
+
+        if (line.startsWith("<") && line.endsWith(">")) {
+          // XML comment; this will have already been parsed so can be ignored
+          break;
+        }
+
         int colon = line.indexOf(": ");
 
         String descrValue = null;
