@@ -826,6 +826,9 @@ public class CellSensReader extends FormatReader {
         if (!imageName.equals("Overview") && !imageName.equals("Label") && duplicate) {
           imageName += " #" + ii;
         }
+        if (imageName.equals("Overview") || imageName.equals("Label")) {
+          imageName = imageName.toLowerCase();
+        }
         store.setImageName(imageName, ii);
         store.setObjectiveSettingsID(MetadataTools.createLSID("Objective", 0, nextPyramid - 1), ii);
         store.setObjectiveSettingsRefractiveIndex(pyramid.refractiveIndex, ii);
@@ -844,7 +847,7 @@ public class CellSensReader extends FormatReader {
         }
       }
       else {
-        store.setImageName("Macro Image", ii);
+        store.setImageName("macro image", ii);
       }
 
       i += core.get(i).resolutionCount;
