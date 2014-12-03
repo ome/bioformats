@@ -404,6 +404,10 @@ public class SVSReader extends BaseTiffReader {
         if (getExcitation() != null) {
           store.setChannelExcitationWavelength(getExcitation(), i, c);
         }
+
+        if (c < dyeNames.size()) {
+          store.setChannelName(dyeNames.get(c), i, c);
+        }
       }
 
       if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0) {
