@@ -662,7 +662,7 @@ public class XMLMockObjects
     settings.setGain(1.0);
     settings.setOffset(1.0);
     settings.setReadOutRate(new Frequency(1.0, UNITS.HZ));
-    settings.setVoltage(new ElectricPotential(0, UNITS.V));
+    settings.setVoltage(new ElectricPotential(1.0, UNITS.V));
     return settings;
   }
 
