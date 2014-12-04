@@ -712,10 +712,6 @@ public class MQDecoder {
      * original probability distribution depends on the actual
      * implementation of the arithmetic coder or decoder.
      *
-     * @param c The index of the context (it starts at 0).
-     *
-     *
-     *
      */
     public final void resetCtxts(){
         System.arraycopy(initStates,0,I,0,I.length);

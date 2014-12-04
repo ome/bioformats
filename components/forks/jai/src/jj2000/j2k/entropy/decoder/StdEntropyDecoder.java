@@ -632,9 +632,7 @@ public class StdEntropyDecoder extends EntropyDecoder
      *
      * @param src The source of data
      *
-     * @param opt The options to use for this encoder. It is a mix of the
-     * 'OPT_TERM_PASS', 'OPT_RESET_MQ', 'OPT_VERT_STR_CAUSAL', 'OPT_BYPASS' and
-     * 'OPT_SEG_SYMBOLS' option flags.
+     * @param decSpec The decoder specifications
      *
      * @param doer If true error detection will be performed, if any error
      * detection features have been enabled.

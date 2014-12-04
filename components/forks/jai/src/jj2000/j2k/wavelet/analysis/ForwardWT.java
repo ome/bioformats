@@ -157,9 +157,7 @@ public abstract class ForwardWT extends ImgDataAdapter
      *
      * @param src The source of data to be transformed
      *
-     * @param pl The parameter list (or options).
-     *
-     * @param kers The encoder specifications.
+     * @param wp The writing parameters.
      *
      * @return A new ForwardWT object with the specified filters and options
      * from 'pl'.

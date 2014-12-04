@@ -134,7 +134,7 @@ public class DataBlkInt extends DataBlk {
      * Creates a DataBlkInt which is the copy of the DataBlkInt
      * given as paramter.
      *
-     * @param DataBlkInt the object to be copied.
+     * @param src the object to be copied.
      *
      *
      * */

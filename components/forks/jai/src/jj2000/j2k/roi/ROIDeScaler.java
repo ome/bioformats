@@ -342,7 +342,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter
      *
      * @param src The source of data that is to be descaled
      *
-     * @param pl The parameter list (or options).
+     * @param j2krparam The parameter list (or options).
      *
      * @param decSpec The decoding specifications
      *

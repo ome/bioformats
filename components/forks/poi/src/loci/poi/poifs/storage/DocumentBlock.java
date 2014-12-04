@@ -145,8 +145,11 @@ public class DocumentBlock
      * convert a single long array into an array of DocumentBlock
      * instances
      *
-     * @param array the byte array to be converted
+     * @param offset the offset into the array of blocks to read from
+     * @param stream the {@link RandomAccessInputStream} to read from
      * @param size the intended size of the array (which may be smaller)
+     * @param numBytes the number of bytes
+     * @param blockSize the size of a big block
      *
      * @return an array of DocumentBlock instances, filled from the
      *         input array

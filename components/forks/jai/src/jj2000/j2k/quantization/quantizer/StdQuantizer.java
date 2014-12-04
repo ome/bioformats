@@ -166,7 +166,7 @@ public class StdQuantizer extends Quantizer {
      *
      * @param src The source of wavelet transform coefficients.
      *
-     * @param encSpec The encoder specifications
+     * @param wp The encoder parameters
      * */
     public StdQuantizer(CBlkWTDataSrc src,J2KImageWriteParamJava wp){
 	super(src);

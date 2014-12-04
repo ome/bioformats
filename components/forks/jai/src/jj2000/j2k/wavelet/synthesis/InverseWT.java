@@ -134,8 +134,7 @@ public abstract class InverseWT extends InvWTAdapter
      * @param src The source of data for the inverse wavelet
      * transform.
      *
-     * @param pl The parameter list containing parameters applicable to the
-     * inverse wavelet transform (other parameters can also be present).
+     * @param decSpec The decoder specifications
      * */
     public static InverseWT createInstance(CBlkWTDataSrcDec src,
                                            DecoderSpecs decSpec) {

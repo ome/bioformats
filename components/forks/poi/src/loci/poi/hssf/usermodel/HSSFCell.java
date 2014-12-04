@@ -281,7 +281,7 @@ public class HSSFCell
     
     /**
      * Returns the Workbook that this Cell is bound to
-     * @return
+     * @return the workbook the cell is bound to
      */
     protected Workbook getBoundWorkbook() {
     	return book;

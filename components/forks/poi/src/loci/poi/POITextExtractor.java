@@ -46,9 +46,6 @@ package loci.poi;
  *  a given format's text extractor under
  *  loci.poi.[format].extractor .
  * @see loci.poi.hssf.extractor.ExcelExtractor
- * @see loci.poi.hslf.extractor.PowerPointExtractor
- * @see loci.poi.hdgf.extractor.VisioTextExtractor
- * @see loci.poi.hwpf.extractor.WordExtractor
  */
 public abstract class POITextExtractor {
 	/** The POIDocument that's open */

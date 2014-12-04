@@ -119,7 +119,7 @@ public class CBlkSizeSpec extends ModuleSpec {
 
     /**
      * Creates a new CBlkSizeSpec object for the specified number of tiles and
-     * components and the ParameterList instance.
+     * components and the parameters instance.
      *
      * @param nt The number of tiles
      *
@@ -128,9 +128,7 @@ public class CBlkSizeSpec extends ModuleSpec {
      * @param type the type of the specification module i.e. tile specific,
      * component specific or both.
      *
-     * @param imgsrc The image source (used to get the image size)
-     *
-     * @param pl The ParameterList instance
+     * @param wp The parameters
      * */
     public CBlkSizeSpec(int nt, int nc, byte type, J2KImageWriteParamJava wp, String values) {
         super(nt, nc, type);
@@ -448,7 +446,7 @@ public class CBlkSizeSpec extends ModuleSpec {
      * Sets default value for specified tile and specValType tag if allowed by
      * its priority.
      *
-     * @param c Tile index.
+     * @param t Tile index.
      *
      * @param value Tile's default value
      *  */

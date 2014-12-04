@@ -84,7 +84,7 @@ public class HeaderBlockReader
      * create a new HeaderBlockReader from an InputStream
      *
      * @param stream the source InputStream
-     * @param size the size of a big block
+     * @param blockSize the size of a big block
      *
      * @exception IOException on errors or bad data
      */

@@ -111,9 +111,6 @@ public interface InvWT extends WaveletTransform {
      *
      * @param rl The image resolution level.
      *
-     * @return The vertical coordinate of the image origin in the canvas
-     * system, on the reference grid.
-     *
      * */
     public void setImgResLevel(int rl);
 }

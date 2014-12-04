@@ -258,7 +258,7 @@ public interface MultiResImgData {
      * Returns the height in pixels of the specified component in the overall
      * image, for the given resolution level.
      *
-     * @param c The index of the component, from 0 to N-1.
+     * @param n The index of the component, from 0 to N-1.
      *
      * @param rl The resolution level, from 0 to L.
      *

@@ -132,8 +132,6 @@ public class RectROIMaskGenerator extends ROIMaskGenerator{
      *
      * @param ROIs The ROI info.
      *
-     * @param maxShift The flag indicating use of Maxshift method.
-     *
      * @param nrc number of components.
      * */
     public RectROIMaskGenerator(ROI[] ROIs, int nrc){

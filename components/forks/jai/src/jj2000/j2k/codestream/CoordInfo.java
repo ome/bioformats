@@ -109,7 +109,6 @@ public abstract class CoordInfo {
      *
      * @param h The height
      *
-     * @param idx The object's index
      * */
     public CoordInfo(int ulx, int uly, int w, int h) {
         this.ulx = ulx;

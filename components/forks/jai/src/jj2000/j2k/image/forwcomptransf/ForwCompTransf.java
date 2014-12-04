@@ -143,7 +143,7 @@ public class ForwCompTransf extends ImgDataAdapter
      * @param imgSrc The source from where to get the data to be
      * transformed
      *
-     * @param encSpec The encoder specifications
+     * @param wp The encoder specifications
      *
      * @see BlkImgDataSrc
      * */

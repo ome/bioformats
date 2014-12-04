@@ -118,7 +118,7 @@ import com.sun.media.imageioimpl.common.ImageUtil;
  * The encoding process may clip, subsample using the parameters
  * specified in the <code>ImageWriteParam</code>.
  *
- * @see com.sun.media.imageio.plugins.PNMImageWriteParam
+ * @see com.sun.media.imageio.plugins.pnm.PNMImageWriteParam
  */
 public class PNMImageWriter extends ImageWriter {
     private static final int PBM_ASCII  = '1';

@@ -56,7 +56,6 @@ import loci.poi.poifs.filesystem.POIFSFileSystem;
  *  intended for display to the user.
  * To turn an excel file into a CSV or similar, then see
  *  the XLS2CSVmra example
- * @see loci.poi.hssf.eventusermodel.examples.XLS2CSVmra
  */
 public class ExcelExtractor extends POITextExtractor{
 	private HSSFWorkbook wb;

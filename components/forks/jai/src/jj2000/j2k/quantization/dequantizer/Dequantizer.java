@@ -142,7 +142,7 @@ public abstract class Dequantizer extends MultiResImgDataAdapter
      *
      * @param src From where to obtain the quantized data.
      *
-     * @param rb The number of "range bits" for each component (must be the
+     * @param utrb The number of "range bits" for each component (must be the
      * "range bits" of the un-transformed components. For a definition of
      * "range bits" see the getNomRangeBits() method.
      *

@@ -177,8 +177,6 @@ public class FileFormatReader implements FileFormatBoxes{
      * and if so finds the first codestream in the file. Currently, the
      * information in the codestream is not used
      *
-     * @param in The RandomAccessIO from which to read the file format
-     *
      * @exception java.io.IOException If an I/O error ocurred.
      *
      * @exception java.io.EOFException If end of file is reached
@@ -379,12 +377,7 @@ public class FileFormatReader implements FileFormatBoxes{
     /**
      * This method reads the JP2Header box
      *
-     * @param pos The position in the file
-     *
      * @param length The length of the JP2Header box
-     *
-     * @param long length The length of the JP2Header box if greater than
-     * 1<<32
      *
      * @return false if the JP2Header box was not found or invalid else true
      *
@@ -442,11 +435,9 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method skips the Contiguous codestream box and adds position
      * of contiguous codestream to a vector
      *
-     * @param pos The position in the file
-     *
      * @param length The length of the JP2Header box
      *
-     * @param long length The length of the JP2Header box if greater than 1<<32
+     * @param longLength The length of the JP2Header box if greater than 1<<32
      *
      * @return false if the Contiguous codestream box was not found or invalid
      * else true

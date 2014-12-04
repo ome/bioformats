@@ -924,7 +924,7 @@ public class StdEntropyCoder extends EntropyCoder
      *
      * @param src The source of data
      *
-     * @param cbks Code-block size specifications
+     * @param cblks Code-block size specifications
      *
      * @param pss Precinct partition specifications
      *
