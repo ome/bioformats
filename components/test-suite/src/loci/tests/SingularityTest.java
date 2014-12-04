@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * A class for testing the accuracy of
  * {@link loci.formats.IFormatReader#isSingleFile(String)}.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class SingularityTest {

@@ -52,7 +52,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * CellSensReader is the file format reader for cellSens .vsi files.
- *
  */
 public class CellSensReader extends FormatReader {
 

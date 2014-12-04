@@ -55,7 +55,6 @@ import ome.units.UNITS;
 
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
- *
  */
 public class NRRDReader extends FormatReader {
 

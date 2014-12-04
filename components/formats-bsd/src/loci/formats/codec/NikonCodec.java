@@ -46,7 +46,6 @@ import loci.formats.UnsupportedCompressionException;
  * Decompression logic is adapted from the jrawio project,
  * http://jrawio.dev.java.net
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class NikonCodec extends BaseCodec {

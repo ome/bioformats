@@ -61,7 +61,6 @@ import ome.units.UNITS;
 /**
  * Logic for colorizing images.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */

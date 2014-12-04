@@ -60,7 +60,6 @@ import loci.formats.meta.MetadataStore;
  * Video codecs currently supported: raw, rle, jpeg, mjpb, rpza.
  * Additional video codecs will be added as time permits.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class NativeQTReader extends FormatReader {

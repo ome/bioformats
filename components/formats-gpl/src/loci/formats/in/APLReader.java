@@ -50,7 +50,6 @@ import ome.units.quantity.Length;
 
 /**
  * APLReader is the file format reader for Olympus APL files.
- *
  */
 public class APLReader extends FormatReader {
 

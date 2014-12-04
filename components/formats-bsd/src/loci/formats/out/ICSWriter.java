@@ -49,7 +49,6 @@ import ome.units.UNITS;
 /**
  * ICSWriter is the file format writer for ICS files.  It writes ICS version 1
  * and 2 files.
- *
  */
 public class ICSWriter extends FormatWriter {
 

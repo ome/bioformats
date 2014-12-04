@@ -69,7 +69,6 @@ import ome.units.UNITS;
  * TODO : remove sub-C logic once N-dimensional support is in place
  *        see http://dev.loci.wisc.edu/trac/java/ticket/398
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ICSReader extends FormatReader {

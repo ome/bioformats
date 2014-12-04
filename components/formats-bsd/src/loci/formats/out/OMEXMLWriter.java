@@ -62,7 +62,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * OMEXMLWriter is the file format writer for OME-XML files.
- *
  */
 public class OMEXMLWriter extends FormatWriter {
 

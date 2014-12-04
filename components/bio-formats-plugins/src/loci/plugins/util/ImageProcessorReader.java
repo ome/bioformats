@@ -48,7 +48,6 @@ import loci.plugins.BF;
  * A low-level reader for {@link ij.process.ImageProcessor} objects.
  * For a higher-level reader that returns {@link ij.ImagePlus} objects,
  * see {@link loci.plugins.in.ImagePlusReader} instead.
- *
  */
 public class ImageProcessorReader extends ReaderWrapper {
 

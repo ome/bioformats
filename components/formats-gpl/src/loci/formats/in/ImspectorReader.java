@@ -39,7 +39,6 @@ import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * ImspectorReader is the file format reader for Imspector .msr files.
- *
  */
 public class ImspectorReader extends FormatReader {
 

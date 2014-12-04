@@ -44,7 +44,6 @@ import ome.units.quantity.Length;
 /**
  * FujiReader is the file format reader for Fuji LAS 3000 datasets.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class FujiReader extends FormatReader {

@@ -48,7 +48,6 @@ import loci.formats.meta.MetadataRetrieve;
  * Much of this writer's code was adapted from Wayne Rasband's
  * AVI Movie Writer plugin for ImageJ
  * (available at http://rsb.info.nih.gov/ij/).
- *
  */
 public class AVIWriter extends FormatWriter {
 

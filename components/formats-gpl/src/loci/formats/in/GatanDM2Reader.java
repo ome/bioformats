@@ -46,7 +46,6 @@ import ome.units.UNITS;
 
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
- *
  */
 public class GatanDM2Reader extends FormatReader {
 

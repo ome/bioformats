@@ -42,7 +42,6 @@
  *                          MQ arithmetic decoder
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -74,8 +73,6 @@
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  *
- *
- *
  */
 package jj2000.j2k.entropy.decoder;
 
@@ -90,7 +87,6 @@ import java.io.*;
  * the software conventions decoder for better performance (i.e. execution
  * time performance). The initial states for each context of the MQ-coder are
  * specified in the constructor.
- *
  */
 
 // A trick to test for increased speed: merge the Qe and mPS into 1 thing by

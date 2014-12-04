@@ -35,7 +35,6 @@ package loci.common;
 /**
  * A simple interface for objects wishing to report their status to listeners.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface StatusReporter {

@@ -52,7 +52,6 @@ import org.testng.annotations.Test;
 /**
  * Tests saving and reading TIFF pixel data that has been compressed using
  * various schemes.
- *
  */
 public class TiffPixelsTest {
 

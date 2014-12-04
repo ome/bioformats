@@ -48,7 +48,6 @@ import loci.formats.cache.CacheListener;
 /**
  * Indicator GUI component showing which planes are currently in the cache
  * for a given dimensional axis at a particular dimensional position.
- *
  */
 public class CacheIndicator extends JComponent implements CacheListener {
 

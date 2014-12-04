@@ -65,7 +65,6 @@ import ome.units.UNITS;
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
  *
- *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu

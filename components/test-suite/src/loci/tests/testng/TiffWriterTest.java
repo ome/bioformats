@@ -50,7 +50,6 @@ import loci.formats.tiff.TiffCompression;
 /**
  * Tests writing of tiles in a tiff.
  *
- *
  * @author Jean-Marie Burel <j dot burel at dundee dot ac dot uk>
  */
 public class TiffWriterTest {

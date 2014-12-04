@@ -41,7 +41,6 @@ import ome.units.quantity.Length;
 
 /**
  * WATOPReader is the file format reader for WA Technology .wat files.
- *
  */
 public class WATOPReader extends FormatReader {
 

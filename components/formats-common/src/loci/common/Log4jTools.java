@@ -36,7 +36,6 @@ import java.util.Enumeration;
 
 /**
  * A utility class with convenience methods for log4j.
- *
  */
 public final class Log4jTools {
 

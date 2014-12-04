@@ -33,7 +33,6 @@ import loci.plugins.util.WindowTools;
 /**
  * An ImageJ plugin for displaying the Bio-Formats plugins configuration dialog.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class LociConfig implements PlugIn {

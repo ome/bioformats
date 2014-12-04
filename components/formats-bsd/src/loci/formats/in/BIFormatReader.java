@@ -45,7 +45,6 @@ import loci.formats.gui.AWTImageTools;
  * BIFormatReader is the superclass for file format readers
  * that use java.awt.image.BufferedImage as the native data type.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class BIFormatReader extends FormatReader {

@@ -40,7 +40,6 @@ import loci.plugins.util.LibraryChecker;
  * Wraps core logic in {@link loci.plugins.in.Importer}, to avoid
  * direct references to classes in the external Bio-Formats library.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

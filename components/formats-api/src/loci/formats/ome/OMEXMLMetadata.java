@@ -36,7 +36,6 @@ import loci.formats.meta.IMetadata;
 
 /**
  *
- *
  * @author Chris Allan callan at blackcat dot ca
  */
 public interface OMEXMLMetadata extends IMetadata, ome.xml.meta.OMEXMLMetadata {

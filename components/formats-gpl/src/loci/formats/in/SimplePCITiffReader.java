@@ -55,7 +55,6 @@ import ome.units.UNITS;
 /**
  * SimplePCITiffReader is the file format reader for TIFF files produced by
  * SimplePCI software.
- *
  */
 public class SimplePCITiffReader extends BaseTiffReader {
 

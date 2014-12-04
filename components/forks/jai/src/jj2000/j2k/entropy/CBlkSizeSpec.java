@@ -41,7 +41,6 @@
  * Description:             Specification of the code-blocks size
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

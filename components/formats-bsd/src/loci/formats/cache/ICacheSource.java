@@ -38,7 +38,6 @@ package loci.formats.cache;
  * The actual source of the objects is implementation-dependent;
  * Bio-Formats uses {@link loci.formats.IFormatReader} to obtain image planes,
  * but any ordered collection of objects can conceivably be cached.
- *
  */
 public interface ICacheSource {
 

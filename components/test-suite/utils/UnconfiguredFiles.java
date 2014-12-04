@@ -32,7 +32,6 @@ import loci.common.DataTools;
 /**
  * Recursively searchs a directory for files that have not been configured for
  * testing.
- *
  */
 public class UnconfiguredFiles {
 

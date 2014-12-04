@@ -41,7 +41,6 @@ import loci.formats.ReaderWrapper;
 
 /**
  * A reader wrapper for reading image planes as BufferedImage objects.
- *
  */
 public class BufferedImageReader extends ReaderWrapper {
 

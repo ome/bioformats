@@ -58,7 +58,6 @@ import ome.units.UNITS;
 
 /**
  * LiFlimReader is the file format reader for LI-FLIM files.
- *
  */
 public class LiFlimReader extends FormatReader {
 

@@ -54,7 +54,6 @@ import org.xml.sax.Attributes;
 /**
  * OperettaReader is the file format reader for PerkinElmer Operetta data.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class OperettaReader extends FormatReader {

@@ -41,7 +41,6 @@ import loci.formats.UnsupportedCompressionException;
 /**
  * Implements encoding and decoding methods for Apple RPZA.  This code was
  * adapted from the RPZA codec for ffmpeg - see http://ffmpeg.mplayerhq.hu
- *
  */
 public class RPZACodec extends BaseCodec {
 

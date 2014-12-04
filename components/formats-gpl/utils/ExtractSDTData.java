@@ -28,7 +28,6 @@ import loci.formats.in.SDTReader;
 
 /**
  * Reads SDT files and creates text files containing histogram data.
- *
  */
 public class ExtractSDTData {
 

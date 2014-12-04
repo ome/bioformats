@@ -40,7 +40,6 @@ import loci.plugins.in.ImporterPrompter;
 
 /**
  * Miscellaneous plugins utility methods.
- *
  */
 public final class BF {
 

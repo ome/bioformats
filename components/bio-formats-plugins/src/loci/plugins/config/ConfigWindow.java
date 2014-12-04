@@ -75,7 +75,6 @@ import loci.plugins.util.WindowTools;
 /**
  * A window for managing configuration of the Bio-Formats plugins.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ConfigWindow extends JFrame

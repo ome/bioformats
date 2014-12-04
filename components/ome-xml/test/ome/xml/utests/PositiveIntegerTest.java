@@ -41,7 +41,6 @@ import ome.xml.model.primitives.PositiveInteger;
 import org.testng.annotations.Test;
 
 /**
- *
  */
 public class PositiveIntegerTest {
 

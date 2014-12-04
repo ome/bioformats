@@ -40,7 +40,6 @@ import loci.plugins.util.LociPrefs;
 /**
  * Custom widgets for configuring Bio-Formats SDT support.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class SDTWidgets implements IFormatWidgets, ItemListener {

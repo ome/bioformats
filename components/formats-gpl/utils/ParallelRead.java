@@ -32,7 +32,6 @@ import loci.formats.services.OMEXMLService;
 /**
  * Reads all files in given directory in parallel,
  * using a separate thread for each.
- *
  */
 public class ParallelRead implements Runnable {
   private String id;

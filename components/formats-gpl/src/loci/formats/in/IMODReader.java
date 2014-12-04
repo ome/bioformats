@@ -46,7 +46,6 @@ import ome.xml.model.primitives.PositiveFloat;
  * Reader for IMOD binary files.
  *
  * See http://bio3d.colorado.edu/imod/doc/binspec.html
- *
  */
 public class IMODReader extends FormatReader {
 

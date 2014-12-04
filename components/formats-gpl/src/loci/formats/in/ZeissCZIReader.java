@@ -81,7 +81,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * ZeissCZIReader is the file format reader for Zeiss .czi files.
- *
  */
 public class ZeissCZIReader extends FormatReader {
 

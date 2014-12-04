@@ -43,7 +43,6 @@
  *                          code-block basis (decoder side).
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

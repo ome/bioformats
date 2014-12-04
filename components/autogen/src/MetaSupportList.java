@@ -41,7 +41,6 @@ import loci.formats.IFormatHandler;
  * An ugly data structure for organizing the status of each metadata property
  * for each format handler (readers and writers).
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class MetaSupportList {

@@ -36,7 +36,6 @@ import java.sql.SQLException;
  * with the data via a set of defined interfaces.
  * A sql parser is not included here instead the caller must parse the sql and
  * pass in a parse tree.
- *
  */
 public class Engine
 {

@@ -41,7 +41,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * Interface for all biological file format writers.
- *
  */
 public interface IFormatWriter extends IFormatHandler {
 

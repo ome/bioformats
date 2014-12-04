@@ -75,7 +75,6 @@ import ome.xml.model.primitives.Timestamp;
 /**
  * OMETiffReader is the file format reader for
  * <a href="http://ome-xml.org/wiki/OmeTiff">OME-TIFF</a> files.
- *
  */
 public class OMETiffReader extends FormatReader {
 

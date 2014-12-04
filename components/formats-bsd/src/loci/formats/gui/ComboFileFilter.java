@@ -41,7 +41,6 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * A file filter that recognizes files from a union of other filters.
- *
  */
 public class ComboFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable

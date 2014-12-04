@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
  * A class for testing the Bio-Formats Importer's
  * autoscaling behavior in various cases.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class AutoscaleTest {

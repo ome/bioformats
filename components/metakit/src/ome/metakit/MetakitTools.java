@@ -32,7 +32,6 @@ import loci.common.RandomAccessInputStream;
 
 /**
  * Utility methods for working with Metakit database files.
- *
  */
 public class MetakitTools {
 

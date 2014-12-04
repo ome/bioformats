@@ -58,7 +58,6 @@ import ome.units.UNITS;
  * {@link loci.formats.ome.OMEXMLMetadata}, thus generating OME-XML from
  * information in an OMERO database.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public final class MetadataConverter {

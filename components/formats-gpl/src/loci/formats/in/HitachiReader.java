@@ -57,7 +57,6 @@ import ome.units.quantity.Length;
 /**
  * HitachiReader is the file format reader for S-4800 files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class HitachiReader extends FormatReader {

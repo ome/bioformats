@@ -41,7 +41,6 @@
  * Description:             The generic coded (compressed) code-block
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

@@ -43,7 +43,6 @@ import loci.formats.CoreMetadata;
  * Handles swapping the dimension order of an image series. This class is
  * useful for both reassigning ZCT sizes (the input dimension order), and
  * shuffling around the resultant planar order (the output dimension order).
- *
  */
 public class DimensionSwapper extends ReaderWrapper {
 

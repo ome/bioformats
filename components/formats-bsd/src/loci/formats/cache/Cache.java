@@ -46,7 +46,6 @@ import loci.formats.FormatTools;
  * across the multidimensional image series's dimensional axes, with the
  * strategy indicating which surrounding planes to load into the cache (i.e.,
  * planes within a certain range along each dimensional axis).
- *
  */
 public class Cache implements CacheReporter {
 

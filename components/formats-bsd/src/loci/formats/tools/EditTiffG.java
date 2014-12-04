@@ -64,7 +64,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides a GUI for editing TIFF file comments.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class EditTiffG extends JFrame implements ActionListener {

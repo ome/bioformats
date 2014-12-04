@@ -44,7 +44,6 @@ import java.nio.channels.Channel;
  * NIOInputStream provides methods for "intelligent" reading of files
  * and byte arrays.
  *
- *
  */
 public class NIOInputStream extends InputStream implements DataInput {
 

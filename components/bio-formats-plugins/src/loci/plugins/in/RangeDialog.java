@@ -33,7 +33,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer range chooser dialog box.
- *
  */
 public class RangeDialog extends ImporterDialog {
 

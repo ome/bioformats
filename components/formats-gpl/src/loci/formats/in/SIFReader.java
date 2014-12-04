@@ -40,7 +40,6 @@ import ome.units.UNITS;
 
 /**
  * SIFReader is the file format reader for Andor SIF files.
- *
  */
 public class SIFReader extends FormatReader {
 

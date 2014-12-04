@@ -41,7 +41,6 @@ import loci.formats.meta.MetadataStore;
  * <a href="http://www.imagingworkbench.com/">Imaging Workbench</a>
  * software.
  *
- *
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */
 public class ARFReader extends FormatReader {

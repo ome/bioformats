@@ -36,7 +36,6 @@ package loci.common.services;
  * Exception thrown when there is an error within a given service. That could
  * not be handled.
  *
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class ServiceException extends Exception

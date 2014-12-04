@@ -40,7 +40,6 @@ package ome.xml.meta;
  * <p>The <code>MetadataRoot</code> interface is implemented by the
  * root node of metadata storage implementations.
  *
- *
  * @author Roger Leigh r.leigh at dundee.ac.uk
  */
 public interface MetadataRoot { }

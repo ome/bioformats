@@ -38,7 +38,6 @@ package loci.formats.cache;
  * {@link ICacheSource}, it works with multidimensional (N-D) position arrays
  * rather than rasterized (1-D) indices. The two are made equivalent via a
  * mapping between the two, invoked within {@link Cache} as needed.
- *
  */
 public interface ICacheStrategy extends CacheReporter {
 

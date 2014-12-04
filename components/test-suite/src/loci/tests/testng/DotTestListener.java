@@ -34,7 +34,6 @@ import org.testng.ITestResult;
  * an "F" for each failure and an "S" for each skip. Adapted from an
  * <a href="http://testng.org/doc/documentation-main.html#logging">example</a>
  * on the TestNG web site.
- *
  */
 public class DotTestListener implements ITestListener {
 

@@ -53,7 +53,6 @@ import loci.poi.hssf.util.RKUtil;
  * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<P>
  *
  *
- *
  * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)

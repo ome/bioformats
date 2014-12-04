@@ -47,7 +47,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * APNGWriter is the file format writer for PNG and APNG files.
- *
  */
 public class APNGWriter extends FormatWriter {
 

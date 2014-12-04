@@ -41,7 +41,6 @@ import loci.common.enumeration.EnumException;
 
 /**
  * An enumeration of compression types.
- *
  */
 public enum CompressionType implements CodedEnum {
 

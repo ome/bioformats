@@ -64,7 +64,6 @@ import ome.units.UNITS;
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class MIASReader extends FormatReader {

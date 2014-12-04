@@ -41,7 +41,6 @@
  * Description:             Implementation of the bit stream writer for streams.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

@@ -36,7 +36,6 @@ package loci.common.services;
  * Exception thrown when there is an object instantiation error or error
  * processing dependencies.
  *
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class DependencyException extends Exception

@@ -84,7 +84,6 @@ import java.io.IOException;
 import javax.imageio.IIOException;
 
 /**
- *
  */
 public class TIFFT6Compressor extends TIFFFaxCompressor {
 

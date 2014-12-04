@@ -39,7 +39,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * InCell3000Reader is the file format reader for InCell 3000.
- *
  */
 public class InCell3000Reader extends FormatReader {
 

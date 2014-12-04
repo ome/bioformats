@@ -29,7 +29,6 @@ import loci.formats.ImageReader;
 
 /**
  * Simple example of how to open multiple files simultaneously.
- *
  */
 public class MultiFileExample {
   public static void main(String[] args) throws FormatException, IOException {

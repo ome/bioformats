@@ -36,7 +36,6 @@ import java.lang.reflect.Field;
 
 /**
  * A event indicating a cache update.
- *
  */
 public class CacheEvent {
 

@@ -58,7 +58,6 @@ import ome.xml.model.primitives.PositiveInteger;
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
- *
  */
 public class Instrument2011_06
 {

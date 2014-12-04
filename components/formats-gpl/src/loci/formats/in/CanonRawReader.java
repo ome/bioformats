@@ -39,7 +39,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * CanonRawReader is the file format reader for Canon RAW files.
- *
  */
 public class CanonRawReader extends FormatReader {
 

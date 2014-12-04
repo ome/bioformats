@@ -66,7 +66,6 @@ import java.util.Locale;
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  *
- *
  * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @author  Shawn Laubach (slaubach at apache dot org) (Data Formats)

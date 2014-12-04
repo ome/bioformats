@@ -43,7 +43,6 @@ import loci.formats.FormatException;
 /**
  * This class implements ZLIB decompression.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ZlibCodec extends BaseCodec {

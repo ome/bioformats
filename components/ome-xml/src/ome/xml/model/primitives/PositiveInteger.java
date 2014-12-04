@@ -39,7 +39,6 @@ package ome.xml.model.primitives;
  * and a further positive restriction.
  *
  * @author callan
- *
  */
 public class PositiveInteger extends NonNegativeInteger {
 

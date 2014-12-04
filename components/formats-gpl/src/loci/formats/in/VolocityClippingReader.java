@@ -40,7 +40,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * VolocityClippingReader is the file format reader for Volocity library
  * clipping files.
- *
  */
 public class VolocityClippingReader extends FormatReader {
 

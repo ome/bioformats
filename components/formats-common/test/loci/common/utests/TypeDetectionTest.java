@@ -46,7 +46,6 @@ import org.testng.annotations.Test;
 /**
  * Tests compressed IRandomAccess implementation type detection.
  *
- *
  * @see loci.common.IRandomAcess
  */
 public class TypeDetectionTest {

@@ -34,6 +34,5 @@ package loci.formats.meta;
 
 /**
  *
- *
  */
 public class DummyMetadata extends ome.xml.meta.DummyMetadata implements IMetadata { }

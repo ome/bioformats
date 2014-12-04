@@ -46,7 +46,6 @@ import ome.units.quantity.Length;
  * GelReader is the file format reader for
  * Molecular Dynamics GEL TIFF files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class GelReader extends BaseTiffReader {

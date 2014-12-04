@@ -48,7 +48,6 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import org.testng.annotations.Test;
 
 /**
- *
  */
 public class EnumHandlerTest {
 

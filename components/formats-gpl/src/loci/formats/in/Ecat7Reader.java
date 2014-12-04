@@ -40,7 +40,6 @@ import ome.units.quantity.Length;
 
 /**
  * Ecat7Reader is the file format reader for ECAT 7 files.
- *
  */
 public class Ecat7Reader extends FormatReader {
 

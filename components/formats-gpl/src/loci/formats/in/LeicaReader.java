@@ -68,7 +68,6 @@ import org.slf4j.LoggerFactory;
 /**
  * LeicaReader is the file format reader for Leica files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LeicaReader extends FormatReader {

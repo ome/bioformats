@@ -41,7 +41,6 @@ import ome.xml.model.primitives.NonNegativeLong;
 import org.testng.annotations.Test;
 
 /**
- *
  */
 public class NonNegativeLongTest {
 

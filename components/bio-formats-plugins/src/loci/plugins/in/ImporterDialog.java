@@ -33,7 +33,6 @@ import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Abstract superclass of importer dialogs.
- *
  */
 public abstract class ImporterDialog extends OptionsDialog {
 

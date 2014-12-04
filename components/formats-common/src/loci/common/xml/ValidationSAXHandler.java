@@ -40,7 +40,6 @@ import org.xml.sax.Attributes;
 /**
  * Used by validateXML to parse the XML block's schema path using SAX.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com

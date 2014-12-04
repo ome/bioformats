@@ -37,7 +37,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * UBMReader is the file format reader for UBM .pr3 files.
- *
  */
 public class UBMReader extends FormatReader {
 

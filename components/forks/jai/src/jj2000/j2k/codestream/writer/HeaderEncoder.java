@@ -41,7 +41,6 @@
  * Description:             Write codestream headers.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

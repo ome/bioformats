@@ -37,7 +37,6 @@ package ome.xml.model.enums;
 /**
  * EnumerationException is the exception thrown when an enumeration is
  * invalid or not found.
- *
  */
 public class EnumerationException extends Exception {
 

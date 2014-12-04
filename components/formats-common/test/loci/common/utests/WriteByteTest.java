@@ -48,7 +48,6 @@ import org.testng.annotations.Test;
 /**
  * Tests for writing bytes to a loci.common.IRandomAccess.
  *
- *
  * @see loci.common.IRandomAccess
  */
 @Test(groups="writeTests")

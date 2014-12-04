@@ -42,7 +42,6 @@ import loci.common.enumeration.EnumException;
 /**
  * Utility class for working with TIFF photometric interpretations.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com

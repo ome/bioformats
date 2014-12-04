@@ -35,7 +35,6 @@ import loci.plugins.BF;
 
 /**
  * Echoes status messages to the ImageJ status bar.
- *
  */
 public class IJStatusEchoer extends AppenderBase<ILoggingEvent> {
 

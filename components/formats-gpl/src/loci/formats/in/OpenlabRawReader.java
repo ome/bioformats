@@ -43,7 +43,6 @@ import loci.formats.meta.MetadataStore;
  * Specifications available at
  * http://www.improvision.com/support/tech_notes/detail.php?id=344
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class OpenlabRawReader extends FormatReader {

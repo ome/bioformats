@@ -41,7 +41,6 @@
  * Description:             This class describes the ROI mask for a subband
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

@@ -53,7 +53,6 @@ import com.esotericsoftware.kryo.io.Output;
 /**
  * Top-level class for reading from various data sources.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */

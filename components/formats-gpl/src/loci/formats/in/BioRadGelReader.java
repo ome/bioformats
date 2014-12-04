@@ -41,7 +41,6 @@ import ome.units.quantity.Length;
 
 /**
  * BioRadGelReader is the file format reader for Bio-Rad gel files.
- *
  */
 public class BioRadGelReader extends FormatReader {
 

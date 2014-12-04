@@ -36,7 +36,6 @@ import java.util.EventListener;
 
 /**
  * A listener for status updates.
- *
  */
 public interface StatusListener extends EventListener {
 

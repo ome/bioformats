@@ -64,7 +64,6 @@ import ome.units.UNITS;
 /**
  * BDReader is the file format reader for BD Pathway datasets.
  *
- *
  * @author Shawn Garbett  Shawn.Garbett a t Vanderbilt.edu
  */
 public class BDReader extends FormatReader {

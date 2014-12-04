@@ -44,7 +44,6 @@ import java.io.IOException;
 
 /**
  * ColorModel that handles 8, 16 and 32 bits per channel signed data.
- *
  */
 public class SignedColorModel extends ColorModel {
 

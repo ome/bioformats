@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 /**
  * PreviewPane is a panel for use as a JFileChooser accessory, displaying
  * a thumbnail for the selected image, loaded in a separate thread.
- *
  */
 public class PreviewPane extends JPanel
   implements PropertyChangeListener, Runnable

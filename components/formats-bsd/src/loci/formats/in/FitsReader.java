@@ -48,7 +48,6 @@ import loci.formats.meta.MetadataStore;
  * Flexible Image Transport System (FITS) images.
  *
  * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij).
- *
  */
 public class FitsReader extends FormatReader {
 

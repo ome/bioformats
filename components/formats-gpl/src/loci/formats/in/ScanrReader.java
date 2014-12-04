@@ -61,7 +61,6 @@ import org.xml.sax.Attributes;
 /**
  * ScanrReader is the file format reader for Olympus ScanR datasets.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ScanrReader extends FormatReader {

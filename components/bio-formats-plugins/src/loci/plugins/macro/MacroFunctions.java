@@ -44,7 +44,6 @@ import loci.plugins.util.WindowTools;
  * It uses reflection to create an extension method for each public method in
  * the implementing subclass. See {@link LociFunctions} for an example.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class MacroFunctions implements PlugIn, MacroExtension {

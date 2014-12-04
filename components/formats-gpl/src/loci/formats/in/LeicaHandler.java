@@ -69,7 +69,6 @@ import org.xml.sax.Attributes;
 /**
  * SAX handler for parsing XML in Leica LIF and Leica TCS files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LeicaHandler extends BaseHandler {

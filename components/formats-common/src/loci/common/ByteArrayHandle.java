@@ -41,7 +41,6 @@ import java.nio.ByteOrder;
 /**
  * A wrapper for a byte array that implements the IRandomAccess interface.
  *
- *
  * @see IRandomAccess
  */
 public class ByteArrayHandle extends AbstractNIOHandle {

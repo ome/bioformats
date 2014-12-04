@@ -32,7 +32,6 @@ import loci.common.services.Service;
 
 /**
  * Interface defining methods for interacting with the OME Metakit library.
- *
  */
 public interface MetakitService extends Service {
 

@@ -47,7 +47,6 @@ import org.w3c.dom.NodeList;
 /**
  * @author callan
  *
- *
  */
 public abstract class AbstractOMEModelObject implements OMEModelObject {
 

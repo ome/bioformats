@@ -48,7 +48,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * TrestleReader is the file format reader for Trestle slide datasets.
- *
  */
 public class TrestleReader extends BaseTiffReader {
 

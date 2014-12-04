@@ -58,7 +58,6 @@ import loci.formats.meta.MetadataStore;
  * Much of this code was adapted from
  * <a href="http://java.sun.com/products/java-media/jai/forDevelopers/samples/MultiPageRead.java">this example</a>.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class TiffJAIReader extends BIFormatReader {

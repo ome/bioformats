@@ -101,7 +101,6 @@
  *
  *    Metadata within the scaled down preview tiff: No (other than basic dimensions and image planes)
  *    Metadata within the separate TIFF z plane images: No (other than basic dimensions and image planes)
- *
  */
 
 package loci.formats.in;
@@ -125,7 +124,6 @@ import loci.formats.tiff.IFDList;
 /**
  * ZeissTIFFReader is the file format reader for Zeiss AxioVision TIFF
  * files and their companion XML file.
- *
  *
  * @author Melissa Linkert melissa at glencoesoftware.com and Roger Leigh r.leigh at dundee.ac.uk
  */

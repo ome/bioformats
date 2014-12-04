@@ -43,7 +43,6 @@ import loci.formats.cache.ICacheSource;
 
 /**
  * Retrieves BufferedImages from a data source using Bio-Formats.
- *
  */
 public class BufferedImageSource implements ICacheSource {
 

@@ -46,7 +46,6 @@ import loci.formats.FormatException;
 /**
  * AmiraParameters handles parsing and writing of AmiraMesh headers.
  *
- *
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */

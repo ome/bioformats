@@ -48,7 +48,6 @@ import org.xml.sax.Attributes;
 
 /**
  * DefaultHandler implementation for handling XML produced by Nikon Elements.
- *
  */
 public class ND2Handler extends BaseHandler {
 

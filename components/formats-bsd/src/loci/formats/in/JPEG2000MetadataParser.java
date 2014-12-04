@@ -46,7 +46,6 @@ import loci.formats.codec.JPEG2000SegmentMarker;
 
 /**
  * A parser for JPEG 2000 metadata.
- *
  */
 public class JPEG2000MetadataParser {
 

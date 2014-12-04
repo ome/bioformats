@@ -39,7 +39,6 @@ import ome.xml.model.enums.EnumerationException;
 
 /**
  * An enumeration provider for making OME data model enumerations available.
- *
  */
 public interface IEnumerationHandler {
 

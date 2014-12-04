@@ -41,7 +41,6 @@ import org.apache.velocity.app.VelocityEngine;
  *
  * TODO - Add support for group reporting using meta-groups.txt.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class MetaSupportAutogen {

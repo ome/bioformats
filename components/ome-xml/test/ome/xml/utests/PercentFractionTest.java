@@ -41,7 +41,6 @@ import ome.xml.model.primitives.PercentFraction;
 import org.testng.annotations.Test;
 
 /**
- *
  */
 public class PercentFractionTest {
 

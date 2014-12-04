@@ -42,7 +42,6 @@ import loci.plugins.util.LibraryChecker;
  * Wraps core logic in {@link loci.plugins.out.Exporter}, to avoid
  * direct references to classes in the external Bio-Formats library.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LociExporter implements PlugInFilter {

@@ -41,7 +41,6 @@
  * Description:             Defines methods to transfer image data in blocks.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

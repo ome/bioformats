@@ -41,7 +41,6 @@ import loci.formats.UnsupportedCompressionException;
 
 /**
  * Methods for compressing and decompressing data using QuickTime RLE.
- *
  */
 public class QTRLECodec extends BaseCodec {
 

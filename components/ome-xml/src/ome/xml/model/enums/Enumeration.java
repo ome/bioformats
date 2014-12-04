@@ -36,7 +36,6 @@ package ome.xml.model.enums;
 
 /**
  * Abstract superclass for all enumerations.
- *
  */
 public interface Enumeration {
   // TODO

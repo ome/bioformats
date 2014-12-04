@@ -58,7 +58,6 @@ import loci.formats.gui.CacheComponent;
 /**
  * CacheConsole provides an interactive interpreter for
  * testing the Bio-Formats caching implementation.
- *
  */
 public final class CacheConsole {
 

@@ -65,7 +65,6 @@ import ome.units.UNITS;
 /**
  * Reader is the file format reader for Metamorph STK files.
  *
- *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu

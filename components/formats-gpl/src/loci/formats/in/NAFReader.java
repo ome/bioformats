@@ -39,7 +39,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * NAFReader is the file format reader for Hamamatsu Aquacosmos NAF files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class NAFReader extends FormatReader {

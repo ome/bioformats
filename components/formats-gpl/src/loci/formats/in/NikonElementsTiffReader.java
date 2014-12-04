@@ -53,7 +53,6 @@ import ome.units.UNITS;
 /**
  * NikonElementsTiffReader is the file format reader for TIFF files produced
  * by Nikon Elements.
- *
  */
 public class NikonElementsTiffReader extends BaseTiffReader {
 

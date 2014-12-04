@@ -60,7 +60,6 @@ import org.xml.sax.SAXException;
 /**
  * Logic for displaying images and metadata onscreen using ImageJ.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

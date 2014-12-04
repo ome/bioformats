@@ -34,7 +34,6 @@ package loci.formats.codec;
 
 /**
  * Options for compressing and decompressing Huffman data.
- *
  */
 public class HuffmanCodecOptions extends CodecOptions {
 

@@ -32,7 +32,6 @@ import loci.formats.tiff.TiffSaver;
  * OME-XML comment found in OME-TIFF files. Note that this code must be
  * tailored to a specific need by editing the commented out code below to
  * make desired alterations to the comment.
- *
  */
 public class CommentSurgery {
   public static void main(String[] args) throws Exception {

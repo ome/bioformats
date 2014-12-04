@@ -35,7 +35,6 @@ import java.util.Iterator;
 /**
  * Utility methods for verifying that classes
  * are present and versions are correct.
- *
  */
 public final class LibraryChecker {
 

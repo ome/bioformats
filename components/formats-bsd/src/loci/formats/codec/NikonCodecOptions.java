@@ -34,7 +34,6 @@ package loci.formats.codec;
 
 /**
  * Options for compressing and decompressing Nikon NEF data.
- *
  */
 public class NikonCodecOptions extends CodecOptions {
 

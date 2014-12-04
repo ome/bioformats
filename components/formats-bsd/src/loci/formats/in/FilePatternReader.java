@@ -54,7 +54,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  *
- *
  */
 public class FilePatternReader extends FormatReader {
 

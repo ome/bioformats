@@ -39,7 +39,6 @@ import javax.swing.filechooser.FileFilter;
 /**
  * A file filter that selects files with no extension,
  * for use with a JFileChooser.
- *
  */
 public class NoExtensionFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable

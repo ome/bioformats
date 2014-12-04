@@ -35,7 +35,6 @@ package loci.formats;
 /**
  * UnsupportedCompressionException is the exception thrown when the compression
  * scheme used in a particular file or stream is unsupported.
- *
  */
 public class UnsupportedCompressionException extends FormatException {
 

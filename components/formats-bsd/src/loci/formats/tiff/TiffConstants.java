@@ -35,7 +35,6 @@ package loci.formats.tiff;
 /**
  * Generally useful TIFF-related constants.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com

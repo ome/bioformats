@@ -67,7 +67,6 @@ import org.slf4j.LoggerFactory;
  * and OME-XML strings.
  * Most of the methods require the optional {@link loci.formats.ome}
  * package, and optional ome-xml.jar library, to be present at runtime.
- *
  */
 public final class MetadataTools {
 

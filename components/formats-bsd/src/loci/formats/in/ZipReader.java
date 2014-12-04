@@ -49,7 +49,6 @@ import loci.formats.ImageReader;
 
 /**
  * Reader for Zip files.
- *
  */
 public class ZipReader extends FormatReader {
 

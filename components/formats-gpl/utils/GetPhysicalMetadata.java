@@ -40,7 +40,6 @@ import ome.units.UNITS;
 /**
  * Uses Bio-Formats to extract some basic standardized
  * (format-independent) metadata.
- *
  */
 public class GetPhysicalMetadata {
 

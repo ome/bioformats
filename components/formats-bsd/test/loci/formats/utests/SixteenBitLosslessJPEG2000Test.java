@@ -59,7 +59,6 @@ import org.testng.annotations.Test;
 /**
  * Test case which outlines the problems seen in omero:#6728.
  *
- *
  * @author Melissa Linkert <melissa at glencoesoftware.com>
  */
 public class SixteenBitLosslessJPEG2000Test {

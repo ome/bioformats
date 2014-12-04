@@ -43,7 +43,6 @@ import ome.units.UNITS;
 
 /**
  * PCORAWReader is the file format reader for PCORAW files.
- *
  */
 public class PCORAWReader extends FormatReader {
 

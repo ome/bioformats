@@ -31,7 +31,6 @@ import ij.gui.GenericDialog;
 
 /**
  * Bio-Formats Importer location chooser dialog box.
- *
  */
 public class LocationDialog extends ImporterDialog {
 

@@ -37,7 +37,6 @@ import loci.formats.FormatException;
 /**
  * CacheException is the exception thrown when something
  * goes wrong performing a cache operation.
- *
  */
 public class CacheException extends FormatException {
 

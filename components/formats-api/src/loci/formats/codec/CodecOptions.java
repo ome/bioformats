@@ -36,7 +36,6 @@ import java.awt.image.ColorModel;
 
 /**
  * Options for compressing and decompressing data.
- *
  */
 public class CodecOptions {
 

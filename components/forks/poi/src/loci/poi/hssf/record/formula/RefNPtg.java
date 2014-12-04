@@ -40,7 +40,6 @@
 
 /*
  * RefNPtg.java
- *
  */
 package loci.poi.hssf.record.formula;
 

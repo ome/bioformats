@@ -112,7 +112,6 @@ import ome.xml.model.enums.handlers.PulseEnumHandler;
 
 /**
  * Abstract superclass of all biological file format readers.
- *
  */
 public abstract class FormatReader extends FormatHandler
   implements IFormatReader

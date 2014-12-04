@@ -85,7 +85,6 @@ import javax.imageio.IIOException;
 import javax.imageio.metadata.IIOMetadata;
 
 /**
- *
  */
 public class TIFFT4Compressor extends TIFFFaxCompressor {
 

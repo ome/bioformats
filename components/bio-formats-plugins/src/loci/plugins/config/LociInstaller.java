@@ -34,7 +34,6 @@ import loci.plugins.util.WindowTools;
  * An ImageJ plugin for installing and upgrading libraries
  * related to the Bio-Formats plugins.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class LociInstaller implements PlugIn {

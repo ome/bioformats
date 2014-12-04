@@ -43,7 +43,6 @@ import loci.formats.services.LuraWaveServiceImpl;
 /**
  * Custom widgets for configuring Bio-Formats Flex support.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FlexWidgets implements DocumentListener, IFormatWidgets {

@@ -42,7 +42,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * NDPISReader is the file format reader for Hamamatsu .ndpis files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class NDPISReader extends FormatReader {

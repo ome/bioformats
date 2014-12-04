@@ -56,7 +56,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer general options dialog box.
- *
  */
 public class MainDialog extends ImporterDialog
   implements FocusListener, ItemListener, MouseListener

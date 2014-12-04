@@ -35,7 +35,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer crop options dialog box.
- *
  */
 public class CropDialog extends ImporterDialog {
 

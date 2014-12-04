@@ -42,7 +42,6 @@ import loci.common.DataTools;
 
 /**
  * ColorModel that handles 16 bits per channel lookup tables.
- *
  */
 public class Index16ColorModel extends ColorModel {
 

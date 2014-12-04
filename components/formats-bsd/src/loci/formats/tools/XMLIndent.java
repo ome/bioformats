@@ -42,7 +42,6 @@ import loci.common.xml.XMLTools;
 
 /**
  * Indents XML to be more readable.
- *
  */
 public class XMLIndent {
 

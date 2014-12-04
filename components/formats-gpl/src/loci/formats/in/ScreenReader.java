@@ -62,7 +62,6 @@ import ome.xml.model.primitives.PositiveInteger;
  * ScreenReader is a generic reader for files in non-HCS formats that have been
  * organized into a screen.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ScreenReader extends FormatReader {

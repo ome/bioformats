@@ -67,7 +67,6 @@ import ome.units.UNITS;
  * (2) the JAI jar file precedes JJ2000 in the classpath.
  *
  * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
- *
  */
 public class NativeND2Reader extends FormatReader {
 

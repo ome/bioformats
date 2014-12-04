@@ -43,7 +43,6 @@ import ome.units.quantity.Length;
 
 /**
  * UnisokuReader is the file format reader for Unisoku STM files.
- *
  */
 public class UnisokuReader extends FormatReader {
 

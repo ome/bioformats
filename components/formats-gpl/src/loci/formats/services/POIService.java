@@ -35,7 +35,6 @@ import loci.common.services.Service;
 /**
  * Interface defining methods for reading Microsoft OLE2 documents using
  * OME's fork of Apache POI.
- *
  */
 public interface POIService extends Service {
 

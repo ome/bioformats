@@ -44,7 +44,6 @@
  *                          the InvWTFullInt and InvWTFullFloat
  *                          classes by Bertrand Berthelot, Apr-19-1999
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

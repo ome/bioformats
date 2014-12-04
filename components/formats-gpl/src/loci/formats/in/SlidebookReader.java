@@ -53,7 +53,6 @@ import ome.units.UNITS;
  * The strategies employed by this reader are highly suboptimal, as we
  * have very little information on the Slidebook format.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class SlidebookReader extends FormatReader {

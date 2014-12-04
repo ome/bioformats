@@ -50,7 +50,6 @@ import org.w3c.dom.Text;
 /**
  * A tree cell renderer for displaying syntax highlighted XML in a JTree.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class XMLCellRenderer extends DefaultTreeCellRenderer {

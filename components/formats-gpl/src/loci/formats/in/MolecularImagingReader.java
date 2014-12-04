@@ -41,7 +41,6 @@ import ome.units.quantity.Length;
 
 /**
  * MolecularImagingReader is the file format reader for Molecular Imaging files.
- *
  */
 public class MolecularImagingReader extends FormatReader {
 

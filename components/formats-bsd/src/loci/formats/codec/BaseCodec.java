@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
  * are left as abstract. 2D methods do simple concatenation and call to the 1D
  * methods
  *
- *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
 public abstract class BaseCodec implements Codec {

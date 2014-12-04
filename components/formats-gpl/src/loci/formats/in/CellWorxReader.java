@@ -60,7 +60,6 @@ import ome.units.quantity.Length;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
- *
  */
 public class CellWorxReader extends FormatReader {
 

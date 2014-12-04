@@ -41,7 +41,6 @@ import loci.poi.poifs.filesystem.Entry;
 import loci.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
- *
  */
 public class POIServiceImpl extends AbstractService implements POIService {
 

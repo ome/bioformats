@@ -32,7 +32,6 @@ import java.awt.Component;
 /**
  * Interface for defining custom widgets for a specific file format reader.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface IFormatWidgets {

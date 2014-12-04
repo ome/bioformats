@@ -41,7 +41,6 @@ import ome.units.quantity.Length;
 /**
  * OxfordInstrumentsReader is the file format reader for
  * Oxford Instruments .top files.
- *
  */
 public class OxfordInstrumentsReader extends FormatReader {
 

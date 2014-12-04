@@ -42,7 +42,6 @@ import java.net.URLConnection;
  * Provides random access to URLs using the IRandomAccess interface.
  * Instances of URLHandle are read-only.
  *
- *
  * @see IRandomAccess
  * @see StreamHandle
  * @see java.net.URLConnection

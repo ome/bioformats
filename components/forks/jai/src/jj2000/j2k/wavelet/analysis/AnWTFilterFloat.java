@@ -42,7 +42,6 @@
  *                          works on float data.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -74,8 +73,6 @@
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  *
- *
- *
  */
 
 
@@ -97,7 +94,6 @@ import jj2000.j2k.image.*;
  * are performed.
  *
  * @see AnWTFilter
- *
  */
 public abstract class AnWTFilterFloat extends AnWTFilter {
 

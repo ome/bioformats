@@ -48,7 +48,6 @@ import loci.formats.gui.AWTImageTools;
 
 /**
  * This class implements JPEG compression and decompression.
- *
  */
 public class JPEGCodec extends BaseCodec {
 

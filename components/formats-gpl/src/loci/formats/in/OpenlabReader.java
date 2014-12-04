@@ -50,7 +50,6 @@ import ome.units.quantity.Length;
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu

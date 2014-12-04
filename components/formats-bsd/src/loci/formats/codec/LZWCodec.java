@@ -74,7 +74,6 @@ import loci.formats.FormatException;
  * exceeds 1.41*(number of input bytes)+3.
  * <p>
  *
- *
  * @author Mikhail Kovtun mikhail.kovtun at duke.edu
  */
 public class LZWCodec extends BaseCodec {

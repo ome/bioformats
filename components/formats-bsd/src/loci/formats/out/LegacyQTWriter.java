@@ -52,7 +52,6 @@ import loci.formats.meta.MetadataRetrieve;
  *
  * Much of this code was based on the QuickTime Movie Writer for ImageJ
  * (available at http://rsb.info.nih.gov/ij/plugins/movie-writer.html).
- *
  */
 public class LegacyQTWriter extends FormatWriter {
 

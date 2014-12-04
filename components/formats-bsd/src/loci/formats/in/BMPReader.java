@@ -53,7 +53,6 @@ import ome.units.UNITS;
  * See http://astronomy.swin.edu.au/~pbourke/dataformats/bmp/ for a nice
  * description of the BMP file format.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class BMPReader extends FormatReader {

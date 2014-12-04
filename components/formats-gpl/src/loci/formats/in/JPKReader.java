@@ -36,7 +36,6 @@ import loci.formats.tiff.PhotoInterp;
 
 /**
  * JPKReader is the file format reader for JPK Instruments files.
- *
  */
 public class JPKReader extends BaseTiffReader {
 

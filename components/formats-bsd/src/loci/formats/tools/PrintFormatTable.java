@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for printing a list of formats supported by Bio-Formats.
- *
  */
 public class PrintFormatTable {
 

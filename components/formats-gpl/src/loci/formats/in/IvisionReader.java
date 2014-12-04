@@ -48,7 +48,6 @@ import org.xml.sax.Attributes;
 /**
  * IvisionReader is the file format reader for IVision (.IPM) files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class IvisionReader extends FormatReader {

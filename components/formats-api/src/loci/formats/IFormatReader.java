@@ -41,7 +41,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * Interface for all biological file format readers.
- *
  */
 public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 

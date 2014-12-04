@@ -47,7 +47,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * BrukerReader is the file format reader for Bruker MRI files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class BrukerReader extends FormatReader {

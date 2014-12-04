@@ -41,7 +41,6 @@ import java.io.IOException;
  * StreamHandle implementation for reading from BZip2-compressed files
  * or byte arrays.  Instances of BZip2Handle are read-only.
  *
- *
  * @see StreamHandle
  *
  * @author Melissa Linkert melissa at glencoesoftware.com

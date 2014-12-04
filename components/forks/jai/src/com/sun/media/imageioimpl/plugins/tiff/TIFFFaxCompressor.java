@@ -83,7 +83,6 @@ import com.sun.media.imageio.plugins.tiff.TIFFCompressor;
 import com.sun.media.imageio.plugins.tiff.TIFFField;
 
 /**
- *
  */
 public abstract class TIFFFaxCompressor extends TIFFCompressor {
 

@@ -44,7 +44,6 @@ import loci.common.NIOFileHandle;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.BZip2Handle.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.BZip2Handle
  */

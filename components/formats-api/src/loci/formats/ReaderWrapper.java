@@ -48,7 +48,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * Abstract superclass of reader logic that wraps other readers.
  * All methods are simply delegated to the wrapped reader.
- *
  */
 public abstract class ReaderWrapper implements IFormatReader {
 

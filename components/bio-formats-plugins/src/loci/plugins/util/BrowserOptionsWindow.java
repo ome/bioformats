@@ -37,7 +37,6 @@ import loci.formats.gui.CacheComponent;
 
 /**
  * Extension of JFrame that allows the user to adjust caching settings.
- *
  */
 public class BrowserOptionsWindow extends JFrame {
 

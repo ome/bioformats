@@ -55,7 +55,6 @@ import loci.formats.meta.MetadataStore;
  * Most of this code was adapted from the PICT readers in JIMI
  * (http://java.sun.com/products/jimi/index.html), ImageMagick
  * (http://www.imagemagick.org), and Java QuickDraw.
- *
  */
 public class PictReader extends FormatReader {
 

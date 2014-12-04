@@ -45,7 +45,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * Attempts to validate the given XML files.
- *
  */
 public class XMLValidate {
 

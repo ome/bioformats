@@ -49,7 +49,6 @@ import loci.plugins.util.RecordedImageProcessor.MethodEntry;
 /**
  * Subclass of VirtualStack that uses Bio-Formats to read planes on demand.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class BFVirtualStack extends VirtualStack {

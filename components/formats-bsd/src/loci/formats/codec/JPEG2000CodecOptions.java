@@ -34,7 +34,6 @@ package loci.formats.codec;
 
 /**
  * Options for compressing and decompressing JPEG-2000 data.
- *
  */
 public class JPEG2000CodecOptions extends CodecOptions {
 

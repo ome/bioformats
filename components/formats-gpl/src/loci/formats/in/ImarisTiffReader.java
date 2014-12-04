@@ -50,7 +50,6 @@ import ome.units.quantity.Length;
  * ImarisTiffReader is the file format reader for
  * Bitplane Imaris 3 files (TIFF variant).
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ImarisTiffReader extends BaseTiffReader {

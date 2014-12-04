@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract superclass of all biological file format readers and writers.
- *
  */
 public abstract class FormatHandler implements IFormatHandler {
 

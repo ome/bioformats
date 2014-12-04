@@ -41,7 +41,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * MRWReader is the file format reader for Minolta MRW files.
- *
  */
 public class MRWReader extends FormatReader {
 

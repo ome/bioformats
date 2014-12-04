@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A utility class with convenience methods for working with dates.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com

@@ -47,7 +47,6 @@ import org.xml.sax.Attributes;
 /**
  * ImaconReader is the file format reader for Imacon .fff (TIFF) files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ImaconReader extends BaseTiffReader {

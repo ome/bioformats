@@ -37,7 +37,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * SMCameraReader is the file format reader for SM camera files.
- *
  */
 public class SMCameraReader extends FormatReader {
 

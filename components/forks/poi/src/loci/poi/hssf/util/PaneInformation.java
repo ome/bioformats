@@ -41,7 +41,6 @@ package loci.poi.hssf.util;
 
 /**
  * Holds information regarding a split plane or freeze plane for a sheet.
- *
  */
 public class PaneInformation
 {

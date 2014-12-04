@@ -56,7 +56,6 @@ import ome.xml.model.enums.EnumerationException;
 
 /**
  * Creates sample OME-TIFF datasets according to the given parameters.
- *
  */
 public class MakeTestOmeTiff {
 

@@ -47,7 +47,6 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * QTWriter is the file format writer for uncompressed QuickTime movie files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 

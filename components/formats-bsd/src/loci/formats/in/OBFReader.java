@@ -54,7 +54,6 @@ import ome.units.UNITS;
 /**
  * OBFReader is the file format reader for Imspector OBF files.
  *
- *
  * @author Bjoern Thiel bjoern.thiel at mpibpc.mpg.de
  */
 

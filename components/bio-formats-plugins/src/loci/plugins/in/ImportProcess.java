@@ -73,7 +73,6 @@ import ome.xml.model.enums.EnumerationException;
  * After calling {@link #execute()}, the process will be ready to feed to
  * an {@link ImagePlusReader} to read in the actual {@link ij.ImagePlus}
  * objects.
- *
  */
 public class ImportProcess implements StatusReporter {
 

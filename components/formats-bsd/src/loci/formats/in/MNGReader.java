@@ -51,7 +51,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * MNGReader is the file format reader for Multiple Network Graphics (MNG)
  * files.  Does not support JNG (JPEG Network Graphics).
- *
  */
 public class MNGReader extends BIFormatReader {
 

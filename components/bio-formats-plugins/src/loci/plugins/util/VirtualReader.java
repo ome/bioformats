@@ -35,7 +35,6 @@ import loci.formats.ReaderWrapper;
 /**
  * TODO
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class VirtualReader extends ReaderWrapper {

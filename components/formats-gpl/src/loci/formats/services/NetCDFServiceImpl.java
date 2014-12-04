@@ -53,7 +53,6 @@ import com.esotericsoftware.kryo.io.Output;
 /**
  * Utility class for working with NetCDF/HDF files.  Uses reflection to
  * call the NetCDF Java library.
- *
  */
 public class NetCDFServiceImpl extends AbstractService
   implements NetCDFService, KryoSerializable {

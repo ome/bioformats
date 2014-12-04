@@ -45,7 +45,6 @@ import ome.units.UNITS;
 /**
  * IPLabReader is the file format reader for IPLab (.IPL) files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */

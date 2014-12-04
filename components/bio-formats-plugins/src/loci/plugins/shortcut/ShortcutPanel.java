@@ -57,7 +57,6 @@ import loci.plugins.util.WindowTools;
  * Files dragged and dropped onto the window will be opened using the
  * Bio-Formats Importer plugin.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {

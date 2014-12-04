@@ -42,7 +42,6 @@ import ome.units.quantity.Length;
 /**
  * TopometrixReader is the file format reader for TopoMetrix .tfr, .ffr,
  * .zfr, .zfp, and .2fl files.
- *
  */
 public class TopometrixReader extends FormatReader {
 

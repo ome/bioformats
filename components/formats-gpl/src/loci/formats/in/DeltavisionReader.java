@@ -55,7 +55,6 @@ import ome.units.UNITS;
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class DeltavisionReader extends FormatReader {

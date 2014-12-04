@@ -63,7 +63,6 @@ import loci.plugins.util.VirtualImagePlus;
 
 /**
  * A high-level reader for {@link ij.ImagePlus} objects.
- *
  */
 public class ImagePlusReader implements StatusReporter {
 

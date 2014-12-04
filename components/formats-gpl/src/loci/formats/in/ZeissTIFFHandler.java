@@ -49,7 +49,6 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * SAX handler for parsing XML in Zeiss TIFF files.
  *
- *
  * @author Roger Leigh <r.leigh at dundee.ac.uk>
  */
 public class ZeissTIFFHandler extends DefaultHandler {

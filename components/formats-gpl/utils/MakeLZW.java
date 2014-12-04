@@ -31,7 +31,6 @@ import loci.formats.services.OMEXMLService;
 
 /**
  * Converts the given image file to an LZW-compressed TIFF.
- *
  */
 public class MakeLZW {
 

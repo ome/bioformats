@@ -28,7 +28,6 @@ package ome.metakit;
 /**
  * MetakitException is the exception thrown when something
  * goes wrong when reading a Metakit database file.
- *
  */
 public class MetakitException extends Exception {
 

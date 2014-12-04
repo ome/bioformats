@@ -38,7 +38,6 @@ import loci.formats.cache.ICacheSource;
 
 /**
  * Retrieves ImageJ image processors from an image reader.
- *
  */
 public class ImageProcessorSource implements ICacheSource {
 

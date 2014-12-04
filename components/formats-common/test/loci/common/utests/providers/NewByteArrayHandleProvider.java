@@ -42,7 +42,6 @@ import loci.common.IRandomAccess;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.ByteArrayHandle in on-the-fly allocated form.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.ByteArrayHandle
  */

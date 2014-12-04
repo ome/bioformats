@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Logic to stitch together files with similar names.
  * Assumes that all files have the same characteristics (e.g., dimensions).
- *
  */
 public class FileStitcher extends ReaderWrapper {
 

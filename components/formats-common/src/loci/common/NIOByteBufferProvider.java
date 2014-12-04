@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6417205</li>
  * </ul>
  *
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class NIOByteBufferProvider {

@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
  * It uses one instance of each writer subclass (specified in writers.txt,
  * or other class list source) to identify file formats and write data.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageWriter implements IFormatWriter {

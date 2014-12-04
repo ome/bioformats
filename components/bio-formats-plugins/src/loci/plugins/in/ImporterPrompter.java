@@ -43,7 +43,6 @@ import loci.plugins.prefs.OptionsDialog;
  * current configuration (i.e., which options are enabled), whether quiet or
  * windowless mode is set, and whether the method is being called from within
  * a macro.
- *
  */
 public class ImporterPrompter implements StatusListener {
 

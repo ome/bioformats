@@ -48,7 +48,6 @@ import ome.units.UNITS;
 /**
  * ImprovisionTiffReader is the file format reader for
  * Improvision TIFF files.
- *
  */
 public class ImprovisionTiffReader extends BaseTiffReader {
 

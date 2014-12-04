@@ -36,7 +36,6 @@ package ome.xml.model.primitives;
 
 /**
  * Primitive type that represents an RGBA color.
- *
  */
 public class Color extends PrimitiveType<Integer> {
 

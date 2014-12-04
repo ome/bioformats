@@ -92,7 +92,6 @@ import org.slf4j.LoggerFactory;
  * DrLaszloJamf's posts</a>
  * on the Java forums.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public final class AWTImageTools {

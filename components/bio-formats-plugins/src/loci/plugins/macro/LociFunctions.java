@@ -67,7 +67,6 @@ import ome.units.UNITS;
  * {@link loci.formats.IFormatReader} interface, with some additional
  * functions to control the type of format reader used.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class LociFunctions extends MacroFunctions {

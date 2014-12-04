@@ -47,7 +47,6 @@ import ome.xml.model.primitives.Timestamp;
 
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
- *
  */
 public class L2DReader extends FormatReader {
 

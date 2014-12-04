@@ -41,7 +41,6 @@ import loci.common.enumeration.EnumException;
 
 /**
  * An enumeration of IFD types.
- *
  */
 public enum IFDType implements CodedEnum {
 

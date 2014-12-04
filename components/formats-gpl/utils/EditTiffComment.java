@@ -30,7 +30,6 @@ import loci.formats.tiff.*;
 
 /**
  * Allows raw user TIFF comment editing for the given TIFF files.
- *
  */
 public class EditTiffComment {
 

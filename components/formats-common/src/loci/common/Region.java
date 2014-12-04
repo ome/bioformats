@@ -36,7 +36,6 @@ package loci.common;
  * A class for representing a rectangular region.
  * This class is very similar to {@link java.awt.Rectangle};
  * it mainly exists to avoid problems with AWT, JNI and headless operation.
- *
  */
 public class Region {
 

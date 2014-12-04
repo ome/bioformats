@@ -43,7 +43,6 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * Abstract superclass of writer logic that wraps other writers.
  * All methods are simply delegated to the wrapped writer.
- *
  */
 public abstract class WriterWrapper implements IFormatWriter {
 

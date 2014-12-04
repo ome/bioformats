@@ -45,7 +45,6 @@ import loci.formats.ImageReader;
 /**
  * Utility class for printing a list of scientific domains supported by
  * Bio-Formats, and all of the supported formats in each domain.
- *
  */
 public class PrintDomains {
 

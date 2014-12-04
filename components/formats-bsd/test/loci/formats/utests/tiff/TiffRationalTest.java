@@ -40,7 +40,6 @@ import org.testng.annotations.Test;
 
 /**
  * Unit tests for TIFF rationals.
- *
  */
 public class TiffRationalTest {
 

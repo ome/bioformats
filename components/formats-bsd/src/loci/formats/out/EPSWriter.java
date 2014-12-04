@@ -42,7 +42,6 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * EPSWriter is the file format writer for Encapsulated PostScript (EPS) files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class EPSWriter extends FormatWriter {

@@ -43,7 +43,6 @@ import java.util.zip.ZipInputStream;
  * StreamHandle implementation for reading from Zip-compressed files
  * or byte arrays.  Instances of ZipHandle are read-only.
  *
- *
  * @see StreamHandle
  *
  * @author Melissa Linkert melissa at glencoesoftware.com

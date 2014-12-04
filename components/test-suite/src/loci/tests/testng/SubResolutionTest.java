@@ -40,7 +40,6 @@ import org.testng.annotations.Test;
 
 /**
  * Demonstration of the sub-resolution API.
- *
  */
 public class SubResolutionTest {
 

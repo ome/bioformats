@@ -38,7 +38,6 @@ import loci.plugins.prefs.Option;
 
 /**
  * Bio-Formats Importer upgrade checker dialog box.
- *
  */
 public class UpgradeDialog extends ImporterDialog {
 

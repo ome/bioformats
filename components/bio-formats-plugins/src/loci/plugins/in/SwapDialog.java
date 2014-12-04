@@ -39,7 +39,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer dimension swapper dialog box.
- *
  */
 public class SwapDialog extends ImporterDialog implements ItemListener {
 

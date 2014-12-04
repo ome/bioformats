@@ -52,7 +52,6 @@ import java.util.*;
  * you can add elements half way into the list and have the value-key mappings
  * update</p>
  *
- *
  * @author Jason Height
  */
 

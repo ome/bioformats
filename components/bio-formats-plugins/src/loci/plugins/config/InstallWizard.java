@@ -44,7 +44,6 @@ import loci.common.Constants;
  * A wizard for walking users through installation of third party
  * libraries and plugins used by the Bio-Formats plugins.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class InstallWizard extends JFrame

@@ -40,7 +40,6 @@ import ome.units.quantity.Length;
 
 /**
  * SeikoReader is the file format reader for Seiko .xqd/.xqf files.
- *
  */
 public class SeikoReader extends FormatReader {
 

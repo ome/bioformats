@@ -37,7 +37,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * I2IReader is the file format reader for I2I files.
- *
  */
 public class I2IReader extends FormatReader {
 

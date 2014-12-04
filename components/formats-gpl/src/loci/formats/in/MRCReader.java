@@ -43,7 +43,6 @@ import ome.units.quantity.Length;
  * MRCReader is the file format reader for MRC files.
  * Specifications available at
  * http://bio3d.colorado.edu/imod/doc/mrc_format.txt
- *
  */
 public class MRCReader extends FormatReader {
 

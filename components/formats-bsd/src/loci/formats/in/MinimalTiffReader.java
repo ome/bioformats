@@ -60,7 +60,6 @@ import loci.formats.tiff.TiffParser;
  * MinimalTiffReader is the superclass for file format readers compatible with
  * or derived from the TIFF 6.0 file format.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class MinimalTiffReader extends FormatReader {

@@ -39,7 +39,6 @@ package ome.xml.model.primitives;
  * further non-negative restriction.
  *
  * @author callan
- *
  */
 public class NonNegativeFloat extends PrimitiveType<Double> implements PrimitiveNumber {
 

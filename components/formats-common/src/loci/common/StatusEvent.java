@@ -34,7 +34,6 @@ package loci.common;
 
 /**
  * An event indicating a status update.
- *
  */
 public class StatusEvent {
 

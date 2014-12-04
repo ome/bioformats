@@ -55,7 +55,6 @@ import loci.plugins.BF;
 
 /**
  * Utility methods for managing ImageJ dialogs and windows.
- *
  */
 public final class WindowTools {
 

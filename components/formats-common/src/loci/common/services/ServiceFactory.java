@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Runtime instantiation of services.
- *
  */
 public class ServiceFactory {
 

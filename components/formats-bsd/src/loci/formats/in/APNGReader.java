@@ -51,7 +51,6 @@ import loci.formats.meta.MetadataStore;
  * APNGReader is the file format reader for
  * Animated Portable Network Graphics (APNG) images.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class APNGReader extends FormatReader {

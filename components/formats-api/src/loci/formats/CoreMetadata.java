@@ -36,7 +36,6 @@ import java.util.Hashtable;
 
 /**
  * Encompasses core metadata values.
- *
  */
 public class CoreMetadata implements Cloneable {
 

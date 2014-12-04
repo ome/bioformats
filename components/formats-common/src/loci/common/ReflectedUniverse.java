@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A general purpose reflection wrapper class.
- *
  */
 @Deprecated
 public class ReflectedUniverse {

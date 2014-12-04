@@ -34,7 +34,6 @@ package loci.formats.ome;
 
 /**
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

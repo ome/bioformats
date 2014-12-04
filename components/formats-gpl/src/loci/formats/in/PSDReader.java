@@ -40,7 +40,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * PSDReader is the file format reader for Photoshop PSD files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class PSDReader extends FormatReader {

@@ -50,7 +50,6 @@ import loci.poi.util.LittleEndian;
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author Andrew C. Oliver (acoliver@apache.org)
- *
  */
 public class SupBookRecord extends Record
 {

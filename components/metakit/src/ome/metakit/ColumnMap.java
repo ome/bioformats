@@ -34,7 +34,6 @@ import loci.common.RandomAccessInputStream;
 /**
  * Class representating a column mapping in a Metakit database file.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ColumnMap {

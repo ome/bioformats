@@ -41,7 +41,6 @@ import ome.xml.model.primitives.PositiveFloat;
 import org.testng.annotations.Test;
 
 /**
- *
  */
 public class PositiveFloatTest {
 

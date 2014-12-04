@@ -48,7 +48,6 @@ import loci.poi.util.BitFieldFactory;
 /**
  * Class ChartFormatRecord
  *
- *
  * @author Glen Stampoultzis (glens at apache.org)
  * @version %I%, %G%
  */

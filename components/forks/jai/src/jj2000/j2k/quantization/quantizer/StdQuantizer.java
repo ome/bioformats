@@ -44,7 +44,6 @@
  *                          Mergerd from StdQuantizerInt and
  *                          StdQuantizerFloat from Joel Askelof.
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

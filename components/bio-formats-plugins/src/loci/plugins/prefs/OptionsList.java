@@ -37,7 +37,6 @@ import loci.common.IniTable;
 
 /**
  * Base class for ImageJ preferences for plugins.
- *
  */
 public class OptionsList {
 

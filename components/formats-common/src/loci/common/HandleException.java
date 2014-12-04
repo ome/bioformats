@@ -37,7 +37,6 @@ import java.io.IOException;
 /**
  * HandleException is the exception thrown when something goes wrong in
  * one of the custom I/O classes.
- *
  */
 public class HandleException extends IOException {
 

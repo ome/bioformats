@@ -44,7 +44,6 @@ import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
- *
  */
 public class SlidebookTiffReader extends BaseTiffReader {
 

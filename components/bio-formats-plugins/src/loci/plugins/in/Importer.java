@@ -40,7 +40,6 @@ import loci.plugins.util.WindowTools;
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

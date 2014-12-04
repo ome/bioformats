@@ -64,7 +64,6 @@ import java.util.*;
  * we don't aggregate the MSODRAWING -> OBJ records unless we
  * need to modify them.
  *
- *
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherAggregate extends AbstractEscherHolderRecord

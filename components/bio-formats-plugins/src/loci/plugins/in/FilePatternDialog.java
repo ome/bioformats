@@ -57,7 +57,6 @@ import loci.formats.FilePatternBlock;
 
 /**
  * Bio-Formats Importer file pattern dialog box.
- *
  */
 public class FilePatternDialog extends ImporterDialog {
 

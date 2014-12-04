@@ -45,7 +45,6 @@ import ome.units.UNITS;
 
 /**
  * ImagicReader is the file format reader for IMAGIC files.
- *
  */
 public class ImagicReader extends FormatReader {
 

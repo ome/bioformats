@@ -41,7 +41,6 @@
  * Description:         Class for random access I/O (big-endian ordering).
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

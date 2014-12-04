@@ -43,7 +43,6 @@ import loci.common.URLHandle;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.URLHandle.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.URLHandle
  */

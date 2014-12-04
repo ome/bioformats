@@ -51,7 +51,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * JPEG2000Reader is the file format reader for JPEG-2000 images.
- *
  */
 public class JPEG2000Reader extends FormatReader {
 

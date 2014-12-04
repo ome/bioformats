@@ -42,7 +42,6 @@
  *                      Image Data Convertres (int -> float, float->int).
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

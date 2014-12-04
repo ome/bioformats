@@ -41,7 +41,6 @@
  * Description:             This class describes a single ROI
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

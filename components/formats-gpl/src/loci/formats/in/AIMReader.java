@@ -41,7 +41,6 @@ import ome.units.quantity.Length;
 
 /**
  * AIMReader is the file format reader for .aim files.
- *
  */
 public class AIMReader extends FormatReader {
 

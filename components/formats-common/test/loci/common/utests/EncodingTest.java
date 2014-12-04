@@ -46,7 +46,6 @@ import org.testng.annotations.Test;
 /**
  * Tests for string encoding.
  *
- *
  */
 public class EncodingTest {
 

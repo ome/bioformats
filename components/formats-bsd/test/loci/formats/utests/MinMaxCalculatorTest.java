@@ -53,7 +53,6 @@ import org.testng.annotations.Test;
 /**
  * Test case which outlines the problems seen in omero:#3599.
  *
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class MinMaxCalculatorTest {

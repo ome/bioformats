@@ -43,7 +43,6 @@ import loci.plugins.util.LociPrefs;
 /**
  * An ImageJ plugin that uses Bio-Formats to build up an {@link ImageStack},
  * reading image planes one by one.
- *
  */
 public class Read_Image implements PlugIn {
   public void run(String arg) {

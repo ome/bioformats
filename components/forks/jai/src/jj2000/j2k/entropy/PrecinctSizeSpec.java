@@ -41,7 +41,6 @@
  * Description:             Specification of the precinct sizes
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

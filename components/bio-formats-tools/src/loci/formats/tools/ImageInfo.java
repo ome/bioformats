@@ -80,7 +80,6 @@ import org.slf4j.LoggerFactory;
 /**
  * ImageInfo is a utility class for reading a file
  * and reporting information about it.
- *
  */
 public class ImageInfo {
 

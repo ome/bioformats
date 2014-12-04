@@ -41,7 +41,6 @@
  * Description:             An abstract class for quantizers
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

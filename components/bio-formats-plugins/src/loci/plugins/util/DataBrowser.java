@@ -66,7 +66,6 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * Extension of StackWindow with additional UI trimmings for animation,
  * virtual stack caching options, metadata, and general beautification.
- *
  */
 public class DataBrowser extends StackWindow {
 

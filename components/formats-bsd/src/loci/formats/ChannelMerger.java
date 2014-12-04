@@ -38,7 +38,6 @@ import loci.common.DataTools;
 
 /**
  * Logic to automatically merge channels in a file.
- *
  */
 public class ChannelMerger extends ReaderWrapper {
 

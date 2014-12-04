@@ -36,7 +36,6 @@ import ome.metakit.MetakitReader;
 /**
  * Implementation of MetakitService for interacting with the
  * OME Metakit library.
- *
  */
 public class MetakitServiceImpl implements MetakitService {
 

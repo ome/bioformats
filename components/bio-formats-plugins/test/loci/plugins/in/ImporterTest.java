@@ -115,7 +115,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A class for testing the Bio-Formats Importer behavior.
  *
- *
  * @author Barry DeZonia bdezonia at wisc.edu
  */
 public class ImporterTest {

@@ -42,7 +42,6 @@
  *                          values are decoded.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -74,8 +73,6 @@
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  *
- *
- *
  */
 
 
@@ -87,7 +84,6 @@ import java.io.*;
  * Thsi exception is thrown whenever an illegal value is read from a
  * bit stream. The cause can be either a corrupted bit stream, or a a
  * bit stream which is illegal.
- *
  */
 public class CorruptedCodestreamException extends IOException {
 

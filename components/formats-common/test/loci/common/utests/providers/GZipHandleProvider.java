@@ -45,7 +45,6 @@ import loci.common.IRandomAccess;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.GZipHandle.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.GZipHandle
  */

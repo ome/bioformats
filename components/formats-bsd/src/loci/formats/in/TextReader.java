@@ -60,7 +60,6 @@ import loci.formats.meta.MetadataStore;
  * Text format is flexible, but assumed to be in tabular form with a consistent
  * number of columns, and a labeled header line immediately preceding the data.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class TextReader extends FormatReader {

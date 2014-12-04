@@ -33,7 +33,6 @@ import java.util.StringTokenizer;
 /**
  * An entity list for the OME data model.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class MetaEntityList extends EntityList {

@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
  * A class for testing the {@link loci.formats.gui.AWTImageTools#makeImage}
  * methods.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageTester extends JPanel implements WindowListener {

@@ -40,7 +40,6 @@ import loci.formats.meta.IMinMaxStore;
 
 /**
  * Logic to compute minimum and maximum values for each channel.
- *
  */
 public class MinMaxCalculator extends ReaderWrapper {
 

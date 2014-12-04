@@ -40,7 +40,6 @@ import java.util.Map;
 /**
  * @author callan
  *
- *
  */
 public interface OMEModel {
 

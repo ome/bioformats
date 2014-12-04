@@ -58,7 +58,6 @@ import org.testng.annotations.Test;
  *
  * To run tests:
  * ant -Dtestng.directory="/path" -Dtestng.multiplier="1.0" test-all
- *
  */
 public class FormatWriterTest {
 

@@ -34,7 +34,6 @@ package loci.formats.cache;
 
 /**
  * Interface for components capable of reporting cache updates.
- *
  */
 public interface CacheReporter {
 

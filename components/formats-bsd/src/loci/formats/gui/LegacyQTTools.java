@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for working with QuickTime for Java.
- *
  */
 public class LegacyQTTools {
 

@@ -37,7 +37,6 @@ import java.io.IOException;
 /**
  * A wrapper for buffered NIO logic that implements the IRandomAccess interface.
  *
- *
  * @see IRandomAccess
  * @see java.io.RandomAccessFile
  *

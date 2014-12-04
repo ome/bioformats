@@ -41,7 +41,6 @@
  * Description:             This class describes generators of ROI masks
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

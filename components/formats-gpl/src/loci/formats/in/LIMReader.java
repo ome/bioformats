@@ -38,7 +38,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * LIMReader is the file format reader for Laboratory Imaging/Nikon LIM files.
- *
  */
 public class LIMReader extends FormatReader {
 

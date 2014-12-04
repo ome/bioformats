@@ -42,7 +42,6 @@ import java.nio.ByteOrder;
 /**
  * RandomAccessOutputStream provides methods for writing to files and
  * byte arrays.
- *
  */
 public class RandomAccessOutputStream extends OutputStream implements DataOutput, Closeable
 {

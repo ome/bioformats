@@ -46,7 +46,6 @@ import ome.units.UNITS;
 /**
  * NiftiReader is the file format reader for NIfTI files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class NiftiReader extends FormatReader {

@@ -49,7 +49,6 @@ import static org.testng.AssertJUnit.assertEquals;
  * dimension sizes and orders.
  * 
  * @author Mark Hiner
- *
  */
 public class DimensionSwapperTest {
   

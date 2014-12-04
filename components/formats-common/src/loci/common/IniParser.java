@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
  * A simple parser for INI configuration files.  Supports pound (#) as comments,
  * and backslash (\) to continue values across multiple lines.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class IniParser {

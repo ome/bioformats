@@ -59,7 +59,6 @@ import ome.xml.model.Union;
  * Capable of constructing ROIs within ImageJ's ROI manager matching
  * those specified in an OME metadata store, and vice versa.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ROIHandler {

@@ -55,7 +55,6 @@ import ome.units.quantity.Length;
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

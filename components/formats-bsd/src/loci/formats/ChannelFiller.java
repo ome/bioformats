@@ -43,7 +43,6 @@ import loci.formats.meta.MetadataStore;
  *
  * For all other data (either non-indexed, or indexed with
  * "false color" tables), does nothing.
- *
  */
 public class ChannelFiller extends ReaderWrapper {
 

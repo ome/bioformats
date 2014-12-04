@@ -47,7 +47,6 @@ import ome.units.UNITS;
 /**
  * GatanReader is the file format reader for Gatan files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class GatanReader extends FormatReader {

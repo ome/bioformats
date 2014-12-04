@@ -41,7 +41,6 @@
  * Description:             Defines the interface for Filter types
  *
  *
- *
  * COPYRIGHT:
  * 
  * This software module was originally developed by Raphaël Grosbois and
@@ -86,7 +85,6 @@ package jj2000.j2k.wavelet;
  *
  * <P>The identifier values are the same as those used in the codestream
  * syntax, for the filters that are defined in the standard.
- *
  */
 public interface FilterTypes {
 

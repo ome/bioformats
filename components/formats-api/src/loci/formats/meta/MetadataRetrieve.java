@@ -34,6 +34,5 @@ package loci.formats.meta;
 
 /**
  *
- *
  */
 public interface MetadataRetrieve extends ome.xml.meta.MetadataRetrieve { }

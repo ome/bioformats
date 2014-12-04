@@ -40,7 +40,6 @@ import ome.units.UNITS;
 /**
  * Uses Bio-Formats to extract timestamp information
  * in a format-independent manner from a dataset.
- *
  */
 public class PrintTimestamps {
 

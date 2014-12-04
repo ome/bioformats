@@ -46,7 +46,6 @@ import ome.units.UNITS;
 
 /**
  * KodakReader is the file format reader for Kodak Molecular Imaging .bip files.
- *
  */
 public class KodakReader extends FormatReader {
 

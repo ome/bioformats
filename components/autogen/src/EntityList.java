@@ -116,7 +116,6 @@ import loci.common.IniTable;
  *    |...
  * </pre>
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class EntityList {

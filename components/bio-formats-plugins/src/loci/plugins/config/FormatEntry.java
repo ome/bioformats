@@ -34,7 +34,6 @@ import java.lang.reflect.Method;
 /**
  * A list entry for the configuration window's Formats tab.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FormatEntry implements Comparable<Object> {

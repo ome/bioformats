@@ -38,7 +38,6 @@ import loci.formats.services.OMEXMLService;
 
 /**
  * Writes each Z section in a dataset to a separate file.
- *
  */
 public class MultiFileExportExample {
   public static void main(String[] args) throws FormatException, IOException {

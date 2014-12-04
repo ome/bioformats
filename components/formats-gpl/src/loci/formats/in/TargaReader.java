@@ -40,7 +40,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * File format reader for Truevision Targa files.
- *
  */
 public class TargaReader extends FormatReader {
 

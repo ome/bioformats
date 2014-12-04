@@ -44,7 +44,6 @@ import loci.formats.UnsupportedCompressionException;
 /**
  * Decompresses lossless JPEG images.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LosslessJPEGCodec extends BaseCodec {

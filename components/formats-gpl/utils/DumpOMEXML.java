@@ -34,7 +34,6 @@ import loci.formats.services.OMEXMLService;
 
 /**
  * Extracts and prints out the OME-XML for a given file.
- *
  */
 public class DumpOMEXML {
 

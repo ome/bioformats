@@ -37,7 +37,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * FEIReader is the file format reader for FEI and Philips .img files.
- *
  */
 public class FEIReader extends FormatReader {
 

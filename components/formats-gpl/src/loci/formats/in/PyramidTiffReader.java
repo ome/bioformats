@@ -41,7 +41,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * PyramidTiffReader is the file format reader for pyramid TIFFs.
- *
  */
 public class PyramidTiffReader extends BaseTiffReader {
 

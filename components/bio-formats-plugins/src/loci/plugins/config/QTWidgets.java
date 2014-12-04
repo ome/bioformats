@@ -40,7 +40,6 @@ import loci.plugins.util.LociPrefs;
 /**
  * Custom widgets for configuring Bio-Formats QuickTime support.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class QTWidgets implements IFormatWidgets, ItemListener {

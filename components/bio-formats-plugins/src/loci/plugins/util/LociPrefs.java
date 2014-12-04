@@ -40,7 +40,6 @@ import loci.formats.in.TiffDelegateReader;
 
 /**
  * Utility methods for ImageJ preferences for Bio-Formats plugins.
- *
  */
 public final class LociPrefs {
 

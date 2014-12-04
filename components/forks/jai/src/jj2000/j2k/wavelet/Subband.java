@@ -43,7 +43,6 @@
  *                          a description of subbands.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

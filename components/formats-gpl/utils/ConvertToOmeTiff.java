@@ -31,7 +31,6 @@ import loci.formats.out.OMETiffWriter;
 
 /**
  * Converts the given files to OME-TIFF format.
- *
  */
 public class ConvertToOmeTiff {
 

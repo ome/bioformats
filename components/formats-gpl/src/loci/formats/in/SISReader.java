@@ -50,7 +50,6 @@ import ome.units.quantity.Length;
 /**
  * SISReader is the file format reader for Olympus Soft Imaging Solutions
  * TIFF files.
- *
  */
 public class SISReader extends BaseTiffReader {
 

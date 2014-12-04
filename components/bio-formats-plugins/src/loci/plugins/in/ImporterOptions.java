@@ -44,7 +44,6 @@ import loci.plugins.util.LibraryChecker;
 /**
  * Helper class for managing Bio-Formats Importer options.
  * Gets default parameter values from IJ_Prefs.txt.
- *
  */
 public class ImporterOptions extends OptionsList {
 

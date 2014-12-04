@@ -44,7 +44,6 @@ import ome.units.UNITS;
 
 /**
  * Logic for calibrating images.
- *
  */
 public class Calibrator {
 

@@ -69,7 +69,6 @@ import com.google.common.io.ByteStreams;
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class OMEXMLReader extends FormatReader {

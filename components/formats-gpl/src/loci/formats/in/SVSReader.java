@@ -56,7 +56,6 @@ import ome.units.UNITS;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
- *
  */
 public class SVSReader extends BaseTiffReader {
 

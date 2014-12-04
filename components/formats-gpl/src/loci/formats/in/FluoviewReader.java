@@ -51,7 +51,6 @@ import ome.units.UNITS;
  * FluoviewReader is the file format reader for
  * Olympus Fluoview TIFF files AND Andor Bio-imaging Division (ABD) TIFF files.
  *
- *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu

@@ -42,7 +42,6 @@ import ome.xml.model.primitives.PositiveInteger;
  * Writes the pixels from a set of JPEG files to a single TIFF.
  * The pixel data is used as-is, so no decompression or re-compression is
  * performed.
- *
  */
 public class WritePrecompressedPlanes {
   public static void main(String[] args) throws FormatException, IOException {

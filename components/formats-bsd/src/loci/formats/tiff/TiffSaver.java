@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Parses TIFF data from an input source.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com

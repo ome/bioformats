@@ -80,7 +80,6 @@ import org.w3c.dom.NodeList;
 /**
  * LIFReader is the file format reader for Leica LIF files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LIFReader extends FormatReader {

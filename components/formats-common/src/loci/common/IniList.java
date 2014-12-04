@@ -39,7 +39,6 @@ import java.util.List;
 /**
  * A data structure containing a parsed list of INI key/value tables.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class IniList extends ArrayList<IniTable> {

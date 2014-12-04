@@ -34,7 +34,6 @@ package loci.formats.cache;
 
 /**
  * A listener for cache updates.
- *
  */
 public interface CacheListener {
 

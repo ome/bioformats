@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Thread responsible for updating the cache
  * (loading and dropping planes) in the background.
- *
  */
 public class CacheUpdater extends Thread {
 

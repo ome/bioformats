@@ -43,7 +43,6 @@ import ome.units.quantity.Length;
 /**
  * SBIGReader is the file format reader for SBIG files.
  * See the specification at http://www.sbig.com/pdffiles/file.format.pdf.
- *
  */
 public class SBIGReader extends FormatReader {
 

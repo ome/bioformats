@@ -34,7 +34,6 @@ package loci.formats.codec;
 
 /**
  * Options for compressing and decompressing MJPB data.
- *
  */
 public class MJPBCodecOptions extends CodecOptions {
 

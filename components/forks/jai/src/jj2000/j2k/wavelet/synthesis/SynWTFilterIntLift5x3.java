@@ -42,7 +42,6 @@
  *                          lifting 5x3 transform.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

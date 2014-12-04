@@ -46,7 +46,6 @@ import mdbtools.libmdb.mem;
 
 /**
  * Implementation of {@link MDBService} for parsing MDB database files.
- *
  */
 public class MDBServiceImpl extends AbstractService implements MDBService {
 

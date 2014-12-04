@@ -34,7 +34,6 @@ package loci.common.enumeration;
 
 /**
  * Enumeration which is coded.
- *
  */
 public interface CodedEnum {
 

@@ -49,7 +49,6 @@ import ome.units.UNITS;
 
 /**
  * BioRadSCNReader is the reader for Bio-Rad .scn files
- *
  */
 public class BioRadSCNReader extends FormatReader {
 

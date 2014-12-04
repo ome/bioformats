@@ -65,7 +65,6 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * GUI component for managing a cache.
- *
  */
 public class CacheComponent extends JPanel
   implements ActionListener, CacheListener, ChangeListener

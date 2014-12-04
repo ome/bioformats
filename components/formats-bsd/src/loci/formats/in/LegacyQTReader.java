@@ -57,7 +57,6 @@ import loci.formats.meta.MetadataStore;
  *
  * Much of this code was based on the QuickTime Movie Opener for ImageJ
  * (available at http://rsb.info.nih.gov/ij/plugins/movie-opener.html).
- *
  */
 public class LegacyQTReader extends BIFormatReader {
 

@@ -35,7 +35,6 @@ import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Demonstrates writing multiple RGB image planes to a movie.
- *
  */
 public class WriteRGBMovie {
 

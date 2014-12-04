@@ -41,7 +41,6 @@
  * Description:             Used to store the code-blocks coordinates.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

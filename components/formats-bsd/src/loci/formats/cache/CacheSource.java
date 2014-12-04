@@ -41,7 +41,6 @@ import loci.formats.IFormatReader;
 /**
  * Superclass of cache sources that retrieve image planes
  * from a data source (e.g., a file) using Bio-Formats.
- *
  */
 public abstract class CacheSource implements ICacheSource {
 

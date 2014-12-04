@@ -34,7 +34,6 @@ package loci.common.enumeration;
 
 /**
  *
- *
  * @author callan
  */
 public class EnumException extends RuntimeException {

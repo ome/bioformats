@@ -43,7 +43,6 @@ import java.nio.ByteOrder;
  * Abstract IRandomAccess implementation for reading from InputStreams and
  * writing to OutputStreams.
  *
- *
  * @see IRandomAccess
  *
  * @author Melissa Linkert melissa at glencoesoftware.com

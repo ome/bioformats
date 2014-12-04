@@ -31,7 +31,6 @@ import loci.common.IniTable;
 
 /**
  * Base class for an option for one of the plugins.
- *
  */
 public abstract class Option {
 

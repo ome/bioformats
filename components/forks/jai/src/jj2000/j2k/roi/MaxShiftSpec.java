@@ -41,7 +41,6 @@
  * Description:             Generic class for storing module specs
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

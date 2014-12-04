@@ -43,7 +43,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * A writer wrapper for writing image planes from BufferedImage objects.
- *
  */
 public class BufferedImageWriter extends WriterWrapper {
 

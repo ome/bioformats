@@ -41,7 +41,6 @@
  * Description:             Class that encodes a number of bits using the
  *                          MQ arithmetic coder
  *
- *
  *                          Diego SANTA CRUZ, Jul-26-1999 (improved speed)
  *
  * COPYRIGHT:
@@ -126,7 +125,6 @@ import java.io.*;
  * the number of operations whenever a renormalization occurs is
  * decreased. Maybe it is due to the number of extra operations in the
  * byteOut(), terminate() and getNumCodedBytes() procedures.
- *
  *
  * 3) Change the convention of MPS and LPS.
  *

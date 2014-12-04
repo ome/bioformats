@@ -35,7 +35,6 @@ import loci.plugins.BF;
 
 /**
  * A very simple example of using Bio-Formats in an ImageJ plugin.
- *
  */
 public class Simple_Read implements PlugIn {
 

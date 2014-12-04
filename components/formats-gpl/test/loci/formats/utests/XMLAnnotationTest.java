@@ -48,7 +48,6 @@ import org.w3c.dom.Document;
 /**
  * Test case which outlines the problems seen in omero:#3269.
  *
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class XMLAnnotationTest {

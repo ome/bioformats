@@ -33,7 +33,6 @@ import loci.formats.FormatTools;
  * It does not read files directly, but chooses which ND2 reader is
  * more appropriate.
  *
- *
  * @see NativeND2Reader
  * @see LegacyND2Reader
  */

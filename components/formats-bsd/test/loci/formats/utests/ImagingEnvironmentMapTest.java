@@ -61,7 +61,6 @@ import org.w3c.dom.Element;
 /**
  * Test case for ImagingEnvironment Map values
  *
- *
  * @author Andrew Patterson
  */
 public class ImagingEnvironmentMapTest {

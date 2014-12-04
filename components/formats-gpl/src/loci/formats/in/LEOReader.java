@@ -46,7 +46,6 @@ import ome.units.quantity.Length;
 /**
  * LEOReader is the file format reader for LEO EM files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LEOReader extends BaseTiffReader {

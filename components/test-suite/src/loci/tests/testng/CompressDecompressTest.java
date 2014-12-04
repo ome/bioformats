@@ -40,7 +40,6 @@ import loci.formats.tiff.TiffCompression;
  * <code>PackBits</code>
  * <code>LuraWave</code>
  *
- *
  * @author Jean-Marie Burel <j dot burel at dundee dot ac dot uk>
  */
 public class CompressDecompressTest {

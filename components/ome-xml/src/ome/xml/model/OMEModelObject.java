@@ -42,7 +42,6 @@ import org.w3c.dom.Element;
 /**
  * @author callan
  *
- *
  */
 public interface OMEModelObject {
 

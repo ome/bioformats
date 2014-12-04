@@ -37,7 +37,6 @@ import java.awt.image.DataBuffer;
 /**
  * DataBuffer that stores signed bytes.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class SignedByteBuffer extends DataBuffer {

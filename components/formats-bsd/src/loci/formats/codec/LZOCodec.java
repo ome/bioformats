@@ -42,7 +42,6 @@ import loci.formats.UnsupportedCompressionException;
  * This class implements LZO decompression. Compression is not yet
  * implemented.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LZOCodec extends BaseCodec {

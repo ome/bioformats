@@ -40,7 +40,6 @@ import loci.plugins.LociImporter;
  * Processes all image files in the chosen directory,
  * grouping files with similar names.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class Mass_Importer implements PlugIn {

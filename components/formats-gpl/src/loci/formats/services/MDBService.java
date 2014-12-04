@@ -32,7 +32,6 @@ import loci.common.services.Service;
 
 /**
  * Interface defining methods for parsing MDB database files.
- *
  */
 public interface MDBService extends Service {
 

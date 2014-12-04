@@ -36,7 +36,6 @@ import java.util.Vector;
 
 /**
  * A string option for one of the plugins.
- *
  */
 public class StringOption extends Option {
 

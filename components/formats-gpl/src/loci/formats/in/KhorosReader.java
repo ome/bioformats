@@ -37,7 +37,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * Reader for Khoros XV files.
- *
  */
 public class KhorosReader extends FormatReader {
 

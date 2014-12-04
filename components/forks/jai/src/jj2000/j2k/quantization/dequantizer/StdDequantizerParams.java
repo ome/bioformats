@@ -41,7 +41,6 @@
  * Description:             Parameters for the scalar deadzone dequantizers
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

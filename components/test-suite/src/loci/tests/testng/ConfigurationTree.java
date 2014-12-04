@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * Stores configuration data about files in a directory structure.
  * This class is not designed to be thread safe, so should be synchronized
  * externally for proper thread safety.
- *
  */
 public class ConfigurationTree {
 

@@ -36,7 +36,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * Stitches the first plane from a collection of TIFFs into a single file.
- *
  */
 public class SewTiffs {
 

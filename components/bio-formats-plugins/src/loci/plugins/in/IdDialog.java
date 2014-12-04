@@ -38,7 +38,6 @@ import loci.common.Location;
 
 /**
  * Bio-Formats Importer id chooser dialog box.
- *
  */
 public class IdDialog extends ImporterDialog {
 

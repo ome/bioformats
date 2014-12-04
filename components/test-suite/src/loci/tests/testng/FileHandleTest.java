@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
  * Checks that no file handles are open after closing a reader.
  * This will not work on Windows, as it depends upon the 'lsof' command.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class FileHandleTest {

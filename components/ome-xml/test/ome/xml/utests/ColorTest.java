@@ -41,7 +41,6 @@ import ome.xml.model.primitives.Color;
 import org.testng.annotations.Test;
 
 /**
- *
  */
 public class ColorTest {
 

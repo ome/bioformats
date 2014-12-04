@@ -59,7 +59,6 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * InCellReader is the file format reader for InCell 1000/2000 datasets.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class InCellReader extends FormatReader {

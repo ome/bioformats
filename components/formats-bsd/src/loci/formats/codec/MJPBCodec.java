@@ -40,7 +40,6 @@ import loci.formats.UnsupportedCompressionException;
 
 /**
  * Methods for compressing and decompressing QuickTime Motion JPEG-B data.
- *
  */
 public class MJPBCodec extends BaseCodec {
 

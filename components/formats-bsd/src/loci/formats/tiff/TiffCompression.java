@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for performing compression operations with a TIFF file.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com

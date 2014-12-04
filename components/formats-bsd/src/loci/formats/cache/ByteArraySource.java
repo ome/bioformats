@@ -40,7 +40,6 @@ import loci.formats.IFormatReader;
 /**
  * Retrieves byte arrays from a data source
  * (e.g., a file) using Bio-Formats.
- *
  */
 public class ByteArraySource extends CacheSource {
 

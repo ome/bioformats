@@ -52,7 +52,6 @@ import loci.plugins.util.WindowTools;
  * A plugin for splitting an image stack into separate
  * channels, focal planes and/or time points.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class Slicer implements PlugInFilter {

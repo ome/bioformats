@@ -41,7 +41,6 @@
  * Description:             String specification for an option
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

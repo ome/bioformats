@@ -48,7 +48,6 @@ import ome.xml.model.Union;
 
 /**
  * A simple example of how to retrieve ROI data parsed from a file.
- *
  */
 public class PrintROIs {
 

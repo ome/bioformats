@@ -35,7 +35,6 @@ import ome.xml.model.primitives.PositiveInteger;
 /**
  * Demonstrates the minimum amount of metadata
  * necessary to write out an image plane.
- *
  */
 public class MinimumWriter {
 

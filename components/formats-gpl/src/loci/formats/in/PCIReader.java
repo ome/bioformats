@@ -55,7 +55,6 @@ import ome.units.UNITS;
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class PCIReader extends FormatReader {

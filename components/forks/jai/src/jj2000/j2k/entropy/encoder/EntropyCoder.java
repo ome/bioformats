@@ -41,7 +41,6 @@
  * Description:             The abstract class for entropy encoders
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

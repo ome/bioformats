@@ -44,7 +44,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * JPXReader is the file format reader for JPX (3D JPEG-2000) images.
- *
  */
 public class JPXReader extends FormatReader {
 

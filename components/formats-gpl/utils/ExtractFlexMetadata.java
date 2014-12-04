@@ -34,7 +34,6 @@ import loci.formats.tiff.TiffParser;
 /**
  * Convenience method to extract the metadata from
  * all the Flex files present in a directory.
- *
  */
 public class ExtractFlexMetadata {
 

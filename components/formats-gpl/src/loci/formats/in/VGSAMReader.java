@@ -37,7 +37,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * VGSAMReader is the file format reader for VG SAM .dti files.
- *
  */
 public class VGSAMReader extends FormatReader {
 

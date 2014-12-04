@@ -36,7 +36,6 @@ import loci.common.RandomAccessInputStream;
  * SDTInfo encapsulates the header information for
  * Becker &amp; Hickl SPC-Image SDT files.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class SDTInfo {

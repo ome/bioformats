@@ -40,7 +40,6 @@ import loci.plugins.util.LociPrefs;
 /**
  * Custom widgets for configuring Bio-Formats ND2 support.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ND2Widgets implements IFormatWidgets, ItemListener {

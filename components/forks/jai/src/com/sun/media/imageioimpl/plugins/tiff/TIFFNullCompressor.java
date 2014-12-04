@@ -81,7 +81,6 @@ import com.sun.media.imageio.plugins.tiff.TIFFCompressor;
 import java.io.IOException;
 
 /**
- *
  */
 public class TIFFNullCompressor extends TIFFCompressor {
 

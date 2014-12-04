@@ -31,7 +31,6 @@ import loci.formats.ImageReader;
 
 /**
  * Demonstration of the sub-resolution API.
- *
  */
 public class SubResolutionExample {
 

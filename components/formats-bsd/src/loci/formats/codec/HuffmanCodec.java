@@ -43,7 +43,6 @@ import loci.formats.UnsupportedCompressionException;
 /**
  * This class implements Huffman decoding.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class HuffmanCodec extends BaseCodec {

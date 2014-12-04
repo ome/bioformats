@@ -55,7 +55,6 @@ import org.xml.sax.SAXException;
 /**
  * A window containing syntax highlighted XML as a tree.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class XMLWindow extends JFrame {

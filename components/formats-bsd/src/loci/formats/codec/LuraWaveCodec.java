@@ -53,7 +53,6 @@ import loci.formats.services.LuraWaveServiceImpl;
  * license code, specified in the lurawave.license system property (e.g.,
  * <code>-Dlurawave.license=XXXX</code> on the command line).
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class LuraWaveCodec extends BaseCodec {

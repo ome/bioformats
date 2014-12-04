@@ -48,7 +48,6 @@ import loci.formats.meta.MetadataRetrieve;
  * ImageIOWriter is the superclass for file format writers that use the
  * javax.imageio library.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class ImageIOWriter extends FormatWriter {

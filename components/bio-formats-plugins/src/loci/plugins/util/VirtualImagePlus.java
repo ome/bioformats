@@ -42,7 +42,6 @@ import loci.plugins.util.RecordedImageProcessor.MethodEntry;
  * Extension of {@link ij.ImagePlus} that supports
  * Bio-Formats-driven virtual stacks.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class VirtualImagePlus extends ImagePlus {

@@ -37,7 +37,6 @@ import java.util.List;
 /**
  * Logic for concatenating multiple images together.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

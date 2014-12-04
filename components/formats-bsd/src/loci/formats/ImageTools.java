@@ -41,7 +41,6 @@ import loci.common.DataTools;
  * To work with images in {@link java.awt.image.BufferedImage} form,
  * use the {@link loci.formats.gui.AWTImageTools} class.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public final class ImageTools {

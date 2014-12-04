@@ -67,7 +67,6 @@ import ome.units.UNITS;
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
  * Fluoview FV 1000 OIF files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class FV1000Reader extends FormatReader {

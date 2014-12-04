@@ -31,7 +31,6 @@ import java.util.HashMap;
 
 /**
  * An enumeration of the steps in the import preparation process.
- *
  */
 public enum ImportStep {
 

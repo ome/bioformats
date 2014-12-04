@@ -39,7 +39,6 @@ import loci.formats.DelegateReader;
  * It does not read files directly, but chooses which TIFF reader
  * is more appropriate.
  *
- *
  * @see TiffReader
  * @see TiffJAIReader
  */

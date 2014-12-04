@@ -41,7 +41,6 @@
  * Description:             Get ImgData from different sources
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

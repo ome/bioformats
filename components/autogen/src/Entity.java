@@ -30,7 +30,6 @@ import java.util.HashMap;
  * It has a list of default attributes (key/value pairs),
  * as well as a list of version overrides for those attributes.
  *
- *
  * @see {EntityList}
  *
  * @author Curtis Rueden ctrueden at wisc.edu

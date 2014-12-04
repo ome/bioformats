@@ -38,7 +38,6 @@ import loci.formats.MetadataTools;
 
 /**
  * Helper class for storing original metadata key/value pairs.
- *
  */
 public class ImporterMetadata extends HashMap<String, Object> {
 

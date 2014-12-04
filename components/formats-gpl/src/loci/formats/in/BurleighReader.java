@@ -40,7 +40,6 @@ import ome.units.quantity.Length;
 
 /**
  * BurleighReader is the file format reader for Burleigh .img files.
- *
  */
 public class BurleighReader extends FormatReader {
 

@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  * Pseudo-extension of java.io.File that supports reading over HTTP (among
  * other things).
  * It is strongly recommended to use this instead of java.io.File.
- *
  */
 public class Location {
 

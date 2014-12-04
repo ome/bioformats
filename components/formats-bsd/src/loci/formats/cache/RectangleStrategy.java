@@ -59,7 +59,6 @@ package loci.formats.cache;
  *    3 |    17 11  1  9 15
  *    4 |    23 19  5 13 21
  * </pre>
- *
  */
 public class RectangleStrategy extends CacheStrategy {
 

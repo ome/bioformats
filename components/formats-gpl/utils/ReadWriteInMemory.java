@@ -35,7 +35,6 @@ import loci.formats.services.OMEXMLService;
 
 /**
  * Tests the Bio-Formats I/O logic to and from byte arrays in memory.
- *
  */
 public class ReadWriteInMemory {
 

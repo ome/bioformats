@@ -52,7 +52,6 @@ import loci.formats.FormatException;
  * implement both compression methods or neither. (The same is expected for
  * decompression).
  *
- *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
 public interface Codec {

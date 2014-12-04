@@ -38,7 +38,6 @@ import org.xml.sax.SAXParseException;
 /**
  * Used by various XMLTools methods to handle XML parsing errors.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ParserErrorHandler implements ErrorHandler {

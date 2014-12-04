@@ -53,7 +53,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer series chooser dialog box.
- *
  */
 public class SeriesDialog extends ImporterDialog implements ActionListener {
 

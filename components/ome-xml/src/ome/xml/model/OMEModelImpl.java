@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @author callan
  *
- *
  */
 public class OMEModelImpl implements OMEModel {
 

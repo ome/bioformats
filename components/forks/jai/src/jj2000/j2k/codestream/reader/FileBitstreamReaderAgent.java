@@ -41,7 +41,6 @@
  * Description:             Retrieve code-blocks codewords in the bit stream
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

@@ -44,7 +44,6 @@ import loci.formats.UnsupportedCompressionException;
  * This class implements Targa RLE decompression. Compression is not yet
  * implemented.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class TargaRLECodec extends BaseCodec {

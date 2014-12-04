@@ -40,7 +40,6 @@ import java.text.DecimalFormatSymbols;
  * A utility class with convenience methods for
  * reading, writing and decoding words.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com

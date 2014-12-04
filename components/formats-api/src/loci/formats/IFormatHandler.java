@@ -37,7 +37,6 @@ import java.io.IOException;
 
 /**
  * Interface for all biological file format readers and writers.
- *
  */
 public interface IFormatHandler extends Closeable {
 

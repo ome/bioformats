@@ -40,7 +40,6 @@ import loci.formats.FormatException;
 /**
  * A codec which just returns the exact data it was given, performing no
  * compression or decompression.
- *
  */
 public class PassthroughCodec extends BaseCodec {
 

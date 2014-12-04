@@ -40,7 +40,6 @@ import loci.formats.UnsupportedCompressionException;
 
 /**
  * Methods for compressing and decompressing data using Microsoft RLE.
- *
  */
 public class MSRLECodec extends BaseCodec {
 

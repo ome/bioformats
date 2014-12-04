@@ -89,7 +89,6 @@ import ome.units.UNITS;
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class Exporter {

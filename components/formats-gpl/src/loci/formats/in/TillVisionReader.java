@@ -60,7 +60,6 @@ import ome.units.UNITS;
 
 /**
  * TillVisionReader is the file format reader for TillVision files.
- *
  */
 public class TillVisionReader extends FormatReader {
 

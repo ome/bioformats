@@ -49,7 +49,6 @@ import loci.formats.tiff.TiffSaver;
 
 /**
  * Extracts the comment from the first IFD of the given TIFF file(s).
- *
  */
 public class TiffComment {
 

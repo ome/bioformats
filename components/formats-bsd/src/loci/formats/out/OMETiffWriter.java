@@ -59,7 +59,6 @@ import loci.formats.tiff.TiffSaver;
 
 /**
  * OMETiffWriter is the file format writer for OME-TIFF files.
- *
  */
 public class OMETiffWriter extends TiffWriter {
 

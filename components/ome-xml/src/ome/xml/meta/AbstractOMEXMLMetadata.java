@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
  * It is the superclass for all versions of OME-XML. It requires the
  * ome.xml package to compile (part of ome-xml.jar).
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

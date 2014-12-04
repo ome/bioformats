@@ -31,7 +31,6 @@ import ij.gui.GenericDialog;
 
 /**
  * Bio-Formats Importer memory usage confirmation dialog box.
- *
  */
 public class MemoryDialog extends ImporterDialog {
 

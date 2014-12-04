@@ -49,7 +49,6 @@ import loci.formats.tiff.TiffParser;
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
  * Some regular PostScript files are also supported.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class EPSReader extends FormatReader {

@@ -36,7 +36,6 @@ import loci.formats.FormatTools;
 
 /**
  * JPEGWriter is the file format writer for JPEG files.
- *
  */
 public class JPEGWriter extends ImageIOWriter {
 

@@ -53,7 +53,6 @@ import org.testng.annotations.Test;
 /**
  * Performs various <code>openBytes()</code> performance tests.
  *
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 @Listeners(value = AssumptionListener.class)

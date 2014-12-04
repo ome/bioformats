@@ -63,7 +63,6 @@ import loci.formats.meta.MetadataStore;
  * IM3Reader may be run as a Java application to
  * dump a per-record description of the file to
  * standard output
- *
  */
 public class IM3Reader extends FormatReader {
 	/**

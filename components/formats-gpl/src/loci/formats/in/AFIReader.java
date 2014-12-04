@@ -55,7 +55,6 @@ import org.xml.sax.Attributes;
 /**
  * AFIReader is the file format reader for Aperio AFI files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class AFIReader extends FormatReader {

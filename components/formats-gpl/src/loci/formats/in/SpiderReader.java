@@ -41,7 +41,6 @@ import ome.units.quantity.Length;
 
 /**
  * SpiderReader is the file format reader for SPIDER files.
- *
  */
 public class SpiderReader extends FormatReader {
 

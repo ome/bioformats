@@ -47,7 +47,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * Abstract superclass of all biological file format writers.
- *
  */
 public abstract class FormatWriter extends FormatHandler
   implements IFormatWriter

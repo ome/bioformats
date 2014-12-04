@@ -56,7 +56,6 @@ package loci.common;
 
 /**
  * A simple class to hold and calculate the CRC for sanity checking the data.
- *
  */
 public class CRC {
 

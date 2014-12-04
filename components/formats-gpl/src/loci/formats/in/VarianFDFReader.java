@@ -44,7 +44,6 @@ import ome.units.quantity.Length;
 
 /**
  * VarianFDFReader is the file format reader for Varian FDF files.
- *
  */
 public class VarianFDFReader extends FormatReader {
 

@@ -45,7 +45,6 @@ import ome.units.quantity.Length;
 
 /**
  * InveonReader is the file format reader for Inveon files.
- *
  */
 public class InveonReader extends FormatReader {
 

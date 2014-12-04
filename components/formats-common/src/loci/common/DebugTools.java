@@ -43,7 +43,6 @@ import java.util.Arrays;
 /**
  * A utility class with convenience methods for debugging.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public final class DebugTools {

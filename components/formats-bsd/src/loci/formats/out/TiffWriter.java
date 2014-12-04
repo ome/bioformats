@@ -57,7 +57,6 @@ import ome.units.UNITS;
 
 /**
  * TiffWriter is the file format writer for TIFF files.
- *
  */
 public class TiffWriter extends FormatWriter {
 

@@ -48,7 +48,6 @@ import loci.formats.FormatTools;
 /**
  * JPEGReader is the file format reader for JPEG images.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class JPEGReader extends DelegateReader {

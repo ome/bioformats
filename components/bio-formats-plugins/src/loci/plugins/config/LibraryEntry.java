@@ -37,7 +37,6 @@ import loci.common.Constants;
 /**
  * A list entry for the configuration window's Libraries tab.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class LibraryEntry implements Comparable<Object> {

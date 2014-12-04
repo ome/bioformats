@@ -40,7 +40,6 @@ import loci.common.enumeration.CodedEnum;
 
 /**
  * An enumeration of JPEG 2000 box types.
- *
  */
 public enum JPEG2000BoxType implements CodedEnum {
 

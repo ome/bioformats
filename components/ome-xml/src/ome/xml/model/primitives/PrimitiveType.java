@@ -38,7 +38,6 @@ package ome.xml.model.primitives;
  * A primitive type from an XSD definition with a given set of constraints.
  *
  * @author callan
- *
  */
 public abstract class PrimitiveType<T> {
 

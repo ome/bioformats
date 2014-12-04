@@ -44,7 +44,6 @@ import ome.units.UNITS;
 
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
- *
  */
 public class NikonTiffReader extends BaseTiffReader {
 

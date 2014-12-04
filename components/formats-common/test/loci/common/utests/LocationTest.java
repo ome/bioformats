@@ -48,7 +48,6 @@ import org.testng.annotations.Test;
 /**
  * Unit tests for the loci.common.Location class.
  *
- *
  * @see loci.common.Location
  */
 public class LocationTest {

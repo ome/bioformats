@@ -41,7 +41,6 @@
  * Description:         Component transformations applied to tiles
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

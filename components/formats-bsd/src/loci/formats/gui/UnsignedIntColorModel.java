@@ -44,7 +44,6 @@ import java.io.IOException;
 
 /**
  * ColorModel that handles unsigned 32 bit data.
- *
  */
 public class UnsignedIntColorModel extends ColorModel {
 

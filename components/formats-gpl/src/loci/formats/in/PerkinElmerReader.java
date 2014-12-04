@@ -54,7 +54,6 @@ import ome.units.UNITS;
 /**
  * PerkinElmerReader is the file format reader for PerkinElmer files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class PerkinElmerReader extends FormatReader {

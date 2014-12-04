@@ -44,7 +44,6 @@ import ome.units.quantity.Length;
 
 /**
  * PDSReader is the file format reader for Perkin Elmer densitometer files.
- *
  */
 public class PDSReader extends FormatReader {
 

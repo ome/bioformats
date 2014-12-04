@@ -37,7 +37,6 @@ import loci.formats.UpgradeChecker;
 /**
  * Utility that checks for a new stable version, and optionally installs
  * a new version of Bio-Formats ueber tools.
- *
  */
 public class UpgradeCheck {
 

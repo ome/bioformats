@@ -34,7 +34,6 @@ package loci.common;
 
 /**
  * Constants that are used within many classes in loci.common.
- *
  */
 public final class Constants {
 

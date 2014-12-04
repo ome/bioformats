@@ -34,7 +34,6 @@ import javax.swing.JTextArea;
 /**
  * Writer implementation that writes to a JTextArea document.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class TextAreaWriter extends Writer {

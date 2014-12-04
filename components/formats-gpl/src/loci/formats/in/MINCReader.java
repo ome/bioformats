@@ -48,7 +48,6 @@ import ome.units.quantity.Length;
 
 /**
  * MINCReader is the file format reader for MINC MRI files.
- *
  */
 public class MINCReader extends FormatReader {
 

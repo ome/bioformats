@@ -40,7 +40,6 @@ import loci.formats.ImageReader;
  * This class is used to generate this wiki page:
  * http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-DatasetStructureTable
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class MakeDatasetStructureTable {

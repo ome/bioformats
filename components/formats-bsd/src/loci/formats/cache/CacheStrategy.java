@@ -40,7 +40,6 @@ import loci.formats.FormatTools;
 
 /**
  * Superclass of cache strategies.
- *
  */
 public abstract class CacheStrategy
   implements CacheReporter, Comparator, ICacheStrategy

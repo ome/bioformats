@@ -34,7 +34,6 @@ import java.util.HashMap;
 
 /**
  * A boolean option for one of the plugins.
- *
  */
 public class BooleanOption extends Option {
 

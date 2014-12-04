@@ -55,7 +55,6 @@ import org.slf4j.LoggerFactory;
  * It uses one instance of each reader subclass (specified in readers.txt,
  * or other class list source) to identify file formats and read data.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageReader implements IFormatReader {

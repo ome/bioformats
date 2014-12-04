@@ -59,7 +59,6 @@ import org.slf4j.LoggerFactory;
  *   <li>/data/Josiah/cell-Z&lt;0-39&gt;.C&lt;0-1&gt;.tiff</li>
  * </ul>
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FilePattern {

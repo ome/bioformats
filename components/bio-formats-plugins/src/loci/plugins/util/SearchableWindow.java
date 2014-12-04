@@ -52,7 +52,6 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Text panel with search capabilities.
- *
  */
 public class SearchableWindow extends TextWindow {
 

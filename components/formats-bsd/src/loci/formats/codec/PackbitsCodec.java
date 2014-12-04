@@ -44,7 +44,6 @@ import loci.formats.UnsupportedCompressionException;
  * This class implements packbits decompression. Compression is not yet
  * implemented.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class PackbitsCodec extends BaseCodec {

@@ -41,7 +41,6 @@ import ome.units.quantity.Length;
 
 /**
  * QuesantReader is the file format reader for Quesant .afm files.
- *
  */
 public class QuesantReader extends FormatReader {
 

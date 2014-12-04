@@ -41,7 +41,6 @@ import org.junit.Test;
 /**
  * Test to ensure that old macro keys (pre-4.2) are still handled correctly.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class MacroTest {

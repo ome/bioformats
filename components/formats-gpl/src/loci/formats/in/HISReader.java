@@ -44,7 +44,6 @@ import ome.units.UNITS;
 
 /**
  * HISReader is the file format reader for Hamamatsu .his files.
- *
  */
 public class HISReader extends FormatReader {
 

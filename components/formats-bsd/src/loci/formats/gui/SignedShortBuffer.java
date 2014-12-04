@@ -43,7 +43,6 @@ import java.awt.image.DataBufferShort;
  * returns DataBuffer.TYPE_USHORT.
  * This is a workaround for the fact that java.awt.image.BufferedImage does
  * not support DataBuffers with type DataBuffer.TYPE_SHORT.
- *
  */
 public class SignedShortBuffer extends DataBuffer {
 

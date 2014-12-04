@@ -44,7 +44,6 @@ import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
- *
  */
 public class AliconaReader extends FormatReader {
 

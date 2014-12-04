@@ -31,7 +31,6 @@ import ij.gui.GenericDialog;
 
 /**
  * Base class for options dialogs.
- *
  */
 public abstract class OptionsDialog {
 

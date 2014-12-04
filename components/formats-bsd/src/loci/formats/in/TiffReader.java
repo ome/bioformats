@@ -61,7 +61,6 @@ import ome.units.UNITS;
  * TiffReader is the file format reader for regular TIFF files,
  * not of any specific TIFF variant.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

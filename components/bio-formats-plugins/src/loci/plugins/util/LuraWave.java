@@ -34,7 +34,6 @@ import loci.formats.services.LuraWaveServiceImpl;
 
 /**
  * Utility methods for dealing with proprietary LuraWave licensing.
- *
  */
 public final class LuraWave {
 

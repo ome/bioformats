@@ -46,7 +46,6 @@ import ome.units.UNITS;
  * Specifications available at
  * http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ImarisReader extends FormatReader {

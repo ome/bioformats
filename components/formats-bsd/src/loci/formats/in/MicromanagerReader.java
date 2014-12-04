@@ -65,7 +65,6 @@ import ome.units.UNITS;
 
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
- *
  */
 public class MicromanagerReader extends FormatReader {
 

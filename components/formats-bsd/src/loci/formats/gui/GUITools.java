@@ -51,7 +51,6 @@ import loci.formats.WriterWrapper;
 /**
  * A utility class for working with graphical user interfaces.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public final class GUITools {

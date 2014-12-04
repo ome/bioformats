@@ -41,7 +41,6 @@
  * Description:             Contains definitions of boxes used in jp2 files
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -73,8 +72,6 @@
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  *
- *
- *
  */
 package jj2000.j2k.fileformat;
 
@@ -85,7 +82,6 @@ package jj2000.j2k.fileformat;
  * @see jj2000.j2k.fileformat.writer.FileFormatWriter
  *
  * @see jj2000.j2k.fileformat.reader.FileFormatReader
- *
  */
 public interface FileFormatBoxes{
 

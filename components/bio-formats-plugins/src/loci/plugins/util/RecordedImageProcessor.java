@@ -56,7 +56,6 @@ import java.util.List;
  * Allows "recordable virtual stacks" that repeat operations performed on
  * one image plane on other image planes when they are loaded from disk.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class RecordedImageProcessor extends ImageProcessor {

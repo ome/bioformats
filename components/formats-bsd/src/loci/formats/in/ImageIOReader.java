@@ -51,7 +51,6 @@ import loci.formats.meta.MetadataStore;
  * ImageIOReader is the superclass for file format readers
  * that use the javax.imageio package.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class ImageIOReader extends BIFormatReader {

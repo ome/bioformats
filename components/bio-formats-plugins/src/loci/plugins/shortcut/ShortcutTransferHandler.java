@@ -45,7 +45,6 @@ import loci.common.Constants;
 /**
  * Drag and drop transfer handler for Bio-Formats Plugins Shortcut Window.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ShortcutTransferHandler extends TransferHandler {

@@ -53,7 +53,6 @@ import loci.formats.tiff.TiffRational;
 /**
  * NikonReader is the file format reader for Nikon NEF (TIFF) files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class NikonReader extends BaseTiffReader {

@@ -43,7 +43,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * JPEG2000Writer is the file format writer for JPEG2000 files.
- *
  */
 public class JPEG2000Writer extends FormatWriter {
 

@@ -30,7 +30,6 @@ import loci.formats.services.OMEXMLService;
 
 /**
  * Edits the given file's image name (but does not save back to disk).
- *
  */
 public class EditImageName {
 

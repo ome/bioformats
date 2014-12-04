@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * A class for testing {@link loci.common.RandomAccessInputStream}'s
  * efficiency in various cases.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class IOTester {

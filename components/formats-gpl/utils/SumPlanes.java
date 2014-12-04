@@ -31,7 +31,6 @@ import loci.formats.gui.BufferedImageWriter;
 /**
  * Sums together the image planes from the given file,
  * and saves the result to a 16-bit TIFF.
- *
  */
 public class SumPlanes {
 

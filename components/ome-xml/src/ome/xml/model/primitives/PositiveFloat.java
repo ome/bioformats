@@ -39,7 +39,6 @@ package ome.xml.model.primitives;
  * further positive restriction.
  *
  * @author callan
- *
  */
 public class PositiveFloat extends NonNegativeFloat {
 

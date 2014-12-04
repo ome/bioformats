@@ -47,7 +47,6 @@ import java.util.Map;
  * reference numbers.
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
- *
  */
 public class SheetReferences
 {

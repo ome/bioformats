@@ -44,7 +44,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * DelegateReader is a file format reader that selects which reader to use
  * for a format if there are two readers which handle the same format.
- *
  */
 public abstract class DelegateReader extends FormatReader {
 

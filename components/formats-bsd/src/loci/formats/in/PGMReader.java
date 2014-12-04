@@ -51,7 +51,6 @@ import loci.formats.meta.MetadataStore;
  * PGMReader is the file format reader for Portable Gray Map (PGM) images.
  *
  * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij).
- *
  */
 public class PGMReader extends FormatReader {
 

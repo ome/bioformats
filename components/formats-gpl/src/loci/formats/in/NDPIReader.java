@@ -48,7 +48,6 @@ import ome.units.quantity.Length;
 
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
- *
  */
 public class NDPIReader extends BaseTiffReader {
 

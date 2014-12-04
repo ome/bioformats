@@ -38,7 +38,6 @@ import java.io.InputStream;
 /**
  * Stub of the Luratech LuraWave&reg; Java decoder class.
  * NOTE: This class contains <b>NO</b> real implementation.
- *
  */
 public class lwfDecoder {
 

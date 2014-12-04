@@ -41,7 +41,6 @@
  * Description:             Hold all decoder specifications
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

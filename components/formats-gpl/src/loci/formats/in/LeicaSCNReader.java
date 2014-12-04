@@ -58,7 +58,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * LeicaSCNReader is the file format reader for Leica SCN TIFF files.
- *
  */
 
 public class LeicaSCNReader extends BaseTiffReader {
@@ -416,7 +415,6 @@ public class LeicaSCNReader extends BaseTiffReader {
 
 /**
  * SAX handler for parsing XML in Zeiss TIFF files.
- *
  *
  * @author Roger Leigh <r.leigh at dundee.ac.uk>
  */

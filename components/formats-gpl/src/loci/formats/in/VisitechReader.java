@@ -41,7 +41,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * VisitechReader is the file format reader for Visitech XYS files.
- *
  */
 public class VisitechReader extends FormatReader {
 

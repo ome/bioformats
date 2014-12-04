@@ -42,7 +42,6 @@
  *                          lifting 9x7 transform.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

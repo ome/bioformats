@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Data structure for working with TIFF Image File Directories (IFDs).
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com

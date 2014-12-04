@@ -42,7 +42,6 @@
  *                          code-blocks options
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

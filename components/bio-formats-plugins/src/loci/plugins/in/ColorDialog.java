@@ -51,7 +51,6 @@ import loci.plugins.util.WindowTools;
  * labels&mdash;this means that we can't record macros in which custom colors
  * are chosen for multiple channels.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */

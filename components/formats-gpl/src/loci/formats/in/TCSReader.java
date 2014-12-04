@@ -55,7 +55,6 @@ import ome.units.quantity.Length;
  * TCSReader is the file format reader for Leica TCS TIFF files and their
  * companion XML file.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class TCSReader extends FormatReader {

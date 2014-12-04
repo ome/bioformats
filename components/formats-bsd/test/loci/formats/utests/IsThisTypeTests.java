@@ -44,7 +44,6 @@ import org.testng.annotations.Test;
  * Tests for checking the speed and accuracy of isThisType(String, boolean) in
  * IFormatReader.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class IsThisTypeTests {

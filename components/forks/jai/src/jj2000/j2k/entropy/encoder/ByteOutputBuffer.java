@@ -44,7 +44,6 @@
  *                          the old jj2000.j2k.io.ByteArrayOutput class by
  *                          Diego SANTA CRUZ, Apr-26-1999
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -75,8 +74,6 @@
  * derivative works of this software module.
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *
- *
  *
  */
 

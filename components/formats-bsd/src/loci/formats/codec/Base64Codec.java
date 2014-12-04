@@ -42,7 +42,6 @@ import loci.formats.FormatException;
  * for Base64.  This code was adapted from the Jakarta Commons Codec source,
  * http://jakarta.apache.org/commons
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class Base64Codec extends BaseCodec {

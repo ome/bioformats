@@ -44,7 +44,6 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Top-level SAX handler.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class BaseHandler extends DefaultHandler {

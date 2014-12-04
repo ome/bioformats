@@ -34,7 +34,6 @@ package loci.formats.meta;
 
 /**
  *
- *
  * @author Roger Leigh r.leigh at dundee.ac.uk
  */
 public interface BaseMetadata extends ome.xml.meta.BaseMetadata { }

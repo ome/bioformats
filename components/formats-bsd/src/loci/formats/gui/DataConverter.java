@@ -73,7 +73,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A utility for reorganizing and converting QuickTime movies,
  * TIFF series and other 4D datasets.
- *
  */
 public class DataConverter extends JFrame implements
   ActionListener, ChangeListener, Runnable

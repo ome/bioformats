@@ -40,7 +40,6 @@ import ome.units.quantity.Length;
 
 /**
  * INRReader is the file format reader for INR files.
- *
  */
 public class INRReader extends FormatReader {
 

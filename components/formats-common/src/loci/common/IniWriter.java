@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A simple writer for INI configuration files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class IniWriter {

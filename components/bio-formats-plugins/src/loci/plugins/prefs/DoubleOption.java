@@ -34,7 +34,6 @@ import java.util.HashMap;
 
 /**
  * A double option for one of the plugins.
- *
  */
 public class DoubleOption extends Option {
 

@@ -42,7 +42,6 @@ import loci.formats.meta.MetadataStore;
  * SDTReader is the file format reader for
  * Becker &amp; Hickl SPC-Image SDT files.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class SDTReader extends FormatReader {

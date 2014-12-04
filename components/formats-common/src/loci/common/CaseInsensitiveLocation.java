@@ -39,7 +39,6 @@ import java.util.HashSet;
 
 /**
  * Case insensitive variant of Location.
- *
  */
 public class CaseInsensitiveLocation extends Location {
 

@@ -58,7 +58,6 @@ import loci.formats.tiff.TiffCompression;
 /**
  * Test grinding in a multi-threaded environment a JPEG-2000 encoded TIFF.
  *
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class Jpeg2000GrindTest {

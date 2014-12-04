@@ -37,7 +37,6 @@ import loci.formats.ImageReader;
  * A class for testing {@link loci.common.RandomAccessInputStream}'s
  * ability to handle files compressed with gz, zip or bz2.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ZipTester {

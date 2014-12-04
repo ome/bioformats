@@ -35,7 +35,6 @@ package loci.common;
 /**
  * ReflectException is the exception thrown when something
  * goes wrong performing a reflected operation with ReflectedUniverse.
- *
  */
 public class ReflectException extends Exception {
 

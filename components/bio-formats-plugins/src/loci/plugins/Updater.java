@@ -39,7 +39,6 @@ import loci.formats.UpgradeChecker;
 /**
  * A plugin for updating the Bio-Formats plugins.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class Updater implements PlugIn {

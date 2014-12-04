@@ -54,7 +54,6 @@ import loci.formats.services.OMEXMLService;
 /**
  * A plugin for opening life sciences files in MIPAV using Bio-Formats.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class PlugInBioFormatsImporter implements PlugInFile {

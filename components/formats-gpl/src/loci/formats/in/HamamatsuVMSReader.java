@@ -55,7 +55,6 @@ import ome.units.quantity.Length;
 /**
  * HamamatsuVMSReader is the file format reader for Hamamatsu VMS datasets.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class HamamatsuVMSReader extends FormatReader {

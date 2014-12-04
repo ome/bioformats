@@ -58,7 +58,6 @@ package loci.formats.cache;
  *    3 |           1
  *    4 |           5
  * </pre>
- *
  */
 public class CrosshairStrategy extends CacheStrategy {
 

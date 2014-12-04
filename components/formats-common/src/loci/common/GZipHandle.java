@@ -42,7 +42,6 @@ import java.util.zip.GZIPInputStream;
  * StreamHandle implementation for reading from gzip-compressed files
  * or byte arrays.  Instances of GZipHandle are read-only.
  *
- *
  * @see StreamHandle
  *
  * @author Melissa Linkert melissa at glencoesoftware.com

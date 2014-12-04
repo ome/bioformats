@@ -41,7 +41,6 @@
  * Description:             Entropy coding engine of stripes in code-blocks
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

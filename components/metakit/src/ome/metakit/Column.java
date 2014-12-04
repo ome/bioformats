@@ -28,7 +28,6 @@ package ome.metakit;
 /**
  * Class representing a column in a Metakit database file.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class Column {

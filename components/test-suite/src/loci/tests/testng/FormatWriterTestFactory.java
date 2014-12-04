@@ -36,7 +36,6 @@ import org.testng.annotations.Factory;
 /**
  * Factory for scanning a directory structure and generating instances of
  * {@link FormatWriterTest} based on the image files found.
- *
  */
 public class FormatWriterTestFactory {
 

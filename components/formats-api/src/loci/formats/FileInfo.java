@@ -34,7 +34,6 @@ package loci.formats;
 
 /**
  * Encompasses basic metadata about a file.
- *
  */
 public class FileInfo {
 

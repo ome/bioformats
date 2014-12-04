@@ -35,7 +35,6 @@ package loci.formats;
 /**
  * UnknownFormatException is the exception thrown when the format of a
  * particular data stream or filename cannot be recognized or is unsupported.
- *
  */
 public class UnknownFormatException extends FormatException {
 

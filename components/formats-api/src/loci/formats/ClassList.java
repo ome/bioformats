@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * ClassList is a list of classes for use with ImageReader or ImageWriter,
  * parsed from a configuration file such as readers.txt or writers.txt.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ClassList<T> {

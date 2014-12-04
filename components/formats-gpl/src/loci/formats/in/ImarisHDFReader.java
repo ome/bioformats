@@ -49,7 +49,6 @@ import ome.units.quantity.Length;
 
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
- *
  */
 public class ImarisHDFReader extends FormatReader {
 

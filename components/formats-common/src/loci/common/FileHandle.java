@@ -42,7 +42,6 @@ import java.nio.ByteOrder;
 /**
  * A wrapper for RandomAccessFile that implements the IRandomAccess interface.
  *
- *
  * @see IRandomAccess
  * @see java.io.RandomAccessFile
  *

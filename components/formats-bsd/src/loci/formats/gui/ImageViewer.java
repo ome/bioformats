@@ -101,7 +101,6 @@ import org.xml.sax.SAXException;
  * ImageViewer is a simple viewer/converter
  * for the Bio-Formats image formats.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageViewer extends JFrame implements ActionListener,

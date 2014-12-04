@@ -38,7 +38,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * JEOLReader is the file format reader for JEOL files.
- *
  */
 public class JEOLReader extends FormatReader {
 

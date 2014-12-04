@@ -77,7 +77,6 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * <p>Instances of this class are not threadsafe.</p>
- *
  */
 public class CBZip2InputStream extends InputStream {
 

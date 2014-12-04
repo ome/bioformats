@@ -35,7 +35,6 @@ package loci.formats;
 /**
  * MissingLibraryException is the exception thrown when a particular data
  * stream or filename requires a library that is not present on the system.
- *
  */
 public class MissingLibraryException extends FormatException {
 

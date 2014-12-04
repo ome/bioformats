@@ -44,7 +44,6 @@ import java.math.BigInteger;
  *   <li>&lt;R,G,B&gt;</li>
  * </ul>
  *
- *
  */
 public class FilePatternBlock {
 

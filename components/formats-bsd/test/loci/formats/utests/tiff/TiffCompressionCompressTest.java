@@ -49,7 +49,6 @@ import org.testng.annotations.Test;
 
 /**
  * Tests the various TIFF compression schemes.
- *
  */
 public class TiffCompressionCompressTest {
 

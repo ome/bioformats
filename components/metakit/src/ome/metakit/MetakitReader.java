@@ -35,7 +35,6 @@ import loci.common.RandomAccessInputStream;
  * See http://equi4.com/metakit/metakit-ff.html for basic documentation on the
  * Metakit file format.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class MetakitReader {

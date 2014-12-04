@@ -39,7 +39,6 @@ import org.apache.velocity.app.VelocityEngine;
 
 /**
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class OriginalMetadataAutogen {

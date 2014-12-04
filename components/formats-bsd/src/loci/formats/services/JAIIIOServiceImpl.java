@@ -60,7 +60,6 @@ import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
 
 /**
  * Implementation of JAIIIOService for reading and writing JPEG-2000 data.
- *
  */
 public class JAIIIOServiceImpl extends AbstractService
   implements JAIIIOService

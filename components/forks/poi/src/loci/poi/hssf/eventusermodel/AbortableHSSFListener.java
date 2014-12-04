@@ -54,7 +54,6 @@ import loci.poi.hssf.eventusermodel.HSSFUserException;
  * @see loci.poi.hssf.eventusermodel.HSSFUserException
  *
  * @author Carey Sublette (careysub@earthling.net)
- *
  */
 
 public abstract class AbortableHSSFListener implements HSSFListener

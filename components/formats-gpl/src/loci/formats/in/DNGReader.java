@@ -54,7 +54,6 @@ import loci.formats.tiff.TiffRational;
 /**
  * DNGReader is the file format reader for Canon DNG (TIFF) files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class DNGReader extends BaseTiffReader {

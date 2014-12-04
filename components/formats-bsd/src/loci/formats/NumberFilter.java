@@ -38,7 +38,6 @@ import java.math.BigInteger;
 
 /**
  * NumberFilter is a helper filter for FilePattern.findPattern().
- *
  */
 public class NumberFilter implements FileFilter {
 

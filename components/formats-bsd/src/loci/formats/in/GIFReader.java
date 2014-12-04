@@ -48,7 +48,6 @@ import loci.formats.meta.MetadataStore;
  * GIFReader is the file format reader for Graphics Interchange Format
  * (GIF) files.  Much of this code was adapted from the Animated GIF Reader
  * plugin for ImageJ (http://rsb.info.nih.gov/ij).
- *
  */
 public class GIFReader extends FormatReader {
 

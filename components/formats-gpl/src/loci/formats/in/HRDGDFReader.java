@@ -49,7 +49,6 @@ import ome.units.quantity.Length;
  * two values are encoded as channels, so that channel 0 represents east-west
  * speed and channel 1 represents north-south speed.
  *
- *
  * @see http://www.aoml.noaa.gov/hrd/data_sub/wind.html
  *
  * @author Melissa Linkert melissa at glencoesoftware.com

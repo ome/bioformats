@@ -46,7 +46,6 @@ import loci.plugins.BF;
 /**
  * Loads thumbnails for Bio-Formats Importer
  * series chooser in a separate thread.
- *
  */
 public class ThumbLoader implements Runnable {
 

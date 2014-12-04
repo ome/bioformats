@@ -56,7 +56,6 @@ import org.xml.sax.Attributes;
 /**
  * FEITiffReader is the file format reader for TIFF files produced by various
  * FEI software.
- *
  */
 public class FEITiffReader extends BaseTiffReader {
 

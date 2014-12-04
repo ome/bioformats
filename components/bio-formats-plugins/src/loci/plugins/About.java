@@ -37,7 +37,6 @@ import loci.formats.IFormatHandler;
 
 /**
  * Displays a small information dialog about the Bio-Formats Plugins package.
- *
  */
 public final class About implements PlugIn {
 

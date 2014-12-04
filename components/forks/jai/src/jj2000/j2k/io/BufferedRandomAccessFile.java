@@ -41,7 +41,6 @@
  * Description:         Abstract class for buffered random access I/O.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

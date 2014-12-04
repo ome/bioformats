@@ -40,7 +40,6 @@ import loci.formats.FormatTools;
  * It does not read files directly, but chooses which QuickTime reader is
  * more appropriate.
  *
- *
  * @see NativeQTReader
  * @see LegacyQTReader
  */

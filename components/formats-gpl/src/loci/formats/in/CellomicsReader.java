@@ -49,7 +49,6 @@ import ome.units.quantity.Length;
 
 /**
  * Reader for Cellomics C01 files.
- *
  */
 public class CellomicsReader extends FormatReader {
 

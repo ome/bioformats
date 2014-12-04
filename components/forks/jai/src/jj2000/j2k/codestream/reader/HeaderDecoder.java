@@ -41,7 +41,6 @@
  * Description:             Reads main and tile-part headers.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

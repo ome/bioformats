@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Primitive type that represents an ISO 8601 timestamp.
- *
  */
 public class Timestamp extends PrimitiveType<String> {
 

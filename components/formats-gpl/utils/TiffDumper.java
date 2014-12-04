@@ -31,7 +31,6 @@ import loci.formats.tiff.*;
 
 /**
  * Parses and outputs all IFDs for the given TIFF file(s).
- *
  */
 public class TiffDumper {
 

@@ -43,7 +43,6 @@ import loci.formats.UnsupportedCompressionException;
  *
  * See http://wiki.multimedia.cx/index.php?title=Microsoft_Video_1 for an
  * excellent description of MSV1.
- *
  */
 public class MSVideoCodec extends BaseCodec {
 

@@ -47,7 +47,6 @@ import loci.formats.tiff.TiffParser;
  * PhotoshopTiffReader is the file format reader for
  * Adobe Photoshop TIFF files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class PhotoshopTiffReader extends BaseTiffReader {

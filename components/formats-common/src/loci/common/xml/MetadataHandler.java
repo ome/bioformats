@@ -39,7 +39,6 @@ import org.xml.sax.Attributes;
 /**
  * Used to retrieve key/value pairs from XML.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com

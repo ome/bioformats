@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Class that allows checking for new versions of Bio-Formats, as well as
  * updating to the latest stable, daily, or trunk version.
- *
  */
 public class UpgradeChecker {
 

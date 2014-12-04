@@ -59,7 +59,6 @@ import org.w3c.dom.Element;
 /**
  * @author rleigh
  *
- *
  */
 public class MapPairs implements OMEModelObject {
 

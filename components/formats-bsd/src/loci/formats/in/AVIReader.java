@@ -55,7 +55,6 @@ import loci.formats.meta.MetadataStore;
  *
  * Much of this code was adapted from Wayne Rasband's AVI Movie Reader
  * plugin for ImageJ (available at http://rsb.info.nih.gov/ij).
- *
  */
 public class AVIReader extends FormatReader {
 

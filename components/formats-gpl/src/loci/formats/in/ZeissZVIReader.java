@@ -50,7 +50,6 @@ import loci.formats.services.POIService;
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ZeissZVIReader extends BaseZeissReader {

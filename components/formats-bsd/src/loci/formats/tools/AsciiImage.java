@@ -36,7 +36,6 @@ import java.awt.image.BufferedImage;
 
 /**
  * A utility class for outputting a BufferedImage as ASCII text.
- *
  */
 public class AsciiImage {
 

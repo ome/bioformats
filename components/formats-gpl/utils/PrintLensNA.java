@@ -37,7 +37,6 @@ import loci.formats.services.OMEXMLService;
 /**
  * Uses Bio-Formats to extract lens numerical aperture
  * in a format-independent manner from a dataset.
- *
  */
 public class PrintLensNA {
 

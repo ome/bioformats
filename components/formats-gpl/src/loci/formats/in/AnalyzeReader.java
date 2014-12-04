@@ -45,7 +45,6 @@ import ome.units.UNITS;
 /**
  * AnalyzeReader is the file format reader for Analyze 7.5 files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class AnalyzeReader extends FormatReader {

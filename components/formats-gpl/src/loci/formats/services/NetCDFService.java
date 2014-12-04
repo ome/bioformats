@@ -35,7 +35,6 @@ import loci.common.services.ServiceException;
 /**
  * Utility class for working with NetCDF/HDF files.  Uses reflection to
  * call the NetCDF Java library.
- *
  */
 public interface NetCDFService extends Service {
 

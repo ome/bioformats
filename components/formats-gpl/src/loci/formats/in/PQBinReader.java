@@ -42,14 +42,12 @@ import ome.units.UNITS;
 /**
  * PQBinReader is the file format reader for PicoQuant .bin files.
  *
- *
  * Please Note: This format holds FLIM data arranged so that each decay is stored contiguously. 
  * Therefore, as in other FLIM format readers e.g. SDTReader.java, on the first call to openBytes
  * the whole data cube ( x,y,t) (NB actually t not real-time T) is loaded from the file to  a buffer.
  * On further calls to openBytes the appropriate 2D (x,y)plane (timebin) is returned from this buffer.
  * This is in the interest of significantly improved  performance when all the planes are requested one after another.
  * There will be a performance cost if a single plane is requested but this is highly unlikely for FLIM data.
- *
  */
 public class PQBinReader extends FormatReader {
 

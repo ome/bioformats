@@ -40,7 +40,6 @@ import org.testng.annotations.Test;
 
 /**
  * Unit tests for {@link loci.common.DataTools}.
- *
  */
 public class DataToolsTest {
 

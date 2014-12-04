@@ -41,7 +41,6 @@
  * Description:             Manipulates codestream to create tile-parts etc
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and

@@ -40,7 +40,6 @@ import loci.common.enumeration.CodedEnum;
 
 /**
  * An enumeration of JPEG 2000 segment markers.
- *
  */
 public enum JPEG2000SegmentMarker implements CodedEnum {
 

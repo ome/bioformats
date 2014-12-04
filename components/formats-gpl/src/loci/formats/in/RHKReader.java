@@ -42,7 +42,6 @@ import ome.units.quantity.Length;
 
 /**
  * RHKReader is the file format reader for RHK Technologies files.
- *
  */
 public class RHKReader extends FormatReader {
 

@@ -47,7 +47,6 @@ import org.testng.annotations.Factory;
  * href="http://code.google.com/p/testng/issues/detail?id=19#c6">this
  * issue</a>.
  * </p>
- *
  */
 public class FormatReaderTestFactory {
 

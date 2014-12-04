@@ -35,7 +35,6 @@ import org.apache.velocity.app.VelocityEngine;
 /**
  * Useful methods for working with Apache Velocity.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class VelocityTools {

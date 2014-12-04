@@ -52,7 +52,6 @@ import loci.common.Constants;
  * This class is used to generate a text file containing all of the
  * image file extensions supported by Bio-Formats.
  *
- *
  * @author Mark Hiner hiner at wisc.edu
  */
 public class BioFormatsExtensionPrinter {
