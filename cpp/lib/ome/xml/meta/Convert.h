@@ -53,6 +53,9 @@ namespace ome
        * MetadataRetrieve object into a destination MetadataStore.
        *
        * This allows conversion between two different storage media.
+       *
+       * @param src the source object.
+       * @param dest the destination object.
        */
       void
       convert(const MetadataRetrieve& src,

@@ -47,21 +47,44 @@ namespace
   using namespace ome::xml::model::primitives;
   using ome::xml::model::AffineTransform;
 
+  /**
+   * Copy metadata between MetadataRetrieve and MetadataStore
+   * instances.
+   */
   class MetadataConverter
   {
   private:
+    /// Source object.
     const MetadataRetrieve& src;
+    // Destination object.
     MetadataStore&          dest;
 
   public:
+    /// Index type.
     typedef ome::xml::meta::BaseMetadata::index_type index_type;
+    // MetadataRetrieve abbreviation.
     typedef ome::xml::meta::MetadataRetrieve MR;
+    // MetadataStore abbrebviation.
     typedef ome::xml::meta::MetadataStore MS;
 
+    /**
+     * Constructor.
+     *
+     * @param src the source object.
+     * @param dest the destination object.
+     */
     MetadataConverter(const MetadataRetrieve& src,
                       MetadataStore&          dest):
       src(src),
       dest(dest)
+    {
+    }
+
+    /**
+     * Perform metadata conversion.
+     */
+    void
+    operator()()
     {
       convertBooleanAnnotations();
       convertCommentAnnotations();
@@ -88,6 +111,15 @@ namespace
 
       convertRootAttributes();
     }
+
+    /**
+     * Transfer a single metadata value (no arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param set a setter method from MetadataStore.
+     * @returns @c true if the transfer succeeded, @c false if an
+     * exception was thrown.
+     */
     template<typename T>
     bool
     transfer(T    (MetadataRetrieve::* get)() const,
@@ -105,6 +137,14 @@ namespace
       return ok;
     }
 
+    /**
+     * Transfer a single metadata value (one index argument).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param set a setter method from MetadataStore.
+     * @returns @c true if the transfer succeeded, @c false if an
+     * exception was thrown.
+     */
     template<typename T, typename P>
     bool
     transfer(T    (MetadataRetrieve::* get)(P param) const,
@@ -124,6 +164,14 @@ namespace
       return ok;
     }
 
+    /**
+     * Transfer a single metadata value (two index arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param set a setter method from MetadataStore.
+     * @returns @c true if the transfer succeeded, @c false if an
+     * exception was thrown.
+     */
     template<typename T, typename P>
     bool
     transfer(T    (MetadataRetrieve::* get)(P param1,
@@ -147,6 +195,14 @@ namespace
       return ok;
     }
 
+    /**
+     * Transfer a single metadata value (three index arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param set a setter method from MetadataStore.
+     * @returns @c true if the transfer succeeded, @c false if an
+     * exception was thrown.
+     */
     template<typename T, typename P>
     bool
     transfer(T    (MetadataRetrieve::* get)(P param1,
@@ -173,6 +229,7 @@ namespace
       return ok;
     }
 
+    /// Convert boolean annotations.
     void
     convertBooleanAnnotations()
     {
@@ -193,6 +250,7 @@ namespace
         }
     }
 
+    /// Convert comment annotations.
     void
     convertCommentAnnotations()
     {
@@ -213,6 +271,7 @@ namespace
         }
     }
 
+    /// Convert datasets.
     void
     convertDatasets()
     {
@@ -237,6 +296,7 @@ namespace
         }
     }
 
+    /// Convert double annotations.
     void
     convertDoubleAnnotations()
     {
@@ -257,6 +317,7 @@ namespace
         }
     }
 
+    /// Convert experiments.
     void
     convertExperiments()
     {
@@ -296,6 +357,7 @@ namespace
         }
     }
 
+    /// Convert experimenters.
     void
     convertExperimenters()
     {
@@ -318,6 +380,7 @@ namespace
         }
     }
 
+    /// Convert experimenter groups.
     void
     convertExperimenterGroups()
     {
@@ -344,6 +407,7 @@ namespace
         }
     }
 
+    /// Convert file annotations.
     void
     convertFileAnnotations()
     {
@@ -366,6 +430,7 @@ namespace
         }
     }
 
+    /// Convert images.
     void
     convertImages()
     {
@@ -518,6 +583,11 @@ namespace
         }
     }
 
+    /**
+     * Convert light sources.
+     *
+     * @param instrumentIndex the instrument to convert.
+     */
     void
     convertLightSources(index_type instrumentIndex)
     {
@@ -618,6 +688,7 @@ namespace
         }
     }
 
+    /// Convert instruments.
     void
     convertInstruments()
     {
@@ -736,11 +807,13 @@ namespace
                         transfer(&MR::getFilterSetExcitationFilterRef, &MS::setFilterSetExcitationFilterRef, i, q, f);
                     }
                 }
+
               convertLightSources(i);
             }
         }
     }
 
+    /// Convert list annotations.
     void
     convertListAnnotations()
     {
@@ -760,6 +833,7 @@ namespace
         }
     }
 
+    /// Convert long annotations.
     void
     convertLongAnnotations()
     {
@@ -780,6 +854,7 @@ namespace
         }
     }
 
+    /// Convert map annotations.
     void
     convertMapAnnotations()
     {
@@ -800,6 +875,7 @@ namespace
         }
     }
 
+    /// Convert plates.
     void
     convertPlates()
     {
@@ -880,6 +956,7 @@ namespace
         }
     }
 
+    /// Convert projects.
     void
     convertProjects()
     {
@@ -904,6 +981,7 @@ namespace
         }
     }
 
+    /// Convert regions of interest.
     void
     convertROIs()
     {
@@ -1164,6 +1242,7 @@ namespace
         }
     }
 
+    /// Convert screens.
     void
     convertScreens()
     {
@@ -1206,6 +1285,7 @@ namespace
         }
     }
 
+    /// Convert tag annotations.
     void
     convertTagAnnotations()
     {
@@ -1226,6 +1306,7 @@ namespace
         }
     }
 
+    /// Convert term annotations.
     void
     convertTermAnnotations()
     {
@@ -1246,6 +1327,7 @@ namespace
         }
     }
 
+    /// Convert timestamp annotations.
     void
     convertTimestampAnnotations()
     {
@@ -1266,6 +1348,7 @@ namespace
         }
     }
 
+    /// Convert XML annotations.
     void
     convertXMLAnnotations()
     {
@@ -1286,6 +1369,7 @@ namespace
         }
     }
 
+    /// Convert root attributes.
     void
     convertRootAttributes()
     {
@@ -1310,7 +1394,8 @@ namespace ome
       convert(const MetadataRetrieve& src,
               MetadataStore&          dest)
       {
-        MetadataConverter(src, dest);
+        MetadataConverter convert(src, dest);
+        convert();
       }
 
     }
