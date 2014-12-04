@@ -431,8 +431,8 @@ public class XMLMockObjects
     TransmittanceRange transmittance = new TransmittanceRange();
     transmittance.setCutIn(new Length(cutIn, UNITS.NM));
     transmittance.setCutOut(new Length(cutOut, UNITS.NM));
-    transmittance.setCutInTolerance(new Length(1, UNITS.NM));
-    transmittance.setCutOutTolerance(new Length(1, UNITS.NM));
+    transmittance.setCutInTolerance(new Length(1.0, UNITS.NM));
+    transmittance.setCutOutTolerance(new Length(1.0, UNITS.NM));
     filter.setTransmittanceRange(transmittance);
     return filter;
   }
@@ -662,7 +662,7 @@ public class XMLMockObjects
     settings.setGain(1.0);
     settings.setOffset(1.0);
     settings.setReadOutRate(new Frequency(1.0, UNITS.HZ));
-    settings.setVoltage(new ElectricPotential(0, UNITS.V));
+    settings.setVoltage(new ElectricPotential(1.0, UNITS.V));
     return settings;
   }
 
