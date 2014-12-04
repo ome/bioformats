@@ -35,12 +35,14 @@ package loci.formats.tiff;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
@@ -618,7 +620,7 @@ public class TiffSaver {
       }
     }
     else if (value instanceof String) { // ASCII
-      char[] q = ((String) value).toCharArray();
+      byte[] q = ((String) value).getBytes(Charset.forName(Constants.ENCODING));
       out.writeShort(IFDType.ASCII.getCode()); // type
       writeIntValue(out, q.length + 1);
       if (q.length < dataLength) {
