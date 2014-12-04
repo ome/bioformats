@@ -900,14 +900,18 @@ ${counter(k, o, v)}\
 
 {% end debug %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       OMEXMLMetadata::getUUID() const
       {
-        return *root->getUUID();
+        std::shared_ptr<const std::string> uuid = root->getUUID();
+        if (uuid)
+          return *root->getUUID();
+        else
+          throw(std::runtime_error("Internal metadata store inconsistency: UUID is null"));
       }
 {% end source %}\
 

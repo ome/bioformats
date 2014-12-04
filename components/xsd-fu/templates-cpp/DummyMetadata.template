@@ -593,11 +593,11 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       DummyMetadata::getUUID() const
       {
         throw std::runtime_error("DummyMetadata: No metadata methods implemented");

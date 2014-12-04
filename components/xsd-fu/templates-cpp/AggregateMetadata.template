@@ -852,11 +852,11 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       AggregateMetadata::getUUID() const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
