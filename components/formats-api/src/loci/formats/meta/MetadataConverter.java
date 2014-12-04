@@ -1727,7 +1727,21 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
         }
       }
+
       convertLightSources(src, dest, i);
+
+      int instrumentRefCount = 0;
+      try {
+        instrumentRefCount = src.getInstrumentAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int r=0; r<instrumentRefCount; r++) {
+        try {
+          String id = src.getInstrumentAnnotationRef(i, r);
+          dest.setInstrumentAnnotationRef(id, i, r);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 

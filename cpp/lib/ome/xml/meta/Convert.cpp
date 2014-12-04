@@ -813,6 +813,10 @@ namespace
                 }
 
               convertLightSources(i);
+
+              index_type instrumentAnnotationRefCount(src.getInstrumentAnnotationRefCount(i));
+              for (index_type r = 0; r < instrumentAnnotationRefCount; ++r)
+                transfer(&MR::getInstrumentAnnotationRef, &MS::setInstrumentAnnotationRef, i, r);
             }
         }
     }
