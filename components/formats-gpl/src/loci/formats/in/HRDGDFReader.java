@@ -50,7 +50,7 @@ import ome.units.quantity.Length;
  * speed and channel 1 represents north-south speed.
  *
  *
- * @see http://www.aoml.noaa.gov/hrd/data_sub/wind.html
+ * @see <a href=http://www.aoml.noaa.gov/hrd/data_sub/wind.html>http://www.aoml.noaa.gov/hrd/data_sub/wind.html</a>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
