@@ -311,7 +311,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   /**
    * Constructs an image viewer.
    *
-   * @param whether or not the underlying reader can be closed
+   * @param canCloseReader whether or not the underlying reader can be closed
    */
   public ImageViewer(boolean canCloseReader) {
     this();

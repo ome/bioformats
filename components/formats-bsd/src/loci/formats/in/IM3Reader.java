@@ -493,7 +493,7 @@ public class IM3Reader extends FormatReader {
 		 * Parse and return the sub-records for the record container
 		 * 
 		 * @param is
-		 * @return
+		 * @return a list of sub-records
 		 * @throws IOException
 		 */
 		List<IM3Record> parseChunks(IRandomAccess is) throws IOException {

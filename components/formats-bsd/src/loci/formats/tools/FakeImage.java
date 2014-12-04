@@ -95,8 +95,6 @@ public class FakeImage {
    *     ...
    * </pre>
    *
-   * @param baseDir
-   *          Directory, where structure will be generated.
    * @param plates
    *          Number of plates in a screen (max 255).
    * @param plateAcquisitions

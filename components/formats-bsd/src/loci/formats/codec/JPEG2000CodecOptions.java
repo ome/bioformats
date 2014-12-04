@@ -59,7 +59,7 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
   /**
    * The resolution level as would be provided to:
-   * {@link com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam#setResolution(int)}
+   * {@link com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam#setResolution(int)}
    * (READ). Leaving this value <code>null</code> signifies that when a JPEG
    * 2000 parameter set is created for the purposes of compression the number
    * of decomposition levels will be left as the default.

@@ -181,7 +181,7 @@ public class OMETiffWriter extends TiffWriter {
   }
 
   /**
-   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], IFD, int, int, int, int)
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws FormatException, IOException
