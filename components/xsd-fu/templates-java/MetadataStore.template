@@ -159,11 +159,11 @@ public interface MetadataStore extends BaseMetadata
 
 	void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
 
-	void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex);
+	void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex);
 
-	void setGenericExcitationSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex);
+	void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex);
 
-	void setImagingEnvironmentMap(java.util.Map<String, String> map, int imageIndex);
+	void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex);
 
 	// -- Entity storage (code generated definitions) --
 

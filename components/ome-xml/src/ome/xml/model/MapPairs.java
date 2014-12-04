@@ -40,9 +40,10 @@ package ome.xml.model;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import ome.xml.model.AbstractOMEModelObject;
@@ -97,24 +98,27 @@ public class MapPairs implements OMEModelObject {
     public static final String MAPNAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/" + VERSION;
     public static final String PAIRSNAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
 
-    private Map<String, String> map;
+    private List<MapPair> pairs;
 
     /** Default constructor. */
     public MapPairs()
     {
-        map = new HashMap<String, String>();
+        pairs = new ArrayList<MapPair>();
     }
 
-    /** Construct from an existing Map. */
-    public MapPairs(Map<String, String> m)
+    /** Copies {@link List} argument */
+    public MapPairs(List<MapPair> pairs)
     {
-       map = new HashMap<String, String>(m);
+    	this();
+        if (pairs != null) {
+            this.pairs.addAll(pairs);	
+        }
     }
 
     /** Copy constructor. */
     public MapPairs(MapPairs orig)
     {
-        map = new HashMap<String, String>(orig.getMap());
+        this(orig.pairs);
     }
 
     /**
@@ -132,14 +136,9 @@ public class MapPairs implements OMEModelObject {
         update(element, model);
     }
 
-    public Map<String, String> getMap()
+    public List<MapPair> getPairs()
     {
-        return map;
-    }
-
-    public void setMap(Map<String, String> m)
-    {
-       map = new HashMap<String, String>(m);
+        return Collections.unmodifiableList(pairs);
     }
 
     public Element asXMLElement(Document document)
@@ -157,12 +156,10 @@ public class MapPairs implements OMEModelObject {
             pairs = document.createElementNS(MAPNAMESPACE, "Value");
         }
 
-        Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<String, String> entry = entries.next();
+        for (MapPair entry : this.pairs) {
 
             Element pair = document.createElementNS(PAIRSNAMESPACE, "M");
-            pair.setAttribute("K", entry.getKey());
+            pair.setAttribute("K", entry.getName());
             pair.setTextContent(entry.getValue());
             pairs.appendChild(pair);
         }
@@ -181,7 +178,7 @@ public class MapPairs implements OMEModelObject {
             if (child.hasAttribute("K")) {
                 String key = child.getAttribute("K");
                 String value = child.getTextContent();
-                map.put(key, value);
+                pairs.add(new MapPair(key, value));
             } else {
                 LOGGER.debug("MapPairs entry M does not contain key attribute K");
             }

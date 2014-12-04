@@ -32,6 +32,7 @@
 
 package loci.formats.meta;
 
+import java.util.List;
 import java.util.Map;
 
 import ome.xml.model.*;
@@ -727,7 +728,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Map<String, String> map = src.getImagingEnvironmentMap(i);
+        List<MapPair> map = src.getImagingEnvironmentMap(i);
         dest.setImagingEnvironmentMap(map, i);
       }
       catch (NullPointerException e) { }
@@ -1853,7 +1854,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Map<String, String> value = src.getMapAnnotationValue(i);
+        List<MapPair> value = src.getMapAnnotationValue(i);
         dest.setMapAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
@@ -3924,7 +3925,7 @@ public final class MetadataConverter {
         }
 
         try {
-          Map<String, String> map =
+          List<MapPair> map =
             src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
           dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
         }
