@@ -3969,6 +3969,19 @@ public final class MetadataConverter {
             instrumentIndex, lightSource);
         }
         catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getGenericExcitationSourceAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setGenericExcitationSourceAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
       else if (type.equals("Laser")) {
         try {
