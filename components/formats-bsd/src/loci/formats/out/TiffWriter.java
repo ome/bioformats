@@ -58,9 +58,6 @@ import ome.units.UNITS;
 /**
  * TiffWriter is the file format writer for TIFF files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/TiffWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/TiffWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TiffWriter extends FormatWriter {
 

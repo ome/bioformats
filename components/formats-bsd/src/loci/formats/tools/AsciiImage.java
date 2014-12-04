@@ -37,9 +37,6 @@ import java.awt.image.BufferedImage;
 /**
  * A utility class for outputting a BufferedImage as ASCII text.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/AsciiImage.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/AsciiImage.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class AsciiImage {
 

@@ -38,9 +38,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * UBMReader is the file format reader for UBM .pr3 files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/UBMReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/UBMReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class UBMReader extends FormatReader {
 

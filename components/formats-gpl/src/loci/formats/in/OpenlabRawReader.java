@@ -43,9 +43,6 @@ import loci.formats.meta.MetadataStore;
  * Specifications available at
  * http://www.improvision.com/support/tech_notes/detail.php?id=344
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/OpenlabRawReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/OpenlabRawReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

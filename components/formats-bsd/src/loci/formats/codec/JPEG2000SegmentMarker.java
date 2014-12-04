@@ -41,9 +41,6 @@ import loci.common.enumeration.CodedEnum;
 /**
  * An enumeration of JPEG 2000 segment markers.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000SegmentMarker.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEG2000SegmentMarker.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public enum JPEG2000SegmentMarker implements CodedEnum {
 

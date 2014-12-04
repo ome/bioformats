@@ -45,9 +45,6 @@ import loci.plugins.util.LibraryChecker;
  * Helper class for managing Bio-Formats Importer options.
  * Gets default parameter values from IJ_Prefs.txt.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/ImporterOptions.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/ImporterOptions.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImporterOptions extends OptionsList {
 

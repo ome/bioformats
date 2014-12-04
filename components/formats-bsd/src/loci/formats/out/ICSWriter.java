@@ -50,9 +50,6 @@ import ome.units.UNITS;
  * ICSWriter is the file format writer for ICS files.  It writes ICS version 1
  * and 2 files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/ICSWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/ICSWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ICSWriter extends FormatWriter {
 

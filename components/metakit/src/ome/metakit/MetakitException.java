@@ -29,9 +29,6 @@ package ome.metakit;
  * MetakitException is the exception thrown when something
  * goes wrong when reading a Metakit database file.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/metakit/src/ome/metakit/MetakitException.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/metakit/src/ome/metakit/MetakitException.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MetakitException extends Exception {
 

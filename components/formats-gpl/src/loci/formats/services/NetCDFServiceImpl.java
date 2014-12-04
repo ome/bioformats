@@ -54,9 +54,6 @@ import com.esotericsoftware.kryo.io.Output;
  * Utility class for working with NetCDF/HDF files.  Uses reflection to
  * call the NetCDF Java library.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/NetCDFServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/NetCDFServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NetCDFServiceImpl extends AbstractService
   implements NetCDFService, KryoSerializable {

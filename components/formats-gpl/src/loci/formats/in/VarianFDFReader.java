@@ -45,9 +45,6 @@ import ome.units.quantity.Length;
 /**
  * VarianFDFReader is the file format reader for Varian FDF files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/VarianFDFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/VarianFDFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class VarianFDFReader extends FormatReader {
 

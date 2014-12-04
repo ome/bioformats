@@ -50,9 +50,6 @@ import org.w3c.dom.Text;
 /**
  * A tree cell renderer for displaying syntax highlighted XML in a JTree.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/XMLCellRenderer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/XMLCellRenderer.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

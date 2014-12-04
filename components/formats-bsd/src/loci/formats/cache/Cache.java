@@ -47,9 +47,6 @@ import loci.formats.FormatTools;
  * strategy indicating which surrounding planes to load into the cache (i.e.,
  * planes within a certain range along each dimensional axis).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/cache/Cache.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/cache/Cache.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Cache implements CacheReporter {
 

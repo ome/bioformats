@@ -76,9 +76,6 @@ import ome.xml.model.primitives.Timestamp;
  * OMETiffReader is the file format reader for
  * <a href="http://ome-xml.org/wiki/OmeTiff">OME-TIFF</a> files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/OMETiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/OMETiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class OMETiffReader extends FormatReader {
 

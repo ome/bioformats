@@ -53,9 +53,6 @@ import org.testng.annotations.Test;
  * Tests saving and reading TIFF pixel data that has been compressed using
  * various schemes.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/tiff/TiffPixelsTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/tiff/TiffPixelsTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TiffPixelsTest {
 

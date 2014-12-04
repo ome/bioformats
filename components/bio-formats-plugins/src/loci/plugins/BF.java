@@ -41,9 +41,6 @@ import loci.plugins.in.ImporterPrompter;
 /**
  * Miscellaneous plugins utility methods.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/BF.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/BF.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class BF {
 

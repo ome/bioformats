@@ -52,9 +52,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * JPEG2000Reader is the file format reader for JPEG-2000 images.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/JPEG2000Reader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/JPEG2000Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEG2000Reader extends FormatReader {
 

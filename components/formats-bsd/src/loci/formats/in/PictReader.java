@@ -56,9 +56,6 @@ import loci.formats.meta.MetadataStore;
  * (http://java.sun.com/products/jimi/index.html), ImageMagick
  * (http://www.imagemagick.org), and Java QuickDraw.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PictReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PictReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PictReader extends FormatReader {
 

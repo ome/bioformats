@@ -41,9 +41,6 @@ import loci.formats.IFormatReader;
 /**
  * A file filter for a biological file format, for use with a JFileChooser.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/FormatFileFilter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/FormatFileFilter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FormatFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable

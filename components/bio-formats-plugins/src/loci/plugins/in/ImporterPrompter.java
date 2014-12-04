@@ -44,9 +44,6 @@ import loci.plugins.prefs.OptionsDialog;
  * windowless mode is set, and whether the method is being called from within
  * a macro.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/ImporterPrompter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/ImporterPrompter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImporterPrompter implements StatusListener {
 

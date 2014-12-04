@@ -39,9 +39,6 @@ package loci.formats.cache;
  * rather than rasterized (1-D) indices. The two are made equivalent via a
  * mapping between the two, invoked within {@link Cache} as needed.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/cache/ICacheStrategy.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/cache/ICacheStrategy.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface ICacheStrategy extends CacheReporter {
 

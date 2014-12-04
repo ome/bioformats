@@ -37,9 +37,6 @@ package loci.formats.tiff;
  * store the values from the entry's specific offset and is based on the TIFF
  * 6.0 specification of an IFD entry.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/TiffIFDEntry.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/TiffIFDEntry.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Chris Allan callan at blackcat.ca
  */

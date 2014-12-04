@@ -68,9 +68,6 @@ import org.slf4j.LoggerFactory;
  * Most of the methods require the optional {@link loci.formats.ome}
  * package, and optional ome-xml.jar library, to be present at runtime.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/MetadataTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/MetadataTools.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class MetadataTools {
 

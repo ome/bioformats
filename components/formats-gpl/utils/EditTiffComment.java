@@ -31,9 +31,6 @@ import loci.formats.tiff.*;
 /**
  * Allows raw user TIFF comment editing for the given TIFF files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/EditTiffComment.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/EditTiffComment.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class EditTiffComment {
 

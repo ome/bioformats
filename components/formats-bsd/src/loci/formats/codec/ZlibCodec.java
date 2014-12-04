@@ -43,9 +43,6 @@ import loci.formats.FormatException;
 /**
  * This class implements ZLIB decompression.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/ZlibCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/ZlibCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

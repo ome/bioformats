@@ -41,9 +41,6 @@ import loci.formats.IFormatHandler;
  * An ugly data structure for organizing the status of each metadata property
  * for each format handler (readers and writers).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/autogen/src/MetaSupportList.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/autogen/src/MetaSupportList.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

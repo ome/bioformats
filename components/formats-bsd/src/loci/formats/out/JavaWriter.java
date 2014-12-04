@@ -46,9 +46,6 @@ import loci.formats.meta.MetadataRetrieve;
  * JavaWriter is the file format writer for Java source code.
  * At the moment, this code is just a very simple container for pixel data.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/JavaWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/JavaWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JavaWriter extends FormatWriter {
 

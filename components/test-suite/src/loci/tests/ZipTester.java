@@ -37,9 +37,6 @@ import loci.formats.ImageReader;
  * A class for testing {@link loci.common.RandomAccessInputStream}'s
  * ability to handle files compressed with gz, zip or bz2.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/ZipTester.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/ZipTester.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

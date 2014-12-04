@@ -44,9 +44,6 @@ import loci.formats.meta.MetadataStore;
  * For all other data (either non-indexed, or indexed with
  * "false color" tables), does nothing.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ChannelFiller.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ChannelFiller.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ChannelFiller extends ReaderWrapper {
 

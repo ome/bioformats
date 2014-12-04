@@ -47,9 +47,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Primitive type that represents an ISO 8601 timestamp.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/model/primitives/Timestamp.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/model/primitives/Timestamp.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Timestamp extends PrimitiveType<String> {
 

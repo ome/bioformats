@@ -44,9 +44,6 @@ import ome.units.UNITS;
 /**
  * PCORAWReader is the file format reader for PCORAW files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PCORAWReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PCORAWReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PCORAWReader extends FormatReader {
 

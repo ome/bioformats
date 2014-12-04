@@ -42,9 +42,6 @@ import java.net.URLConnection;
  * Provides random access to URLs using the IRandomAccess interface.
  * Instances of URLHandle are read-only.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/URLHandle.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/URLHandle.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see IRandomAccess
  * @see StreamHandle

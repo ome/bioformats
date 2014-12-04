@@ -70,9 +70,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * and a LuraWave license key must be specified in the lurawave.license system
  * property (e.g., <code>-Dlurawave.license=XXXX</code> on the command line).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/FlexReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/FlexReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FlexReader extends FormatReader {
 

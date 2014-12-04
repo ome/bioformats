@@ -41,9 +41,6 @@ import org.junit.Test;
 /**
  * Test to ensure that old macro keys (pre-4.2) are still handled correctly.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/test/loci/plugins/in/MacroTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/test/loci/plugins/in/MacroTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

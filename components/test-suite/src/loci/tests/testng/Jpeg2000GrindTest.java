@@ -58,9 +58,6 @@ import loci.formats.tiff.TiffCompression;
 /**
  * Test grinding in a multi-threaded environment a JPEG-2000 encoded TIFF.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/Jpeg2000GrindTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/Jpeg2000GrindTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */

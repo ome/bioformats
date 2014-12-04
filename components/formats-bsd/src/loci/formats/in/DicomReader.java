@@ -64,9 +64,6 @@ import ome.units.UNITS;
  * Much of this code is adapted from ImageJ's DICOM reader; see
  * http://rsb.info.nih.gov/ij/developer/source/ij/plugin/DICOM.java.html
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/DicomReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/DicomReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class DicomReader extends FormatReader {
 

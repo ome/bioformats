@@ -36,9 +36,6 @@ package loci.formats;
  * UnknownFormatException is the exception thrown when the format of a
  * particular data stream or filename cannot be recognized or is unsupported.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/UnknownFormatException.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/UnknownFormatException.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class UnknownFormatException extends FormatException {
 

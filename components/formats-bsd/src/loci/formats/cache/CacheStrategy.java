@@ -41,9 +41,6 @@ import loci.formats.FormatTools;
 /**
  * Superclass of cache strategies.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/cache/CacheStrategy.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/cache/CacheStrategy.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class CacheStrategy
   implements CacheReporter, Comparator, ICacheStrategy

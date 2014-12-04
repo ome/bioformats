@@ -49,9 +49,6 @@ import org.testng.annotations.Test;
 /**
  * Unit tests for the loci.common.URLHandle class.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/URLHandleTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/URLHandleTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see loci.common.URLHandle
  */

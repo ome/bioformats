@@ -37,9 +37,6 @@ import ome.jxr.constants.File;
  * so that further and more expensive operation can be avoided.
  *
  * <dl>
- * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/parser/FileParser.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/parser/FileParser.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */

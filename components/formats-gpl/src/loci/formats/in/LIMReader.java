@@ -39,9 +39,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * LIMReader is the file format reader for Laboratory Imaging/Nikon LIM files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/LIMReader.java">Trac</a>
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/LIMReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class LIMReader extends FormatReader {
 

@@ -49,9 +49,6 @@ import org.slf4j.LoggerFactory;
  * are left as abstract. 2D methods do simple concatenation and call to the 1D
  * methods
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/BaseCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/BaseCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */

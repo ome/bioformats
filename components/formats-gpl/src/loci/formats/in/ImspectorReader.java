@@ -40,9 +40,6 @@ import ome.xml.model.primitives.PositiveFloat;
 /**
  * ImspectorReader is the file format reader for Imspector .msr files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImspectorReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImspectorReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImspectorReader extends FormatReader {
 

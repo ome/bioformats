@@ -49,9 +49,6 @@ import loci.formats.meta.MetadataStore;
  * (GIF) files.  Much of this code was adapted from the Animated GIF Reader
  * plugin for ImageJ (http://rsb.info.nih.gov/ij).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/GIFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/GIFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class GIFReader extends FormatReader {
 

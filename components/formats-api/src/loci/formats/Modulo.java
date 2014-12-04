@@ -36,9 +36,6 @@ package loci.formats;
  * Represents a subdimension of Z, C, or T as needed for supporting Modulo
  * annotations.  See http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/Modulo.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/Modulo.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Modulo {
 

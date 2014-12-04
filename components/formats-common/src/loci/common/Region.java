@@ -37,9 +37,6 @@ package loci.common;
  * This class is very similar to {@link java.awt.Rectangle};
  * it mainly exists to avoid problems with AWT, JNI and headless operation.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Region.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/Region.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Region {
 

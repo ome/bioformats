@@ -41,9 +41,6 @@ import loci.common.DataTools;
  * To work with images in {@link java.awt.image.BufferedImage} form,
  * use the {@link loci.formats.gui.AWTImageTools} class.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ImageTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ImageTools.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

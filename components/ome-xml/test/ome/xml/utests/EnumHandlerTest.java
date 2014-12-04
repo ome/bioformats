@@ -49,9 +49,6 @@ import org.testng.annotations.Test;
 
 /**
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/test/ome/xml/utests/EnumHandlerTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/test/ome/xml/utests/EnumHandlerTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class EnumHandlerTest {
 

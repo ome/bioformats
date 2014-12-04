@@ -58,9 +58,6 @@ import org.slf4j.LoggerFactory;
  * Logic to stitch together files with similar names.
  * Assumes that all files have the same characteristics (e.g., dimensions).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/FileStitcher.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/FileStitcher.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FileStitcher extends ReaderWrapper {
 
