@@ -156,6 +156,7 @@ Type "ant -p" for a list of targets.
       <format property="YEAR" pattern="yyyy"/>
     </tstamp>
     <javadoc sourcepath="${merged-docs.source}"
+      failonwarning="true"
       classpath="${merged-docs.classpath}"
       destdir="${merged-docs.dir}/api"
       maxmemory="${merged-docs.memory}"
