@@ -1115,6 +1115,19 @@ public final class MetadataConverter {
           }
           catch (NullPointerException e) { }
         }
+
+        int lightPathAnnotationRefCount = 0;
+        try {
+          lightPathAnnotationRefCount = src.getLightPathAnnotationRefCount(i, c);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<lightPathAnnotationRefCount; q++) {
+          try {
+            String lightPathAnnotationRef = src.getLightPathAnnotationRef(i, c, q);
+            dest.setLightPathAnnotationRef(lightPathAnnotationRef, i, c, q);
+          }
+          catch (NullPointerException e) { }
+        }
       }
 
       int planeCount = 0;

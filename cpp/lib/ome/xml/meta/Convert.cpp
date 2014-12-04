@@ -539,6 +539,10 @@ namespace
                       index_type exFilterRefCount(src.getLightPathExcitationFilterRefCount(i, c));
                       for (index_type q = 0; q < exFilterRefCount; ++q)
                         transfer(&MR::getLightPathExcitationFilterRef, &MS::setLightPathExcitationFilterRef, i, c, q);
+
+                      index_type lightPathAnnotationRefCount(src.getLightPathAnnotationRefCount(i, c));
+                      for (index_type q = 0; q < lightPathAnnotationRefCount; ++q)
+                        transfer(&MR::getLightPathAnnotationRef, &MS::setLightPathAnnotationRef, i, c, q);
                     }
                 }
 
