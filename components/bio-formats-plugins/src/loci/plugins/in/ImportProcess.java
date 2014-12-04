@@ -667,7 +667,7 @@ public class ImportProcess implements StatusReporter {
    * HACK: This method mainly exists to prompt the user for a missing
    * LuraWave license code, in the case of LWF-compressed Flex.
    *
-   * @see ImagePlusReader#readProcessors(ImportProcess, int, Region)
+   * @see ImagePlusReader#readProcessors(ImportProcess, int, Region, boolean)
    */
   private void setId() throws FormatException, IOException {
     boolean first = true;
