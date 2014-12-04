@@ -22,6 +22,7 @@ Introduction to Bio-Formats
 .. toctree::
     :maxdepth: 1
 
+    overview
     building-bioformats
     file-reader
     file-writer
