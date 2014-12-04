@@ -54,7 +54,7 @@
 * License along with this program; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA  02110-1301, USA.
-* \brief	Woolz writer for bioformats.
+* \brief        Woolz writer for bioformats.
 */
 
 package loci.formats.out;
@@ -204,7 +204,7 @@ public class WlzWriter extends FormatWriter {
         vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
-		  meta.getPixelsType(series).toString());
+                  meta.getPixelsType(series).toString());
       wlz.setupWrite(oX, oY, oZ, nX, nY, nZ, nC, nT, vX, vY, vZ, gType);
     }
   }

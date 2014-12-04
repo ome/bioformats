@@ -194,7 +194,7 @@ public class MRCReader extends FormatReader {
       case 16:
         m.sizeC = 3;
         m.pixelType = FormatTools.UINT8;
-	m.rgb = true;
+        m.rgb = true;
         break;
     }
 

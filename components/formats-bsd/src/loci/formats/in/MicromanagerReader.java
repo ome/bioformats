@@ -576,20 +576,20 @@ public class MicromanagerReader extends FormatReader {
         token = st.nextToken().trim();
         String key = "", value = "";
         boolean valueArray = false;
-	int nestedCount = 0;
+        int nestedCount = 0;
 
         while (!token.startsWith("}") || nestedCount > 0) {
 
-	  if (token.trim().endsWith("{")) {
-	      nestedCount++;
-	      token = st.nextToken().trim();
-	      continue;
-	  }
-	  else if (token.trim().startsWith("}")) {
-	      nestedCount--;
-	      token = st.nextToken().trim();
-	      continue;
-	  }
+          if (token.trim().endsWith("{")) {
+            nestedCount++;
+            token = st.nextToken().trim();
+            continue;
+          }
+          else if (token.trim().startsWith("}")) {
+            nestedCount--;
+            token = st.nextToken().trim();
+            continue;
+          }
 
           if (valueArray) {
             if (token.trim().equals("],")) {

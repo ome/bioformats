@@ -289,14 +289,14 @@ public class ImarisHDFReader extends FormatReader {
         ms.sizeT = getSizeT();
         ms.thumbnail = true;
 
-	if (ms.sizeZ == ms0.sizeZ && ms.sizeC == ms0.sizeC &&
-	  ms.sizeT == ms0.sizeT)
-	{
-	  // do not assume that all series will have the same dimensions
-	  // if the Z, C or T size is different, then it cannot
-	  // be a subresolution
+        if (ms.sizeZ == ms0.sizeZ && ms.sizeC == ms0.sizeC &&
+          ms.sizeT == ms0.sizeT)
+        {
+          // do not assume that all series will have the same dimensions
+          // if the Z, C or T size is different, then it cannot
+          // be a subresolution
           ms0.resolutionCount++;
-	}
+        }
       }
     }
     ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();

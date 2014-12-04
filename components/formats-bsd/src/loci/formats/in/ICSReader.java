@@ -1378,21 +1378,21 @@ public class ICSReader extends FormatReader {
       boolean same = true;
 
       for (Integer len : channelLengths) {
-	  if (clen0 != len) same = false;
+        if (clen0 != len) same = false;
       }
       for (String type : channelTypes) {
-	  if (!ctype0.equals(type)) same = false;
+        if (!ctype0.equals(type)) same = false;
       }
 
       if (same) {
-	  m.moduloC.type = ctype0;
-	  if (FormatTools.LIFETIME.equals(ctype0)) {
-	    m.moduloC.parentType = FormatTools.SPECTRA;
-	  }
-	  m.moduloC.typeDescription = "TCSPC";
-	  m.moduloC.start = 0;
-	  m.moduloC.step = 1;
-	  m.moduloC.end = clen0;
+        m.moduloC.type = ctype0;
+        if (FormatTools.LIFETIME.equals(ctype0)) {
+          m.moduloC.parentType = FormatTools.SPECTRA;
+        }
+        m.moduloC.typeDescription = "TCSPC";
+        m.moduloC.start = 0;
+        m.moduloC.step = 1;
+        m.moduloC.end = clen0;
       }
     }
 

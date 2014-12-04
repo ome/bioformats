@@ -1076,8 +1076,9 @@ public class ZeissLSMReader extends FormatReader {
             int length = in.readInt();
             String name = in.readString(length);
             while ((name.length() > 0) &&
-            	   (name.codePointAt(name.length()-1) == 0)) {
-            	name = name.substring(0, name.length()-1);
+              (name.codePointAt(name.length()-1) == 0))
+            {
+              name = name.substring(0, name.length()-1);
             }
             if (name.length() <= 128) {
               addSeriesMetaList("ChannelName", name);

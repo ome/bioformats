@@ -2373,10 +2373,10 @@ public class ZeissCZIReader extends FormatReader {
     if (root.getChildNodes().getLength() == 1) {
       String value = root.getTextContent();
       if (value != null && key.length() > 0) {
-    	String s = key.toString();
-    	if (s.endsWith("|")){
-    	  s = s.substring(0, s.length() - 1);
-    	}
+        String s = key.toString();
+        if (s.endsWith("|")){
+          s = s.substring(0, s.length() - 1);
+        }
         addGlobalMetaList(s, value);
 
         if (key.toString().endsWith("|Rotations|")) {
@@ -2402,7 +2402,7 @@ public class ZeissCZIReader extends FormatReader {
         attrName = attrName.substring(0, attrName.length() - 1);
       }
       else if(attrName.length() == 0 && keyString.endsWith("|")) {
-    	  keyString = keyString.substring(0, keyString.length() - 1);
+        keyString = keyString.substring(0, keyString.length() - 1);
       }
 
       addGlobalMetaList(keyString + attrName, attrValue);

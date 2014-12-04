@@ -566,8 +566,8 @@ public class FileStitcher extends ReaderWrapper {
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) reader.setSeries(no);
     else {
-	coreIndex = no;
-	series = no;
+      coreIndex = no;
+      series = no;
     }
   }
 

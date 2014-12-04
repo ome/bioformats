@@ -150,11 +150,11 @@ public class V3DrawWriter extends FormatWriter {
                 pixels.write(formatkey.getBytes(Constants.ENCODING));             // write format key
                 pixels.write(endianString.getBytes(Constants.ENCODING));          // endianness.
                 unpackBytes(bytesPerPixel, v2, 0, 2, !bigendian);
-                pixels.write(v2);                                //       	unitSize 
+                pixels.write(v2);                                // unitSize 
                 for (int d : sz) {
                     unpackBytes(d, v4, 0, 4, !bigendian);
                     pixels.write(v4);
-                }        // and    	image dimensions into header 
+                }        // and image dimensions into header 
                 pixels.write(buf);
                 LOGGER.info("*********   V3DrawWriter.java internal variables  *********");
                 LOGGER.info("bytesPerPixel = " + bytesPerPixel);
