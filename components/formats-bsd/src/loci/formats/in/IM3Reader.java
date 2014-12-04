@@ -189,15 +189,15 @@ public class IM3Reader extends FormatReader {
   /*
    * Records for the current file
    */
-  private List<IM3Record> records;
+  private List<IM3Record> records = new ArrayList<IM3Record>();
   /*
    * Data sets for the current file
    */
-  private List<ContainerRecord> dataSets;
+  private List<ContainerRecord> dataSets = new ArrayList<ContainerRecord>();
   /*
    * Spectrum records for a spectral library
    */
-  private List<Spectrum> spectra;
+  private List<Spectrum> spectra = new ArrayList<Spectrum>();
 
   /*
    * The data from the current series' file.
@@ -248,18 +248,23 @@ public class IM3Reader extends FormatReader {
    */
   public byte [] openRaw() throws IOException {
     IRandomAccess is = Location.getHandle(getCurrentFile(), false);
-    is.setOrder(ByteOrder.LITTLE_ENDIAN);
-    final ContainerRecord dataSet = dataSets.get(getSeries());
-    for (IM3Record subRec:dataSet.parseChunks(is)){
-      if (subRec.name.equals(FIELD_DATA)) {
-        is.seek(subRec.offset+4);
-        int width = is.readInt();
-        int height = is.readInt();
-        int channels = is.readInt();
-        final byte [] result = new byte [width * height * channels * 2];
-        is.read(result);
-        return result;
+    try {
+      is.setOrder(ByteOrder.LITTLE_ENDIAN);
+      final ContainerRecord dataSet = dataSets.get(getSeries());
+      for (IM3Record subRec:dataSet.parseChunks(is)){
+        if (subRec.name.equals(FIELD_DATA)) {
+          is.seek(subRec.offset+4);
+          int width = is.readInt();
+          int height = is.readInt();
+          int channels = is.readInt();
+          final byte [] result = new byte [width * height * channels * 2];
+          is.read(result);
+          return result;
+        }
       }
+    }
+    finally {
+      is.close();
     }
     return null;
   }
@@ -282,93 +287,94 @@ public class IM3Reader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    IRandomAccess is = Location.getHandle(id, false);
-    is.setOrder(ByteOrder.LITTLE_ENDIAN);
-    final int cookie = is.readInt();
-    if (cookie != COOKIE) {
-      throw new FormatException(String.format("Expected file cookie of %d, but got %d.", COOKIE, cookie));
-    }
-    long fileLength = is.length();
-    records = new ArrayList<IM3Record>();
-    dataSets = new ArrayList<ContainerRecord>();
-    spectra = new ArrayList<Spectrum>();
-    core = new ArrayList<CoreMetadata>();
 
-    while (is.getFilePointer() < fileLength) {
-      final IM3Record rec = parseRecord(is);
-      if (rec == null) {
-        if (is.getFilePointer() > fileLength-16) break;
-        /*
-         * # of bytes in chunk.
-         */
-        @SuppressWarnings("unused")
-        final int chunkLength = is.readInt();
-        /*
-         * Is always zero? Chunk #?
-         */
-        @SuppressWarnings("unused")
-        final int unknown = is.readInt();
-        /*
-         * Is always one? Chunk #?
-         */
-        @SuppressWarnings("unused")
-        final int unknown1 = is.readInt();
-        /*
-         * # of records to follow
-         */
-        @SuppressWarnings("unused")
-        final int nRecords = is.readInt();
-      } else {
-        if (rec instanceof ContainerRecord) {
-          final ContainerRecord bRec = (ContainerRecord)rec;
-          for (IM3Record subDS:bRec.parseChunks(is)) {
-            if ((subDS instanceof ContainerRecord) && (subDS.name.equals(FIELD_DATA_SET))) {
-              final ContainerRecord bSubDS = (ContainerRecord)subDS;
-              for (IM3Record subSubDS:bSubDS.parseChunks(is)) {
-                if (subSubDS instanceof ContainerRecord) {
-                  final ContainerRecord bDataSet = (ContainerRecord) subSubDS;
-                  dataSets.add(bDataSet);
-                  List<IM3Record> subRecs = bDataSet.parseChunks(is);
-                  final CoreMetadata cm = new CoreMetadata();
-                  cm.dimensionOrder = DimensionOrder.XYCZT.getValue();
-                  cm.littleEndian = true;
-                  // TODO: Detect pixel type
-                  cm.pixelType = FormatTools.UINT16;
-                  for (IM3Record subRec:subRecs){
-                    if (subRec.name.equals(FIELD_SHAPE) && (subRec instanceof IntIM3Record)) {
-                      final IntIM3Record iRec = (IntIM3Record)subRec;
-                      cm.sizeX = iRec.getEntry(is, 0);
-                      cm.sizeY = iRec.getEntry(is, 1);
-                      cm.sizeC = iRec.getEntry(is, 2);
-                      cm.sizeZ = 1;
-                      cm.sizeT = 1;
-                      cm.imageCount = cm.sizeC;
-                      cm.metadataComplete = true;
+    core.clear();
+
+    IRandomAccess is = Location.getHandle(id, false);
+    try {
+      is.setOrder(ByteOrder.LITTLE_ENDIAN);
+      final int cookie = is.readInt();
+      if (cookie != COOKIE) {
+        throw new FormatException(String.format("Expected file cookie of %d, but got %d.", COOKIE, cookie));
+      }
+      long fileLength = is.length();
+
+      while (is.getFilePointer() < fileLength) {
+        final IM3Record rec = parseRecord(is);
+        if (rec == null) {
+          if (is.getFilePointer() > fileLength-16) break;
+          /*
+           * # of bytes in chunk.
+           */
+          @SuppressWarnings("unused")
+          final int chunkLength = is.readInt();
+          /*
+           * Is always zero? Chunk #?
+           */
+          @SuppressWarnings("unused")
+          final int unknown = is.readInt();
+          /*
+           * Is always one? Chunk #?
+           */
+          @SuppressWarnings("unused")
+          final int unknown1 = is.readInt();
+          /*
+           * # of records to follow
+           */
+          @SuppressWarnings("unused")
+          final int nRecords = is.readInt();
+       } else {
+          if (rec instanceof ContainerRecord) {
+            final ContainerRecord bRec = (ContainerRecord)rec;
+            for (IM3Record subDS:bRec.parseChunks(is)) {
+              if ((subDS instanceof ContainerRecord) && (subDS.name.equals(FIELD_DATA_SET))) {
+                final ContainerRecord bSubDS = (ContainerRecord)subDS;
+                for (IM3Record subSubDS:bSubDS.parseChunks(is)) {
+                  if (subSubDS instanceof ContainerRecord) {
+                    final ContainerRecord bDataSet = (ContainerRecord) subSubDS;
+                    dataSets.add(bDataSet);
+                    List<IM3Record> subRecs = bDataSet.parseChunks(is);
+                    final CoreMetadata cm = new CoreMetadata();
+                    cm.dimensionOrder = DimensionOrder.XYCZT.getValue();
+                    cm.littleEndian = true;
+                    // TODO: Detect pixel type
+                    cm.pixelType = FormatTools.UINT16;
+                    for (IM3Record subRec:subRecs){
+                      if (subRec.name.equals(FIELD_SHAPE) && (subRec instanceof IntIM3Record)) {
+                        final IntIM3Record iRec = (IntIM3Record)subRec;
+                        cm.sizeX = iRec.getEntry(is, 0);
+                        cm.sizeY = iRec.getEntry(is, 1);
+                        cm.sizeC = iRec.getEntry(is, 2);
+                        cm.sizeZ = 1;
+                        cm.sizeT = 1;
+                        cm.imageCount = cm.sizeC;
+                        cm.metadataComplete = true;
+                      }
                     }
+                    core.add(cm);
                   }
-                  core.add(cm);
                 }
-              }
-            } else if ((subDS instanceof ContainerRecord) && subDS.name.equals(FIELD_SPECTRAL_LIBRARY)) {
-              /*
-               * SpectralLibrary
-               *   (unnamed container record)
-               *       Spectra
-               *           Keys (integers)
-               *           Values
-               *               (unnamed container record for spectrum #1)
-               *               (unnamed container record for spectrum #2)...
-               *
-               */
-              for (IM3Record slContainer:((ContainerRecord)subDS).parseChunks(is)) { /* unnamed container */
-                if (slContainer instanceof ContainerRecord) {
-                  for (IM3Record slSpectra:((ContainerRecord)slContainer).parseChunks(is)) {
-                    if ((slSpectra instanceof ContainerRecord) && (slSpectra.name.equals(FIELD_SPECTRA))) {
-                      for (IM3Record slRec:((ContainerRecord)slSpectra).parseChunks(is)) {
-                        if (slRec.name.equals(FIELD_VALUES) && (slRec instanceof ContainerRecord)) {
-                          for (IM3Record spectrumRec:((ContainerRecord)slRec).parseChunks(is)) {
-                            if (spectrumRec instanceof ContainerRecord) {
-                              spectra.add(new Spectrum(is, (ContainerRecord)spectrumRec));
+              } else if ((subDS instanceof ContainerRecord) && subDS.name.equals(FIELD_SPECTRAL_LIBRARY)) {
+                /*
+                 * SpectralLibrary
+                 *   (unnamed container record)
+                 *       Spectra
+                 *           Keys (integers)
+                 *           Values
+                 *               (unnamed container record for spectrum #1)
+                 *               (unnamed container record for spectrum #2)...
+                 *
+                 */
+                for (IM3Record slContainer:((ContainerRecord)subDS).parseChunks(is)) { /* unnamed container */
+                  if (slContainer instanceof ContainerRecord) {
+                    for (IM3Record slSpectra:((ContainerRecord)slContainer).parseChunks(is)) {
+                      if ((slSpectra instanceof ContainerRecord) && (slSpectra.name.equals(FIELD_SPECTRA))) {
+                        for (IM3Record slRec:((ContainerRecord)slSpectra).parseChunks(is)) {
+                          if (slRec.name.equals(FIELD_VALUES) && (slRec instanceof ContainerRecord)) {
+                            for (IM3Record spectrumRec:((ContainerRecord)slRec).parseChunks(is)) {
+                              if (spectrumRec instanceof ContainerRecord) {
+                                spectra.add(new Spectrum(is, (ContainerRecord)spectrumRec));
+                              }
                             }
                           }
                         }
@@ -379,9 +385,12 @@ public class IM3Reader extends FormatReader {
               }
             }
           }
+          records.add(rec);
         }
-        records.add(rec);
       }
+    }
+    finally {
+      is.close();
     }
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
@@ -410,7 +419,7 @@ public class IM3Reader extends FormatReader {
    * @return an IM3Record or subclass depending on the record's type
    * @throws IOException on file misparsing leading to overrun and other
    */
-  private IM3Record parseRecord(IRandomAccess is) throws IOException {
+  private static IM3Record parseRecord(IRandomAccess is) throws IOException {
     final String name = parseString(is);
     if (name == null) return null;
     final int recLength = is.readInt()-8;
@@ -440,7 +449,8 @@ public class IM3Reader extends FormatReader {
     stream.seek(0);
     return (stream.readInt() == COOKIE);
   }
-  protected class IM3Record {
+
+  protected static class IM3Record {
     final String name;
     final int type;
     final long offset;
@@ -484,7 +494,7 @@ public class IM3Reader extends FormatReader {
    * other records. In the IM3 format, records are often grouped
    * under a ContainerRecord with a blank tagname.
    */
-  protected class ContainerRecord extends IM3Record {
+  protected static class ContainerRecord extends IM3Record {
 
     ContainerRecord(String name, int type, long offset, int length) {
       super(name, type, offset, length);
@@ -526,7 +536,7 @@ public class IM3Reader extends FormatReader {
    *
    * An integer array record
    */
-  protected class IntIM3Record extends IM3Record {
+  protected static class IntIM3Record extends IM3Record {
 
     public IntIM3Record(String name, int recType, long offset, int recLength) {
       super(name, recType, offset, recLength);
@@ -596,7 +606,7 @@ public class IM3Reader extends FormatReader {
    * int32 - # of floats
    * float32s - values
    */
-  protected class FloatIM3Record extends IM3Record {
+  protected static class FloatIM3Record extends IM3Record {
 
     public FloatIM3Record(String name, int recType, long offset, int recLength) {
       super(name, recType, offset, recLength);
@@ -680,7 +690,7 @@ public class IM3Reader extends FormatReader {
    * @author Lee Kamentsky
    *
    */
-  protected class BooleanIM3Record extends IM3Record {
+  protected static class BooleanIM3Record extends IM3Record {
     public BooleanIM3Record(String name, int recType, long offset, int recLength) {
       super(name, recType, offset, recLength);
     }
@@ -725,7 +735,7 @@ public class IM3Reader extends FormatReader {
    *
    * A record whose value is a string.
    */
-  protected class StringIM3Record extends IM3Record {
+  protected static class StringIM3Record extends IM3Record {
     public StringIM3Record(String name, int recType, long offset, int recLength) {
       super(name, recType, offset, recLength);
     }
@@ -860,7 +870,12 @@ public class IM3Reader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    data = null;
+    if (!fileOnly) {
+      data = null;
+      records.clear();
+      spectra.clear();
+      dataSets.clear();
+    }
   }
 
   /**
@@ -869,9 +884,14 @@ public class IM3Reader extends FormatReader {
    */
   public void writeSummary() throws IOException {
     IRandomAccess is = Location.getHandle(getCurrentFile(), false);
-    is.setOrder(ByteOrder.LITTLE_ENDIAN);
-    for (IM3Record rec: records) {
-      rec.writeSummary(is, "");
+    try {
+      is.setOrder(ByteOrder.LITTLE_ENDIAN);
+      for (IM3Record rec: records) {
+        rec.writeSummary(is, "");
+      }
+    }
+    finally {
+      is.close();
     }
   }
   /**
