@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,7 +50,6 @@ import loci.plugins.util.WindowTools;
  * ColorChooser is not used because there is no way to change the slider
  * labels&mdash;this means that we can't record macros in which custom colors
  * are chosen for multiple channels.
- *
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -146,6 +145,7 @@ public class ColorDialog extends ImporterDialog {
       final TextField blueField = colors.get(colorIndex++);
       final Panel swatch = swatches.get(swatchIndex++);
       TextListener textListener = new TextListener() {
+        @Override
         public void textValueChanged(TextEvent e) {
           int red = getColorValue(redField);
           int green = getColorValue(greenField);

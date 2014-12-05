@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,7 +43,6 @@ import loci.plugins.util.LociPrefs;
 /**
  * An ImageJ plugin that uses Bio-Formats to build up an {@link ImageStack},
  * reading image planes one by one.
- *
  */
 public class Read_Image implements PlugIn {
   public void run(String arg) {

@@ -42,12 +42,12 @@ import loci.common.IRandomAccess;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.ByteArrayHandle in on-the-fly allocated form.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.ByteArrayHandle
  */
 class NewByteArrayHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     IRandomAccess handle = new ByteArrayHandle();

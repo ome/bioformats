@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,7 +36,6 @@ import java.util.Hashtable;
 
 /**
  * Encompasses core metadata values.
- *
  */
 public class CoreMetadata implements Cloneable {
 
@@ -208,6 +207,7 @@ public class CoreMetadata implements Cloneable {
 
   // -- Object methods --
 
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(super.toString() + ":");
@@ -234,6 +234,7 @@ public class CoreMetadata implements Cloneable {
     return sb.toString();
   }
 
+  @Override
   public Object clone() throws CloneNotSupportedException {
     return super.clone();
   }

@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,7 +37,6 @@ import loci.common.IniTable;
 
 /**
  * Base class for ImageJ preferences for plugins.
- *
  */
 public class OptionsList {
 
@@ -191,6 +190,7 @@ public class OptionsList {
   // -- Object API methods --
 
   /* @see java.lang.Object#equals(Object) */
+  @Override
   public boolean equals(Object o) {
     if (o == null || !(o instanceof OptionsList)) return false;
     OptionsList optionsList = (OptionsList) o;
@@ -228,6 +228,7 @@ public class OptionsList {
     return true;
   }
 
+  @Override
   public int hashCode() {
     return options.hashCode();
   }

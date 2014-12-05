@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -58,7 +58,6 @@ import org.w3c.dom.Element;
 
 /**
  * @author rleigh
- *
  *
  */
 public class MapPairs implements OMEModelObject {
@@ -138,6 +137,7 @@ public class MapPairs implements OMEModelObject {
         return Collections.unmodifiableList(pairs);
     }
 
+    @Override
     public Element asXMLElement(Document document)
     {
         return asXMLElement(document, null);
@@ -164,6 +164,7 @@ public class MapPairs implements OMEModelObject {
         return pairs;
     }
 
+    @Override
     public void update(Element element, OMEModel model) throws EnumerationException
     {
         String tagName = element.getTagName();
@@ -182,6 +183,7 @@ public class MapPairs implements OMEModelObject {
         }
     }
 
+    @Override
     public boolean link(Reference reference, OMEModelObject o)
     {
         return false;

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -61,7 +61,6 @@ import ome.units.UNITS;
  * TiffReader is the file format reader for regular TIFF files,
  * not of any specific TIFF variant.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -99,6 +98,7 @@ public class TiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     if (noPixels) {
       return companionFile == null ? null : new String[] {companionFile};
@@ -108,6 +108,7 @@ public class TiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -124,6 +125,7 @@ public class TiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
     String comment = ifds.get(0).getComment();
@@ -222,6 +224,7 @@ public class TiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();

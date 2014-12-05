@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@ import loci.common.DataTools;
  *
  * To work with images in {@link java.awt.image.BufferedImage} form,
  * use the {@link loci.formats.gui.AWTImageTools} class.
- *
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

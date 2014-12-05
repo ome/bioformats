@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -168,6 +168,7 @@ public class TestTools {
 
     // close log file on exit
     Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
       public void run() {
         LOGGER.info(DIVIDER);
         LOGGER.info("Test suite complete.");
@@ -242,6 +243,7 @@ public class TestTools {
     catch (Exception e) { }
 
     Arrays.sort(subs, new Comparator() {
+      @Override
       public int compare(Object o1, Object o2) {
         String s1 = o1.toString();
         String s2 = o2.toString();

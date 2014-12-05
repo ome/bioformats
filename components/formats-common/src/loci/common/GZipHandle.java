@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,7 +41,6 @@ import java.util.zip.GZIPInputStream;
 /**
  * StreamHandle implementation for reading from gzip-compressed files
  * or byte arrays.  Instances of GZipHandle are read-only.
- *
  *
  * @see StreamHandle
  *
@@ -91,6 +90,7 @@ public class GZipHandle extends StreamHandle {
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
+  @Override
   protected void resetStream() throws IOException {
     if (stream != null) stream.close();
     BufferedInputStream bis = new BufferedInputStream(

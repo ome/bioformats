@@ -46,7 +46,6 @@ import ch.qos.logback.core.ConsoleAppender;
 
 /**
  * A utility class with convenience methods for logback.
- *
  */
 public final class LogbackTools {
 

@@ -418,6 +418,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
@@ -686,6 +687,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     int pixelType = getPixelType();
     if ((pixelType != FormatTools.INT8 && pixelType != FormatTools.UINT8) ||
@@ -712,6 +714,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     int pixelType = getPixelType();
     if ((pixelType != FormatTools.INT16 && pixelType != FormatTools.UINT16) ||
@@ -737,6 +740,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -1131,6 +1135,7 @@ public abstract class BaseZeissReader extends FormatReader {
       return keyid != -1 && value != null && category != -1;
     }
 
+    @Override
     public String toString()
     {
       String s = new String();
@@ -2052,6 +2057,7 @@ public abstract class BaseZeissReader extends FormatReader {
     int pointCount = 0;
     double points[];
 
+    @Override
     public String toString() {
       String s = new String();
       s += "  SHAPE: " + id;
@@ -2097,6 +2103,7 @@ public abstract class BaseZeissReader extends FormatReader {
     public String name; // Layer name. (Assumed.)
     public ArrayList<Shape> shapes = new ArrayList<Shape>(); // List of shape objects, displayed deepest first, topmost last.
 
+    @Override
     public String toString() {
       String s = new String();
       s += "LAYER: " + key;

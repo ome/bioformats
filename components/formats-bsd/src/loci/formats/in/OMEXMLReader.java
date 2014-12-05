@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -69,7 +69,6 @@ import com.google.common.io.ByteStreams;
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class OMEXMLReader extends FormatReader {
@@ -96,6 +95,7 @@ public class OMEXMLReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 64;
     String xml = stream.readString(blockLen);
@@ -103,6 +103,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "companion.ome")) {
       // pass binary-only files along to the OME-TIFF reader
@@ -112,6 +113,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
@@ -121,6 +123,7 @@ public class OMEXMLReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -203,6 +206,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -217,6 +221,7 @@ public class OMEXMLReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -331,18 +336,21 @@ public class OMEXMLReader extends FormatReader {
       xmlBuffer = new StringBuffer();
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) {
       if (currentQName.indexOf("BinData") < 0) {
         xmlBuffer.append(new String(ch, start, length));
       }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
       xmlBuffer.append("</");
       xmlBuffer.append(qName);
       xmlBuffer.append(">");
     }
 
+    @Override
     public void startElement(String ur, String localName, String qName,
       Attributes attributes)
     {
@@ -394,10 +402,12 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
+    @Override
     public void endDocument() {
       omexml = xmlBuffer.toString();
     }
 
+    @Override
     public void setDocumentLocator(Locator locator) {
       this.locator = locator;
     }

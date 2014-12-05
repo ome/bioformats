@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -52,7 +52,6 @@ import org.testng.annotations.Test;
 
 /**
  * Test case which outlines the problems seen in omero:#3599.
- *
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
@@ -215,6 +214,7 @@ public class MinMaxCalculatorTest {
     /**
      * @see loci.formats.meta.IMinMaxStore#setChannelGlobalMinMax(int, double, double, int)
      */
+    @Override
     public void setChannelGlobalMinMax(int channel, double minimum,
                                        double maximum, int series) {
       if (seriesGlobalMinimaMaxima.size() == series) {

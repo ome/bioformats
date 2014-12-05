@@ -45,7 +45,6 @@ package ome.xml.meta;
  * <code>MetadataStore</code> and <code>MetadataRetrieve</code> object
  * types within the same container.
  *
- *
  * @author Roger Leigh r.leigh at dundee.ac.uk
  */
 public interface BaseMetadata { }

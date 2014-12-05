@@ -33,7 +33,6 @@
 package loci.formats.ome;
 
 /**
- *
  */
 public class OMEXMLMetadataImpl extends ome.xml.meta.OMEXMLMetadataImpl implements OMEXMLMetadata {
 }

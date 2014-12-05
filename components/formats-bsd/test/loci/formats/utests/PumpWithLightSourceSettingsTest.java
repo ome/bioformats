@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -55,7 +55,6 @@ import org.w3c.dom.Element;
 
 /**
  * Test case which outlines the problems seen in ticket:571.
- *
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */

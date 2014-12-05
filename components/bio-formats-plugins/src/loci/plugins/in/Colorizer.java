@@ -61,7 +61,6 @@ import ome.units.UNITS;
 /**
  * Logic for colorizing images.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -167,6 +166,7 @@ public class Colorizer {
       if (doComposite) {
         final ImagePlus toClose = imp;
         CompositeImage compImage = new CompositeImage(imp, mode) {
+          @Override
           public void close() {
             super.close();
             toClose.close();

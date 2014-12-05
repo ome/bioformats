@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@ import loci.plugins.util.LibraryChecker;
  * Wraps core logic in {@link loci.plugins.in.Importer}, to avoid
  * direct references to classes in the external Bio-Formats library.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -65,6 +64,7 @@ public class LociImporter implements PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
+  @Override
   public void run(String arg) {
     DebugTools.enableLogging("INFO");
     canceled = false;

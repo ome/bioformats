@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Primitive type that represents an ISO 8601 timestamp.
- *
  */
 public class Timestamp extends PrimitiveType<String> {
 

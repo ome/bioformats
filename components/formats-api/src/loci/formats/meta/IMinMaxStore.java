@@ -36,7 +36,6 @@ package loci.formats.meta;
  * Interface for consumers of minima and maxima pixel intensities across a
  * given wavelength.
  *
- *
  * @author Chris Allan callan at blackcat.ca
  */
 public interface IMinMaxStore {

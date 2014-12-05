@@ -82,7 +82,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * ImageConverter is a utility class for converting a file between formats.
- *
  */
 public final class ImageConverter {
 

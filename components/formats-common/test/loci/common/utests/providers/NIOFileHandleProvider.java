@@ -44,12 +44,12 @@ import loci.common.NIOFileHandle;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.NIOFileHandle.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.NIOFileHandle
  */
 class NIOFileHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".dat");

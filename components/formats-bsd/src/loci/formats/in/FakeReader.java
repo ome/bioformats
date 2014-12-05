@@ -94,7 +94,6 @@ import ome.units.UNITS;
  *  <li>showinf '64bit-floating&amp;pixelType=double&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  * </ul></p>
- *
  */
 public class FakeReader extends FormatReader {
 

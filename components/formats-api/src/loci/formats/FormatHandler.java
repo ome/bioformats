@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract superclass of all biological file format readers and writers.
- *
  */
 public abstract class FormatHandler implements IFormatHandler {
 
@@ -80,17 +79,21 @@ public abstract class FormatHandler implements IFormatHandler {
    * The default implementation checks filename suffixes against
    * those known for this format.
    */
+  @Override
   public boolean isThisType(String name) {
     return checkSuffix(name, suffixes);
   }
 
   /* @see IFormatHandler#getFormat() */
+  @Override
   public String getFormat() { return format; }
 
   /* @see IFormatHandler#getSuffixes() */
+  @Override
   public String[] getSuffixes() { return suffixes; }
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     // NB: Handlers use byte arrays by default as the native type.
     return byte[].class;

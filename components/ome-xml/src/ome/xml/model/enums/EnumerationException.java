@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -37,7 +37,6 @@ package ome.xml.model.enums;
 /**
  * EnumerationException is the exception thrown when an enumeration is
  * invalid or not found.
- *
  */
 public class EnumerationException extends Exception {
 

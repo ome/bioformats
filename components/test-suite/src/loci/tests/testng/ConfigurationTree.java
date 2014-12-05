@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * Stores configuration data about files in a directory structure.
  * This class is not designed to be thread safe, so should be synchronized
  * externally for proper thread safety.
- *
  */
 public class ConfigurationTree {
 

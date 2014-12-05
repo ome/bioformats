@@ -67,7 +67,6 @@ import ome.units.UNITS;
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
  * Fluoview FV 1000 OIF files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class FV1000Reader extends FormatReader {
@@ -167,6 +166,7 @@ public class FV1000Reader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream plane = getPlane(getSeries(), 0);
@@ -187,6 +187,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream plane = getPlane(getSeries(), 0);
@@ -207,11 +208,13 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return checkSuffix(id, OIB_SUFFIX);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, FV1000_SUFFIXES)) return true;
 
@@ -229,6 +232,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 1024;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -238,6 +242,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     if (checkSuffix(id, OIB_SUFFIX)) {
       return FormatTools.CANNOT_GROUP;
@@ -246,6 +251,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut == null || !isIndexed() ? null : lut[lastChannel];
@@ -254,6 +260,7 @@ public class FV1000Reader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -286,6 +293,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (isOIB) {
@@ -317,6 +325,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (thumbReader != null) thumbReader.close(fileOnly);
@@ -355,6 +364,7 @@ public class FV1000Reader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

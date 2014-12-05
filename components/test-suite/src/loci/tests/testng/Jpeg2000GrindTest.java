@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -57,7 +57,6 @@ import loci.formats.tiff.TiffCompression;
 
 /**
  * Test grinding in a multi-threaded environment a JPEG-2000 encoded TIFF.
- *
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
@@ -157,6 +156,7 @@ public class Jpeg2000GrindTest {
   public void testPyramidWriteTiles() throws Exception {
     pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     short tileCount = (short) TestTools.forEachTile(new TileLoopIteration() {
+      @Override
       public void run(int z, int c, int t, int x, int y, int tileWidth,
           int tileHeight, int tileCount) {
         int planeNumber = FormatTools.getIndex(
@@ -256,6 +256,7 @@ public class Jpeg2000GrindTest {
       this.tileNumber = tileNumber;
     }
 
+    @Override
     public void run() {
       byte[] tile = new byte[tileWidth * tileHeight * bytesPerPixel];
       ByteBuffer.wrap(tile).asShortBuffer().put(0, (short) tileNumber);
@@ -289,6 +290,7 @@ public class Jpeg2000GrindTest {
       this.theC = theC;
     }
 
+    @Override
     public void run() {
       final TiffReader reader = new TiffReader();
       try {
@@ -300,6 +302,7 @@ public class Jpeg2000GrindTest {
       assertEquals(reader.getImageCount(), SIZE_Z * SIZE_C * SIZE_T);
       assertEquals(reader.getSeriesCount(), 6);
       short tileCount = (short) TestTools.forEachTile(new TileLoopIteration() {
+        @Override
         public void run(int z, int c, int t, int x, int y, int tileWidth,
             int tileHeight, int tileCount) {
           try {

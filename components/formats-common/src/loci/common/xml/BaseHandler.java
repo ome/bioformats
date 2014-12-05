@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,7 +44,6 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Top-level SAX handler.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class BaseHandler extends DefaultHandler {
@@ -54,6 +53,7 @@ public class BaseHandler extends DefaultHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public InputSource resolveEntity(String publicId, String systemId)
     throws IOException, SAXException
   {

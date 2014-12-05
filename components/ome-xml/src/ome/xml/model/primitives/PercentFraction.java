@@ -39,7 +39,6 @@ package ome.xml.model.primitives;
  * point type and a further 0.0f minimum and 1.0f maximum.
  *
  * @author callan
- *
  */
 public class PercentFraction extends PrimitiveType<Float> implements PrimitiveNumber {
 

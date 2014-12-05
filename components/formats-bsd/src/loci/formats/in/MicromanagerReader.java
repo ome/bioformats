@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -65,7 +65,6 @@ import ome.units.UNITS;
 
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
- *
  */
 public class MicromanagerReader extends FormatReader {
 
@@ -102,11 +101,13 @@ public class MicromanagerReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA) ||
@@ -139,11 +140,13 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException
   {
     if (tiffReader == null) tiffReader = new MinimalTiffReader();
@@ -151,6 +154,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -173,6 +177,7 @@ public class MicromanagerReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -191,6 +196,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (tiffReader != null) tiffReader.close(fileOnly);
@@ -200,6 +206,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     if (tiffReader.getCurrentFile() == null) {
@@ -209,6 +216,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     if (tiffReader.getCurrentFile() == null) {
@@ -220,6 +228,7 @@ public class MicromanagerReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     tiffReader = new MinimalTiffReader();
@@ -567,20 +576,20 @@ public class MicromanagerReader extends FormatReader {
         token = st.nextToken().trim();
         String key = "", value = "";
         boolean valueArray = false;
-	int nestedCount = 0;
+        int nestedCount = 0;
 
         while (!token.startsWith("}") || nestedCount > 0) {
 
-	  if (token.trim().endsWith("{")) {
-	      nestedCount++;
-	      token = st.nextToken().trim();
-	      continue;
-	  }
-	  else if (token.trim().startsWith("}")) {
-	      nestedCount--;
-	      token = st.nextToken().trim();
-	      continue;
-	  }
+          if (token.trim().endsWith("{")) {
+            nestedCount++;
+            token = st.nextToken().trim();
+            continue;
+          }
+          else if (token.trim().startsWith("}")) {
+            nestedCount--;
+            token = st.nextToken().trim();
+            continue;
+          }
 
           if (valueArray) {
             if (token.trim().equals("],")) {
@@ -812,6 +821,7 @@ public class MicromanagerReader extends FormatReader {
 
   /** SAX handler for parsing Acqusition.xml. */
   class MicromanagerHandler extends BaseHandler {
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {

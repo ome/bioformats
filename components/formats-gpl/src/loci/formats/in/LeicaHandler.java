@@ -69,7 +69,6 @@ import org.xml.sax.Attributes;
 /**
  * SAX handler for parsing XML in Leica LIF and Leica TCS files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LeicaHandler extends BaseHandler {
@@ -149,6 +148,7 @@ public class LeicaHandler extends BaseHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void endElement(String uri, String localName, String qName) {
     if (!nameStack.empty() && nameStack.peek().equals(qName)) nameStack.pop();
 
@@ -274,6 +274,7 @@ public class LeicaHandler extends BaseHandler {
     }
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {

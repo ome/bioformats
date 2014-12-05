@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,7 +48,6 @@ import org.xml.sax.Attributes;
 /**
  * IvisionReader is the file format reader for IVision (.IPM) files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class IvisionReader extends FormatReader {
@@ -88,6 +87,7 @@ public class IvisionReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockCheckLen = 4096;
     if (!FormatTools.validStream(stream, blockCheckLen, true)) return false;
@@ -103,6 +103,7 @@ public class IvisionReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -145,6 +146,7 @@ public class IvisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -167,6 +169,7 @@ public class IvisionReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -339,6 +342,7 @@ public class IvisionReader extends FormatReader {
 
     // -- DefaultHandler API methods --
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
       addGlobalMeta(key, value);
       if ("iplab:Bin_X".equals(key)) binX = value;
@@ -369,6 +373,7 @@ public class IvisionReader extends FormatReader {
       else if ("iplab:Wavelength".equals(key)) wavelength = value;
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) {
       String v = new String(ch, start, length).trim();
       if (v.length() > 0) {
@@ -379,6 +384,7 @@ public class IvisionReader extends FormatReader {
       }
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
