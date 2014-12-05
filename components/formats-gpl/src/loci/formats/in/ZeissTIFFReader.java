@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -101,7 +101,6 @@
  *
  *    Metadata within the scaled down preview tiff: No (other than basic dimensions and image planes)
  *    Metadata within the separate TIFF z plane images: No (other than basic dimensions and image planes)
- *
  */
 
 package loci.formats.in;
@@ -125,7 +124,6 @@ import loci.formats.tiff.IFDList;
 /**
  * ZeissTIFFReader is the file format reader for Zeiss AxioVision TIFF
  * files and their companion XML file.
- *
  *
  * @author Melissa Linkert melissa at glencoesoftware.com and Roger Leigh r.leigh at dundee.ac.uk
  */
@@ -157,6 +155,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
@@ -169,6 +168,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!checkSuffix(name, TIFF_SUFFIXES)) {
       return false;
@@ -187,6 +187,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return MUST_GROUP;
   }
@@ -194,6 +195,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
@@ -209,6 +211,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     ArrayList<String> files = new ArrayList<String>();
@@ -247,6 +250,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (tiffReader != null) tiffReader.close(fileOnly);
@@ -376,6 +380,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
     return info;
   }
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     CaseInsensitiveLocation.invalidateCache();
     TIFFInfo info = evalFile(id);
@@ -389,6 +394,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     super.initFileMain(info.origname);
   }
 
+  @Override
   protected void initVars(String id) throws FormatException, IOException {
     super.initVars(id);
 
@@ -396,6 +402,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     planes = new ArrayList<Plane>();
   }
 
+  @Override
   protected void fillMetadataPass1(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass1(store);
     int nplanes = tiffInfo.handler.planes.size();
@@ -492,12 +499,14 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
   }
 
+  @Override
   protected void fillMetadataPass2(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass2(store);
 
     core.get(0).interleaved = false;
   }
 
+  @Override
   protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass5(store);
 
@@ -507,6 +516,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     }
   }
 
+  @Override
   protected void countImages()
   {
     core.get(0).imageCount = planes.size();
@@ -596,6 +606,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     {
     }
 
+    @Override
     public String
     toString()
     {

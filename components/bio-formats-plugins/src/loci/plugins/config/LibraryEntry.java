@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,7 +36,6 @@ import loci.common.Constants;
 
 /**
  * A list entry for the configuration window's Libraries tab.
- *
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -147,6 +146,7 @@ public class LibraryEntry implements Comparable<Object> {
 
   // -- Comparable API methods --
 
+  @Override
   public int compareTo(Object o) {
     LibraryEntry entry = (LibraryEntry) o;
     return name.compareTo(entry.name);
@@ -154,6 +154,7 @@ public class LibraryEntry implements Comparable<Object> {
 
   // -- Object API methods --
 
+  @Override
   public String toString() {
     String markup = version == null ? MISSING : PRESENT;
     return "<html>" + markup + name;

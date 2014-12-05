@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,7 +38,6 @@ package loci.formats.cache;
  * The actual source of the objects is implementation-dependent;
  * Bio-Formats uses {@link loci.formats.IFormatReader} to obtain image planes,
  * but any ordered collection of objects can conceivably be cached.
- *
  */
 public interface ICacheSource {
 

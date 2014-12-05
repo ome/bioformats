@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  */
 public class JPEGTileDecoder {
 
@@ -215,16 +214,19 @@ public class JPEGTileDecoder {
 
     // -- ImageConsumer API methods --
 
+    @Override
     public void imageComplete(int status) {
       producer.removeConsumer(this);
     }
 
+    @Override
     public void setDimensions(int width, int height) {
       this.width = width;
       this.height = height;
       if (hh <= 0) hh = height;
     }
 
+    @Override
     public void setPixels(int x, int y, int w, int h, ColorModel model,
       byte[] pixels, int off, int scanSize)
     {
@@ -246,6 +248,7 @@ public class JPEGTileDecoder {
       }
     }
 
+    @Override
     public void setPixels(int x, int y, int w, int h, ColorModel model,
       int[] pixels, int off, int scanSize)
     {
@@ -267,8 +270,11 @@ public class JPEGTileDecoder {
       }
     }
 
+    @Override
     public void setProperties(Hashtable props) { }
+    @Override
     public void setColorModel(ColorModel model) { }
+    @Override
     public void setHints(int hintFlags) { }
   }
 

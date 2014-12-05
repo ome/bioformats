@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 
 /**
  * Data structure for working with a list of TIFF {@link IFD}s.
- *
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

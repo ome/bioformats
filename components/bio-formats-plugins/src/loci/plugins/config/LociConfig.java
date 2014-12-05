@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,7 +33,6 @@ import loci.plugins.util.WindowTools;
 /**
  * An ImageJ plugin for displaying the Bio-Formats plugins configuration dialog.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class LociConfig implements PlugIn {
@@ -41,6 +40,7 @@ public class LociConfig implements PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
+  @Override
   public void run(String arg) {
     ConfigWindow cw = new ConfigWindow();
     WindowTools.placeWindow(cw);

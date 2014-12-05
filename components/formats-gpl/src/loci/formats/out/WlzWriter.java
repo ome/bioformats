@@ -54,7 +54,7 @@
 * License along with this program; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA  02110-1301, USA.
-* \brief	Woolz writer for bioformats.
+* \brief        Woolz writer for bioformats.
 */
 
 package loci.formats.out;
@@ -122,6 +122,7 @@ public class WlzWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -132,11 +133,13 @@ public class WlzWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() {
     return true;
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     int[] spt;
     if(wlz != null) {
@@ -151,6 +154,7 @@ public class WlzWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     try {
@@ -200,12 +204,13 @@ public class WlzWriter extends FormatWriter {
         vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
-		  meta.getPixelsType(series).toString());
+                  meta.getPixelsType(series).toString());
       wlz.setupWrite(oX, oY, oZ, nX, nY, nZ, nC, nT, vX, vY, vZ, gType);
     }
   }
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     super.close();
     if(wlz != null) {

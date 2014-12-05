@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -59,7 +59,6 @@ import loci.formats.tiff.TiffSaver;
 
 /**
  * OMETiffWriter is the file format writer for OME-TIFF files.
- *
  */
 public class OMETiffWriter extends TiffWriter {
 
@@ -91,6 +90,7 @@ public class OMETiffWriter extends TiffWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     try {
       if (currentId != null) {
@@ -174,6 +174,7 @@ public class OMETiffWriter extends TiffWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -183,6 +184,7 @@ public class OMETiffWriter extends TiffWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], IFD, int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -208,6 +210,7 @@ public class OMETiffWriter extends TiffWriter {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
     super.setId(id);

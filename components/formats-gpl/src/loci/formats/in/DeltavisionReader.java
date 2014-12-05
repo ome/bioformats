@@ -55,7 +55,6 @@ import ome.units.UNITS;
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class DeltavisionReader extends FormatReader {
@@ -134,11 +133,13 @@ public class DeltavisionReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "dv.log") || checkSuffix(name, "r3d.log") ||
       name.endsWith("_log.txt"))
@@ -150,6 +151,7 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 98;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -159,6 +161,7 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -171,6 +174,7 @@ public class DeltavisionReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -198,6 +202,7 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -231,6 +236,7 @@ public class DeltavisionReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "dv")) {
       if (checkSuffix(id, "dv.log") || checkSuffix(id, "r3d.log")) {
@@ -2318,6 +2324,7 @@ public class DeltavisionReader extends FormatReader {
      * Helper function which overrides toString, printing out the values in
      * the header section.
      */
+    @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
       sb.append("photosensorReading: ");

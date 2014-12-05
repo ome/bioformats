@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,7 +43,6 @@ import loci.formats.cache.ICacheSource;
 
 /**
  * Retrieves BufferedImages from a data source using Bio-Formats.
- *
  */
 public class BufferedImageSource implements ICacheSource {
 
@@ -66,9 +65,11 @@ public class BufferedImageSource implements ICacheSource {
   // -- ICacheSource API methods --
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
+  @Override
   public int getObjectCount() { return reader.getImageCount(); }
 
   /* @see loci.formats.cache.ICacheSource#getObject(int) */
+  @Override
   public Object getObject(int index) throws CacheException {
     BufferedImage bi = null;
     try {

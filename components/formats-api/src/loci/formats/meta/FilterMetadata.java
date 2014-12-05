@@ -34,7 +34,6 @@ package loci.formats.meta;
 
 /**
  *
- *
  */
 public class FilterMetadata extends ome.xml.meta.FilterMetadata implements MetadataStore {
 

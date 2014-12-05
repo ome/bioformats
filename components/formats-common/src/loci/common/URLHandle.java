@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,6 @@ import java.net.URLConnection;
  * Provides random access to URLs using the IRandomAccess interface.
  * Instances of URLHandle are read-only.
  *
- *
  * @see IRandomAccess
  * @see StreamHandle
  * @see java.net.URLConnection
@@ -75,6 +74,7 @@ public class URLHandle extends StreamHandle {
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#seek(long) */
+  @Override
   public void seek(long pos) throws IOException {
     if (pos < fp && pos >= mark) {
       stream.reset();
@@ -87,6 +87,7 @@ public class URLHandle extends StreamHandle {
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
+  @Override
   protected void resetStream() throws IOException {
     conn = (new URL(url)).openConnection();
     stream = new DataInputStream(new BufferedInputStream(

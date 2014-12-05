@@ -37,7 +37,6 @@ package ome.xml.meta;
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
  *
- *
  * @author Chris Allan callan at blackcat dot ca
  */
 public interface OMEXMLMetadata extends IMetadata {

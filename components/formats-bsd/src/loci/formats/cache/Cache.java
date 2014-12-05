@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,7 +46,6 @@ import loci.formats.FormatTools;
  * across the multidimensional image series's dimensional axes, with the
  * strategy indicating which surrounding planes to load into the cache (i.e.,
  * planes within a certain range along each dimensional axis).
- *
  */
 public class Cache implements CacheReporter {
 
@@ -229,6 +228,7 @@ public class Cache implements CacheReporter {
   // -- CacheReporter API methods --
 
   /* @see CacheReporter#addCacheListener(CacheListener) */
+  @Override
   public void addCacheListener(CacheListener l) {
     synchronized (listeners) {
       listeners.add(l);
@@ -237,6 +237,7 @@ public class Cache implements CacheReporter {
   }
 
   /* @see CacheReporter#removeCacheListener(CacheListener) */
+  @Override
   public void removeCacheListener(CacheListener l) {
     synchronized (listeners) {
       listeners.remove(l);
@@ -245,6 +246,7 @@ public class Cache implements CacheReporter {
   }
 
   /* @see CacheReporter#getCacheListeners() */
+  @Override
   public CacheListener[] getCacheListeners() {
     CacheListener[] l;
     synchronized (listeners) {

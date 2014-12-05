@@ -2,7 +2,7 @@
  * #%L
  * Luratech LWF library stub classes.
  * %%
- * Copyright (C) 2010 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2010 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,7 +38,6 @@ import java.io.InputStream;
 /**
  * Stub of the Luratech LuraWave&reg; Java decoder class.
  * NOTE: This class contains <b>NO</b> real implementation.
- *
  */
 public class lwfDecoder {
 

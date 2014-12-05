@@ -49,7 +49,6 @@ import org.testng.annotations.Test;
 /**
  * Unit tests for the loci.common.URLHandle class.
  *
- *
  * @see loci.common.URLHandle
  */
 public class URLHandleTest {

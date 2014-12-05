@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -67,7 +67,6 @@ import org.slf4j.LoggerFactory;
  * and OME-XML strings.
  * Most of the methods require the optional {@link loci.formats.ome}
  * package, and optional ome-xml.jar library, to be present at runtime.
- *
  */
 public final class MetadataTools {
 

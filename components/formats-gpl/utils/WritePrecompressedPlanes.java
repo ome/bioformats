@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,6 @@ import ome.xml.model.primitives.PositiveInteger;
  * Writes the pixels from a set of JPEG files to a single TIFF.
  * The pixel data is used as-is, so no decompression or re-compression is
  * performed.
- *
  */
 public class WritePrecompressedPlanes {
   public static void main(String[] args) throws FormatException, IOException {

@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@ import loci.plugins.util.LociPrefs;
 /**
  * Custom widgets for configuring Bio-Formats TIFF support.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class TiffDelegateWidgets implements IFormatWidgets, ItemListener {
@@ -67,16 +66,19 @@ public class TiffDelegateWidgets implements IFormatWidgets, ItemListener {
 
   // -- IFormatWidgets API methods --
 
+  @Override
   public String[] getLabels() {
     return labels;
   }
 
+  @Override
   public Component[] getWidgets() {
     return widgets;
   }
 
   // -- ItemListener API methods --
 
+  @Override
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
     Prefs.set(LociPrefs.PREF_TIFF_IMAGEIO, box.isSelected());

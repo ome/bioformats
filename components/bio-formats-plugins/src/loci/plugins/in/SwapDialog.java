@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer dimension swapper dialog box.
- *
  */
 public class SwapDialog extends ImporterDialog implements ItemListener {
 
@@ -130,6 +129,7 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
 
   // -- ItemListener methods --
 
+  @Override
   public void itemStateChanged(ItemEvent e) {
     final Object src = e.getSource();
     final int zIndex = zChoice.getSelectedIndex();

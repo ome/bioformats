@@ -34,6 +34,5 @@ package loci.formats.meta;
 
 /**
  *
- *
  */
 public interface MetadataStore extends ome.xml.meta.MetadataStore { }

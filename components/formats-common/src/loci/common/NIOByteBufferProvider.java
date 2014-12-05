@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
  *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092131</li>
  *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6417205</li>
  * </ul>
- *
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */

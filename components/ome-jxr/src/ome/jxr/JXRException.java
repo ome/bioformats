@@ -28,7 +28,6 @@ package ome.jxr;
 /**
  * JXRException is thrown when an error is encountered during the broadly
  * understood parsing of a JPEG XR image file.
- *
  */
 public class JXRException extends Exception {
 

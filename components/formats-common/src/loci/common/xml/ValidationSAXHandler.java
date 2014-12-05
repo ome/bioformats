@@ -40,7 +40,6 @@ import org.xml.sax.Attributes;
 /**
  * Used by validateXML to parse the XML block's schema path using SAX.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -50,10 +49,12 @@ class ValidationSAXHandler extends BaseHandler {
   private String schemaPath;
   private boolean first;
   public String getSchemaPath() { return schemaPath; }
+  @Override
   public void startDocument() {
     schemaPath = null;
     first = true;
   }
+  @Override
   public void startElement(String uri,
     String localName, String qName, Attributes attributes)
   {

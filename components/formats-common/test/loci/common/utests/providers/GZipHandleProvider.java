@@ -45,12 +45,12 @@ import loci.common.IRandomAccess;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.GZipHandle.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.GZipHandle
  */
 class GZipHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".gz");

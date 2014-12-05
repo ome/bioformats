@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,7 +36,6 @@ import org.testng.annotations.Factory;
 /**
  * Factory for scanning a directory structure and generating instances of
  * {@link FormatWriterTest} based on the image files found.
- *
  */
 public class FormatWriterTestFactory {
 

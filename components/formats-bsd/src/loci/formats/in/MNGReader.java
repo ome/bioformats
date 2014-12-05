@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,7 +51,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * MNGReader is the file format reader for Multiple Network Graphics (MNG)
  * files.  Does not support JNG (JPEG Network Graphics).
- *
  */
 public class MNGReader extends BIFormatReader {
 
@@ -76,6 +75,7 @@ public class MNGReader extends BIFormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -83,6 +83,7 @@ public class MNGReader extends BIFormatReader {
   }
 
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -101,6 +102,7 @@ public class MNGReader extends BIFormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -112,6 +114,7 @@ public class MNGReader extends BIFormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);

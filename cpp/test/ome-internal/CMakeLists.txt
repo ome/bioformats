@@ -39,6 +39,6 @@ if(BUILD_TESTS)
 
   if(extended-tests)
     header_test_from_file(ome-internal "" ome/internal)
-    add_test(ome-internal/headers ome-internal-headers)
+    bf_add_test(ome-internal/headers ome-internal-headers)
   endif(extended-tests)
 endif(BUILD_TESTS)

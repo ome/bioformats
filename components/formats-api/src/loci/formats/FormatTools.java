@@ -73,7 +73,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A utility class for format reader and writer implementations.
- *
  */
 public final class FormatTools {
 

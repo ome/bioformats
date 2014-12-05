@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,7 +38,6 @@ import java.math.BigInteger;
 
 /**
  * NumberFilter is a helper filter for FilePattern.findPattern().
- *
  */
 public class NumberFilter implements FileFilter {
 
@@ -81,6 +80,7 @@ public class NumberFilter implements FileFilter {
   // -- FileFilter API methods --
 
   /** Tests if a specified file should be included in a file list. */
+  @Override
   public boolean accept(File pathname) {
     return accept(pathname.getName());
   }

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -58,7 +58,6 @@ import loci.formats.gui.CacheComponent;
 /**
  * CacheConsole provides an interactive interpreter for
  * testing the Bio-Formats caching implementation.
- *
  */
 public final class CacheConsole {
 
@@ -83,6 +82,7 @@ public final class CacheConsole {
       new CrosshairStrategy(getLengths(reader)),
       new BufferedImageSource(reader), true);
     CacheListener l = new CacheListener() {
+      @Override
       public void cacheUpdated(CacheEvent e) {
         int type = e.getType();
         int ndx = e.getIndex();

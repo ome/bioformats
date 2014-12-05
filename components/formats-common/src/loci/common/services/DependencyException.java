@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ package loci.common.services;
 /**
  * Exception thrown when there is an object instantiation error or error
  * processing dependencies.
- *
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */

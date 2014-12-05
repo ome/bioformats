@@ -48,7 +48,6 @@ import org.xml.sax.Attributes;
 
 /**
  * DefaultHandler implementation for handling XML produced by Nikon Elements.
- *
  */
 public class ND2Handler extends BaseHandler {
 
@@ -350,6 +349,7 @@ public class ND2Handler extends BaseHandler {
     }
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
@@ -620,6 +620,7 @@ public class ND2Handler extends BaseHandler {
     prevRuntype = attributes.getValue("runtype");
   }
 
+  @Override
   public void endDocument() {
     for (String name : colors.keySet()) {
       String chName = dyes.get(name);

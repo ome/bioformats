@@ -39,7 +39,6 @@ import loci.common.IRandomAccess;
 /**
  * Interface for all providers of IRandomAccess objects.
  *
- *
  */
 public interface IRandomAccessProvider {
 

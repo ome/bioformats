@@ -45,12 +45,12 @@ import loci.common.ZipHandle;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.ZipHandle.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.ZipHandle
  */
 class ZipHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".zip");

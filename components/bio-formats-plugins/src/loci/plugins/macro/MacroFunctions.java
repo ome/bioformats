@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,7 +44,6 @@ import loci.plugins.util.WindowTools;
  * It uses reflection to create an extension method for each public method in
  * the implementing subclass. See {@link LociFunctions} for an example.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class MacroFunctions implements PlugIn, MacroExtension {
@@ -55,6 +54,7 @@ public class MacroFunctions implements PlugIn, MacroExtension {
 
   // -- PlugIn API methods --
 
+  @Override
   public void run(String arg) {
     if (!LibraryChecker.checkImageJ()) return;
     if (!IJ.macroRunning()) {
@@ -66,10 +66,12 @@ public class MacroFunctions implements PlugIn, MacroExtension {
 
   // -- MacroExtension API methods --
 
+  @Override
   public ExtensionDescriptor[] getExtensionFunctions() {
     return extensions;
   }
 
+  @Override
   public String handleExtension(String name, Object[] args) {
     Class<?>[] c = null;
     if (args != null) {

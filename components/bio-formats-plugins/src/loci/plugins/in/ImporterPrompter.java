@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,7 +43,6 @@ import loci.plugins.prefs.OptionsDialog;
  * current configuration (i.e., which options are enabled), whether quiet or
  * windowless mode is set, and whether the method is being called from within
  * a macro.
- *
  */
 public class ImporterPrompter implements StatusListener {
 
@@ -60,6 +59,7 @@ public class ImporterPrompter implements StatusListener {
 
   // -- StatusListener methods --
 
+  @Override
   public void statusUpdated(StatusEvent e) {
     final String message = e.getStatusMessage();
     final int value = e.getProgressValue();
