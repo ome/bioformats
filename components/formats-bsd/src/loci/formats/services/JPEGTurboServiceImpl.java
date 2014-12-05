@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,10 +54,6 @@ import org.scijava.nativelib.NativeLibraryUtil;
  * Based upon the NDPI to OME-TIFF converter by Matthias Baldauf:
  *
  * http://matthias-baldauf.at/software/ndpi_converter/
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/JPEGTurboServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/JPEGTurboServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert <melissa at glencoesoftware.com>
  */
@@ -113,6 +109,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- JPEGTurboService API methods --
 
+  @Override
   public void setRestartMarkers(long[] markers) {
     restartMarkers.clear();
     if (markers != null) {
@@ -122,6 +119,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public long[] getRestartMarkers() {
     long[] markers = new long[restartMarkers.size()];
     for (int i=0; i<markers.length; i++) {
@@ -130,6 +128,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     return markers;
   }
 
+  @Override
   public void initialize(RandomAccessInputStream jpeg, int width, int height)
     throws ServiceException, IOException
   {
@@ -213,6 +212,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate,
     int width, int height)
     throws IOException
@@ -268,6 +268,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     return buf;
   }
 
+  @Override
   public byte[] getTile(int tileX, int tileY) throws IOException {
     if (header == null) {
       header = getFixedHeader();
@@ -334,6 +335,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public void close() throws IOException {
     logger = null;
     imageWidth = 0;

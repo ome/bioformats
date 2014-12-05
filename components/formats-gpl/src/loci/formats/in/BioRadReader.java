@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,10 +54,6 @@ import ome.units.quantity.Length;
 
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BioRadReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/BioRadReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -169,17 +165,20 @@ public class BioRadReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, PIC_SUFFIX)) return true;
     String fname = new File(name.toLowerCase()).getName();
@@ -187,6 +186,7 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 56;
     if (!FormatTools.validStream(stream, blockLen, LITTLE_ENDIAN)) {
@@ -198,6 +198,7 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     Location thisFile = new Location(id).getAbsoluteFile();
     Location parent = thisFile.getParentFile();
@@ -211,12 +212,14 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut == null ? null : lut[lastChannel];
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -232,6 +235,7 @@ public class BioRadReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -256,6 +260,7 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -272,6 +277,7 @@ public class BioRadReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // always initialize a PIC file, even if we were given something else
     if (!checkSuffix(id, PIC_SUFFIX)) {
@@ -1082,6 +1088,7 @@ public class BioRadReader extends FormatReader {
 
   /** SAX handler for parsing XML. */
   class BioRadHandler extends BaseHandler {
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -1116,6 +1123,7 @@ public class BioRadReader extends FormatReader {
     public int y;
     public String p;
 
+    @Override
     public String toString() {
       StringBuffer sb = new StringBuffer(100);
       sb.append("level=");

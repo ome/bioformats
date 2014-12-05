@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -63,10 +63,6 @@ import ome.units.UNITS;
  * DicomReader is the file format reader for DICOM files.
  * Much of this code is adapted from ImageJ's DICOM reader; see
  * http://rsb.info.nih.gov/ij/developer/source/ij/plugin/DICOM.java.html
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/DicomReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/DicomReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class DicomReader extends FormatReader {
 
@@ -167,6 +163,7 @@ public class DicomReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     // extension is sufficient as long as it is DIC, DCM, DICOM, J2KI, or J2KR
     if (checkSuffix(name, DICOM_SUFFIXES)) return true;
@@ -174,6 +171,7 @@ public class DicomReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 2048;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
@@ -192,6 +190,7 @@ public class DicomReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.INT8 &&
@@ -203,6 +202,7 @@ public class DicomReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.INT16 &&
@@ -214,6 +214,7 @@ public class DicomReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels || fileList == null) return null;
@@ -237,6 +238,7 @@ public class DicomReader extends FormatReader {
     return uniqueFiles.toArray(new String[uniqueFiles.size()]);
   }
 
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return CAN_GROUP;
   }
@@ -244,6 +246,7 @@ public class DicomReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -412,6 +415,7 @@ public class DicomReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (helper != null) helper.close(fileOnly);
@@ -441,6 +445,7 @@ public class DicomReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);

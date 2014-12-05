@@ -43,44 +43,44 @@ add_subdirectory(data)
 if(BUILD_TESTS)
   if(extended-tests)
     header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
-    add_test(ome-bioformats/headers ome-bioformats-headers)
+    bf_add_test(ome-bioformats/headers ome-bioformats-headers)
   endif(extended-tests)
 
   add_executable(formatreader formatreader.cpp)
   target_link_libraries(formatreader ome-bioformats)
   target_link_libraries(formatreader ome-test)
 
-  add_test(ome-bioformats/formatreader formatreader)
+  bf_add_test(ome-bioformats/formatreader formatreader)
 
   add_executable(formattools formattools.cpp)
   target_link_libraries(formattools ome-bioformats)
   target_link_libraries(formattools ome-test)
 
-  add_test(ome-bioformats/formattools formattools)
+  bf_add_test(ome-bioformats/formattools formattools)
 
   add_executable(formatwriter formatwriter.cpp)
   target_link_libraries(formatwriter ome-bioformats)
   target_link_libraries(formatwriter ome-test)
 
-  add_test(ome-bioformats/formatwriter formatwriter)
+  bf_add_test(ome-bioformats/formatwriter formatwriter)
 
   add_executable(metadatamap metadatamap.cpp)
   target_link_libraries(metadatamap ome-bioformats)
   target_link_libraries(metadatamap ome-test)
 
-  add_test(ome-bioformats/metadatamap metadatamap)
+  bf_add_test(ome-bioformats/metadatamap metadatamap)
 
   add_executable(metadatatools metadatatools.cpp)
   target_link_libraries(metadatatools ome-bioformats)
   target_link_libraries(metadatatools ome-test)
 
-  add_test(ome-bioformats/metadatatools metadatatools)
+  bf_add_test(ome-bioformats/metadatatools metadatatools)
 
   add_executable(fileinfo fileinfo.cpp)
   target_link_libraries(fileinfo ome-bioformats)
   target_link_libraries(fileinfo ome-test)
 
-  add_test(ome-bioformats/fileinfo fileinfo)
+  bf_add_test(ome-bioformats/fileinfo fileinfo)
 
   add_executable(pixelbuffer
                  pixelbuffer.h
@@ -99,13 +99,13 @@ if(BUILD_TESTS)
   target_link_libraries(pixelbuffer ome-bioformats)
   target_link_libraries(pixelbuffer ome-test)
 
-  add_test(ome-bioformats/pixelbuffer pixelbuffer)
+  bf_add_test(ome-bioformats/pixelbuffer pixelbuffer)
 
   add_executable(pixelproperties pixelproperties.cpp)
   target_link_libraries(pixelproperties ome-bioformats)
   target_link_libraries(pixelproperties ome-test)
 
-  add_test(ome-bioformats/pixelproperties pixelproperties)
+  bf_add_test(ome-bioformats/pixelproperties pixelproperties)
 
   add_executable(tiff
                  tiff.cpp
@@ -115,30 +115,30 @@ if(BUILD_TESTS)
   target_link_libraries(tiff ome-test ${PNG_LIBRARIES})
   add_dependencies(tiff gentestimages)
 
-  add_test(ome-bioformats/tiff tiff)
+  bf_add_test(ome-bioformats/tiff tiff)
 
   add_executable(minimaltiffreader minimaltiffreader.cpp)
   target_link_libraries(minimaltiffreader ome-bioformats)
   target_link_libraries(minimaltiffreader ome-test)
 
-  add_test(ome-bioformats/minimaltiffreader minimaltiffreader)
+  bf_add_test(ome-bioformats/minimaltiffreader minimaltiffreader)
 
   add_executable(tiffreader tiffreader.cpp)
   target_link_libraries(tiffreader ome-bioformats)
   target_link_libraries(tiffreader ome-test)
 
-  add_test(ome-bioformats/tiffreader tiffreader)
+  bf_add_test(ome-bioformats/tiffreader tiffreader)
 
   add_executable(variantpixelbuffer variantpixelbuffer.cpp)
   target_link_libraries(variantpixelbuffer ome-bioformats)
   target_link_libraries(variantpixelbuffer ome-test)
 
-  add_test(ome-bioformats/variantpixelbuffer variantpixelbuffer)
+  bf_add_test(ome-bioformats/variantpixelbuffer variantpixelbuffer)
 
   add_executable(version version.cpp)
   target_link_libraries(version ome-bioformats)
   target_link_libraries(version ome-test)
 
-  add_test(ome-bioformats/version version)
+  bf_add_test(ome-bioformats/version version)
 
 endif(BUILD_TESTS)

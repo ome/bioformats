@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,10 +41,6 @@ import loci.poi.poifs.filesystem.Entry;
 import loci.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/POIServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/POIServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class POIServiceImpl extends AbstractService implements POIService {
 
@@ -69,11 +65,13 @@ public class POIServiceImpl extends AbstractService implements POIService {
   }
 
   /* @see POIService#initialize(String) */
+  @Override
   public void initialize(String file) throws IOException {
     initialize(new RandomAccessInputStream(file));
   }
 
   /* @see POIService#initialize(RandomAccessInputStream) */
+  @Override
   public void initialize(RandomAccessInputStream s) throws IOException {
     // determine the size of a 'big' block
     stream = s;
@@ -95,11 +93,13 @@ public class POIServiceImpl extends AbstractService implements POIService {
   }
 
   /* @see POIService#getInputStream(String) */
+  @Override
   public InputStream getInputStream(String file) throws IOException {
     return new DocumentInputStream(files.get(file), stream);
   }
 
   /* @see POIService#getDocumentStream(String) */
+  @Override
   public RandomAccessInputStream getDocumentStream(String file)
     throws IOException
   {
@@ -107,11 +107,13 @@ public class POIServiceImpl extends AbstractService implements POIService {
   }
 
   /* @see POIService#getDocumentBytes(String) */
+  @Override
   public byte[] getDocumentBytes(String file) throws IOException {
     return getDocumentBytes(file, getFileSize(file));
   }
 
   /* @see POIService#getDocumentBytes(String, int) */
+  @Override
   public byte[] getDocumentBytes(String file, int length) throws IOException {
     int size = getFileSize(file);
     int len = length > size ? size : length;
@@ -124,6 +126,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
   }
 
   /* @see POIService#getFileSize(String) */
+  @Override
   public int getFileSize(String file) {
     if (fileSizes.containsKey(file)) {
       return fileSizes.get(file).intValue();
@@ -132,6 +135,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
   }
 
   /* @see POIService#getDocumentList() */
+  @Override
   public Vector<String> getDocumentList() {
     Vector<String> list = new Vector<String>();
     list.addAll(fileSizes.keySet());
@@ -139,6 +143,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
   }
 
   /* @see POIService#close() */
+  @Override
   public void close() throws IOException {
     fileSystem = null;
     root = null;

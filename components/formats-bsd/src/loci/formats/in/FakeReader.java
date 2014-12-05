@@ -67,6 +67,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.specification.XMLMockObjects;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
@@ -93,10 +94,6 @@ import ome.units.UNITS;
  *  <li>showinf '64bit-floating&amp;pixelType=double&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  * </ul></p>
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/FakeReader.java">Trac</a>
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/FakeReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FakeReader extends FormatReader {
 
@@ -694,9 +691,9 @@ public class FakeReader extends FormatReader {
         nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
         store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
         store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-        Map<String, String> mapValue = new HashMap<String,String>();
+        List<MapPair> mapValue = new ArrayList<MapPair>();
         for (int keyNum=0; keyNum<10; keyNum++) {
-          mapValue.put("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1));
+          mapValue.add(new MapPair("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
         }
         store.setMapAnnotationValue(mapValue, annotationMapCount);
         store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);

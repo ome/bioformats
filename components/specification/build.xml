@@ -41,9 +41,9 @@
 
       <!-- Standard -->
       <schema namespace="http://www.w3.org/XML/1998/namespace"
-        file="${basedir}/released-schema/additions/jar/xml.xsd"/>
+        file="${basedir}/released-schema/external/xml.xsd"/>
       <schema namespace="http://www.w3.org/2001/XMLSchema"
-        file="${basedir}/released-schema/additions/jar/XMLSchema.xsd"/>
+        file="${basedir}/released-schema/external/XMLSchema.xsd"/>
 
       <!-- 2003-FC -->
       <!-- No namespace is defined for AnalysisChain in this release -->

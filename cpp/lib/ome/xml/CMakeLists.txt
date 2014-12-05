@@ -54,6 +54,7 @@ endforeach(hdr)
 set(OME_XML_STATIC_SOURCES
   meta/OMEXMLMetadataRoot.cpp
   meta/Convert.cpp
+  model/Catalog.cpp
   model/ModelException.cpp
   model/detail/OMEModel.cpp
   model/detail/OMEModelObject.cpp
@@ -170,12 +171,13 @@ add_custom_target(gensrc DEPENDS
 
 # Find and install all schemas
 file(GLOB OME_SCHEMAS RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/released-schema/"
-     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/2*/*.xsd")
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/catalog.xml"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/2*/*.xsd"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/2*/catalog.xml"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/external/*.xsd"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/external/catalog.xml")
 foreach(schema ${OME_SCHEMAS})
   get_filename_component(SCHEMA_RELEASE ${schema} PATH)
   install(FILES "${PROJECT_SOURCE_DIR}/components/specification/released-schema/${schema}"
           DESTINATION "${OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR}/${SCHEMA_RELEASE}")
 endforeach(schema)
-  install(FILES "${PROJECT_SOURCE_DIR}/components/specification/released-schema/additions/jar/XMLSchema.xsd"
-                "${PROJECT_SOURCE_DIR}/components/specification/released-schema/additions/jar/xml.xsd"
-          DESTINATION "${OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR}/external")

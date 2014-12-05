@@ -1,7 +1,7 @@
 /*#%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -63,7 +63,6 @@ import loci.formats.meta.MetadataStore;
  * IM3Reader may be run as a Java application to
  * dump a per-record description of the file to
  * standard output
- *
  */
 public class IM3Reader extends FormatReader {
 	/**
@@ -513,7 +512,8 @@ public class IM3Reader extends FormatReader {
 		/* (non-Javadoc)
 		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
+		@Override
+    public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
 			LOGGER.info(indentation + toString());
 			for (IM3Record rec:parseChunks(is)) {
@@ -573,7 +573,8 @@ public class IM3Reader extends FormatReader {
 		/* (non-Javadoc)
 		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
+		@Override
+    public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
 			LOGGER.info(indentation + toString());
 			final int length = getNumEntries(is);
@@ -661,7 +662,8 @@ public class IM3Reader extends FormatReader {
 		/* (non-Javadoc)
 		 * @see loci.formats.in.IM3Reader.IM3Record#writeSummary(loci.common.IRandomAccess, java.lang.String)
 		 */
-		public void writeSummary(IRandomAccess is, String indentation) throws IOException {
+		@Override
+    public void writeSummary(IRandomAccess is, String indentation) throws IOException {
 			is.seek(offset);
 			LOGGER.info(indentation + toString());
 			final int length = getNumEntries(is);

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -61,10 +61,6 @@ import org.xml.sax.Attributes;
 /**
  * ScanrReader is the file format reader for Olympus ScanR datasets.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ScanrReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ScanrReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ScanrReader extends FormatReader {
@@ -117,6 +113,7 @@ public class ScanrReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     Location file = new Location(id).getAbsoluteFile();
     String name = file.getName();
@@ -133,11 +130,13 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     String localName = new Location(name).getName();
     if (localName.equals(XML_FILE) || localName.equals(EXPERIMENT_FILE) ||
@@ -160,6 +159,7 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser p = new TiffParser(stream);
     IFD ifd = p.getFirstIFD();
@@ -172,6 +172,7 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -195,6 +196,7 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -225,6 +227,7 @@ public class ScanrReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -262,12 +265,14 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return tileWidth;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return tileHeight;
@@ -276,6 +281,7 @@ public class ScanrReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     if (metadataFiles.size() > 0) {
@@ -400,6 +406,7 @@ public class ScanrReader extends FormatReader {
     tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
 
     Arrays.sort(list, new Comparator<String>() {
+      @Override
       public int compare(String s1, String s2) {
         int lastSeparator1 = s1.lastIndexOf(File.separator) + 1;
         int lastSeparator2 = s2.lastIndexOf(File.separator) + 1;
@@ -439,6 +446,7 @@ public class ScanrReader extends FormatReader {
     int next = 0;
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
     Arrays.sort(keys, new Comparator<String>() {
+      @Override
       public int compare(String s1, String s2) {
         char row1 = s1.charAt(0);
         char row2 = s2.charAt(0);
@@ -704,11 +712,13 @@ public class ScanrReader extends FormatReader {
 
     // -- DefaultHandler API methods --
 
+    @Override
     public void characters(char[] ch, int start, int length) {
       String v = new String(ch, start, length);
       currentValue.append(v);
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -719,6 +729,7 @@ public class ScanrReader extends FormatReader {
       }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
       String v = currentValue.toString().trim();
       if (v.length() > 0) {

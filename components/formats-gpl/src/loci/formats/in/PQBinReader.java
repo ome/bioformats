@@ -42,17 +42,12 @@ import ome.units.UNITS;
 /**
  * PQBinReader is the file format reader for PicoQuant .bin files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PQBinReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PQBinReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * Please Note: This format holds FLIM data arranged so that each decay is stored contiguously. 
  * Therefore, as in other FLIM format readers e.g. SDTReader.java, on the first call to openBytes
  * the whole data cube ( x,y,t) (NB actually t not real-time T) is loaded from the file to  a buffer.
  * On further calls to openBytes the appropriate 2D (x,y)plane (timebin) is returned from this buffer.
  * This is in the interest of significantly improved  performance when all the planes are requested one after another.
  * There will be a performance cost if a single plane is requested but this is highly unlikely for FLIM data.
- *
  */
 public class PQBinReader extends FormatReader {
 
@@ -89,6 +84,7 @@ public class PQBinReader extends FormatReader {
   // -- IFormatReader API methods --
   
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     
     long fileLength = stream.length();
@@ -110,6 +106,7 @@ public class PQBinReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -196,6 +193,7 @@ public class PQBinReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -209,6 +207,7 @@ public class PQBinReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);

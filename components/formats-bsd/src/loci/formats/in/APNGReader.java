@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,13 +32,12 @@
 
 package loci.formats.in;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.zip.InflaterInputStream;
 
-import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -51,10 +50,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * APNGReader is the file format reader for
  * Animated Portable Network Graphics (APNG) images.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/APNGReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/APNGReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -89,6 +84,7 @@ public class APNGReader extends FormatReader {
 
   private byte[] lastImage;
   private int lastImageIndex = -1;
+  private int lastImageRow = -1;
 
   private int compression;
   private int interlace;
@@ -106,6 +102,7 @@ public class APNGReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -123,6 +120,7 @@ public class APNGReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut;
@@ -131,91 +129,48 @@ public class APNGReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (no == lastImageIndex && lastImage != null) {
+    if (no == lastImageIndex && lastImage != null && y + h <= lastImageRow) {
       RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
       readPlane(s, x, y, w, h, buf);
       s.close();
+      s = null;
       return buf;
     }
 
     if (no == 0) {
-      ByteArrayOutputStream s = new ByteArrayOutputStream();
-      int readIDATs = 0;
+      lastImage = null;
 
-      for (PNGBlock block : blocks) {
-        if (block.type.equals("IDAT")) {
-          in.seek(block.offset);
-          byte[] tmp = new byte[block.length];
-          in.read(tmp);
-          s.write(tmp);
-          tmp = null;
-
-          readIDATs++;
-        }
-        if (readIDATs == idatCount) {
-          break;
-        }
-      }
-
-      s.close();
-
-      lastImage = decode(s.toByteArray());
+      PNGInputStream stream = new PNGInputStream("IDAT");
+      lastImage = decode(stream, getSizeX(), y + h);
+      stream.close();
       lastImageIndex = 0;
+      lastImageRow = y + h;
 
       RandomAccessInputStream pix = new RandomAccessInputStream(lastImage);
       readPlane(pix, x, y, w, h, buf);
       pix.close();
+      pix = null;
+
+      if (y + h < getSizeY()) {
+        lastImage = null;
+      }
       return buf;
     }
 
-    ByteArrayOutputStream s = new ByteArrayOutputStream();
-    int readIDATs = 0;
 
-    for (PNGBlock block : blocks) {
-      if (block.type.equals("IDAT")) {
-        in.seek(block.offset);
-        byte[] tmp = new byte[block.length];
-        in.read(tmp);
-        s.write(tmp);
-        tmp = null;
-
-        readIDATs++;
-      }
-      if (readIDATs == idatCount) {
-        break;
-      }
-    }
-
-    boolean fdatValid = false;
-    int fctlCount = 0;
     int[] coords = frameCoordinates.get(no);
 
-    s = new ByteArrayOutputStream();
-
-    for (PNGBlock block : blocks) {
-      if (block.type.equals("fcTL")) {
-        fdatValid = fctlCount == no;
-        fctlCount++;
-      }
-      else if (block.type.equals("fdAT")) {
-        in.seek(block.offset + 4);
-        if (fdatValid) {
-          byte[] tmp = new byte[block.length - 4];
-          in.read(tmp);
-          s.write(tmp);
-          tmp = null;
-        }
-      }
-    }
-
-    s.close();
     lastImage = openBytes(0);
-    byte[] newImage = decode(s.toByteArray(), coords[2], coords[3]);
+    lastImageRow = getSizeY();
+    PNGInputStream stream = new PNGInputStream("fdAT", no);
+    byte[] newImage = decode(stream, coords[2], coords[3]);
+    stream.close();
 
     // paste current image onto first image
 
@@ -250,6 +205,7 @@ public class APNGReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -258,12 +214,14 @@ public class APNGReader extends FormatReader {
       blocks = null;
       lastImage = null;
       lastImageIndex = -1;
+      lastImageRow = -1;
     }
   }
 
   // -- Internal FormatReader methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -384,11 +342,11 @@ public class APNGReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
   }
 
-  private byte[] decode(byte[] bytes) throws FormatException, IOException {
+  private byte[] decode(PNGInputStream bytes) throws FormatException, IOException {
     return decode(bytes, getSizeX(), getSizeY());
   }
 
-  private byte[] decode(byte[] bytes, int width, int height)
+  private byte[] decode(PNGInputStream bytes, int width, int height)
     throws FormatException, IOException
   {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -415,11 +373,11 @@ public class APNGReader extends FormatReader {
       byte[] filters = new byte[height];
       image = new byte[rowLen * height];
 
-      InflaterInputStream decompressor =
-        new InflaterInputStream(new ByteArrayInputStream(bytes));
+      InflaterInputStream decompressor = new InflaterInputStream(bytes);
       try {
+        int n = 0;
         for (int row=0; row<height; row++) {
-          int n = 0;
+          n = 0;
           while (n < 1) {
             n = decompressor.read(filters, row, 1);
           }
@@ -431,6 +389,7 @@ public class APNGReader extends FormatReader {
       }
       finally {
         decompressor.close();
+        decompressor = null;
       }
 
       // perform any necessary unfiltering
@@ -446,10 +405,16 @@ public class APNGReader extends FormatReader {
       int nRowBlocks = height / 8;
       int nColBlocks = width / 8;
 
+      if (nRowBlocks <= 0) {
+        nRowBlocks = 1;
+      }
+      if (nColBlocks <= 0) {
+        nColBlocks = 1;
+      }
+
       image = new byte[FormatTools.getPlaneSize(this)];
 
-      InflaterInputStream decompressor =
-        new InflaterInputStream(new ByteArrayInputStream(bytes));
+      InflaterInputStream decompressor = new InflaterInputStream(bytes);
       try {
         for (int i=0; i<passImages.length; i++) {
           int passWidth = PASS_WIDTHS[i] * nColBlocks;
@@ -477,6 +442,7 @@ public class APNGReader extends FormatReader {
       }
       finally {
         decompressor.close();
+        decompressor = null;
       }
 
       int chunk = bpp * getRGBChannelCount();
@@ -528,8 +494,7 @@ public class APNGReader extends FormatReader {
 
     if (getBitsPerPixel() < 8) {
       byte[] expandedImage = new byte[FormatTools.getPlaneSize(this)];
-      RandomAccessInputStream bits = new RandomAccessInputStream(
-        new ByteArrayHandle(image));
+      RandomAccessInputStream bits = new RandomAccessInputStream(image);
 
       int skipBits = rowLen * 8 - getSizeX() * getBitsPerPixel();
       for (int row=0; row<getSizeY(); row++) {
@@ -541,6 +506,7 @@ public class APNGReader extends FormatReader {
         bits.skipBits(skipBits);
       }
       bits.close();
+      bits = null;
 
       image = expandedImage;
     }
@@ -606,6 +572,126 @@ public class APNGReader extends FormatReader {
     public long offset;
     public int length;
     public String type;
+  }
+
+  /**
+   * InputStream implementation that stitches together IDAT blocks into
+   * a seamless zlib stream.  This allows us to decompress the image data
+   * without reading the entire compressed stream into a byte array.
+   */
+  class PNGInputStream extends InputStream {
+    private int currentBlock = -1;
+    private int blockPointer = 0;
+    private int blockLength = 0;
+    private String blockType;
+    private int imageNumber;
+    private int fctlCount = 0;
+    private boolean fdatValid = false;
+
+    public PNGInputStream(String blockType) throws IOException {
+      this(blockType, 0);
+    }
+
+    public PNGInputStream(String blockType, int imageNumber) throws IOException {
+      this.imageNumber = imageNumber;
+      this.blockType = blockType;
+      fctlCount = 0;
+      fdatValid = false;
+      advanceBlock();
+    }
+
+    @Override
+    public int available() throws IOException {
+      if (blockPointer == blockLength) {
+        advanceBlock();
+      }
+      if (currentBlock < 0 || in.getFilePointer() == in.length()) {
+        return -1;
+      }
+      return (int) Math.min(blockLength - blockPointer, in.length() - in.getFilePointer());
+    }
+
+    @Override
+    public int read() throws IOException {
+      if (blockPointer < blockLength) {
+        blockPointer++;
+        return in.read();
+      }
+      advanceBlock();
+      if (currentBlock < 0) {
+        throw new EOFException();
+      }
+      blockPointer++;
+      return in.read();
+    }
+
+    public byte readByte() throws IOException {
+      if (blockPointer < blockLength) {
+        blockPointer++;
+        return in.readByte();
+      }
+      advanceBlock();
+      if (currentBlock < 0) {
+        throw new EOFException();
+      }
+      blockPointer++;
+      return in.readByte();
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+      int read = 0;
+      for (int i=0; i<len; i++) {
+        if (available() > 0) {
+          b[off + i] = readByte();
+          read++;
+        }
+        else {
+          break;
+        }
+      }
+      return read;
+    }
+
+    private void advanceBlock() throws IOException {
+      if (currentBlock < blocks.size() - 1) {
+        while (currentBlock < blocks.size()) {
+          currentBlock++;
+          if (currentBlock == blocks.size()) {
+            currentBlock = -1;
+            break;
+          }
+          if (blockType.equals("fdAT") && blocks.get(currentBlock).type.equals("fcTL")) {
+            fdatValid = fctlCount == imageNumber;
+            fctlCount++;
+            if (fctlCount > imageNumber + 1) {
+              currentBlock = -1;
+              break;
+            }
+          }
+          else if (blockType.equals(blocks.get(currentBlock).type)) {
+            if (fdatValid || !blockType.equals("fdAT")) {
+              break;
+            }
+          }
+        }
+        if (currentBlock >= 0) {
+          blockPointer = 0;
+          blockLength = blocks.get(currentBlock).length;
+          in.seek(blocks.get(currentBlock).offset);
+          if (blocks.get(currentBlock).type.equals("fdAT")) {
+            blockLength -= 4;
+            in.skipBytes(4);
+          }
+        }
+      }
+      else {
+        currentBlock = -1;
+        blockPointer = 0;
+        blockLength = 0;
+      }
+    }
+
   }
 
 }

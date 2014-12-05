@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,10 +45,6 @@ import loci.formats.UnsupportedCompressionException;
  *
  * Decompression logic is adapted from the jrawio project,
  * http://jrawio.dev.java.net
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/NikonCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/NikonCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -138,6 +134,7 @@ public class NikonCodec extends BaseCodec {
   };
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -160,6 +157,7 @@ public class NikonCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {

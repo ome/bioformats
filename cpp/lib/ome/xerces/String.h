@@ -173,6 +173,79 @@ namespace ome
         return narrow;
       }
 
+      /**
+       * Compare a String for equality with a C string.
+       *
+       * @param rhs the string to compare.
+       * @returns @c true if equal, @c false otherwise.
+       */
+      bool
+      operator== (const char *rhs)
+      {
+        return this->narrow != 0 && strcmp(this->narrow, rhs) == 0;
+      }
+
+      /**
+       * Compare a String for equality with a std::string.
+       *
+       * @param rhs the string to compare.
+       * @returns @c true if equal, @c false otherwise.
+       */
+      bool
+      operator== (const std::string& rhs)
+      {
+        return this->narrow != 0 && strcmp(this->narrow, rhs.c_str()) == 0;
+      }
+
+      /**
+       * Compare a String for equality with a String.
+       *
+       * @param rhs the string to compare.
+       * @returns @c true if equal, @c false otherwise.
+       */
+      bool
+      operator== (const String& rhs)
+      {
+        return this->narrow != 0 && rhs.narrow != 0 &&
+          strcmp(this->narrow, rhs.narrow) == 0;
+      }
+
+      /**
+       * Compare a String for inequality with a C string.
+       *
+       * @param rhs the string to compare.
+       * @returns @c true if not equal, @c false otherwise.
+       */
+      bool
+      operator!= (const char *rhs)
+      {
+        return !(*this == rhs);
+      }
+
+      /**
+       * Compare a String for inequality with a std::string.
+       *
+       * @param rhs the string to compare.
+       * @returns @c true if not equal, @c false otherwise.
+       */
+      bool
+      operator!= (const std::string& rhs)
+      {
+        return !(*this == rhs);
+      }
+
+      /**
+       * Compare a String for inequality with a String.
+       *
+       * @param rhs the string to compare.
+       * @returns @c true if not equal, @c false otherwise.
+       */
+      bool
+      operator!= (const String& rhs)
+      {
+        return !(*this == rhs);
+      }
+
     private:
       /// The char * string representation.
       char *narrow;

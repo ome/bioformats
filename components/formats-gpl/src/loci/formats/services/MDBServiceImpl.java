@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,10 +46,6 @@ import mdbtools.libmdb.mem;
 
 /**
  * Implementation of {@link MDBService} for parsing MDB database files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/MDBServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/MDBServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MDBServiceImpl extends AbstractService implements MDBService {
 
@@ -70,6 +66,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
   }
 
   /* @see MDBService#initialize(String) */
+  @Override
   public void initialize(String filename) throws IOException {
     boundValues = new Vector<Holder>();
     mem.mdb_init();
@@ -80,6 +77,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
   }
 
   /* @see MDBService#parseDatabase() */
+  @Override
   public Vector<Vector<String[]>> parseDatabase() throws IOException {
     List catalog = mdb.catalog;
 
@@ -127,6 +125,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
   }
 
   /* @see MDBService#close() */
+  @Override
   public void close() {
     mdb.close();
     mdb = null;

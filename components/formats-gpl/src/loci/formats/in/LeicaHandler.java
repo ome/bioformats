@@ -69,10 +69,6 @@ import org.xml.sax.Attributes;
 /**
  * SAX handler for parsing XML in Leica LIF and Leica TCS files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/LeicaHandler.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/LeicaHandler.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LeicaHandler extends BaseHandler {
@@ -152,6 +148,7 @@ public class LeicaHandler extends BaseHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void endElement(String uri, String localName, String qName) {
     if (!nameStack.empty() && nameStack.peek().equals(qName)) nameStack.pop();
 
@@ -277,6 +274,7 @@ public class LeicaHandler extends BaseHandler {
     }
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {

@@ -36,10 +36,20 @@
  * #L%
  */
 
+#include <cassert>
+#include <deque>
 #include <fstream>
+#include <iostream>
+#include <set>
+
+#include <boost/format.hpp>
 
 #include <ome/xerces/EntityResolver.h>
 #include <ome/xerces/String.h>
+
+#include <ome/xerces/dom/Document.h>
+#include <ome/xerces/dom/Element.h>
+#include <ome/xerces/dom/NodeList.h>
 
 #include <xercesc/sax/InputSource.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
@@ -70,32 +80,67 @@ namespace ome
             case xercesc::XMLResourceIdentifier::SchemaGrammar:
             case xercesc::XMLResourceIdentifier::SchemaImport:
               {
-                entity_map_type& cache(entities());
-                entity_map_type::const_iterator i = cache.find(String(resource->getSchemaLocation()));
-                const std::string& data(i->second);
-                if (i != cache.end())
-                  {
-                    ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
-                                                         static_cast<XMLSize_t>(data.size()),
-                                                         resource->getSchemaLocation());
-                  }
+                ret = getSource(String(resource->getSchemaLocation()));
               }
               break;
             case xercesc::XMLResourceIdentifier::ExternalEntity:
               {
-                entity_map_type& cache(entities());
-                entity_map_type::const_iterator i = cache.find(String(resource->getSystemId()));
-                const std::string& data(i->second);
-                if (i != cache.end())
-                  {
-                    ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
-                                                         static_cast<XMLSize_t>(data.size()),
-                                                         resource->getSystemId());
-                  }
+                ret = getSource(String(resource->getSystemId()));
               }
               break;
             default:
               break;
+            }
+        }
+
+      return ret;
+    }
+
+    xercesc::InputSource *
+    EntityResolver::getSource(const std::string& resource)
+    {
+      xercesc::InputSource *ret = 0;
+
+      entity_map_type& cache(entities());
+      entity_map_type::iterator i = cache.find(resource);
+      if (i != cache.end())
+        {
+          std::string& data(i->second.second);
+
+          if (data.empty())
+            {
+              const boost::filesystem::path& file(i->second.first);
+
+              if (boost::filesystem::exists(file))
+                {
+                  std::ifstream in(file.generic_string().c_str());
+                  if (in)
+                    {
+                      std::ios::pos_type pos = in.tellg();
+                      in.seekg(0, std::ios::end);
+                      std::ios::pos_type len = in.tellg() - pos;
+                      if (len)
+                        data.reserve(static_cast<std::string::size_type>(len));
+                      in.seekg(0, std::ios::beg);
+
+                      data.assign(std::istreambuf_iterator<char>(in),
+                                  std::istreambuf_iterator<char>());
+
+                    }
+                  else
+                    {
+                      boost::format fmt("Failed to load XML schema id ‘%1%’ from file ‘%2%’");
+                      fmt % resource % file.generic_string();
+                      std::cerr << fmt.str() << '\n';
+                    }
+                }
+            }
+
+          if (!data.empty())
+            {
+              ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
+                                                   static_cast<XMLSize_t>(data.size()),
+                                                   String(i->second.first.generic_string()));
             }
         }
 
@@ -109,28 +154,11 @@ namespace ome
       return entity_map;
     }
 
-    EntityResolver::AutoRegisterEntity::AutoRegisterEntity(const std::string& id,
-                                                           const std::string& data):
-      id(id)
-    {
-      EntityResolver::entities().insert(std::make_pair(id, data));
-    }
-
     EntityResolver::AutoRegisterEntity::AutoRegisterEntity(const std::string&             id,
                                                            const boost::filesystem::path& file):
       id(id)
     {
-      std::string data;
-
-      std::ifstream in(file.generic_string().c_str());
-      in.seekg(0, std::ios::end);
-      data.reserve(in.tellg());
-      in.seekg(0, std::ios::beg);
-
-      data.assign(std::istreambuf_iterator<char>(in),
-                  std::istreambuf_iterator<char>());
-
-      EntityResolver::entities().insert(std::make_pair(id, data));
+      EntityResolver::entities().insert(std::make_pair(id, entity_cache(file, std::string())));
     }
 
     EntityResolver::AutoRegisterEntity::~AutoRegisterEntity()
@@ -138,11 +166,93 @@ namespace ome
       EntityResolver::entities().erase(id);
     }
 
-    EntityResolver::RegisterEntity::RegisterEntity(const std::string& id,
-                                                   const std::string& data):
-      registration(new AutoRegisterEntity(id, data))
+    EntityResolver::AutoRegisterCatalog::AutoRegisterCatalog(const boost::filesystem::path& catalog):
+      registration()
     {
-      EntityResolver::entities().insert(std::make_pair(id, data));
+      std::set<boost::filesystem::path> visited;
+      std::deque<boost::filesystem::path> pending;
+
+      pending.push_back(ome::compat::canonical(catalog));
+
+      while(!pending.empty())
+        {
+          boost::filesystem::path current(pending.front());
+          assert(!current.empty());
+          pending.pop_front();
+
+          if (visited.find(current) != visited.end())
+            {
+              boost::format fmt("XML catalog ‘%1%’ contains a recursive reference");
+              fmt % current.generic_string();
+              std::cerr << fmt.str() << '\n';
+              continue; // This has already been processed; break loop
+            }
+
+          boost::filesystem::path currentdir(current.parent_path());
+          assert(!currentdir.empty());
+
+          std::ifstream in(current.generic_string().c_str());
+          if (in)
+            {
+              dom::Document doc(dom::createDocument(in));
+              dom::Element root(doc.getDocumentElement());
+              dom::NodeList nodes(root->getChildNodes());
+              for (dom::NodeList::iterator i = nodes.begin();
+                   i != nodes.end();
+                   ++i)
+                {
+                  if (i->getNodeType() == xercesc::DOMNode::ELEMENT_NODE)
+                    {
+                      dom::Element e(i->get());
+                      if (e)
+                        {
+                          if (e.getTagName() == "uri")
+                            {
+                              if (e.hasAttribute("uri") && e.hasAttribute("name"))
+                                {
+                                  boost::filesystem::path newid(currentdir / static_cast<std::string>(e.getAttribute("uri")));
+                                  registration.push_back(std::shared_ptr<AutoRegisterEntity>(new AutoRegisterEntity(static_cast<std::string>(e.getAttribute("name")),
+                                                                                                                    ome::compat::canonical(newid))));
+                                }
+                            }
+                          if (e.getTagName() == "nextCatalog")
+                            {
+                              if (e.hasAttribute("catalog"))
+                                {
+                                  boost::filesystem::path newcatalog(currentdir / static_cast<std::string>(e.getAttribute("catalog")));
+                                  pending.push_back(ome::compat::canonical(newcatalog));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+#ifndef NDEBUG
+          // Don't make failure hard in release builds; just skip.
+          else
+            {
+              boost::format fmt("Failed to load XML catalog from file ‘%1%’");
+              fmt % catalog.generic_string();
+              throw std::runtime_error(fmt.str());
+            }
+#endif
+
+          // Mark this file visited.
+          visited.insert(current);
+        }
+    }
+
+    EntityResolver::AutoRegisterCatalog::~AutoRegisterCatalog()
+    {
+    }
+
+    EntityResolver::RegisterCatalog::RegisterCatalog(const boost::filesystem::path& catalog):
+      registration(new AutoRegisterCatalog(catalog))
+    {
+    }
+
+    EntityResolver::RegisterCatalog::~RegisterCatalog()
+    {
     }
 
     EntityResolver::RegisterEntity::RegisterEntity(const std::string&             id,

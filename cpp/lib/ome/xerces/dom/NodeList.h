@@ -56,6 +56,9 @@ namespace ome
     namespace dom
     {
 
+      template<int T>
+      class NodeWrapper;
+
       /**
        * DOM NodeList wrapper.  The wrapper behaves as though is the
        * wrapped DOMNodeList; it can be dereferenced using the "*" or
@@ -121,7 +124,7 @@ namespace ome
            *
            * @return a reference to the Node at this position.
            */
-          Node&
+          NodeWrapper<S>&
           operator* () noexcept
           {
             assert(xmlnode);
@@ -133,7 +136,7 @@ namespace ome
            *
            * @return a pointer to the Node at this position.
            */
-          Node *
+          NodeWrapper<S> *
           operator-> () noexcept
           {
             assert(xmlnode);
@@ -202,7 +205,7 @@ namespace ome
           bool
           operator != (const iterator& rhs) const noexcept
           {
-            return *this != rhs;
+            return !(*this == rhs);
           }
 
           friend class NodeListWrapper;
@@ -213,7 +216,7 @@ namespace ome
           /// List being iterated over.
           xercesc::DOMNodeList *xmlnodelist;
           /// Node at current position.
-          Node xmlnode;
+          NodeWrapper<S> xmlnode;
         };
 
         /**

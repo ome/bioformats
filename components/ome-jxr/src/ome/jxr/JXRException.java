@@ -28,10 +28,6 @@ package ome.jxr;
 /**
  * JXRException is thrown when an error is encountered during the broadly
  * understood parsing of a JPEG XR image file.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/JXRException.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/JXRException.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JXRException extends Exception {
 

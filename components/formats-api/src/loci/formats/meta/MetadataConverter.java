@@ -32,6 +32,7 @@
 
 package loci.formats.meta;
 
+import java.util.List;
 import java.util.Map;
 
 import ome.xml.model.*;
@@ -56,10 +57,6 @@ import ome.units.UNITS;
  * (OMERO's metadata store implementation) into an
  * {@link loci.formats.ome.OMEXMLMetadata}, thus generating OME-XML from
  * information in an OMERO database.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/MetadataConverter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/MetadataConverter.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -727,7 +724,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Map<String, String> map = src.getImagingEnvironmentMap(i);
+        List<MapPair> map = src.getImagingEnvironmentMap(i);
         dest.setImagingEnvironmentMap(map, i);
       }
       catch (NullPointerException e) { }
@@ -1880,7 +1877,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        Map<String, String> value = src.getMapAnnotationValue(i);
+        List<MapPair> value = src.getMapAnnotationValue(i);
         dest.setMapAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
@@ -3951,7 +3948,7 @@ public final class MetadataConverter {
         }
 
         try {
-          Map<String, String> map =
+          List<MapPair> map =
             src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
           dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
         }

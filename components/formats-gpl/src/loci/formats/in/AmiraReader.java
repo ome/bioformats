@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,10 +50,6 @@ import ome.units.quantity.Length;
 /**
  * This is a file format reader for AmiraMesh data.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/AmiraReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/AmiraReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */
@@ -82,6 +78,7 @@ public class AmiraReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
@@ -90,6 +87,7 @@ public class AmiraReader extends FormatReader {
   /**
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -122,6 +120,7 @@ public class AmiraReader extends FormatReader {
   }
 
   /* @see loci.formats.FormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
 
@@ -136,6 +135,7 @@ public class AmiraReader extends FormatReader {
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#initFile(java.lang.String)
    */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -268,6 +268,7 @@ public class AmiraReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, 50, false)) return false;
     String c = stream.readLine();
@@ -278,6 +279,7 @@ public class AmiraReader extends FormatReader {
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true ,1);
     return lut;
@@ -339,6 +341,7 @@ public class AmiraReader extends FormatReader {
       offsets[0] = offsetOfFirstStream;
     }
 
+    @Override
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (offsets[no] == 0) {
         int i = no - 1;
@@ -417,6 +420,7 @@ public class AmiraReader extends FormatReader {
       decompressor = new InflaterInputStream(in);
     }
 
+    @Override
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (no < currentNo) {
         initDecompressor();
@@ -488,6 +492,7 @@ public class AmiraReader extends FormatReader {
       }
     }
 
+    @Override
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (maxOffsetIndex < no) {
         in.seek(offsets[maxOffsetIndex]);

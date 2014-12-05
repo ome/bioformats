@@ -43,6 +43,7 @@
 
 #include <ome/xerces/dom/Base.h>
 #include <ome/xerces/dom/Wrapper.h>
+#include <ome/xerces/dom/NodeList.h>
 
 #include <xercesc/dom/DOMNode.hpp>
 
@@ -64,6 +65,9 @@ namespace ome
       class NodeWrapper : public Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >
       {
       public:
+        /// The derived object type of a node.
+        typedef xercesc::DOMNode::NodeType node_type;
+
         /**
          * Construct a NULL Node.
          */
@@ -110,6 +114,17 @@ namespace ome
           // errors converted to sane descriptions.  And additionally
           // for all other xerces methods which throw.
           return (*this)->appendChild(node.get());
+        }
+
+        /**
+         * Get the object type of this node.
+         *
+         * @return the object type.
+         */
+        node_type
+        getNodeType ()
+        {
+          return (*this)->getNodeType();
         }
       };
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -59,10 +59,6 @@ import ome.units.UNITS;
  * MetamorphTiffReader is the file format reader for TIFF files produced by
  * Metamorph software version 7.5 and above.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Thomas Caswell tcaswell at uchicago.edu
  */
@@ -92,6 +88,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
@@ -101,6 +98,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     String[] domain = new String[1];
@@ -110,6 +108,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels ? new String[0] : files;
@@ -118,6 +117,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -153,6 +153,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -560,6 +561,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       this.well = well;
     }
 
+    @Override
     public boolean equals(Object o) {
       if (!(o instanceof Well)) return false;
       Well w = (Well) o;
@@ -568,12 +570,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
         w.fieldCol == this.fieldCol;
     }
 
+    @Override
     public int hashCode() {
       return (well << 16) | (fieldRow << 8) | fieldCol;
     }
   }
 
   class NumericComparator implements Comparator<String> {
+    @Override
     public int compare(String s1, String s2) {
       if (s1.equals(s2)) return 0;
 
