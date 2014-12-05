@@ -871,9 +871,15 @@ public class IM3Reader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       data = null;
-      records.clear();
-      spectra.clear();
-      dataSets.clear();
+      if (records != null) {
+        records.clear();
+      }
+      if (spectra != null) {
+        spectra.clear();
+      }
+      if (dataSets != null) {
+        dataSets.clear();
+      }
     }
   }
 
