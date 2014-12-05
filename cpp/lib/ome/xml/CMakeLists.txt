@@ -53,6 +53,7 @@ endforeach(hdr)
 
 set(OME_XML_STATIC_SOURCES
   meta/OMEXMLMetadataRoot.cpp
+  model/Catalog.cpp
   model/ModelException.cpp
   model/detail/OMEModel.cpp
   model/detail/OMEModelObject.cpp

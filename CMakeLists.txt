@@ -100,9 +100,17 @@ add_subdirectory(cpp)
 set(LIBRARY_PREFIX OME)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/cpp/cmake/bf)
+file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf
+     DESTINATION ${PROJECT_BINARY_DIR}
+     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 if(WIN32)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config.bat)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/bf.bat)
 endif()
 
 message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")
