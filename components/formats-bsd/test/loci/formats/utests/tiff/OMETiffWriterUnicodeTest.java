@@ -26,7 +26,6 @@ import java.io.File;
 
 import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
-import loci.formats.in.TiffReader;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
@@ -43,7 +42,8 @@ import org.testng.annotations.Test;
 //Java imports
 
 /**
- * 
+ * Tests that the correct reader is used to read an OME-TIFF file with unicode
+ * characters.
  *
  * @author Jean-Marie Burel &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:j.burel@dundee.ac.uk">j.burel@dundee.ac.uk</a>
