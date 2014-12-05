@@ -1035,23 +1035,6 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setMaskBinData(const byte_array& binData,
-                       index_type        ROIIndex,
-                       index_type        shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      OMEXMLMetadata::setMaskBinData(const byte_array& /* binData */,
-                                     index_type        /* ROIIndex */,
-                                     index_type        /* shapeIndex */)
-      {
-        // @todo To implement
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
         setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                               index_type mapAnnotationIndex);
 {% end header %}\

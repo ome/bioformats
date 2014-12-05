@@ -979,31 +979,6 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setMaskBinData(const byte_array& binData,
-                       index_type ROIIndex,
-                       index_type shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      AggregateMetadata::setMaskBinData(const byte_array& binData,
-                                        index_type ROIIndex,
-                                        index_type shapeIndex)
-      {
-        for (delegate_list_type::iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataStore> store = std::dynamic_pointer_cast<MetadataStore>(*i);
-            if (store)
-              store->setMaskBinData(binData, ROIIndex, shapeIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
         setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                               index_type mapAnnotationIndex);
 {% end header %}\

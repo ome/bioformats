@@ -253,20 +253,6 @@ namespace ome
                                   index_type imageIndex,
                                   index_type binDataIndex = 0) = 0;
 
-        /**
-         * Set the Mask binary data property on a ROI Shape.
-         *
-         * @param binData the mask data.
-         * @param ROIIndex the ROI index.
-         * @param shapeIndex the Shape index.
-         *
-         * @todo correct type for mask bin data?
-         */
-        virtual void
-        setMaskBinData(const byte_array& binData,
-                       index_type ROIIndex,
-                       index_type shapeIndex) = 0;
-
 	/**
          * Set the Map value of MapAnnotation.
          *
