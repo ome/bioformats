@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,7 +48,6 @@ import loci.formats.meta.MetadataRetrieve;
  * ImageIOWriter is the superclass for file format writers that use the
  * javax.imageio library.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class ImageIOWriter extends FormatWriter {
@@ -81,6 +80,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -94,6 +94,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#savePlane(int, Object, int, int, int, int)
    */
+  @Override
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -110,6 +111,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8, FormatTools.UINT16};
   }
@@ -117,6 +119,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return Image.class;
   }

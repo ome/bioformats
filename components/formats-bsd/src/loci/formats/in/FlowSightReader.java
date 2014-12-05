@@ -56,7 +56,6 @@ import loci.formats.tiff.TiffParser;
  * The cif file format is tiff-like, but doesn't adhere to
  * the TIFF standard, so we use the TiffParser where we can, 
  * but do not use the TiffReader hierarchy.
- *
  */
 public class FlowSightReader extends FormatReader {
   final private static int CHANNEL_COUNT_TAG = 33000;

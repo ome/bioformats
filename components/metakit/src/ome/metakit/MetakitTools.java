@@ -2,7 +2,7 @@
  * #%L
  * OME Metakit package for reading Metakit database files.
  * %%
- * Copyright (C) 2011 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2011 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,7 +32,6 @@ import loci.common.RandomAccessInputStream;
 
 /**
  * Utility methods for working with Metakit database files.
- *
  */
 public class MetakitTools {
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,7 +48,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * TrestleReader is the file format reader for Trestle slide datasets.
- *
  */
 public class TrestleReader extends BaseTiffReader {
 
@@ -81,6 +80,7 @@ public class TrestleReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (super.isThisType(name, open)) return true;
 
@@ -102,6 +102,7 @@ public class TrestleReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
     IFD ifd = parser.getFirstIFD();
@@ -112,11 +113,13 @@ public class TrestleReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -132,6 +135,7 @@ public class TrestleReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -145,6 +149,7 @@ public class TrestleReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -153,6 +158,7 @@ public class TrestleReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -165,6 +171,7 @@ public class TrestleReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -179,6 +186,7 @@ public class TrestleReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "tif")) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
@@ -199,6 +207,7 @@ public class TrestleReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.in.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -291,6 +300,7 @@ public class TrestleReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 

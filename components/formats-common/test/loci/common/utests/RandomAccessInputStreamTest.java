@@ -51,7 +51,6 @@ import org.testng.annotations.Test;
 /**
  * Tests for reading bytes from a loci.common.RandomAccessInputStream.
  *
- *
  * @see loci.common.RandomAccessInputStream
  */
 @Test(groups="readTests")

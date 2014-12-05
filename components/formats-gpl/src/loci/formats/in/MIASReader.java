@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -64,7 +64,6 @@ import ome.units.UNITS;
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class MIASReader extends FormatReader {
@@ -119,6 +118,7 @@ public class MIASReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  @Override
   public int getRequiredDirectories(String[] files)
     throws FormatException, IOException
   {
@@ -156,11 +156,13 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
 
@@ -189,6 +191,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -205,11 +208,13 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0][0].getCurrentFile() == null) {
@@ -219,6 +224,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0][0].getCurrentFile() == null) {
@@ -230,6 +236,7 @@ public class MIASReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -282,6 +289,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -308,6 +316,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
@@ -336,6 +345,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -352,6 +362,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -370,6 +381,7 @@ public class MIASReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

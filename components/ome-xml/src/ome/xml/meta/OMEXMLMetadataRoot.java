@@ -43,7 +43,6 @@ import ome.xml.model.enums.EnumerationException;
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
  *
- *
  * @author Roger Leigh rleigh at dundee.ac.uk
  */
 public class OMEXMLMetadataRoot extends OME implements MetadataRoot {

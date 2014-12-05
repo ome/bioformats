@@ -31,7 +31,6 @@ package ome.jxr.ifd;
  * <dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
- *
  */
 public enum PixelType {
 

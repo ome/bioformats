@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -39,7 +39,6 @@ package ome.xml.meta;
  *
  * <p>The <code>MetadataRoot</code> interface is implemented by the
  * root node of metadata storage implementations.
- *
  *
  * @author Roger Leigh r.leigh at dundee.ac.uk
  */

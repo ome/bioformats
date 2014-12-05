@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @author callan
  *
- *
  */
 public class OMEModelImpl implements OMEModel {
 
@@ -63,6 +62,7 @@ public class OMEModelImpl implements OMEModel {
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#removeModelObject(java.lang.String)
    */
+  @Override
   public OMEModelObject removeModelObject(String id) {
     return modelObjects.remove(id);
   }
@@ -70,6 +70,7 @@ public class OMEModelImpl implements OMEModel {
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#addModelObject(java.lang.String, ome.xml.model.OMEModelObject)
    */
+  @Override
   public OMEModelObject addModelObject(String id, OMEModelObject object) {
     if (Reference.class.isAssignableFrom(object.getClass())) {
       return object;
@@ -80,6 +81,7 @@ public class OMEModelImpl implements OMEModel {
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#getModelObject(java.lang.String)
    */
+  @Override
   public OMEModelObject getModelObject(String id) {
     return modelObjects.get(id);
   }
@@ -87,6 +89,7 @@ public class OMEModelImpl implements OMEModel {
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#getModelObjects()
    */
+  @Override
   public Map<String, OMEModelObject> getModelObjects() {
     return modelObjects;
   }
@@ -94,6 +97,7 @@ public class OMEModelImpl implements OMEModel {
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#addReference(java.lang.String, ome.xml.model.Reference)
    */
+  @Override
   public boolean addReference(OMEModelObject a, Reference b) {
     List<Reference> bList = references.get(a);
     if (bList == null) {
@@ -106,6 +110,7 @@ public class OMEModelImpl implements OMEModel {
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#getReferences()
    */
+  @Override
   public Map<OMEModelObject, List<Reference>> getReferences() {
     return references;
   }
@@ -113,6 +118,7 @@ public class OMEModelImpl implements OMEModel {
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#resolveReferences()
    */
+  @Override
   public int resolveReferences() {
     int unhandledReferences = 0;
     for (Entry<OMEModelObject, List<Reference>> entry : references.entrySet())

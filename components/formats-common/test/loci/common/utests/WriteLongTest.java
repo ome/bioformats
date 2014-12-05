@@ -48,7 +48,6 @@ import org.testng.annotations.Test;
 /**
  * Tests for reading longs from a loci.common.IRandomAccess.
  *
- *
  * @see loci.common.IRandomAccess
  */
 @Test(groups="writeTests")

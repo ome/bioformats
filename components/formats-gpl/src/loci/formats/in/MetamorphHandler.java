@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,7 +38,6 @@ import org.xml.sax.Attributes;
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
  * Metamorph software version 7.5 and above.
- *
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Thomas Caswell tcaswell at uchicago.edu
@@ -117,12 +116,16 @@ public class MetamorphHandler extends BaseHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
     String id = attributes.getValue("id");
     String value = attributes.getValue("value");
     String delim = " #13; #10;";
+    if (value != null && value.indexOf(delim) < 0) {
+      delim = "&#13;&#10;";
+    }
     if (id != null && value != null) {
       if (id.equals("Description")) {
         if (metadata != null) metadata.remove("Comment");

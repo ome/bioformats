@@ -50,7 +50,6 @@ import ome.units.quantity.Length;
  * ImarisTiffReader is the file format reader for
  * Bitplane Imaris 3 files (TIFF variant).
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ImarisTiffReader extends BaseTiffReader {
@@ -74,6 +73,7 @@ public class ImarisTiffReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

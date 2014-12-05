@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -53,7 +53,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer series chooser dialog box.
- *
  */
 public class SeriesDialog extends ImporterDialog implements ActionListener {
 
@@ -203,6 +202,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
   // -- ActionListener methods --
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     final String cmd = e.getActionCommand();
     if ("select".equals(cmd)) {

@@ -47,7 +47,6 @@ import org.testng.annotations.Test;
 /**
  * Tests for reading bytes from a loci.common.IRandomAccess.
  *
- *
  * @see loci.common.IRandomAccess
  */
 @Test(groups="readTests")

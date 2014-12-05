@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,7 +38,6 @@ package loci.formats.cache;
  * {@link ICacheSource}, it works with multidimensional (N-D) position arrays
  * rather than rasterized (1-D) indices. The two are made equivalent via a
  * mapping between the two, invoked within {@link Cache} as needed.
- *
  */
 public interface ICacheStrategy extends CacheReporter {
 

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,7 +48,6 @@ import loci.formats.cache.CacheListener;
 /**
  * Indicator GUI component showing which planes are currently in the cache
  * for a given dimensional axis at a particular dimensional position.
- *
  */
 public class CacheIndicator extends JComponent implements CacheListener {
 
@@ -90,6 +89,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- JComponent API methods --
 
+  @Override
   public void paintComponent(Graphics g) {
 //    super.paintComponent(g);
 
@@ -152,16 +152,19 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- Component API methods --
 
+  @Override
   public Dimension getPreferredSize() {
     int w = comp == null ? COMPONENT_WIDTH : comp.getPreferredSize().width;
     return new Dimension(w, COMPONENT_HEIGHT);
   }
 
+  @Override
   public Dimension getMinimumSize() {
     int w = comp == null ? COMPONENT_WIDTH : comp.getMinimumSize().width;
     return new Dimension(w, COMPONENT_HEIGHT);
   }
 
+  @Override
   public Dimension getMaximumSize() {
     int w = comp == null ? Integer.MAX_VALUE : comp.getMaximumSize().width;
     return new Dimension(w, COMPONENT_HEIGHT);
@@ -169,6 +172,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- CacheListener API methods --
 
+  @Override
   public void cacheUpdated(CacheEvent e) {
     if (e.getSource() instanceof Cache) this.cache = (Cache) e.getSource();
     int type = e.getType();
@@ -177,6 +181,7 @@ public class CacheIndicator extends JComponent implements CacheListener {
     {
       // cache has changed; update GUI
       SwingUtilities.invokeLater(new Runnable() {
+        @Override
         public void run() {
           repaint();
         }

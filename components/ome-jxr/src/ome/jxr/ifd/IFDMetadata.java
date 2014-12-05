@@ -46,7 +46,6 @@ import ome.jxr.JXRException;
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  *
  * <dl>
- *
  */
 public class IFDMetadata {
 

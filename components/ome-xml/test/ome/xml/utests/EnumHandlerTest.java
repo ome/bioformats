@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -48,7 +48,6 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import org.testng.annotations.Test;
 
 /**
- *
  */
 public class EnumHandlerTest {
 

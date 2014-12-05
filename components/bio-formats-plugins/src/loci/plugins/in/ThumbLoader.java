@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,7 +46,6 @@ import loci.plugins.BF;
 /**
  * Loads thumbnails for Bio-Formats Importer
  * series chooser in a separate thread.
- *
  */
 public class ThumbLoader implements Runnable {
 
@@ -94,6 +93,7 @@ public class ThumbLoader implements Runnable {
   // -- Runnable methods --
 
   /** Does the work of loading the thumbnails. */
+  @Override
   public void run() {
     BF.status(false, "Gathering series information");
     int seriesCount = ir.getSeriesCount();
@@ -156,6 +156,7 @@ public class ThumbLoader implements Runnable {
       this.size = size;
     }
 
+    @Override
     public int compareTo(SeriesInfo info) {
       return size - info.size;
     }

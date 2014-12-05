@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,7 +46,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * QTWriter is the file format writer for uncompressed QuickTime movie files.
- *
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -177,6 +176,7 @@ public class QTWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -263,9 +263,11 @@ public class QTWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8};
   }
@@ -273,6 +275,7 @@ public class QTWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     MetadataRetrieve r = getMetadataRetrieve();
@@ -317,6 +320,7 @@ public class QTWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     if (out != null) writeFooter();
     super.close();

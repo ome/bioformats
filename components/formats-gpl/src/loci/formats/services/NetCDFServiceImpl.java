@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -53,7 +53,6 @@ import com.esotericsoftware.kryo.io.Output;
 /**
  * Utility class for working with NetCDF/HDF files.  Uses reflection to
  * call the NetCDF Java library.
- *
  */
 public class NetCDFServiceImpl extends AbstractService
   implements NetCDFService, KryoSerializable {
@@ -94,6 +93,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#setFile(java.lang.String)
    */
+  @Override
   public void setFile(String file) throws IOException {
     this.currentFile = file;
 
@@ -109,6 +109,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getFile()
    */
+  @Override
   public String getFile() {
     return currentFile;
   }
@@ -116,6 +117,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getAttributeList()
    */
+  @Override
   public Vector<String> getAttributeList() {
     return attributeList;
   }
@@ -123,6 +125,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getVariableList()
    */
+  @Override
   public Vector<String> getVariableList() {
     return variableList;
   }
@@ -130,6 +133,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getAttributeValue(java.lang.String)
    */
+  @Override
   public String getAttributeValue(String path) {
     String groupName = getDirectory(path);
     String attributeName = getName(path);
@@ -143,6 +147,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getVariableValue(java.lang.String)
    */
+  @Override
   public Object getVariableValue(String name) throws ServiceException {
     return getArray(name, null, null);
   }
@@ -150,6 +155,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getArray(java.lang.String, int[], int[])
    */
+  @Override
   public Object getArray(String path, int[] origin, int[] shape)
     throws ServiceException
   {
@@ -178,6 +184,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getVariableAttributes(java.lang.String)
    */
+  @Override
   public Hashtable<String, Object> getVariableAttributes(String name) {
     String groupName = getDirectory(name);
     String variableName = getName(name);
@@ -194,6 +201,7 @@ public class NetCDFServiceImpl extends AbstractService
     return toReturn;
   }
 
+  @Override
   public int getDimension(String name) {
     String groupName = getDirectory(name);
     String variableName = getName(name);
@@ -204,6 +212,7 @@ public class NetCDFServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.NetCDFService#close()
    */
+  @Override
   public void close() throws IOException {
     if (netCDFFile != null) netCDFFile.close();
     currentFile = null;
@@ -290,6 +299,7 @@ public class NetCDFServiceImpl extends AbstractService
     PrintStream throwaway = new PrintStream(
       new ByteArrayOutputStream(), false /*auto-flush*/,
         Constants.ENCODING) {
+      @Override
       public void print(String s) { }
     };
     System.setOut(throwaway);
@@ -301,6 +311,7 @@ public class NetCDFServiceImpl extends AbstractService
 
   // -- KryoSerializable methods --
 
+  @Override
   public void read(Kryo kryo, Input in) {
     currentFile = kryo.readObjectOrNull(in, String.class);
     attributeList = kryo.readObjectOrNull(in, Vector.class);
@@ -313,6 +324,7 @@ public class NetCDFServiceImpl extends AbstractService
     }
   }
 
+  @Override
   public void write(Kryo kryo, Output out) {
     kryo.writeObjectOrNull(out, currentFile, String.class);
     kryo.writeObjectOrNull(out, attributeList, Vector.class);

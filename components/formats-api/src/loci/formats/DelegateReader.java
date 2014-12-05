@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,7 +44,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * DelegateReader is a file format reader that selects which reader to use
  * for a format if there are two readers which handle the same format.
- *
  */
 public abstract class DelegateReader extends FormatReader {
 
@@ -86,16 +85,19 @@ public abstract class DelegateReader extends FormatReader {
   // -- IMetadataConfigurable API methods --
 
   /* @see IMetadataConfigurable#getSupportedMetadataLevels() */
+  @Override
   public Set<MetadataLevel> getSupportedMetadataLevels() {
     return nativeReader.getSupportedMetadataLevels();
   }
 
   /* @see IMetadataConfigurable#getMetadataOptions() */
+  @Override
   public MetadataOptions getMetadataOptions() {
     return nativeReader.getMetadataOptions();
   }
 
   /* @see IMetadataConfigurable#setMetadataOptions(MetadataOptions) */
+  @Override
   public void setMetadataOptions(MetadataOptions options) {
     nativeReader.setMetadataOptions(options);
     legacyReader.setMetadataOptions(options);
@@ -104,16 +106,19 @@ public abstract class DelegateReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     return nativeReader.isThisType(name, open);
   }
 
   /* @see IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return nativeReader.isThisType(stream);
   }
 
   /* @see IFormatReader#setSeries(int) */
+  @Override
   public void setSeries(int no) {
     super.setSeries(no);
     if (nativeReaderInitialized) nativeReader.setSeries(no);
@@ -121,6 +126,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setCoreIndex(int) */
+  @Override
   public void setCoreIndex(int no) {
     super.setCoreIndex(no);
     if (nativeReaderInitialized) nativeReader.setCoreIndex(no);
@@ -128,6 +134,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setResolution(int) */
+  @Override
   public void setResolution(int resolution) {
     super.setResolution(resolution);
     if (nativeReaderInitialized) nativeReader.setResolution(resolution);
@@ -135,6 +142,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
+  @Override
   public void setNormalized(boolean normalize) {
     super.setNormalized(normalize);
     nativeReader.setNormalized(normalize);
@@ -142,6 +150,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
+  @Override
   public void setOriginalMetadataPopulated(boolean populate) {
     super.setOriginalMetadataPopulated(populate);
     nativeReader.setOriginalMetadataPopulated(populate);
@@ -149,6 +158,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
+  @Override
   public void setGroupFiles(boolean group) {
     super.setGroupFiles(group);
     nativeReader.setGroupFiles(group);
@@ -156,6 +166,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  @Override
   public void setFlattenedResolutions(boolean flattened) {
     super.setFlattenedResolutions(flattened);
     nativeReader.setFlattenedResolutions(flattened);
@@ -163,6 +174,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
+  @Override
   public void setMetadataFiltered(boolean filter) {
     super.setMetadataFiltered(filter);
     nativeReader.setMetadataFiltered(filter);
@@ -170,6 +182,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
+  @Override
   public void setMetadataStore(MetadataStore store) {
     super.setMetadataStore(store);
     nativeReader.setMetadataStore(store);
@@ -177,6 +190,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
       return legacyReader.get8BitLookupTable();
@@ -185,6 +199,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
       return legacyReader.get16BitLookupTable();
@@ -193,6 +208,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
       return legacyReader.getSeriesUsedFiles(noPixels);
@@ -201,6 +217,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -211,6 +228,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (nativeReader != null) nativeReader.close(fileOnly);
@@ -221,6 +239,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
       return legacyReader.getOptimalTileWidth();
@@ -229,6 +248,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
       return legacyReader.getOptimalTileHeight();
@@ -237,6 +257,7 @@ public abstract class DelegateReader extends FormatReader {
   }
 
   /* @see IFormatReader#reopenFile() */
+  @Override
   public void reopenFile() throws IOException {
     if (useLegacy) {
       legacyReader.reopenFile();
@@ -249,6 +270,7 @@ public abstract class DelegateReader extends FormatReader {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     if (useLegacy) {

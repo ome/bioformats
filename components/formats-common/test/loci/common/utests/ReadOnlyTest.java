@@ -47,7 +47,6 @@ import org.testng.annotations.Test;
  * Tests for ensuring that read-only IRandomAccess objects throw an
  * appropriate exception when a write method is called.
  *
- *
  * @see loci.common.IRandomAccess
  */
 public class ReadOnlyTest {

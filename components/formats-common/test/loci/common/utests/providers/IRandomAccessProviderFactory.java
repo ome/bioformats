@@ -38,7 +38,6 @@ import java.util.Map;
 /**
  * Factory for providing instances of IRandomAccessProvider.
  *
- *
  * @see IRandomAccessProvider
  */
 public class IRandomAccessProviderFactory {

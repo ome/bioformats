@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats autogen package for programmatically generating source code.
  * %%
- * Copyright (C) 2007 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2007 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,6 @@ import org.apache.velocity.app.VelocityEngine;
 
 /**
  * Useful methods for working with Apache Velocity.
- *
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

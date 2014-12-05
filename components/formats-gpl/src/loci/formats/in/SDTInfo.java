@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ import loci.common.RandomAccessInputStream;
 /**
  * SDTInfo encapsulates the header information for
  * Becker &amp; Hickl SPC-Image SDT files.
- *
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

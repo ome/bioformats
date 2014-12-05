@@ -47,7 +47,6 @@ import ome.xml.model.primitives.Timestamp;
 
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
- *
  */
 public class L2DReader extends FormatReader {
 
@@ -82,6 +81,7 @@ public class L2DReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "l2d") || checkSuffix(name, "scn")) {
       return super.isThisType(name, open);
@@ -105,6 +105,7 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = (int) Math.min(512, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -113,6 +114,7 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
@@ -120,6 +122,7 @@ public class L2DReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -130,11 +133,13 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -151,6 +156,7 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (reader != null) reader.close(fileOnly);
@@ -164,12 +170,14 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return tileWidth[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return tileHeight[getSeries()];
@@ -178,6 +186,7 @@ public class L2DReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // NB: This format cannot be imported using omebf.
     // See Trac ticket #266 for details.

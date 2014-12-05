@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -59,7 +59,6 @@ package loci.formats.cache;
  *    3 |    17 11  1  9 15
  *    4 |    23 19  5 13 21
  * </pre>
- *
  */
 public class RectangleStrategy extends CacheStrategy {
 
@@ -71,6 +70,7 @@ public class RectangleStrategy extends CacheStrategy {
   // -- CacheStrategy API methods --
 
   /* @see CacheStrategy#getPossiblePositions() */
+  @Override
   protected int[][] getPossiblePositions() {
     // with sufficient range, any position could be cached
     int[][] p = new int[length()][lengths.length];

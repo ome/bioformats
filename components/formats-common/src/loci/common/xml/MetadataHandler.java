@@ -39,7 +39,6 @@ import org.xml.sax.Attributes;
 /**
  * Used to retrieve key/value pairs from XML.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -57,10 +56,12 @@ class MetadataHandler extends BaseHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void characters(char[] data, int start, int len) {
     metadata.put(currentQName, new String(data, start, len));
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {

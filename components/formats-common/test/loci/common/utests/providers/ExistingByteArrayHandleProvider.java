@@ -42,12 +42,12 @@ import loci.common.IRandomAccess;
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.ByteArrayHandle from existing byte arrays.
  *
- *
  * @see IRandomAccessProvider
  * @see loci.common.ByteArrayHandle
  */
 class ExistingByteArrayHandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     IRandomAccess handle = new ByteArrayHandle(page);

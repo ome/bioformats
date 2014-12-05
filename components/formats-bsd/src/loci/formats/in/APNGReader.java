@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,7 +50,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * APNGReader is the file format reader for
  * Animated Portable Network Graphics (APNG) images.
- *
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -103,6 +102,7 @@ public class APNGReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -120,6 +120,7 @@ public class APNGReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut;
@@ -128,6 +129,7 @@ public class APNGReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -203,6 +205,7 @@ public class APNGReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -218,6 +221,7 @@ public class APNGReader extends FormatReader {
   // -- Internal FormatReader methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -596,6 +600,7 @@ public class APNGReader extends FormatReader {
       advanceBlock();
     }
 
+    @Override
     public int available() throws IOException {
       if (blockPointer == blockLength) {
         advanceBlock();
@@ -606,6 +611,7 @@ public class APNGReader extends FormatReader {
       return (int) Math.min(blockLength - blockPointer, in.length() - in.getFilePointer());
     }
 
+    @Override
     public int read() throws IOException {
       if (blockPointer < blockLength) {
         blockPointer++;
@@ -632,6 +638,7 @@ public class APNGReader extends FormatReader {
       return in.readByte();
     }
 
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
       int read = 0;
       for (int i=0; i<len; i++) {

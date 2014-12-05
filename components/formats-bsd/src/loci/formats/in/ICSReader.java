@@ -69,7 +69,6 @@ import ome.units.UNITS;
  * TODO : remove sub-C logic once N-dimensional support is in place
  *        see http://dev.loci.wisc.edu/trac/java/ticket/398
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ICSReader extends FormatReader {
@@ -562,6 +561,7 @@ public class ICSReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     // check if we have a v2 ICS file - means there is no companion IDS file
     RandomAccessInputStream f = new RandomAccessInputStream(id);
@@ -571,6 +571,7 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     String[] domain = new String[] {FormatTools.GRAPHICS_DOMAIN};
@@ -585,12 +586,14 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
+  @Override
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
     return subC == 0 && core.get(0).interleaved;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
@@ -598,6 +601,7 @@ public class ICSReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -703,6 +707,7 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (versionTwo) {
@@ -713,6 +718,7 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -736,6 +742,7 @@ public class ICSReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -1371,21 +1378,21 @@ public class ICSReader extends FormatReader {
       boolean same = true;
 
       for (Integer len : channelLengths) {
-	  if (clen0 != len) same = false;
+        if (clen0 != len) same = false;
       }
       for (String type : channelTypes) {
-	  if (!ctype0.equals(type)) same = false;
+        if (!ctype0.equals(type)) same = false;
       }
 
       if (same) {
-	  m.moduloC.type = ctype0;
-	  if (FormatTools.LIFETIME.equals(ctype0)) {
-	    m.moduloC.parentType = FormatTools.SPECTRA;
-	  }
-	  m.moduloC.typeDescription = "TCSPC";
-	  m.moduloC.start = 0;
-	  m.moduloC.step = 1;
-	  m.moduloC.end = clen0;
+        m.moduloC.type = ctype0;
+        if (FormatTools.LIFETIME.equals(ctype0)) {
+          m.moduloC.parentType = FormatTools.SPECTRA;
+        }
+        m.moduloC.typeDescription = "TCSPC";
+        m.moduloC.start = 0;
+        m.moduloC.step = 1;
+        m.moduloC.end = clen0;
       }
     }
 

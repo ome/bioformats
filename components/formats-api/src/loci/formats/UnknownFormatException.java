@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ package loci.formats;
 /**
  * UnknownFormatException is the exception thrown when the format of a
  * particular data stream or filename cannot be recognized or is unsupported.
- *
  */
 public class UnknownFormatException extends FormatException {
 

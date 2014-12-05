@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,7 +33,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer range chooser dialog box.
- *
  */
 public class RangeDialog extends ImporterDialog {
 
@@ -51,6 +50,7 @@ public class RangeDialog extends ImporterDialog {
 
   // -- ImporterDialog methods --
 
+  @Override
   protected boolean needPrompt() {
     if (process.isWindowless() || !options.isSpecifyRanges()) return false;
 
@@ -68,6 +68,7 @@ public class RangeDialog extends ImporterDialog {
     return false;
   }
 
+  @Override
   protected GenericDialog constructDialog() {
     ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
@@ -107,6 +108,7 @@ public class RangeDialog extends ImporterDialog {
     return gd;
   }
 
+  @Override
   protected boolean harvestResults(GenericDialog gd) {
     ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();

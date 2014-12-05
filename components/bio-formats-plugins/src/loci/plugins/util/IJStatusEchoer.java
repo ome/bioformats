@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,12 +35,12 @@ import loci.plugins.BF;
 
 /**
  * Echoes status messages to the ImageJ status bar.
- *
  */
 public class IJStatusEchoer extends AppenderBase<ILoggingEvent> {
 
   // -- AppenderSkeleton API methods --
 
+  @Override
   protected void append(ILoggingEvent event) {
     if (event.getLevel().isGreaterOrEqual(Level.INFO)) {
       BF.status(false, event.getMessage().toString());

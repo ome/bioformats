@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,19 +34,25 @@ import org.testng.ITestResult;
  * an "F" for each failure and an "S" for each skip. Adapted from an
  * <a href="http://testng.org/doc/documentation-main.html#logging">example</a>
  * on the TestNG web site.
- *
  */
 public class DotTestListener implements ITestListener {
 
   private int count = 0;
 
+  @Override
   public void onTestFailure(ITestResult tr) { log("F"); }
+  @Override
   public void onTestSkipped(ITestResult tr) { log("-"); }
+  @Override
   public void onTestSuccess(ITestResult tr) { log("."); }
 
+  @Override
   public void onFinish(ITestContext tc) { }
+  @Override
   public void onStart(ITestContext tc) { }
+  @Override
   public void onTestFailedButWithinSuccessPercentage(ITestResult tr) { }
+  @Override
   public void onTestStart(ITestResult tr) { }
 
   private void log(String s) {

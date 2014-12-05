@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ import loci.formats.ReaderWrapper;
 /**
  * TODO
  *
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class VirtualReader extends ReaderWrapper {
@@ -59,6 +58,7 @@ public class VirtualReader extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
+  @Override
   public void close() throws IOException {
     if (refCount > 0) refCount--;
     if (refCount == 0) super.close();

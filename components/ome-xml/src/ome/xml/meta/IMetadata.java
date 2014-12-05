@@ -44,7 +44,6 @@ package ome.xml.meta;
  * mainly to reduce the need to cast between <code>MetadataStore</code> and
  * <code>MetadataRetrieve</code> object types.
  *
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface IMetadata extends MetadataRetrieve, MetadataStore { }
