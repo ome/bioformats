@@ -1,0 +1,8 @@
+#! /bin/bash
+# Script for updating copyright headers across the code
+
+COPYRIGHT_START="Copyright (C) [0-9]\{4\} - "
+COPYRIGHT_END="[0-9]\{4\}"
+YEAR=$1
+git grep -l "${COPYRIGHT_START}${COPYRIGHT_END}" | \
+xargs sed -i '' -e "s/\(${COPYRIGHT_START}\)${COPYRIGHT_END}/\1${YEAR}/"
