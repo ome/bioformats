@@ -1,6 +1,12 @@
 #! /bin/bash
 # Script for updating copyright headers across the code
 
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: update_copyright [year]"
+  exit 1
+fi
+
 COPYRIGHT="Copyright (C) "
 YEAR="[0-9]\{4\}"
 RANGE=" - "
