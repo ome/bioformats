@@ -8,30 +8,29 @@ import sys
 version = sys.argv[1]
 
 # Define regular expression objects
-pattern1 = r"(.*<groupId>ome</groupId>\n.*\n.*<version>).*(</version>)"
-regexp1 = re.compile(pattern1)
-pattern2 = r"(<release.version>).*(</release.version>)"
-regexp2 = re.compile(pattern2)
+artifact_pattern = r"(<groupId>ome</groupId>\n.*\n.*<version>).*(</version>)"
+release_version_pattern = r"(<release.version>).*(</release.version>)"
 
-for pomfile in (glob.glob("pom.xml") + glob.glob("*/*/pom.xml") +
-                glob.glob("*/*/*/pom.xml")):
-    with open(pomfile, "r") as infile:
-        infile_str = infile.read()
-        outfile_str = regexp1.sub(r"\g<1>%s\g<2>" % version, infile_str)
-        outfile_str = regexp2.sub(r"\g<1>%s\g<2>" % version, outfile_str)
-        with open(pomfile, "w") as output:
-            output.write(outfile_str)
+
+def replace_file(input_path, pattern):
+    with open(input_path, "r") as infile:
+        regexp = re.compile(pattern)
+        new_content = regexp.sub(r"\g<1>%s\g<2>" % version, infile.read())
+        with open(input_path, "w") as output:
+            output.write(new_content)
             output.close()
         infile.close()
 
-pattern3 = r"(STABLE_VERSION = \").*(\";)"
-regexp3 = re.compile(pattern3)
+# Replace versions in components pom.xml
+for pomfile in (glob.glob("*/*/pom.xml") + glob.glob("*/*/*/pom.xml")):
+    replace_file(pomfile, artifact_pattern)
 
+# Replace versions in top-level pom.xml
+toplevelpomfile = "pom.xml"
+replace_file(toplevelpomfile, artifact_pattern)
+replace_file(toplevelpomfile, release_version_pattern)
+
+# Replace STABLE_VERSION in UpgradeChecker
+stableversion_pattern = r"(STABLE_VERSION = \").*(\";)"
 upgradecheck = "components/formats-bsd/src/loci/formats/UpgradeChecker.java"
-with open(upgradecheck, "r") as infile:
-    infile_str = infile.read()
-    outfile_str = regexp3.sub(r"\g<1>%s\g<2>" % version, infile_str)
-    with open(upgradecheck, "w") as output:
-        output.write(outfile_str)
-        output.close()
-    infile.close()
+replace_file(upgradecheck, stableversion_pattern)
