@@ -43,7 +43,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import loci.common.DataTools;
-import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -202,7 +201,7 @@ public class OMETiffReader extends FormatReader {
       try {
         String metadataFile = meta.getBinaryOnlyMetadataFile();
         if (metadataFile != null) {
-          return !checkSuffix(metadataFile, "tif") && !checkSuffix(metadataFile, "tiff");
+          return true;
         }
       }
       catch (NullPointerException e) {
@@ -437,9 +436,6 @@ public class OMETiffReader extends FormatReader {
     String metadataPath = null;
     try {
       metadataPath = meta.getBinaryOnlyMetadataFile();
-      if (checkSuffix(metadataPath, "tif") || checkSuffix(metadataPath, "tiff")) {
-        metadataPath = null;
-      }
     }
     catch (NullPointerException e) {
     }
@@ -450,7 +446,7 @@ public class OMETiffReader extends FormatReader {
       Location path = new Location(dir, metadataPath);
       if (path.exists()) {
         metadataFile = path.getAbsolutePath();
-        xml = DataTools.readFile(metadataFile);
+        xml = readMetadataFile();
 
         try {
           meta = service.createOMEXMLMetadata(xml);
@@ -1002,6 +998,16 @@ public class OMETiffReader extends FormatReader {
     catch (DependencyException de) {
       throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
     }
+  }
+
+  /** Extracts the OME-XML from the current {@link #metadataFile}. */
+  private String readMetadataFile() throws IOException {
+    if (checkSuffix(metadataFile, "tif") || checkSuffix(metadataFile, "tiff")) {
+      // metadata file is an OME-TIFF file; extract OME-XML comment
+      return new TiffParser(metadataFile).getComment();
+    }
+    // assume metadata file is an XML file
+    return DataTools.readFile(metadataFile);
   }
 
   // -- Helper classes --
