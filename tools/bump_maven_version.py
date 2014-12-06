@@ -1,4 +1,4 @@
-#! /env/python
+#! /usr/bin/python
 # Script for updating copyright headers across the code
 
 import glob
