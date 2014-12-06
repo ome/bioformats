@@ -54,6 +54,9 @@ if __name__ == "__main__":
     parser.add_argument("version", type=str)
     ns = parser.parse_args()
 
-    bump_pom_versions(ns.version)
-    if not ns.version.endswith('SNAPSHOT'):
-        bump_stable_version(ns.version)
+    if not check_version_format(ns.version):
+        print "Invalid version format"
+    else:
+        bump_pom_versions(ns.version)
+        if not ns.version.endswith('SNAPSHOT'):
+            bump_stable_version(ns.version)
