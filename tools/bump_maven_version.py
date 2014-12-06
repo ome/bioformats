@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# Script for updating copyright headers across the code
+# Script for increasing versions numbers across the code
 
 import glob
 import re
