@@ -3,16 +3,17 @@
 
 import glob
 import re
-import sys
-
-version = sys.argv[1]
-
-# Define regular expression objects
-artifact_pattern = r"(<groupId>ome</groupId>\n.*\n.*<version>).*(</version>)"
-release_version_pattern = r"(<release.version>).*(</release.version>)"
+import argparse
 
 
-def replace_file(input_path, pattern):
+def check_version_format(version):
+    """Check format of version number"""
+    pattern = '^[0-9]+[\.][0-9]+[\.][0-9]+(\-.+)*$'
+    return re.match(pattern, version) is not None
+
+
+def replace_file(input_path, pattern, version):
+    """Substitute a pattern with version in a file"""
     with open(input_path, "r") as infile:
         regexp = re.compile(pattern)
         new_content = regexp.sub(r"\g<1>%s\g<2>" % version, infile.read())
@@ -21,16 +22,38 @@ def replace_file(input_path, pattern):
             output.close()
         infile.close()
 
-# Replace versions in components pom.xml
-for pomfile in (glob.glob("*/*/pom.xml") + glob.glob("*/*/*/pom.xml")):
-    replace_file(pomfile, artifact_pattern)
+artifact_pattern = r"(<groupId>ome</groupId>\n.*\n.*<version>).*(</version>)"
+release_version_pattern = r"(<release.version>).*(</release.version>)"
 
-# Replace versions in top-level pom.xml
-toplevelpomfile = "pom.xml"
-replace_file(toplevelpomfile, artifact_pattern)
-replace_file(toplevelpomfile, release_version_pattern)
 
-# Replace STABLE_VERSION in UpgradeChecker
+def bump_pom_versions(version):
+    """Replace versions in pom.xml files"""
+
+    # Replace versions in components pom.xml
+    for pomfile in (glob.glob("*/*/pom.xml") + glob.glob("*/*/*/pom.xml")):
+        replace_file(pomfile, artifact_pattern, version)
+
+    # Replace versions in top-level pom.xml
+    toplevelpomfile = "pom.xml"
+    replace_file(toplevelpomfile, artifact_pattern, version)
+    replace_file(toplevelpomfile, release_version_pattern, version)
+
 stableversion_pattern = r"(STABLE_VERSION = \").*(\";)"
 upgradecheck = "components/formats-bsd/src/loci/formats/UpgradeChecker.java"
-replace_file(upgradecheck, stableversion_pattern)
+
+
+def bump_stable_version(version):
+    """Replace UpgradeChecker stable version"""
+
+    replace_file(upgradecheck, stableversion_pattern, version)
+
+
+if __name__ == "__main__":
+    # Input check
+    parser = argparse.ArgumentParser()
+    parser.add_argument("version", type=str)
+    ns = parser.parse_args()
+
+    bump_pom_versions(ns.version)
+    if not ns.version.endswith('SNAPSHOT'):
+        bump_stable_version(ns.version)
