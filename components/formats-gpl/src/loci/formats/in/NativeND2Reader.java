@@ -1720,7 +1720,7 @@ public class NativeND2Reader extends FormatReader {
       ArrayList<String> posNames = handler.getPositionNames();
       for (int i=0; i<getSeriesCount(); i++) {
         String suffix =
-          i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
+          (i < posNames.size() && !posNames.get(i).equals("")) ? posNames.get(i) : "(series " + (i + 1) + ")";
         String name = filename + " " + suffix;
         store.setImageName(name.trim(), i);
       }
