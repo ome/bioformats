@@ -294,7 +294,7 @@ public class NDPIReader extends BaseTiffReader {
         long prevByteCount =
           i == 0 ? 0 : ifds.get(i - 1).getStripByteCounts()[0];
 
-        while (stripOffsets[j] < prevOffset) {
+        while (stripOffsets[j] < prevOffset || stripOffsets[j] < prevOffset + prevByteCount) {
           long newOffset = stripOffsets[j] + 0x100000000L;
           if (newOffset < stream.length() && ((j > 0 &&
             (stripOffsets[j] < stripOffsets[j - 1])) ||
