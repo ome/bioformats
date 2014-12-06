@@ -9,8 +9,8 @@ NEW_YEAR=$1
 
 # Update year range copyrights
 git grep -l "${COPYRIGHT}${YEAR}${RANGE}${YEAR}${AUTHOR}" | \
-xargs sed -i '' -e "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${NEW_YEAR}\2/"
+xargs sed -i "" -e "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${NEW_YEAR}\2/"
 
 # Update single year copyrights
 git grep -l "${COPYRIGHT}${YEAR}${AUTHOR}" | \
-xargs sed -i '' -e "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${NEW_YEAR}\2/"
+xargs sed -i "" -e "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${NEW_YEAR}\2/"
