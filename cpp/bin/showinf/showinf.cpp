@@ -41,11 +41,11 @@
 
 #include <ome/internal/version.h>
 
-#include "options.h"
-#include "ImageInfo.h"
+#include <showinf/options.h>
+#include <showinf/ImageInfo.h>
 
 using boost::format;
-using namespace bin::showinf;
+using namespace showinf;
 
 namespace
 {

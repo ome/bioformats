@@ -34,7 +34,11 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-set(OME_TOPLEVEL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR}/lib)
+set(OME_TOPLEVEL_INCLUDES
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib
+    ${CMAKE_CURRENT_BINARY_DIR}/lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/bin
+    ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 add_subdirectory(lib/ome/compat)
 add_subdirectory(lib/ome/internal)
