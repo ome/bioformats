@@ -36,15 +36,8 @@
 
 set(OME_TOPLEVEL_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}/lib
-    ${CMAKE_CURRENT_BINARY_DIR}/lib
-    ${CMAKE_CURRENT_SOURCE_DIR}/bin
-    ${CMAKE_CURRENT_BINARY_DIR}/bin)
+    ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/internal)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-add_subdirectory(lib/ome/bioformats)
-add_subdirectory(lib/ome/test)
-add_subdirectory(bin/showinf)
+add_subdirectory(lib)
+add_subdirectory(bin)
 add_subdirectory(test)
