@@ -34,15 +34,15 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-find_package(Xerces 3.0.0 REQUIRED)
+find_package(XercesC 3.0.0 REQUIRED)
 
 include(CheckCXXSourceRuns)
 
 # Xerces-C++ link test
 set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
-set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Xerces_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${XercesC_INCLUDE_DIRS})
 set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
-set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Xerces_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${XercesC_LIBRARIES})
 
 check_cxx_source_runs(
 "#include <xercesc/util/PlatformUtils.hpp>

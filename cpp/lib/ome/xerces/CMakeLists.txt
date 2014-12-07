@@ -35,7 +35,7 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Xerces_INCLUDE_DIRS})
+                    ${XercesC_INCLUDE_DIRS})
 
 set(ome_xerces_sources
     EntityResolver.cpp
@@ -67,7 +67,7 @@ set(ome_xerces_headers
     ${ome_xerces_generated_headers})
 
 add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
-target_link_libraries(ome-xerces ome-compat ${Xerces_LIBRARIES})
+target_link_libraries(ome-xerces ome-compat ${XercesC_LIBRARIES})
 set_target_properties(ome-xerces PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 set(ome_xerces_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xerces")
