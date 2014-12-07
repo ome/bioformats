@@ -387,14 +387,6 @@ namespace ome
       typedef typename PixelProperties<P>::native_type type;
     };
 
-    // No switch default to avoid -Wunreachable-code errors.
-    // However, this then makes -Wswitch-default complain.  Disable
-    // temporarily.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wswitch-default"
-#endif
-
     /**
      * Get the size of a PixelType, in bytes.
      *
