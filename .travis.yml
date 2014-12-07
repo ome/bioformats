@@ -30,6 +30,7 @@ before_install:
   - if [[ $BUILD == 'sphinx' ]]; then sudo fc-cache -rsfv; fi
 
 install:
+  - if [[ $BUILD != 'ant' ]] && [[ $BUILD != 'sphinx' ]]; then git fetch --tags; fi
   - if [[ $BUILD == 'maven' ]]; then mvn install -DskipTests=true; fi
 
 script:
