@@ -1,10 +1,11 @@
 #! /bin/bash
 # Script for updating copyright headers across the code
 
-if [ sed --version ]
+version=$(sed --version || echo "")
+if [ ${version:0:3} == "GNU" ];
 then
   echo "GNU version"
-  inplace_sed() { sed -e "$@"; }
+  inplace_sed() { sed -i -e "$@"; }
 else
   echo "FreeBSD version"
   inplace_sed(){ sed -i "" -e "$@"; }
