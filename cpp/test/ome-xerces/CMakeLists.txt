@@ -35,7 +35,7 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Xerces_INCLUDE_DIRS})
+                    ${XercesC_INCLUDE_DIRS})
 
 if(BUILD_TESTS)
   add_executable(xerces xerces.cpp)
