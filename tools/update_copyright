@@ -26,6 +26,8 @@ done
 # Update single year copyrights
 for file in $(git grep -l "${COPYRIGHT}${YEAR}${AUTHOR}");
 do
-    echo $file
-    inplace_sed "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${CURRENT_YEAR}\2/" $file
+    if [ -z "$(git grep "${COPYRIGHT}${CURRENT_YEAR}${AUTHOR}" -- $file)" ];
+    then
+        inplace_sed "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${CURRENT_YEAR}\2/" $file
+    fi
 done
