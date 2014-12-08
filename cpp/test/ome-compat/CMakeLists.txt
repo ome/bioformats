@@ -49,6 +49,12 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-compat/array array)
 
+  add_executable(boolean boolean.cpp)
+  target_link_libraries(boolean ome-compat)
+  target_link_libraries(boolean ome-test)
+
+  bf_add_test(ome-compat/boolean boolean)
+
   add_executable(cstdint cstdint.cpp)
   target_link_libraries(cstdint ome-compat)
   target_link_libraries(cstdint ome-test)
