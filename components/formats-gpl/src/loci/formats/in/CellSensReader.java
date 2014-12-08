@@ -789,7 +789,7 @@ public class CellSensReader extends FormatReader {
             int wave = pyramid.channelWavelengths.get(c).intValue();
             if (wave > 0) {
               store.setChannelEmissionWavelength(
-                new PositiveInteger(wave), ii, c);
+                FormatTools.getEmissionWavelength((double) wave), ii, c);
             }
           }
           for (int z=0; z<core.get(i).sizeZ; z++) {
