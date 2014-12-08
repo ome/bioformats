@@ -1,12 +1,6 @@
 #! /bin/bash
 # Script for updating copyright headers across the code
 
-if [ "$#" -ne 1 ]
-then
-  echo "Usage: update_copyright [year]"
-  exit 1
-fi
-
 if [ sed --version ]
 then
   echo "GNU version"
@@ -21,6 +15,7 @@ YEAR="[0-9]\{4\}"
 RANGE=" - "
 AUTHOR=" Open Microscopy Environment"
 CURRENT_YEAR=${1:-$(date +%Y)}
+echo "Updating copyright with $CURRENT_YEAR"
 
 # Update year range copyrights
 for file in $(git grep -l "${COPYRIGHT}${YEAR}${RANGE}${YEAR}${AUTHOR}");
@@ -31,5 +26,6 @@ done
 # Update single year copyrights
 for file in $(git grep -l "${COPYRIGHT}${YEAR}${AUTHOR}");
 do
-    "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${CURRENT_YEAR}\2/"
+    echo $file
+    inplace_sed "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${CURRENT_YEAR}\2/" $file
 done
