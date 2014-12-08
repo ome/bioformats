@@ -53,10 +53,10 @@ import java.util.List;
 
 //Third-party libraries
 
+
 //Application-internal dependencies
 import ome.units.quantity.Length;
 import ome.units.UNITS;
-
 import ome.xml.model.AffineTransform;
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
@@ -125,6 +125,7 @@ import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.IlluminationType;
+import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.Medium;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserType;
@@ -138,7 +139,6 @@ import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Power;
@@ -216,6 +216,9 @@ public class XMLMockObjects
 
   /** The default medium for the objective. */
   public static final Medium MEDIUM = Medium.AIR;
+  
+  /** The default type of a laser. */
+  public static final LaserMedium LASER_MEDIUM = LaserMedium.ALEXANDRITE;
 
   /** The default number of pixels along the X-axis. */
   public static final Integer SIZE_X = 24;
@@ -332,6 +335,10 @@ public class XMLMockObjects
     detector.setLotNumber(COMPONENT_LOT_NUMBER);
     detector.setAmplificationGain(0.0);
     detector.setGain(1.0);
+    detector.setOffset(2.0);
+    detector.setVoltage(new ElectricPotential(100, UNITS.V));
+    detector.setType(DETECTOR_TYPE);
+    detector.setZoom(3.0);
     return detector;
   }
 
@@ -432,6 +439,7 @@ public class XMLMockObjects
     transmittance.setCutOut(new Length(cutOut, UNITS.NM));
     transmittance.setCutInTolerance(new Length(1.0, UNITS.NM));
     transmittance.setCutOutTolerance(new Length(1.0, UNITS.NM));
+    transmittance.setTransmittance(new PercentFraction(3.0f));
     filter.setTransmittanceRange(transmittance);
     return filter;
   }
@@ -454,6 +462,12 @@ public class XMLMockObjects
       laser.setLotNumber(COMPONENT_LOT_NUMBER);
       laser.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       laser.setType(LASER_TYPE);
+      laser.setFrequencyMultiplication(new PositiveInteger(30));
+      laser.setLaserMedium(LASER_MEDIUM);
+      laser.setPockelCell(false);
+      laser.setRepetitionRate(new Frequency(30, UNITS.AHZ));
+      laser.setTuneable(false);
+      laser.setWavelength(new Length(200, UNITS.NM));
       return laser;
     } else if (Arc.class.getName().equals(type)) {
       Arc arc = new Arc();
@@ -662,6 +676,8 @@ public class XMLMockObjects
     settings.setOffset(1.0);
     settings.setReadOutRate(new Frequency(1.0, UNITS.HZ));
     settings.setVoltage(new ElectricPotential(1.0, UNITS.V));
+    settings.setIntegration(new PositiveInteger(20));
+    settings.setZoom(3.0);
     return settings;
   }
 
