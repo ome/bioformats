@@ -54,6 +54,7 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
+import ome.units.UNITS;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -721,7 +722,8 @@ public class CellSensReader extends FormatReader {
       Pyramid pyramid = pyramids.get(i);
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, i), 0, i);
       store.setObjectiveNominalMagnification(pyramid.magnification, 0, i);
-      store.setObjectiveWorkingDistance(pyramid.workingDistance, 0, i);
+      store.setObjectiveWorkingDistance(
+        FormatTools.createLength(pyramid.workingDistance, UNITS.MICROM), 0, i);
 
       for (int q=0; q<pyramid.objectiveTypes.size(); q++) {
         if (pyramid.objectiveTypes.get(q) == 1) {
@@ -799,10 +801,13 @@ public class CellSensReader extends FormatReader {
                 exp = pyramid.exposureTimes.get(c);
               }
               if (exp != null) {
-                store.setPlaneExposureTime(exp / 1000000.0, ii, nextPlane);
+                store.setPlaneExposureTime(
+                  FormatTools.createTime(exp / 1000000.0, UNITS.S), ii, nextPlane);
               }
-              store.setPlanePositionX(pyramid.originX, ii, nextPlane);
-              store.setPlanePositionY(pyramid.originY, ii, nextPlane);
+              store.setPlanePositionX(
+                FormatTools.createLength(pyramid.originX, UNITS.MICROM), ii, nextPlane);
+              store.setPlanePositionY(
+                FormatTools.createLength(pyramid.originY, UNITS.MICROM), ii, nextPlane);
               nextPlane++;
             }
           }
@@ -834,10 +839,10 @@ public class CellSensReader extends FormatReader {
         store.setObjectiveSettingsRefractiveIndex(pyramid.refractiveIndex, ii);
 
         if (pyramid.physicalSizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pyramid.physicalSizeX), ii);
+          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pyramid.physicalSizeX), ii);
         }
         if (pyramid.physicalSizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pyramid.physicalSizeY), ii);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pyramid.physicalSizeY), ii);
         }
 
         if (pyramid.acquisitionTime != null) {
