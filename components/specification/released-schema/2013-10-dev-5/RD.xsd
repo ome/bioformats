@@ -139,7 +139,6 @@
 				<xsd:element ref="VirtualChannelSettings" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="ChannelRenderer" minOccurs="1" maxOccurs="unbounded"/>
 				<xsd:element ref="OutputRenderer" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref="Compositor" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
@@ -151,6 +150,21 @@
 				<xsd:annotation>
 					<xsd:documentation> A name for the renderer.</xsd:documentation>
 				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="BlendMode" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						The blend mode used when combining overlapping images.
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Add"/>
+						<xsd:enumeration value="Mean"/>
+						<xsd:enumeration value="Multiply"/>
+						<xsd:enumeration value="Max"/>
+					</xsd:restriction>
+				</xsd:simpleType>
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
@@ -199,6 +213,11 @@
 										<xsd:documentation>True is the channel is displayed in the final image.</xsd:documentation>
 									</xsd:annotation>
 								</xsd:attribute>
+								<xsd:attribute name="Grayscale" type="xsd:boolean" use="optional" default="true">
+									<xsd:annotation>
+										<xsd:documentation>True is the channel is displayed in grayscale, regardless of color or lookup settings.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
 								<xsd:attribute name="Color" type="OME:Color" use="optional">
 									<xsd:annotation>
 										<xsd:documentation>The color used to construct a color ramp lookup table if no
@@ -212,42 +231,64 @@
 								</xsd:attribute>
 							</xsd:complexType>
 						</xsd:element>
+						<xsd:element name="ViewportOptions" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This defines the viewport options of the renderer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:attribute name="Zoom" type="xsd:float" use="optional">
+									<xsd:annotation>
+										<xsd:documentation>
+											The lower bound used for the input channel pixel data.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterX" use="optional" type="xsd:float">
+									<xsd:annotation>
+										<xsd:documentation>
+											The X position of the center of the viewport. Units are set by CenterXUnit.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterXUnit" use="optional" default="pixel" type="OME:UnitsLength">
+									<xsd:annotation>
+										<xsd:documentation>The units of the X stage center of the viewport - default:[pixel].</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterY" use="optional" type="xsd:float">
+									<xsd:annotation>
+										<xsd:documentation>
+											The Y position of the center of the viewport. Units are set by CenterYUnit.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterYUnit" use="optional" default="pixel" type="OME:UnitsLength">
+									<xsd:annotation>
+										<xsd:documentation>The units of the Y stage center of the viewport - default:[pixel].</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="TheZ" use="optional" type="OME:NonNegativeInt">
+									<xsd:annotation>
+										<xsd:documentation>
+											The z-section to render by default. If not specified then
+											0 is assumed. [units:none]
+											This is numbered from 0.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="TheT" use="optional" type="OME:NonNegativeInt">
+									<xsd:annotation>
+										<xsd:documentation>
+											The timepoint to render by default. If not specified then
+											0 is assumed. [units:none]
+											This is numbered from 0.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:complexType>
+						</xsd:element>
 					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="RendererID"/>
-					<xsd:attribute name="TheZ" use="optional" type="OME:NonNegativeInt">
-						<xsd:annotation>
-							<xsd:documentation>
-								The z-section to dender by default. If not specified then
-								0 is assumed. [units:none]
-								This is numbered from 0.
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="TheT" use="optional" type="OME:NonNegativeInt">
-						<xsd:annotation>
-							<xsd:documentation>
-								The timepoint to dender by default. If not specified then
-								0 is assumed. [units:none]
-								This is numbered from 0.
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="OutputStart" type="xsd:float" use="optional">
-						<xsd:annotation>
-							<xsd:documentation>
-								The lower bound used for the output channel pixel data.
-								TODO: If not present?
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="OutputEnd" type="xsd:float" use="optional">
-						<xsd:annotation>
-							<xsd:documentation>
-								The upper bound used for the output channel pixel data.
-								TODO: If not present?
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
 					<xsd:attribute name="BackgroundColor" use="optional" type="OME:Color">
 						<xsd:annotation>
 							<xsd:documentation> The Background Color used by the renderer when 
@@ -575,52 +616,26 @@
 					<xsd:documentation> A name for the output renderer.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
-
-	<xsd:element name="Compositor"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>Compositors</plural></xsdfu></xsd:appinfo>
-			<xsd:documentation> A compositor used when combining overlapping images. </xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation> A description for the compositor. [plane text multi-line string]
-						</xsd:documentation>
-					</xsd:annotation>
-					<xsd:simpleType>
-						<xsd:restriction base="xsd:string">
-							<xsd:whiteSpace value="preserve"/>
-						</xsd:restriction>
-					</xsd:simpleType>
-				</xsd:element>
-				<xsd:element ref="OME:Map" minOccurs="0" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation> A collection of settings for the compositor.</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-			</xsd:sequence>
-			<xsd:attribute name="Name" use="required" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation> A name for the output compositor.</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="BlendMode" use="required">
+			<xsd:attribute name="Type" use="required" type="OME:PixelType">
 				<xsd:annotation>
 					<xsd:documentation>
-						The blend mode used when combining overlapping images.
+						The variable type used to represent each pixel in the image.
 					</xsd:documentation>
 				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Add"/>
-						<xsd:enumeration value="Average"/>
-						<xsd:enumeration value="Multiply"/>
-						<xsd:enumeration value="XXXXX"/>
-					</xsd:restriction>
-				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="OutputStart" type="xsd:float" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						The lower bound used for the output channel pixel data.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="OutputEnd" type="xsd:float" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						The upper bound used for the output channel pixel data.
+					</xsd:documentation>
+				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
