@@ -1112,6 +1112,19 @@ public final class MetadataConverter {
           }
           catch (NullPointerException e) { }
         }
+
+        int lightPathAnnotationRefCount = 0;
+        try {
+          lightPathAnnotationRefCount = src.getLightPathAnnotationRefCount(i, c);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<lightPathAnnotationRefCount; q++) {
+          try {
+            String lightPathAnnotationRef = src.getLightPathAnnotationRef(i, c, q);
+            dest.setLightPathAnnotationRef(lightPathAnnotationRef, i, c, q);
+          }
+          catch (NullPointerException e) { }
+        }
       }
 
       int planeCount = 0;
@@ -1711,7 +1724,21 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
         }
       }
+
       convertLightSources(src, dest, i);
+
+      int instrumentRefCount = 0;
+      try {
+        instrumentRefCount = src.getInstrumentAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int r=0; r<instrumentRefCount; r++) {
+        try {
+          String id = src.getInstrumentAnnotationRef(i, r);
+          dest.setInstrumentAnnotationRef(id, i, r);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -3966,6 +3993,19 @@ public final class MetadataConverter {
             instrumentIndex, lightSource);
         }
         catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getGenericExcitationSourceAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setGenericExcitationSourceAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
       else if (type.equals("Laser")) {
         try {
