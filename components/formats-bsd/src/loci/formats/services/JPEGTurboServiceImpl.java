@@ -274,7 +274,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       header = getFixedHeader();
     }
 
-    int dataLength = header.length + 2;
+    long dataLength = header.length + 2;
 
     int start = tileX + (tileY * xTiles * restartInterval);
     for (int row=0; row<restartInterval; row++) {
@@ -284,12 +284,12 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
         long startOffset = restartMarkers.get(start);
         long endOffset = restartMarkers.get(end);
 
-        dataLength += (int) (endOffset - startOffset);
+        dataLength += (endOffset - startOffset);
       }
       start += xTiles;
     }
 
-    byte[] data = new byte[dataLength];
+    byte[] data = new byte[(int) dataLength];
 
     int offset = 0;
     System.arraycopy(header, 0, data, offset, header.length);
