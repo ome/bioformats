@@ -34,58 +34,9 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${XercesC_INCLUDE_DIRS})
-
-set(ome_xerces_sources
-    EntityResolver.cpp
-    ErrorReporter.cpp
-    dom/Document.cpp)
-
-set(ome_xerces_base_headers
-    EntityResolver.h
-    ErrorReporter.h
-    Platform.h
-    String.h)
-
-set(ome_xerces_dom_headers
-    dom/Base.h
-    dom/Document.h
-    dom/Element.h
-    dom/Node.h
-    dom/NodeList.h
-    dom/Wrapper.h)
-
-set(ome_xerces_static_headers
-    ${ome_xerces_base_headers}
-    ${ome_xerces_dom_headers})
-
-set(ome_xerces_generated_headers)
-
-set(ome_xerces_headers
-    ${ome_xerces_static_headers}
-    ${ome_xerces_generated_headers})
-
-add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
-target_link_libraries(ome-xerces ome-compat ${XercesC_LIBRARIES})
-set_target_properties(ome-xerces PROPERTIES VERSION ${OME_VERSION_SHORT})
-
-set(ome_xerces_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xerces")
-
-install(FILES ${ome_xerces_headers}
-        DESTINATION ${ome_xerces_includedir})
-install(FILES ${ome_xerces_dom_headers}
-        DESTINATION ${ome_xerces_includedir}/dom)
-install(TARGETS ome-xerces LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-
-set(LIBRARY_PREFIX OME_XERCES)
-set(LIBRARY_NAME ome-xerces)
-set(LIBRARY_HEADER ome/xerces/Platform.h)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
-
-# Dump header list for testing
-header_include_list_write(ome_xerces_static_headers ome_xerces_generated_headers ome/xerces ${PROJECT_BINARY_DIR}/cpp/test/ome-xerces)
+add_subdirectory(ome/compat)
+add_subdirectory(ome/internal)
+add_subdirectory(ome/xerces)
+add_subdirectory(ome/xml)
+add_subdirectory(ome/bioformats)
+add_subdirectory(ome/test)

@@ -44,6 +44,14 @@ namespace ome
   namespace bioformats
   {
 
+    // No switch default to avoid -Wunreachable-code errors.
+    // However, this then makes -Wswitch-default complain.  Disable
+    // temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
     pixel_size_type
     bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype)
     {
@@ -275,6 +283,10 @@ namespace ome
       return is_complex;
     }
 
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
+
     ::ome::xml::model::enums::PixelType
     pixelTypeFromBytes(pixel_size_type size,
                        bool            is_signed,
@@ -335,10 +347,6 @@ namespace ome
 
       return type;
     }
-
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
 
     ::ome::xml::model::enums::PixelType
     pixelTypeFromBits(pixel_size_type size,

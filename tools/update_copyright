@@ -1,0 +1,22 @@
+#! /bin/bash
+# Script for updating copyright headers across the code
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: update_copyright [year]"
+  exit 1
+fi
+
+COPYRIGHT="Copyright (C) "
+YEAR="[0-9]\{4\}"
+RANGE=" - "
+AUTHOR=" Open Microscopy Environment"
+NEW_YEAR=$1
+
+# Update year range copyrights
+git grep -l "${COPYRIGHT}${YEAR}${RANGE}${YEAR}${AUTHOR}" | \
+xargs sed -i "" -e "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${NEW_YEAR}\2/"
+
+# Update single year copyrights
+git grep -l "${COPYRIGHT}${YEAR}${AUTHOR}" | \
+xargs sed -i "" -e "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${NEW_YEAR}\2/"

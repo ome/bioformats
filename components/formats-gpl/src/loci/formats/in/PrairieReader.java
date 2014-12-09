@@ -49,7 +49,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -562,6 +561,18 @@ public class PrairieReader extends FormatReader {
         // populate channel name
         final String channelName = file == null ? null : file.getChannelName();
         if (channelName != null) store.setChannelName(channelName, s, c);
+
+        // populate emission wavelength
+        if (file != null) {
+          final Double waveMin = file.getWavelengthMin();
+          final Double waveMax = file.getWavelengthMax();
+          if (waveMin != null && waveMax != null) {
+            final double waveAvg = (waveMin + waveMax) / 2;
+            final Length wavelength =
+              FormatTools.getEmissionWavelength(waveAvg);
+            store.setChannelEmissionWavelength(wavelength, s, c);
+          }
+        }
 
         if (detectorIDs[c] == null) {
           // create a Detector for this channel

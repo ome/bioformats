@@ -285,7 +285,8 @@ public class NDPIReader extends BaseTiffReader {
     // fix the offsets for > 4 GB files
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
     for (int i=0; i<ifds.size(); i++) {
-      long[] stripOffsets = ifds.get(i).getStripOffsets();
+      IFD ifd = ifds.get(i);
+      long[] stripOffsets = ifd.getStripOffsets();
 
       boolean neededAdjustment = false;
       for (int j=0; j<stripOffsets.length; j++) {
@@ -293,34 +294,38 @@ public class NDPIReader extends BaseTiffReader {
         long prevByteCount =
           i == 0 ? 0 : ifds.get(i - 1).getStripByteCounts()[0];
 
-        long newOffset = stripOffsets[j] + 0x100000000L;
-        if (newOffset < stream.length() && ((j > 0 &&
-          (stripOffsets[j] < stripOffsets[j - 1])) ||
-          (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
-        {
-          stripOffsets[j] = newOffset;
-          neededAdjustment = true;
+        while (stripOffsets[j] < prevOffset || stripOffsets[j] < prevOffset + prevByteCount) {
+          long newOffset = stripOffsets[j] + 0x100000000L;
+          if (newOffset < stream.length() && ((j > 0 &&
+            (stripOffsets[j] < stripOffsets[j - 1])) ||
+            (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
+          {
+            stripOffsets[j] = newOffset;
+            neededAdjustment = true;
+          }
         }
       }
       if (neededAdjustment) {
-        ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+        ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
       }
 
       neededAdjustment = false;
 
-      long[] stripByteCounts = ifds.get(i).getStripByteCounts();
+      long[] stripByteCounts = ifd.getStripByteCounts();
       for (int j=0; j<stripByteCounts.length; j++) {
         long newByteCount = stripByteCounts[j] + 0x100000000L;
         if (stripByteCounts[j] < 0 || neededAdjustment ||
-          newByteCount + ifds.get(i).getStripOffsets()[0] < in.length())
+          newByteCount + stripOffsets[j] < in.length())
         {
-          stripByteCounts[j] = newByteCount;
-          neededAdjustment = true;
+          if (newByteCount < ifd.getImageWidth() * ifd.getImageLength()) {
+            stripByteCounts[j] = newByteCount;
+            neededAdjustment = true;
+          }
         }
       }
 
       if (neededAdjustment) {
-        ifds.get(i).putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
+        ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
       }
     }
     stream.close();
@@ -351,18 +356,13 @@ public class NDPIReader extends BaseTiffReader {
 
       if (markerTag != null) {
         if (markerTag.getValueOffset() > in.length()) {
-          long markerOffset = markerTag.getValueOffset() & 0xffffffffL;
-          if (markerOffset < prevMarkerOffset || (use64Bit && i == 0 &&
-            markerOffset < in.length() / 2))
-          {
-            markerOffset += 0x100000000L;
-          }
-          markerTag = new TiffIFDEntry(markerTag.getTag(), markerTag.getType(),
-            markerTag.getValueCount(), markerOffset);
-          prevMarkerOffset = markerOffset;
+          // can't rely upon the MARKER_TAG to be detected correctly
+          ifds.get(i).remove(MARKER_TAG);
         }
-        Object value = tiffParser.getIFDValue(markerTag);
-        ifds.get(i).putIFDValue(MARKER_TAG, value);
+        else {
+          Object value = tiffParser.getIFDValue(markerTag);
+          ifds.get(i).putIFDValue(MARKER_TAG, value);
+        }
       }
 
       tiffParser.fillInIFD(ifds.get(i));

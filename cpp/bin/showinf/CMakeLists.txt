@@ -35,6 +35,7 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${OME_BIN_INCLUDES}
                     ${Boost_INCLUDE_DIRS})
 
 set(showinf_SOURCES
