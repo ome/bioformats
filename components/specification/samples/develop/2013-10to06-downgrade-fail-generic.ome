@@ -113,7 +113,9 @@
 	<Instrument ID="Instrument:0">
 		<Microscope Type="Dissection"/>
 		<LightSource ID="LightSource:0">
-			<Arc/>
+			<GenericExcitationSource>
+				<Map><M K="a">1</M><M K="b">2</M><M K="c">3</M></Map>
+			</GenericExcitationSource>
 		</LightSource>
 		<LightSource ID="LightSource:1" Manufacturer="OME-Inc">
 			<Laser Wavelength="655.3" Tuneable="false"/>
@@ -190,11 +192,11 @@
 				<test2/>
 			</SA:Value>
 		</SA:XMLAnnotation>
-		<SA:XMLAnnotation ID="Annotation:2">
+		<SA:MapAnnotation ID="Annotation:2">
 			<SA:Value>
 				<M K="a">1</M><M K="b">2</M><M K="c">3</M>
 			</SA:Value>
-		</SA:XMLAnnotation>
+		</SA:MapAnnotation>
 		<SA:LongAnnotation ID="Annotation:Detector:0">
 			<SA:Value>1</SA:Value>
 		</SA:LongAnnotation>

@@ -43,6 +43,8 @@
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 
+	<xsl:import href="units-conversion.xsl"/>
+
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2013-06</xsl:variable>
 	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2013-06</xsl:variable>
 	<xsl:variable name="newBINNS"
@@ -203,6 +205,18 @@
 		</xsl:element>
 	</xsl:template>
 
+	<!-- strip GenericExcitationSource and terminate -->
+	<xsl:template match="OME:GenericExcitationSource">
+		<xsl:comment>GenericExcitationSource elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
+		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - GenericExcitationSource elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+	</xsl:template>
+
+	<!-- strip GenericExcitationSource and terminate -->
+	<xsl:template match="SA:MapAnnotation">
+		<xsl:comment>MapAnnotation elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
+		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - MapAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
@@ -220,7 +234,8 @@
 
 	<xsl:template match="OME:*">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*|node()"/>
+			<xsl:call-template name="attribute-units-conversion"/>
+			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -248,6 +263,34 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template name="attribute-units-conversion">
+		<xsl:variable name="unit-attributes" select="@* [substring(name(), string-length(name()) - string-length('Unit') +1) = 'Unit']"/>
+		<xsl:variable name="unit-attributes-count" select="count($unit-attributes)"/>
+		<xsl:for-each select="@*">
+			<xsl:choose>
+				<xsl:when test="substring(name(), string-length(name()) - string-length('Unit') +1) = 'Unit'">
+					<xsl:message>Skipping: <xsl:value-of select="name()"/></xsl:message>
+				</xsl:when>
+				<xsl:when test="$unit-attributes-count != 0">
+					<xsl:message>Checking: <xsl:value-of select="name()"/></xsl:message>
+					<xsl:variable name="match-name"><xsl:value-of select="name()"/>Unit</xsl:variable>
+					<xsl:choose>
+						<xsl:when test="count($unit-attributes[name() = $match-name]) = 1">
+							<xsl:message>Match: <xsl:value-of select="name()"/></xsl:message>
+							<xsl:apply-templates select="."/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:message>No match: <xsl:value-of select="name()"/></xsl:message>
+							<xsl:apply-templates select="."/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:for-each>
+	</xsl:template>
 	<!-- Default processing -->
 	<xsl:template match="@*|node()">
 		<xsl:copy>
