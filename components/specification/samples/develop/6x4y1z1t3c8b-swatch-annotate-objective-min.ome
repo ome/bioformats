@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-4"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-4"
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4    http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4/ome.xsd">
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5    http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd">
 	<Instrument ID="Instrument:1">
 		<Objective ID="Objective:1" Immersion="Air">
 			<SA:AnnotationRef ID="Annotation:1"/>
