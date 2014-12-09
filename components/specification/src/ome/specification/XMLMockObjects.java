@@ -439,7 +439,7 @@ public class XMLMockObjects
     transmittance.setCutOut(new Length(cutOut, UNITS.NM));
     transmittance.setCutInTolerance(new Length(1.0, UNITS.NM));
     transmittance.setCutOutTolerance(new Length(1.0, UNITS.NM));
-    transmittance.setTransmittance(new PercentFraction(3.0f));
+    transmittance.setTransmittance(new PercentFraction(0.5f));
     filter.setTransmittanceRange(transmittance);
     return filter;
   }
