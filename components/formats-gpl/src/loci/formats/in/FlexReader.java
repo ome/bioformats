@@ -780,7 +780,7 @@ public class FlexReader extends FormatReader {
   {
     LOGGER.info("Parsing .flex file (well {}{}, field {})",
       (char) (wellRow + 'A'), wellCol + 1, field);
-    FlexFile file = lookupFile(wellRow, wellCol, field);
+    FlexFile file = lookupFile(wellRow, wellCol, field < 0 ? 0 : field);
     if (file == null) return;
 
     int originalFieldCount = fieldCount;
@@ -836,7 +836,9 @@ public class FlexReader extends FormatReader {
 
     channelNames = n.toArray(new String[n.size()]);
 
-    if (firstFile) populateCoreMetadata(wellRow, wellCol, field, n);
+    if (firstFile) {
+      populateCoreMetadata(wellRow, wellCol, field < 0 ? 0 : field, n);
+    }
 
     int totalPlanes = getSeriesCount() * getImageCount();
 
@@ -1336,7 +1338,10 @@ public class FlexReader extends FormatReader {
             }
           }
           flexFiles.add(file);
-          parseFlexFile(currentWell, row, col, field, firstFile, store);
+
+          // setting a negative field index indicates that the field count
+          // should be taken from the XML
+          parseFlexFile(currentWell, row, col, nFiles == 1 ? -1 : field, firstFile, store);
           s.close();
           if (firstFile) firstFile = false;
         }
@@ -1680,7 +1685,12 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Field")) {
         parentQName = qName;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        if (fieldNo > fieldCount && fieldCount < (thisField * firstWellPlanes())) {
+
+        // trust firstWellPlanes() if we know that the fields are not
+        // split across multiple files
+        if (fieldNo > fieldCount && ((thisField < 0 && fieldCount < firstWellPlanes()) ||
+          fieldCount < (thisField * firstWellPlanes())))
+        {
           fieldCount++;
         }
       }
