@@ -36,17 +36,26 @@
  * #L%
  */
 
+#include <sstream>
+
 #include <ome/xerces/EntityResolver.h>
 #include <ome/xerces/ErrorReporter.h>
 #include <ome/xerces/Platform.h>
 #include <ome/xerces/String.h>
 #include <ome/xerces/dom/Document.h>
 
+#include <xercesc/dom/DOMException.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMImplementationRegistry.hpp>
+#include <xercesc/dom/DOMLSOutput.hpp>
+#include <xercesc/dom/DOMLSSerializer.hpp>
+#include <xercesc/framework/LocalFileFormatTarget.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
+#include <xercesc/framework/MemBufFormatTarget.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/util/XMLException.hpp>
+#include <xercesc/util/XMLUni.hpp>
 
 namespace
 {
@@ -54,10 +63,9 @@ namespace
   void
   setup_parser(xercesc::XercesDOMParser& parser)
   {
-    xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto;  // Val_Always;
+    xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto; // Val_Always
     bool do_ns = true;
     bool do_schema = true;
-    //bool do_valid = false;
     bool do_fullcheck = true;
     bool do_create = true;
 
@@ -85,6 +93,103 @@ namespace
       throw std::runtime_error("Parse error");
   }
 
+  void
+  setup_writer(xercesc::DOMLSSerializer&                writer,
+               const ome::xerces::dom::WriteParameters& params)
+  {
+    xercesc::DOMConfiguration *config(writer.getDomConfig());
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMCanonicalForm, params.canonicalForm))
+      config->setParameter(xercesc::XMLUni::fgDOMCanonicalForm, params.canonicalForm);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMCDATASections, params.CDATASections))
+      config->setParameter(xercesc::XMLUni::fgDOMCDATASections, params.CDATASections);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMComments, params.comments))
+      config->setParameter(xercesc::XMLUni::fgDOMComments, params.comments);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMDatatypeNormalization, params.datatypeNormalization))
+      config->setParameter(xercesc::XMLUni::fgDOMDatatypeNormalization, params.datatypeNormalization);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMWRTDiscardDefaultContent, params.discardDefaultContent))
+      config->setParameter(xercesc::XMLUni::fgDOMWRTDiscardDefaultContent, params.discardDefaultContent);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMEntities, params.entities))
+      config->setParameter(xercesc::XMLUni::fgDOMEntities, params.entities);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMNamespaces, params.namespaces))
+      config->setParameter(xercesc::XMLUni::fgDOMNamespaces, params.namespaces);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMNamespaceDeclarations, params.namespaceDeclarations))
+      config->setParameter(xercesc::XMLUni::fgDOMNamespaceDeclarations, params.namespaceDeclarations);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMNormalizeCharacters, params.normalizeCharacters))
+      config->setParameter(xercesc::XMLUni::fgDOMNormalizeCharacters, params.normalizeCharacters);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMWRTFormatPrettyPrint, params.prettyPrint))
+      config->setParameter(xercesc::XMLUni::fgDOMWRTFormatPrettyPrint, params.prettyPrint);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMSplitCDATASections, params.splitCDATASections))
+      config->setParameter(xercesc::XMLUni::fgDOMSplitCDATASections, params.splitCDATASections);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMValidateIfSchema, params.validate))
+      config->setParameter(xercesc::XMLUni::fgDOMValidateIfSchema, params.validate);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMWRTWhitespaceInElementContent, params.whitespace))
+      config->setParameter(xercesc::XMLUni::fgDOMWRTWhitespaceInElementContent, params.whitespace);
+    if (config->canSetParameter(xercesc::XMLUni::fgDOMXMLDeclaration, params.xmlDeclaration))
+      config->setParameter(xercesc::XMLUni::fgDOMXMLDeclaration, params.xmlDeclaration);
+  }
+
+  void
+  write_target(xercesc::DOMNode&                        node,
+               xercesc::XMLFormatTarget&                target,
+               const ome::xerces::dom::WriteParameters& params)
+  {
+    // To clean up properly due to the lack of Xerces
+    // exception-safety, track if we need to throw an exception after
+    // cleanup.
+    bool ok = false;
+    std::string fail_message;
+
+    xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(ome::xerces::String("LS"));
+    xercesc::DOMImplementationLS *ls(dynamic_cast<xercesc::DOMImplementationLS *>(impl));
+    if (!ls)
+      throw std::runtime_error("Failed to create LS DOMImplementation");
+
+    xercesc::DOMLSSerializer* writer(0);
+    xercesc::DOMLSOutput* output(0);
+
+    try
+      {
+        writer = (ls->createLSSerializer());
+
+        ome::xerces::ErrorReporter er;
+
+        xercesc::DOMConfiguration *config(writer->getDomConfig());
+        config->setParameter(xercesc::XMLUni::fgDOMErrorHandler, &er);
+
+        setup_writer(*writer, params);
+
+        xercesc::DOMLSOutput* output(ls->createLSOutput());
+        output->setByteStream(&target);
+
+        writer->write(&node, output);
+
+        ok = true;
+      }
+    catch (const xercesc::XMLException& toCatch)
+      {
+        fail_message = "XMLException during DOM XML writing: ";
+        fail_message += ome::xerces::String(toCatch.getMessage());
+      }
+    catch (const xercesc::DOMException& toCatch)
+      {
+        fail_message = "DOMException during DOM XML writing: ";
+        fail_message += ome::xerces::String(toCatch.getMessage());
+      }
+    catch (...)
+      {
+        fail_message = "Unexpected exception during DOM XML writing";
+      }
+
+    // Clean up before rethrowing any exceptions.
+    if (output)
+      output->release();
+    if (writer)
+      writer->release();
+
+    if (!ok)
+      throw std::runtime_error(fail_message);
+  }
+
 }
 
 namespace ome
@@ -99,6 +204,8 @@ namespace ome
       {
 
         xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(String("LS"));
+        if (!impl)
+          throw std::runtime_error("Failed to create LS DOMImplementation");
 
         return impl->createDocument(0, String(qualifiedName), 0);
 
@@ -162,6 +269,50 @@ namespace ome
         read_source(parser, source);
 
         return parser.adoptDocument();
+      }
+
+      void
+      writeDocument(Document&                      document,
+                    const boost::filesystem::path& file,
+                    const WriteParameters&         params)
+      {
+        Platform xmlplat;
+
+        xercesc::LocalFileFormatTarget target(String(file.generic_string()));
+
+        write_target(*document.get(), target, params);
+      }
+
+      void
+      writeDocument(Document&              document,
+                    std::ostream&          stream,
+                    const WriteParameters& params)
+      {
+        Platform xmlplat;
+
+        xercesc::MemBufFormatTarget target(4096);
+
+        write_target(*document.get(), target, params);
+
+        stream.write(reinterpret_cast<const char *>(target.getRawBuffer()),
+                     target.getLen());
+      }
+
+      void
+      writeDocument(Document&              document,
+                    std::string&           text,
+                    const WriteParameters& params)
+      {
+        Platform xmlplat;
+
+        xercesc::MemBufFormatTarget target(4096);
+
+        write_target(*document.get(), target, params);
+
+        const XMLByte *buf(target.getRawBuffer());
+        XMLSize_t buflen(target.getLen());
+        text.assign(reinterpret_cast<const char *>(buf),
+                    reinterpret_cast<const char *>(buf) + buflen);
       }
 
     }

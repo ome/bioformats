@@ -226,6 +226,107 @@ namespace ome
       Document
       createDocument(std::istream& stream);
 
+      /**
+       * Parameters controlling DOM writing.
+       *
+       * The DOMSerializer provides for some control over the process
+       * via DOMConfiguration.  They are settable here to allow their
+       * use at a high level without the need to have access to the
+       * internals of the Xerces-C writing process.  Simply create an
+       * instance of this class, adjust the parameters as needed, and
+       * then pass to a method call which uses WriteParameters as an
+       * optional argument.
+       *
+       * If more precise control of the process is required, use the
+       * Xerces-C classes directly.  These are simply a convienience
+       * for the common case and will not suit every situation.
+       */
+      struct WriteParameters
+      {
+        /// Canonicalize document (canonical-form).
+        bool canonicalForm;
+        /// Retain CDATA (cdata-sections).
+        bool CDATASections;
+        /// Retain comments (comments).
+        bool comments;
+        /// Datatype normalization (datatype-normalization).
+        bool datatypeNormalization;
+        /// Discard defaults (discard-default-content).
+        bool discardDefaultContent;
+        /// Retain entities (entities).
+        bool entities;
+        /// Namespace processing (namespaces).
+        bool namespaces;
+        /// Include namespace declaration attributes (namespace-declarations).
+        bool namespaceDeclarations;
+        /// Normalize characters.
+        bool normalizeCharacters;
+        /// Pretty-print (format-pretty-print).
+        bool prettyPrint;
+        /// Split CDATA sections (split-cdata-sections).
+        bool splitCDATASections;
+        /// Validate if schema available (validate-if-schema).
+        bool validate;
+        /// Retain whitespace (element-content-whitespace).
+        bool whitespace;
+        /// Require XML declaration (xml-declaration).
+        bool xmlDeclaration;
+
+        /// Constructor.
+        WriteParameters():
+          canonicalForm(false),
+          CDATASections(true),
+          comments(true),
+          datatypeNormalization(false),
+          discardDefaultContent(true),
+          entities(false),
+          namespaces(true),
+          namespaceDeclarations(true),
+          normalizeCharacters(false),
+          prettyPrint(false),
+          splitCDATASections(true),
+          validate(true),
+          whitespace(false),
+          xmlDeclaration(true)
+        {
+        }
+      };
+
+      /**
+       * Write a Document to a file.
+       *
+       * @param document the document to use.
+       * @param file the file to write.
+       * @param params XML output parameters.
+       */
+      void
+      writeDocument(Document&                      document,
+                    const boost::filesystem::path& file,
+                    const WriteParameters&         params = WriteParameters());
+
+      /**
+       * Write a Document to a stream.
+       *
+       * @param document the document to use.
+       * @param stream the stream to write to.
+       * @param params XML output parameters.
+       */
+      void
+      writeDocument(Document&              document,
+                    std::ostream&          stream,
+                    const WriteParameters& params = WriteParameters());
+
+      /**
+       * Write a Document to a stream.
+       *
+       * @param document the document to use.
+       * @param text the string to store the text in.
+       * @param params XML output parameters.
+       */
+      void
+      writeDocument(Document&              document,
+                    std::string&           text,
+                    const WriteParameters& params = WriteParameters());
     }
   }
 }
