@@ -141,4 +141,10 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-bioformats/version version)
 
+  add_executable(xmltools xmltools.cpp)
+  target_link_libraries(xmltools ome-bioformats)
+  target_link_libraries(xmltools ome-test)
+
+  bf_add_test(ome-bioformats/xmltools xmltools)
+
 endif(BUILD_TESTS)

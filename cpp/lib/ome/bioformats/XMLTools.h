@@ -45,6 +45,55 @@ namespace ome
   namespace bioformats
   {
 
+    /*
+     * Utility functions for XML processing.  This is an equivalent to
+     * the Java XMLtools implementation, with the following
+     * differences:
+     *
+     * createBuilder: Not required; handled internally by xerces::dom.
+     * createDocument: Use ome::xerces::dom::createDocument(qualifiedName).
+     * parseDOM(file): Use ome::xerces::dom::createDocument(file)
+     * parseDOM(string): Use ome::xerces::dom::createDocument(string)
+     * parseDOM(stream): Use ome::xerces::dom::createDocument(steam)
+     *
+     * dumpXML(): Use ome::xerces::dom::writeDocument(doc, string);
+     * writeXML(stream): Use ome::xerces::dom::writeDocument(doc, stream);
+     *
+     * validateXML(doc): Use ome::xerces::dom::validate(doc)
+     *
+     * All parseXML SAX methods are currently unimplemented.
+     *
+     * XSLT transforms:
+     * getStylesheet currently unimplemented.
+     * avoidUndeclaredNamespaces currently unimplemented.
+     * transformXML currently unimplemented.
+     *
+     * Helpers:
+     * checkUTF8: May not be required if xerces can handle it.
+     * error/fatalError/warning: Not implemented, may not be required here.
+     */
+
+    /**
+     * Replace special characters with XML entities.
+     *
+     * @param s the string to escape.
+     * @returns the escaped string.
+     */
+    std::string
+    escapeXML(const std::string& s);
+
+    /**
+     * Filter control codes and invalid sequences.
+     *
+     * Remove all control codes except for LF, HT and CR.  Also
+     * replace @c &# with @c #.
+     *
+     * @param s the string to filter.
+     * @returns the filtered string.
+     */
+    std::string
+    sanitizeXML(const std::string& s);
+
   }
 }
 

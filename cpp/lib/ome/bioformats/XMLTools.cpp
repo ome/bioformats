@@ -35,6 +35,8 @@
  * #L%
  */
 
+#include <cctype>
+
 #include <ome/bioformats/XMLTools.h>
 
 #include <ome/xerces/ErrorReporter.h>
@@ -55,6 +57,74 @@ namespace ome
 {
   namespace bioformats
   {
+
+    std::string
+    escapeXML(const std::string& s)
+    {
+      std::string ret;
+      ret.reserve(s.size());
+
+      for(std::string::const_iterator i = s.begin();
+          i != s.end();
+          ++i)
+        {
+          switch(*i)
+            {
+            case '<':
+              ret += "&lt;";
+              break;
+            case '>':
+              ret += "&gt;";
+              break;
+            case '&':
+              ret += "&amp;";
+              break;
+            case '"':
+              ret += "&quot;";
+              break;
+            case '\'':
+              ret += "&apos;";
+              break;
+            default:
+              ret += *i;
+              break;
+            }
+        }
+      return ret;
+    }
+
+    std::string
+    sanitizeXML(const std::string& s)
+    {
+      std::string ret;
+      ret.reserve(s.size());
+
+      for(std::string::const_iterator i = s.begin();
+          i != s.end();
+          ++i)
+        {
+          char v = *i;
+          // Remove all control characters except for newline, tab and
+          // cr.  Note that the java code also removes codepoints
+          // which are not defined in unicode, but we don't have any
+          // means of doing that with just the standard library, so
+          // undefined characters are currently passed through.
+          if (std::iscntrl(*i) && '\n' != *i && '\t' != *i && '\r' != *i)
+            v = 0;
+
+          // Eliminate invalid "&#" sequences
+          if (i != s.begin() && '&' == *(i-1) && '#' == *i)
+            {
+              ret.pop_back();
+              ret += "&amp;";
+            }
+
+          if (v)
+            ret += v;
+        }
+
+      return ret;
+    }
 
 
   }
