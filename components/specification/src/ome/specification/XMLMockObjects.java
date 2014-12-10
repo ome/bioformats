@@ -465,9 +465,9 @@ public class XMLMockObjects
       laser.setFrequencyMultiplication(new PositiveInteger(30));
       laser.setLaserMedium(LASER_MEDIUM);
       laser.setPockelCell(false);
-      laser.setRepetitionRate(new Frequency(30, UNITS.AHZ));
+      laser.setRepetitionRate(new Frequency(30.0, UNITS.AHZ));
       laser.setTuneable(false);
-      laser.setWavelength(new Length(200, UNITS.NM));
+      laser.setWavelength(new Length(200.0, UNITS.NM));
       return laser;
     } else if (Arc.class.getName().equals(type)) {
       Arc arc = new Arc();
