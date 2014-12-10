@@ -115,7 +115,7 @@ namespace ome
           // Eliminate invalid "&#" sequences
           if (i != s.begin() && '&' == *(i-1) && '#' == *i)
             {
-              ret.pop_back();
+              ret.resize(ret.size() - 1);
               ret += "&amp;";
             }
 
