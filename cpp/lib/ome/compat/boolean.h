@@ -55,7 +55,7 @@ namespace ome
      * values.
      *
      * The standard @c bool type has an implementation-defined size,
-     * and as such this makes it unsuitable for interoperbility with
+     * and as such this makes it unsuitable for interoperability with
      * some APIs and libraries when used in arrays and matrices where
      * the size and alignment are required to meet specific criteria.
      * The special-casing of @c bool for some standard library
