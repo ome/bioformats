@@ -214,7 +214,7 @@ namespace ome
 
       private:
         /// Automatic registration.
-        std::shared_ptr<AutoRegisterEntity> registration;        
+        std::shared_ptr<AutoRegisterEntity> registration;
       };
 
       /**

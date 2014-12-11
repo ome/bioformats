@@ -963,6 +963,7 @@ namespace ome
 
     }
 
+    /// @copydoc VariantPixelBuffer::array()
     template<typename T>
     inline typename PixelBuffer<T>::array_ref_type&
     VariantPixelBuffer::array()
@@ -971,6 +972,7 @@ namespace ome
       return boost::apply_visitor(v, buffer).array();
     }
 
+    /// @copydoc VariantPixelBuffer::array() const
     template<typename T>
     inline const typename PixelBuffer<T>::array_ref_type&
     VariantPixelBuffer::array() const
