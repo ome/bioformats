@@ -586,7 +586,9 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-                if (contains(${prop.instanceVariableName}, o_casted))
+                typedef OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::nth_index<1>::type container_set_type;
+                container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(o_casted));
+                if (it != this->${prop.instanceVariableName}.get<1>().end())
                   {
                     ${prop.instanceVariableName}.push_back(o_casted);
                   }
@@ -717,7 +719,10 @@ ${customUpdatePropertyContent[prop.name]}
       ${klass.name}::setLinked${prop.methodName}(${prop.instanceVariableType}::size_type index,
                                                  const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        return this->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
+        ${prop.instanceVariableType}::iterator it(${prop.instanceVariableName}.iterator_to(${prop.instanceVariableName}.at(index)));
+        const std::weak_ptr<${prop.langTypeNS}> wp(${prop.argumentName});
+        ${prop.instanceVariableName}.replace(it, wp);
+        return *it;
       }
 {% end source %}\
 
@@ -747,10 +752,12 @@ ${customUpdatePropertyContent[prop.name]}
         ${prop.argumentName}->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
-        if (!contains(this->${prop.instanceVariableName}, ${prop.argumentName}))
+        typedef OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::nth_index<1>::type container_set_type;
+        container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(${prop.argumentName}));
+        if (it == this->${prop.instanceVariableName}.get<1>().end())
           {
-            this->${prop.instanceVariableName}.push_back(${prop.argumentName});
-            return true;
+            std::pair<OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::iterator, bool> res(this->${prop.instanceVariableName}.push_back(std::weak_ptr<${prop.langTypeNS}>(${prop.argumentName})));
+            return res.second;
           }
         return false;
       }
@@ -982,7 +989,8 @@ ${customUpdatePropertyContent[prop.name]}
         std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
-        ${prop.instanceVariableName}.at(index) = ${prop.argumentName};
+        ${prop.instanceVariableType}::iterator it(${prop.instanceVariableName}.iterator_to(${prop.instanceVariableName}.at(index)));
+        ${prop.instanceVariableName}.replace(it, ${prop.argumentName});
       }
 {% end source %}\
 
