@@ -232,8 +232,11 @@ TEST_P(XercesTest, DocumentToFile)
               std::istreambuf_iterator<char>());
 
   xml::dom::Document doc(ome::xerces::dom::createDocument(data));
-  boost::filesystem::path file(PROJECT_BINARY_DIR "/cpp/test/ome-xerces/test-document-output-");
-  file += boost::filesystem::path(params.filename).filename();
+  boost::filesystem::path file(PROJECT_BINARY_DIR "/cpp/test/ome-xerces");
+  std::string name("test-document-output-");
+  name += boost::filesystem::path(params.filename).filename().generic_string();
+  file /= name;
+
   std::string s;
   ome::xerces::dom::writeDocument(doc, s);
   ome::xerces::dom::writeDocument(doc, file);
