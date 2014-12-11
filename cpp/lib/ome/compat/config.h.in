@@ -46,6 +46,7 @@
 #cmakedefine OME_HAVE_CSTDINT 1
 #cmakedefine OME_HAVE_MEMORY 1
 #cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
+#cmakedefine OME_HAVE_BOOST_OWNER_LESS 1
 #cmakedefine OME_HAVE_TUPLE 1
 #cmakedefine OME_HAVE_TR1_TUPLE 1
 #cmakedefine OME_HAVE_BOOST_TUPLE 1
