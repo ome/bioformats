@@ -43,6 +43,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 
 set(ome_compat_static_headers
     array.h
+    boolean.h
     cstdint.h
     filesystem.h
     endian.h

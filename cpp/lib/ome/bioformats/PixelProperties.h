@@ -40,6 +40,7 @@
 
 #include <complex>
 
+#include <ome/compat/boolean.h>
 #include <ome/compat/cstdint.h>
 #include <ome/compat/endian.h>
 
@@ -288,11 +289,11 @@ namespace ome
       typedef bool std_type;
 
       /// Pixel type (big endian).
-      typedef bool big_type;
+      typedef ome::compat::boolean big_type;
       /// Pixel type (little endian).
-      typedef bool little_type;
+      typedef ome::compat::boolean little_type;
       /// Pixel type (native endian).
-      typedef bool native_type;
+      typedef ome::compat::boolean native_type;
 
       /// This pixel type is not signed.
       static const bool is_signed = false;
