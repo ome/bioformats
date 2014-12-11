@@ -65,6 +65,14 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
+			<xsl:variable name="theValueEm">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@EmissionWavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@EmissionWavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">EmissionWavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">Channel</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:variable name="theValueEm" select="@EmissionWavelength"/>
 			<xsl:for-each select="@* [name() = 'EmissionWavelength']">
 				<xsl:if test="$theValueEm=round($theValueEm)">
@@ -73,7 +81,14 @@
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
-			<xsl:variable name="theValueEx" select="@ExcitationWavelength"/>
+			<xsl:variable name="theValueEx">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@ExcitationWavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@ExcitationWavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">ExcitationWavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">Channel</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'ExcitationWavelength']">
 				<xsl:if test="$theValueEx=round($theValueEx)">
 					<xsl:attribute name="{local-name(.)}">
@@ -93,7 +108,14 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValue" select="@Wavelength"/>
+			<xsl:variable name="theValue">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Wavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Wavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">LightSourceSettings</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
 				<xsl:if test="$theValue=round($theValue)">
 					<xsl:attribute name="{local-name(.)}">
