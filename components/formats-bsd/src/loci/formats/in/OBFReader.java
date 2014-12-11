@@ -38,9 +38,10 @@ import java.util.List;
 import java.util.zip.Inflater;
 import java.util.zip.DataFormatException;
 
-import ome.xml.model.primitives.PositiveFloat;
+import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -50,6 +51,13 @@ import loci.formats.meta.MetadataStore;
 
 import ome.units.quantity.Length;
 import ome.units.UNITS;
+import ome.xml.model.primitives.PositiveFloat;
+
+import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+
 
 /**
  * OBFReader is the file format reader for Imspector OBF files.
@@ -286,8 +294,57 @@ public class OBFReader extends FormatReader
 
       final String name = in.readString(lengthOfName);
       obf.seriesMetadata.put("Name", name);
-      final String description = in.readString(lengthOfDescription);
-      obf.seriesMetadata.put("Description", description);
+      String description = in.readString(lengthOfDescription);
+
+      if (description != null) {
+        description = XMLTools.sanitizeXML(description);
+
+        // some XML node names may contain white space, which prevents parsing
+        description = description.replaceAll("<Time Lapse ", "<TimeLapse ");
+        description = description.replaceAll("</Time Lapse", "</TimeLapse");
+
+        boolean xml = false;
+        try {
+          Element root = XMLTools.parseDOM(description).getDocumentElement();
+
+          root = getChildNodes(root).get(0);
+
+          ArrayList<Element> children = getChildNodes(root);
+          for (Element child : children) {
+            String nodeName = child.getNodeName();
+
+            ArrayList<Element> grandchildren = getChildNodes(child);
+
+            for (Element grandchild : grandchildren) {
+              String key = grandchild.getNodeName();
+              String value = grandchild.getTextContent().trim();
+              if (!key.equals("doc") && !key.equals("hwr")) {
+                addSeriesMeta(nodeName + " " + key, value);
+              }
+              else {
+                ArrayList<Element> docs = getChildNodes(grandchild);
+
+                for (Element doc : docs) {
+                  key = doc.getNodeName();
+                  value = doc.getTextContent().trim();
+                  addSeriesMeta(nodeName + " " + key, value);
+                }
+              }
+            }
+          }
+          xml = true;
+        }
+        catch (ParserConfigurationException e) {
+          LOGGER.warn("Could parse description as XML", e);
+        }
+        catch (SAXException e) {
+          LOGGER.warn("Could parse description as XML", e);
+        }
+
+        if (!xml) {
+          obf.seriesMetadata.put("Description", description);
+        }
+      }
 
       stack.position = in.getFilePointer();
 
@@ -518,5 +575,19 @@ public class OBFReader extends FormatReader
     inflater = new Inflater();
 
     super.close(fileOnly);
+  }
+
+
+  private ArrayList<Element> getChildNodes(Element root) {
+    ArrayList<Element> list = new ArrayList<Element>();
+    NodeList children = root.getChildNodes();
+
+    for (int i=0; i<children.getLength(); i++) {
+      Object child = children.item(i);
+      if (child instanceof Element) {
+        list.add((Element) child);
+      }
+    }
+    return list;
   }
 }
