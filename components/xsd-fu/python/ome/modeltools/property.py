@@ -659,7 +659,7 @@ class OMEModelProperty(OMEModelEntity):
                     not self.isChoice):
                 idefault = None
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                idefault = "ReferenceList<%s>" % self.langType
+                idefault = "ArrayList<%s>" % self.langType
         elif isinstance(self.model.opts.lang, language.CXX):
             ns_sep = self.langTypeNS
             if ns_sep.startswith('::'):
