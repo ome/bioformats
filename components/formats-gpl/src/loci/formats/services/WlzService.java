@@ -208,7 +208,7 @@ public interface WlzService extends Service {
   * @param      buf             buffer for bytes.
   * @param      x               rectangle first column.
   * @param      y               rectangle first line.
-  * @param      a               rectangle width (in columns).
+  * @param      w               rectangle width (in columns).
   * @param      h               rectangle heigth (in lines).
   */
   public byte[] readBytes(int no, byte[] buf, int x, int y, int w, int h)

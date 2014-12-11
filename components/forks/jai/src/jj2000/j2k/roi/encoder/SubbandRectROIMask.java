@@ -118,8 +118,6 @@ public class SubbandRectROIMask extends SubbandROIMask{
      *
      * @param lrys The lower right y coordinates of the ROIs
      *
-     * @param lrys The lower right y coordinates of the ROIs
-     *
      * @param nr Number of ROIs that affect this tile
      * */
     public SubbandRectROIMask(Subband sb, int[] ulxs, int[] ulys, int[] lrxs,

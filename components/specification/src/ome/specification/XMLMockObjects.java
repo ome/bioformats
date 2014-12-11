@@ -558,7 +558,6 @@ public class XMLMockObjects
   /**
    * Creates a imaging environment.
    *
-   * @param index The index of the environment in the file.
    * @return See above.
    */
   public StageLabel createStageLabel()

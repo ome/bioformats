@@ -1085,7 +1085,7 @@ public final class FormatTools {
    * specified output file.  The ImageReader and ImageWriter classes are used
    * for input and output, respectively.  To use other IFormatReader or
    * IFormatWriter implementation,
-   * @see convert(IFormatReader, IFormatWriter, String).
+   * @see #convert(IFormatReader, IFormatWriter, String).
    *
    * @param input the full path name of the existing input file
    * @param output the full path name of the output file to be created
@@ -1175,7 +1175,7 @@ public final class FormatTools {
    * rendering.
    *
    * @param pixelType the pixel type.
-   * @returns an array containing the min and max as elements 0 and 1,
+   * @return an array containing the min and max as elements 0 and 1,
    * respectively.
    * @throws IOException if the pixel type is floating point or invalid.
    */

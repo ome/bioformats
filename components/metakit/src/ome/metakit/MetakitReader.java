@@ -96,7 +96,8 @@ public class MetakitReader {
 
   /**
    * Retrieve the name of every table in this database file.
-   * The length of the returned array is equivalent to {@link getTableCount()}.
+   * The length of the returned array is equivalent to
+   * {@link #getTableCount()}.
    */
   public String[] getTableNames() {
     return tableNames;
@@ -104,7 +105,7 @@ public class MetakitReader {
 
   /**
    * Retrieve the name of every column in the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    */
   public String[] getColumnNames(int tableIndex) {
     String[] columnNames = new String[columns[tableIndex].length];
@@ -127,10 +128,10 @@ public class MetakitReader {
 
   /**
    * Retrieve the type for every column in the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    *
-   * Every Object in the arrays returned by {@link getTableData(int)} and
-   * {@link getTableData(String)} will be an instance of the corresponding
+   * Every Object in the arrays returned by {@link #getTableData(int)} and
+   * {@link #getTableData(String)} will be an instance of the corresponding
    * Class in the Class[] returned by this method.
    */
   public Class[] getColumnTypes(int tableIndex) {
@@ -144,8 +145,8 @@ public class MetakitReader {
   /**
    * Retrieve the type for every column in the named table.
    *
-   * Every Object in the arrays returned by {@link getTableData(int)} and
-   * {@link getTableData(String)} will be an instance of the corresponding
+   * Every Object in the arrays returned by {@link #getTableData(int)} and
+   * {@link #getTableData(String)} will be an instance of the corresponding
    * Class in the Class[] returned by this method.
    */
   public Class[] getColumnTypes(String tableName) {
@@ -158,7 +159,7 @@ public class MetakitReader {
 
   /**
    * Retrieve the number of rows in the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    */
   public int getRowCount(int tableIndex) {
     return rowCount[tableIndex];
@@ -173,9 +174,9 @@ public class MetakitReader {
 
   /**
    * Retrieve all of the tabular data for the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    *
-   * @see getColumnTypes(int)
+   * @see #getColumnTypes(int)
    */
   public Object[][] getTableData(int tableIndex) {
     Object[][] table = data[tableIndex];
@@ -199,7 +200,7 @@ public class MetakitReader {
   /**
    * Retrieve all of the tabular data for the named table.
    *
-   * @see getColumnTypes(String)
+   * @see #getColumnTypes(String)
    */
   public Object[][] getTableData(String tableName) {
     int index = DataTools.indexOf(tableNames, tableName);
@@ -211,9 +212,9 @@ public class MetakitReader {
 
   /**
    * Retrieve the given row of data from the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    *
-   * @see getColumnTypes(int)
+   * @see #getColumnTypes(int)
    */
   public Object[] getRowData(int rowIndex, int tableIndex) {
     Object[] row = new Object[data[tableIndex].length];
@@ -226,7 +227,7 @@ public class MetakitReader {
   /**
    * Retrieve the given row of data from the named table.
    *
-   * @see getColumnTypes(String)
+   * @see #getColumnTypes(String)
    */
   public Object[] getRowData(int rowIndex, String tableName) {
     int index = DataTools.indexOf(tableNames, tableName);

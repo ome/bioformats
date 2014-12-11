@@ -143,7 +143,7 @@ public class RawImageReader extends ImageReader {
     }
 
     /** Overrides the method defined in the superclass.
-     *  @throw ClassCastException If the provided <code>input</code> is not
+     *  @throws ClassCastException If the provided <code>input</code> is not
      *          an instance of <code>RawImageInputImage</code>
      */
     public void setInput(Object input,

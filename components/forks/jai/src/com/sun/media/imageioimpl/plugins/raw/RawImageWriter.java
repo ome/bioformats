@@ -122,7 +122,7 @@ import com.sun.media.imageioimpl.common.ImageUtil;
  * Thus, when read this raw image the proper image data type
  * should be provided.
  *
- * @see com.sun.media.imageio.plugins.RawImageWriteParam
+ * @see RawImageWriteParam
  */
 
  // <p> If the destination data is packed packed, the data is written in the

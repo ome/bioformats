@@ -307,7 +307,7 @@ public class FlowSightReader extends FormatReader {
    * @param ifd
    * @param imageWidth
    * @param imageHeight
-   * @return
+   * @return a byte array
    * @throws FormatException 
    */
   private byte[] openGreyscaleBytes(final IFD ifd, final int imageWidth, final int imageHeight) throws FormatException {

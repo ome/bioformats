@@ -276,12 +276,11 @@ public class PktEncoder {
      * @param infoSrc The source of information to construct the
      * object.
      *
-     * @param encSpec The parameters for the encoding
+     * @param wp The parameters for the encoding
      *
-     * @param maxNumPrec Maximum number of precinct in each tile, component
+     * @param numPrec Maximum number of precinct in each tile, component
      * and resolution level.
      *
-     * @param pl ParameterList instance that holds command line options
      * */
     public PktEncoder(CodedCBlkDataSrcEnc infoSrc, J2KImageWriteParamJava wp,
                       Point[][][] numPrec) {

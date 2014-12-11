@@ -147,8 +147,6 @@ public abstract class InvWTAdapter implements InvWT {
      *
      * @param rl The image resolution level.
      *
-     * @return The vertical coordinate of the image origin in the canvas
-     * system, on the reference grid.
      * */
     public void setImgResLevel(int rl) {
         if(rl<0) {

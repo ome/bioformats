@@ -160,7 +160,7 @@ public class ForwWTFull extends ForwardWT {
      *
      * @param src From where the image data should be obtained.
      *
-     * @param encSpec The encoder specifications
+     * @param wp The writing parameters
      *
      * @param pox The horizontal coordinate of the cell and code-block
      * partition origin with respect to the canvas origin, on the reference

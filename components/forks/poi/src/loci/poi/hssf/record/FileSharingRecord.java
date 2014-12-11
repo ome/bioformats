@@ -123,35 +123,36 @@ public class FileSharingRecord extends Record {
     }
 
     /**
-     * @param hashed password
+     * @param password hashed password
      */
     public void setPassword(short password) {
         field_2_password = password;
     }
 
     /**
-     * @returns password hashed with hashPassword() (very lame)
+     * @return password hashed with hashPassword() (very lame)
      */
     public short getPassword() {
         return field_2_password;
     }
 
     /**
-     * @returns byte representing the length of the username field
+     * @return byte representing the length of the username field
      */
     public byte getUsernameLength() {
         return field_3_username_length ;
     }
 
     /**
-     * @param byte representing the length of the username field
+     * @param length @{link byte} representing the length of the username
+     *               field
      */
     public void setUsernameLength(byte length) {
         this.field_3_username_length = length;
     }
 
     /**
-     * @returns username of the user that created the file
+     * @return username of the user that created the file
      */
     public String getUsername() {
         return this.field_5_username;
@@ -173,7 +174,7 @@ public class FileSharingRecord extends Record {
     }
 
     /**
-     * @param unknown field value to set (bonus field that is not doc'd)
+     * @param unk field value to set (bonus field that is not doc'd)
      */
     public void setUnknown(short unk) {
         field_4_unknown = unk;

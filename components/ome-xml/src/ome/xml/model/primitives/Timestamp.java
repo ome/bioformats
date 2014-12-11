@@ -88,7 +88,7 @@ public class Timestamp extends PrimitiveType<String> {
   /**
    * Returns a <code>Timestamp</code> object holding the value of
    * the specified string, or null if parsing failed.
-   * @param s The string to be parsed.
+   * @param value The string to be parsed.
    * @return See above.
    */
   public static Timestamp valueOf(String value) {

@@ -108,7 +108,7 @@ import javax.imageio.stream.ImageOutputStream;
  * The encoding process may clip, subsample using the parameters
  * specified in the <code>ImageWriteParam</code>.
  *
- * @see com.sun.media.imageio.plugins.WBMPImageWriteParam
+ * @see ImageWriteParam
  */
 public class WBMPImageWriter extends ImageWriter {
     /** The output stream to write into */

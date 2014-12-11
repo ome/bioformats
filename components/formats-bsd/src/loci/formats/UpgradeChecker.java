@@ -175,7 +175,8 @@ public class UpgradeChecker {
    * Contact the OME registry and return true if a new version is available.
    *
    * @param registryID how the application identifies itself to OMERO.registry
-   *                  @see #REGISTRY_IMAGEJ, @see #REGISTRY_LIBRARY
+   *                  @see #REGISTRY_IMAGEJ
+   *                  @see #REGISTRY_LIBRARY
    * @param caller  name of the calling application, e.g. "MATLAB"
    */
   public boolean newVersionAvailable(String registryID, String caller) {
@@ -269,7 +270,7 @@ public class UpgradeChecker {
    * @param downloadDir the directory into which to save the JAR files
    * @return true if installation was successfull
    *
-   * @see install(String, String)
+   * @see #install(String, String)
    */
   public boolean installIndividualJars(String urlDir, String downloadDir) {
     boolean overallSuccess = true;

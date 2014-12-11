@@ -135,7 +135,6 @@ import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReadParamJava;
  * displayed and its length parameter is used to skip it.
  *
  * @see DecoderSpecs
- * @see Decoder
  * @see FileBitstreamReaderAgent
  * */
 public class HeaderDecoder implements ProgressionType, Markers,
@@ -2267,7 +2266,7 @@ public class HeaderDecoder implements ProgressionType, Markers,
     /**
      * Return the DecoderSpecs instance filled when reading the headers
      *
-     * @retrieves and reads all marker segments previously found in the
+     * Retrieves and reads all marker segments previously found in the
      * tile-part header.
      *
      * @param tileIdx The index of the current tile
@@ -2515,8 +2514,7 @@ public class HeaderDecoder implements ProgressionType, Markers,
      * @param src The bit stream reader agent where to get code-block data
      * from.
      *
-     * @param pl The parameter list containing parameters applicable to the
-     * entropy decoder (other parameters can also be present).
+     * @param j2krparam The parameters applicable to the entropy decoder.
      *
      * @return The ROI descaler
      * */

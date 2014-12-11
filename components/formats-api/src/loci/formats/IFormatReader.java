@@ -531,14 +531,14 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /**
    * Set the resolution level.
    *
-   * @see getResolutionCount()
+   * @see #getResolutionCount()
    */
   void setResolution(int resolution);
 
   /**
    * Get the current resolution level.
    *
-   * @see getResolutionCount()
+   * @see #getResolutionCount()
    */
   int getResolution();
 
@@ -550,8 +550,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /**
    * Reopen any files that were closed, and which are expected to be open
-   * while the reader is open.  This assumes that {@link setId} has been called,
-   * but close(false) has not been called.
+   * while the reader is open.  This assumes that {@link #setId} has been
+   * called, but close(false) has not been called.
    */
   void reopenFile() throws IOException;
 }

@@ -38,7 +38,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * PovrayReader is the file format reader for POV-Ray .df3 files.
  *
- * @see http://www.povray.org/documentation/view/3.6.1/374/
+ * @see <a href=http://www.povray.org/documentation/view/3.6.1/374/>http://www.povray.org/documentation/view/3.6.1/374/<a>
  */
 public class PovrayReader extends FormatReader {
 

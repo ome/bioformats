@@ -348,7 +348,7 @@ public class ISRandomAccessIO implements RandomAccessIO {
      *
      * @param off The index in 'b' where to place the first byte read.
      *
-     * @param len The number of bytes to read.
+     * @param n The number of bytes to read.
      *
      * @exception EOFException If the end-of file was reached before
      * getting all the necessary data.

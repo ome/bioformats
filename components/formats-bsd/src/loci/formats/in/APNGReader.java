@@ -127,7 +127,7 @@ public class APNGReader extends FormatReader {
   }
 
   /**
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int int)
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
   @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)

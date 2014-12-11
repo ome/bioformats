@@ -260,7 +260,7 @@ public class HSSFDateUtil
      *  Check if a cell contains a date
      *  Since dates are stored internally in Excel as double values 
      *  we infer it is a date if it is formatted as such. 
-     *  @see #isADateFormat(int,string)
+     *  @see #isADateFormat(int,String)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellDateFormatted(HSSFCell cell) {
@@ -281,7 +281,7 @@ public class HSSFDateUtil
      *   excel date formats.
      *  As Excel stores a great many of its dates in "non-internal"
      *   date formats, you will not normally want to use this method.
-     *  @see #isADateFormat(int,string)
+     *  @see #isADateFormat(int,String)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellInternalDateFormatted(HSSFCell cell) {

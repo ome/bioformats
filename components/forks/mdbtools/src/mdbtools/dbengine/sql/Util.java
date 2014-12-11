@@ -35,7 +35,7 @@ public class Util
    * also quotes strings and expands out arrays
    * @param sql
    * @param o
-   * @return
+   * @return string
    */
   public static String toString(Select sql,Object o)
   {

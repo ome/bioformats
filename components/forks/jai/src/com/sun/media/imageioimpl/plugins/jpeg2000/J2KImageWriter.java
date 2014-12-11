@@ -135,7 +135,7 @@ import org.w3c.dom.Node;
  * The encoding process may re-tile image, clip, subsample, and select bands
  * using the parameters specified in the <code>ImageWriteParam</code>.
  *
- * @see com.sun.media.imageio.plugins.J2KImageWriteParam
+ * @see com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam
  */
 public class J2KImageWriter extends ImageWriter {
     /** Wrapper for the protected method <code>processImageProgress</code>

@@ -131,7 +131,7 @@ public class DataBlkFloat extends DataBlk {
      * Creates a DataBlkFloat which is the copy of the DataBlkFloat
      * given as paramter.
      *
-     * @param DataBlkFloat the object to be copied.
+     * @param src the object to be copied.
      *
      *
      * */

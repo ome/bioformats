@@ -92,7 +92,7 @@ public class SingleTileRenderedImage extends SimpleRenderedImage {
      * and a ColorModel.
      *
      * @param ras A Raster that will define tile (0, 0) of the image.
-     * @param cm A ColorModel that will serve as the image's
+     * @param colorModel A ColorModel that will serve as the image's
      *           ColorModel.
      */
     public SingleTileRenderedImage(Raster ras, ColorModel colorModel) {

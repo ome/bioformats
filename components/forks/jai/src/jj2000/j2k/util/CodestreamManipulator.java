@@ -147,7 +147,7 @@ public class CodestreamManipulator{
     /**
      * Instantiates a codestream manipulator..
      *
-     * @param outname The name of the original outfile
+     * @param file The name of the original outfile
      *
      * @param nt The number of tiles in the image
      *

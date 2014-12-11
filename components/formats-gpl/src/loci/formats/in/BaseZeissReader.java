@@ -1016,7 +1016,7 @@ public abstract class BaseZeissReader extends FormatReader {
    * Parse timestamp from string.  Note this may be ZVI-specific
    * due to the use of locale-specific date formats in the TIFF XML.
    * @param s
-   * @return
+   * @return a timestamp
    */
   private long parseTimestamp(String s) {
     long stamp = 0;

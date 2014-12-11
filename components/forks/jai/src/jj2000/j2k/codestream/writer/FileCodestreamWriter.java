@@ -164,8 +164,6 @@ public class FileCodestreamWriter extends CodestreamWriter
      * @param mb The maximum number of bytes that can be written to the bit
      * stream.
      *
-     * @param encSpec The encoder's specifications
-     *
      * @exception IOException If an error occurs while trying to open the file
      * for writing or while writing the magic number.
      * */

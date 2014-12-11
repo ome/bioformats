@@ -161,7 +161,7 @@ public class OmeValidator
      *
      * @param file The file to parse.
      * @param schema The schema used to validate the specified file.
-     * @return
+     * @return Document
      * @throws Exception Thrown if an error occurred.
      */
     public Document parseFile(File file, File schema)
@@ -187,7 +187,7 @@ public class OmeValidator
      * Any validation errors are thrown as an exception.
      * @param file The file to parse.
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
-     * @return
+     * @return Document
      * @throws Exception Thrown if an error occurred.
      */
     public Document parseFileWithStreamArray(File file, StreamSource[] schemaStreamArray)
@@ -217,7 +217,7 @@ public class OmeValidator
      * Any validation errors are sent to StdErr, not thrown as an exception.
      * @param file The file to parse.
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
-     * @return
+     * @return Document
      * @throws Exception Thrown if other (NON-VALIDATION) errors occurred.
      */
     public Document parseFileWithStreamArrayToSdtErr(File file, StreamSource[] schemaStreamArray)

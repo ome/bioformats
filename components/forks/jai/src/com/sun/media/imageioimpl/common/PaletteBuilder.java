@@ -137,9 +137,9 @@ public class PaletteBuilder {
      * is unable to create approximation of <code>src</code>
      * and <code>canCreatePalette</code> returns <code>false</code>.
      *
-     * @see createIndexColorModel
+     * @see #createIndexColorModel(RenderedImage)
      *
-     * @see canCreatePalette
+     * @see #canCreatePalette(RenderedImage)
      *
      */
     public static RenderedImage createIndexedImage(RenderedImage src) {
@@ -160,9 +160,9 @@ public class PaletteBuilder {
      * is unable to create approximation of <code>img</code>
      * and <code>canCreatePalette</code> returns <code>false</code>.
      *
-     * @see createIndexedImage
+     * @see #createIndexedImage(RenderedImage)
      *
-     * @see canCreatePalette
+     * @see #canCreatePalette(RenderedImage)
      *
      */
     public static IndexColorModel createIndexColorModel(RenderedImage img) {

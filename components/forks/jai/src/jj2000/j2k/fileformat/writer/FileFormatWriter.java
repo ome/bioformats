@@ -161,7 +161,7 @@ public class FileFormatWriter implements FileFormatBoxes {
      * The constructor of the FileFormatWriter. It receives all the
      * information necessary about a codestream to generate a legal JP2 file
      *
-     * @param filename The name of the file that is to be made a JP2 file
+     * @param file The name of the file that is to be made a JP2 file
      *
      * @param height The height of the image
      *
@@ -284,8 +284,6 @@ public class FileFormatWriter implements FileFormatBoxes {
 
     /**
      * This method writes the Contiguous codestream box
-     *
-     * @param cs The contiguous codestream
      *
      * @exception java.io.IOException If an I/O error ocurred.
      * */

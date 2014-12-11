@@ -208,14 +208,6 @@ public abstract class AnWTFilter implements WaveletFilter{
      * @param inStep This is the step, or interleave factor, of the
      * input signal samples in the inSig array. See above.
      *
-     * @param tailOvrlp This is the number of samples in the input
-     * signal before the first sample to filter that can be used for
-     * overlap. See above.
-     *
-     * @param headOvrlp This is the number of samples in the input
-     * signal after the last sample to filter that can be used for
-     * overlap. See above.
-     *
      * @param lowSig This is the array where the low-pass output
      * signal is placed. It must be of the same type as inSig and it
      * should be long enough to contain the output signal.
