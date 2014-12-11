@@ -88,7 +88,7 @@
 	<!-- strip Wavelength from LightSourceSettings ONLY if it is not an integer -->
 	<xsl:template match="OME:LightSourceSettings">
 		<xsl:element name="OME:LightSourceSettings" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'Wavelength')]">
+			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
@@ -108,12 +108,19 @@
 	<!-- strip Wavelength from Laser ONLY if it is not an integer -->
 	<xsl:template match="OME:Laser">
 		<xsl:element name="OME:Laser" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'Wavelength')]">
+			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValue" select="@Wavelength"/>
+			<xsl:variable name="theValue">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Wavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Wavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">Laser</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
 				<xsl:if test="$theValue=round($theValue)">
 					<xsl:attribute name="{local-name(.)}">
