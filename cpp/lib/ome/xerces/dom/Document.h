@@ -293,16 +293,104 @@ namespace ome
       };
 
       /**
+       * Write a Node to a file.
+       *
+       * @param node the node to use.
+       * @param file the file to write.
+       * @param params XML output parameters.
+       */
+      void
+      writeNode(xercesc::DOMNode&              node,
+                const boost::filesystem::path& file,
+                const WriteParameters&         params);
+
+      /**
+       * Write a Node to a stream.
+       *
+       * @param node the node to use.
+       * @param stream the stream to write to.
+       * @param params XML output parameters.
+       */
+      void
+      writeNode(xercesc::DOMNode&      node,
+                std::ostream&          stream,
+                const WriteParameters& params = WriteParameters());
+
+      /**
+       * Write a Node to a stream.
+       *
+       * @param node the node to use.
+       * @param text the string to store the text in.
+       * @param params XML output parameters.
+       */
+      void
+      writeNode(xercesc::DOMNode&      node,
+                std::string&           text,
+                const WriteParameters& params = WriteParameters());
+
+      /**
+       * Write a Node to a file.
+       *
+       * @param node the node to use.
+       * @param file the file to write.
+       * @param params XML output parameters.
+       */
+      template<int S>
+      void
+      writeNode(NodeWrapper<S>&                node,
+                const boost::filesystem::path& file,
+                const WriteParameters&         params = WriteParameters())
+      {
+        writeNode(*(node.get()), file, params);
+      }
+
+      /**
+       * Write a Node to a stream.
+       *
+       * @param node the node to use.
+       * @param stream the stream to write to.
+       * @param params XML output parameters.
+       */
+      template<int S>
+      void
+      writeNode(NodeWrapper<S>&        node,
+                std::ostream&          stream,
+                const WriteParameters& params = WriteParameters())
+      {
+        writeNode(*(node.get()), stream, params);
+      }
+
+      /**
+       * Write a Node to a stream.
+       *
+       * @param node the node to use.
+       * @param text the string to store the text in.
+       * @param params XML output parameters.
+       */
+      template<int S>
+      void
+      writeNode(NodeWrapper<S>&        node,
+                std::string&           text,
+                const WriteParameters& params = WriteParameters())
+      {
+        writeNode(*(node.get()), text, params);
+      }
+
+      /**
        * Write a Document to a file.
        *
        * @param document the document to use.
        * @param file the file to write.
        * @param params XML output parameters.
        */
+      template<int S>
       void
-      writeDocument(Document&                      document,
+      writeDocument(DocumentWrapper<S>&            document,
                     const boost::filesystem::path& file,
-                    const WriteParameters&         params = WriteParameters());
+                    const WriteParameters&         params = WriteParameters())
+      {
+        writeNode(*(document.get()), file, params);
+      }
 
       /**
        * Write a Document to a stream.
@@ -311,10 +399,14 @@ namespace ome
        * @param stream the stream to write to.
        * @param params XML output parameters.
        */
+      template<int S>
       void
-      writeDocument(Document&              document,
+      writeDocument(DocumentWrapper<S>&    document,
                     std::ostream&          stream,
-                    const WriteParameters& params = WriteParameters());
+                    const WriteParameters& params = WriteParameters())
+      {
+        writeNode(*(document.get()), stream, params);
+      }
 
       /**
        * Write a Document to a stream.
@@ -323,10 +415,15 @@ namespace ome
        * @param text the string to store the text in.
        * @param params XML output parameters.
        */
+      template<int S>
       void
-      writeDocument(Document&              document,
+      writeDocument(DocumentWrapper<S>&    document,
                     std::string&           text,
-                    const WriteParameters& params = WriteParameters());
+                    const WriteParameters& params = WriteParameters())
+      {
+        writeNode(*(document.get()), text, params);
+      }
+
     }
   }
 }

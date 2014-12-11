@@ -272,42 +272,42 @@ namespace ome
       }
 
       void
-      writeDocument(Document&                      document,
-                    const boost::filesystem::path& file,
-                    const WriteParameters&         params)
+      writeNode(xercesc::DOMNode&              node,
+                const boost::filesystem::path& file,
+                const WriteParameters&         params)
       {
         Platform xmlplat;
 
         xercesc::LocalFileFormatTarget target(String(file.generic_string()));
 
-        write_target(*document.get(), target, params);
+        write_target(node, target, params);
       }
 
       void
-      writeDocument(Document&              document,
-                    std::ostream&          stream,
-                    const WriteParameters& params)
+      writeNode(xercesc::DOMNode&      node,
+                std::ostream&          stream,
+                const WriteParameters& params)
       {
         Platform xmlplat;
 
         xercesc::MemBufFormatTarget target(4096);
 
-        write_target(*document.get(), target, params);
+        write_target(node, target, params);
 
         stream.write(reinterpret_cast<const char *>(target.getRawBuffer()),
                      target.getLen());
       }
 
       void
-      writeDocument(Document&              document,
-                    std::string&           text,
-                    const WriteParameters& params)
+      writeNode(xercesc::DOMNode&      node,
+                std::string&           text,
+                const WriteParameters& params)
       {
         Platform xmlplat;
 
         xercesc::MemBufFormatTarget target(4096);
 
-        write_target(*document.get(), target, params);
+        write_target(node, target, params);
 
         const XMLByte *buf(target.getRawBuffer());
         XMLSize_t buflen(target.getLen());
