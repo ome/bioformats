@@ -151,7 +151,7 @@
 		<ExperimenterRef ID="Experimenter:1"/>
 		<ImagingEnvironment 
 			AirPressure="999" AirPressureUnit="mbar"
-			Temperature="23.3" TemperatureUnit="°C"
+			Temperature="73.94" TemperatureUnit="°F"
 			CO2Percent="0.05" Humidity="0.35"/>
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0"
 			PhysicalSizeX="10000.0" PhysicalSizeXUnit="nm"

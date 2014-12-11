@@ -45,9 +45,12 @@
 			<!-- codegen begin - defaults -->
 			<xsl:when test="$theAttributeName = 'Wavelength' and $theElementName = 'Laser'">nm</xsl:when>
 			<xsl:when test="$theAttributeName = 'Wavelength' and $theElementName = 'LightSourceSettings'">nm</xsl:when>
+			<xsl:when test="$theAttributeName = 'AirPressure' and $theElementName = 'ImagingEnvironment'">mbar</xsl:when>
+			<xsl:when test="$theAttributeName = 'Temperature' and $theElementName = 'ImagingEnvironment'">°C</xsl:when>
+			<xsl:when test="$theAttributeName = 'PhysicalSizeX' and $theElementName = 'Pixels'">nm</xsl:when>
+			<xsl:when test="$theAttributeName = 'PhysicalSizeY' and $theElementName = 'Pixels'">nm</xsl:when>
 			<!-- codegen end - defaults -->
 			<xsl:otherwise>
-				<xsl:comment>GetDefaultUnit, the default for [<xsl:value-of select="$theAttributeName"/>] in element [<xsl:value-of select="$theElementName"/>] is not supported.</xsl:comment>
 				<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - GetDefaultUnit, the default for [<xsl:value-of select="$theAttributeName"/>] in element [<xsl:value-of select="$theElementName"/>] is not supported.</xsl:message>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -60,6 +63,7 @@
 		<xsl:param name="theCurrentUnit"/>
 		<xsl:param name="theAttributeName"/>
 		<xsl:param name="theElementName"/>
+		<xsl:message>OME-XSLT: units-conversion.xsl - Message - ConvertValueToDefault, (<xsl:value-of select="$theValue"/>, <xsl:value-of select="$theCurrentUnit"/>, <xsl:value-of select="$theAttributeName"/>, <xsl:value-of select="$theElementName"/>).</xsl:message>
 		<xsl:choose>
 			<xsl:when test="$theCurrentUnit = ''">
 				<!-- Already using default units so no conversion necessary -->
@@ -85,16 +89,17 @@
 		<xsl:param name="theCurrentUnit"/>
 		<xsl:param name="theNewUnit"/>
 		<xsl:choose>
-			<!-- codegen begin - convert -->
 			<xsl:when test="$theNewUnit = ''">
-				<xsl:comment>ConvertValueToUnit, cannot perform conversion of [<xsl:value-of select="$theCurrentUnit"/>] to an unknown unit.</xsl:comment>
 				<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion of [<xsl:value-of select="$theCurrentUnit"/>] to an unknown unit.</xsl:message>
 			</xsl:when>
+			<xsl:when test="$theCurrentUnit = $theNewUnit"><xsl:value-of select="$theValue"/></xsl:when>
+			<!-- codegen begin - convert -->
 			<xsl:when test="$theCurrentUnit = 'mm' and $theNewUnit = 'nm'"><xsl:value-of select="$theValue * 1000000"/></xsl:when>
 			<xsl:when test="$theCurrentUnit = 'pm' and $theNewUnit = 'nm'"><xsl:value-of select="$theValue div 1000"/></xsl:when>
+			<xsl:when test="$theCurrentUnit = '°F' and $theNewUnit = '°C'"><xsl:value-of select="(($theValue - 32) * 5) div 9"/></xsl:when>
+			
 			<!-- codegen end - convert -->
 			<xsl:otherwise>
-				<xsl:comment>ConvertValueToUnit, cannot perform conversion [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:comment>
 				<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 			</xsl:otherwise>
 		</xsl:choose>

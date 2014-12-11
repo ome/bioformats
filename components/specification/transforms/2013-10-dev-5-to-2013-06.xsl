@@ -65,7 +65,7 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValueEm">
+			<xsl:variable name="theConvertedValueEm">
 				<xsl:call-template name="ConvertValueToDefault">
 					<xsl:with-param name="theValue"><xsl:value-of select="@EmissionWavelength"/></xsl:with-param>
 					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@EmissionWavelengthUnit"/></xsl:with-param>
@@ -73,15 +73,14 @@
 					<xsl:with-param name="theElementName">Channel</xsl:with-param>
 				</xsl:call-template>
 			</xsl:variable>
-			<xsl:variable name="theValueEm" select="@EmissionWavelength"/>
 			<xsl:for-each select="@* [name() = 'EmissionWavelength']">
-				<xsl:if test="$theValueEm=round($theValueEm)">
+				<xsl:if test="$theConvertedValueEm=round($theConvertedValueEm)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValueEm)"/>
+						<xsl:value-of select="round($theConvertedValueEm)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
-			<xsl:variable name="theValueEx">
+			<xsl:variable name="theConvertedValueEx">
 				<xsl:call-template name="ConvertValueToDefault">
 					<xsl:with-param name="theValue"><xsl:value-of select="@ExcitationWavelength"/></xsl:with-param>
 					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@ExcitationWavelengthUnit"/></xsl:with-param>
@@ -90,9 +89,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'ExcitationWavelength']">
-				<xsl:if test="$theValueEx=round($theValueEx)">
+				<xsl:if test="$theConvertedValueEx=round($theConvertedValueEx)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValueEx)"/>
+						<xsl:value-of select="round($theConvertedValueEx)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
@@ -108,7 +107,7 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValue">
+			<xsl:variable name="theConvertedValue">
 				<xsl:call-template name="ConvertValueToDefault">
 					<xsl:with-param name="theValue"><xsl:value-of select="@Wavelength"/></xsl:with-param>
 					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WavelengthUnit"/></xsl:with-param>
@@ -117,9 +116,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theValue=round($theValue)">
+				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValue)"/>
+						<xsl:value-of select="round($theConvertedValue)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
@@ -135,7 +134,7 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValue">
+			<xsl:variable name="theConvertedValue">
 				<xsl:call-template name="ConvertValueToDefault">
 					<xsl:with-param name="theValue"><xsl:value-of select="@Wavelength"/></xsl:with-param>
 					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WavelengthUnit"/></xsl:with-param>
@@ -144,9 +143,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theValue=round($theValue)">
+				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValue)"/>
+						<xsl:value-of select="round($theConvertedValue)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
@@ -298,23 +297,34 @@
 		<xsl:for-each select="@*">
 			<xsl:choose>
 				<xsl:when test="substring(name(), string-length(name()) - string-length('Unit') +1) = 'Unit'">
-					<xsl:message>Skipping: <xsl:value-of select="name()"/></xsl:message>
+					<!-- Units attribute so do not copy -->
 				</xsl:when>
 				<xsl:when test="$unit-attributes-count != 0">
-					<xsl:message>Checking: <xsl:value-of select="name()"/></xsl:message>
 					<xsl:variable name="match-name"><xsl:value-of select="name()"/>Unit</xsl:variable>
 					<xsl:choose>
 						<xsl:when test="count($unit-attributes[name() = $match-name]) = 1">
-							<xsl:message>Match: <xsl:value-of select="name()"/></xsl:message>
-							<xsl:apply-templates select="."/>
+							<!-- This attribute has units specified so convert -->
+							<xsl:variable name="theUnitName"><xsl:value-of select="local-name()"/>Unit</xsl:variable>
+							<xsl:variable name="theConvertedValue">
+								<xsl:call-template name="ConvertValueToDefault">
+									<xsl:with-param name="theValue"><xsl:value-of select="."/></xsl:with-param>
+									<xsl:with-param name="theCurrentUnit"><xsl:value-of select="../@*[name() = $theUnitName]"/></xsl:with-param>
+									<xsl:with-param name="theAttributeName"><xsl:value-of select="local-name(.)"/></xsl:with-param>
+									<xsl:with-param name="theElementName"><xsl:value-of select="local-name(parent::node())"/></xsl:with-param>
+								</xsl:call-template>
+							</xsl:variable>
+							<xsl:attribute name="{local-name(.)}">
+								<xsl:value-of select="$theConvertedValue"/>
+							</xsl:attribute>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:message>No match: <xsl:value-of select="name()"/></xsl:message>
+							<!-- Units used but this attribute has no units specified -->
 							<xsl:apply-templates select="."/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
+					<!-- No units being used -->
 					<xsl:apply-templates select="."/>
 				</xsl:otherwise>
 			</xsl:choose>
