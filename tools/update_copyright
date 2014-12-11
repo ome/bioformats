@@ -21,7 +21,7 @@ echo "Updating copyright with $CURRENT_YEAR"
 # Update year range copyrights
 for COPYRIGHT in "${COPYRIGHTS[@]}";
 do
-    echo $COPYRIGHT
+    echo "Updating $COPYRIGHT"
     for file in $(git grep -l "${COPYRIGHT}${YEAR}${RANGE}${YEAR}${AUTHOR}");
     do
         inplace_sed "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${CURRENT_YEAR}\2/" $file
