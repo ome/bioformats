@@ -89,7 +89,7 @@ namespace
 
     parser.parse(source);
 
-    if (er)
+    if (er || !parser.getDocument())
       throw std::runtime_error("Parse error");
   }
 
@@ -202,13 +202,11 @@ namespace ome
       Document
       createEmptyDocument(const std::string& qualifiedName)
       {
-
         xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(String("LS"));
         if (!impl)
           throw std::runtime_error("Failed to create LS DOMImplementation");
 
-        return impl->createDocument(0, String(qualifiedName), 0);
-
+        return Document(impl->createDocument(0, String(qualifiedName), 0), true);
       }
 
       Document
@@ -222,7 +220,7 @@ namespace ome
         setup_parser(parser);
         read_source(parser, source);
 
-        return parser.adoptDocument();
+        return Document(parser.adoptDocument(), true);
       }
 
       Document
@@ -238,7 +236,7 @@ namespace ome
         setup_parser(parser);
         read_source(parser, source);
 
-        return parser.adoptDocument();
+        return Document(parser.adoptDocument(), true);
       }
 
       Document
@@ -268,7 +266,7 @@ namespace ome
         setup_parser(parser);
         read_source(parser, source);
 
-        return parser.adoptDocument();
+        return Document(parser.adoptDocument(), true);
       }
 
       void
@@ -313,6 +311,54 @@ namespace ome
         XMLSize_t buflen(target.getLen());
         text.assign(reinterpret_cast<const char *>(buf),
                     reinterpret_cast<const char *>(buf) + buflen);
+      }
+
+      void
+      writeNode(Node&                          node,
+                const boost::filesystem::path& file,
+                const WriteParameters&         params)
+      {
+        writeNode(*(node.get()), file, params);
+      }
+
+      void
+      writeNode(Node&                  node,
+                std::ostream&          stream,
+                const WriteParameters& params)
+      {
+        writeNode(*(node.get()), stream, params);
+      }
+
+      void
+      writeNode(Node&                  node,
+                std::string&           text,
+                const WriteParameters& params)
+      {
+        writeNode(*(node.get()), text, params);
+      }
+
+      void
+      writeDocument(Document&                      document,
+                    const boost::filesystem::path& file,
+                    const WriteParameters&         params)
+      {
+        writeNode(*(document.get()), file, params);
+      }
+
+      void
+      writeDocument(Document&              document,
+                    std::ostream&          stream,
+                    const WriteParameters& params)
+      {
+        writeNode(*(document.get()), stream, params);
+      }
+
+      void
+      writeDocument(Document&              document,
+                    std::string&           text,
+                    const WriteParameters& params)
+      {
+        writeNode(*(document.get()), text, params);
       }
 
     }

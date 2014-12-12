@@ -10,7 +10,7 @@
              ++elem)
           {
             /// @todo Wrap importNode in document.
-            xerces::dom::Node Value_subNode = document->importNode(elem->get(), true);
+            xerces::dom::Node Value_subNode(document->importNode(elem->get(), true), false);
             value_element.appendChild(Value_subNode);
           }
         element.appendChild(value_element);

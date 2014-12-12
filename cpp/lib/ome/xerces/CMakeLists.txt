@@ -40,7 +40,8 @@ include_directories(${OME_TOPLEVEL_INCLUDES}
 set(ome_xerces_sources
     EntityResolver.cpp
     ErrorReporter.cpp
-    dom/Document.cpp)
+    dom/Document.cpp
+    dom/NodeList.cpp)
 
 set(ome_xerces_base_headers
     EntityResolver.h
