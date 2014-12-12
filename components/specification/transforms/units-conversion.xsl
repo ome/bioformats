@@ -92,15 +92,28 @@
 			<xsl:when test="$theNewUnit = ''">
 				<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion of [<xsl:value-of select="$theCurrentUnit"/>] to an unknown unit.</xsl:message>
 			</xsl:when>
-			<xsl:when test="$theCurrentUnit = $theNewUnit"><xsl:value-of select="$theValue"/></xsl:when>
+			<xsl:when test="$theNewUnit = $theCurrentUnit"><xsl:value-of select="$theValue"/></xsl:when>
 			<!-- codegen begin - convert -->
-			<xsl:when test="$theCurrentUnit = 'mm' and $theNewUnit = 'nm'"><xsl:value-of select="$theValue * 1000000"/></xsl:when>
-			<xsl:when test="$theCurrentUnit = 'pm' and $theNewUnit = 'nm'"><xsl:value-of select="$theValue div 1000"/></xsl:when>
-			<xsl:when test="$theCurrentUnit = '°F' and $theNewUnit = '°C'"><xsl:value-of select="(($theValue - 32) * 5) div 9"/></xsl:when>
-			
+			<xsl:when test="$theNewUnit = 'nm'">
+				<xsl:choose>
+					<xsl:when test="$theCurrentUnit = 'mm'"><xsl:value-of select="$theValue * 1000000"/></xsl:when>
+					<xsl:when test="$theCurrentUnit = 'pm'"><xsl:value-of select="$theValue div 1000"/></xsl:when>
+					<xsl:otherwise>
+						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:when>
+			<xsl:when test="$theNewUnit = '°C'">
+				<xsl:choose>
+					<xsl:when test="$theCurrentUnit = '°F'"><xsl:value-of select="(($theValue - 32) * 5) div 9"/></xsl:when>
+					<xsl:otherwise>
+						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:when>
 			<!-- codegen end - convert -->
 			<xsl:otherwise>
-				<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
+				<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion from any unit to [<xsl:value-of select="$theNewUnit"/>].</xsl:message>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
