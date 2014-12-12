@@ -132,9 +132,9 @@ public class TiffWriter extends FormatWriter {
     isBigTiff = false;
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatWriter API methods --
 
-  /* @see loci.formats.IFormatHandler#setId(String) */
+  /* @see loci.formats.FormatWriter#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);

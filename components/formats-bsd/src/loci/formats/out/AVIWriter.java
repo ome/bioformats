@@ -218,9 +218,9 @@ public class AVIWriter extends FormatWriter {
     return new int[] {FormatTools.UINT8};
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatWriter API methods --
 
-  /* @see loci.formats.IFormatHandler#close() */
+  /* @see loci.formats.FormatWriter#close() */
   @Override
   public void close() throws IOException {
     super.close();
@@ -234,7 +234,7 @@ public class AVIWriter extends FormatWriter {
     saveidx1Length = 0;
   }
 
-  /* @see loci.formats.IFormatHandler#setId(String) */
+  /* @see loci.formats.FormatWriter#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);

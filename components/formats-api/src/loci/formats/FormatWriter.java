@@ -295,7 +295,15 @@ public abstract class FormatWriter extends FormatHandler
 
   // -- IFormatHandler API methods --
 
-  /* @see IFormatHandler#setId(String) */
+  /**
+   * Initializes a writer from the input file name.
+   *
+   * Initializes a {@link RandomAccessOutputStream} for the output
+   * file and initializes the metadata for all the series using
+   * {@link #setSeries(int)}.
+   *
+   *  @param id a {@link String} specifying the path to the file
+   */
   @Override
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
