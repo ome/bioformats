@@ -2,17 +2,17 @@
 Developer Documentation
 ***********************
 
-This document describes various things that are useful to know when
-working with Bio-Formats.  It is recommended that you obtain the
+The following sections describe various things that are useful to know when
+working with Bio-Formats. It is recommended that you obtain the
 Bio-Formats source by following the directions in the
-:ref:`source-code` section.  Having a copy of the :javadoc:`Javadocs <>`
-nearby is recommended—the notes that follow will make more sense when you see 
-the API.
+:ref:`source-code` section. Referring to the :javadoc:`Javadocs <>` as you
+read over these pages should help, as the notes will make more sense when you
+see the API.
 
-For a complete list of supported formats, see the Bio-Formats 
+For a complete list of supported formats, see the Bio-Formats
 :doc:`supported formats table </supported-formats>`.
 
-For a few working examples of how to use Bio-Formats, see 
+For a few working examples of how to use Bio-Formats, see
 :sourcedir:`these Github pages <components/formats-gpl/utils>`.
 
 
