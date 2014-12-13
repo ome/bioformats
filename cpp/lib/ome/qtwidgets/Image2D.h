@@ -47,7 +47,7 @@
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/FormatReader.h>
 
-#include <ome/qtwidgets/GLImageShader2D.h>
+#include <ome/qtwidgets/glsl/v110/GLImageShader2D.h>
 
 namespace ome
 {
@@ -168,7 +168,7 @@ namespace ome
 
     private:
       /// The shader program for image rendering.
-      GLImageShader2D *image_shader;
+      glsl::v110::GLImageShader2D *image_shader;
       /// The image vertices.
       QOpenGLBuffer image_vertices;
       /// The image texture coordinates.
@@ -186,7 +186,7 @@ namespace ome
       /// The image series.
       ome::bioformats::dimension_size_type series;
       /// The current image plane.
-      ome::bioformats::dimension_size_type plane;      
+      ome::bioformats::dimension_size_type plane;
     };
 
   }

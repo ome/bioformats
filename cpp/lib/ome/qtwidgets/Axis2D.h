@@ -47,7 +47,7 @@
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/FormatReader.h>
 
-#include <ome/qtwidgets/GLFlatShader2D.h>
+#include <ome/qtwidgets/glsl/v110/GLFlatShader2D.h>
 
 namespace ome
 {
@@ -110,7 +110,7 @@ namespace ome
                    glm::vec2 slim);
 
       /// The shader program for axis rendering.
-      GLFlatShader2D *axis_shader;
+      glsl::v110::GLFlatShader2D *axis_shader;
       /// The vertices for the x axis.
       QOpenGLBuffer xaxis_vertices;
       /// The vertices for the y axis.

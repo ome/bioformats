@@ -50,7 +50,7 @@ namespace ome
                    ome::bioformats::dimension_size_type            series,
                    QObject                                        *parent):
       QObject(parent),
-      axis_shader(new GLFlatShader2D(this)),
+      axis_shader(new glsl::v110::GLFlatShader2D(this)),
       xaxis_vertices(QOpenGLBuffer::VertexBuffer),
       yaxis_vertices(QOpenGLBuffer::VertexBuffer),
       axis_elements(QOpenGLBuffer::IndexBuffer),

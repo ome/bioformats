@@ -108,7 +108,7 @@ namespace ome
                    ome::bioformats::dimension_size_type            series,
                    QObject                                        *parent):
       QObject(parent),
-      grid_shader(new GLLineShader2D(this)),
+      grid_shader(new glsl::v110::GLLineShader2D(this)),
       grid_vertices(QOpenGLBuffer::VertexBuffer),
       grid_elements(QOpenGLBuffer::IndexBuffer),
       reader(reader),

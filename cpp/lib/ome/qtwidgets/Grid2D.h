@@ -47,7 +47,7 @@
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/FormatReader.h>
 
-#include <ome/qtwidgets/GLLineShader2D.h>
+#include <ome/qtwidgets/glsl/v110/GLLineShader2D.h>
 
 namespace ome
 {
@@ -112,7 +112,7 @@ namespace ome
                    const glm::vec2& ylim);
 
       /// The shader program for grid shading.
-      GLLineShader2D *grid_shader;
+      glsl::v110::GLLineShader2D *grid_shader;
       /// The vertices for the grid.
       QOpenGLBuffer grid_vertices;
       /// The elements for the grid.

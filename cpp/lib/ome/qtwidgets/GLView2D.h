@@ -42,14 +42,10 @@
 #include <ome/bioformats/FormatReader.h>
 
 #include <ome/qtwidgets/GLWindow.h>
-#include <ome/qtwidgets/GLImageShader2D.h>
-#include <ome/qtwidgets/GLFlatShader2D.h>
 #include <ome/qtwidgets/Image2D.h>
 #include <ome/qtwidgets/Grid2D.h>
 #include <ome/qtwidgets/Axis2D.h>
 
-#include <QOpenGLShader>
-#include <QOpenGLBuffer>
 #include <QElapsedTimer>
 
 #include <glm/glm.hpp>

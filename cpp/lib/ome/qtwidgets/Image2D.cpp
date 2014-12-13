@@ -221,13 +221,9 @@ namespace
       const PixelBufferBase::storage_order_type& orig_order(v->storage_order());
       PixelBufferBase::storage_order_type new_order(gl_order(orig_order));
 
-      if (new_order == orig_order)
-        {
-        }
-      else
+      if (!(new_order == orig_order))
         {
           // Reorder as interleaved.
-
           const PixelBufferBase::size_type *shape = v->shape();
 
           T gl_buf(new typename T::element_type(boost::extents[shape[0]][shape[1]][shape[2]][shape[3]][shape[4]][shape[5]][shape[6]][shape[7]][shape[8]],
@@ -239,11 +235,10 @@ namespace
         }
 
       // In interleaved order.
-      //      glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // MultiArray buffers are packed
+      glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // MultiArray buffers are packed
 
       glBindTexture(GL_TEXTURE_2D, textureid);
       check_gl("Bind texture");
-      //      std::cerr << "Loading subimage of size "<<v->num_elements()<<"\n";
       glTexSubImage2D(GL_TEXTURE_2D, // target
                       0,  // level, 0 = base, no minimap,
                       0, 0, // x, y
@@ -267,11 +262,6 @@ namespace
       /// @todo Conversion from complex.
     }
 
-    void
-    operator() (const std::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
-    {
-      /// @todo Conversion to uint8.
-    }
   };
 
 }
@@ -285,7 +275,7 @@ namespace ome
                      ome::bioformats::dimension_size_type            series,
                      QObject                                        *parent):
       QObject(parent),
-      image_shader(new GLImageShader2D(this)),
+      image_shader(new glsl::v110::GLImageShader2D(this)),
       image_vertices(QOpenGLBuffer::VertexBuffer),
       image_texcoords(QOpenGLBuffer::VertexBuffer),
       image_elements(QOpenGLBuffer::IndexBuffer),

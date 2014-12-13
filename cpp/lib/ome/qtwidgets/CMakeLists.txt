@@ -46,35 +46,41 @@ if (OME_QTOPENGL)
                       ${GLM_INCLUDE_DIR}
                       ${Qt5_INCLUDE_DIRS})
 
-  SET(QTWIDGETS_SOURCES
+  set(QTWIDGETS_SOURCES
       GLUtil.cpp
       GLContainer.cpp
       GLWindow.cpp
-      GLFlatShader2D.cpp
-      GLImageShader2D.cpp
-      GLLineShader2D.cpp
       GLView2D.cpp
       Axis2D.cpp
       Grid2D.cpp
       Image2D.cpp
       TexelProperties.cpp)
 
-  SET(QTWIDGETS_HEADERS
+  set(QTWIDGETS_HEADERS
       GLUtil.h
       GLContainer.h
       GLWindow.h
-      GLFlatShader2D.h
-      GLImageShader2D.h
-      GLLineShader2D.h
       GLView2D.h
       Axis2D.h
       Grid2D.h
       Image2D.h
       TexelProperties.h)
 
+  set(QTWIDGETS_GLSL_V110_SOURCES
+      glsl/v110/GLFlatShader2D.cpp
+      glsl/v110/GLImageShader2D.cpp
+      glsl/v110/GLLineShader2D.cpp)
+
+  set(QTWIDGETS_GLSL_V110_HEADERS
+      glsl/v110/GLFlatShader2D.h
+      glsl/v110/GLImageShader2D.h
+      glsl/v110/GLLineShader2D.h)
+
   add_library(ome-qtwidgets SHARED
               ${QTWIDGETS_SOURCES}
               ${QTWIDGETS_HEADERS}
+              ${QTWIDGETS_GLSL_V110_SOURCES}
+              ${QTWIDGETS_GLSL_V110HEADERS}
               ${ome-qtwidgets_HEADERS_MOC}
               ${ome-qtwidgets_RESOURCES})
   qt5_use_modules(ome-qtwidgets Core Gui Widgets Svg)
@@ -92,6 +98,8 @@ if (OME_QTOPENGL)
 
   install(FILES ${OME_QTWIDGETS_HEADERS}
           DESTINATION ${ome_qtwidgets_includedir})
+  install(FILES ${OME_QTWIDGETS_GLSL_V110_HEADERS}
+          DESTINATION ${ome_qtwidgets_includedir}/glsl/v110)
 
   set(LIBRARY_PREFIX OME_QTWIDGETS)
   set(LIBRARY_NAME ome-qtwidgets)
