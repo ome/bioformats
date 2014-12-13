@@ -34,10 +34,17 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-add_subdirectory(ome/compat)
-add_subdirectory(ome/internal)
-add_subdirectory(ome/xerces)
-add_subdirectory(ome/xml)
-add_subdirectory(ome/bioformats)
-add_subdirectory(ome/qtwidgets)
-add_subdirectory(ome/test)
+if(OME_QTOPENGL AND BUILD_TESTS)
+  include_directories(${OME_TOPLEVEL_INCLUDES}
+                      ${Boost_INCLUDE_DIRS}
+                      ${OPENGL_INCLUDE_DIR}
+                      ${TIFF_INCLUDE_DIR}
+                      ${GLM_INCLUDE_DIR}
+                      ${Qt5_INCLUDE_DIRS})
+
+  if(extended-tests)
+    header_test_from_file(ome-qtwidgets ome-qtwidgets ome/qtwidgets)
+    qt5_use_modules(ome-qtwidgets-headers Core Gui Widgets Svg)
+    add_test(ome-qtwidgets/headers ome-qtwidgets-headers)
+  endif(extended-tests)
+endif()
