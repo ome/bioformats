@@ -36,8 +36,8 @@
  * #L%
  */
 
-#ifndef OME_QTWIDGETS_GLSL_V110GLIMAGESHADER2D_H
-#define OME_QTWIDGETS_GLSL_V110GLIMAGESHADER2D_H
+#ifndef OME_QTWIDGETS_GLSL_V110_GLIMAGESHADER2D_H
+#define OME_QTWIDGETS_GLSL_V110_GLIMAGESHADER2D_H
 
 #include <QOpenGLShader>
 #include <QOpenGLBuffer>
@@ -51,8 +51,10 @@ namespace ome
 {
   namespace qtwidgets
   {
+    /// OpenGL Shader Language (GLSL) program wrappers.
     namespace glsl
     {
+      /// GLSL v1.10 compatible.
       namespace v110
       {
 
@@ -203,7 +205,7 @@ namespace ome
   }
 }
 
-#endif // OME_QTWIDGETS_GLSL_V110GLIMAGESHADER2D_H
+#endif // OME_QTWIDGETS_GLSL_V110_GLIMAGESHADER2D_H
 
 /*
  * Local Variables:

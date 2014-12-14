@@ -36,92 +36,67 @@
  * #L%
  */
 
-#ifndef OME_QTWIDGETS_GLSL_V110_GLFLATSHADER2D_H
-#define OME_QTWIDGETS_GLSL_V110_GLFLATSHADER2D_H
+#ifndef OME_QTWIDGETS_GL_V20_V20IMAGE2D_H
+#define OME_QTWIDGETS_GL_V20_V20IMAGE2D_H
 
-#include <QOpenGLShader>
-#include <QOpenGLBuffer>
+#include <QtCore/QObject>
+#include <QtGui/QOpenGLBuffer>
+#include <QtGui/QOpenGLShader>
 #include <QtGui/QOpenGLFunctions>
 
-#include <glm/glm.hpp>
+#include <ome/bioformats/Types.h>
+#include <ome/bioformats/FormatReader.h>
+
+#include <ome/qtwidgets/gl/Image2D.h>
+#include <ome/qtwidgets/glsl/v110/GLImageShader2D.h>
 
 namespace ome
 {
   namespace qtwidgets
   {
-    namespace glsl
+    /// OpenGL rendering.
+    namespace gl
     {
-      namespace v110
+      /// OpenGL v2.0 (compatibility profile).
+      namespace v20
       {
 
         /**
-         * 2D flat (solid fill) shader program.
+         * 2D (xy) image renderer.
+         *
+         * Draws the specified image, using a user-selectable plane.
+         *
+         * The render is greyscale with a per-channel min/max for linear
+         * contrast.
          */
-        class GLFlatShader2D : public QOpenGLShaderProgram, protected QOpenGLFunctions
+        class Image2D : public gl::Image2D
         {
           Q_OBJECT
 
         public:
           /**
-           * Constructor.
+           * Create a 2D image.
            *
+           * The size and position will be taken from the specified image.
+           *
+           * @param reader the image reader.
+           * @param series the image series.
            * @param parent the parent of this object.
            */
-          explicit GLFlatShader2D(QObject *parent = 0);
+          explicit Image2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
+                           ome::bioformats::dimension_size_type            series,
+                           QObject                                        *parent = 0);
+
 
           /// Destructor.
-          ~GLFlatShader2D();
+          virtual ~Image2D();
 
-          /// @copydoc GLImageShader2D::enableCoords()
           void
-          enableCoords();
-
-          /// @copydoc GLImageShader2D::enableCoords()
-          void
-          disableCoords();
-
-          /// @copydoc GLImageShader2D::setCoords(const GLfloat*, int, int)
-          void
-          setCoords(const GLfloat *offset, int tupleSize, int stride = 0);
-
-          /// @copydoc GLImageShader2D::setCoords(QOpenGLBuffer&, const GLfloat*, int, int)
-          void
-          setCoords(QOpenGLBuffer& coords, const GLfloat *offset, int tupleSize, int stride = 0);
-
-          /**
-           * Set fill colour.
-           *
-           * @param colour the RGBA fill colour.
-           */
-          void
-          setColour(const glm::vec4& colour);
-
-          /**
-           * Set xy offset in model space.
-           *
-           * @param offset the offset to apply to the model.
-           */
-          void
-          setOffset(const glm::vec2& offset);
-
-          /// @copydoc GLImageShader2D::setModelViewProjection(const glm::mat4& mvp)
-          void
-          setModelViewProjection(const glm::mat4& mvp);
+          render(const glm::mat4& mvp);
 
         private:
-          /// @copydoc GLImageShader2D::vshader
-          QOpenGLShader *vshader;
-          /// @copydoc GLImageShader2D::fshader
-          QOpenGLShader *fshader;
-
-          /// @copydoc GLImageShader2D::attr_coords
-          int attr_coords;
-          /// Fill colour uniform.
-          int uniform_colour;
-          /// Model offset uniform.
-          int uniform_offset;
-          /// @copydoc GLImageShader2D::uniform_mvp
-          int uniform_mvp;
+          /// The shader program for image rendering.
+          glsl::v110::GLImageShader2D *image_shader;
         };
 
       }
@@ -129,7 +104,7 @@ namespace ome
   }
 }
 
-#endif // OME_QTWIDGETS_GLSL_V110_GLFLATSHADER2D_H
+#endif // OME_QTWIDGETS_GL_V20_V20IMAGE2D_H
 
 /*
  * Local Variables:

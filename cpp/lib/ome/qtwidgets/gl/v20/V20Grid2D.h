@@ -36,8 +36,8 @@
  * #L%
  */
 
-#ifndef OME_QTWIDGETS_GRID2D_H
-#define OME_QTWIDGETS_GRID2D_H
+#ifndef OME_QTWIDGETS_GL_V20_V20GRID2D_H
+#define OME_QTWIDGETS_GL_V20_V20GRID2D_H
 
 #include <QtCore/QObject>
 #include <QtGui/QOpenGLBuffer>
@@ -47,86 +47,67 @@
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/FormatReader.h>
 
+#include <ome/qtwidgets/gl/Grid2D.h>
 #include <ome/qtwidgets/glsl/v110/GLLineShader2D.h>
 
 namespace ome
 {
   namespace qtwidgets
   {
-
-    /**
-     * 2D (xy) grid renderer.
-     *
-     * Draws x and y gridlines for the specified image.
-     */
-    class Grid2D : public QObject, protected QOpenGLFunctions
+    namespace gl
     {
-      Q_OBJECT
+      namespace v20
+      {
 
-    public:
-      /**
-       * Create a 2D grid.
-       *
-       * The size and position will be taken from the specified image.
-       *
-       * @param reader the image reader.
-       * @param series the image series.
-       * @param parent the parent of this object.
-       */
-      explicit Grid2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                      ome::bioformats::dimension_size_type            series,
-                      QObject                                        *parent = 0);
+        /**
+         * 2D (xy) grid renderer.
+         *
+         * Draws x and y gridlines for the specified image.
+         */
+        class Grid2D : public gl::Grid2D
+        {
+          Q_OBJECT
 
-      /// Destructor.
-      ~Grid2D();
+        public:
+          /**
+           * Create a 2D grid.
+           *
+           * The size and position will be taken from the specified image.
+           *
+           * @param reader the image reader.
+           * @param series the image series.
+           * @param parent the parent of this object.
+           */
+          explicit Grid2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
+                          ome::bioformats::dimension_size_type            series,
+                          QObject                                        *parent = 0);
 
-      /**
-       * Create GL buffers.
-       *
-       * @note Requires a valid GL context.  Must be called before
-       * rendering.
-       */
-      void
-      create();
+          /// Destructor.
+          ~Grid2D();
 
-      /**
-       * Render the grid.
-       *
-       * The zoom level is used to selectively draw gridlines of
-       * differing magnitude depending upon the magnification.
-       *
-       * @param mvp the model view projection matrix.
-       * @param zoom the zoom level.
-       */
-      void render(const glm::mat4& mvp,
-                  float            zoom);
+          /**
+           * Render the grid.
+           *
+           * The zoom level is used to selectively draw gridlines of
+           * differing magnitude depending upon the magnification.
+           *
+           * @param mvp the model view projection matrix.
+           * @param zoom the zoom level.
+           */
+          void render(const glm::mat4& mvp,
+                      float            zoom);
 
-    private:
-      /**
-       * Set the size of the x and y axes.
-       *
-       * @param xlim the x axis limits (range).
-       * @param ylim the y axis limits (range).
-       */
-      void setSize(const glm::vec2& xlim,
-                   const glm::vec2& ylim);
+        private:
+          /// The shader program for grid shading.
+          glsl::v110::GLLineShader2D *grid_shader;
+        };
 
-      /// The shader program for grid shading.
-      glsl::v110::GLLineShader2D *grid_shader;
-      /// The vertices for the grid.
-      QOpenGLBuffer grid_vertices;
-      /// The elements for the grid.
-      QOpenGLBuffer grid_elements;
-      /// The image reader.
-      std::shared_ptr<ome::bioformats::FormatReader> reader;
-      /// The image series.
-      ome::bioformats::dimension_size_type series;
-    };
-
+      }
+    }
   }
 }
 
-#endif // OME_QTWIDGETS_GRID2D_H
+#endif // OME_QTWIDGETS_GL_V20_V20GRID2D_H
 
 /*
  * Local Variables:

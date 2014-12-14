@@ -43,6 +43,10 @@
 #include <ome/qtwidgets/GLView2D.h>
 #include <ome/qtwidgets/GLUtil.h>
 
+#include <ome/qtwidgets/gl/v20/V20Image2D.h>
+#include <ome/qtwidgets/gl/v20/V20Grid2D.h>
+#include <ome/qtwidgets/gl/v20/V20Axis2D.h>
+
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -248,9 +252,9 @@ namespace ome
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       check_gl("Set blend function");
 
-      image = new Image2D(reader, series, this);
-      axes = new Axis2D(reader, series, this);
-      grid = new Grid2D(reader, series, this);
+      image = new gl::v20::Image2D(reader, series, this);
+      axes = new gl::v20::Axis2D(reader, series, this);
+      grid = new gl::v20::Grid2D(reader, series, this);
 
       GLint max_combined_texture_image_units;
       glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_combined_texture_image_units);

@@ -36,8 +36,10 @@
  * #L%
  */
 
-#ifndef OME_QTWIDGETS_AXIS2D_H
-#define OME_QTWIDGETS_AXIS2D_H
+#ifndef OME_QTWIDGETS_GL_AXIS2D_H
+#define OME_QTWIDGETS_GL_AXIS2D_H
+
+#include <glm/glm.hpp>
 
 #include <QtCore/QObject>
 #include <QtGui/QOpenGLBuffer>
@@ -53,80 +55,86 @@ namespace ome
 {
   namespace qtwidgets
   {
-
-    /**
-     * 2D (xy) axis renderer.
-     *
-     * Draws x and y axes for the specified image.
-     */
-    class Axis2D : public QObject, protected QOpenGLFunctions
+    namespace gl
     {
-      Q_OBJECT
-
-    public:
-      /**
-       * Create a 2D axis.
-       *
-       * The size and position will be taken from the specified image.
-       *
-       * @param reader the image reader.
-       * @param series the image series.
-       * @param parent the parent of this object.
-       */
-      explicit Axis2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                      ome::bioformats::dimension_size_type            series,
-                      QObject                                        *parent = 0);
-
-      /// Destructor.
-      ~Axis2D();
 
       /**
-       * Create GL buffers.
+       * 2D (xy) axis renderer.
        *
-       * @note Requires a valid GL context.  Must be called before
-       * rendering.
+       * Draws x and y axes for the specified image.
        */
-      void
-      create();
+      class Axis2D : public QObject, protected QOpenGLFunctions
+      {
+        Q_OBJECT
 
-      /**
-       * Render the axis.
-       *
-       * @param mvp the model view projection matrix.
-       */
-      void
-      render(const glm::mat4& mvp);
+      public:
+        /**
+         * Create a 2D axis.
+         *
+         * The size and position will be taken from the specified image.
+         *
+         * @param reader the image reader.
+         * @param series the image series.
+         * @param parent the parent of this object.
+         */
+        explicit Axis2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
+                        ome::bioformats::dimension_size_type            series,
+                        QObject                                        *parent = 0);
 
-    private:
-      /**
-       * Set the size of the x and y axes.
-       *
-       * @param xlim the x axis limits (range).
-       * @param ylim the y axis limits (range).
-       * @param slim the axis shaft width (min and max from midline).
-       */
-      void setSize(glm::vec2 xlim,
-                   glm::vec2 ylim,
-                   glm::vec2 slim);
+        /// Destructor.
+        virtual
+        ~Axis2D() = 0;
 
-      /// The shader program for axis rendering.
-      glsl::v110::GLFlatShader2D *axis_shader;
-      /// The vertices for the x axis.
-      QOpenGLBuffer xaxis_vertices;
-      /// The vertices for the y axis.
-      QOpenGLBuffer yaxis_vertices;
-      /// The elements for both axes.
-      QOpenGLBuffer axis_elements;
-      /// The image reader.
-      std::shared_ptr<ome::bioformats::FormatReader> reader;
-      /// The image series.
-      ome::bioformats::dimension_size_type series;
-    };
+        /**
+         * Create GL buffers.
+         *
+         * @note Requires a valid GL context.  Must be called before
+         * rendering.
+         */
+        virtual
+        void
+        create();
 
+        /**
+         * Render the axis.
+         *
+         * @param mvp the model view projection matrix.
+         */
+        virtual
+        void
+        render(const glm::mat4& mvp) = 0;
+
+      protected:
+        /**
+         * Set the size of the x and y axes.
+         *
+         * @param xlim the x axis limits (range).
+         * @param ylim the y axis limits (range).
+         * @param slim the axis shaft width (min and max from midline).
+         */
+        virtual
+        void
+        setSize(glm::vec2 xlim,
+                glm::vec2 ylim,
+                glm::vec2 slim);
+
+        /// The vertices for the x axis.
+        QOpenGLBuffer xaxis_vertices;
+        /// The vertices for the y axis.
+        QOpenGLBuffer yaxis_vertices;
+        /// The elements for both axes.
+        QOpenGLBuffer axis_elements;
+        /// The image reader.
+        std::shared_ptr<ome::bioformats::FormatReader> reader;
+        /// The image series.
+        ome::bioformats::dimension_size_type series;
+      };
+
+    }
   }
 }
 
-#endif // OME_QTWIDGETS_AXIS2D_H
+#endif // OME_QTWIDGETS_GL_AXIS2D_H
 
 /*
  * Local Variables:

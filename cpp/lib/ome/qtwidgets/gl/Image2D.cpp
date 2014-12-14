@@ -39,7 +39,7 @@
 #include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
 
-#include <ome/qtwidgets/Image2D.h>
+#include <ome/qtwidgets/gl/Image2D.h>
 #include <ome/qtwidgets/GLUtil.h>
 
 #include <iostream>
@@ -255,8 +255,8 @@ namespace
 
     template <typename T>
     typename boost::enable_if_c<
-    boost::is_complex<T>::value, void
-    >::type
+      boost::is_complex<T>::value, void
+      >::type
     operator() (const std::shared_ptr<PixelBuffer<T> >& v)
     {
       /// @todo Conversion from complex.
@@ -270,194 +270,164 @@ namespace ome
 {
   namespace qtwidgets
   {
-
-    Image2D::Image2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                     ome::bioformats::dimension_size_type            series,
-                     QObject                                        *parent):
-      QObject(parent),
-      image_shader(new glsl::v110::GLImageShader2D(this)),
-      image_vertices(QOpenGLBuffer::VertexBuffer),
-      image_texcoords(QOpenGLBuffer::VertexBuffer),
-      image_elements(QOpenGLBuffer::IndexBuffer),
-      textureid(0),
-      texmin(0.0f),
-      texmax(0.1f),
-      reader(reader),
-      series(series),
-      plane(-1)
+    namespace gl
     {
-      initializeOpenGLFunctions();
+
+      Image2D::Image2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
+                       ome::bioformats::dimension_size_type            series,
+                       QObject                                        *parent):
+        QObject(parent),
+        image_vertices(QOpenGLBuffer::VertexBuffer),
+        image_texcoords(QOpenGLBuffer::VertexBuffer),
+        image_elements(QOpenGLBuffer::IndexBuffer),
+        textureid(0),
+        texmin(0.0f),
+        texmax(0.1f),
+        reader(reader),
+        series(series),
+        plane(-1)
+      {
+        initializeOpenGLFunctions();
+      }
+
+      Image2D::~Image2D()
+      {
+      }
+
+      void Image2D::create()
+      {
+        TextureProperties tprop(*reader, series);
+
+        ome::bioformats::dimension_size_type oldseries = reader->getSeries();
+        reader->setSeries(series);
+        ome::bioformats::dimension_size_type sizeX = reader->getSizeX();
+        ome::bioformats::dimension_size_type sizeY = reader->getSizeY();
+        setSize(glm::vec2(0.0f, sizeX),
+                glm::vec2(0.0f, sizeY));
+        reader->setSeries(oldseries);
+
+        unsigned int id = 0;
+        std::cerr << "Unset textureid "<<textureid << "\n";
+        glGenTextures(1, &textureid);
+        std::cerr << "Gen textureid "<<textureid << "\n";
+        glBindTexture(GL_TEXTURE_2D, textureid);
+        check_gl("Bind texture");
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, tprop.min_filter);
+        check_gl("Set texture min filter");
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, tprop.mag_filter);
+        check_gl("Set texture mag filter");
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        check_gl("Set texture wrap s");
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        check_gl("Set texture wrap t");
+
+        glTexImage2D(GL_TEXTURE_2D, // target
+                     0,  // level, 0 = base, no minimap,
+                     tprop.internal_format, // internalformat
+                     sizeX,  // width
+                     sizeY,  // height
+                     0,  // border
+                     tprop.external_format,  // format
+                     tprop.external_type, // type
+                     0);
+        check_gl("Texture create");
+        std::cerr << "Created image textureid "<<textureid<<"(" << sizeX << "x" << sizeY <<  ")\n";
+      }
+
+      void
+      Image2D::setSize(const glm::vec2& xlim,
+                       const glm::vec2& ylim)
+      {
+        GLfloat square_vertices[] = {
+          xlim[0], ylim[0],
+          xlim[1], ylim[0],
+          xlim[1], ylim[1],
+          xlim[0], ylim[1]
+        };
+
+        if (!image_vertices.isCreated())
+          image_vertices.create();
+        image_vertices.setUsagePattern(QOpenGLBuffer::StaticDraw);
+        image_vertices.bind();
+        image_vertices.allocate(square_vertices, sizeof(square_vertices));
+
+        glm::vec2 texxlim(0.0, 1.0);
+        glm::vec2 texylim(0.0, 1.0);
+        GLfloat square_texcoords[] = {
+          texxlim[0], texylim[0],
+          texxlim[1], texylim[0],
+          texxlim[1], texylim[1],
+          texxlim[0], texylim[1]
+        };
+
+        if (!image_texcoords.isCreated())
+          image_texcoords.create();
+        image_texcoords.setUsagePattern(QOpenGLBuffer::StaticDraw);
+        image_texcoords.bind();
+        image_texcoords.allocate(square_texcoords, sizeof(square_texcoords));
+
+        GLushort square_elements[] = {
+          // front
+          0,  1,  2,
+          2,  3,  0
+        };
+
+        if (!image_elements.isCreated())
+          image_elements.create();
+        image_elements.setUsagePattern(QOpenGLBuffer::StaticDraw);
+        image_elements.bind();
+        image_elements.allocate(square_elements, sizeof(square_elements));
+      }
+
+      void
+      Image2D::setPlane(ome::bioformats::dimension_size_type plane)
+      {
+        if (this->plane != plane)
+          {
+            TextureProperties tprop(*reader, series);
+
+            ome::bioformats::VariantPixelBuffer buf;
+            ome::bioformats::dimension_size_type oldseries = reader->getSeries();
+            reader->setSeries(series);
+            reader->openBytes(plane, buf);
+            reader->setSeries(oldseries);
+
+            GLSetBufferVisitor v(textureid, tprop);
+            boost::apply_visitor(v, buf.vbuffer());
+          }
+        this->plane = plane;
+      }
+
+      const glm::vec3&
+      Image2D::getMin() const
+      {
+        return texmin;
+      }
+
+      void
+      Image2D::setMin(const glm::vec3& min)
+      {
+        texmin = min;
+      }
+
+      const glm::vec3&
+      Image2D::getMax() const
+      {
+        return texmax;
+      }
+
+      void
+      Image2D::setMax(const glm::vec3& max)
+      {
+        texmax = max;
+      }
+
+      unsigned int
+      Image2D::texture()
+      {
+        return textureid;
+      }
+
     }
-
-    Image2D::~Image2D()
-    {
-    }
-
-    void Image2D::create()
-    {
-      TextureProperties tprop(*reader, series);
-
-      ome::bioformats::dimension_size_type oldseries = reader->getSeries();
-      reader->setSeries(series);
-      ome::bioformats::dimension_size_type sizeX = reader->getSizeX();
-      ome::bioformats::dimension_size_type sizeY = reader->getSizeY();
-      setSize(glm::vec2(0.0f, sizeX),
-              glm::vec2(0.0f, sizeY));
-      reader->setSeries(oldseries);
-
-      unsigned int id = 0;
-      std::cerr << "Unset textureid "<<textureid << "\n";
-      glGenTextures(1, &textureid);
-      std::cerr << "Gen textureid "<<textureid << "\n";
-      glBindTexture(GL_TEXTURE_2D, textureid);
-      check_gl("Bind texture");
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, tprop.min_filter);
-      check_gl("Set texture min filter");
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, tprop.mag_filter);
-      check_gl("Set texture mag filter");
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-      check_gl("Set texture wrap s");
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-      check_gl("Set texture wrap t");
-
-      glTexImage2D(GL_TEXTURE_2D, // target
-                   0,  // level, 0 = base, no minimap,
-                   tprop.internal_format, // internalformat
-                   sizeX,  // width
-                   sizeY,  // height
-                   0,  // border
-                   tprop.external_format,  // format
-                   tprop.external_type, // type
-                   0);
-      check_gl("Texture create");
-      std::cerr << "Created image textureid "<<textureid<<"(" << sizeX << "x" << sizeY <<  ")\n";
-    }
-
-    void
-    Image2D::setSize(const glm::vec2& xlim,
-                     const glm::vec2& ylim)
-    {
-      GLfloat square_vertices[] = {
-        xlim[0], ylim[0],
-        xlim[1], ylim[0],
-        xlim[1], ylim[1],
-        xlim[0], ylim[1]
-      };
-
-      if (!image_vertices.isCreated())
-        image_vertices.create();
-      image_vertices.setUsagePattern(QOpenGLBuffer::StaticDraw);
-      image_vertices.bind();
-      image_vertices.allocate(square_vertices, sizeof(square_vertices));
-
-      glm::vec2 texxlim(0.0, 1.0);
-      glm::vec2 texylim(0.0, 1.0);
-      GLfloat square_texcoords[] = {
-        texxlim[0], texylim[0],
-        texxlim[1], texylim[0],
-        texxlim[1], texylim[1],
-        texxlim[0], texylim[1]
-      };
-
-      if (!image_texcoords.isCreated())
-        image_texcoords.create();
-      image_texcoords.setUsagePattern(QOpenGLBuffer::StaticDraw);
-      image_texcoords.bind();
-      image_texcoords.allocate(square_texcoords, sizeof(square_texcoords));
-
-      GLushort square_elements[] = {
-        // front
-        0,  1,  2,
-        2,  3,  0
-      };
-
-      if (!image_elements.isCreated())
-        image_elements.create();
-      image_elements.setUsagePattern(QOpenGLBuffer::StaticDraw);
-      image_elements.bind();
-      image_elements.allocate(square_elements, sizeof(square_elements));
-    }
-
-    void
-    Image2D::setPlane(ome::bioformats::dimension_size_type plane)
-    {
-      if (this->plane != plane)
-        {
-          TextureProperties tprop(*reader, series);
-
-          ome::bioformats::VariantPixelBuffer buf;
-          ome::bioformats::dimension_size_type oldseries = reader->getSeries();
-          reader->setSeries(series);
-          reader->openBytes(plane, buf);
-          reader->setSeries(oldseries);
-
-          GLSetBufferVisitor v(textureid, tprop);
-          boost::apply_visitor(v, buf.vbuffer());
-        }
-      this->plane = plane;
-    }
-
-    const glm::vec3&
-    Image2D::getMin() const
-    {
-      return texmin;
-    }
-
-    void
-    Image2D::setMin(const glm::vec3& min)
-    {
-      texmin = min;
-    }
-
-    const glm::vec3&
-    Image2D::getMax() const
-    {
-      return texmax;
-    }
-
-    void
-    Image2D::setMax(const glm::vec3& max)
-    {
-      texmax = max;
-    }
-
-    void
-    Image2D::render(const glm::mat4& mvp)
-    {
-      image_shader->bind();
-
-      image_shader->setMin(texmin);
-      image_shader->setMax(texmax);
-      image_shader->setModelViewProjection(mvp);
-
-      glActiveTexture(GL_TEXTURE0);
-      check_gl("Activate texture");
-      glBindTexture(GL_TEXTURE_2D, textureid);
-      check_gl("Bind texture");
-      image_shader->setTexture(0);
-      std::cerr << "Setting textureid = " << textureid << "\n";
-
-      image_shader->enableCoords();
-      image_shader->setCoords(image_vertices, 0, 2);
-
-      image_shader->enableTexCoords();
-      image_shader->setTexCoords(image_texcoords, 0, 2);
-
-      // Push each element to the vertex shader
-      image_elements.bind();
-      glDrawElements(GL_TRIANGLES, image_elements.size()/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-      check_gl("Image2D draw elements");
-
-      image_shader->disableCoords();
-      image_shader->disableTexCoords();
-      image_shader->release();
-    }
-
-    unsigned int
-    Image2D::texture()
-    {
-      return textureid;
-    }
-
   }
 }

@@ -51,9 +51,6 @@ if (OME_QTOPENGL)
       GLContainer.cpp
       GLWindow.cpp
       GLView2D.cpp
-      Axis2D.cpp
-      Grid2D.cpp
-      Image2D.cpp
       TexelProperties.cpp)
 
   set(QTWIDGETS_HEADERS
@@ -61,10 +58,27 @@ if (OME_QTOPENGL)
       GLContainer.h
       GLWindow.h
       GLView2D.h
-      Axis2D.h
-      Grid2D.h
-      Image2D.h
       TexelProperties.h)
+
+  set(QTWIDGETS_GL_SOURCES
+      gl/Axis2D.cpp
+      gl/Grid2D.cpp
+      gl/Image2D.cpp)
+
+  set(QTWIDGETS_GL_HEADERS
+      gl/Axis2D.h
+      gl/Grid2D.h
+      gl/Image2D.h)
+
+  set(QTWIDGETS_GL_V20_SOURCES
+      gl/v20/V20Axis2D.cpp
+      gl/v20/V20Grid2D.cpp
+      gl/v20/V20Image2D.cpp)
+
+  set(QTWIDGETS_GL_V20_HEADERS
+      gl/v20/V20Axis2D.h
+      gl/v20/V20Grid2D.h
+      gl/v20/V20Image2D.h)
 
   set(QTWIDGETS_GLSL_V110_SOURCES
       glsl/v110/GLFlatShader2D.cpp
@@ -79,8 +93,12 @@ if (OME_QTOPENGL)
   add_library(ome-qtwidgets SHARED
               ${QTWIDGETS_SOURCES}
               ${QTWIDGETS_HEADERS}
+              ${QTWIDGETS_GL_SOURCES}
+              ${QTWIDGETS_GL_HEADERS}
+              ${QTWIDGETS_GL_V20_SOURCES}
+              ${QTWIDGETS_GL_V20_HEADERS}
               ${QTWIDGETS_GLSL_V110_SOURCES}
-              ${QTWIDGETS_GLSL_V110HEADERS}
+              ${QTWIDGETS_GLSL_V110_HEADERS}
               ${ome-qtwidgets_HEADERS_MOC}
               ${ome-qtwidgets_RESOURCES})
   qt5_use_modules(ome-qtwidgets Core Gui Widgets Svg)
@@ -98,6 +116,10 @@ if (OME_QTOPENGL)
 
   install(FILES ${OME_QTWIDGETS_HEADERS}
           DESTINATION ${ome_qtwidgets_includedir})
+  install(FILES ${OME_QTWIDGETS_GL__HEADERS}
+          DESTINATION ${ome_qtwidgets_includedir}/gl)
+  install(FILES ${OME_QTWIDGETS_GL_V20_HEADERS}
+          DESTINATION ${ome_qtwidgets_includedir}/gl/v20)
   install(FILES ${OME_QTWIDGETS_GLSL_V110_HEADERS}
           DESTINATION ${ome_qtwidgets_includedir}/glsl/v110)
 
@@ -110,7 +132,7 @@ if (OME_QTOPENGL)
           DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 
   # Dump header list for testing
-  header_include_list_write(QTWIDGETS_HEADERS ome-qtwidgets_HEADERS_MOC ome/qtwidgets ${PROJECT_BINARY_DIR}/cpp/test/ome-qtwidgets)
+  header_include_list_write(QTWIDGETS_HEADERS "" ome/qtwidgets ${PROJECT_BINARY_DIR}/cpp/test/ome-qtwidgets)
 
 else()
   message(WARNING "Not building Qt widgets and glview; Qt5.2, OpenGL or glm not found")

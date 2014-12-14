@@ -42,9 +42,9 @@
 #include <ome/bioformats/FormatReader.h>
 
 #include <ome/qtwidgets/GLWindow.h>
-#include <ome/qtwidgets/Image2D.h>
-#include <ome/qtwidgets/Grid2D.h>
-#include <ome/qtwidgets/Axis2D.h>
+#include <ome/qtwidgets/gl/Image2D.h>
+#include <ome/qtwidgets/gl/Grid2D.h>
+#include <ome/qtwidgets/gl/Axis2D.h>
 
 #include <QElapsedTimer>
 
@@ -373,11 +373,11 @@ namespace ome
       /// Last mouse position.
       QPoint lastPos;
       /// Image to render.
-      Image2D *image;
+      gl::Image2D *image;
       /// Axes to render.
-      Axis2D *axes;
+      gl::Axis2D *axes;
       /// Grid to render.
-      Grid2D *grid;
+      gl::Grid2D *grid;
       /// The image reader.
       std::shared_ptr<ome::bioformats::FormatReader> reader;
       /// The image series.
