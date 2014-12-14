@@ -8,55 +8,73 @@ Bio-Formats provides several methods for retrieving data from files in an
 arbitrary (supported) format.  These methods fall into three categories: raw
 pixels, core metadata, and format-specific metadata.  All methods described
 here are present and documented in
-:source:`loci.formats.IFormatReader <components/formats-api/src/loci/formats/IFormatReader.java>`- it is advised that
-you take a look at the source and/or the Javadocs. In general, it is
-recommended that you read files using an instance of :source:`ImageReader
-<components/formats-api/src/loci/formats/ImageReader.java>`.
+:javadoc:`loci.formats.IFormatReader <loci/formats/IFormatReader.html>`. In
+general, it is recommended that you read files using an instance of
+:javadoc:`loci.formats.ImageReader <loci/formats/ImageReader.html>`.
 While it is possible to work with readers for a specific format, ImageReader
 contains additional logic to automatically detect the format of a file and
 delegate subsequent calls to the appropriate reader.
 
 Prior to retrieving pixels or metadata, it is necessary to call
-:javadoc:`setId(String)
-<loci/formats/IFormatHandler.html#setId(java.lang.String)>`
+:javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId(java.lang.String)>`
 on the reader instance, passing in the name of the file to read.  Some formats
 allow multiple series (5D image stacks) per file; in this case you may wish to
-call :javadoc:`setSeries(int) <loci/formats/IFormatReader.html#setSeries(int)>` to change which series is being read.
+call :iformatreaderapi:`setSeries(int)` to change which series is being
+read.
 
 Raw pixels are always retrieved one plane at a time.  Planes are returned
 as raw byte arrays, using one of the openBytes methods.
 
 Core metadata is the general term for anything that might be needed to work
-with the planes in a file.  A list of core metadata fields is given below,
-with the appropriate accessor method in parentheses:
+with the planes in a file.  A list of core metadata fields is given in the
+table below together with the appropriate accessor method:
 
-- image width (:javadoc:`getSizeX()
-  <loci/formats/IFormatReader.html#getSizeX()>`)
-- image height (:javadoc:`getSizeY()
-  <loci/formats/IFormatReader.html#getSizeY()>`)
-- number of series per file (:javadoc:`getSeriesCount()
-  <loci/formats/IFormatReader.html#getSeriesCount()>`)
-- total number of images per series (:javadoc:`getImageCount()
-  <loci/formats/IFormatReader.html#getImageCount()>`)
-- number of slices in the current series (:javadoc:`getSizeZ()
-  <loci/formats/IFormatReader.html#getSizeZ()>`)
-- number of timepoints in the current series (:javadoc:`getSizeT()
-  <loci/formats/IFormatReader.html#getSizeT()>`)
-- number of actual channels in the current series (:javadoc:`getSizeC()
-  <loci/formats/IFormatReader.html#getSizeC()>`)
-- number of channels per image (:javadoc:`getRGBChannelCount()
-  <loci/formats/IFormatReader.html#getRGBChannelCount()>`)
-- the ordering of the images within the current series
-  (:javadoc:`getDimensionOrder()
-  <loci/formats/IFormatReader.html#getDimensionOrder()>`)
-- whether each image is RGB (:javadoc:`isRGB()
-  <loci/formats/IFormatReader.html#isRGB()>`)
-- whether the pixel bytes are in little-endian order
-  (:javadoc:`isLittleEndian() <loci/formats/IFormatReader.html#isLittleEndian()>`)
-- whether the channels in an image are interleaved (:javadoc:`isInterleaved()
-  <loci/formats/IFormatReader.html#isInterleaved()>`)
-- the type of pixel data in this file (:javadoc:`getPixelType()
-  <loci/formats/IFormatReader.html#getPixelType()>`)
+.. tabularcolumns:: |l|c|
+
+.. list-table::
+  :header-rows: 1
+
+  * - Core metadata field
+    - API method
+
+  * - image width
+    - :iformatreaderapi:`getSizeX()`
+
+  * - image height
+    - :iformatreaderapi:`getSizeY()`
+
+  * - number of series per file
+    - :iformatreaderapi:`getSeriesCount()`
+
+  * - total number of images per series
+    - :iformatreaderapi:`getImageCount()`
+
+  * - number of slices in the current series
+    - :iformatreaderapi:`getSizeZ()`
+
+  * - number of timepoints in the current series
+    - :iformatreaderapi:`getSizeT()`
+
+  * - number of actual channels in the current series
+    - :iformatreaderapi:`getSizeC()`
+
+  * - number of channels per image
+    - :iformatreaderapi:`getRGBChannelCount()`
+
+  * - the ordering of the images within the current series
+    - :iformatreaderapi:`getDimensionOrder()`
+
+  * - whether each image is RGB
+    - :iformatreaderapi:`isRGB()`
+
+  * - whether the pixel bytes are in little-endian order
+    - :iformatreaderapi:`isLittleEndian()`
+
+  * - whether the channels in an image are interleaved
+    - :iformatreaderapi:`isInterleaved()`
+
+  * - the type of pixel data in this file
+    - :iformatreaderapi:`getPixelType()`
 
 All file formats are guaranteed to accurately report core metadata.
 
@@ -64,55 +82,73 @@ Format-specific metadata refers to any other data specified in the file - this
 includes acquisition and hardware parameters, among other things.  This data
 is stored internally in a **java.util.Hashtable**, and can be accessed in one of
 two ways: individual values can be retrieved by calling
-:javadoc:`getMetadataValue(String)
-<loci/formats/IFormatReader.html#getMetadataValue(java.lang.String)>`, which gets the value of the specified key.
+:iformatreaderapi:`getMetadataValue(java.lang.String)`, which gets the value of the specified key.
 Note that the keys in this Hashtable are different for each format, hence the
 name "format-specific metadata".
 
 See :doc:`Bio-Formats metadata processing </about/index>` for more information on the metadata capabilities that Bio-Formats provides.
 
+.. seealso::
+  :source:`IFormatReader <components/formats-api/src/loci/formats/IFormatReader.java>`
+    Source code of the ``loci.formats.IFormatReader`` interface
+
 File reading extras
 -------------------
 
 The previous section described how to read pixels as they are stored in the
-file.  However, the native format is not necessarily convenient, so Bio-Formats
-provides a few extras to make file reading more flexible.
+file.  However, the native format is not necessarily convenient, so
+Bio-Formats provides a few extras to make file reading more flexible.
 
-- There are a few "wrapper" readers (that implement IFormatReader) that take a
-  reader in the constructor, and manipulate the results somehow, for
-  convenience. Using them is similar to the java.io InputStream/OutputStream
-  model: just layer whichever functionality you need by nesting the wrappers.
+- The :javadoc:`loci.formats.ReaderWrapper <loci/formats/ReaderWrapper.html>`
+  API that implements ``loci.formats.IFormatReader`` allows to define
+  "wrapper" readers that take a reader in the constructor, and manipulate the
+  results somehow, for convenience. Using them is similar to the java.io
+  InputStream/OutputStream model: just layer whichever functionality you need
+  by nesting the wrappers.
 
-  + :source:`BufferedImageReader <components/formats-bsd/src/loci/formats/gui/BufferedImageReader.java>`
-    extends IFormatReader, and allows pixel data to be
-    returned as BufferedImages instead of raw byte arrays.
-  + :source:`FileStitcher <components/formats-bsd/src/loci/formats/FileStitcher.java>`
-    extends IFormatReader, and uses advanced pattern
-    matching heuristics to group files that belong to the same dataset.
-  + :source:`ChannelSeparator <components/formats-bsd/src/loci/formats/ChannelSeparator.java>`
-    extends IFormatReader, and makes sure that
-    all planes are grayscale - RGB images are split into 3 separate grayscale
-    images.
-  + :source:`ChannelMerger <components/formats-bsd/src/loci/formats/ChannelMerger.java>`
-    extends IFormatReader, and merges grayscale
-    images to RGB if the number of channels is greater than 1.
-  + :source:`ChannelFiller <components/formats-bsd/src/loci/formats/ChannelFiller.java>` extends
-    IFormatReader, and converts indexed color images to
-    RGB images.
-  + :source:`MinMaxCalculator <components/formats-bsd/src/loci/formats/MinMaxCalculator.java>`
-    extends IFormatReader, and provides an API
-    for retrieving the minimum and maximum pixel values for each channel.
-  + :source:`DimensionSwapper <components/formats-bsd/src/loci/formats/DimensionSwapper.java>`
-    extends IFormatReader, and provides an API
-    for changing the dimension order of a file.
+  The table below summarizes a few wrapper readers of interest:
 
-- :source:`ImageTools <components/formats-bsd/src/loci/formats/ImageTools.java>`
-  and :source:`loci.formats.gui.AWTImageTools <components/formats-bsd/src/loci/formats/gui/AWTImageTools.java>` provide a number
-  of methods
-  for manipulating BufferedImages and primitive type arrays.  In particular,
-  there are methods to split and merge channels in a BufferedImage/array, as
-  well as converting to a specific data type (e.g. convert short data to byte
-  data).
+  .. tabularcolumns:: |l|c|
+
+  .. list-table::
+    :header-rows: 1
+    :widths: 25, 75
+
+    * - Wrapper reader
+      - Functionality
+
+    * - :javadoc:`loci.formats.BufferedImageReader <loci/formats/gui/BufferedImageReader.html>`
+      - Allows pixel data to be returned as BufferedImages instead of raw byte
+        arrays
+
+    * - :javadoc:`loci.formats.FileStitcher <loci/formats/FileStitcher.html>`
+      - Uses advanced pattern matching heuristics to group files that belong
+        to the same dataset
+
+    * - :javadoc:`loci.formats.ChannelSeparator <loci/formats/ChannelSeparator.html>`
+      - Makes sure that all planes are grayscale - RGB images are split into 3
+        separate grayscale images
+
+    * - :javadoc:`loci.formats.ChannelMerger <loci/formats/ChannelMerger.html>`
+      - Merges grayscale images to RGB if the number of channels is greater
+        than 1
+
+    * - :javadoc:`loci.formats.ChannelFiller <loci/formats/ChannelFiller.html>`
+      - Converts indexed color images to RGB images
+
+    * - :javadoc:`loci.formats.MinMaxCalculator <loci/formats/MinMaxCalculator.html>`
+      - Provides an API for retrieving the minimum and maximum pixel values
+        for each channel
+
+    * - :javadoc:`loci.formats.DimensionSwapper <loci/formats/DimensionSwapper.html>`
+      - Provides an API for changing the dimension order of a file
+
+- :javadoc:`loci.formats.ImageTools <loci/formats/ImageTools.html>`
+  and :javadoc:`loci.formats.gui.AWTImageTools <loci/formats/gui/AWTImageTools.html>`
+  provide a number of methods for manipulating BufferedImages and primitive
+  type arrays.  In particular, there are methods to split and merge channels
+  in a BufferedImage/array, as well as converting to a specific data type
+  (e.g. convert short data to byte data).
 
 Troubleshooting
 ---------------

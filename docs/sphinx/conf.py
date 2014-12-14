@@ -197,6 +197,10 @@ extlinks = {
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5.1/%s', ''),
     'javadoc' : (downloads_root + '/latest/bio-formats5.1/api/%s', ''),
+    'iformatreaderapi': (downloads_root +  '/latest/bio-formats5.1/api'
+                         '/loci/formats/IFormatReader.html#%s', ''),
+    'formatreaderapi': (downloads_root +  '/latest/bio-formats5.1/api'
+                        '/loci/formats/FormatReader.html#%s', ''),
     'doxygen' : (downloads_root + '/latest/bio-formats5.1/doxygen/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
