@@ -45,9 +45,23 @@
 
 package ${lang.omexml_model_enums_package};
 
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
+
+import ${lang.omexml_model_omexml_model_enum_handlers_package}.${klass.langType}EnumHandler;
+import ome.xml.model.primitives.*;
+
 public enum ${klass.langType} implements Enumeration
 {
-  ${", ".join(['%s("%s")' % (enum_value_name(value), value) for value in klass.possibleValues])};
+  ${", ".join(['%s("%s")' % (enum_value_name(value, klass.isUnitsEnumeration), value) for value in klass.possibleValues])};
 
   private ${klass.langType}(String value)
   {
@@ -60,10 +74,10 @@ public enum ${klass.langType} implements Enumeration
 {% for value in klass.possibleValues %}\
     if ("${value}".equals(value))
     {
-      return ${enum_value_name(value).upper()};
+      return ${enum_value_name(value, klass.isUnitsEnumeration).upper()};
     }
 {% end %}\
-    String s = String.format("%s not a supported value of %s",
+    String s = String.format("'%s' not a supported value of '%s'",
                              value, ${klass.langType}.class);
     throw new EnumerationException(s);
   }
@@ -79,5 +93,36 @@ public enum ${klass.langType} implements Enumeration
     return value;
   }
 
+{% end %}\
+{% if klass.isUnitsEnumeration %}\
+  public static <T extends PrimitiveNumber> ${lang.typeToUnitsType(klass.langType)} create(T newValue, ${klass.langType} newUnit)
+  {
+    ${lang.typeToUnitsType(klass.langType)} theQuantity = null;
+    
+    try
+    {
+      theQuantity = ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);
+    }
+    finally
+    {
+      return theQuantity;
+    }
+  }
+
+  public static <T extends Number> ${lang.typeToUnitsType(klass.langType)} create(T newValue, ${klass.langType} newUnit)
+  {
+    ${lang.typeToUnitsType(klass.langType)} theQuantity = null;
+    
+    try
+    {
+      theQuantity = ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);
+    }
+    finally
+    {
+      return theQuantity;
+    }
+  }
+
+{% end %}\
   private final String value;
 }

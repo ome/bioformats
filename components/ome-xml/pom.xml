@@ -32,6 +32,7 @@
       <artifactId>formats-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -57,6 +58,7 @@
       <version>${logback.version}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
@@ -123,7 +125,7 @@
               </arguments>
             </configuration>
           </execution>
-	</executions>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -158,7 +160,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>test/ome/xml/utests/testng.xml</suiteXmlFile>
+            <suiteXmlFile>test/ome/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
@@ -266,6 +268,10 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
+      <id>ome.experimental</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
+    </repository>
+    <repository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
@@ -274,5 +280,4 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </repository>
   </repositories>
-
 </project>

@@ -111,34 +111,41 @@ public class Memoizer extends ReaderWrapper {
     Input input;
     Output output;
 
+    @Override
     public void close() {
       loadStop();
       saveStop();
       kryo.reset();
     }
 
+    @Override
     public void loadStart(File memoFile) throws FileNotFoundException {
         fis = new FileInputStream(memoFile);
         input = new Input(fis);
     }
 
+    @Override
     public Integer loadVersion() {
         return kryo.readObject(input, Integer.class);
     }
 
+    @Override
     public String loadReleaseVersion() {
         return kryo.readObject(input, String.class);
     }
 
+    @Override
     public String loadRevision() {
         return kryo.readObject(input, String.class);
     }
 
+    @Override
     public IFormatReader loadReader() {
         Class<?> c = kryo.readObject(input, Class.class);
         return (IFormatReader) kryo.readObject(input, c);
     }
 
+    @Override
     public void loadStop() {
       if (input != null) {
         input.close();
@@ -154,28 +161,34 @@ public class Memoizer extends ReaderWrapper {
       }
     }
 
+    @Override
     public void saveStart(File tempFile) throws FileNotFoundException {
       fos = new FileOutputStream(tempFile);
       output = new Output(fos);
     }
 
+    @Override
     public void saveVersion(Integer version) {
       kryo.writeObject(output, version);
     }
 
+    @Override
     public void saveReleaseVersion(String version) {
       kryo.writeObject(output, version);
     }
 
+    @Override
     public void saveRevision(String revision) {
       kryo.writeObject(output, revision);
     }
 
-   public void saveReader(IFormatReader reader) {
-     kryo.writeObject(output, reader.getClass());
-     kryo.writeObject(output, reader);
-   }
+    @Override
+    public void saveReader(IFormatReader reader) {
+      kryo.writeObject(output, reader.getClass());
+      kryo.writeObject(output, reader);
+    }
 
+    @Override
     public void saveStop() {
       if (output != null) {
         output.close();
@@ -203,24 +216,29 @@ public class Memoizer extends ReaderWrapper {
 
     RandomAccessOutputStream saveStream;
 
+    @Override
     public void loadStart(File memoFile) throws IOException {
         this.loadStream = new RandomAccessInputStream(memoFile.getAbsolutePath());
     }
 
+    @Override
     public Integer loadVersion() throws IOException {
         return loadStream.readInt();
     }
 
+    @Override
     public String loadReleaseVersion() throws IOException {
         int length = loadStream.readInt();
         return loadStream.readString(length);
     }
 
+    @Override
     public String loadRevision() throws IOException {
         int length = loadStream.readInt();
         return loadStream.readString(length);
     }
 
+    @Override
     public IFormatReader loadReader() throws IOException, ClassNotFoundException {
       int cSize = loadStream.readInt();
       byte[] cArr = new byte[cSize];
@@ -238,6 +256,7 @@ public class Memoizer extends ReaderWrapper {
     protected abstract IFormatReader readerFromBytes(Class<IFormatReader> c,
       byte[] rArr) throws IOException, ClassNotFoundException;
 
+    @Override
     public void loadStop() throws IOException {
         if (loadStream != null) {
           loadStream.close();
@@ -245,24 +264,29 @@ public class Memoizer extends ReaderWrapper {
         }
     }
 
+    @Override
     public void saveStart(File tempFile) throws IOException {
       this.saveStream = new RandomAccessOutputStream(tempFile.getAbsolutePath());
     }
 
+    @Override
     public void saveVersion(Integer version) throws IOException {
       saveStream.writeInt(version);
     }
 
+    @Override
     public void saveReleaseVersion(String version) throws IOException {
       saveStream.writeInt(version.length());
       saveStream.writeBytes(version);
     }
 
+    @Override
     public void saveRevision(String revision) throws IOException {
       saveStream.writeInt(revision.length());
       saveStream.writeBytes(revision);
     }
 
+    @Override
     public void saveReader(IFormatReader reader) throws IOException {
       byte[] cArr = reader.getClass().getName().getBytes(Constants.ENCODING);
       saveStream.write(cArr.length);
@@ -274,6 +298,7 @@ public class Memoizer extends ReaderWrapper {
 
     protected abstract byte[] bytesFromReader(IFormatReader reader) throws IOException;
 
+    @Override
     public void saveStop() throws IOException {
       if (saveStream != null) {
         saveStream.close();
@@ -554,6 +579,7 @@ public class Memoizer extends ReaderWrapper {
     }
   }
 
+  @Override
   public void close() throws IOException {
     try {
       cleanup();
@@ -562,6 +588,7 @@ public class Memoizer extends ReaderWrapper {
     }
   }
 
+  @Override
   public void close(boolean fileOnly) throws IOException {
     try {
       cleanup();
@@ -572,6 +599,7 @@ public class Memoizer extends ReaderWrapper {
 
   // -- ReaderWrapper API methods --
 
+  @Override
   public void setId(String id) throws FormatException, IOException {
     StopWatch sw = stopWatch();
     try {
@@ -608,6 +636,7 @@ public class Memoizer extends ReaderWrapper {
         // loadMemo has already called handleMetadataStore with non-null
         loadedFromMemo = true;
         reader = memo;
+        reader.reopenFile();
       }
     } catch (ServiceException e) {
       LOGGER.error("Could not create OMEXMLMetadata", e);

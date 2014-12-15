@@ -40,14 +40,20 @@
 #define OME_XERCES_DOM_DOCUMENT_H
 
 #include <ome/compat/config.h>
+#include <ome/compat/memory.h>
 
 #include <cassert>
+#include <istream>
 #include <string>
 #include <ostream>
 
 #include <xercesc/dom/DOMDocument.hpp>
 
+#include <ome/compat/filesystem.h>
+
 #include <ome/xerces/dom/Element.h>
+#include <ome/xerces/dom/NodeList.h>
+#include <ome/xerces/dom/Wrapper.h>
 #include <ome/xerces/String.h>
 
 namespace ome
@@ -67,14 +73,15 @@ namespace ome
        * wrapped object.  It can also be cast to a pointer to the
        * wrapped object, so can substitute for it directly.
        */
-      class Document
+      template<int S>
+      class DocumentWrapper : public Wrapper<xercesc::DOMDocument, NodeWrapper<S> >
       {
       public:
         /**
          * Construct a NULL Document.
          */
-        Document ():
-          xmldoc()
+        DocumentWrapper ():
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >()
         {
         }
 
@@ -83,8 +90,18 @@ namespace ome
          *
          * @param document the Document to copy.
          */
-        Document (const Document& document):
-          xmldoc(document.xmldoc)
+        DocumentWrapper (const DocumentWrapper& document):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(document)
+        {
+        }
+
+        /**
+         * Copy construct a Document.
+         *
+         * @param base the base type to copy (must be a Document).
+         */
+        DocumentWrapper (const typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_type& base):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
         {
         }
 
@@ -93,40 +110,37 @@ namespace ome
          *
          * @param document the Document to wrap.
          */
-        Document (xercesc::DOMDocument *document):
-          xmldoc(document)
+        DocumentWrapper (typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::element_type *document):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(document)
+        {
+        }
+
+        /**
+         * Construct a Document from a xercesc::DOMNode *.
+         *
+         * @param base the DOMNode to wrap.
+         */
+        DocumentWrapper (typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_element_type *base):
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
         {
         }
 
         /// Destructor.
-        ~Document ()
+        ~DocumentWrapper ()
         {
         }
 
         /**
-         * Get wrapped xercesc::DOMDocument *.
+         * Assign a Document.
          *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
+         * @param wrapped the Document to assign.
+         * @returns the Document.
          */
-        xercesc::DOMDocument*
-        get()
+        DocumentWrapper&
+        operator= (const DocumentWrapper& wrapped)
         {
-          return xmldoc;
-        }
-
-        /**
-         * Get wrapped xercesc::DOMDocument *.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        const xercesc::DOMDocument*
-        get() const
-        {
-          return xmldoc;
+          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::operator=(wrapped);
+          return *this;
         }
 
         /**
@@ -143,97 +157,74 @@ namespace ome
           xerces::String xns(ns);
           xerces::String xname(name);
 
-          return xmldoc->createElementNS(xns, xname);
+          return (*this)->createElementNS(xns, xname);
         }
 
         /**
-         * Assign a Document.
+         * Get the root element of this document.
          *
-         * @param document the Document to assign.
-         * @returns the Document.
+         * @returns the root element.
          */
-        Document&
-        operator= (Document& document)
+        Element
+        getDocumentElement()
         {
-          this->xmldoc = document.xmldoc;
-          return *this;
+          return (*this)->getDocumentElement();
         }
 
         /**
-         * Assign a xercesc::DOMDocument *.
+         * Get child nodes.
          *
-         * @param document the Document to assign.
-         * @returns the Document.
+         * @returns the child nodes (if any).
          */
-        Document&
-        operator= (xercesc::DOMDocument *document)
+        NodeList
+        getChildNodes()
         {
-          this->xmldoc = document;
-          return *this;
+          return (*this)->getChildNodes();
         }
-
-        /**
-         * Dereference to xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        xercesc::DOMDocument&
-        operator* () noexcept
-        {
-          assert(xmldoc != 0);
-          return *xmldoc;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        const xercesc::DOMDocument&
-        operator* () const noexcept
-        {
-          assert(xmldoc != 0);
-          return *xmldoc;
-        }
-
-        /**
-         * Dereference to xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        xercesc::DOMDocument *
-        operator-> () noexcept
-        {
-          assert(xmldoc != 0);
-          return xmldoc;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMDocument.
-         *
-         * @returns the wrapped xercesc::DOMDocument.
-         */
-        const xercesc::DOMDocument *
-        operator-> () const noexcept
-        {
-          assert(xmldoc != 0);
-          return xmldoc;
-        }
-
-        /**
-         * Check if the wrapped Document is NULL.
-         *
-         * @returns true if valid, false if NULL.
-         */
-        operator bool () const
-        {
-          return xmldoc != 0;
-        }
-
-      private:
-        /// The wrapped xercesc::DOMDocument.
-        xercesc::DOMDocument *xmldoc;
       };
+
+      /// Managed Document.
+      typedef DocumentWrapper<MANAGED> ManagedDocument;
+      /// Unmanaged Document.
+      typedef DocumentWrapper<UNMANAGED> UnmanagedDocument;
+      /// Default Document.
+      typedef ManagedDocument Document;
+
+      /**
+       * Construct an empty Document.
+       *
+       * @param qualifiedName the qualified name of the document type.
+       * @returns the new Document.
+       */
+      Document
+      createEmptyDocument(const std::string& qualifiedName);
+
+      /**
+       * Construct a Document from the content of a file.
+       *
+       * @param file the file to read.
+       * @returns the new Document.
+       */
+      Document
+      createDocument(const boost::filesystem::path& file);
+
+      /**
+       * Construct a Document from the content of a string.
+       *
+       * @param text the string to use.
+       * @returns the new Document.
+       */
+      Document
+      createDocument(const std::string& text);
+
+      /**
+       * Construct a Document from the content of an input stream.
+       *
+       * @param stream the stream to read.
+       * @returns the new Document.
+       */
+      Document
+      createDocument(std::istream& stream);
 
     }
   }

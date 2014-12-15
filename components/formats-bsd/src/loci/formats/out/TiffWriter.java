@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,12 +51,12 @@ import loci.formats.tiff.TiffSaver;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * TiffWriter is the file format writer for TIFF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/TiffWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/TiffWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TiffWriter extends FormatWriter {
 
@@ -135,6 +135,7 @@ public class TiffWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
@@ -275,15 +276,15 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Long(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
 
-    PositiveFloat px = retrieve.getPixelsPhysicalSizeX(series);
-    Double physicalSizeX = px == null ? null : px.getValue();
+    Length px = retrieve.getPixelsPhysicalSizeX(series);
+    Double physicalSizeX = px == null ? null : px.value(UNITS.MICROM).doubleValue();
     if (physicalSizeX == null || physicalSizeX.doubleValue() == 0) {
       physicalSizeX = 0d;
     }
     else physicalSizeX = 1d / physicalSizeX;
 
-    PositiveFloat py = retrieve.getPixelsPhysicalSizeY(series);
-    Double physicalSizeY = py == null ? null : py.getValue();
+    Length py = retrieve.getPixelsPhysicalSizeY(series);
+    Double physicalSizeY = py == null ? null : py.value(UNITS.MICROM).doubleValue();
     if (physicalSizeY == null || physicalSizeY.doubleValue() == 0) {
       physicalSizeY = 0d;
     }
@@ -345,6 +346,7 @@ public class TiffWriter extends FormatWriter {
   }
 
   /* @see loci.formats.FormatWriter#getPlaneCount() */
+  @Override
   public int getPlaneCount() {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     int c = getSamplesPerPixel();
@@ -363,6 +365,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -387,9 +390,11 @@ public class TiffWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     if (codec != null && codec.equals(COMPRESSION_JPEG)) {
       return new int[] {FormatTools.INT8, FormatTools.UINT8,

@@ -42,15 +42,11 @@ valid commands.
 Compile-time dependencies -- Windows -- Boost
 ---------------------------------------------
 
-The easiest way to install the Boost Thread library on Windows is to use the
-free installer from `BoostPro <http://www.boostpro.com/download/>`_.
+Download `Boost <http://www.boost.org/users/download/>`_. 
 
-When running the installer:
-
-* Under "Compilers," check the version of Visual C++ matching your system.
-* Under "Variants," check all eight boxes.
-* When choosing components, check "Boost DateTime" and "Boost Thread."
-
+You can either build and install from source using the instructions in the
+Boost documentation, or follow the link under 'Other downloads' to the
+prebuilt binaries for several Visual Studio versions.
 
 Compile-time dependencies -- Windows -- Java Development Kit
 ------------------------------------------------------------

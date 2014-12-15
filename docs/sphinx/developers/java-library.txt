@@ -93,8 +93,8 @@ A Note on Java Web Start (bioformats\_package.jar vs. formats-gpl.jar)
 ----------------------------------------------------------------------
 
 To use Bio-Formats with your Java Web Start application, we recommend
-using **formats-gpl.jar** rather than **bioformats\_package.jar**—the latter is
-merely a bundle of **formats-gpl.jar** plus all its optional
+using **formats-gpl.jar** rather than **bioformats\_package.jar**—the latter
+is merely a bundle of **formats-gpl.jar** plus all its optional
 dependencies.
 
 The **bioformats\_package.jar** bundle is intended as a convenience (e.g. to
@@ -128,3 +128,4 @@ For an explicit enumeration of all the optional libraries included in
 :source:`ant/toplevel.properties <ant/toplevel.properties>`
 file of the distribution. You can also read our notes about each in the
 source distribution's Ant :source:`build.xml <build.xml#L240>` script.
+

@@ -47,6 +47,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Map;
+import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
@@ -59,10 +60,6 @@ import org.w3c.dom.Element;
 
 /**
  * Test case for ImagingEnvironment Map values
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/ImagingEnvironmentMapTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/ImagingEnvironmentMapTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Andrew Patterson
  */
@@ -83,11 +80,11 @@ public class ImagingEnvironmentMapTest {
     ImagingEnvironment imagingEnvironment = new ImagingEnvironment();
 
     Map dataMap = new Map();
-    dataMap.getMap().put("a","1");
-    dataMap.getMap().put("b","2");
-    dataMap.getMap().put("c","3");
-    dataMap.getMap().put("d","4");
-    dataMap.getMap().put("e","5");
+    dataMap.getPairs().add(new MapPair("a","1"));
+    dataMap.getPairs().add(new MapPair("b","2"));
+    dataMap.getPairs().add(new MapPair("c","3"));
+    dataMap.getPairs().add(new MapPair("d","4"));
+    dataMap.getPairs().add(new MapPair("e","5"));
     imagingEnvironment.setMap(dataMap);
 
     image.setImagingEnvironment(imagingEnvironment);
@@ -127,27 +124,16 @@ public class ImagingEnvironmentMapTest {
     ImagingEnvironment imagingEnvironment = ome.getImage(0).getImagingEnvironment(); 
     Map dataMap = imagingEnvironment.getMap();
 
-    assertTrue(dataMap.getMap().containsKey("a"));
-    assertTrue(dataMap.getMap().containsKey("b"));
-    assertTrue(dataMap.getMap().containsKey("c"));
-    assertTrue(dataMap.getMap().containsKey("d"));
-    assertTrue(dataMap.getMap().containsKey("e"));
-
-    assertFalse(dataMap.getMap().containsKey("x"));
-
-    assertTrue(dataMap.getMap().containsValue("1"));
-    assertTrue(dataMap.getMap().containsValue("2"));
-    assertTrue(dataMap.getMap().containsValue("3"));
-    assertTrue(dataMap.getMap().containsValue("4"));
-    assertTrue(dataMap.getMap().containsValue("5"));
-
-    assertFalse(dataMap.getMap().containsValue("-1"));
-
-    assertEquals(dataMap.getMap().get("a"),"1");
-    assertEquals(dataMap.getMap().get("b"),"2");
-    assertEquals(dataMap.getMap().get("c"),"3");
-    assertEquals(dataMap.getMap().get("d"),"4");
-    assertEquals(dataMap.getMap().get("e"),"5");
+    assertEquals(5, dataMap.getPairs().size());
+    assertPair(dataMap, 0, "a", "1");
+    assertPair(dataMap, 1, "b", "2");
+    assertPair(dataMap, 2, "c", "3");
+    assertPair(dataMap, 3, "d", "4");
+    assertPair(dataMap, 4, "e", "5");
   }
 
+  void assertPair(Map dataMap, int idx, String name, String value) {
+    assertEquals(name, dataMap.getPairs().get(idx).getName());
+    assertEquals(value, dataMap.getPairs().get(idx).getValue());
+  }
 }

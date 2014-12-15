@@ -44,13 +44,11 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+
 /**
  * ImarisTiffReader is the file format reader for
  * Bitplane Imaris 3 files (TIFF variant).
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImarisTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImarisTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -75,6 +73,7 @@ public class ImarisTiffReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -172,9 +171,8 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {
-        PositiveFloat emission =
-          FormatTools.getEmissionWavelength(emWave.get(i));
-        PositiveFloat excitation =
+        Length emission = FormatTools.getEmissionWavelength(emWave.get(i));
+        Length excitation =
           FormatTools.getExcitationWavelength(exWave.get(i));
 
         if (emission != null) {

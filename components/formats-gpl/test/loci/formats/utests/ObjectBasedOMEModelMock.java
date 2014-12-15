@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -62,10 +62,10 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Power;
+import ome.units.UNITS;
+
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/ObjectBasedOMEModelMock.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/ObjectBasedOMEModelMock.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ObjectBasedOMEModelMock implements OMEModelMock {
 
@@ -83,6 +83,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     ome.setStructuredAnnotations(annotations);
   }
 
+  @Override
   public OMEXMLMetadataRoot getRoot() {
     return ome;
   }
@@ -159,7 +160,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     laser.setID(InOutCurrentTest.LIGHTSOURCE_LASER_ID);
     laser.setModel(InOutCurrentTest.LIGHTSOURCE_LASER_MODEL);
     laser.setType(InOutCurrentTest.LASER_TYPE);
-    laser.setPower(InOutCurrentTest.LIGHTSOURCE_LASER_POWER);
+    laser.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_LASER_POWER, UNITS.MW));
     CommentAnnotation laserAnnotation = new CommentAnnotation();
     laserAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID);
     laserAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_VALUE);
@@ -171,7 +172,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     laserPump.setID(InOutCurrentTest.LIGHTSOURCE_PUMP_ID);
     laserPump.setModel(InOutCurrentTest.LIGHTSOURCE_PUMP_MODEL);
     laserPump.setType(InOutCurrentTest.LASER_TYPE);
-    laserPump.setPower(InOutCurrentTest.LIGHTSOURCE_PUMP_POWER);
+    laserPump.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_PUMP_POWER, UNITS.MW));
     
     laser.linkPump(laserPump);
     
@@ -183,7 +184,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     arc.setID(InOutCurrentTest.LIGHTSOURCE_ARC_ID);
     arc.setModel(InOutCurrentTest.LIGHTSOURCE_ARC_MODEL);
     arc.setType(InOutCurrentTest.ARC_TYPE);
-    arc.setPower(InOutCurrentTest.LIGHTSOURCE_ARC_POWER);
+    arc.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_ARC_POWER, UNITS.MW));
     CommentAnnotation arcAnnotation = new CommentAnnotation();
     arcAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID);
     arcAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_VALUE);
@@ -197,7 +198,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     filament.setID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ID);
     filament.setModel(InOutCurrentTest.LIGHTSOURCE_FILAMENT_MODEL);
     filament.setType(InOutCurrentTest.FILAMENT_TYPE);
-    filament.setPower(InOutCurrentTest.LIGHTSOURCE_FILAMENT_POWER);
+    filament.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_FILAMENT_POWER, UNITS.MW));
     CommentAnnotation filamentAnnotation = new CommentAnnotation();
     filamentAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID);
     filamentAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE);
@@ -210,7 +211,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     LightEmittingDiode led = new LightEmittingDiode();
     led.setID(InOutCurrentTest.LIGHTSOURCE_LED_ID);
     led.setModel(InOutCurrentTest.LIGHTSOURCE_LED_MODEL);
-    led.setPower(InOutCurrentTest.LIGHTSOURCE_LED_POWER);
+    led.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_LED_POWER, UNITS.MW));
     CommentAnnotation ledAnnotation = new CommentAnnotation();
     ledAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_ID);
     ledAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_VALUE);

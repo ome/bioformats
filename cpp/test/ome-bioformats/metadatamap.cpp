@@ -44,7 +44,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using ome::bioformats::MetadataMap;
 using boost::lexical_cast;

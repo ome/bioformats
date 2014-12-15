@@ -53,6 +53,8 @@ endforeach(hdr)
 
 set(OME_XML_STATIC_SOURCES
   meta/OMEXMLMetadataRoot.cpp
+  meta/Convert.cpp
+  model/Catalog.cpp
   model/ModelException.cpp
   model/detail/OMEModel.cpp
   model/detail/OMEModelObject.cpp
@@ -67,6 +69,10 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveLong.cpp
   model/primitives/Timestamp.cpp
   model/MapPairs.cpp)
+
+# Not installed, internal only.
+set(OME_XML_META_PRIVATE_STATIC_HEADERS
+    meta/Convert.h)
 
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
@@ -112,6 +118,7 @@ set(OME_XML_GENERATED_HEADERS
     ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
 
 set(OME_XML_HEADERS
+    ${OME_XML_PRIVATE_STATIC_HEADERS}
     ${OME_XML_STATIC_HEADERS}
     ${OME_XML_GENERATED_HEADERS})
 
@@ -161,3 +168,16 @@ add_custom_target(gensrc DEPENDS
   ${OME_XML_GENERATED_MODEL_HEADERS}
   ${OME_XML_GENERATED_MODEL_SOURCES}
   ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
+
+# Find and install all schemas
+file(GLOB OME_SCHEMAS RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/released-schema/"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/catalog.xml"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/2*/*.xsd"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/2*/catalog.xml"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/external/*.xsd"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/external/catalog.xml")
+foreach(schema ${OME_SCHEMAS})
+  get_filename_component(SCHEMA_RELEASE ${schema} PATH)
+  install(FILES "${PROJECT_SOURCE_DIR}/components/specification/released-schema/${schema}"
+          DESTINATION "${OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR}/${SCHEMA_RELEASE}")
+endforeach(schema)

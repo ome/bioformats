@@ -60,11 +60,20 @@ namespace ome
      */
     class FormatHandler
     {
-    public:
+    protected:
       /// Constructor.
       FormatHandler()
       {}
 
+    private:
+      /// Copy constructor (deleted).
+      FormatHandler (const FormatHandler&);
+
+      /// Assignment operator (deleted).
+      FormatHandler&
+      operator= (const FormatHandler&);
+
+    public:
       /// Destructor.
       virtual
       ~FormatHandler()
@@ -82,12 +91,12 @@ namespace ome
        *   system access is not allowed.
        * @returns @c true if the file is valid, @c false otherwise.
        *
-       * @todo Could this method be static and/or const?
+       * @todo Could this method be static?
        */
       virtual
       bool
       isThisType(const std::string& name,
-                 bool               open = true) = 0;
+                 bool               open = true) const = 0;
 
       /**
        * Get the name of this file format.

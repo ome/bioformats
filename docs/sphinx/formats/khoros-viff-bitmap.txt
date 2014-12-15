@@ -55,5 +55,3 @@ Source Code: :bfreader:`KhorosReader.java`
 Notes:
 
 
-.. seealso:: 
-  `VisiQuest software overview (formerly known as KhorosPro) <http://www.accusoft.com/products/visiquest/>`_

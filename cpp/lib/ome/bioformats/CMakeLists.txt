@@ -51,7 +51,8 @@ set(OME_BIOFORMATS_SOURCES
     UnknownFormatException.cpp
     UnsupportedCompressionException.cpp
     VariantPixelBuffer.cpp
-    Version.cpp)
+    Version.cpp
+    XMLTools.cpp)
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
@@ -72,7 +73,8 @@ set(OME_BIOFORMATS_HEADERS
     UnknownFormatException.h
     UnsupportedCompressionException.h
     VariantPixelBuffer.h
-    Version.h)
+    Version.h
+    XMLTools.h)
 
 set(OME_BIOFORMATS_DETAIL_SOURCES
     detail/FormatReader.cpp
@@ -82,14 +84,19 @@ set(OME_BIOFORMATS_DETAIL_HEADERS
     detail/FormatReader.h
     detail/FormatWriter.h)
 
-set(OME_BIOFORMATS_IN_SOURCES)
+set(OME_BIOFORMATS_IN_SOURCES
+    in/MinimalTIFFReader.cpp
+    in/TIFFReader.cpp)
 
-set(OME_BIOFORMATS_IN_HEADERS)
+set(OME_BIOFORMATS_IN_HEADERS
+    in/MinimalTIFFReader.h
+    in/TIFFReader.h)
 
 set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/Exception.cpp
     tiff/Field.cpp
     tiff/IFD.cpp
+    tiff/ImageJMetadata.cpp
     tiff/Sentry.cpp
     tiff/Tags.cpp
     tiff/TIFF.cpp
@@ -102,6 +109,7 @@ set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/Exception.h
     tiff/Field.h
     tiff/IFD.h
+    tiff/ImageJMetadata.h
     tiff/Sentry.h
     tiff/Tags.h
     tiff/TIFF.h

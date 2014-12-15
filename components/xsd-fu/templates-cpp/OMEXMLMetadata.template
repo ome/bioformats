@@ -900,14 +900,18 @@ ${counter(k, o, v)}\
 
 {% end debug %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       OMEXMLMetadata::getUUID() const
       {
-        return *root->getUUID();
+        std::shared_ptr<const std::string> uuid = root->getUUID();
+        if (uuid)
+          return *root->getUUID();
+        else
+          throw(std::runtime_error("Internal metadata store inconsistency: UUID is null"));
       }
 {% end source %}\
 
@@ -1031,29 +1035,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setMaskBinData(const byte_array& binData,
-                       index_type        ROIIndex,
-                       index_type        shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      OMEXMLMetadata::setMaskBinData(const byte_array& /* binData */,
-                                     index_type        /* ROIIndex */,
-                                     index_type        /* shapeIndex */)
-      {
-        // @todo To implement
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                               index_type mapAnnotationIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+      OMEXMLMetadata::setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                             index_type mapAnnotationIndex)
       {
         std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
@@ -1078,13 +1065,13 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+      OMEXMLMetadata::setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                                     index_type instrumentIndex,
                                                     index_type lightSourceIndex)
       {
@@ -1115,12 +1102,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                  index_type imageIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+      OMEXMLMetadata::setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                                index_type imageIndex)
       {
         std::shared_ptr<OMEXMLMetadataRoot>& o0(root);

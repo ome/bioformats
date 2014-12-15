@@ -40,9 +40,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/OMEXMLServiceTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/OMEXMLServiceTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
@@ -68,7 +65,7 @@ public class OMEXMLServiceTest {
 
   @Test
   public void testGetLatestVersion() {
-    assertEquals("2013-10-dev-3", service.getLatestVersion());
+    assertEquals("2013-10-dev-5", service.getLatestVersion());
   }
 
   @Test
@@ -94,7 +91,7 @@ public class OMEXMLServiceTest {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2013-10-dev-3",
+    assertEquals("2013-10-dev-5",
       service.getOMEXMLVersion(service.createOMEXMLMetadata(xml)));
   }
 

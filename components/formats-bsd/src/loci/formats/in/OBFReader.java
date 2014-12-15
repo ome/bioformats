@@ -50,12 +50,11 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * OBFReader is the file format reader for Imspector OBF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/formats-bsd/src/loci/formats/in/OBFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/formats-bsd/src/loci/formats/in/OBFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Bjoern Thiel bjoern.thiel at mpibpc.mpg.de
  */
@@ -121,14 +120,16 @@ public class OBFReader extends FormatReader
 		return - 1 ;
 	}
 	
-	public boolean isThisType(RandomAccessInputStream stream) throws IOException
+	@Override
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException
 	{
 		final int fileVersion = getFileVersion(stream) ;
 		
 		return fileVersion >= 0 && fileVersion <= FILE_VERSION ;
 	}
 
-	protected void initFile(String id) throws FormatException, IOException
+	@Override
+  protected void initFile(String id) throws FormatException, IOException
 	{
 		super.initFile(id) ;
 		
@@ -177,7 +178,7 @@ public class OBFReader extends FormatReader
 				}
 				if (lengthX > 0)
 				{
-					final PositiveFloat physicalSizeX = new PositiveFloat( lengthX / obf.sizeX ) ;
+					final Length physicalSizeX = FormatTools.createLength( lengthX / obf.sizeX , UNITS.MICROM) ;
 					ome.setPixelsPhysicalSizeX(physicalSizeX, series) ;
 				}
 			}
@@ -190,7 +191,7 @@ public class OBFReader extends FormatReader
 				}
 				if (lengthY > 0)
 				{
-					final PositiveFloat physicalSizeY = new PositiveFloat( lengthY / obf.sizeY ) ;
+					final Length physicalSizeY = FormatTools.createLength( lengthY / obf.sizeY , UNITS.MICROM) ;
 					ome.setPixelsPhysicalSizeY(physicalSizeY, series) ;
 				}
 			}
@@ -203,7 +204,7 @@ public class OBFReader extends FormatReader
 				}
 				if (lengthZ > 0)
 				{
-					final PositiveFloat physicalSizeZ = new PositiveFloat( lengthZ / obf.sizeZ ) ;
+					final Length physicalSizeZ = FormatTools.createLength( lengthZ / obf.sizeZ  , UNITS.MICROM) ;
 					ome.setPixelsPhysicalSizeZ(physicalSizeZ, series) ;
 				}
 			}
@@ -526,7 +527,8 @@ public class OBFReader extends FormatReader
 		return buffer ;
 	}
 
-	public void close(boolean fileOnly) throws IOException
+	@Override
+  public void close(boolean fileOnly) throws IOException
 	{
 		stacks = new ArrayList<Stack>() ;
 		currentInflatedFrame = new Frame() ;

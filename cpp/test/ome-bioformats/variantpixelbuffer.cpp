@@ -41,8 +41,7 @@
 
 #include <ome/bioformats/VariantPixelBuffer.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+#include <ome/test/test.h>
 
 #include "pixel.h"
 
@@ -982,6 +981,7 @@ TEST_P(VariantPixelBufferTest, SetIndex)
 
 TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 {
+#ifndef NDEBUG
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
   const VariantPixelBufferTestParameters& params = GetParam();
@@ -989,8 +989,9 @@ TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
   VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
                          params.type);
 
-  SetIndexTestVisitor v(buf);
+  SetIndexDeathTestVisitor v(buf);
   boost::apply_visitor(v, buf.vbuffer());
+#endif // ! NDEBUG
 }
 
 TEST_P(VariantPixelBufferTest, StreamInput)
@@ -1036,6 +1037,7 @@ VariantPixelBufferTestParameters variant_params[] =
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(VariantPixelBufferVariants, VariantPixelBufferTest, ::testing::ValuesIn(variant_params));

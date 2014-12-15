@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,13 +37,10 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * AIMReader is the file format reader for .aim files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/AIMReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/AIMReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class AIMReader extends FormatReader {
 
@@ -64,6 +61,7 @@ public class AIMReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -75,6 +73,7 @@ public class AIMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -85,6 +84,7 @@ public class AIMReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -189,21 +189,21 @@ public class AIMReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize != null && xLength != null) {
         Double size = xLength / xSize;
-        PositiveFloat physicalSize = FormatTools.getPhysicalSizeX(size);
+        Length physicalSize = FormatTools.getPhysicalSizeX(size);
         if (physicalSize != null) {
           store.setPixelsPhysicalSizeX(physicalSize, 0);
         }
       }
       if (ySize != null && yLength != null) {
         Double size = yLength / ySize;
-        PositiveFloat physicalSize = FormatTools.getPhysicalSizeY(size);
+        Length physicalSize = FormatTools.getPhysicalSizeY(size);
         if (physicalSize != null) {
           store.setPixelsPhysicalSizeY(physicalSize, 0);
         }
       }
       if (zSize != null && zLength != null) {
         Double size = zLength / zSize;
-        PositiveFloat physicalSize = FormatTools.getPhysicalSizeZ(size);
+        Length physicalSize = FormatTools.getPhysicalSizeZ(size);
         if (physicalSize != null) {
           store.setPixelsPhysicalSizeZ(physicalSize, 0);
         }

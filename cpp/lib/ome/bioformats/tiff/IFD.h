@@ -42,6 +42,7 @@
 
 #include <ome/compat/memory.h>
 
+#include <ome/bioformats/CoreMetadata.h>
 #include <ome/bioformats/tiff/TileCoverage.h>
 #include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/Types.h>
@@ -401,6 +402,22 @@ namespace ome
         setPlanarConfiguration(PlanarConfiguration planarconfig);
 
         /**
+         * Get photometric interpretation.
+         *
+         * @returns the photometric interpretation of sample values.
+         */
+        PhotometricInterpretation
+        getPhotometricInterpretation() const;
+
+        /**
+         * Set photometric interpretation.
+         *
+         * @param photometric the photometric interpretation of sample values.
+         */
+        void
+        setPhotometricInterpretation(PhotometricInterpretation photometric);
+
+        /**
          * Read a whole image plane into a pixel buffer.
          *
          * @param buf the destination pixel buffer.
@@ -473,6 +490,15 @@ namespace ome
         bool
         last() const;
       };
+
+      /**
+       * Create CoreMetadata from an IFD.
+       *
+       * @param ifd the IFD to use.
+       * @returns the CoreMetadata.
+       */
+      std::shared_ptr<CoreMetadata>
+      makeCoreMetadata(const IFD& ifd);
 
     }
   }

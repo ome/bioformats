@@ -41,11 +41,15 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import ome.xml.model.Image;
 import ome.xml.model.MapAnnotation;
+import ome.xml.model.MapPair;
 import ome.xml.model.MapPairs;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
@@ -60,10 +64,6 @@ import org.w3c.dom.Element;
 
 /**
  * Test case for MapAnnotation values
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/MapAnnotationTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/MapAnnotationTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Andrew Patterson
  */
@@ -81,14 +81,16 @@ public class MapAnnotationTest {
     image.setPixels(pixels);
 
     // Add a Map Annotation
+    List<MapPair> pairs = new ArrayList<MapPair>();
+    pairs.add(new MapPair("a", "1"));
+    pairs.add(new MapPair("b", "2"));
+    pairs.add(new MapPair("c", "3"));
+    pairs.add(new MapPair("d", "4"));
+    pairs.add(new MapPair("e", "5"));
+
     MapAnnotation mapAnnotation = new MapAnnotation();
     mapAnnotation.setID("Annotation:0");
-    mapAnnotation.setValue(new MapPairs());
-    mapAnnotation.getValue().getMap().put("a","1");
-    mapAnnotation.getValue().getMap().put("b","2");
-    mapAnnotation.getValue().getMap().put("c","3");
-    mapAnnotation.getValue().getMap().put("d","4");
-    mapAnnotation.getValue().getMap().put("e","5");
+    mapAnnotation.setValue(new MapPairs(pairs));
 
     StructuredAnnotations structuredAnnotations = new StructuredAnnotations();
     structuredAnnotations.addMapAnnotation(mapAnnotation);
@@ -129,27 +131,12 @@ public class MapAnnotationTest {
     MapAnnotation mapAnnotation = (MapAnnotation) ome.getImage(0).getLinkedAnnotation(0); 
     MapPairs dataMap = mapAnnotation.getValue();
 
-    assertTrue(dataMap.getMap().containsKey("a"));
-    assertTrue(dataMap.getMap().containsKey("b"));
-    assertTrue(dataMap.getMap().containsKey("c"));
-    assertTrue(dataMap.getMap().containsKey("d"));
-    assertTrue(dataMap.getMap().containsKey("e"));
-
-    assertFalse(dataMap.getMap().containsKey("x"));
-
-    assertTrue(dataMap.getMap().containsValue("1"));
-    assertTrue(dataMap.getMap().containsValue("2"));
-    assertTrue(dataMap.getMap().containsValue("3"));
-    assertTrue(dataMap.getMap().containsValue("4"));
-    assertTrue(dataMap.getMap().containsValue("5"));
-
-    assertFalse(dataMap.getMap().containsValue("-1"));
-
-    assertEquals(dataMap.getMap().get("a"),"1");
-    assertEquals(dataMap.getMap().get("b"),"2");
-    assertEquals(dataMap.getMap().get("c"),"3");
-    assertEquals(dataMap.getMap().get("d"),"4");
-    assertEquals(dataMap.getMap().get("e"),"5");
+    assertEquals(5, dataMap.getPairs().size());
+    assertEquals(new MapPair("a", "1"), dataMap.getPairs().get(0));
+    assertEquals(new MapPair("b", "2"), dataMap.getPairs().get(1));
+    assertEquals(new MapPair("c", "3"), dataMap.getPairs().get(2));
+    assertEquals(new MapPair("d", "4"), dataMap.getPairs().get(3));
+    assertEquals(new MapPair("e", "5"), dataMap.getPairs().get(4));
   }
 
 }

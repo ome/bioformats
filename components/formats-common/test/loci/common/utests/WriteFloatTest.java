@@ -48,10 +48,6 @@ import org.testng.annotations.Test;
 /**
  * Tests for reading floats from a loci.common.IRandomAccess.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/WriteFloatTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/WriteFloatTest.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @see loci.common.IRandomAccess
  */
 @Test(groups="writeTests")

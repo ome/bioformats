@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,15 +30,14 @@ import java.util.Vector;
 
 import loci.common.xml.BaseHandler;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+
 import org.xml.sax.Attributes;
 
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
  * Metamorph software version 7.5 and above.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MetamorphHandler.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MetamorphHandler.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Thomas Caswell tcaswell at uchicago.edu
@@ -58,7 +57,7 @@ public class MetamorphHandler extends BaseHandler {
   private double temperature;
   private String binning;
   private double readOutRate, zoom;
-  private double positionX, positionY;
+  private Length positionX, positionY;
   private Vector<Double> exposures;
   private String channelName;
   private String stageLabel;
@@ -109,20 +108,24 @@ public class MetamorphHandler extends BaseHandler {
 
   public double getZoom() { return zoom; }
 
-  public double getStagePositionX() { return positionX; }
+  public Length getStagePositionX() { return positionX; }
 
-  public double getStagePositionY() { return positionY; }
+  public Length getStagePositionY() { return positionY; }
 
   public Vector<Double> getExposures() { return exposures; }
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
     String id = attributes.getValue("id");
     String value = attributes.getValue("value");
-    String delim = "&#13;&#10;";
+    String delim = " #13; #10;";
+    if (value != null && value.indexOf(delim) < 0) {
+      delim = "&#13;&#10;";
+    }
     if (id != null && value != null) {
       if (id.equals("Description")) {
         if (metadata != null) metadata.remove("Comment");
@@ -208,13 +211,15 @@ public class MetamorphHandler extends BaseHandler {
       zoom = Double.parseDouble(value);
     }
     else if (key.equals("stage-position-x")) {
-      positionX = Double.parseDouble(value);
+      final Double number = Double.valueOf(value);
+      positionX = new Length(number, UNITS.REFERENCEFRAME);
       if (metadata != null) {
         metadata.put("X position for position #1", positionX);
       }
     }
     else if (key.equals("stage-position-y")) {
-      positionY = Double.parseDouble(value);
+      final Double number = Double.valueOf(value);
+      positionY = new Length(number, UNITS.REFERENCEFRAME);
       if (metadata != null) {
         metadata.put("Y position for position #1", positionY);
       }

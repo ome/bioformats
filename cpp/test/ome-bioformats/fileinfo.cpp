@@ -38,7 +38,7 @@
 
 #include <ome/bioformats/FileInfo.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 TEST(FileInfo, Construct)
 {

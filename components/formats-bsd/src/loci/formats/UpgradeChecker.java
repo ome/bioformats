@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,10 +49,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Class that allows checking for new versions of Bio-Formats, as well as
  * updating to the latest stable, daily, or trunk version.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/UpgradeChecker.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/UpgradeChecker.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class UpgradeChecker {
 
@@ -179,7 +175,8 @@ public class UpgradeChecker {
    * Contact the OME registry and return true if a new version is available.
    *
    * @param registryID how the application identifies itself to OMERO.registry
-   *                  @see #REGISTRY_IMAGEJ, @see #REGISTRY_LIBRARY
+   *                  @see #REGISTRY_IMAGEJ
+   *                  @see #REGISTRY_LIBRARY
    * @param caller  name of the calling application, e.g. "MATLAB"
    */
   public boolean newVersionAvailable(String registryID, String caller) {
@@ -273,7 +270,7 @@ public class UpgradeChecker {
    * @param downloadDir the directory into which to save the JAR files
    * @return true if installation was successfull
    *
-   * @see install(String, String)
+   * @see #install(String, String)
    */
   public boolean installIndividualJars(String urlDir, String downloadDir) {
     boolean overallSuccess = true;

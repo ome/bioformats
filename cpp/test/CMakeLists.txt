@@ -36,6 +36,14 @@
 
 include_directories(${GTEST_INCLUDE_DIR})
 
+# Add test, making sure it's run with a suitable environment.
+# If updated, make sure to update the wrappers in cpp/cmake.
+function(bf_add_test)
+  add_test(${ARGV})
+  set_tests_properties(${ARGV0}
+    PROPERTIES ENVIRONMENT "BIOFORMATS_SCHEMADIR=${PROJECT_SOURCE_DIR}/components/specification/released-schema")
+endfunction()
+
 add_subdirectory(ome-compat)
 add_subdirectory(ome-internal)
 add_subdirectory(ome-xerces)

@@ -125,7 +125,8 @@ public class SchemaResolver implements LSResourceResolver
      * @param baseURI Not used by function.
      * @return The requested resource.
      */
-     public LSInput  resolveResource(
+    @Override
+    public LSInput  resolveResource(
         String type, String namespaceURI, String publicId,
         String systemId, String baseURI)
     {
@@ -134,7 +135,7 @@ public class SchemaResolver implements LSResourceResolver
         // Match the requested schema locations and create the appropriate LSInput object
         if (systemId.equals("http://www.w3.org/2001/xml.xsd"))
         {
-            theResult = makeSubstutionStream("/released-schema/additions/jar/xml.xsd", systemId);
+            theResult = makeSubstutionStream("/released-schema/external/xml.xsd", systemId);
         }
         else if (systemId.startsWith(GIT_MASTER_PATH))
         {

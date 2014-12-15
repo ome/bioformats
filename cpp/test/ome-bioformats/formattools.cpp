@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -43,7 +43,7 @@
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::getIndex;
@@ -258,6 +258,7 @@ std::vector<DimensionTestParameters> params(init_params());
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(DimensionVariants, DimensionTest, ::testing::ValuesIn(params));

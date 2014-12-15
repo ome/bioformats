@@ -478,7 +478,7 @@ namespace ome
          *
          * @todo Can this be a const reference?
          */
-        virtual std::string
+        virtual const std::string&
         getUUID() const = 0;
 
 {% end header%}\

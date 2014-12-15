@@ -56,7 +56,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
+
 import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_enums_package}.handlers.*;
 import ${lang.omexml_model_package}.primitives.*;
 
 {% choose %}\
@@ -80,6 +91,7 @@ public class ${klass.name} extends ${klass.parentName}
 
 	// -- Instance variables --
 {% for prop in klass.instanceVariables %}\
+{% if not prop[4] %}\
 
 {% if prop[3] is not None %}\
 	// ${prop[3]}
@@ -90,6 +102,7 @@ public class ${klass.name} extends ${klass.parentName}
 {% end %}\
 {% if prop[2] is None %}\
 	private ${prop[0]} ${prop[1]};
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -126,13 +139,25 @@ public class ${klass.name} extends ${klass.parentName}
 		super(orig);
 {% end %}\
 {% for prop in klass.instanceVariables %}\
-{% if prop[0] is not None %}\
+{% choose %}\
+{% when prop[0] is not None and prop[4] %}\
+{% if debug %}\
+		// Unit property ${prop[1]}, copied with it's value property
+{% end debug %}\
+{% end %}\
+{% when prop[0] is not None %}\
 		${prop[1]} = orig.${prop[1]};
 {% end %}\
-{% if prop[0] is None %}\
+{% when prop[0] is None %}\
 {% if debug %}\
 		// *** WARNING *** Unhandled or skipped property ${prop[1]}
 {% end debug %}\
+{% end %}\
+{% otherwise %}\
+{% if debug %}\
+		// *** WARNING *** Unhandled or skipped non-unit property ${prop[1]}
+{% end debug %}\
+{% end %}\
 {% end %}\
 {% end %}\
 	}
@@ -215,19 +240,65 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 {% end %}\
 {% when prop.isAttribute %}\
+{% choose %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+			// MARKER [JJJ]
+			// Attribute property which is Units enumeration ${prop.name}
+{% end debug %}\
+{% end %}\
+{% when prop.isEnumeration and not prop.isUnitsEnumeration%}\
+{% if debug %}\
+			// MARKER [KKK]
+{% end debug %}\
 		if (element.hasAttribute("${prop.name}"))
 		{
-{% if prop.isEnumeration %}\
 			// Attribute property which is an enumeration ${prop.name}
 			set${prop.methodName}(${prop.langType}.fromString(
 					element.getAttribute("${prop.name}")));
+		}
 {% end %}\
-{% if not prop.isEnumeration %}\
+{% when prop.hasUnitsCompanion %}\
+{% if debug %}\
+			// MARKER [UUU]
+{% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
+			// Attribute property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+			String unitSymbol = element.getAttribute("${prop.unitsCompanion.name}");
+			if ((unitSymbol == null) || (unitSymbol.isEmpty()))
+			{
+				// Use default value specified in the xsd model
+				unitSymbol = get${prop.unitsCompanion.name}XsdDefault();
+			}
+			${prop.unitsCompanion.langType} modelUnit = 
+				${prop.unitsCompanion.langType}.fromString(unitSymbol);
+			${prop.langType} baseValue = ${prop.langType}.valueOf(
+					element.getAttribute("${prop.name}"));
+			if (baseValue != null) 
+			{
+				set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
+			}
+		}
+{% end %}\
+{% when not prop.isEnumeration %}\
+{% if debug %}\
+			// MARKER [LLL]
+{% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
 			// Attribute property ${prop.name}
 			set${prop.methodName}(${prop.langType}.valueOf(
 					element.getAttribute("${prop.name}")));
-{% end %}\
 		}
+{% end %}\
+{% otherwise %}\
+{% if debug %}\
+		// MARKER [MMM]
+		// *** WARNING *** Unhandled or skipped attribute ${prop.name}
+{% end debug %}\
+{% end %}\
+{% end %}\
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
 		List<Element> ${prop.name}_nodeList =
@@ -438,14 +509,37 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 	}
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
-	// Property
-	public ${prop.langType} get${prop.methodName}()
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+	// Property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+	public ${prop.instanceVariableType} get${prop.methodName}()
 	{
 		return ${prop.instanceVariableName};
 	}
 
-	public void set${prop.methodName}(${prop.langType} ${prop.argumentName})
+	public void set${prop.methodName}(${prop.instanceVariableType} ${prop.argumentName})
+	{
+		this.${prop.instanceVariableName} = ${prop.argumentName};
+	}
+{% end %}\
+{% when prop.isUnitsEnumeration %}
+{% if debug %}\
+			// MARKER [RRR]
+			// Attribute property which is Units enumeration ${prop.name}
+{% end debug %}\
+	// Property ${prop.name} is a unit companion
+	public static String get${prop.methodName}XsdDefault()
+	{
+		return "${prop.defaultXsdValue}";
+	}
+{% end %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+	// Property ${prop.name}
+	public ${prop.instanceVariableType} get${prop.methodName}()
+	{
+		return ${prop.instanceVariableName};
+	}
+
+	public void set${prop.methodName}(${prop.instanceVariableType} ${prop.argumentName})
 	{
 		this.${prop.instanceVariableName} = ${prop.argumentName};
 	}
@@ -536,6 +630,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end if isAnnotation %}\
 
 {% for prop in klass.properties.values() %}\
+{% if not prop.isUnitsEnumeration %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
 		if (${prop.instanceVariableName} != null)
 		{
@@ -567,7 +662,31 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.isBackReference %}\
 			// *** IGNORING *** Skipped back reference ${prop.name}
 {% end when %}\
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and prop.isAttribute %}\
+{% if debug %}\
+			// MARKER [QQQ]
+{% end debug %}\
+			// Attribute property ${prop.name} with units companion prop.unitsCompanion.name
+			if (${prop.instanceVariableName}.value() != null)
+			{
+				${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.value().toString());
+			}
+			if (${prop.instanceVariableName}.unit() != null)
+			{
+				try
+				{
+					${prop.unitsCompanion.langType} enumUnits = ${prop.unitsCompanion.langType}.fromString(${prop.instanceVariableName}.unit().getSymbol());
+					${klass.name}_element.setAttribute("${prop.unitsCompanion.name}", enumUnits.toString());
+				} catch (EnumerationException e)
+				{
+					LOGGER.debug("Unable to create xml for ${klass.name}:${prop.unitsCompanion.name}: {}", e.toString());
+				}
+			}
+{% end when %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
+{% if debug %}\
+			// MARKER [III]
+{% end debug %}\
 			// Attribute property ${prop.name}
 			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.toString());
 {% end when %}\
@@ -610,6 +729,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end otherwise %}\
 {% end choose %}\
 		}
+{% end if %}\
 {% end if %}\
 {% end for %}\
 

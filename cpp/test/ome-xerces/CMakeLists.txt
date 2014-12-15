@@ -35,15 +35,17 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Xerces_INCLUDE_DIRS})
+                    ${XercesC_INCLUDE_DIRS})
 
 if(BUILD_TESTS)
   add_executable(xerces xerces.cpp)
   target_link_libraries(xerces ome-xml ome-test)
 
-  add_test(ome-xerces/xerces xerces)
+  bf_add_test(ome-xerces/xerces xerces)
 
-  header_test_from_file(ome-xerces ome-xerces ome/xerces)
-  target_link_libraries(ome-xerces-headers ome-xerces)
-  add_test(ome-xerces/headers ome-xerces-headers)
+  if(extended-tests)
+    header_test_from_file(ome-xerces ome-xerces ome/xerces)
+    target_link_libraries(ome-xerces-headers ome-xerces)
+    bf_add_test(ome-xerces/headers ome-xerces-headers)
+   endif(extended-tests)
 endif(BUILD_TESTS)

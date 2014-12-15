@@ -41,9 +41,9 @@
 
 #include <ome/compat/config.h>
 
-#include <cassert>
-#include <string>
-#include <ostream>
+#include <ome/xerces/dom/Base.h>
+#include <ome/xerces/dom/Wrapper.h>
+#include <ome/xerces/dom/NodeList.h>
 
 #include <xercesc/dom/DOMNode.hpp>
 
@@ -61,14 +61,18 @@ namespace ome
        * object.  It can also be cast to a pointer to the wrapped
        * object, so can substitute for it directly.
        */
-      class Node
+      template<int S>
+      class NodeWrapper : public Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >
       {
       public:
+        /// The derived object type of a node.
+        typedef xercesc::DOMNode::NodeType node_type;
+
         /**
          * Construct a NULL Node.
          */
-        Node ():
-          xmlnode()
+        NodeWrapper ():
+          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >()
         {
         }
 
@@ -77,8 +81,8 @@ namespace ome
          *
          * @param node the Node to copy.
          */
-        Node (const Node& node):
-          xmlnode(node.xmlnode)
+        NodeWrapper (const NodeWrapper& node):
+          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >(node)
         {
         }
 
@@ -87,40 +91,14 @@ namespace ome
          *
          * @param node the Node to wrap.
          */
-        Node (xercesc::DOMNode *node):
-          xmlnode(node)
+        NodeWrapper (xercesc::DOMNode *node):
+          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >(node)
         {
         }
 
         /// Destructor.
-        ~Node ()
+        ~NodeWrapper ()
         {
-        }
-
-        /**
-         * Get wrapped xercesc::DOMNode *.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        xercesc::DOMNode*
-        get()
-        {
-          return xmlnode;
-        }
-
-        /**
-         * Get wrapped xercesc::DOMNode *.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        const xercesc::DOMNode*
-        get() const
-        {
-          return xmlnode;
         }
 
         /**
@@ -129,103 +107,33 @@ namespace ome
          * @param node the child Node to append.
          * @returns the appended Node.
          */
-        Node
-        appendChild (const Node& node)
+        NodeWrapper
+        appendChild (NodeWrapper& node)
         {
           // TODO: Catch and rethrow xerces exceptions with the xerces
           // errors converted to sane descriptions.  And additionally
           // for all other xerces methods which throw.
-          return this->xmlnode->appendChild(node.xmlnode);
+          return (*this)->appendChild(node.get());
         }
 
         /**
-         * Assign a Node.
+         * Get the object type of this node.
          *
-         * @param node the Node to assign.
-         * @returns the Node.
+         * @return the object type.
          */
-        Node&
-        operator= (Node& node)
+        node_type
+        getNodeType ()
         {
-          this->xmlnode = node.xmlnode;
-          return *this;
+          return (*this)->getNodeType();
         }
-
-        /**
-         * Assign a xercesc::DOMNode *.
-         *
-         * @param node the Node to assign.
-         * @returns the Node.
-         */
-        Node&
-        operator= (xercesc::DOMNode *node)
-        {
-          this->xmlnode = node;
-          return *this;
-        }
-
-        /**
-         * Dereference to xercesc::DOMNode.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        xercesc::DOMNode&
-        operator* () noexcept
-        {
-          assert(xmlnode != 0);
-          return *xmlnode;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMNode.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        const xercesc::DOMNode&
-        operator* () const noexcept
-        {
-          assert(xmlnode != 0);
-          return *xmlnode;
-        }
-
-        /**
-         * Dereference to xercesc::DOMNode.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        xercesc::DOMNode *
-        operator-> () noexcept
-        {
-          assert(xmlnode != 0);
-          return xmlnode;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMNode.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        const xercesc::DOMNode *
-        operator-> () const noexcept
-        {
-          assert(xmlnode != 0);
-          return xmlnode;
-        }
-
-        /**
-         * Check if the wrapped Node is NULL.
-         *
-         * @returns true if valid, false if NULL.
-         */
-        operator bool () const
-        {
-          return xmlnode != 0;
-        }
-
-      private:
-        /// The wrapped xercesc::DOMNode.
-        xercesc::DOMNode *xmlnode;
       };
+
+      /// Managed Node.
+      typedef NodeWrapper<MANAGED> ManagedNode;
+      /// Unmanaged Node.
+      typedef NodeWrapper<UNMANAGED> UnmanagedNode;
+      /// Default Node.
+      typedef UnmanagedNode Node;
 
     }
   }

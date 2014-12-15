@@ -50,6 +50,34 @@ namespace ome
   {
 
     /**
+     * Imaging domain.
+     */
+    enum Domain
+      {
+        UNKNOWN,   ///< Unknown
+        HCS,       ///< High-Content Screening (HCS)
+        LM,        ///< Light Microscopy (LM)
+        EM,        ///< Electron Microscopy (EM)
+        SPM,       ///< Scanning Probe Microscopy (SPM)
+        SEM,       ///< Scanning Electron Microscopy (SEM)
+        FLIM,      ///< Fluorescence-Lifetime Imaging (FLIM)
+        MEDICAL,   ///< Medical Imaging
+        HISTOLOGY, ///< Histology
+        GEL,       ///< Gel/Blot Imaging
+        ASTRONOMY, ///< Astronomy
+        GRAPHICS   ///< Graphics
+      };
+
+    /**
+     * Get the string corresponding to a particular Domain.
+     *
+     * @param domain the Domain to use.
+     * @returns the string description of the Domain.
+     */
+    const std::string&
+    getDomain(Domain domain);
+
+    /**
      * Get the rasterized index corresponding to the given Z, C and T
      * coordinates.
      *

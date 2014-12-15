@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2013 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -50,7 +50,7 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 #include "pixel.h"
 
@@ -130,7 +130,18 @@ public:
   {
   }
 
-private:
+protected:
+  bool
+  isStreamThisTypeImpl(std::istream& stream) const
+  {
+    std::istreambuf_iterator<char> eos;
+    std::string in(std::istreambuf_iterator<char>(stream), eos);
+
+    std::cout << "IN: " << in << std::endl;
+
+    return in == "Valid file content";
+  }
+
   std::shared_ptr<CoreMetadata>
   makeCore()
   {
@@ -156,21 +167,14 @@ private:
     return c;
   }
 
-public:
+protected:
   void
-  openBytes(dimension_size_type no,
-            VariantPixelBuffer& buf) const
-  {
-    ::ome::bioformats::detail::FormatReader::openBytes(no, buf);
-  }
-
-  void
-  openBytes(dimension_size_type /* no */,
-            VariantPixelBuffer& /* buf */,
-            dimension_size_type /* x */,
-            dimension_size_type /* y */,
-            dimension_size_type /* w */,
-            dimension_size_type /* h */) const
+  openBytesImpl(dimension_size_type /* no */,
+                VariantPixelBuffer& /* buf */,
+                dimension_size_type /* x */,
+                dimension_size_type /* y */,
+                dimension_size_type /* w */,
+                dimension_size_type /* h */) const
   {
     assertId(currentId, true);
     return;
@@ -224,6 +228,7 @@ public:
       }
   }
 
+public:
   bool
   isUsedFile(const std::string& file)
   {
@@ -289,8 +294,10 @@ TEST_P(FormatReaderTest, ReaderProperties)
 
 TEST_P(FormatReaderTest, IsThisType)
 {
-  std::string content("Invalid file content");
-  std::istringstream iscontent(content);
+  std::string icontent("Invalid file content");
+  std::string vcontent("Valid file content");
+  std::istringstream isicontent(icontent);
+  std::istringstream isvcontent(vcontent);
 
   EXPECT_FALSE(r.isThisType("invalid.file"));
   EXPECT_FALSE(r.isThisType("invalid.file", true));
@@ -300,11 +307,17 @@ TEST_P(FormatReaderTest, IsThisType)
   EXPECT_TRUE(r.isThisType("valid.test", true));
   EXPECT_TRUE(r.isThisType("valid.test", false));
 
-  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*content.begin()),
-                            reinterpret_cast<uint8_t *>(&*content.end())));
-  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*content.begin()),
-                            content.size()));
-  EXPECT_FALSE(r.isThisType(content));
+  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
+                            reinterpret_cast<uint8_t *>(&*icontent.end())));
+  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
+                            icontent.size()));
+  EXPECT_FALSE(r.isThisType(isicontent));
+
+  EXPECT_TRUE(r.isThisType(reinterpret_cast<uint8_t *>(&*vcontent.begin()),
+                           reinterpret_cast<uint8_t *>(&*vcontent.end())));
+  EXPECT_TRUE(r.isThisType(reinterpret_cast<uint8_t *>(&*vcontent.begin()),
+                           vcontent.size()));
+  EXPECT_TRUE(r.isThisType(isvcontent));
 }
 
 TEST_P(FormatReaderTest, DefaultClose)
@@ -372,8 +385,8 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
-  EXPECT_EQ(1U, r.getThumbSizeX());
-  EXPECT_EQ(1U, r.getThumbSizeY());
+  EXPECT_EQ(64U, r.getThumbSizeX());
+  EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_TRUE(r.isOrderCertain());
@@ -411,8 +424,8 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
-  EXPECT_EQ(1U, r.getThumbSizeX());
-  EXPECT_EQ(1U, r.getThumbSizeY());
+  EXPECT_EQ(64U, r.getThumbSizeX());
+  EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_TRUE(r.isOrderCertain());
@@ -450,8 +463,8 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
-  EXPECT_EQ(1U, r.getThumbSizeX());
-  EXPECT_EQ(1U, r.getThumbSizeY());
+  EXPECT_EQ(64U, r.getThumbSizeX());
+  EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
   EXPECT_EQ(std::string("XYZTC"), r.getDimensionOrder());
   EXPECT_TRUE(r.isOrderCertain());
@@ -468,20 +481,16 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
 
 TEST_P(FormatReaderTest, DefaultLUT)
 {
-  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get8BitLookupTable(buf8), std::runtime_error);
-  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
+  VariantPixelBuffer buf;
+  EXPECT_THROW(r.getLookupTable(buf), std::runtime_error);
 }
 
 TEST_P(FormatReaderTest, FlatLUT)
 {
   r.setId("flat");
 
-  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get8BitLookupTable(buf8), std::runtime_error);
-  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
-  EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
+  VariantPixelBuffer buf;
+  EXPECT_THROW(r.getLookupTable(buf), std::runtime_error);
 }
 
 TEST_P(FormatReaderTest, DefaultSeries)
@@ -960,6 +969,7 @@ FormatReaderTestParameters variant_params[] =
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(FormatReaderVariants, FormatReaderTest, ::testing::ValuesIn(variant_params));

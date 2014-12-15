@@ -63,10 +63,6 @@ import org.w3c.dom.Element;
 /**
  * Test case for GenericExcitationSource Map values
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/GenericExcitationMapTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/GenericExcitationMapTest.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Andrew Patterson
  */
 public class GenericExcitationMapTest {
@@ -81,11 +77,11 @@ public class GenericExcitationMapTest {
     GenericExcitationSource geSource = new GenericExcitationSource();
     geSource.setID("LightSource:0");
     Map dataMap = new Map();
-    dataMap.getMap().put("a","1");
-    dataMap.getMap().put("b","2");
-    dataMap.getMap().put("c","3");
-    dataMap.getMap().put("d","4");
-    dataMap.getMap().put("e","5");
+    assertPair(dataMap, 0, "a", "1");
+    assertPair(dataMap, 1, "b", "2");
+    assertPair(dataMap, 2, "c", "3");
+    assertPair(dataMap, 3, "d", "4");
+    assertPair(dataMap, 4, "e", "5");
     geSource.setMap(dataMap);
 
     instrument.addLightSource(geSource);
@@ -138,27 +134,18 @@ public class GenericExcitationMapTest {
     GenericExcitationSource geSource = (GenericExcitationSource) ome.getInstrument(0).getLightSource(0); 
     Map dataMap = geSource.getMap();
 
-    assertTrue(dataMap.getMap().containsKey("a"));
-    assertTrue(dataMap.getMap().containsKey("b"));
-    assertTrue(dataMap.getMap().containsKey("c"));
-    assertTrue(dataMap.getMap().containsKey("d"));
-    assertTrue(dataMap.getMap().containsKey("e"));
+    assertEquals(5, dataMap.getPairs().size());
+    assertPair(dataMap, 0, "a", "1");
+    assertPair(dataMap, 1, "b", "2");
+    assertPair(dataMap, 2, "c", "3");
+    assertPair(dataMap, 3, "d", "4");
+    assertPair(dataMap, 4, "e", "5");
 
-    assertFalse(dataMap.getMap().containsKey("x"));
+  }
 
-    assertTrue(dataMap.getMap().containsValue("1"));
-    assertTrue(dataMap.getMap().containsValue("2"));
-    assertTrue(dataMap.getMap().containsValue("3"));
-    assertTrue(dataMap.getMap().containsValue("4"));
-    assertTrue(dataMap.getMap().containsValue("5"));
-
-    assertFalse(dataMap.getMap().containsValue("-1"));
-
-    assertEquals(dataMap.getMap().get("a"),"1");
-    assertEquals(dataMap.getMap().get("b"),"2");
-    assertEquals(dataMap.getMap().get("c"),"3");
-    assertEquals(dataMap.getMap().get("d"),"4");
-    assertEquals(dataMap.getMap().get("e"),"5");
+  void assertPair(Map dataMap, int idx, String name, String value) {
+    assertEquals(name, dataMap.getPairs().get(idx).getName());
+    assertEquals(value, dataMap.getPairs().get(idx).getValue());
   }
 
 }

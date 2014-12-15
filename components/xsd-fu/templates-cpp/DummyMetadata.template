@@ -593,11 +593,11 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       DummyMetadata::getUUID() const
       {
         throw std::runtime_error("DummyMetadata: No metadata methods implemented");
@@ -703,28 +703,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setMaskBinData(const byte_array&,
-                       index_type ROIIndex,
-                       index_type shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      DummyMetadata::setMaskBinData(const byte_array&,
-                                    index_type /* ROIIndex */,
-                                    index_type /* shapeIndex */)
-      {
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                               index_type mapAnnotationIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type /* map */,
+      DummyMetadata::setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& /* map */,
                                            index_type /* mapAnnotationIndex */)
       {
       }
@@ -733,13 +717,13 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type /* map */,
+      DummyMetadata::setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& /* map */,
                                                    index_type /* instrumentIndex */,
                                                    index_type /* lightSourceIndex */)
       {
@@ -749,12 +733,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                  index_type imageIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type /* map */,
+      DummyMetadata::setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& /* map */,
                                               index_type /* imageIndex */)
       {
       }

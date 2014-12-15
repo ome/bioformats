@@ -186,6 +186,7 @@ namespace ome
          * @param mode the file open mode (@c r to read, @c w to write
          * or @c a to append).
          * @returns the the open TIFF.
+         * @throws an Exception on failure.
          */
         static std::shared_ptr<TIFF>
         open(const std::string& filename,

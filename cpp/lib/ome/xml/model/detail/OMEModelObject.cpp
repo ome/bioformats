@@ -98,12 +98,19 @@ namespace ome
                pos != children.end();
                ++pos)
             {
-              // Note that this will be null if not an element node.
-              xerces::dom::Element child(*pos);
-              if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName()))) {
-                xerces::dom::Element c2(child);
-                ret.push_back(child);
-              }
+              try
+                {
+                   xerces::dom::Element child(pos->get());
+                   if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName())))
+                    {
+                      xerces::dom::Element c2(child);
+                      ret.push_back(child);
+                    }
+                }
+              catch (std::logic_error& /* e */)
+                {
+                   // Not an Element.
+                }
             }
           return ret;
         }

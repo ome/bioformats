@@ -4,7 +4,16 @@
   </description>
 
   <property name="import.dir" value="${basedir}/../antlib/resources"/>
+  <fail message="No file ${import.dir}/global.xml found. Make sure this target is called from Bio-Formats as a submodule of openmicroscopy.git.">
+	<condition>
+      <not>
+        <available file="${import.dir}/global.xml" />
+      </not>
+    </condition>
+  </fail>
+  <import file="${import.dir}/gitversion.xml" optional="true"/>
   <import file="${import.dir}/global.xml"/>
+  <import file="${import.dir}/version.xml"/>
   <import file="${import.dir}/lifecycle.xml"/>
 
   <target name="dist" depends="generate" description="Hook for OME build to call Bio-Formats">

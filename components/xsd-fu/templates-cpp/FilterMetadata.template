@@ -297,30 +297,13 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
-        setMaskBinData(const byte_array& binData,
-                       index_type ROIIndex,
-                       index_type shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setMaskBinData(const byte_array& binData,
-                                     index_type ROIIndex,
-                                     index_type shapeIndex)
-      {
-        store->setMaskBinData(binData, ROIIndex, shapeIndex);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
         void
-        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                               index_type mapAnnotationIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+      FilterMetadata::setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                             index_type mapAnnotationIndex)
       {
         store->setMapAnnotationValue(map, mapAnnotationIndex);
@@ -330,13 +313,13 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+      FilterMetadata::setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                                     index_type instrumentIndex,
                                                     index_type lightSourceIndex)
       {
@@ -347,12 +330,12 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                  index_type imageIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+      FilterMetadata::setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                                index_type imageIndex)
       {
         store->setImagingEnvironmentMap(map, imageIndex);

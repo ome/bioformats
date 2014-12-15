@@ -114,7 +114,6 @@ namespace ome
                 dimension_size_type t = mr->getPixelsSizeT(s);
                 dimension_size_type c = mr->getPixelsSizeC(s);
                 c /= mr->getChannelSamplesPerPixel(s, 0);
-                dimension_size_type planes = z * t * c;
               }
 
             currentId = id;
@@ -135,7 +134,7 @@ namespace ome
 
       bool
       FormatWriter::isThisType(const std::string& name,
-                               bool               /* open */)
+                               bool               /* open */) const
       {
         return checkSuffix(name,
                            writerProperties.suffixes,
@@ -143,13 +142,7 @@ namespace ome
       }
 
       void
-      FormatWriter::set8BitLookupTable(const VariantPixelBuffer& /* buf */)
-      {
-        assertId(currentId, true);
-      }
-
-      void
-      FormatWriter::set16BitLookupTable(const VariantPixelBuffer& /* buf */)
+      FormatWriter::setLookupTable(const VariantPixelBuffer& /* buf */)
       {
         assertId(currentId, true);
       }

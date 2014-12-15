@@ -28,7 +28,6 @@
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
  *
- *
  * 	This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -144,15 +143,15 @@ public class XMLWriter
 
 	/** The schemas. */
 	private static final String[] SCHEMAS = {
-	    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3/ome.xsd"};
+	    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd"};
 
 	/** The XML namespace. */
 	private static final String XML_NS =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3";
+		"http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5";
 
 	/** The XML namespace. */
 	private static final String BIN_NS =
-		"http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-3";
+		"http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5";
 
 	/** The XSI namespace. */
 	private static final String XSI_NS =
@@ -160,7 +159,7 @@ public class XMLWriter
 
 	/** The schema location. */
 	private static final String SCHEMA_LOCATION =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3/ome.xsd";
+		"http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd";
 
 	/** A default plane. */
 	private static final String PLANE =
@@ -230,6 +229,9 @@ public class XMLWriter
 		//Add Planar data
 		if (binaryData) {
 			NodeList nodes = document.getElementsByTagName(BIN_DATA_NS + ":" + BIN_DATA_TAG);
+			if (nodes == null || nodes.getLength() == 0) {
+			    nodes = document.getElementsByTagName(BIN_DATA_TAG);
+			}
 			for (int i = 0; i < nodes.getLength(); i++) {
 				nodes.item(i).setTextContent(PLANE);
 			}

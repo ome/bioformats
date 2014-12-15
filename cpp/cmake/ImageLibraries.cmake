@@ -35,16 +35,17 @@
 # #L%
 
 include(CheckCSourceCompiles)
+include(CheckTypeSize)
 
-find_package(TIFF)
+find_package(TIFF REQUIRED)
 
 if(NOT TIFF_FOUND)
-  message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/)")
+  message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/ is recommended)")
 endif(NOT TIFF_FOUND)
 
 set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${TIFF_INCLUDE_DIR})
-set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
 set(CMAKE_REQUIRED_LIBRARIES ${TIFF_LIBRARIES})
 check_c_source_compiles("#include <tiffio.h>
 
@@ -112,8 +113,6 @@ int main(void)
 }
 " TIFF_HAVE_MERGEFIELDINFO_RETURN)
 
-set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
-
 check_c_source_compiles("#include <tiff.h>
 
 int main(void)
@@ -123,6 +122,13 @@ int main(void)
 " TIFF_HAVE_BIGTIFF)
 
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_EXTRA_INCLUDE_FILES_SAVE ${CMAKE_EXTRA_INCLUDE_FILES})
+set(CMAKE_EXTRA_INCLUDE_FILES tiffio.h)
+
+check_type_size(tmsize_t TIFF_HAVE_TMSIZE_T)
+check_type_size(tsize_t TIFF_HAVE_TSIZE_T)
+
+set(CMAKE_EXTRA_INCLUDE_FILES ${CMAKE_EXTRA_INCLUDE_FILES_SAVE})
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
 
-find_package(PNG)
+find_package(PNG REQUIRED)

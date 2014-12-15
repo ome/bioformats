@@ -38,11 +38,11 @@
 
 #include <ome/xml/model/primitives/Timestamp.h>
 
+#include <ome/test/test.h>
+
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
-
-#include <gtest/gtest.h>
 
 using ome::xml::model::primitives::Timestamp;
 
@@ -175,6 +175,7 @@ TEST_P(TimestampTest, TimeFromEpoch)
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(TimestampVariants, TimestampTest, ::testing::ValuesIn(params));

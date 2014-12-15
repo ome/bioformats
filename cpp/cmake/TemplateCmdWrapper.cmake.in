@@ -1,0 +1,5 @@
+@echo off
+
+set "BIOFORMATS_SCHEMADIR=@PROJECT_SOURCE_DIR@/components/specification/released-schema"
+
+%*
