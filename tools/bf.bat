@@ -33,7 +33,7 @@ if not "%BF_PROFILE%" == "" (
     rem Set default profiling depth
     set BF_PROFILE_DEPTH=30
   )
-  set BF_FLAGS=%$BF_FLAGS% -Xrunhprof:cpu=samples,depth=%BF_PROFILE_DEPTH%,file=%BF_PROG%.hprof
+  set BF_FLAGS=%$BF_FLAGS% -agentlib:hprof=cpu=samples,depth=%BF_PROFILE_DEPTH%,file=%BF_PROG%.hprof
 fi
 )
 

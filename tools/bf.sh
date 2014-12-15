@@ -36,7 +36,7 @@ then
   then
     BF_PROFILE_DEPTH="30"
   fi
-  BF_FLAGS="$BF_FLAGS -Xrunhprof:cpu=samples,depth=$BF_PROFILE_DEPTH,file=$BF_PROG.hprof"
+  BF_FLAGS="$BF_FLAGS -agentlib:hprof=cpu=samples,depth=$BF_PROFILE_DEPTH,file=$BF_PROG.hprof"
 fi
 
 # Use any available proxy settings.
