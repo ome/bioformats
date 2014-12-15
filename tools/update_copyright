@@ -1,8 +1,7 @@
 #! /bin/bash
 # Script for updating copyright headers across the code
 
-version=$(sed --version || echo "")
-if [ ${version:0:3} == "GNU" ];
+if $(sed --version 2>/dev/null | head -n1 | grep -q "GNU");
 then
   echo "GNU version"
   inplace_sed() { sed -i -e "$@"; }
@@ -11,7 +10,7 @@ else
   inplace_sed(){ sed -i "" -e "$@"; }
 fi
 
-COPYRIGHT="Copyright (C) "
+COPYRIGHTS=( "Copyright (C) " "Copyright © " )
 YEAR="[0-9]\{4\}"
 RANGE=" - "
 AUTHOR=" Open Microscopy Environment"
@@ -19,16 +18,20 @@ CURRENT_YEAR=${1:-$(date +%Y)}
 echo "Updating copyright with $CURRENT_YEAR"
 
 # Update year range copyrights
-for file in $(git grep -l "${COPYRIGHT}${YEAR}${RANGE}${YEAR}${AUTHOR}");
+for COPYRIGHT in "${COPYRIGHTS[@]}";
 do
-    inplace_sed "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${CURRENT_YEAR}\2/" $file
-done
+    echo "Updating $COPYRIGHT"
+    for file in $(git grep -l "${COPYRIGHT}${YEAR}${RANGE}${YEAR}${AUTHOR}");
+    do
+        inplace_sed "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${CURRENT_YEAR}\2/" $file
+    done
 
-# Update single year copyrights
-for file in $(git grep -l "${COPYRIGHT}${YEAR}${AUTHOR}");
-do
-    if [ -z "$(git grep "${COPYRIGHT}${CURRENT_YEAR}${AUTHOR}" -- $file)" ];
-    then
-        inplace_sed "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${CURRENT_YEAR}\2/" $file
-    fi
+    # Update single year copyrights
+    for file in $(git grep -l "${COPYRIGHT}${YEAR}${AUTHOR}");
+    do
+        if [ -z "$(git grep "${COPYRIGHT}${CURRENT_YEAR}${AUTHOR}" -- $file)" ];
+        then
+            inplace_sed "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${CURRENT_YEAR}\2/" $file
+        fi
+    done
 done

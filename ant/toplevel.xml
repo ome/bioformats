@@ -1013,4 +1013,10 @@ VCS_REVISION=${vcs.revision}
 </echo>
   </target>
 
+  <target name="update-copyright" description="update copyright headers">
+	<property name="executable-update-copyright"
+	            location="tools/update_copyright"/>
+    <exec executable="${executable-update-copyright}"/>
+  </target>
+
 </project>
