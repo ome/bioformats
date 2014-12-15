@@ -1621,13 +1621,12 @@ public class NativeND2Reader extends FormatReader {
             value = in.readLong();
             break;
           case (8): // String
-            //in.read(); // size of string
-            long start = in.getFilePointer();
-            value = DataTools.stripString(in.findString("\0\0\0"));
-            long end = in.getFilePointer();
-            if ((end - start) % 2 != 0) {
-              in.skipBytes(1);
+            char currentChar = 0;
+            StringBuilder resultString = new StringBuilder();
+            while((currentChar = in.readChar()) != 0) {
+                resultString.append(currentChar);
             }
+            value = resultString.toString();
             break;
           case (9): // ByteArray
             long length = in.readLong();
