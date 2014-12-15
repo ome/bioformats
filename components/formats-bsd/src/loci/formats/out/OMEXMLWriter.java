@@ -81,9 +81,9 @@ public class OMEXMLWriter extends FormatWriter {
     compression = compressionTypes[0];
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatWriter API methods --
 
-  /* @see loci.formats.IFormatHandler#setId(String) */
+  /* @see loci.formats.FormatWriter#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) {

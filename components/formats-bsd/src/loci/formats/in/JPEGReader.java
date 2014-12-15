@@ -69,9 +69,9 @@ public class JPEGReader extends DelegateReader {
     suffixNecessary = false;
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatReader API methods --
 
-  /* @see IFormatHandler#setId(String) */
+  /* @see FormatReader#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
     try {
