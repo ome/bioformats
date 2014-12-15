@@ -28,6 +28,17 @@ then
   BF_FLAGS="$BF_FLAGS -Dbioformats_can_do_upgrade_check=false"
 fi
 
+# Run profiling if the BF_PROFILE flag is set.
+if [ -n "$BF_PROFILE" ]
+then
+  # Set default profiling depth
+  if [ -z "$BF_PROFILE_DEPTH" ]
+  then
+    BF_PROFILE_DEPTH="30"
+  fi
+  BF_FLAGS="$BF_FLAGS -Xrunhprof:cpu=samples,depth=$BF_PROFILE_DEPTH,file=$BF_PROG.hprof"
+fi
+
 # Use any available proxy settings.
 BF_FLAGS="$BF_FLAGS -Dhttp.proxyHost=$PROXY_HOST -Dhttp.proxyPort=$PROXY_PORT"
 

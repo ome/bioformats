@@ -27,6 +27,17 @@ if not "%NO_UPDATE_CHECK%" == "" (
   set BF_FLAGS=%BF_FLAGS% -Dbioformats_can_do_upgrade_check=false
 )
 
+rem Run profiling if the BF_PROFILE flag is set.
+if not "%BF_PROFILE%" == "" (
+  if "%BF_PROFILE_DEPTH%" == "" (
+    rem Set default profiling depth
+    set BF_PROFILE_DEPTH=30
+  )
+  set BF_FLAGS=%$BF_FLAGS% -Xrunhprof:cpu=samples,depth=%BF_PROFILE_DEPTH%,file=%BF_PROG%.hprof
+fi
+)
+
+
 rem Use any available proxy settings.
 set BF_FLAGS=%BF_FLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT%
 
