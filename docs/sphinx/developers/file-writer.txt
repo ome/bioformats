@@ -1,7 +1,9 @@
 Writing files
 =============
 
-The following file formats can be written using Bio-Formats:
+The file formats which can be written using Bio-Formats are marked in the
+:doc:`supported formats table </supported-formats>` with a green tick in the
+'export' column. These include, but are not limited to:
 
 - TIFF (uncompressed, LZW, JPEG, or JPEG-2000)
 - OME-TIFF (uncompressed, LZW, JPEG, or JPEG-2000)
