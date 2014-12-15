@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # domainlist: a script for listing supported domains in Bio-Formats
 

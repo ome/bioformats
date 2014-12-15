@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # bf.sh: the script that actually launches a command line tool
 
