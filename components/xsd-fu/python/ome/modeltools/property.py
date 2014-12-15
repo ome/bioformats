@@ -638,8 +638,7 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     itype = self.langTypeNS
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                itype = ("OMEModelObject::indexed_container"
-                         "<%s, std::shared_ptr>::type") % ns_sep
+                itype = "std::vector<std::shared_ptr<%s> >" % ns_sep
 
         return itype
     instanceVariableType = property(
