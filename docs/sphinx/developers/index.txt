@@ -23,6 +23,7 @@ Introduction to Bio-Formats
     :maxdepth: 1
 
     building-bioformats
+    components
     file-reader
     file-writer
 
