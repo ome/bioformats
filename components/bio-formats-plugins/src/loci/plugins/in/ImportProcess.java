@@ -521,8 +521,18 @@ public class ImportProcess implements StatusReporter {
 
     r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
-    if (options.isAutoscale() || FormatTools.isFloatingPoint(r.getPixelType()))
-    {
+
+    boolean hasFloatingPoint = false;
+    for (int s=0; s<r.getSeriesCount(); s++) {
+      r.setSeries(s);
+      if (FormatTools.isFloatingPoint(r.getPixelType())) {
+        hasFloatingPoint = true;
+        break;
+      }
+    }
+    r.setSeries(0);
+
+    if (options.isAutoscale() || hasFloatingPoint) {
       r = minMaxCalculator = new MinMaxCalculator(r);
     }
     if (options.doStitchTiles()) {
