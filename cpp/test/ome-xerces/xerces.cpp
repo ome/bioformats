@@ -217,6 +217,276 @@ TEST_P(XercesTest, ResetDocument)
   ASSERT_TRUE(doc.get() == 0);
 }
 
+TEST_P(XercesTest, DocumentToFile)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  boost::filesystem::path file(PROJECT_BINARY_DIR "/cpp/test/ome-xerces");
+  std::string name("test-document-output-");
+  name += boost::filesystem::path(params.filename).filename().generic_string();
+  file /= name;
+
+  std::string s;
+  ome::xerces::dom::writeDocument(doc, s);
+  ome::xerces::dom::writeDocument(doc, file);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(file));
+  std::string s2;
+  ome::xerces::dom::writeDocument(doc2, s2);
+
+  ASSERT_EQ(s, s2);
+}
+
+TEST_P(XercesTest, DocumentWriteString)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  std::string s;
+  ome::xerces::dom::writeDocument(doc, s);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(s));
+  std::string s2;
+  ome::xerces::dom::writeDocument(doc2, s2);
+
+  ASSERT_EQ(s, s2);
+}
+
+TEST_P(XercesTest, DocumentWriteStringParameters)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  ome::xerces::dom::WriteParameters p;
+  p.prettyPrint=true;
+  p.whitespace=false;
+  p.xmlDeclaration=false;
+  p.datatypeNormalization=true;
+  p.canonicalForm=true;
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  std::string s;
+  ome::xerces::dom::writeDocument(doc, s, p);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(s));
+  std::string s2;
+  ome::xerces::dom::writeDocument(doc2, s2, p);
+
+  ASSERT_EQ(s, s2);
+
+  ome::xerces::dom::WriteParameters p2;
+  p.prettyPrint=false;
+  p.whitespace=true;
+  p.xmlDeclaration=true;
+  p.datatypeNormalization=false;
+  p.canonicalForm=false;
+
+  xml::dom::Document doc3(ome::xerces::dom::createDocument(s));
+  std::string s3;
+  ome::xerces::dom::writeDocument(doc3, s3, p2);
+
+  ASSERT_NE(s, s3);
+  ASSERT_NE(s2, s3);
+}
+
+TEST_P(XercesTest, DocumentWriteStream)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  std::ostringstream os;
+  ome::xerces::dom::writeDocument(doc, os);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(os.str()));
+  std::ostringstream os2;
+  ome::xerces::dom::writeDocument(doc2, os2);
+
+  ASSERT_EQ(os.str(), os2.str());
+}
+
+TEST_P(XercesTest, NodeToFile)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  boost::filesystem::path file(PROJECT_BINARY_DIR "/cpp/test/ome-xerces");
+  std::string name("test-document-output-");
+  name += boost::filesystem::path(params.filename).filename().generic_string();
+  file /= name;
+
+  std::string s;
+  ome::xerces::dom::writeNode(doc, s);
+  ome::xerces::dom::writeNode(doc, file);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(file));
+  std::string s2;
+  ome::xerces::dom::writeNode(doc2, s2);
+
+  ASSERT_EQ(s, s2);
+}
+
+TEST_P(XercesTest, NodeWriteString)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  std::string s;
+  ome::xerces::dom::writeNode(doc, s);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(s));
+  std::string s2;
+  ome::xerces::dom::writeNode(doc2, s2);
+
+  ASSERT_EQ(s, s2);
+}
+
+TEST_P(XercesTest, NodeWriteStringParameters)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  ome::xerces::dom::WriteParameters p;
+  p.prettyPrint=true;
+  p.whitespace=false;
+  p.xmlDeclaration=false;
+  p.datatypeNormalization=true;
+  p.canonicalForm=true;
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  std::string s;
+  ome::xerces::dom::writeNode(doc, s, p);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(s));
+  std::string s2;
+  ome::xerces::dom::writeNode(doc2, s2, p);
+
+  ASSERT_EQ(s, s2);
+
+  ome::xerces::dom::WriteParameters p2;
+  p.prettyPrint=false;
+  p.whitespace=true;
+  p.xmlDeclaration=true;
+  p.datatypeNormalization=false;
+  p.canonicalForm=false;
+
+  xml::dom::Document doc3(ome::xerces::dom::createDocument(s));
+  std::string s3;
+  ome::xerces::dom::writeNode(doc3, s3, p2);
+
+  ASSERT_NE(s, s3);
+  ASSERT_NE(s2, s3);
+}
+
+TEST_P(XercesTest, NodeWriteStream)
+{
+  const XercesTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  xml::dom::Document doc(ome::xerces::dom::createDocument(data));
+  std::ostringstream os;
+  ome::xerces::dom::writeNode(doc, os);
+
+  // Can't compare the original directly so reparse and check it
+  // round-trips identically.
+  xml::dom::Document doc2(ome::xerces::dom::createDocument(os.str()));
+  std::ostringstream os2;
+  ome::xerces::dom::writeNode(doc2, os2);
+
+  ASSERT_EQ(os.str(), os2.str());
+}
+
 XercesTestParameters params[] =
   {
     //    XercesTestParameters(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome", XercesTestParameters::NONE),
