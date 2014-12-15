@@ -1,8 +1,7 @@
 #! /bin/bash
 # Script for updating copyright headers across the code
 
-version=$(sed --version || echo "")
-if [ ${version:0:3} == "GNU" ];
+if $(sed --version | head -n1 | grep -q "GNU");
 then
   echo "GNU version"
   inplace_sed() { sed -i -e "$@"; }
