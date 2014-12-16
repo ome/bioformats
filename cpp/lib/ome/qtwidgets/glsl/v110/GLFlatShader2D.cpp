@@ -131,21 +131,18 @@ namespace ome
         void
         GLFlatShader2D::enableCoords()
         {
-          bind();
           enableAttributeArray(attr_coords);
         }
 
         void
         GLFlatShader2D::disableCoords()
         {
-          bind();
           disableAttributeArray(attr_coords);
         }
 
         void
         GLFlatShader2D::setCoords(const GLfloat *offset, int tupleSize, int stride)
         {
-          bind();
           setAttributeArray(attr_coords, offset, tupleSize, stride);
           check_gl("Set flatcoords");
         }
@@ -161,7 +158,6 @@ namespace ome
         void
         GLFlatShader2D::setColour(const glm::vec4& colour)
         {
-          bind();
           glUniform4fv(uniform_colour, 1, glm::value_ptr(colour));
           check_gl("Set flat uniform colour");
         }
@@ -169,7 +165,6 @@ namespace ome
         void
         GLFlatShader2D::setOffset(const glm::vec2& offset)
         {
-          bind();
           glUniform2fv(uniform_offset, 1, glm::value_ptr(offset));
           check_gl("Set flat uniform offset");
         }
@@ -177,7 +172,6 @@ namespace ome
         void
         GLFlatShader2D::setModelViewProjection(const glm::mat4& mvp)
         {
-          bind();
           glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
           check_gl("Set flat uniform mvp");
         }

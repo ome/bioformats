@@ -162,21 +162,18 @@ namespace ome
         void
         GLImageShader2D::enableCoords()
         {
-          bind();
           enableAttributeArray(attr_coords);
         }
 
         void
         GLImageShader2D::disableCoords()
         {
-          bind();
           disableAttributeArray(attr_coords);
         }
 
         void
         GLImageShader2D::setCoords(const GLfloat *offset, int tupleSize, int stride)
         {
-          bind();
           setAttributeArray(attr_coords, offset, tupleSize, stride);
         }
 
@@ -191,14 +188,12 @@ namespace ome
         void
         GLImageShader2D::enableTexCoords()
         {
-          bind();
           enableAttributeArray(attr_texcoords);
         }
 
         void
         GLImageShader2D::disableTexCoords()
         {
-          bind();
           disableAttributeArray(attr_texcoords);
         }
 
@@ -207,7 +202,6 @@ namespace ome
                                       int            tupleSize,
                                       int            stride)
         {
-          bind();
           setAttributeArray(attr_texcoords, offset, tupleSize, stride);
         }
 
@@ -225,7 +219,6 @@ namespace ome
         void
         GLImageShader2D::setTexture(int texunit)
         {
-          bind();
           glUniform1i(uniform_texture, texunit);
           check_gl("Set texture");
         }
@@ -233,7 +226,6 @@ namespace ome
         void
         GLImageShader2D::setMin(const glm::vec3& min)
         {
-          bind();
           glUniform3fv(uniform_min, 1, glm::value_ptr(min));
           check_gl("Set min range");
         }
@@ -241,7 +233,6 @@ namespace ome
         void
         GLImageShader2D::setMax(const glm::vec3& max)
         {
-          bind();
           glUniform3fv(uniform_max, 1, glm::value_ptr(max));
           check_gl("Set max range");
         }
@@ -249,7 +240,6 @@ namespace ome
         void
         GLImageShader2D::setModelViewProjection(const glm::mat4& mvp)
         {
-          bind();
           glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
           check_gl("Set image2d uniform mvp");
         }

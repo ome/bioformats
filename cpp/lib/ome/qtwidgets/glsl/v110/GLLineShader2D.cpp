@@ -135,14 +135,12 @@ namespace ome
         void
         GLLineShader2D::enableCoords()
         {
-          bind();
           enableAttributeArray(attr_coords);
         }
 
         void
         GLLineShader2D::disableCoords()
         {
-          bind();
           disableAttributeArray(attr_coords);
         }
 
@@ -151,7 +149,6 @@ namespace ome
                                   int            tupleSize,
                                   int            stride)
         {
-          bind();
           setAttributeArray(attr_coords, offset, tupleSize, stride);
         }
 
@@ -169,14 +166,12 @@ namespace ome
         void
         GLLineShader2D::enableColour()
         {
-          bind();
           enableAttributeArray(attr_colour);
         }
 
         void
         GLLineShader2D::disableColour()
         {
-          bind();
           disableAttributeArray(attr_colour);
         }
 
@@ -185,7 +180,6 @@ namespace ome
                                   int            tupleSize,
                                   int            stride)
         {
-          bind();
           setAttributeArray(attr_colour, offset, tupleSize, stride);
         }
 
@@ -203,7 +197,6 @@ namespace ome
         void
         GLLineShader2D::setModelViewProjection(const glm::mat4& mvp)
         {
-          bind();
           glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
           check_gl("Set line uniform mvp");
         }
@@ -211,7 +204,6 @@ namespace ome
         void
         GLLineShader2D::setZoom(float zoom)
         {
-          bind();
           glUniform1f(uniform_zoom, zoom);
           check_gl("Set line zoom level");
         }
