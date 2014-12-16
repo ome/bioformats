@@ -39,7 +39,7 @@ The classes that implement the :command:`showinf`, :command:`bfconvert`, and :co
 :source:`bundles <components/bundles>`:
 
 This is only needed by the Maven build system, and is used to aggregate all of
-the individual .jar files into bioformats_package.jar.  There should not be
+the individual .jar files into :file:`bioformats_package.jar`.  There should not be
 any code here, just build system files.
 
 .. _forks-jai:
@@ -122,7 +122,7 @@ specification, e.g. TIFF.  Everything in the component is BSD-licensed.
 :source:`formats-gpl <components/formats-gpl>`:
 
 The majority of the file format readers and some file format writers are contained in this component.
-Everything in the component is GPL licensed (in contrast with :ref:`formats-bsd <formats-bsd>`).
+Everything in the component is GPL-licensed (in contrast with :ref:`formats-bsd <formats-bsd>`).
 Most file formats represented in this component do not have a publicly
 available specification.
 
