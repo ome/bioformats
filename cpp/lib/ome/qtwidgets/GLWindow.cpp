@@ -199,10 +199,11 @@ namespace ome
 
       makeCurrent();
 
-      if (needsInitialize) {
-        initializeOpenGLFunctions();
-        initialize();
-      }
+      if (needsInitialize)
+        {
+          initializeOpenGLFunctions();
+          initialize();
+        }
 
       render();
 
