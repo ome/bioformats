@@ -177,6 +177,17 @@ namespace ome
         unsigned int
         texture();
 
+        /**
+         * Get LUT ID.
+         *
+         * This is the identifier of the LUT for the plane being
+         * rendered.
+         *
+         * @returns the LUT ID.
+         */
+        unsigned int
+        lut();
+
       protected:
         /// The image vertices.
         QOpenGLBuffer image_vertices;
@@ -186,6 +197,8 @@ namespace ome
         QOpenGLBuffer image_elements;
         /// The identifier of the texture owned and used by this object.
         unsigned int textureid;
+        /// The identifier of the LUTs owned and used by this object.
+        unsigned int lutid;
         /// Linear contrast minimum limits.
         glm::vec3 texmin;
         /// Linear contrast maximum limits.

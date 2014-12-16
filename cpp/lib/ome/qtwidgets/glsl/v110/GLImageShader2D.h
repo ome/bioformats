@@ -173,6 +173,14 @@ namespace ome
           setMax(const glm::vec3& max);
 
           /**
+           * Set the LUT to use.
+           *
+           * @param texunit the texture unit to use.
+           */
+          void
+          setLUT(int texunit);
+
+          /**
            * Set model view projection matrix.
            *
            * @param mvp the model view projection matrix.
@@ -194,6 +202,8 @@ namespace ome
           int uniform_mvp;
           /// Texture uniform.
           int uniform_texture;
+          /// LUT uniform.
+          int uniform_lut;
           /// Minimum limits for linear contrast uniform.
           int uniform_min;
           /// Maximum limits for linear contrast uniform.

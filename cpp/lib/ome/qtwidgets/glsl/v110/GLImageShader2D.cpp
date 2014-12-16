@@ -64,6 +64,7 @@ namespace ome
           attr_texcoords(),
           uniform_mvp(),
           uniform_texture(),
+          uniform_lut(),
           uniform_min(),
           uniform_max()
         {
@@ -91,9 +92,11 @@ namespace ome
 
           fshader = new QOpenGLShader(QOpenGLShader::Fragment, this);
           std::string fsource("#version 110\n"
+                              "#extension GL_EXT_texture_array : enable\n"
                               "\n"
                               "varying vec2 f_texcoord;\n"
                               "uniform sampler2D tex;\n"
+                              "uniform sampler1DArray lut;\n"
                               "uniform vec3 texmin;\n"
                               "uniform vec3 texmax;\n"
                               "\n"
@@ -101,18 +104,7 @@ namespace ome
                               "  vec2 flipped_texcoord = vec2(f_texcoord.x, 1.0 - f_texcoord.y);\n"
                               "  vec4 texval = texture2D(tex, flipped_texcoord);\n"
                               "\n"
-                              // "  gl_FragColor[0] = f_texcoord[0];\n"
-                              // "  gl_FragColor[1] = f_texcoord[1];\n"
-                              // "  gl_FragColor[2] = 1.0;\n"
-                              "  gl_FragColor[0] = gl_FragColor[1] = gl_FragColor[2] = ((texval[0] * 64.0) - texmin[0]) / (texmax[0] - texmin[0]);\n"
-
-
-                              //                                                    "  gl_FragColor[0] = gl_FragColor[1] = gl_FragColor[2] = (0.5 - texmin[0]) / (texmax[0] - texmin[0]);\n"
-                              // "  gl_FragColor[0] = gl_FragColor[1] = gl_FragColor[2] = ((texval[0] * 64.0) - texmin[0]) / (texmax[0] - texmin[0]);\n"
-                              // "  gl_FragColor[0] = ((texval[0] *64.0) - texmin[0]) / (texmax[0] - texmin[0]);\n"
-                              // "  gl_FragColor[1] = ((texval[1] *64.0) - texmin[0]) / (texmax[0] - texmin[0]);\n"
-                              // "  gl_FragColor[2] = (texval[2] - texmin[0]) / (texmax[0] - texmin[0]);\n"
-                              "  gl_FragColor[3] = 1.0;\n"
+                              "  gl_FragColor = texture1DArray(lut, vec2(((((texval[0] * 64.0) - texmin[0]) / (texmax[0] - texmin[0]))), 0.0));\n"
                               "}\n");
 
           fshader->compileSourceCode(fsource.c_str());
@@ -145,6 +137,10 @@ namespace ome
           uniform_texture = uniformLocation("tex");
           if (uniform_texture == -1)
             std::cerr << "Failed to bind texture uniform " << std::endl;
+
+          uniform_lut = uniformLocation("lut");
+          if (uniform_lut == -1)
+            std::cerr << "Failed to bind lut uniform " << std::endl;
 
           uniform_min = uniformLocation("texmin");
           if (uniform_min == -1)
@@ -220,7 +216,7 @@ namespace ome
         GLImageShader2D::setTexture(int texunit)
         {
           glUniform1i(uniform_texture, texunit);
-          check_gl("Set texture");
+          check_gl("Set image texture");
         }
 
         void
@@ -235,6 +231,13 @@ namespace ome
         {
           glUniform3fv(uniform_max, 1, glm::value_ptr(max));
           check_gl("Set max range");
+        }
+
+        void
+        GLImageShader2D::setLUT(int texunit)
+        {
+          glUniform1i(uniform_lut, texunit);
+          check_gl("Set LUT texture");
         }
 
         void

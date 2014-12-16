@@ -281,6 +281,7 @@ namespace ome
         image_texcoords(QOpenGLBuffer::VertexBuffer),
         image_elements(QOpenGLBuffer::IndexBuffer),
         textureid(0),
+        lutid(0),
         texmin(0.0f),
         texmax(0.1f),
         reader(reader),
@@ -306,6 +307,7 @@ namespace ome
                 glm::vec2(0.0f, sizeY));
         reader->setSeries(oldseries);
 
+        // Create image texture.
         glGenTextures(1, &textureid);
         glBindTexture(GL_TEXTURE_2D, textureid);
         check_gl("Bind texture");
@@ -327,6 +329,42 @@ namespace ome
                      tprop.external_format,  // format
                      tprop.external_type, // type
                      0);
+        check_gl("Texture create");
+
+        // Create LUT texture.
+        glGenTextures(1, &lutid);
+        glBindTexture(GL_TEXTURE_1D_ARRAY, lutid);
+        check_gl("Bind texture");
+        glTexParameteri(GL_TEXTURE_1D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        check_gl("Set texture min filter");
+        glTexParameteri(GL_TEXTURE_1D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        check_gl("Set texture mag filter");
+        glTexParameteri(GL_TEXTURE_1D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        check_gl("Set texture wrap s");
+
+        // HiLo
+        uint8_t lut[256][3];
+        for (uint16_t i = 0; i < 256; ++i)
+          for (uint16_t j = 0; j < 3; ++j)
+            {
+              lut[i][j] = i;
+            }
+        lut[0][0] = 0;
+        lut[0][2] = 0;
+        lut[0][2] = 255;
+        lut[255][0] = 255;
+        lut[255][1] = 0;
+        lut[255][2] = 0;
+
+        glTexImage2D(GL_TEXTURE_1D_ARRAY, // target
+                     0,  // level, 0 = base, no minimap,
+                     GL_RGB8, // internalformat
+                     256,  // width
+                     1,  // height
+                     0,  // border
+                     GL_RGB,  // format
+                     GL_UNSIGNED_BYTE, // type
+                     lut);
         check_gl("Texture create");
       }
 
@@ -422,6 +460,12 @@ namespace ome
       Image2D::texture()
       {
         return textureid;
+      }
+
+      unsigned int
+      Image2D::lut()
+      {
+        return lutid;
       }
 
     }

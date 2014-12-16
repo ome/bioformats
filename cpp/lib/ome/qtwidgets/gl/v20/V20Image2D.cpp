@@ -77,6 +77,12 @@ namespace ome
           check_gl("Bind texture");
           image_shader->setTexture(0);
 
+          glActiveTexture(GL_TEXTURE1);
+          check_gl("Activate texture");
+          glBindTexture(GL_TEXTURE_1D_ARRAY, lutid);
+          check_gl("Bind texture");
+          image_shader->setLUT(1);
+
           image_shader->enableCoords();
           image_shader->setCoords(image_vertices, 0, 2);
 
