@@ -76,7 +76,6 @@ namespace ome
           glBindTexture(GL_TEXTURE_2D, textureid);
           check_gl("Bind texture");
           image_shader->setTexture(0);
-          std::cerr << "Setting textureid = " << textureid << "\n";
 
           image_shader->enableCoords();
           image_shader->setCoords(image_vertices, 0, 2);

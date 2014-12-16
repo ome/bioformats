@@ -306,10 +306,7 @@ namespace ome
                 glm::vec2(0.0f, sizeY));
         reader->setSeries(oldseries);
 
-        unsigned int id = 0;
-        std::cerr << "Unset textureid "<<textureid << "\n";
         glGenTextures(1, &textureid);
-        std::cerr << "Gen textureid "<<textureid << "\n";
         glBindTexture(GL_TEXTURE_2D, textureid);
         check_gl("Bind texture");
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, tprop.min_filter);
@@ -331,7 +328,6 @@ namespace ome
                      tprop.external_type, // type
                      0);
         check_gl("Texture create");
-        std::cerr << "Created image textureid "<<textureid<<"(" << sizeX << "x" << sizeY <<  ")\n";
       }
 
       void
