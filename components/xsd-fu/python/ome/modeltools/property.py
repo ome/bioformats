@@ -650,9 +650,9 @@ class OMEModelProperty(OMEModelEntity):
 
         if isinstance(self.model.opts.lang, language.Java):
             if self.isReference and self.maxOccurs > 1:
-                idefault = "ArrayList<%s>" % self.langType
+                idefault = "ReferenceList<%s>" % self.langType
             elif self.isBackReference and self.maxOccurs > 1:
-                idefault = "ArrayList<%s>" % self.langType
+                idefault = "ReferenceList<%s>" % self.langType
             elif self.isBackReference:
                 idefault = None
             elif self.maxOccurs == 1 and (

@@ -139,6 +139,9 @@ public class FlexReader extends FormatReader {
   private HashMap<String, String> reverseFileMapping =
     new HashMap<String, String>();
 
+  private HashMap<String, String> dichroicMap = new HashMap<String, String>();
+  private HashMap<String, String> filterMap = new HashMap<String, String>();
+
   /** Specifies the row and column index into 'flexFiles' for a given well. */
   private int[][] wellNumber;
 
@@ -281,7 +284,7 @@ public class FlexReader extends FormatReader {
     TiffParser tp = new TiffParser(s);
     tp.fillInIFD(ifd);
     tp.getSamples(ifd, buf, x, y, w, h);
-    factor = file.factors[imageNumber];
+    factor = file.factors == null ? 1d : file.factors[imageNumber];
     tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
@@ -330,6 +333,8 @@ public class FlexReader extends FormatReader {
       planeDeltaT.clear();
       acquisitionDates = null;
       reverseFileMapping.clear();
+      dichroicMap.clear();
+      filterMap.clear();
     }
   }
 
@@ -607,6 +612,9 @@ public class FlexReader extends FormatReader {
           if (seriesIndex > 0 && channelNames.length == getEffectiveSizeC() * getSeriesCount()) {
             channelIndex = i * getEffectiveSizeC() + c;
           }
+          if (channelNames != null && channelIndex >= channelNames.length) {
+            channelIndex = c;
+          }
           if (channelNames != null && channelIndex < channelNames.length) {
             store.setChannelName(channelNames[channelIndex], i, c);
           }
@@ -770,9 +778,9 @@ public class FlexReader extends FormatReader {
     int field, boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
-    LOGGER.info("Parsing .flex file (well {}{})",
-      (char) (wellRow + 'A'), wellCol + 1);
-    FlexFile file = lookupFile(wellRow, wellCol, field);
+    LOGGER.info("Parsing .flex file (well {}{}, field {})",
+      (char) (wellRow + 'A'), wellCol + 1, field);
+    FlexFile file = lookupFile(wellRow, wellCol, field < 0 ? 0 : field);
     if (file == null) return;
 
     int originalFieldCount = fieldCount;
@@ -815,7 +823,7 @@ public class FlexReader extends FormatReader {
     Vector<String> n = new Vector<String>();
     Vector<String> f = new Vector<String>();
     DefaultHandler handler =
-      new FlexHandler(n, f, store, firstFile, currentWell);
+      new FlexHandler(n, f, store, firstFile, currentWell, field);
     LOGGER.info("Parsing XML in .flex file");
 
     xml = xml.trim();
@@ -828,7 +836,9 @@ public class FlexReader extends FormatReader {
 
     channelNames = n.toArray(new String[n.size()]);
 
-    if (firstFile) populateCoreMetadata(wellRow, wellCol, field, n);
+    if (firstFile) {
+      populateCoreMetadata(wellRow, wellCol, field < 0 ? 0 : field, n);
+    }
 
     int totalPlanes = getSeriesCount() * getImageCount();
 
@@ -842,16 +852,19 @@ public class FlexReader extends FormatReader {
         "(count={}, names={}, factors={})",
         new Object[] {totalPlanes, nsize, fsize});
     }
-    for (String ns : n) {
-      addGlobalMetaList("Name", ns);
-    }
-    for (String fs : f) {
-      addGlobalMetaList("Factor", fs);
+    if (firstFile) {
+      for (String ns : n) {
+        addGlobalMetaList("Name", ns);
+      }
+      for (String fs : f) {
+        addGlobalMetaList("Factor", fs);
+      }
     }
 
     // parse factor values
     file.factors = new double[totalPlanes];
     int max = 0;
+    boolean oneFactors = true;
     for (int i=0; i<fsize; i++) {
       String factor = f.get(i);
       double q = 1;
@@ -864,6 +877,10 @@ public class FlexReader extends FormatReader {
       if (i < file.factors.length) {
         file.factors[i] = q;
         if (q > file.factors[max]) max = i;
+
+        if (oneFactors && q != 1d) {
+          oneFactors = false;
+        }
       }
     }
     if (fsize < file.factors.length) {
@@ -883,6 +900,10 @@ public class FlexReader extends FormatReader {
 
     if (!firstFile) {
       fieldCount = originalFieldCount;
+    }
+
+    if (oneFactors) {
+      file.factors = null;
     }
   }
 
@@ -1283,8 +1304,6 @@ public class FlexReader extends FormatReader {
               tp.setDoCaching(false);
               file.ifds = tp.getIFDs();
               file.ifds.set(0, firstIFD);
-              flexFiles.add(file);
-              parseFlexFile(currentWell, row, col, field, firstFile, store);
             }
             else {
               // if the pixel data is uncompressed and the IFD is stored
@@ -1295,8 +1314,6 @@ public class FlexReader extends FormatReader {
               nOffsets = file.offsets.length;
               file.ifds = new IFDList();
               file.ifds.add(firstIFD);
-              flexFiles.add(file);
-              parseFlexFile(currentWell, row, col, field, firstFile, store);
             }
           }
           else {
@@ -1319,9 +1336,12 @@ public class FlexReader extends FormatReader {
                 file.offsets[i] = file.offsets[i - 1] + size;
               }
             }
-            flexFiles.add(file);
-            parseFlexFile(currentWell, row, col, field, firstFile, store);
           }
+          flexFiles.add(file);
+
+          // setting a negative field index indicates that the field count
+          // should be taken from the XML
+          parseFlexFile(currentWell, row, col, nFiles == 1 ? -1 : field, firstFile, store);
           s.close();
           if (firstFile) firstFile = false;
         }
@@ -1381,6 +1401,7 @@ public class FlexReader extends FormatReader {
   public class FlexHandler extends BaseHandler {
     private Vector<String> names, factors;
     private MetadataStore store;
+    private int thisField = 0;
 
     private int nextLaser = -1;
     private int nextCamera = 0;
@@ -1400,8 +1421,6 @@ public class FlexReader extends FormatReader {
     private boolean populateCore = true;
     private int well = 0;
 
-    private HashMap<String, String> filterMap;
-    private HashMap<String, String> dichroicMap;
     private MetadataLevel level;
 
     private String filterSet;
@@ -1409,16 +1428,15 @@ public class FlexReader extends FormatReader {
     private StringBuffer charData = new StringBuffer();
 
     public FlexHandler(Vector<String> names, Vector<String> factors,
-      MetadataStore store, boolean populateCore, int well)
+      MetadataStore store, boolean populateCore, int well, int thisField)
     {
       this.names = names;
       this.factors = factors;
       this.store = store;
       this.populateCore = populateCore;
       this.well = well;
-      filterMap = new HashMap<String, String>();
-      dichroicMap = new HashMap<String, String>();
       level = getMetadataOptions().getMetadataLevel();
+      this.thisField = thisField;
     }
 
     @Override
@@ -1468,9 +1486,11 @@ public class FlexReader extends FormatReader {
       }
       else if (qName.equals("Barcode")) {
         if (plateBarcode == null) plateBarcode = value;
-        store.setPlateExternalIdentifier(value, nextPlate - 1);
+        if (populateCore) {
+          store.setPlateExternalIdentifier(value, nextPlate - 1);
+        }
       }
-      else if (qName.equals("Wavelength")) {
+      else if (qName.equals("Wavelength") && populateCore) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
         Double wavelength = new Double(value);
@@ -1486,14 +1506,14 @@ public class FlexReader extends FormatReader {
           LOGGER.warn("", e);
         }
       }
-      else if (qName.equals("Magnification")) {
+      else if (qName.equals("Magnification") && populateCore) {
         store.setObjectiveCalibratedMagnification(new Double(value), 0,
           nextObjective);
       }
-      else if (qName.equals("NumAperture")) {
+      else if (qName.equals("NumAperture") && populateCore) {
         store.setObjectiveLensNA(new Double(value), 0, nextObjective);
       }
-      else if (qName.equals("Immersion")) {
+      else if (qName.equals("Immersion") && populateCore) {
         String immersion = "Other";
         if (value.equals("1.33")) immersion = "Water";
         else if (value.equals("1.00")) immersion = "Air";
@@ -1558,17 +1578,23 @@ public class FlexReader extends FormatReader {
         else if (qName.equals("PositionX")) {
           final double v = Double.parseDouble(value) * 1000000;
           planePositionX.add(new Length(v, UNITS.REFERENCEFRAME));
-          addGlobalMetaList("X position for position", v);
+          if (planePositionX.size() <= fieldCount) {
+            addGlobalMetaList("X position for position", v);
+          }
         }
         else if (qName.equals("PositionY")) {
           final double v = Double.parseDouble(value) * 1000000;
           planePositionY.add(new Length(v, UNITS.REFERENCEFRAME));
-          addGlobalMetaList("Y position for position", v);
+          if (planePositionY.size() <= fieldCount) {
+            addGlobalMetaList("Y position for position", v);
+          }
         }
         else if (qName.equals("PositionZ")) {
           final double v = Double.parseDouble(value) * 1000000;
           planePositionZ.add(new Length(v, UNITS.REFERENCEFRAME));
-          addGlobalMetaList("Z position for position", v);
+          if (planePositionZ.size() <= fieldCount) {
+            addGlobalMetaList("Z position for position", v);
+          }
         }
         else if (qName.equals("TimepointOffsetUsed")) {
           planeDeltaT.add(new Double(value));
@@ -1626,7 +1652,7 @@ public class FlexReader extends FormatReader {
           lightSourceCombinationIDs.put(lightSourceID, v);
         }
       }
-      else if (qName.equals("Camera") && level != MetadataLevel.MINIMUM) {
+      else if (qName.equals("Camera") && level != MetadataLevel.MINIMUM && populateCore) {
         parentQName = qName;
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
@@ -1640,7 +1666,7 @@ public class FlexReader extends FormatReader {
         cameraIDs.add(attributes.getValue("ID"));
         nextCamera++;
       }
-      else if (qName.equals("Objective") && level != MetadataLevel.MINIMUM) {
+      else if (qName.equals("Objective") && level != MetadataLevel.MINIMUM && populateCore) {
         parentQName = qName;
         nextObjective++;
 
@@ -1659,7 +1685,12 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Field")) {
         parentQName = qName;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        if (fieldNo > fieldCount && fieldCount < firstWellPlanes()) {
+
+        // trust firstWellPlanes() if we know that the fields are not
+        // split across multiple files
+        if (fieldNo > fieldCount && ((thisField < 0 && fieldCount < firstWellPlanes()) ||
+          fieldCount < (thisField * firstWellPlanes())))
+        {
           fieldCount++;
         }
       }
@@ -1704,17 +1735,21 @@ public class FlexReader extends FormatReader {
         if (sliderName.endsWith("Dichro")) {
           String dichroicID =
             MetadataTools.createLSID("Dichroic", 0, nextDichroic);
-          dichroicMap.put(id, dichroicID);
-          store.setDichroicID(dichroicID, 0, nextDichroic);
-          store.setDichroicModel(id, 0, nextDichroic);
+          if (dichroicMap.get(id) == null || !dichroicMap.get(id).equals(dichroicID)) {
+            dichroicMap.put(id, dichroicID);
+            store.setDichroicID(dichroicID, 0, nextDichroic);
+            store.setDichroicModel(id, 0, nextDichroic);
+          }
           nextDichroic++;
         }
         else {
           String filterID = MetadataTools.createLSID("Filter", 0, nextFilter);
-          filterMap.put(id, filterID);
-          store.setFilterID(filterID, 0, nextFilter);
-          store.setFilterModel(id, 0, nextFilter);
-          store.setFilterFilterWheel(sliderName, 0, nextFilter);
+          if (filterMap.get(id) == null || !filterMap.get(id).equals(filterID)) {
+            filterMap.put(id, filterID);
+            store.setFilterID(filterID, 0, nextFilter);
+            store.setFilterModel(id, 0, nextFilter);
+            store.setFilterFilterWheel(sliderName, 0, nextFilter);
+          }
           nextFilter++;
         }
       }

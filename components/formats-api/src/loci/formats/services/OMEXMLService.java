@@ -275,6 +275,14 @@ public interface OMEXMLService extends Service {
   public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image);
 
   /**
+   * Insert a MetadataOnly element under the Image specified by 'index' in the
+   * given OME-XML metadata object.  If the 'resolve' flag is set, references
+   * in the OME-XML metadata object will be resolved before the new element is
+   * inserted.
+   */
+  public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image, boolean resolve);
+
+  /**
    * Determine whether or not two OMEXMLMetadata objects are equal.
    * Equality is defined as:
    *

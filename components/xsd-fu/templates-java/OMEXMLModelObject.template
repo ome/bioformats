@@ -405,9 +405,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-			if (!${prop.instanceVariableName}.contains(o_casted)) {
-				${prop.instanceVariableName}.add(o_casted);
-			}
+			${prop.instanceVariableName}.add(o_casted);
 {% end %}\
 {% if prop.maxOccurs == 1 %}\
 			${prop.instanceVariableName} = o_casted;
@@ -469,10 +467,7 @@ ${customUpdatePropertyContent[prop.name]}
       o.link${klass.name}${prop.methodName}(this);
 {% end %}\
 {% end %}\
-		if (!${prop.instanceVariableName}.contains(o)) {
-			return ${prop.instanceVariableName}.add(o);
-		}
-		return false;
+		return ${prop.instanceVariableName}.add(o);
 	}
 
 	public boolean unlink${prop.methodName}(${prop.langType} o)
