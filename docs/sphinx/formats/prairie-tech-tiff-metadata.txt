@@ -10,13 +10,14 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 45 of them (9%).
-  * Of those, Bio-Formats fully or partially converts 45 (100%).
+  * The file format itself supports 46 of them (9%).
+  * Of those, Bio-Formats fully or partially converts 46 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Prairie TIFF format reader:
+  * :schema:`Channel : EmissionWavelength <OME-2013-10-dev-5/ome_xsd.html#Channel_EmissionWavelength>`
   * :schema:`Channel : ID <OME-2013-10-dev-5/ome_xsd.html#Channel_ID>`
   * :schema:`Channel : Name <OME-2013-10-dev-5/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : SamplesPerPixel <OME-2013-10-dev-5/ome_xsd.html#Channel_SamplesPerPixel>`
@@ -63,6 +64,6 @@ These fields are fully supported by the Bio-Formats Prairie TIFF format reader:
   * :schema:`Plane : TheT <OME-2013-10-dev-5/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2013-10-dev-5/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 45**
+**Total supported: 46**
 
-**Total unknown or missing: 430**
+**Total unknown or missing: 429**
