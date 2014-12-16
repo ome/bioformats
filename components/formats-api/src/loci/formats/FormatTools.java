@@ -648,6 +648,25 @@ public final class FormatTools {
   }
 
   /**
+   * Determines whether the given reader represents any floating point data.
+   * @param reader the reader to check
+   * @return true if any of the reader's series have a floating point pixel type
+   * @see #isFloatingPoint(int)
+   */
+  public static boolean isFloatingPoint(IFormatReader reader) {
+    int originalSeries = reader.getSeries();
+    for (int s=0; s<reader.getSeriesCount(); s++) {
+      reader.setSeries(s);
+      if (isFloatingPoint(reader.getPixelType())) {
+        reader.setSeries(originalSeries);
+        return true;
+      }
+    }
+    reader.setSeries(originalSeries);
+    return false;
+  }
+
+  /**
    * Determines whether the given pixel type is floating point or integer.
    * @param pixelType the pixel type as retrieved from
    *   {@link IFormatReader#getPixelType()}.
