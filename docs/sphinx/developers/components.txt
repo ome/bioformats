@@ -25,14 +25,14 @@ documentation for all formats::
 
 Everything pertaining to the Bio-Formats plugins for ImageJ lives in this
 component.  Note that when built, this component produces
-'bio-formats_plugins.jar' (instead of 'bio-formats-plugins.jar') to be in
+:file:`bio-formats_plugins.jar` (instead of :file:`bio-formats-plugins.jar`) to be in
 keeping with ImageJ plugin naming conventions.
 
 .. _bio-formats-tools:
 
 :source:`bio-formats-tools <components/bio-formats-tools>`:
 
-The classes that implement the showinf, bfconvert, and mkfake :doc:`command line tools </users/comlinetools/index>` are contained in this component.
+The classes that implement the :command:`showinf`, :command:`bfconvert`, and :command:`mkfake` :doc:`command line tools </users/comlinetools/index>` are contained in this component.  Note that this is built with the :command:`jar-bio-formats-tools` Ant target, and not the :command:`tools` target (which is the Ant equivalent of :ref:`bundles <bundles>`).
 
 .. _bundles:
 
@@ -114,8 +114,8 @@ independent of the rest of the Bio-Formats API.
 
 :source:`formats-bsd <components/formats-bsd>`:
 
-This contains readers and writers for formats deemed to be "open", e.g. TIFF.
-Everything in the component is BSD licensed.
+This contains readers and writers for formats which have a publicly available
+specification, e.g. TIFF.  Everything in the component is BSD-licensed.
 
 .. _formats-gpl:
 
@@ -123,13 +123,15 @@ Everything in the component is BSD licensed.
 
 The majority of the file format readers and some file format writers are contained in this component.
 Everything in the component is GPL licensed (in contrast with :ref:`formats-bsd <formats-bsd>`).
+Most file formats represented in this component do not have a publicly
+available specification.
 
 .. _metakit:
 
 :source:`metakit <components/metakit>`:
 
 Java implementation of the `Metakit database specification
-<http://equi4.com/metakit>`_.  This uses classes from :ref:`formats-common <formats-common>` and is
+<http://equi4.com/metakit/>`_.  This uses classes from :ref:`formats-common <formats-common>` and is
 used by :ref:`formats-gpl <formats-gpl>`, but is otherwise independent of the main Bio-Formats
 API.
 
@@ -168,7 +170,7 @@ This component provides empty classes that mirror third-party dependencies
 which are required at compile time but cannot be included in the build system
 (usually due to licensing issues).  The build succeeds since required class
 names are present with the correct method signatures; the end user is then
-expected to replace the stub .jar files at run time.
+expected to replace the stub .jar files at runtime.
 
 .. _test-suite:
 
