@@ -618,11 +618,13 @@ class OMEModelProperty(OMEModelEntity):
                 itype = self.model.opts.lang.typeToUnitsType(
                     self.unitsCompanion.instanceVariableType)
             elif self.isReference and self.maxOccurs > 1:
-                itype = "std::vector<std::weak_ptr<%s> >" % ns_sep
+                itype = ("OMEModelObject::indexed_container"
+                         "<%s, std::weak_ptr>::type") % ns_sep
             elif self.isReference:
                 itype = "std::weak_ptr<%s>" % ns_sep
             elif self.isBackReference and self.maxOccurs > 1:
-                itype = "std::vector<std::weak_ptr<%s> >" % ns_sep
+                itype = ("OMEModelObject::indexed_container"
+                         "<%s, std::weak_ptr>::type") % ns_sep
             elif self.isBackReference:
                 itype = "std::weak_ptr<%s>" % ns_sep
             elif self.maxOccurs == 1 and (

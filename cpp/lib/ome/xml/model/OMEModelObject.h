@@ -44,6 +44,12 @@
 #include <string>
 #include <vector>
 
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/identity.hpp>
+#include <boost/multi_index/indexed_by.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/random_access_index.hpp>
+
 #include <ome/compat/memory.h>
 
 #include <ome/xerces/dom/Element.h>
@@ -71,6 +77,23 @@ namespace ome
       class OMEModelObject : public std::enable_shared_from_this<OMEModelObject>
       {
       protected:
+        /**
+         * Multi-index container for efficient ordered insertion and
+         * deletion of model object references.
+         */
+        template<typename T, template <typename ElementType> class Ptr>
+        struct indexed_container
+        {
+          /// Multi-index container type.
+          typedef boost::multi_index_container<
+            Ptr<T>, // value type
+            boost::multi_index::indexed_by<
+              boost::multi_index::random_access<>, // insertion order
+              boost::multi_index::ordered_unique<boost::multi_index::identity<Ptr<T> >, std::owner_less<Ptr<T> >  > // sorted order
+              >
+            > type;
+        };
+
         /// Constructor.
         OMEModelObject ()
         {}
