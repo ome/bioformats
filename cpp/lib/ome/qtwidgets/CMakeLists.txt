@@ -47,14 +47,12 @@ if (OME_QTOPENGL)
                       ${Qt5_INCLUDE_DIRS})
 
   set(QTWIDGETS_SOURCES
-      GLUtil.cpp
       GLContainer.cpp
       GLWindow.cpp
       GLView2D.cpp
       TexelProperties.cpp)
 
   set(QTWIDGETS_HEADERS
-      GLUtil.h
       GLContainer.h
       GLWindow.h
       GLView2D.h
@@ -63,12 +61,14 @@ if (OME_QTOPENGL)
   set(QTWIDGETS_GL_SOURCES
       gl/Axis2D.cpp
       gl/Grid2D.cpp
-      gl/Image2D.cpp)
+      gl/Image2D.cpp
+      gl/Util.cpp)
 
   set(QTWIDGETS_GL_HEADERS
       gl/Axis2D.h
       gl/Grid2D.h
-      gl/Image2D.h)
+      gl/Image2D.h
+      gl/Util.h)
 
   set(QTWIDGETS_GL_V20_SOURCES
       gl/v20/V20Axis2D.cpp

@@ -36,8 +36,8 @@
  * #L%
  */
 
-#ifndef OME_QTWIDGETS_GLUTIL_H
-#define OME_QTWIDGETS_GLUTIL_H
+#ifndef OME_QTWIDGETS_GL_UTIL_H
+#define OME_QTWIDGETS_GL_UTIL_H
 
 #include <string>
 
@@ -45,14 +45,17 @@ namespace ome
 {
   namespace qtwidgets
   {
+    namespace gl
+    {
 
-    extern void
-    check_gl(std::string const& message);
+      extern void
+      check_gl(std::string const& message);
 
+    }
   }
 }
 
-#endif // OME_QTWIDGETS_GLUTIL_H
+#endif // OME_QTWIDGETS_GL_UTIL_H
 
 /*
  * Local Variables:

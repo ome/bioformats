@@ -40,7 +40,7 @@
 #include <ome/bioformats/VariantPixelBuffer.h>
 
 #include <ome/qtwidgets/gl/Image2D.h>
-#include <ome/qtwidgets/GLUtil.h>
+#include <ome/qtwidgets/gl/Util.h>
 
 #include <iostream>
 
@@ -48,7 +48,7 @@ using ome::bioformats::PixelBuffer;
 using ome::bioformats::PixelBufferBase;
 using ome::bioformats::PixelProperties;
 using ome::bioformats::VariantPixelBuffer;
-using ome::qtwidgets::check_gl;
+using ome::qtwidgets::gl::check_gl;
 typedef ome::xml::model::enums::PixelType PT;
 
 namespace

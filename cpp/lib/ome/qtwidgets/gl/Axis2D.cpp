@@ -37,7 +37,7 @@
  */
 
 #include <ome/qtwidgets/gl/Axis2D.h>
-#include <ome/qtwidgets/GLUtil.h>
+#include <ome/qtwidgets/gl/Util.h>
 
 #include <iostream>
 

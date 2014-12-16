@@ -37,11 +37,13 @@
  */
 
 #include <ome/qtwidgets/glsl/v110/GLFlatShader2D.h>
-#include <ome/qtwidgets/GLUtil.h>
+#include <ome/qtwidgets/gl/Util.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+
+using ome::qtwidgets::gl::check_gl;
 
 namespace ome
 {

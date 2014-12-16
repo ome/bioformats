@@ -41,7 +41,7 @@
 #include <cmath>
 
 #include <ome/qtwidgets/GLView2D.h>
-#include <ome/qtwidgets/GLUtil.h>
+#include <ome/qtwidgets/gl/Util.h>
 
 #include <ome/qtwidgets/gl/v20/V20Image2D.h>
 #include <ome/qtwidgets/gl/v20/V20Grid2D.h>
@@ -242,15 +242,15 @@ namespace ome
       makeCurrent();
 
       glEnable(GL_DEPTH_TEST);
-      check_gl("Enable depth test");
+      gl::check_gl("Enable depth test");
       glEnable(GL_CULL_FACE);
-      check_gl("Enable cull face");
+      gl::check_gl("Enable cull face");
       glEnable(GL_MULTISAMPLE);
-      check_gl("Enable multisampling");
+      gl::check_gl("Enable multisampling");
       glEnable(GL_BLEND);
-      check_gl("Enable blending");
+      gl::check_gl("Enable blending");
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      check_gl("Set blend function");
+      gl::check_gl("Set blend function");
 
       image = new gl::v20::Image2D(reader, series, this);
       axes = new gl::v20::Axis2D(reader, series, this);
@@ -278,9 +278,9 @@ namespace ome
       makeCurrent();
 
       glClearColor(1.0, 1.0, 1.0, 1.0);
-      check_gl("Clear colour");
+      gl::check_gl("Clear colour");
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      check_gl("Clear buffers");
+      gl::check_gl("Clear buffers");
 
       // Render image
       image->render(mvp);

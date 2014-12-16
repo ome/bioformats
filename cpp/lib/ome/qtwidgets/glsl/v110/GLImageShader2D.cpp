@@ -37,13 +37,15 @@
  */
 
 #include <ome/qtwidgets/glsl/v110/GLImageShader2D.h>
-#include <ome/qtwidgets/GLUtil.h>
+#include <ome/qtwidgets/gl/Util.h>
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 #include <sstream>
+
+using ome::qtwidgets::gl::check_gl;
 
 namespace ome
 {
