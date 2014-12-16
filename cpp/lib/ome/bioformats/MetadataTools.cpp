@@ -299,9 +299,11 @@ namespace ome
 
     void
     addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
-                    dimension_size_type               series)
+                    dimension_size_type               series,
+                    bool                              resolve)
     {
-      omexml.resolveReferences();
+      if (resolve)
+        omexml.resolveReferences();
       std::shared_ptr<MetadataRoot> root(omexml.getRoot());
       std::shared_ptr<OMEXMLMetadataRoot> omexmlroot(std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root));
       if (omexmlroot)
