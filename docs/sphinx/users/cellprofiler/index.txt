@@ -20,10 +20,10 @@ It should be possible to use a newer version of Bio-Formats by replacing
 the bundled **loci\_tools.jar** with a newer version.
 
 -  For example, on Mac OS X, Ctrl+click the CellProfiler icon, choose
-   Show Package Contents, and replace the following files:
+   :guilabel:`Show Package Contents`, and replace the following files:
 
-   -  Contents/Resources/bioformats/loci\_tools.jar
-   -  Contents/Resources/lib/python2.5/bioformats/loci\_tools.jar
+   - :file:`Contents/Resources/bioformats/loci_tools.jar`
+   - :file:`Contents/Resources/lib/python2.5/bioformats/loci_tools.jar`
 
 .. seealso::
     `CellProfiler`_
