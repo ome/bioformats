@@ -627,10 +627,10 @@ Format readers
      - 0
      - 456
    * - :doc:`PrairieReader <formats/prairie-tech-tiff-metadata>`
-     - 45
+     - 46
      - 0
      - 0
-     - 430
+     - 429
    * - :doc:`PyramidTiffReader <formats/prairie-tech-tiff-metadata>`
      - 19
      - 0
@@ -944,10 +944,10 @@ Metadata fields
      - 0
      - 164
    * - :schema:`Channel - EmissionWavelength <OME-2013-10-dev-5/ome_xsd.html#Channel_EmissionWavelength>`
-     - 16
+     - 17
      - 0
      - 0
-     - 148
+     - 147
    * - :schema:`Channel - ExcitationWavelength <OME-2013-10-dev-5/ome_xsd.html#Channel_ExcitationWavelength>`
      - 17
      - 0
