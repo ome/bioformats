@@ -156,13 +156,17 @@ namespace ome
         return;
 
       bool needsInitialize = false;
+      bool enableDebug = false;
+
+      if (std::getenv("BIOFORMATS_OPENGL_DEBUG"))
+        enableDebug = true;
 
       if (!glcontext) {
         QSurfaceFormat format = requestedFormat();
         // OpenGL 2.0 profile with debugging.
         format.setVersion(2, 0);
         format.setProfile(QSurfaceFormat::NoProfile);
-        if (std::getenv("BIOFORMATS_OPENGL_DEBUG"))
+        if (enableDebug)
           {
             format.setOption(QSurfaceFormat::DebugContext);
           }
@@ -174,18 +178,21 @@ namespace ome
         glcontext->create();
         makeCurrent();
 
-        // The debug logger is broken on Windows for Qt 5.2 and earlier, so don't use.
-#if !defined(Q_OS_WIN) || QT_VERSION >= 0x050300
-        logger = new QOpenGLDebugLogger(this);
-        connect(logger, SIGNAL(messageLogged(QOpenGLDebugMessage)),
-                this, SLOT(logMessage(QOpenGLDebugMessage)),
-                Qt::DirectConnection);
-        if (logger->initialize())
+        if (enableDebug)
           {
-            logger->startLogging(QOpenGLDebugLogger::SynchronousLogging);
-            logger->enableMessages();
-          }
+            // The debug logger is broken on Windows for Qt 5.2 and earlier, so don't use.
+#if !defined(Q_OS_WIN) || QT_VERSION >= 0x050300
+            logger = new QOpenGLDebugLogger(this);
+            connect(logger, SIGNAL(messageLogged(QOpenGLDebugMessage)),
+                    this, SLOT(logMessage(QOpenGLDebugMessage)),
+                    Qt::DirectConnection);
+            if (logger->initialize())
+              {
+                logger->startLogging(QOpenGLDebugLogger::SynchronousLogging);
+                logger->enableMessages();
+              }
 #endif // !defined(Q_OS_WIN) || QT_VERSION >= 0x050300
+          }
 
         needsInitialize = true;
       }
