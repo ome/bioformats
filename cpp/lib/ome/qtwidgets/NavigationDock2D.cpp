@@ -66,7 +66,7 @@ namespace
   createSlider()
   {
     QSlider *slider = new QSlider(Qt::Horizontal);
-    slider->setRange(0, 0);
+    slider->setRange(0, 1);
     slider->setSingleStep(1);
     slider->setPageStep(8);
     slider->setTickInterval(8);
@@ -78,7 +78,7 @@ namespace
   createSpinBox()
   {
     QSpinBox *slider = new QSpinBox;
-    slider->setRange(0, 0);
+    slider->setRange(0, 1);
     slider->setSingleStep(1);
     slider->setButtonSymbols(QAbstractSpinBox::NoButtons);
     return slider;
@@ -194,8 +194,8 @@ namespace ome
                     }
                   sliders[i]->setEnabled(false);
                   spinboxes[i]->setEnabled(false);
-                  sliders[i]->setRange(0, 0);
-                  spinboxes[i]->setRange(0, 0);
+                  sliders[i]->setRange(0, 1);
+                  spinboxes[i]->setRange(0, 1);
                 }
             }
         }
