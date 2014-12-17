@@ -62,15 +62,17 @@ Methods to override
   The majority of the file parsing logic should be placed in this method.  The
   idea is to call this method once (and only once!) when the file is first
   opened.  Generally, you will want to start by calling
-  ``super.initFile(String)``.  You will also need to set up the stream for reading
-  the file, as well as initializing any dimension information and metadata.
+  ``super.initFile(String)``.  You will also need to set up the stream for
+  reading the file, as well as initializing any dimension information and
+  metadata.
   Most of this logic is up to you; however, you should populate the 'core'
-  variable (see :javadoc:`loci.formats.CoreMetadata <loci/formats/CoreMetadata.html>`).
+  variable (see
+  :javadoc:`loci.formats.CoreMetadata <loci/formats/CoreMetadata.html>`).
 
   Note that each variable is initialized to 0 or null when
   ``super.initFile(String)`` is called.
-  Also, ``super.initFile(String)`` constructs a Hashtable called "metadata" where
-  you should store any relevant metadata.
+  Also, ``super.initFile(String)`` constructs a Hashtable called "metadata"
+  where you should store any relevant metadata.
 
 - :javadoc:`close(boolean) <loci/formats/IFormatReader.html#close(boolean)>`
   Cleans up any resources used by the reader.  Global variables should be
@@ -81,7 +83,8 @@ Note that if the new format is a variant of a format currently supported by
 Bio-Formats, it is more efficient to make the new reader a subclass of the
 existing reader (rather than subclassing :javadoc:`loci.formats.FormatReader
 <loci/formats/FormatReader.html>`).  In this case, it is
-usually sufficient to override ``initFile(String)`` and ``isThisType(byte[])``.
+usually sufficient to override
+:javadoc:`initFile(java.lang.String) <loci/formats/FormatReader.html#initFile(java.lang.String)>` and :javadoc:`isThisType(byte[]) <loci/formats/FormatReader.html#isThisType(byte[])>`.
 
 Every reader also has an instance of :javadoc:`loci.formats.CoreMetadata
 <loci/formats/CoreMetadata.html>`.  All readers should populate the fields in
