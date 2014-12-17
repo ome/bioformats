@@ -390,10 +390,26 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   int getIndex(int z, int c, int t);
 
   /**
+   * Gets the rasterized index corresponding to the given Z, C, T,
+   * moduloZ, moduloC and moduloT coordinates.  Note that the Z, C and
+   * T coordinates take the modulo dimension sizes into account.
+   */
+  int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT);
+
+  /**
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
   int[] getZCTCoords(int index);
+
+  /**
+   * Gets the Z, C, T, moduloZ, moduloC and moduloT coordinates
+   * corresponding to the given rasterized index value.  Note that the
+   * Z, C and T coordinates are not the same as those returned by
+   * getZCTCoords(int) because the size of the modulo dimensions is
+   * taken into account.
+   */
+  int[] getZCTModuloCoords(int index);
 
   /**
    * Obtains the specified metadata field's value for the current file.

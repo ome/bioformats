@@ -327,6 +327,28 @@ public final class FormatTools {
   }
 
   /**
+   * Gets the rasterized index corresponding to the given Z, C, T,
+   * ModuloZ, ModuloC and ModuloT coordinates.
+   */
+  public static int getIndex(IFormatReader reader, int z, int c, int t,
+                             int moduloZ, int moduloC, int moduloT) {
+    String order = reader.getDimensionOrder();
+    int zSize = reader.getSizeZ();
+    int cSize = reader.getEffectiveSizeC();
+    int tSize = reader.getSizeT();
+    int moduloZSize = reader.getModuloZ().length();
+    int moduloCSize = reader.getModuloC().length();
+    int moduloTSize = reader.getModuloT().length();
+    int num = reader.getImageCount();
+    return getIndex(order,
+                    zSize, cSize, tSize,
+                    moduloZSize, moduloCSize, moduloTSize,
+                    num,
+                    z, c, t,
+                    moduloZ, moduloC, moduloT);
+  }
+
+  /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    *
@@ -405,6 +427,42 @@ public final class FormatTools {
   }
 
   /**
+   * Gets the rasterized index corresponding to the given Z, C, T,
+   * ModuloZ, ModuloC, ModuloT coordinates.
+   *
+   * @param order Dimension order.
+   * @param zSize Total number of focal planes.
+   * @param cSize Total number of channels.
+   * @param tSize Total number of time points.
+   * @param moduloZSize Total number of ModuloZ planes.
+   * @param moduloCSize Total number of ModuloC planes.
+   * @param moduloTSize Total number of ModuloT planes.
+   * @param num Total number of image planes (zSize * cSize * tSize),
+   *   specified as a consistency check.
+   * @param z Z coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+   * @param c C coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+   * @param t T coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+   * @param moduloZ ModuloZ coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+   * @param moduloC ModuloC coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+   * @param moduloT ModuloT coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+   */
+  public static int getIndex(String order,
+    int zSize, int cSize, int tSize,
+    int moduloZSize, int moduloCSize, int moduloTSize,
+    int num,
+    int z, int c, int t,
+    int moduloZ, int moduloC, int moduloT) {
+    return getIndex(order,
+                    zSize,
+                    cSize,
+                    tSize,
+                    num,
+                    (z * moduloZSize) + moduloZ,
+                    (c * moduloCSize) + moduloC,
+                    (t * moduloTSize) + moduloT);
+  }
+
+  /**
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
@@ -415,6 +473,22 @@ public final class FormatTools {
     int tSize = reader.getSizeT();
     int num = reader.getImageCount();
     return getZCTCoords(order, zSize, cSize, tSize, num, index);
+  }
+
+  /**
+   * Gets the Z, C, T, ModuloZ, ModuloC and ModuloZ coordinates
+   * corresponding to the given rasterized index value.
+   */
+  public static int[] getZCTModuloCoords(IFormatReader reader, int index) {
+    String order = reader.getDimensionOrder();
+    int zSize = reader.getSizeZ();
+    int cSize = reader.getEffectiveSizeC();
+    int tSize = reader.getSizeT();
+    int moduloZSize = reader.getModuloZ().length();
+    int moduloCSize = reader.getModuloC().length();
+    int moduloTSize = reader.getModuloT().length();
+    int num = reader.getImageCount();
+    return getZCTCoords(order, zSize, cSize, tSize, moduloZSize, moduloCSize, moduloTSize, num, index);
   }
 
   /**
@@ -490,6 +564,37 @@ public final class FormatTools {
     int t = it == 0 ? v0 : (it == 1 ? v1 : v2);
 
     return new int[] {z, c, t};
+  }
+
+  /**
+   * Gets the Z, C and T coordinates corresponding to the given rasterized
+   * index value.
+   *
+   * @param order Dimension order.
+   * @param zSize Total number of focal planes.
+   * @param cSize Total number of channels.
+   * @param tSize Total number of time points.
+   * @param moduloZSize Total number of ModuloZ planes.
+   * @param moduloCSize Total number of ModuloC planes.
+   * @param moduloTSize Total number of ModuloT planes.
+   * @param num Total number of image planes (zSize * cSize * tSize),
+   *   specified as a consistency check.
+   * @param index 1D (rasterized) index to convert to ZCT coordinate triple.
+   */
+  public static int[] getZCTCoords(String order,
+    int zSize, int cSize, int tSize,
+    int moduloZSize, int moduloCSize, int moduloTSize,
+    int num, int index) {
+    int[] coords = getZCTCoords(order, zSize, cSize, tSize, num, index);
+
+    return new int[] {
+        coords[0] / moduloZSize,
+        coords[1] / moduloCSize,
+        coords[2] / moduloTSize,
+        coords[0] % moduloZSize,
+        coords[1] % moduloCSize,
+        coords[2] % moduloTSize
+    };
   }
 
   /**

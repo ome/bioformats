@@ -261,8 +261,18 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   @Override
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+      return FormatTools.getIndex(this, z, c, t, moduloZ, moduloC, moduloT);
+  }
+
+  @Override
   public int[] getZCTCoords(int index) {
     return FormatTools.getZCTCoords(this, index);
+  }
+
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    return FormatTools.getZCTModuloCoords(this, index);
   }
 
   // -- IFormatHandler API methods --
