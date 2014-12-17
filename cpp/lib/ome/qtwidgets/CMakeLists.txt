@@ -50,12 +50,14 @@ if (OME_QTOPENGL)
       GLContainer.cpp
       GLWindow.cpp
       GLView2D.cpp
+      NavigationDock2D.cpp
       TexelProperties.cpp)
 
   set(QTWIDGETS_HEADERS
       GLContainer.h
       GLWindow.h
       GLView2D.h
+      NavigationDock2D.h
       TexelProperties.h)
 
   set(QTWIDGETS_GL_SOURCES
