@@ -45,3 +45,11 @@ main (int   argc,
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+
+bool
+verbose ()
+{
+  static bool v(getenv("BIOFORMATS_TEST_VERBOSE")
+                && std::string(getenv("BIOFORMATS_TEST_VERBOSE")) == "true");
+  return v;
+}

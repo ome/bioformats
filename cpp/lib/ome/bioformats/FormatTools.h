@@ -78,8 +78,8 @@ namespace ome
     getDomain(Domain domain);
 
     /**
-     * Get the rasterized index corresponding to the given Z, C and T
-     * coordinates.
+     * Get the rasterized index corresponding to the given @c Z, @c C
+     * and @c T coordinates.
      *
      * @param order dimension order.
      * @param zSize total number of focal planes.
@@ -87,9 +87,9 @@ namespace ome
      * @param tSize total number of time points.
      * @param num total number of image planes (zSize * cSize * tSize),
      *   specified as a consistency check.
-     * @param z Z coordinate of ZCT coordinate triple to convert to 1D index.
-     * @param c C coordinate of ZCT coordinate triple to convert to 1D index.
-     * @param t T coordinate of ZCT coordinate triple to convert to 1D index.
+     * @param z the @c Z coordinate of ZCT coordinate triple to convert to 1D index.
+     * @param c the @c C coordinate of ZCT coordinate triple to convert to 1D index.
+     * @param t the @c T coordinate of ZCT coordinate triple to convert to 1D index.
      * @returns the 1D index.
      */
     dimension_size_type
@@ -103,8 +103,45 @@ namespace ome
              dimension_size_type t);
 
     /**
-     * Get the Z, C and T coordinates corresponding to the given rasterized
-     * index value.
+     * Get the rasterized index corresponding to the given @c Z, @c C,
+     * @c T, @c ModuloZ, @c ModuloC and @c ModuloT coordinates.
+     *
+     * @param order dimension order.
+     * @param zSize total number of focal planes.
+     * @param cSize total number of channels.
+     * @param tSize total number of time points.
+     * @param moduloZSize total number of ModuloZ planes.
+     * @param moduloCSize total number of ModuloC channels.
+     * @param moduloTSize total number of ModuloT time points.
+     * @param num total number of image planes (zSize * cSize * tSize),
+     *   specified as a consistency check.
+     * @param z the @c Z coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+     * @param c the @c C coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+     * @param t the @c T coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+     * @param moduloZ the @c ModuloZ coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+     * @param moduloC the @c ModuloC coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+     * @param moduloT the @c ModuloT coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+     * @returns the 1D index.
+     */
+    dimension_size_type
+    getIndex(const std::string& order,
+             dimension_size_type zSize,
+             dimension_size_type cSize,
+             dimension_size_type tSize,
+             dimension_size_type moduloZSize,
+             dimension_size_type moduloCSize,
+             dimension_size_type moduloTSize,
+             dimension_size_type num,
+             dimension_size_type z,
+             dimension_size_type c,
+             dimension_size_type t,
+             dimension_size_type moduloZ,
+             dimension_size_type moduloC,
+             dimension_size_type moduloT);
+
+    /**
+     * Get the @c Z, @c C and @c T coordinates corresponding to the
+     * given rasterized index value.
      *
      * @param order dimension order.
      * @param zSize total number of focal planes.
@@ -120,6 +157,35 @@ namespace ome
                  dimension_size_type zSize,
                  dimension_size_type cSize,
                  dimension_size_type tSize,
+                 dimension_size_type num,
+                 dimension_size_type index);
+
+    /**
+     * Get the @c Z, @c C, @c T, @c ModuloZ, @c ModuloC and @c ModuloT
+     * coordinates corresponding to the given rasterized index value.
+     *
+     * @param order dimension order.
+     * @param zSize total number of focal planes.
+     * @param cSize total number of channels.
+     * @param tSize total number of time points.
+     * @param moduloZSize total number of ModuloZ planes.
+     * @param moduloCSize total number of ModuloC channels.
+     * @param moduloTSize total number of ModuloT time points.
+     * @param num total number of image planes (zSize * cSize * tSize),
+     *   specified as a consistency check.
+     * @param index 1D (rasterized) index to convert to ZCTmZmCmT
+     * coordinates.
+     * @returns an array containing the ZCTmZmCmT coordinates (in that
+     * order).
+     */
+    std::array<dimension_size_type, 6>
+    getZCTCoords(const std::string& order,
+                 dimension_size_type zSize,
+                 dimension_size_type cSize,
+                 dimension_size_type tSize,
+                 dimension_size_type moduloZSize,
+                 dimension_size_type moduloCSize,
+                 dimension_size_type moduloTSize,
                  dimension_size_type num,
                  dimension_size_type index);
 

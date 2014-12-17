@@ -68,6 +68,7 @@ using ome::xml::model::enums::PixelType;
 
 typedef ome::xml::model::enums::PixelType PT;
 typedef std::array<dimension_size_type, 3> dim;
+typedef std::array<dimension_size_type, 6> moddim;
 
 class FormatReaderTestParameters
 {
@@ -163,6 +164,9 @@ protected:
     c->metadataComplete = false;
     c->thumbnail = false;
     c->resolutionCount = 1;
+    c->moduloZ.start = 0.0f;
+    c->moduloZ.end = 8.0f;
+    c->moduloZ.step = 2.0f;
 
     return c;
   }
@@ -385,6 +389,9 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
+  EXPECT_EQ(5U, r.getModuloZ().size());
+  EXPECT_EQ(1U, r.getModuloT().size());
+  EXPECT_EQ(1U, r.getModuloC().size());
   EXPECT_EQ(64U, r.getThumbSizeX());
   EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
@@ -424,6 +431,9 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
+  EXPECT_EQ(5U, r.getModuloZ().size());
+  EXPECT_EQ(1U, r.getModuloT().size());
+  EXPECT_EQ(1U, r.getModuloC().size());
   EXPECT_EQ(64U, r.getThumbSizeX());
   EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
@@ -463,6 +473,9 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
+  EXPECT_EQ(5U, r.getModuloZ().size());
+  EXPECT_EQ(1U, r.getModuloT().size());
+  EXPECT_EQ(1U, r.getModuloC().size());
   EXPECT_EQ(64U, r.getThumbSizeX());
   EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
@@ -507,7 +520,9 @@ TEST_P(FormatReaderTest, DefaultSeries)
   EXPECT_THROW(r.setResolution(0), std::logic_error);
 
   EXPECT_THROW(r.getIndex(0U, 0U, 0U), std::logic_error);
+  EXPECT_THROW(r.getIndex(0U, 0U, 0U, 0U, 0U, 0U), std::logic_error);
   EXPECT_THROW(r.getZCTCoords(0U), std::logic_error);
+  EXPECT_THROW(r.getZCTModuloCoords(0U), std::logic_error);
 }
 
 struct dims
@@ -528,6 +543,37 @@ struct dims
     ret[0] = z;
     ret[1] = c;
     ret[2] = t;
+    return ret;
+  }
+};
+
+struct moddims
+{
+  dimension_size_type z;
+  dimension_size_type t;
+  dimension_size_type c;
+  dimension_size_type mz;
+  dimension_size_type mt;
+  dimension_size_type mc;
+
+  moddims(dimension_size_type z,
+          dimension_size_type t,
+          dimension_size_type c,
+          dimension_size_type mz,
+          dimension_size_type mt,
+          dimension_size_type mc):
+    z(z), t(t), c(c), mz(mz), mt(mt), mc(mc)
+  {}
+
+  operator std::array<dimension_size_type, 6>() const
+  {
+    std::array<dimension_size_type, 6> ret;
+    ret[0] = z;
+    ret[1] = c;
+    ret[2] = t;
+    ret[3] = mz;
+    ret[4] = mc;
+    ret[5] = mt;
     return ret;
   }
 };
@@ -563,6 +609,22 @@ TEST_P(FormatReaderTest, FlatSeries)
       dims(19, 3, 1)
     };
 
+    moddims modcoords[] =
+    {
+      moddims(0,  0, 0, 0, 0, 0),
+      moddims(0,  0, 0, 1, 0, 0),
+      moddims(0,  1, 0, 0, 0, 0),
+      moddims(0,  0, 1, 0, 0, 0),
+      moddims(0,  1, 0, 1, 0, 0),
+      moddims(0,  0, 1, 1, 0, 0),
+      moddims(0,  1, 1, 0, 0, 0),
+      moddims(0,  1, 1, 1, 0, 0),
+      moddims(0,  2, 1, 3, 0, 0),
+      moddims(2,  3, 0, 2, 0, 0),
+      moddims(1,  2, 1, 3, 0, 0),
+      moddims(3,  3, 1, 4, 0, 0)
+    };
+
   dimension_size_type indexes[] =
     { 0, 1, 20, 80, 21, 81, 100, 101, 123, 72, 128, 159 };
 
@@ -575,6 +637,21 @@ TEST_P(FormatReaderTest, FlatSeries)
       EXPECT_EQ(indexes[i], r.getIndex(coord[0], coord[1], coord[2]));
 
       dim ncoord = r.getZCTCoords(indexes[i]);
+      // EXPECT_EQ should work here, but fails for Boost 1.42; works
+      // in 1.46.
+      EXPECT_TRUE(coord == ncoord);
+    }
+
+  for (unsigned int i = 0;
+       i < sizeof(modcoords)/sizeof(modcoords[0]);
+       ++i)
+    {
+      const moddim coord(static_cast<moddim>(modcoords[i]));
+
+      EXPECT_EQ(indexes[i], r.getIndex(coord[0], coord[1], coord[2],
+                                       coord[3], coord[4], coord[5]));
+
+      moddim ncoord = r.getZCTModuloCoords(indexes[i]);
       // EXPECT_EQ should work here, but fails for Boost 1.42; works
       // in 1.46.
       EXPECT_TRUE(coord == ncoord);
@@ -598,13 +675,18 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedSeries)
   EXPECT_NO_THROW(r.setResolution(0));
 
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
+  EXPECT_EQ(0U, r.getIndex(0, 0, 0, 0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
+  std::array<dimension_size_type, 6> modcoords;
+  modcoords[0] = modcoords[1] = modcoords[2] = modcoords[3] = modcoords[4] = modcoords[5] = 0;
 
   // EXPECT_EQ should work here, but fails for Boost 1.42; works
   // in 1.46.
   dim ncoords = r.getZCTCoords(0U);
   EXPECT_TRUE(coords == ncoords);
+  moddim modncoords = r.getZCTModuloCoords(0U);
+  EXPECT_TRUE(modcoords == modncoords);
 }
 
 TEST_P(FormatReaderTest, SubresolutionUnflattenedSeries)
@@ -624,13 +706,18 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedSeries)
   EXPECT_NO_THROW(r.setResolution(0));
 
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
+  EXPECT_EQ(0U, r.getIndex(0, 0, 0, 0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
+  std::array<dimension_size_type, 6> modcoords;
+  modcoords[0] = modcoords[1] = modcoords[2] = modcoords[3] = modcoords[4] = modcoords[5] = 0;
 
   // EXPECT_EQ should work here, but fails for Boost 1.42; works
   // in 1.46.
   dim ncoords = r.getZCTCoords(0U);
   EXPECT_TRUE(coords == ncoords);
+  moddim modncoords = r.getZCTModuloCoords(0U);
+  EXPECT_TRUE(modcoords == modncoords);
 }
 
 TEST_P(FormatReaderTest, DefaultGroupFiles)

@@ -955,6 +955,27 @@ namespace ome
                                          z, c, t);
       }
 
+      dimension_size_type
+      FormatReader::getIndex(dimension_size_type z,
+                             dimension_size_type c,
+                             dimension_size_type t,
+                             dimension_size_type moduloZ,
+                             dimension_size_type moduloC,
+                             dimension_size_type moduloT) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getIndex(getDimensionOrder(),
+                                         getSizeZ(),
+                                         getEffectiveSizeC(),
+                                         getSizeT(),
+                                         getModuloZ().size(),
+                                         getModuloC().size(),
+                                         getModuloT().size(),
+                                         getImageCount(),
+                                         z, c, t,
+                                         moduloZ, moduloC, moduloT);
+      }
+
       std::array<dimension_size_type, 3>
       FormatReader::getZCTCoords(dimension_size_type index) const
       {
@@ -963,6 +984,21 @@ namespace ome
                                              getSizeZ(),
                                              getEffectiveSizeC(),
                                              getSizeT(),
+                                             getImageCount(),
+                                             index);
+      }
+
+      std::array<dimension_size_type, 6>
+      FormatReader::getZCTModuloCoords(dimension_size_type index) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getZCTCoords(getDimensionOrder(),
+                                             getSizeZ(),
+                                             getEffectiveSizeC(),
+                                             getSizeT(),
+                                             getModuloZ().size(),
+                                             getModuloC().size(),
+                                             getModuloT().size(),
                                              getImageCount(),
                                              index);
       }

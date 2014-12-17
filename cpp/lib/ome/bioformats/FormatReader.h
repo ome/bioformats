@@ -785,6 +785,33 @@ namespace ome
                dimension_size_type t) const = 0;
 
       /**
+       * Get the linear index of a @c Z, @c C, @c T, @c ModuloZ, @c
+       * ModuloC and @c ModuloT coordinate.
+       *
+       * The index is computed using the DimensionOrder.
+       *
+       * @param z the @c Z coordinate.
+       * @param c the @c C coordinate.
+       * @param t the @c T coordinate.
+       * @param moduloZ the @c ModuloZ coordinate.
+       * @param moduloC the @c ModuloC coordinate.
+       * @param moduloT the @c ModuloT coordinate.
+       * @returns the linear index.
+       *
+       * @todo unify with the pixel buffer dimension indexes.
+       * @todo Don't use separate values to match the return of
+       * getZCTModuloCoords.
+       */
+      virtual
+      dimension_size_type
+      getIndex(dimension_size_type z,
+               dimension_size_type c,
+               dimension_size_type t,
+               dimension_size_type moduloZ,
+               dimension_size_type moduloC,
+               dimension_size_type moduloT) const = 0;
+
+      /**
        * Get the @c Z, @c C and @c T coordinate of a linear index.
        *
        * @param index the linear index.
@@ -795,6 +822,20 @@ namespace ome
       virtual
       std::array<dimension_size_type, 3>
       getZCTCoords(dimension_size_type index) const = 0;
+
+      /**
+       * Get the @c Z, @c C, @c T, @c ModuloZ, @c ModuloC and @c
+       * ModuloT coordinate of a linear index.
+       *
+       * @param index the linear index.
+       * @returns an array containing @c Z, @c C, @c T, @c ModuloZ, @c
+       * ModuloC and @c ModuloT values.
+       *
+       * @todo unify with the pixel buffer dimension indexes.
+       */
+      virtual
+      std::array<dimension_size_type, 6>
+      getZCTModuloCoords(dimension_size_type index) const = 0;
 
       /**
        * Get a global metadata value.
