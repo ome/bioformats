@@ -41,6 +41,7 @@
 
 #include <QMainWindow>
 #include <ome/qtwidgets/GLView2D.h>
+#include <ome/qtwidgets/NavigationDock2D.h>
 
 QT_BEGIN_NAMESPACE
 class QSlider;
@@ -93,20 +94,19 @@ namespace glview
 
     QSlider *createAngleSlider();
     QSlider *createRangeSlider();
-    QSlider *createPlaneSlider();
+    ome::qtwidgets::NavigationDock2D *navigation;
 
     QTabWidget *tabs;
     ome::qtwidgets::GLView2D *glView;
     QSlider *minSlider;
     QSlider *maxSlider;
-    QSlider *planeSlider;
 
     QMetaObject::Connection minSliderChanged;
     QMetaObject::Connection minSliderUpdate;
     QMetaObject::Connection maxSliderChanged;
     QMetaObject::Connection maxSliderUpdate;
-    QMetaObject::Connection planeSliderChanged;
-    QMetaObject::Connection planeSliderUpdate;
+    QMetaObject::Connection navigationChanged;
+    QMetaObject::Connection navigationUpdate;
   };
 
 }

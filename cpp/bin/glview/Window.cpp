@@ -47,6 +47,7 @@
 #include <ome/compat/module.h>
 
 using namespace ome::qtwidgets;
+using ome::bioformats::dimension_size_type;
 
 namespace glview
 {
@@ -161,27 +162,21 @@ namespace glview
 
   void Window::createDockWindows()
   {
-    QDockWidget *dock = new QDockWidget(tr("Navigation"), this);
-    dock->setAllowedAreas(Qt::AllDockWidgetAreas);
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    planeSlider = createPlaneSlider();
-    mainLayout->addWidget(planeSlider);
-    QWidget *mainWidget = new QWidget(this);
-    mainWidget->setLayout(mainLayout);
-    dock->setWidget(mainWidget);
-    addDockWidget(Qt::BottomDockWidgetArea, dock);
+    navigation = new ome::qtwidgets::NavigationDock2D(this);
+    navigation->setAllowedAreas(Qt::AllDockWidgetAreas);
+    addDockWidget(Qt::BottomDockWidgetArea, navigation);
 
     viewMenu->addSeparator();
-    viewMenu->addAction(dock->toggleViewAction());
+    viewMenu->addAction(navigation->toggleViewAction());
 
-    dock = new QDockWidget(tr("Rendering"), this);
+    QDockWidget *dock = new QDockWidget(tr("Rendering"), this);
     dock->setAllowedAreas(Qt::AllDockWidgetAreas);
-    mainLayout = new QVBoxLayout;
+    QLayout *mainLayout = new QVBoxLayout;
     minSlider=createRangeSlider();
     maxSlider=createRangeSlider();
     mainLayout->addWidget(minSlider);
     mainLayout->addWidget(maxSlider);
-    mainWidget = new QWidget(this);
+    QWidget *mainWidget = new QWidget(this);
     mainWidget->setLayout(mainLayout);
     dock->setWidget(mainWidget);
     addDockWidget(Qt::BottomDockWidgetArea, dock);
@@ -207,18 +202,6 @@ namespace glview
     slider->setSingleStep(16);
     slider->setPageStep(8 * 16);
     slider->setTickInterval(8 * 16);
-    slider->setTickPosition(QSlider::TicksRight);
-    return slider;
-  }
-
-  // Note hardcoded range
-  QSlider *Window::createPlaneSlider()
-  {
-    QSlider *slider = new QSlider(Qt::Horizontal);
-    slider->setRange(0, 143);
-    slider->setSingleStep(1);
-    slider->setPageStep(8);
-    slider->setTickInterval(8);
     slider->setTickPosition(QSlider::TicksRight);
     return slider;
   }
@@ -264,8 +247,8 @@ namespace glview
     disconnect(minSliderUpdate);
     disconnect(maxSliderChanged);
     disconnect(maxSliderUpdate);
-    disconnect(planeSliderChanged);
-    disconnect(planeSliderUpdate);
+    disconnect(navigationChanged);
+    disconnect(navigationUpdate);
 
     viewResetAction->setEnabled(false);
     viewZoomAction->setEnabled(false);
@@ -279,18 +262,22 @@ namespace glview
         maxSliderChanged = connect(maxSlider, SIGNAL(valueChanged(int)), newGlView, SLOT(setChannelMax(int)));
         maxSliderUpdate = connect(newGlView, SIGNAL(channelMaxChanged(int)), maxSlider, SLOT(setValue(int)));
 
-        planeSliderChanged = connect(planeSlider, SIGNAL(valueChanged(int)), newGlView, SLOT(setPlane(int)));
-        planeSliderUpdate = connect(newGlView, SIGNAL(planeChanged(int)), planeSlider, SLOT(setValue(int)));
+        navigation->setReader(newGlView->getReader(), newGlView->getSeries(), newGlView->getPlane());
+        navigationChanged = connect(navigation, SIGNAL(planeChanged(ome::bioformats::dimension_size_type)), newGlView, SLOT(setPlane(ome::bioformats::dimension_size_type)));
+        navigationUpdate = connect(newGlView, SIGNAL(planeChanged(ome::bioformats::dimension_size_type)), navigation, SLOT(setPlane(ome::bioformats::dimension_size_type)));
 
         minSlider->setValue(newGlView->getChannelMin());
         maxSlider->setValue(newGlView->getChannelMax());
-        planeSlider->setValue(newGlView->getPlane());
+        navigation->setPlane(newGlView->getPlane());
+      }
+    else
+      {
+        navigation->setReader(0, 0, 0);
       }
 
     bool enable(newGlView != 0);
     minSlider->setEnabled(enable);
     maxSlider->setEnabled(enable);
-    planeSlider->setEnabled(enable);
 
     viewResetAction->setEnabled(enable);
     viewZoomAction->setEnabled(enable);
