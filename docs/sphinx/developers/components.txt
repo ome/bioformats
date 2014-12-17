@@ -1,9 +1,41 @@
 .. _component-overview:
 
 Component overview
-------------------
+==================
 
 The Bio-Formats code repository is divided up into separate components.
+
+Core components
+---------------
+
+The most commonly used and actively modified components.
+
+- :ref:`formats-common <formats-common>`
+- :ref:`formats-api <formats-api>`
+- :ref:`formats-bsd <formats-bsd>`
+- :ref:`formats-gpl <formats-gpl>`
+- :ref:`specification <specification>`
+- :ref:`ome-xml <ome-xml>`
+
+Internal testing components
+---------------------------
+
+These components are used heavily during continuous integration testing,
+but are less relevant for active development work.
+
+- :ref:`autogen <autogen>`
+- :ref:`test-suite <test-suite>`
+
+Forks of existing projects
+--------------------------
+
+- :ref:`mdbtools <forks-mdbtools>`
+- :ref:`jai <forks-jai>`
+- :ref:`turbojpeg <forks-turbojpeg>`
+- :ref:`poi <forks-poi>`
+
+All components
+--------------
 
 .. _autogen:
 
