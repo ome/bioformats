@@ -107,6 +107,18 @@ namespace ome
         angle -= 360 * 16;
     }
 
+    std::shared_ptr<ome::bioformats::FormatReader>
+    GLView2D::getReader()
+    {
+      return reader;
+    }
+
+    ome::bioformats::dimension_size_type
+    GLView2D::getSeries()
+    {
+      return series;
+    }
+
     int
     GLView2D::getZoom() const
     {
@@ -143,13 +155,14 @@ namespace ome
       return static_cast<int>(cmax[0] * 255.0*16.0);
     }
 
-    int
+    ome::bioformats::dimension_size_type
     GLView2D::getPlane() const
     {
       return plane;
     }
 
-    void GLView2D::setZoom(int zoom)
+    void
+    GLView2D::setZoom(int zoom)
     {
       if (zoom != camera.zoom) {
         camera.zoom = zoom;
@@ -158,7 +171,8 @@ namespace ome
       }
     }
 
-    void GLView2D::setXTranslation(int xtran)
+    void
+    GLView2D::setXTranslation(int xtran)
     {
       if (xtran != camera.xTran) {
         camera.xTran = xtran;
@@ -167,7 +181,8 @@ namespace ome
       }
     }
 
-    void GLView2D::setYTranslation(int ytran)
+    void
+    GLView2D::setYTranslation(int ytran)
     {
       if (ytran != camera.yTran) {
         camera.yTran = ytran;
@@ -176,7 +191,8 @@ namespace ome
       }
     }
 
-    void GLView2D::setZRotation(int angle)
+    void
+    GLView2D::setZRotation(int angle)
     {
       qNormalizeAngle(angle);
       if (angle != camera.zRot) {
@@ -214,7 +230,8 @@ namespace ome
         setChannelMax(min);
     }
 
-    void GLView2D::setChannelMax(int max)
+    void
+    GLView2D::setChannelMax(int max)
     {
       float v = max / (255.0*16.0);
       if (cmax[0] != v)
@@ -227,7 +244,8 @@ namespace ome
         setChannelMin(max);
     }
 
-    void GLView2D::setPlane(int plane)
+    void
+    GLView2D::setPlane(ome::bioformats::dimension_size_type plane)
     {
       if (this->plane != plane)
         {
@@ -237,7 +255,8 @@ namespace ome
         }
     }
 
-    void GLView2D::initialize()
+    void
+    GLView2D::initialize()
     {
       makeCurrent();
 
@@ -288,7 +307,8 @@ namespace ome
       grid->render(mvp, std::pow(10.0f, static_cast<float>(camera.zoom)/1024.0));
     }
 
-    void GLView2D::resize()
+    void
+    GLView2D::resize()
     {
       makeCurrent();
 
@@ -297,12 +317,14 @@ namespace ome
     }
 
 
-    void GLView2D::mousePressEvent(QMouseEvent *event)
+    void
+    GLView2D::mousePressEvent(QMouseEvent *event)
     {
       lastPos = event->pos();
     }
 
-    void GLView2D::mouseMoveEvent(QMouseEvent *event)
+    void
+    GLView2D::mouseMoveEvent(QMouseEvent *event)
     {
       int dx = event->x() - lastPos.x();
       int dy = event->y() - lastPos.y();
@@ -325,7 +347,8 @@ namespace ome
       lastPos = event->pos();
     }
 
-    void GLView2D::timerEvent (QTimerEvent *event)
+    void
+    GLView2D::timerEvent (QTimerEvent *event)
     {
       makeCurrent();
 

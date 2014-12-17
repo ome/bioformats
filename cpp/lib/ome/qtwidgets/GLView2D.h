@@ -156,7 +156,7 @@ namespace ome
        * @param plane the plane number to render.
        */
       void
-      setPlane(int plane);
+      setPlane(ome::bioformats::dimension_size_type plane);
 
       /**
        * Set mouse behaviour mode.
@@ -167,6 +167,22 @@ namespace ome
       setMouseMode(MouseMode mode);
 
     public:
+      /**
+       * Get reader.
+       *
+       * @returns the reader.
+       */
+      std::shared_ptr<ome::bioformats::FormatReader>
+      getReader();
+
+      /**
+       * Get series.
+       *
+       * @returns the series.
+       */
+      ome::bioformats::dimension_size_type
+      getSeries();
+
       /**
        * Get zoom factor.
        *
@@ -220,7 +236,7 @@ namespace ome
        *
        * @returns the plane number to render.
        */
-      int
+      ome::bioformats::dimension_size_type
       getPlane() const;
 
       /**
@@ -286,7 +302,7 @@ namespace ome
        * @param plane the new plane.
        */
       void
-      planeChanged(int plane);
+      planeChanged(ome::bioformats::dimension_size_type plane);
 
     protected:
       /// Set up GL context and subsidiary objects.
@@ -367,9 +383,9 @@ namespace ome
       /// Maximum level for linear contrast.
       glm::vec3 cmax;
       /// Current plane.
-      int plane;
+      ome::bioformats::dimension_size_type plane;
       /// Previous plane.
-      int oldplane;
+      ome::bioformats::dimension_size_type oldplane;
       /// Last mouse position.
       QPoint lastPos;
       /// Image to render.
