@@ -913,32 +913,32 @@ Type "ant -p" for a list of targets.
 
   <!-- Xsd-Fu -->
   <target name="clean-xsd-fu"
-    description="remove build files for Xsd-Fu">
+    description="remove build files for xsd-fu">
     <ant dir="components/xsd-fu" target="xsd-fu.clean"/>
   </target>
 
   <target name="ome-xml-src"
-    description="generate sources using Xsd-Fu">
+    description="generate sources using xsd-fu">
     <ant dir="components/ome-xml" target="generate-source"/>
   </target>
 
   <target name="metadata-src"
-    description="generate sources using Xsd-Fu">
+    description="generate sources using xsd-fu">
     <ant dir="components/formats-bsd" target="generate-source"/>
   </target>
 
   <!-- Specification -->
   <target name="jar-specification"
-    description="generate JAR file for OME-XML Specification"
+    description="generate JAR file for OME-XML specification"
     depends="jar-ome-xml">
     <ant dir="components/specification" target="jar"/>
   </target>
   <target name="test-specification"
-    description="compile and run tests for OME-XML Specification">
+    description="compile and run tests for OME-XML specification">
     <ant dir="components/specification" target="test"/>
   </target>
   <target name="clean-specification"
-    description="remove build files for OME-XML Specification">
+    description="remove build files for OME-XML specification">
     <ant dir="components/specification" target="clean"/>
   </target>
 
