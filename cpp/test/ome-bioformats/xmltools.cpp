@@ -36,7 +36,11 @@
  * #L%
  */
 
+#include <fstream>
+
 #include <ome/bioformats/XMLTools.h>
+
+#include <ome/xerces/Platform.h>
 
 #include <ome/test/test.h>
 
@@ -60,3 +64,66 @@ TEST(XMLTools, Filter)
   std::string observed = ome::bioformats::sanitizeXML(original);
   ASSERT_EQ(expected, observed);
 }
+
+class XMLToolsFileTestParameters
+{
+public:
+  std::string filename;
+  bool valid;
+
+  XMLToolsFileTestParameters(const std::string& filename,
+                             bool               valid):
+    filename(filename),
+    valid(valid)
+  {}
+};
+
+class XMLToolsFileTest : public ::testing::TestWithParam<XMLToolsFileTestParameters>
+{
+public:
+  ome::xerces::Platform plat;
+};
+
+TEST_P(XMLToolsFileTest, ValidateXML)
+{
+  const XMLToolsFileTestParameters& params = GetParam();
+
+  std::string data;
+
+  std::ifstream in(params.filename.c_str());
+
+  ASSERT_TRUE(!!in);
+  in.seekg(0, std::ios::end);
+  data.reserve(in.tellg());
+  in.seekg(0, std::ios::beg);
+
+  data.assign(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>());
+
+  if (params.valid)
+    {
+      ASSERT_TRUE(ome::bioformats::validateXML(data));
+    }
+  else
+    {
+      ASSERT_FALSE(ome::bioformats::validateXML(data));
+    }
+}
+
+XMLToolsFileTestParameters params[] =
+  {
+    XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome", true),
+    XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/cpp/test/ome-xerces/data/18x24y5z5t2c8b-text-invalid.ome", false),
+    XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/cpp/test/ome-xerces/data/18x24y5z5t2c8b-text-invalid2.ome", false)
+  };
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
+#endif
+
+INSTANTIATE_TEST_CASE_P(XMLToolsFileVariants, XMLToolsFileTest, ::testing::ValuesIn(params));
