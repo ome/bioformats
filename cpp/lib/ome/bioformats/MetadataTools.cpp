@@ -427,5 +427,35 @@ namespace ome
         }
     }
 
+    ome::xml::model::enums::DimensionOrder
+    createDimensionOrder(const std::string& order)
+    {
+      // A set could be used here, but given the tiny string length, a
+      // linear scan is quicker than an index lookup.
+
+      static const std::string validchars("XYZTC");
+
+      std::string validorder;
+
+      for (std::string::const_iterator i = order.begin();
+           i != order.end();
+           ++i)
+        {
+          if (validchars.find_first_of(*i) != std::string::npos &&
+              validorder.find_first_of(*i) == std::string::npos)
+              validorder += *i;
+        }
+
+      for (std::string::const_iterator i = validchars.begin();
+           i != validchars.end();
+           ++i)
+        {
+          if (validorder.find_first_of(*i) == std::string::npos)
+            validorder += *i;
+        }
+
+      return ome::xml::model::enums::DimensionOrder(validorder);
+    }
+
   }
 }
