@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_METADATAMAP_H
 #define OME_BIOFORMATS_METADATAMAP_H
 
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <map>
@@ -394,6 +395,63 @@ namespace ome
       erase(iterator pos)
       {
         discriminating_map.erase(pos);
+      }
+
+    private:
+      /// Functor to get a map key.
+      struct getkey
+      {
+        /**
+         * Get key from pair.
+         *
+         * @param pair the pair to use.
+         * @returns the key.
+         */
+        template <typename T>
+        typename T::first_type operator()(T pair) const
+        {
+          return pair.first;
+        }
+      };
+
+    public:
+      /**
+       * Get a list of keys in the map.
+       *
+       * @note This is inefficient, and exists solely for
+       * compatibility with the Java implementation.  Using the
+       * iterator interface directly should be preferred.
+       *
+       * @returns a sorted list of keys.
+       */
+      std::vector<key_type>
+      keys() const
+      {
+        std::vector<key_type> ret;
+        std::transform(begin(), end(), std::back_inserter(ret), getkey());
+        std::sort(ret.begin(), ret.end());
+
+        return ret;
+      }
+
+      /**
+       * Merge a separate map into this map.
+       *
+       * @param map the map to merge.
+       * @param prefix a prefix to append to the keys of the map being
+       * merged.
+       */
+      void
+      merge(const MetadataMap& map,
+            const std::string& prefix)
+      {
+        for (const_iterator i = map.begin();
+             i != map.end();
+             ++i)
+          {
+            map_type::value_type v(prefix + i->first, i->second);
+            insert(v);
+          }
       }
 
       /**

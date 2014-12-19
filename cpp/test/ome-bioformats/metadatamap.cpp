@@ -329,6 +329,35 @@ TEST_F(MetadataMapTest, EraseIter)
   ASSERT_EQ(m.size(), 1U);
 }
 
+TEST_F(MetadataMapTest, Keys)
+{
+  std::vector<std::string> keys = m.keys();
+  ASSERT_EQ(m.size(), keys.size());
+}
+
+TEST_F(MetadataMapTest, Merge)
+{
+  MetadataMap m2;
+  MetadataMap::map_type::value_type i1("merge1", int32_t(12));
+  m2.insert(i1);
+  MetadataMap::map_type::value_type i2("merge2", int32_t(13));
+  m2.insert(i2);
+  MetadataMap::map_type::value_type i3("int1", int32_t(14));
+  m2.insert(i3);
+
+  ASSERT_EQ(m.size(), 3U);
+  m.merge(m2, "merge-");
+  ASSERT_EQ(m.size(), 6U);
+
+  MetadataMap::iterator f1 = m.find("merge-merge1");
+  ASSERT_TRUE(f1 != m.end());
+  MetadataMap::iterator f2 = m.find("merge-merge2");
+  ASSERT_TRUE(f2 != m.end());
+  MetadataMap::iterator f3 = m.find("merge-int1");
+  ASSERT_TRUE(f3 != m.end());
+
+}
+
 TEST_F(MetadataMapTest, Flatten)
 {
   // Vector flattening with suffix padding.
