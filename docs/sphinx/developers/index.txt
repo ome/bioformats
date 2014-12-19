@@ -24,6 +24,7 @@ Introduction to Bio-Formats
 
     overview
     building-bioformats
+    components
     file-reader
     file-writer
 
