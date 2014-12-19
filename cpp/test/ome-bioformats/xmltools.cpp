@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,34 +36,27 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/bioformats/XMLTools.h>
 
-// Configured features
+#include <ome/test/test.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_BOOST_OWNER_LESS 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_THREAD 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_CANONICAL 1
-#cmakedefine OME_HAVE_BOOST_TYPE_TRAITS_HPP 1
-#cmakedefine OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+TEST(XMLTools, Escape)
+{
+  std::string original("'Test'&<\"Escape\">");
+  std::string expected("&apos;Test&apos;&amp;&lt;&quot;Escape&quot;&gt;");
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+  std::string observed = ome::bioformats::escapeXML(original);
+  ASSERT_EQ(expected, observed);
+}
 
-#endif // OME_COMPAT_CONFIG_H
+TEST(XMLTools, Filter)
+{
+  std::string original("\r\nTest\v\v\t");
+  original += '\0';
+  original += '\0';
+  original += "\b\b&amp;&#&gt;";
+  std::string expected("\r\nTest\t&amp;&amp;#&gt;");
+
+  std::string observed = ome::bioformats::sanitizeXML(original);
+  ASSERT_EQ(expected, observed);
+}

@@ -618,11 +618,13 @@ class OMEModelProperty(OMEModelEntity):
                 itype = self.model.opts.lang.typeToUnitsType(
                     self.unitsCompanion.instanceVariableType)
             elif self.isReference and self.maxOccurs > 1:
-                itype = "std::vector<std::weak_ptr<%s> >" % ns_sep
+                itype = ("OMEModelObject::indexed_container"
+                         "<%s, std::weak_ptr>::type") % ns_sep
             elif self.isReference:
                 itype = "std::weak_ptr<%s>" % ns_sep
             elif self.isBackReference and self.maxOccurs > 1:
-                itype = "std::vector<std::weak_ptr<%s> >" % ns_sep
+                itype = ("OMEModelObject::indexed_container"
+                         "<%s, std::weak_ptr>::type") % ns_sep
             elif self.isBackReference:
                 itype = "std::weak_ptr<%s>" % ns_sep
             elif self.maxOccurs == 1 and (
@@ -648,9 +650,9 @@ class OMEModelProperty(OMEModelEntity):
 
         if isinstance(self.model.opts.lang, language.Java):
             if self.isReference and self.maxOccurs > 1:
-                idefault = "ArrayList<%s>" % self.langType
+                idefault = "ReferenceList<%s>" % self.langType
             elif self.isBackReference and self.maxOccurs > 1:
-                idefault = "ArrayList<%s>" % self.langType
+                idefault = "ReferenceList<%s>" % self.langType
             elif self.isBackReference:
                 idefault = None
             elif self.maxOccurs == 1 and (

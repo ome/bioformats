@@ -1372,7 +1372,16 @@ public abstract class FormatReader extends FormatHandler
     return isThisType(name, true);
   }
 
-  /* @see IFormatHandler#setId(String) */
+  /**
+   * Initializes a reader from the input file name.
+   *
+   * Calls {@link #initFile(String id)} to initializes the input file, reads
+   * all of the metadata and sets the reader up for reading planes.
+   * The performance of this method depends on the format and can be up to
+   * several minutes for large file sets.
+   *
+   *  @param id a {@link String} specifying the path to the file
+   */
   @Override
   public void setId(String id) throws FormatException, IOException {
     LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
@@ -1406,13 +1415,14 @@ public abstract class FormatReader extends FormatHandler
       }
 
       if (store instanceof OMEXMLMetadata) {
+        ((OMEXMLMetadata) store).resolveReferences();
         setupService();
 
         for (int series=0; series<getSeriesCount(); series++) {
           setSeries(series);
 
-          if (getModuloZ().length() > 0 || getModuloC().length() > 0 ||
-            getModuloT().length() > 0)
+          if (getModuloZ().length() > 1 || getModuloC().length() > 1 ||
+            getModuloT().length() > 1)
           {
             service.addModuloAlong(
               (OMEXMLMetadata) store, core.get(series), series);

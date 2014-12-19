@@ -3031,6 +3031,7 @@ Plane.TheT = Yes
 Plane.TheZ = Yes
 
 [PrairieReader]
+Channel.EmissionWavelength = Yes
 Channel.ID = Yes
 Channel.Name = Yes
 Channel.SamplesPerPixel = Yes

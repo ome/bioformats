@@ -221,11 +221,15 @@ namespace ome
      * Add a MetadataOnly element to Pixels for the specified series.
      *
      * @param omexml the OME-XML metadata store.
-     * @param series the series containing the Pixels element to add MetadataOnly to.
+     * @param series the series containing the Pixels element to add
+     * MetadataOnly to.
+     * @param resolve @c true to resolve references, @c false to skip
+     * resolving references
      */
     void
     addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
-                    dimension_size_type               series);
+                    dimension_size_type               series,
+                    bool                              resolve = true);
 
     /**
      * Get Modulo annotation from OME-XML metadata.
