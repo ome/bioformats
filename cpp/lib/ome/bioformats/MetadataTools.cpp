@@ -44,6 +44,7 @@
 
 #include <ome/internal/version.h>
 
+#include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
 
 #include <ome/xml/model/Image.h>
@@ -170,8 +171,7 @@ namespace ome
           else
             {
               ret = std::shared_ptr<Metadata>(new OMEXMLMetadata());
-              // @todo Implement convertMetadata.
-              // convertMetadata(metadata, ret);
+              ome::xml::meta::convert(*retrieve, *ret);
             }
         }
 
