@@ -2,7 +2,7 @@
 
 rem bf.bat: the batch file that actually launches a command line tool
 
-setlocal
+setlocal enabledelayedexpansion
 set BF_DIR=%~dp0
 if "%BF_DIR:~-1%" == "\" set BF_DIR=%BF_DIR:~0,-1%
 
@@ -33,8 +33,7 @@ if not "%BF_PROFILE%" == "" (
     rem Set default profiling depth
     set BF_PROFILE_DEPTH=30
   )
-  set BF_FLAGS=%$BF_FLAGS% -agentlib:hprof=cpu=samples,depth=%BF_PROFILE_DEPTH%,file=%BF_PROG%.hprof
-fi
+  set BF_FLAGS=%BF_FLAGS% -agentlib:hprof=cpu=samples,depth=!BF_PROFILE_DEPTH!,file=%BF_PROG%.hprof
 )
 
 
