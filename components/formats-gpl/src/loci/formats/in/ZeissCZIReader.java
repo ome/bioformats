@@ -33,8 +33,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -158,6 +156,8 @@ public class ZeissCZIReader extends FormatReader {
   private int scanDim = 1;
 
   private String[] rotationLabels, phaseLabels, illuminationLabels;
+
+  private transient DocumentBuilder parser;
 
   // -- Constructor --
 
@@ -462,6 +462,7 @@ public class ZeissCZIReader extends FormatReader {
       illuminationLabels = null;
       phaseLabels = null;
       indexIntoPlanes.clear();
+      parser = null;
     }
   }
 
@@ -471,6 +472,8 @@ public class ZeissCZIReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    parser = XMLTools.createBuilder();
 
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
@@ -1195,15 +1198,10 @@ public class ZeissCZIReader extends FormatReader {
   {
     Element root = null;
     try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder parser = factory.newDocumentBuilder();
       ByteArrayInputStream s =
         new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
       root = parser.parse(s).getDocumentElement();
       s.close();
-    }
-    catch (ParserConfigurationException e) {
-      throw new FormatException(e);
     }
     catch (SAXException e) {
       throw new FormatException(e);
@@ -2884,16 +2882,10 @@ public class ZeissCZIReader extends FormatReader {
 
       Element root = null;
       try {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder parser = factory.newDocumentBuilder();
         ByteArrayInputStream s =
           new ByteArrayInputStream(metadata.getBytes(Constants.ENCODING));
         root = parser.parse(s).getDocumentElement();
         s.close();
-      }
-      catch (ParserConfigurationException e) {
-        metadata = null;
-        return;
       }
       catch (SAXException e) {
         metadata = null;
