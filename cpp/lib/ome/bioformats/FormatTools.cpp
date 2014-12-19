@@ -57,7 +57,7 @@ namespace ome
       {
         boost::format fmt("Invalid %1% %2%: %3%");
         fmt % dim % what % value;
-        throw new std::logic_error(fmt.str());
+        throw std::logic_error(fmt.str());
       }
 
       void
@@ -68,7 +68,7 @@ namespace ome
       {
         boost::format fmt("Invalid %1% %2%: %3%/%4%");
         fmt % dim % what % value1 % value2;
-        throw new std::logic_error(fmt.str());
+        throw std::logic_error(fmt.str());
       }
 
       void
@@ -85,7 +85,7 @@ namespace ome
           {
             boost::format fmt("Invalid dimension order: %1%");
             fmt % order;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
 
         std::string::size_type sz, st, sc;
@@ -99,7 +99,7 @@ namespace ome
           {
             boost::format fmt("Invalid dimension order: %1%");
             fmt % order;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
 
         iz = sz - 2;
@@ -123,7 +123,7 @@ namespace ome
           {
             boost::format fmt("Invalid image count: %1%");
             fmt % num;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
 
         if (num != (zSize * cSize * tSize))
@@ -133,7 +133,7 @@ namespace ome
             // else the input file is invalid
             boost::format fmt("ZCT/image count mismatch (sizeZ=%1%, sizeT=%2%, sizeC=%3%, total=%4%");
             fmt % zSize % tSize % cSize % num;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
       }
 
