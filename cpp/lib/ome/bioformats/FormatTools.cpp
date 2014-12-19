@@ -273,7 +273,7 @@ namespace ome
                  dimension_size_type num,
                  dimension_size_type index)
     {
-      dimension_size_type iz, it, ic;
+      dimension_size_type iz = 0, it = 0, ic = 0;
       validate_dimensions(order, zSize, cSize, tSize, num, iz, ic, it);
 
       // assign rasterization order
