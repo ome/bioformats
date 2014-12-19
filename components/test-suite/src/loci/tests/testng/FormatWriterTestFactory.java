@@ -101,6 +101,10 @@ public class FormatWriterTestFactory {
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);
 
+    // display local information
+    LOGGER.info("user.language = {}", System.getProperty("user.language"));
+    LOGGER.info("user.country = {}", System.getProperty("user.country"));
+
     if (filename == null) {
       // scan for files
       System.out.println("Scanning for files...");
