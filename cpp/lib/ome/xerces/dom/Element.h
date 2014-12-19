@@ -87,7 +87,7 @@ namespace ome
          *
          * @param base the base type to copy (must be an Element).
          */
-        Element (const typename Wrapper<xercesc::DOMElement, Node>::base_type& base):
+        Element (const Wrapper<xercesc::DOMElement, Node>::base_type& base):
           Wrapper<xercesc::DOMElement, Node>(base)
         {
         }
@@ -112,8 +112,8 @@ namespace ome
          * @param base the DOMNode to wrap.
          * @param managed is the value to be managed?
          */
-        Element (typename Wrapper<xercesc::DOMElement, Node>::base_element_type *base,
-                 bool                                                            managed):
+        Element (Wrapper<xercesc::DOMElement, Node>::base_element_type *base,
+                 bool                                                   managed):
           Wrapper<xercesc::DOMElement, Node>(managed ?
                                              Wrapper<xercesc::DOMElement, Node>(base, std::mem_fun(&base_element_type::release)) :
                                              Wrapper<xercesc::DOMElement, Node>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>))

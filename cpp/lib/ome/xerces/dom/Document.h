@@ -99,7 +99,7 @@ namespace ome
          *
          * @param base the base type to copy (must be a Document).
          */
-        Document (const typename Wrapper<xercesc::DOMDocument, Node>::base_type& base):
+        Document (const Wrapper<xercesc::DOMDocument, Node>::base_type& base):
           Wrapper<xercesc::DOMDocument, Node>(base)
         {
         }
@@ -110,8 +110,8 @@ namespace ome
          * @param document the Document to wrap.
          * @param managed is the value to be managed?
          */
-        Document (typename Wrapper<xercesc::DOMDocument, Node>::element_type *document,
-                  bool                                                        managed):
+        Document (Wrapper<xercesc::DOMDocument, Node>::element_type *document,
+                  bool                                               managed):
           Wrapper<xercesc::DOMDocument, Node>(managed ?
                                               Wrapper<xercesc::DOMDocument, Node>(document, std::mem_fun(&base_element_type::release)) :
                                               Wrapper<xercesc::DOMDocument, Node>(document, &ome::xerces::dom::detail::unmanaged<base_element_type>))
@@ -124,8 +124,8 @@ namespace ome
          * @param base the DOMNode to wrap.
          * @param managed is the value to be managed?
          */
-        Document (typename Wrapper<xercesc::DOMDocument, Node>::base_element_type *base,
-                  bool                                                             managed):
+        Document (Wrapper<xercesc::DOMDocument, Node>::base_element_type *base,
+                  bool                                                    managed):
           Wrapper<xercesc::DOMDocument, Node>(managed ?
                                               Wrapper<xercesc::DOMDocument, Node>(base, std::mem_fun(&base_element_type::release)) :
                                               Wrapper<xercesc::DOMDocument, Node>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>))
