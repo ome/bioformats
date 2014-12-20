@@ -62,6 +62,15 @@ namespace std
   {
     return os << '(' << d[0] << ',' << d[1] << ',' << d[2] << ')';
   }
+
+  template<class charT, class traits>
+  inline std::basic_ostream<charT,traits>&
+  operator<< (std::basic_ostream<charT,traits>& os,
+              const moddims& d)
+  {
+    return os << '(' << d[0] << ',' << d[1] << ',' << d[2]
+              << d[3] << ',' << d[4] << ',' << d[5] << ')';
+  }
 }
 
 class DimensionTestParameters
