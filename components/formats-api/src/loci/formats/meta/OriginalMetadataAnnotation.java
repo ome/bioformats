@@ -32,6 +32,8 @@
 
 package loci.formats.meta;
 
+import javax.xml.parsers.DocumentBuilder;
+
 import loci.common.xml.XMLTools;
 import ome.xml.model.XMLAnnotation;
 
@@ -45,6 +47,8 @@ public class OriginalMetadataAnnotation extends XMLAnnotation {
     ORIGINAL_METADATA_NS = "openmicroscopy.org/OriginalMetadata";
   }
 
+  private static final DocumentBuilder BUILDER = XMLTools.createBuilder();
+
   private String key, value;
 
   // -- OriginalMetadataAnnotation methods --
@@ -53,7 +57,7 @@ public class OriginalMetadataAnnotation extends XMLAnnotation {
     setNamespace(ORIGINAL_METADATA_NS);
     this.key = key;
     this.value = value; // Not XML value
-    Document doc = XMLTools.createDocument();
+    Document doc = BUILDER.newDocument();
     Element r = makeOriginalMetadata(doc);
     super.setValue(XMLTools.dumpXML(null,  doc, r, false));
   }
