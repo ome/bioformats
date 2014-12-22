@@ -370,11 +370,11 @@ public class MinimalTiffReader extends FormatReader {
       }
       ifds = null;
       thumbnailIFDs = null;
-      subResolutionIFDs = new ArrayList<IFDList>();
+      subResolutionIFDs = null;
       lastPlane = 0;
       tiffParser = null;
       resolutionLevels = null;
-      j2kCodecOptions = JPEG2000CodecOptions.getDefaultOptions();
+      j2kCodecOptions = null;
     }
   }
 
