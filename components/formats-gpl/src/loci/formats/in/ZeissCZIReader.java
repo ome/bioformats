@@ -710,6 +710,7 @@ public class ZeissCZIReader extends FormatReader {
         AttachmentEntry entry = ((Attachment) segment).attachment;
 
         if (entry.name.trim().equals("TimeStamps")) {
+          segment.fillInData();
           RandomAccessInputStream s =
             new RandomAccessInputStream(((Attachment) segment).attachmentData);
           try {
@@ -2441,7 +2442,9 @@ public class ZeissCZIReader extends FormatReader {
       segment = new SubBlock();
     }
     else if (segmentID.equals("ZISRAWATTACH")) {
-      segment = new Attachment();
+      segment = new Attachment(filename);
+       // attachments can be large, so only read binary data on demand
+       skipData = true;
     }
     else if (segmentID.equals("ZISRAWDIRECTORY")) {
       segment = new Directory();
@@ -2466,10 +2469,12 @@ public class ZeissCZIReader extends FormatReader {
     segment.stream = in;
 
     if (!(segment instanceof Metadata)) {
-      segment.fillInData();
+      if (!skipData) {
+        segment.fillInData();
+      }
     }
     else {
-      ((Metadata) segment).skipData(); 
+      ((Metadata) segment).skipData();
     }
 
     long pos = segment.startingPosition + segment.allocatedSize + HEADER_SIZE;
@@ -2618,6 +2623,11 @@ public class ZeissCZIReader extends FormatReader {
       allocatedSize = 0;
       usedSize = 0;
       stream = null;
+    }
+
+    public Segment(String filename) {
+      this();
+      this.filename = filename;
     }
 
     public Segment(Segment model) {
@@ -3051,11 +3061,11 @@ public class ZeissCZIReader extends FormatReader {
     public int dataSize;
     public AttachmentEntry attachment;
     public byte[] attachmentData;
+    public long dataOffset;
 
-    @Override
-    public void fillInData() throws IOException {
+    public Attachment(String filename) throws IOException {
+      super(filename);
       super.fillInData();
-
       RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
@@ -3063,7 +3073,21 @@ public class ZeissCZIReader extends FormatReader {
         dataSize = s.readInt();
         s.skipBytes(12); // reserved
         attachment = new AttachmentEntry(s);
-        s.skipBytes(112); // reserved
+        dataOffset = s.getFilePointer() + 112; // skip reserved bytes
+      }
+      finally {
+        if (stream == null) {
+          s.close();
+        }
+      }
+    }
+
+    @Override
+    public void fillInData() throws IOException {
+      RandomAccessInputStream s = getStream();
+      try {
+        s.order(isLittleEndian());
+        s.seek(dataOffset);
         attachmentData = new byte[dataSize];
         s.read(attachmentData);
       }
