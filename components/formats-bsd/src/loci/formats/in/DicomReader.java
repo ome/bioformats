@@ -1112,10 +1112,8 @@ public class DicomReader extends FormatReader {
         fileList.get(s).add(currentId);
       }
 
-      // look for matching files in the current directory
       Location currentFile = new Location(currentId).getAbsoluteFile();
       Location directory = currentFile.getParentFile();
-      scanDirectory(directory, false);
 
       // move up a directory and look for other directories that
       // could contain matching files
