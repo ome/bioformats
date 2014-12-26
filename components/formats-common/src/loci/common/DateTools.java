@@ -34,6 +34,8 @@ package loci.common;
 
 import java.text.FieldPosition;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -259,20 +261,10 @@ public final class DateTools {
    * (in Unix format: milliseconds since January 1, 1970).
    */
   public static long getTime(String date, String format) {
-    final DateTimeFormatter parser =
-      DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
-    Instant timestamp = null;
-    try {
-      timestamp = Instant.parse(date, parser);
-    }
-    catch (IllegalArgumentException e) {
-      LOGGER.debug("Invalid timestamp '{}'", date);
-    }
-    catch (UnsupportedOperationException e) {
-      LOGGER.debug("Error parsing timestamp '{}'", date, e);
-    }
-    if (timestamp == null) return -1;
-    return timestamp.getMillis();
+    SimpleDateFormat f = new SimpleDateFormat(format);
+    Date d = f.parse(date, new ParsePosition(0));
+    if (d == null) return -1;
+    return d.getTime();
   }
 
   /**
