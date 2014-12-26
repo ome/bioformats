@@ -320,15 +320,15 @@ namespace ome
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         check_gl("Set texture wrap t");
 
-        glTexImage2D(GL_TEXTURE_2D, // target
-                     0,  // level, 0 = base, no minimap,
-                     tprop.internal_format, // internalformat
-                     sizeX,  // width
-                     sizeY,  // height
-                     0,  // border
-                     tprop.external_format,  // format
-                     tprop.external_type, // type
-                     0);
+        glTexImage2D(GL_TEXTURE_2D,         // target
+                     0,                     // level, 0 = base, no minimap,
+                     tprop.internal_format, // internal format
+                     sizeX,                 // width
+                     sizeY,                 // height
+                     0,                     // border
+                     tprop.external_format, // external format
+                     tprop.external_type,   // external type
+                     0);                    // no image data at this point
         check_gl("Texture create");
 
         // Create LUT texture.
@@ -357,14 +357,14 @@ namespace ome
         lut[255][2] = 0;
 
         glTexImage2D(GL_TEXTURE_1D_ARRAY, // target
-                     0,  // level, 0 = base, no minimap,
-                     GL_RGB8, // internalformat
-                     256,  // width
-                     1,  // height
-                     0,  // border
-                     GL_RGB,  // format
-                     GL_UNSIGNED_BYTE, // type
-                     lut);
+                     0,                   // level, 0 = base, no minimap,
+                     GL_RGB8,             // internal format
+                     256,                 // width
+                     1,                   // height
+                     0,                   // border
+                     GL_RGB,              // external format
+                     GL_UNSIGNED_BYTE,    // external type
+                     lut);                // LUT data
         check_gl("Texture create");
       }
 
