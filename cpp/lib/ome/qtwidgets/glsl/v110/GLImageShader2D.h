@@ -173,6 +173,22 @@ namespace ome
           setMax(const glm::vec3& max);
 
           /**
+           * Set correction multipliers to normalise pixel intensity.
+           *
+           * Use to correct the pixel value limits to the storage size
+           * limits, for example when using data with 12 bits per
+           * sample with a 16-bit storage type it will require
+           * multiplying by 2^(16-12) = 2^4 = 16.  To leave
+           * uncorrected, e.g. for float and complex types, and
+           * integer types where the bits per sample is the same as
+           * the storage size, set to 1.0.
+           *
+           * @param max the RGB channel correction multipliers.
+           */
+          void
+          setCorrection(const glm::vec3& corr);
+          
+          /**
            * Set the LUT to use.
            *
            * @param texunit the texture unit to use.
@@ -208,6 +224,8 @@ namespace ome
           int uniform_min;
           /// Maximum limits for linear contrast uniform.
           int uniform_max;
+          /// Correction multiplier for linear contrast uniform.
+          int uniform_corr;
         };
 
       }

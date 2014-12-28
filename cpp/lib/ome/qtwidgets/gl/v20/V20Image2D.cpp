@@ -69,6 +69,7 @@ namespace ome
 
           image_shader->setMin(texmin);
           image_shader->setMax(texmax);
+          image_shader->setCorrection(texcorr);
           image_shader->setModelViewProjection(mvp);
 
           glActiveTexture(GL_TEXTURE0);

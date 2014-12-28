@@ -203,6 +203,8 @@ namespace ome
         glm::vec3 texmin;
         /// Linear contrast maximum limits.
         glm::vec3 texmax;
+        /// Linear contrast correction multipliers.
+        glm::vec3 texcorr;
         /// The image reader.
         std::shared_ptr<ome::bioformats::FormatReader> reader;
         /// The image series.

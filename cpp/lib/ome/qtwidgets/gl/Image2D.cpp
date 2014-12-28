@@ -284,6 +284,7 @@ namespace ome
         lutid(0),
         texmin(0.0f),
         texmax(0.1f),
+        texcorr(1.0f),
         reader(reader),
         series(series),
         plane(-1)
@@ -305,6 +306,9 @@ namespace ome
         ome::bioformats::dimension_size_type sizeY = reader->getSizeY();
         setSize(glm::vec2(-(sizeX/2.0f), sizeX/2.0f),
                 glm::vec2(-(sizeY/2.0f), sizeY/2.0f));
+        ome::bioformats::dimension_size_type rbpp = reader->getBitsPerPixel();
+        ome::bioformats::dimension_size_type bpp = ome::bioformats::bitsPerPixel(reader->getPixelType());
+        texcorr[0] = texcorr[1] = texcorr[2] = (1 << (bpp - rbpp));
         reader->setSeries(oldseries);
 
         // Create image texture.

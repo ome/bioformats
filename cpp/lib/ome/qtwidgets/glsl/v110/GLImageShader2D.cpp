@@ -99,12 +99,13 @@ namespace ome
                               "uniform sampler1DArray lut;\n"
                               "uniform vec3 texmin;\n"
                               "uniform vec3 texmax;\n"
+                              "uniform vec3 correction;\n"
                               "\n"
                               "void main(void) {\n"
                               "  vec2 flipped_texcoord = vec2(f_texcoord.x, 1.0 - f_texcoord.y);\n"
                               "  vec4 texval = texture2D(tex, flipped_texcoord);\n"
                               "\n"
-                              "  gl_FragColor = texture1DArray(lut, vec2(((((texval[0] * 64.0) - texmin[0]) / (texmax[0] - texmin[0]))), 0.0));\n"
+                              "  gl_FragColor = texture1DArray(lut, vec2(((((texval[0] * correction[0]) - texmin[0]) / (texmax[0] - texmin[0]))), 0.0));\n"
                               "}\n");
 
           fshader->compileSourceCode(fsource.c_str());
@@ -149,6 +150,10 @@ namespace ome
           uniform_max = uniformLocation("texmax");
           if (uniform_max == -1)
             std::cerr << "Failed to bind max uniform " << std::endl;
+
+          uniform_corr = uniformLocation("correction");
+          if (uniform_corr == -1)
+            std::cerr << "Failed to bind correction uniform " << std::endl;
         }
 
         GLImageShader2D::~GLImageShader2D()
@@ -231,6 +236,13 @@ namespace ome
         {
           glUniform3fv(uniform_max, 1, glm::value_ptr(max));
           check_gl("Set max range");
+        }
+
+        void
+        GLImageShader2D::setCorrection(const glm::vec3& corr)
+        {
+          glUniform3fv(uniform_corr, 1, glm::value_ptr(corr));
+          check_gl("Set correction multiplier");
         }
 
         void
