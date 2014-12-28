@@ -349,19 +349,30 @@ namespace ome
 
     private:
       /**
-       * Camera (projection matrix manipulation)
+       * Camera (modelview projection matrix manipulation)
        */
       struct Camera
       {
         /// Projection type
-        enum Projection
+        enum ProjectionType
           {
             ORTHOGRAPHIC, ///< Orthographic projection.
             PERSPECTIVE   ///< Perspective projection.
           };
 
+        Camera():
+          projectionType(ORTHOGRAPHIC),
+          zoom(0),
+          xTran(0),
+          yTran(0),
+          zRot(0),
+          model(1.0f),
+          view(1.0f),
+          projection(1.0f)
+        {}
+
         /// Projection type.
-        Projection projection;
+        ProjectionType projectionType;
         /// Zoom factor.
         int zoom;
         /// x translation
@@ -370,6 +381,31 @@ namespace ome
         int yTran;
         /// Rotation factor.
         int zRot;
+        /// Current model.
+        glm::mat4 model;
+        /// Current view.
+        glm::mat4 view;
+        /// Current projection.
+        glm::mat4 projection;
+
+        // Convert linear signed zoom value to a factor.
+        float
+        zoomfactor() const
+        {
+          return std::pow(10.0f, static_cast<float>(zoom)/1024.0); /// @todo remove fixed size.
+        }
+
+        float
+        rotation() const
+        {
+          return glm::radians(-static_cast<float>(zRot)/16.0f);
+        }
+
+        glm::mat4
+        mvp() const
+        {
+          return projection * view * model;
+        }
       };
 
       /// Current projection
@@ -398,8 +434,6 @@ namespace ome
       std::shared_ptr<ome::bioformats::FormatReader> reader;
       /// The image series.
       ome::bioformats::dimension_size_type series;
-      /// The current model view projection matrix.
-      glm::mat4 mvp;
     };
 
   }

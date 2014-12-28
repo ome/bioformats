@@ -79,8 +79,7 @@ namespace ome
       axes(),
       grid(),
       reader(reader),
-      series(series),
-      mvp()
+      series(series)
     {
     }
 
@@ -302,9 +301,10 @@ namespace ome
       gl::check_gl("Clear buffers");
 
       // Render image
+      glm::mat4 mvp = camera.mvp();
       image->render(mvp);
       axes->render(mvp);
-      grid->render(mvp, std::pow(10.0f, static_cast<float>(camera.zoom)/1024.0));
+      grid->render(mvp, camera.zoomfactor());
     }
 
     void
@@ -352,39 +352,25 @@ namespace ome
     {
       makeCurrent();
 
-      // Convert linear signed zoom value to a factor.
-      float zoomfactor = std::pow(10.0f, static_cast<float>(camera.zoom)/1024.0);
-
-      // Window size.  Size may be zero if the window is not yet mapped.
-      QSize s = size();
-
-      glm::vec2 xlim(0, 1024.0);
-      glm::vec2 ylim(0, 1024.0);
-      float maxsize = std::max(xlim[1], ylim[1]);
-
-      float minsize = static_cast<float>(std::min(s.width(), s.height()));
-      float xrange = static_cast<float>(s.width()) / zoomfactor;
-      float yrange = static_cast<float>(s.height()) / zoomfactor;
-
-      glm::vec3 axis_z(0, 0, 1);
-
-      glm::mat4 model(1.0f);
+      float zoomfactor = camera.zoomfactor();
 
       float xtr(static_cast<float>(camera.xTran) / zoomfactor);
       float ytr(static_cast<float>(camera.yTran) / zoomfactor);
 
-      glm::vec3 tr(glm::rotateZ(glm::vec3(xtr, ytr, 0.0), glm::radians(-static_cast<float>(camera.zRot)/16.0f)));
+      glm::vec3 tr(glm::rotateZ(glm::vec3(xtr, ytr, 0.0), camera.rotation()));
 
-      glm::mat4 view = glm::lookAt(glm::vec3(512.0-tr[0], 512.0-tr[1], 5.0),
-                                   glm::vec3(512.0-tr[0], 512.0-tr[1], 0.0),
-                                   glm::rotateZ(glm::vec3(0.0, 1.0, 0.0), glm::radians(-static_cast<float>(camera.zRot)/16.0f)));
+      camera.view = glm::lookAt(glm::vec3(tr[0], tr[1], 5.0),
+                                glm::vec3(tr[0], tr[1], 0.0),
+                                glm::rotateZ(glm::vec3(0.0, 1.0, 0.0), camera.rotation()));
 
-      glm::mat4 projection = glm::ortho(-xrange, xrange,
-                                        -yrange, yrange,
-                                        0.0f, 10.0f);
+      // Window size.  Size may be zero if the window is not yet mapped.
+      QSize s = size();
+      float xrange = static_cast<float>(s.width()) / zoomfactor;
+      float yrange = static_cast<float>(s.height()) / zoomfactor;
 
-      this->mvp = projection * view * model;
-
+      camera.projection = glm::ortho(-xrange, xrange,
+                                     -yrange, yrange,
+                                     0.0f, 10.0f);
 
       image->setPlane(getPlane());
       image->setMin(cmin);

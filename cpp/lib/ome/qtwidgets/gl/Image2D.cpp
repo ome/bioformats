@@ -303,8 +303,8 @@ namespace ome
         reader->setSeries(series);
         ome::bioformats::dimension_size_type sizeX = reader->getSizeX();
         ome::bioformats::dimension_size_type sizeY = reader->getSizeY();
-        setSize(glm::vec2(0.0f, sizeX),
-                glm::vec2(0.0f, sizeY));
+        setSize(glm::vec2(-(sizeX/2.0f), sizeX/2.0f),
+                glm::vec2(-(sizeY/2.0f), sizeY/2.0f));
         reader->setSeries(oldseries);
 
         // Create image texture.

@@ -110,12 +110,14 @@ namespace ome
          *
          * @param xlim the x axis limits (range).
          * @param ylim the y axis limits (range).
+         * @param axis shaft offset (x and y offsets from midline).
          * @param slim the axis shaft width (min and max from midline).
          */
         virtual
         void
         setSize(glm::vec2 xlim,
                 glm::vec2 ylim,
+                glm::vec2 soff,
                 glm::vec2 slim);
 
         /// The vertices for the x axis.

@@ -76,9 +76,9 @@ namespace
   }
 
   float
-  majorlimit(int mag,
+  majorlimit(int   mag,
              float v,
-             bool high)
+             bool  high)
   {
     float f = pow(10.0f, static_cast<float>(mag));
     v /= f;
@@ -119,7 +119,7 @@ namespace ome
 
         ome::bioformats::dimension_size_type oldseries = reader->getSeries();
         reader->setSeries(series);
-        setSize(glm::vec2(0.0, reader->getSizeX()), glm::vec2(0.0, reader->getSizeY()));
+        setSize(glm::vec2(-(static_cast<float>(reader->getSizeX())), reader->getSizeX()), glm::vec2(-(static_cast<float>(reader->getSizeY())), reader->getSizeY()));
         reader->setSeries(oldseries);
       }
 
@@ -151,7 +151,6 @@ namespace ome
         float xmax = majorlimit(lmajor, xlim[1], true);
         float ymin = majorlimit(lmajor, ylim[0], false);
         float ymax = majorlimit(lmajor, ylim[1], true);
-
         std::vector<vert> verts;
         std::vector<GLushort> idxs;
 

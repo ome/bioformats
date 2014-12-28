@@ -70,8 +70,9 @@ namespace ome
       {
         ome::bioformats::dimension_size_type oldseries = reader->getSeries();
         reader->setSeries(series);
-        setSize(glm::vec2(0.0f, reader->getSizeX()),
-                glm::vec2(0.0f, reader->getSizeY()),
+        setSize(glm::vec2(-(reader->getSizeX()/2.0f), reader->getSizeX()/2.0f),
+                glm::vec2(-(reader->getSizeY()/2.0f), reader->getSizeY()/2.0f),
+                glm::vec2(-(reader->getSizeX()/2.0f)-12.0, -(reader->getSizeY()/2.0f)-12.0),
                 glm::vec2(-6.0, 6.0));
         reader->setSeries(oldseries);
       }
@@ -79,35 +80,38 @@ namespace ome
       void
       Axis2D::setSize(glm::vec2 xlim,
                       glm::vec2 ylim,
+                      glm::vec2 soff,
                       glm::vec2 slim)
       {
         GLfloat swid(slim[1] - slim[0]);
         GLfloat smid(slim[0] + (swid/2.0));
         GLfloat arrowwid(swid * 5);
         GLfloat arrowlen(arrowwid * 1.5);
+        GLfloat xoff(static_cast<GLfloat>(soff[0]));
+        GLfloat yoff(static_cast<GLfloat>(soff[1]));
 
         GLfloat xaxis_vertices_a[] = {
           // Arrow shaft
-          xlim[0], slim[0],
-          xlim[1]-arrowlen, slim[0],
-          xlim[1]-arrowlen, slim[1],
-          xlim[0], slim[1],
+          xlim[0], yoff+slim[0],
+          xlim[1]-arrowlen, yoff+slim[0],
+          xlim[1]-arrowlen, yoff+slim[1],
+          xlim[0], yoff+slim[1],
           // Arrow head
-          xlim[1]-arrowlen, smid+(arrowwid/2),
-          xlim[1]-arrowlen, smid-(arrowwid/2),
-          xlim[1], smid
+          xlim[1]-arrowlen, yoff+smid+(arrowwid/2.0f),
+          xlim[1]-arrowlen, yoff+smid-(arrowwid/2.0f),
+          xlim[1], yoff+smid
         };
 
         GLfloat yaxis_vertices_a[] = {
           // Arrow shaft
-          slim[1], ylim[0],
-          slim[1], ylim[1]-arrowlen,
-          slim[0], ylim[1]-arrowlen,
-          slim[0], ylim[0],
+          xoff+slim[1], ylim[0],
+          xoff+slim[1], ylim[1]-arrowlen,
+          xoff+slim[0], ylim[1]-arrowlen,
+          xoff+slim[0], ylim[0],
           // Arrow head
-          smid-(arrowwid/2), ylim[1]-arrowlen,
-          smid+(arrowwid/2), ylim[1]-arrowlen,
-          smid, ylim[1]
+          xoff+smid-(arrowwid/2.0f), ylim[1]-arrowlen,
+          xoff+smid+(arrowwid/2.0f), ylim[1]-arrowlen,
+          xoff+smid, ylim[1]
         };
 
         xaxis_vertices.create();
