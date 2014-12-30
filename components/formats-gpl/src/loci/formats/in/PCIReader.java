@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -45,6 +46,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.enums.Binning;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -341,7 +343,7 @@ public class PCIReader extends FormatReader {
       }
     }
 
-    boolean zFirst = !new Double(firstZ).equals(new Double(secondZ));
+    boolean zFirst = Math.abs(firstZ - secondZ) > Constants.EPSILON;
 
     if (getSizeC() == 0) m.sizeC = 1;
     if (mode == 0) {
@@ -400,16 +402,16 @@ public class PCIReader extends FormatReader {
       }
 
       for (int i=0; i<timestamps.size(); i++) {
-        Double timestamp = new Double(timestamps.get(i).doubleValue());
         if (i >= getImageCount()) {
           break;
         }
+        Double timestamp = timestamps.get(i);
         if (timestamp != null) {
           store.setPlaneDeltaT(new Time(timestamp, UNITS.S), 0, i);
         }
         if (i == 2) {
-          double first = timestamps.get(1).doubleValue();
-          Double increment = new Double(timestamp.doubleValue() - first);
+          Double first = timestamps.get(1);
+          Double increment = timestamp - first;
           if (increment != null) {
             store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
           }
@@ -424,10 +426,10 @@ public class PCIReader extends FormatReader {
         store.setDetectorType(getDetectorType("Other"), 0, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
+        Binning binningEnum = getBinning(binning + "x" + binning);
         for (int c=0; c<getEffectiveSizeC(); c++) {
           store.setDetectorSettingsID(detectorID, 0, c);
-          store.setDetectorSettingsBinning(
-            getBinning(binning + "x" + binning), 0, c);
+          store.setDetectorSettingsBinning(binningEnum, 0, c);
         }
       }
     }
