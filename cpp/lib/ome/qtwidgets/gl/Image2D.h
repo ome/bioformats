@@ -158,6 +158,17 @@ namespace ome
         setMax(const glm::vec3& max);
 
         /**
+         * Range of min/max adjustment for linear contrast.
+         */
+        enum RangePolicy
+          {
+            StorageRange, ///< Range of storage type.
+            BPPRange,     ///< Range of pixel type and bits per pixel.
+            PlaneRange,   ///< Range of samples on the current plane.
+            ImageRange    ///< Range of samples in the current image.
+          };
+
+        /**
          * Render the image.
          *
          * @param mvp the model view projection matrix.
