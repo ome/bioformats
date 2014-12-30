@@ -444,6 +444,7 @@ public class MinimalTiffReader extends FormatReader {
 
     ifds = new IFDList();
     thumbnailIFDs = new IFDList();
+    subResolutionIFDs = new ArrayList<IFDList>();
     for (IFD ifd : allIFDs) {
       Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
@@ -609,6 +610,9 @@ public class MinimalTiffReader extends FormatReader {
   protected void setResolutionLevel(IFD ifd) {
     if (tiffParser == null) {
       initTiffParser();
+    }
+    if (j2kCodecOptions == null) {
+      j2kCodecOptions = new JPEG2000CodecOptions();
     }
     j2kCodecOptions.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     LOGGER.debug("Using JPEG 2000 resolution level {}",
