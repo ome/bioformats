@@ -35,86 +35,83 @@
  * #L%
  */
 
-#include <ome/bioformats/tiff/TileCache.h>
+#include <ome/bioformats/TileCache.h>
 
 namespace ome
 {
   namespace bioformats
   {
-    namespace tiff
+
+    TileCache::TileCache():
+      cache()
     {
-
-      TileCache::TileCache():
-        cache()
-      {
-      }
-
-      TileCache::~TileCache()
-      {
-      }
-
-      bool
-      TileCache::insert(key_type   tileindex,
-                        value_type tilebuffer)
-      {
-        std::pair<std::map<key_type, value_type>::iterator, bool> i =
-          cache.insert(std::pair<key_type, value_type>(tileindex, tilebuffer));
-        return i.second;
-      }
-
-      void
-      TileCache::erase(key_type tileindex)
-      {
-        cache.erase(tileindex);
-      }
-
-      TileCache::value_type
-      TileCache::find(key_type tileindex)
-      {
-        std::map<key_type, value_type>::iterator i = cache.find(tileindex);
-        if (i != cache.end())
-          return i->second;
-        else
-          return value_type();
-      }
-
-      const TileCache::value_type
-      TileCache::find(key_type tileindex) const
-      {
-        std::map<key_type, value_type>::const_iterator i = cache.find(tileindex);
-        if (i != cache.end())
-          return i->second;
-        else
-          return value_type();
-      }
-
-      dimension_size_type
-      TileCache::size() const
-      {
-        return cache.size();
-      }
-
-      void
-      TileCache::clear()
-      {
-        cache.clear();
-      }
-
-      TileCache::value_type&
-      TileCache::operator[](key_type tileindex)
-      {
-        std::map<key_type, value_type>::iterator i = cache.find(tileindex);
-        if (i != cache.end())
-          return i->second;
-        else
-          {
-            value_type value;
-            std::pair<std::map<key_type, value_type>::iterator, bool> i =
-              cache.insert(std::pair<key_type, value_type>(tileindex, value));
-            return i.first->second;
-          }
-      }
-
     }
+
+    TileCache::~TileCache()
+    {
+    }
+
+    bool
+    TileCache::insert(key_type   tileindex,
+                      value_type tilebuffer)
+    {
+      std::pair<std::map<key_type, value_type>::iterator, bool> i =
+        cache.insert(std::pair<key_type, value_type>(tileindex, tilebuffer));
+      return i.second;
+    }
+
+    void
+    TileCache::erase(key_type tileindex)
+    {
+      cache.erase(tileindex);
+    }
+
+    TileCache::value_type
+    TileCache::find(key_type tileindex)
+    {
+      std::map<key_type, value_type>::iterator i = cache.find(tileindex);
+      if (i != cache.end())
+        return i->second;
+      else
+        return value_type();
+    }
+
+    const TileCache::value_type
+    TileCache::find(key_type tileindex) const
+    {
+      std::map<key_type, value_type>::const_iterator i = cache.find(tileindex);
+      if (i != cache.end())
+        return i->second;
+      else
+        return value_type();
+    }
+
+    dimension_size_type
+    TileCache::size() const
+    {
+      return cache.size();
+    }
+
+    void
+    TileCache::clear()
+    {
+      cache.clear();
+    }
+
+    TileCache::value_type&
+    TileCache::operator[](key_type tileindex)
+    {
+      std::map<key_type, value_type>::iterator i = cache.find(tileindex);
+      if (i != cache.end())
+        return i->second;
+      else
+        {
+          value_type value;
+          std::pair<std::map<key_type, value_type>::iterator, bool> i =
+            cache.insert(std::pair<key_type, value_type>(tileindex, value));
+          return i.first->second;
+        }
+    }
+
   }
 }

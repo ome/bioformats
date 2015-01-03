@@ -44,13 +44,13 @@
 
 #include <ome/bioformats/PlaneRegion.h>
 #include <ome/bioformats/TileBuffer.h>
+#include <ome/bioformats/TileCache.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/Field.h>
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
-#include <ome/bioformats/tiff/TileCache.h>
 
 #include <ome/compat/thread.h>
 #include <ome/compat/string.h>
@@ -68,6 +68,7 @@ namespace
   using ::ome::bioformats::PixelProperties;
   using ::ome::bioformats::PlaneRegion;
   using ::ome::bioformats::TileBuffer;
+  using ::ome::bioformats::TileCache;
 
   // VariantPixelBuffer tile transfer
   // ────────────────────────────────

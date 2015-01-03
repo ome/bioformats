@@ -115,7 +115,6 @@ if(BUILD_TESTS)
 
   add_executable(tiff
                  tiff.cpp
-                 tiff-tilecache.cpp
                  tiff-coverage.cpp)
   target_link_libraries(tiff ome-bioformats)
   target_link_libraries(tiff ome-test ${PNG_LIBRARIES})
@@ -141,11 +140,11 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-bioformats/tilebuffer tilebuffer)
 
-  add_executable(types types.cpp)
-  target_link_libraries(types ome-bioformats)
-  target_link_libraries(types ome-test)
+  add_executable(tilecache tilecache.cpp)
+  target_link_libraries(tilecache ome-bioformats)
+  target_link_libraries(tilecache ome-test)
 
-  bf_add_test(ome-bioformats/types types)
+  bf_add_test(ome-bioformats/tilecache tilecache)
 
   add_executable(variantpixelbuffer variantpixelbuffer.cpp)
   target_link_libraries(variantpixelbuffer ome-bioformats)
