@@ -69,6 +69,7 @@ namespace
   using ::ome::bioformats::PlaneRegion;
   using ::ome::bioformats::TileBuffer;
   using ::ome::bioformats::TileCache;
+  using ::ome::bioformats::TileCoverage;
 
   // VariantPixelBuffer tile transfer
   // ────────────────────────────────

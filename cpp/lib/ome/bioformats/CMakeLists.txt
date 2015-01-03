@@ -50,6 +50,7 @@ set(OME_BIOFORMATS_SOURCES
     PixelProperties.cpp
     TileBuffer.cpp
     TileCache.cpp
+    TileCoverage.cpp
     UnknownFormatException.cpp
     UnsupportedCompressionException.cpp
     VariantPixelBuffer.cpp
@@ -73,6 +74,7 @@ set(OME_BIOFORMATS_HEADERS
     PixelProperties.h
     TileBuffer.h
     TileCache.h
+    TileCoverage.h
     Types.h
     UnknownFormatException.h
     UnsupportedCompressionException.h
@@ -104,7 +106,6 @@ set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/Sentry.cpp
     tiff/Tags.cpp
     tiff/TIFF.cpp
-    tiff/TileCoverage.cpp
     tiff/TileInfo.cpp)
 
 set(OME_BIOFORMATS_TIFF_HEADERS
@@ -115,7 +116,6 @@ set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/Sentry.h
     tiff/Tags.h
     tiff/TIFF.h
-    tiff/TileCoverage.h
     tiff/TileInfo.h
     tiff/Types.h)
 

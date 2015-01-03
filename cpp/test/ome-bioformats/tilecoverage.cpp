@@ -37,14 +37,13 @@
  */
 
 #include <ome/bioformats/Types.h>
-#include <ome/bioformats/tiff/Types.h>
-#include <ome/bioformats/tiff/TileCoverage.h>
+#include <ome/bioformats/TileCoverage.h>
 
 #include <ome/test/test.h>
 
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::PlaneRegion;
-using ome::bioformats::tiff::TileCoverage;
+using ome::bioformats::TileCoverage;
 
 TEST(TileCoverage, Construct)
 {
