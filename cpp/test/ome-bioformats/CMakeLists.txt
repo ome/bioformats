@@ -135,6 +135,12 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-bioformats/tiffreader tiffreader)
 
+  add_executable(tilebuffer tilebuffer.cpp)
+  target_link_libraries(tilebuffer ome-bioformats)
+  target_link_libraries(tilebuffer ome-test)
+
+  bf_add_test(ome-bioformats/tilebuffer tilebuffer)
+
   add_executable(types types.cpp)
   target_link_libraries(types ome-bioformats)
   target_link_libraries(types ome-test)

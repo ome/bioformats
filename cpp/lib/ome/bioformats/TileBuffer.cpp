@@ -35,49 +35,44 @@
  * #L%
  */
 
-#include <ome/bioformats/PixelProperties.h>
-#include <ome/bioformats/tiff/TileBuffer.h>
+#include <cstring>
 
-#include <tiffio.h>
+#include <ome/bioformats/TileBuffer.h>
 
 namespace ome
 {
   namespace bioformats
   {
-    namespace tiff
+
+    TileBuffer::TileBuffer(dimension_size_type size):
+      bufsize(size),
+      buf(new uint8_t[size])
     {
-
-      TileBuffer::TileBuffer(dimension_size_type size):
-        bufsize(size),
-        buf(reinterpret_cast<uint8_t *>(_TIFFmalloc(bufsize)))
-      {
-        _TIFFmemset(buf, 0, bufsize);
-      }
-
-      TileBuffer::~TileBuffer()
-      {
-        if (buf)
-          _TIFFfree(buf);
-      }
-
-      dimension_size_type
-      TileBuffer::size() const
-      {
-        return bufsize;
-      }
-
-      uint8_t *
-      TileBuffer::data()
-      {
-        return buf;
-      }
-
-      const uint8_t *
-      TileBuffer::data() const
-      {
-        return buf;
-      }
-
+      std::memset(buf, 0, size);
     }
+
+    TileBuffer::~TileBuffer()
+    {
+      delete[] buf;
+    }
+
+    dimension_size_type
+    TileBuffer::size() const
+    {
+      return bufsize;
+    }
+
+    uint8_t *
+    TileBuffer::data()
+    {
+      return buf;
+    }
+
+    const uint8_t *
+    TileBuffer::data() const
+    {
+      return buf;
+    }
+
   }
 }

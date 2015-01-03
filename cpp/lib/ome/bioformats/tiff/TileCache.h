@@ -39,7 +39,7 @@
 #define OME_BIOFORMATS_TIFF_TILECACHE_H
 
 #include <ome/bioformats/Types.h>
-#include <ome/bioformats/tiff/TileBuffer.h>
+#include <ome/bioformats/TileBuffer.h>
 
 #include <ome/compat/memory.h>
 

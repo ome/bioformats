@@ -37,6 +37,7 @@
  */
 
 #include <ome/bioformats/Types.h>
+#include <ome/bioformats/TileBuffer.h>
 #include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/tiff/TileCache.h>
 
@@ -44,7 +45,7 @@
 
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::tiff::TileCache;
-using ome::bioformats::tiff::TileBuffer;
+using ome::bioformats::TileBuffer;
 
 TEST(TileCache, Construct)
 {
