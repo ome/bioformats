@@ -43,7 +43,7 @@
 #include <ome/test/test.h>
 
 using ome::bioformats::dimension_size_type;
-using ome::bioformats::tiff::PlaneRegion;
+using ome::bioformats::PlaneRegion;
 using ome::bioformats::tiff::TileCoverage;
 
 TEST(TileCoverage, Construct)

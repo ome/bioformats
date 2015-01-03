@@ -39,6 +39,7 @@
 #define OME_BIOFORMATS_TIFF_TILECOVERAGE_H
 
 #include <ome/bioformats/Types.h>
+#include <ome/bioformats/PlaneRegion.h>
 #include <ome/bioformats/tiff/Types.h>
 
 #include <ome/compat/memory.h>

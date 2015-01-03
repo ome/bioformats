@@ -107,6 +107,12 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-bioformats/pixelproperties pixelproperties)
 
+  add_executable(planeregion planeregion.cpp)
+  target_link_libraries(planeregion ome-bioformats)
+  target_link_libraries(planeregion ome-test)
+
+  bf_add_test(ome-bioformats/planeregion planeregion)
+
   add_executable(tiff
                  tiff.cpp
                  tiff-tilecache.cpp
@@ -128,6 +134,12 @@ if(BUILD_TESTS)
   target_link_libraries(tiffreader ome-test)
 
   bf_add_test(ome-bioformats/tiffreader tiffreader)
+
+  add_executable(types types.cpp)
+  target_link_libraries(types ome-bioformats)
+  target_link_libraries(types ome-test)
+
+  bf_add_test(ome-bioformats/types types)
 
   add_executable(variantpixelbuffer variantpixelbuffer.cpp)
   target_link_libraries(variantpixelbuffer ome-bioformats)

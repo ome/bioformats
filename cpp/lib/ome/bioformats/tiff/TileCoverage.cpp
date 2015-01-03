@@ -64,18 +64,18 @@ namespace
 {
 
   box
-  box_from_region(const ::ome::bioformats::tiff::PlaneRegion &r)
+  box_from_region(const ::ome::bioformats::PlaneRegion &r)
   {
     return box(point(r.x, r.y),
                point(r.x + r.w, r.y + r.h));
   }
 
-  ::ome::bioformats::tiff::PlaneRegion
+  ::ome::bioformats::PlaneRegion
   region_from_box(const box& b)
   {
     const point& bmin = b.min_corner();
     const point& bmax = b.max_corner();
-    return ::ome::bioformats::tiff::PlaneRegion
+    return ::ome::bioformats::PlaneRegion
       (bmin.get<0>(), bmin.get<1>(),
        bmax.get<0>() - bmin.get<0>(), bmax.get<1>() - bmin.get<1>());
   }
