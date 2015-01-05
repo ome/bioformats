@@ -502,6 +502,8 @@ public class FilePattern {
     if (dot < 0) baseSuffix = "";
     else baseSuffix = baseSuffix.substring(dot + 1);
 
+    String absoluteBase = new Location(base).getAbsolutePath();
+
     ArrayList<String> patterns = new ArrayList<String>();
     int[] exclude = new int[] {AxisGuesser.S_AXIS};
     for (String name : nameList) {
@@ -517,9 +519,16 @@ public class FilePattern {
       String checkPattern = findPattern(name, dir, nameList);
       String[] checkFiles = new FilePattern(checkPattern).getFiles();
 
+      // ensure that escaping is consistent with the base file
+      // this is needed to make sure that file grouping works correctly
+      // on Windows
+      for (int q=0; q<checkFiles.length; q++) {
+        checkFiles[q] = new Location(checkFiles[q]).getAbsolutePath();
+      }
+
       if (!patterns.contains(pattern) && (!new Location(pattern).exists() ||
-        base.equals(pattern)) && patternSuffix.equals(baseSuffix) &&
-        DataTools.indexOf(checkFiles, base) >= 0)
+        absoluteBase.equals(pattern)) && patternSuffix.equals(baseSuffix) &&
+        DataTools.indexOf(checkFiles, absoluteBase) >= 0)
       {
         patterns.add(pattern);
       }
