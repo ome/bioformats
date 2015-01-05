@@ -113,7 +113,7 @@ public class NativeND2Reader extends FormatReader {
 
   private double trueSizeX = 0;
   private double trueSizeY = 0;
-  private double trueSizeZ = 0;
+  private Double trueSizeZ = null;
 
   private ArrayList<String> textChannelNames = new ArrayList<String>();
   private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
@@ -328,7 +328,7 @@ public class NativeND2Reader extends FormatReader {
       backupHandler = null;
       trueSizeX = 0;
       trueSizeY = 0;
-      trueSizeZ = 0;
+      trueSizeZ = null;
       textChannelNames.clear();
       textEmissionWavelengths.clear();
       useZ = null;
@@ -1698,6 +1698,9 @@ public class NativeND2Reader extends FormatReader {
           Double wave = Double.parseDouble(value.toString());
           textEmissionWavelengths.add(wave);
         }
+        else if (name.equals("dZStep")) {
+          trueSizeZ = new Double(value.toString());
+        }
 
         if (type != 11 && type != 10) {    // if not level add global meta
           addGlobalMeta(name, value);
@@ -1807,7 +1810,7 @@ public class NativeND2Reader extends FormatReader {
             store.setPixelsPhysicalSizeY(size, i);
           }
         }
-        if (trueSizeZ > 0) {
+        if (trueSizeZ != null && trueSizeZ > 0) {
           store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(trueSizeZ), i);
         }
         else {
@@ -2161,11 +2164,13 @@ public class NativeND2Reader extends FormatReader {
             value = key.substring(8, end);
             key = key.substring(0, 8);
           }
-          try {
-            trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
-          }
-          catch (NumberFormatException nfe) {
-            LOGGER.trace("Could not parse step", nfe);
+          if (trueSizeZ == null) {
+            try {
+              trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+            }
+            catch (NumberFormatException nfe) {
+              LOGGER.trace("Could not parse step", nfe);
+            }
           }
         }
         else if (key.equals("Name")) {
