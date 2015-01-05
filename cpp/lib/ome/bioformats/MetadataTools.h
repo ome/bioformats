@@ -46,6 +46,8 @@
 #include <ome/xml/meta/MetadataRoot.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
+#include <ome/xml/model/enums/DimensionOrder.h>
+
 #ifndef OME_BIOFORMATS_METADATATOOLS_H
 #define OME_BIOFORMATS_METADATATOOLS_H
 
@@ -320,6 +322,22 @@ namespace ome
     setDefaultCreationDate(::ome::xml::meta::MetadataStore& store,
                            dimension_size_type              series,
                            const boost::filesystem::path&   id);
+
+    /**
+     * Create a valid DimensionOrder from string.
+     *
+     * Any duplicate dimension will have all duplicates following the
+     * initial instance removed.  Any missing dimension will be
+     * suffixed to the resulting dimension order; the order of these
+     * dimensions is unspecified (since they weren't provided, the
+     * expectation is that the caller did not care).
+     *
+     * @param order the string dimension order.
+     * @returns the dimension order.
+     * @throws std::logic_error if the provided order is invalid.
+     */
+    ome::xml::model::enums::DimensionOrder
+    createDimensionOrder(const std::string& order);
 
   }
 }

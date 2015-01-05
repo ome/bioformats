@@ -44,6 +44,7 @@
 
 #include <ome/internal/version.h>
 
+#include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
 
 #include <ome/xml/model/Image.h>
@@ -170,8 +171,7 @@ namespace ome
           else
             {
               ret = std::shared_ptr<Metadata>(new OMEXMLMetadata());
-              // @todo Implement convertMetadata.
-              // convertMetadata(metadata, ret);
+              ome::xml::meta::convert(*retrieve, *ret);
             }
         }
 
@@ -425,6 +425,36 @@ namespace ome
             cdate = Timestamp(boost::posix_time::from_time_t(boost::filesystem::last_write_time(id)));
           store.setImageAcquisitionDate(cdate, series);
         }
+    }
+
+    ome::xml::model::enums::DimensionOrder
+    createDimensionOrder(const std::string& order)
+    {
+      // A set could be used here, but given the tiny string length, a
+      // linear scan is quicker than an index lookup.
+
+      static const std::string validchars("XYZTC");
+
+      std::string validorder;
+
+      for (std::string::const_iterator i = order.begin();
+           i != order.end();
+           ++i)
+        {
+          if (validchars.find_first_of(*i) != std::string::npos &&
+              validorder.find_first_of(*i) == std::string::npos)
+              validorder += *i;
+        }
+
+      for (std::string::const_iterator i = validchars.begin();
+           i != validchars.end();
+           ++i)
+        {
+          if (validorder.find_first_of(*i) == std::string::npos)
+            validorder += *i;
+        }
+
+      return ome::xml::model::enums::DimensionOrder(validorder);
     }
 
   }
