@@ -156,20 +156,15 @@ public class NativeND2Reader extends FormatReader {
 
     byte[][] lut = new byte[3][256];
 
-    int index = -1;
-    if (color > 0 && color < 256) index = 0;
-    else if (color >= 256 && color < 65280) index = 1;
-    else if (color > 65280 && color <= 16711680) index = 2;
+    int redMax = color & 0xff;
+    int greenMax = (color & 0xff00) >> 8;
+    int blueMax = (color & 0xff0000) >> 16;
 
     for (int i=0; i<256; i++) {
-      if (index == -1) {
-        lut[0][i] = (byte) i;
-        lut[1][i] = (byte) i;
-        lut[2][i] = (byte) i;
-      }
-      else {
-        lut[index][i] = (byte) i;
-      }
+      double scale = i / 255.0;
+      lut[0][i] = (byte) (redMax * scale);
+      lut[1][i] = (byte) (greenMax * scale);
+      lut[2][i] = (byte) (blueMax * scale);
     }
 
     return lut;
@@ -189,20 +184,16 @@ public class NativeND2Reader extends FormatReader {
 
     short[][] lut = new short[3][65536];
 
-    int index = -1;
-    if (color > 0 && color < 256) index = 0;
-    else if (color >= 256 && color <= 65280) index = 1;
-    else if (color > 65280 && color <= 16711680) index = 2;
+    int redMax = color & 0xff;
+    int greenMax = (color & 0xff00) >> 8;
+    int blueMax = (color & 0xff0000) >> 16;
 
     for (int i=0; i<65536; i++) {
-      if (index == -1) {
-        lut[0][i] = (short) i;
-        lut[1][i] = (short) i;
-        lut[2][i] = (short) i;
-      }
-      else {
-        lut[index][i] = (short) i;
-      }
+      // *Max values are from 0-255; we want LUT values from 0-65535
+      double scale = i / 255.0;
+      lut[0][i] = (short) (redMax * scale);
+      lut[1][i] = (short) (greenMax * scale);
+      lut[2][i] = (short) (blueMax * scale);
     }
 
     return lut;
