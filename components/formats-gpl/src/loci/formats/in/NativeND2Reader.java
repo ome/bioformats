@@ -519,8 +519,8 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
         {
-          foundMetadata = true;
           if (blockType.equals("ImageAttribu")) {
+            foundMetadata = true;
             in.skipBytes(6);
             long endFP = in.getFilePointer() + len - 18;
             while (in.read() == 0);
@@ -691,6 +691,7 @@ public class NativeND2Reader extends FormatReader {
               }
               xml.write(b, off, b.length - off);
             }
+
           }
           skip = 0;
         }
@@ -927,8 +928,10 @@ public class NativeND2Reader extends FormatReader {
         if (getSizeC() == 0) {
           core.get(0).sizeC = 1;
         }
+        planeSize = getSizeX() * getSizeY() * getSizeC() *
+          FormatTools.getBytesPerPixel(getPixelType());
       }
-      else if (planeSize > 0 &&
+      if (planeSize > 0 &&
         availableBytes > DataTools.safeMultiply64(planeSize, 3))
       {
         if (availableBytes < DataTools.safeMultiply64(planeSize, 6)) {
