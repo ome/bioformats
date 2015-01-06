@@ -104,7 +104,9 @@ and `OME-XML and OME-TIFF
 sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ 
 for answers to some common questions. Please `contact us 
 <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
-you have any questions or problems with Bio-Formats. There is a :doc:`guide 
+you have any questions or problems with Bio-Formats.
+
+There is a :doc:`guide 
 for reporting bugs here <bug-reporting>`.
 
 Other places where questions are commonly asked and/or bugs are reported
@@ -132,7 +134,6 @@ pages linked from the :doc:`supported formats table </supported-formats>`.
     :hidden:
 
     bug-reporting
-    troubleshooting
 
 Bio-Formats versions
 --------------------
