@@ -87,7 +87,7 @@ namespace ome
          * Construct with initial wrapped value (managed).
          *
          * @param wrapped the value to wrap.
-         * @param del the deleter to clean up the wrapped value
+         * @param del the deleter to clean up the wrapped value.
          */
         template<typename Deleter>
         explicit
