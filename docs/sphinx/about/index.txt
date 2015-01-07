@@ -112,17 +112,17 @@ for reporting bugs here <bug-reporting>`.
 Other places where questions are commonly asked and/or bugs are reported
 include:
 
-   -  `OME Trac <http://trac.openmicroscopy.org.uk/ome>`_
-   -  `Fiji Bugzilla (for ImageJ/Fiji
-      issues) <http://fiji.sc/cgi-bin/bugzilla/index.cgi>`_
-   -  `ome-devel mailing
-      list <http://lists.openmicroscopy.org.uk/pipermail/ome-devel>`_
-      (searchable using google with 'site:lists.openmicroscopy.org.uk')
-   -  `ome-users mailing
-      list <http://lists.openmicroscopy.org.uk/pipermail/ome-users>`_
-      (searchable using google with 'site:lists.openmicroscopy.org.uk')
-   -  `ImageJ mailing list (for ImageJ/Fiji
-      issues) <http://imagej.1557.n6.nabble.com/>`_
+-  `OME Trac <http://trac.openmicroscopy.org.uk/ome>`_
+-  `Fiji Bugzilla (for ImageJ/Fiji
+   issues) <http://fiji.sc/cgi-bin/bugzilla/index.cgi>`_
+-  `ome-devel mailing
+   list <http://lists.openmicroscopy.org.uk/pipermail/ome-devel>`_
+   (searchable using google with 'site:lists.openmicroscopy.org.uk')
+-  `ome-users mailing
+   list <http://lists.openmicroscopy.org.uk/pipermail/ome-users>`_
+   (searchable using google with 'site:lists.openmicroscopy.org.uk')
+-  `ImageJ mailing list (for ImageJ/Fiji
+   issues) <http://imagej.1557.n6.nabble.com/>`_
 
 For help relating to opening images in ImageJ or FIJI or when using the
 command line tools, refer to the :doc:`users documentation </users/index>`.

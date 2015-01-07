@@ -20,7 +20,7 @@ range of metadata that is included in .sld files, and so exporting to \n
 OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
 preserved. \n
 Free software from 3I can export the files to OME-TIFF post-acquisition, see \n
-`https://www.slidebook.com/reader.php <https://www.slidebook.com/reader.php>`_
+`https://www.slidebook.com/reader.php <https://www.slidebook.com/reader.php>`_ \n
 \n
 .. seealso:: \n
   `Slidebook software overview <https://www.slidebook.com>`_ \n
@@ -2365,10 +2365,9 @@ privateSpecification = true
 reader = ZeissZVIReader.java
 notes = Bio-Formats uses a modified version of the `Apache Jakarta POI library <http://jakarta.apache.org/poi/>`_ to read ZVI files. \n
 ImageJ/FIJI will use the ZVI reader plugin in preference to Bio-Formats if \n
-both are installed. If you have a problem which is solved by opening the file
-\n
+both are installed. If you have a problem which is solved by opening the file \n
 using the Bio-Formats Importer plugin, you can just remove the \n
-ZVI_Reader.class from the plugins folder.
+ZVI_Reader.class from the plugins folder. \n
 \n
 Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. \n
 \n
