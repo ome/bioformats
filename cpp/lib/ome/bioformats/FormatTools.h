@@ -79,17 +79,17 @@ namespace ome
 
     /**
      * Get the rasterized index corresponding to the given @c Z, @c C
-     * and @c T coordinates.
+     * and @c T coordinates (real sizes).
      *
      * @param order dimension order.
-     * @param zSize total number of focal planes.
-     * @param cSize total number of channels.
-     * @param tSize total number of time points.
+     * @param zSize total number of focal planes  (real size).
+     * @param cSize total number of channels  (real size).
+     * @param tSize total number of time points  (real size).
      * @param num total number of image planes (zSize * cSize * tSize),
      *   specified as a consistency check.
-     * @param z the @c Z coordinate of ZCT coordinate triple to convert to 1D index.
-     * @param c the @c C coordinate of ZCT coordinate triple to convert to 1D index.
-     * @param t the @c T coordinate of ZCT coordinate triple to convert to 1D index.
+     * @param z the @c Z coordinate of ZCT coordinate triple to convert to 1D index (real size).
+     * @param c the @c C coordinate of ZCT coordinate triple to convert to 1D index (real size).
+     * @param t the @c T coordinate of ZCT coordinate triple to convert to 1D index (real size).
      * @returns the 1D index.
      */
     dimension_size_type
@@ -104,23 +104,29 @@ namespace ome
 
     /**
      * Get the rasterized index corresponding to the given @c Z, @c C,
-     * @c T, @c ModuloZ, @c ModuloC and @c ModuloT coordinates.
+     * @c T, @c ModuloZ, @c ModuloC and @c ModuloT coordinates
+     * (effective sizes).
+     *
+     * @note The @c Z, @c C and @c T coordinates take the modulo
+     * dimension sizes into account.  The effective size for each of
+     * these dimensions is limited to the total size of the dimension
+     * divided by the modulo size.
      *
      * @param order dimension order.
-     * @param zSize total number of focal planes.
-     * @param cSize total number of channels.
-     * @param tSize total number of time points.
-     * @param moduloZSize total number of ModuloZ planes.
-     * @param moduloCSize total number of ModuloC channels.
-     * @param moduloTSize total number of ModuloT time points.
+     * @param zSize total number of focal planes (real size).
+     * @param cSize total number of channels (real size).
+     * @param tSize total number of time points (real size).
+     * @param moduloZSize total number of ModuloZ planes (real size).
+     * @param moduloCSize total number of ModuloC channels (real size).
+     * @param moduloTSize total number of ModuloT time points (real size).
      * @param num total number of image planes (zSize * cSize * tSize),
      *   specified as a consistency check.
-     * @param z the @c Z coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
-     * @param c the @c C coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
-     * @param t the @c T coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
-     * @param moduloZ the @c ModuloZ coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
-     * @param moduloC the @c ModuloC coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
-     * @param moduloT the @c ModuloT coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index.
+     * @param z the @c Z coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+     * @param c the @c C coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+     * @param t the @c T coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+     * @param moduloZ the @c ModuloZ coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+     * @param moduloC the @c ModuloC coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+     * @param moduloT the @c ModuloT coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
      * @returns the 1D index.
      */
     dimension_size_type
@@ -140,17 +146,17 @@ namespace ome
              dimension_size_type moduloT);
 
     /**
-     * Get the @c Z, @c C and @c T coordinates corresponding to the
-     * given rasterized index value.
+     * Get the @c Z, @c C and @c T coordinates (real
+     * sizes) corresponding to the given rasterized index value.
      *
      * @param order dimension order.
-     * @param zSize total number of focal planes.
-     * @param cSize total number of channels.
-     * @param tSize total number of time points.
+     * @param zSize total number of focal planes (real size).
+     * @param cSize total number of channels (real size).
+     * @param tSize total number of time points (real size).
      * @param num total number of image planes (zSize * cSize * tSize),
      *   specified as a consistency check.
      * @param index 1D (rasterized) index to convert to ZCT coordinates.
-     * @returns an array containing the ZCT coordinates (in that order).
+     * @returns an array containing the ZCT coordinates (real sizes, in that order).
      */
     std::array<dimension_size_type, 3>
     getZCTCoords(const std::string& order,
@@ -162,20 +168,30 @@ namespace ome
 
     /**
      * Get the @c Z, @c C, @c T, @c ModuloZ, @c ModuloC and @c ModuloT
-     * coordinates corresponding to the given rasterized index value.
+     * coordinates (effective sizes) corresponding to the given
+     * rasterized index value.
+     *
+     * @note The @c Z, @c C and @c T coordinates are not the same as
+     * those returned by ome::bioformats::getZCTCoords(const
+     * std::string&, dimension_size_type, dimension_size_type,
+     * dimension_size_type, dimension_size_type, dimension_size_type)
+     * because the size of the modulo dimensions is taken into
+     * account.  The effective size for each of these dimensions is
+     * limited to the total size of the dimension divided by the
+     * modulo size.
      *
      * @param order dimension order.
-     * @param zSize total number of focal planes.
-     * @param cSize total number of channels.
-     * @param tSize total number of time points.
-     * @param moduloZSize total number of ModuloZ planes.
-     * @param moduloCSize total number of ModuloC channels.
-     * @param moduloTSize total number of ModuloT time points.
+     * @param zSize total number of focal planes (effective size).
+     * @param cSize total number of channels (effective size).
+     * @param tSize total number of time points (effective size).
+     * @param moduloZSize total number of ModuloZ planes (effective size).
+     * @param moduloCSize total number of ModuloC channels (effective size).
+     * @param moduloTSize total number of ModuloT time points (effective size).
      * @param num total number of image planes (zSize * cSize * tSize),
      *   specified as a consistency check.
      * @param index 1D (rasterized) index to convert to ZCTmZmCmT
      * coordinates.
-     * @returns an array containing the ZCTmZmCmT coordinates (in that
+     * @returns an array containing the ZCTmZmCmT coordinates (effective sizes, in that
      * order).
      */
     std::array<dimension_size_type, 6>

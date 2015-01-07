@@ -769,9 +769,9 @@ namespace ome
        *
        * The index is computed using the DimensionOrder.
        *
-       * @param z the @c Z coordinate.
-       * @param c the @c C coordinate.
-       * @param t the @c T coordinate.
+       * @param z the @c Z coordinate (real size).
+       * @param c the @c C coordinate (real size).
+       * @param t the @c T coordinate (real size).
        * @returns the linear index.
        *
        * @todo unify with the pixel buffer dimension indexes.
@@ -790,12 +790,17 @@ namespace ome
        *
        * The index is computed using the DimensionOrder.
        *
-       * @param z the @c Z coordinate.
-       * @param c the @c C coordinate.
-       * @param t the @c T coordinate.
-       * @param moduloZ the @c ModuloZ coordinate.
-       * @param moduloC the @c ModuloC coordinate.
-       * @param moduloT the @c ModuloT coordinate.
+       * @note The @c Z, @c C and @c T coordinates take the modulo
+       * dimension sizes into account.  The effective size for each of
+       * these dimensions is limited to the total size of the
+       * dimension divided by the modulo size.
+       *
+       * @param z the @c Z coordinate (effective size).
+       * @param c the @c C coordinate (effective size).
+       * @param t the @c T coordinate (effective size).
+       * @param moduloZ the @c ModuloZ coordinate (effective size).
+       * @param moduloC the @c ModuloC coordinate (effective size).
+       * @param moduloT the @c ModuloT coordinate (effective size).
        * @returns the linear index.
        *
        * @todo unify with the pixel buffer dimension indexes.
@@ -815,7 +820,8 @@ namespace ome
        * Get the @c Z, @c C and @c T coordinate of a linear index.
        *
        * @param index the linear index.
-       * @returns an array containing @c Z, @c C and @c T values.
+       * @returns an array containing @c Z, @c C and @c T values (real
+       * sizes).
        *
        * @todo unify with the pixel buffer dimension indexes.
        */
@@ -827,9 +833,15 @@ namespace ome
        * Get the @c Z, @c C, @c T, @c ModuloZ, @c ModuloC and @c
        * ModuloT coordinate of a linear index.
        *
+       * @note The @c Z, @c C and @c T coordinates are not the same as
+       * those returned by getZCTCoords(dimension_size_type) because
+       * the size of the modulo dimensions is taken into account.  The
+       * effective size for each of these dimensions is limited to the
+       * total size of the dimension divided by the modulo size.
+       *
        * @param index the linear index.
        * @returns an array containing @c Z, @c C, @c T, @c ModuloZ, @c
-       * ModuloC and @c ModuloT values.
+       * ModuloC and @c ModuloT values (effective sizes).
        *
        * @todo unify with the pixel buffer dimension indexes.
        */
