@@ -100,16 +100,15 @@ namespace ome
             {
               try
                 {
-                   xerces::dom::Element child(pos->get());
-                   if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName())))
+                  xerces::dom::Element child(pos->get(), false);
+                  if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName())))
                     {
-                      xerces::dom::Element c2(child);
                       ret.push_back(child);
                     }
                 }
               catch (std::logic_error& /* e */)
                 {
-                   // Not an Element.
+                  // Not an Element.
                 }
             }
           return ret;

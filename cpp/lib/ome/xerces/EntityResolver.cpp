@@ -196,14 +196,14 @@ namespace ome
             {
               dom::Document doc(dom::createDocument(in));
               dom::Element root(doc.getDocumentElement());
-              dom::NodeList nodes(root->getChildNodes());
+              dom::NodeList nodes(root.getChildNodes());
               for (dom::NodeList::iterator i = nodes.begin();
                    i != nodes.end();
                    ++i)
                 {
                   if (i->getNodeType() == xercesc::DOMNode::ELEMENT_NODE)
                     {
-                      dom::Element e(i->get());
+                      dom::Element e(i->get(), false);
                       if (e)
                         {
                           if (e.getTagName() == "uri")
