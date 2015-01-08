@@ -823,7 +823,7 @@ public class NativeND2Reader extends FormatReader {
         core.add(ms0);
       }
 
-      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
+      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && imageOffsets.size() % extraZDataCount == 0) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
         CoreMetadata ms0 = core.get(0);
         if (getSeriesCount() > ms0.sizeZ) {
           ms0.sizeZ = getSeriesCount();
@@ -916,7 +916,7 @@ public class NativeND2Reader extends FormatReader {
 
       in.seek(fp);
 
-      int planeSize = getSizeX() * getSizeY() * getSizeC() *
+      long planeSize = getSizeX() * getSizeY() * getSizeC() *
         FormatTools.getBytesPerPixel(getPixelType());
 
       if (availableBytes < planeSize) {
@@ -930,6 +930,13 @@ public class NativeND2Reader extends FormatReader {
         }
         planeSize = getSizeX() * getSizeY() * getSizeC() *
           FormatTools.getBytesPerPixel(getPixelType());
+      }
+
+      if (availableBytes % planeSize != 0) {
+        // an extra 4K block of zeros may have been appended
+        if ((availableBytes - 4096) % planeSize == 0) {
+          availableBytes -= 4096;
+        }
       }
       if (planeSize > 0 &&
         availableBytes > DataTools.safeMultiply64(planeSize, 3))
@@ -948,7 +955,7 @@ public class NativeND2Reader extends FormatReader {
         getSizeC() > 3) && getPixelType() == FormatTools.INT8)
       {
         core.get(0).pixelType = FormatTools.UINT16;
-        if (getSizeC() > 3) {
+        if (getSizeC() > 3 && availableBytes % planeSize != 0) {
           core.get(0).sizeC = 3;
           core.get(0).rgb = true;
         }
@@ -989,7 +996,8 @@ public class NativeND2Reader extends FormatReader {
           ms.imageCount /= getSizeC();
         }
         if (ms.imageCount > imageOffsets.size() / getSeriesCount()) {
-          if (ms.imageCount == imageOffsets.size()) {
+          int diff = imageOffsets.size() - ms.imageCount;
+          if (diff >= 0 && diff < ms.sizeZ && diff < ms.sizeT) {
             CoreMetadata ms0 = core.get(0);
             core = new ArrayList<CoreMetadata>();
             core.add(ms0);
