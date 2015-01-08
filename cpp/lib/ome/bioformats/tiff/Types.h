@@ -80,6 +80,43 @@ namespace ome
           TYPE_IFD8 = 18        ///< BigTIFF 64-bit unsigned integer (offset).
         };
 
+      /// Compression technique.
+      enum Compression
+        {
+          COMPRESSION_NONE = 1,            ///< No compression.
+          COMPRESSION_CCITTRLE = 2,        ///< CCITT modified Huffman RLE.
+          COMPRESSION_CCITTFAX3 = 3,       ///< CCITT Group 3 fax encoding (deprecated).
+          COMPRESSION_CCITT_T4 = 3,        ///< CCITT T.4 (TIFF 6 name).
+          COMPRESSION_CCITTFAX4 = 4,       ///< CCITT Group 4 fax encoding (deprecated).
+          COMPRESSION_CCITT_T6 = 4,        ///< CCITT T.6 (TIFF 6 name).
+          COMPRESSION_LZW = 5,             ///< Lempel-Ziv & Welch.
+          COMPRESSION_OJPEG = 6,           ///< JPEG (deprecated).
+          COMPRESSION_JPEG = 7,            ///< JPEG DCT compression.
+          COMPRESSION_ADOBE_DEFLATE = 8,   ///< Deflate compression (Adobe).
+          COMPRESSION_T85 = 9,             ///< TIFF/FX T.85 JBIG compression.
+          COMPRESSION_T43 = 10,            ///< TIFF/FX T.43 colour by layered JBIG compression.
+          COMPRESSION_NEXT = 32766,        ///< NeXT 2-bit RLE.
+          COMPRESSION_CCITTRLEW = 32771,   ///< 1 w/ word alignment.
+          COMPRESSION_PACKBITS = 32773,    ///< Macintosh RLE.
+          COMPRESSION_THUNDERSCAN = 32809, ///< ThunderScan RLE.
+          /// codes 32895-32898 are reserved for ANSI IT8 TIFF/IT <dkelly@apago.com).
+          COMPRESSION_IT8CTPAD = 32895,    ///< IT8 CT w/padding.
+          COMPRESSION_IT8LW = 32896,       ///< IT8 Linework RLE.
+          COMPRESSION_IT8MP = 32897,       ///< IT8 Monochrome picture.
+          COMPRESSION_IT8BL = 32898,       ///< IT8 Binary line art.
+          /// compression codes 32908-32911 are reserved for Pixar.
+          COMPRESSION_PIXARFILM = 32908,   ///< Pixar companded 10bit LZW.
+          COMPRESSION_PIXARLOG = 32909,    ///< Pixar companded 11bit ZIP.
+          COMPRESSION_DEFLATE = 32946,     ///< Deflate compression.
+          /// compression code 32947 is reserved for Oceana Matrix <dev@oceana.com>.
+          COMPRESSION_DCS = 32947,         ///< Kodak DCS encoding.
+          COMPRESSION_JBIG = 34661,        ///< ISO JBIG.
+          COMPRESSION_SGILOG = 34676,      ///< SGI Log Luminance RLE.
+          COMPRESSION_SGILOG24 = 34677,    ///< SGI Log 24-bit packed.
+          COMPRESSION_JP2000 = 34712,      ///< Leadtools JPEG2000.
+          COMPRESSION_LZMA = 34925         ///< LZMA2.
+        };
+
       /// Extra components description.
       enum ExtraSamples
         {
@@ -103,7 +140,7 @@ namespace ome
           BOTTOM_RIGHT = 3, ///< Row 0 bottom, column 0 rhs.
           BOTTOM_LEFT  = 4, ///< Row 0 bottom, column 0 lhs.
           LEFT_TOP     = 5, ///< Row 0 lhs, column 0 top.
-          RIGH_TTOP    = 6, ///< Row 0 rhs, column 0 top.
+          RIGHT_TOP    = 6, ///< Row 0 rhs, column 0 top.
           RIGHT_BOTTOM = 7, ///< Row 0 rhs, column 0 bottom.
           LEFT_BOTTOM  = 8  ///< Row 0 lhs, column 0 bottom.
         };
@@ -111,18 +148,19 @@ namespace ome
       /// Photometric interpretation of pixel data.
       enum PhotometricInterpretation
         {
-          MIN_IS_WHITE = 0, ///< Minimum value is white.
-          MIN_IS_BLACK = 1, ///< Minimum value is black.
-          RGB = 2,          ///< RGB subchannels.
-          PALETTE = 3,      ///< Indexed colour with colormap.
-          MASK = 4,         ///< Mask.
-          SEPARATED = 5,    ///< Color separations.
-          YCBCR = 6,        ///< CCIR 601.
-          CIELAB = 8,       ///< 1976 CIE L*a*b*.
-          ICCLAB = 9,       ///< ICC L*a*b*.
-          ITULAB = 10,      ///< ITU L*a*b*.
-          LOGL = 32844,     ///< CIE log2(L).
-          LOGLUV = 32845    ///< CIE log2(L) (u',v').
+          MIN_IS_WHITE = 0,  ///< Minimum value is white.
+          MIN_IS_BLACK = 1,  ///< Minimum value is black.
+          RGB = 2,           ///< RGB subchannels.
+          PALETTE = 3,       ///< Indexed colour with colormap.
+          MASK = 4,          ///< Mask.
+          SEPARATED = 5,     ///< Color separations.
+          YCBCR = 6,         ///< CCIR 601.
+          CIELAB = 8,        ///< 1976 CIE L*a*b*.
+          ICCLAB = 9,        ///< ICC L*a*b*.
+          ITULAB = 10,       ///< ITU L*a*b*.
+          CFA_ARRAY = 32803, ///< Color Filter Array.
+          LOGL = 32844,      ///< CIE log2(L).
+          LOGLUV = 32845     ///< CIE log2(L) (u',v').
         };
 
       /// Planar configuration of samples.
@@ -166,6 +204,13 @@ namespace ome
           COSITED = 2   ///< Co-sited.
         };
 
+      /// Type of tile.
+      enum TileType
+        {
+          STRIP, ///< Strips.
+          TILE   ///< Tiles.
+        };
+
       /**
        * A rectangular region.
        *
@@ -183,6 +228,7 @@ namespace ome
         /// The height of the region.
         dimension_size_type h;
 
+      public:
         /**
          * Default construct.
          *
@@ -194,6 +240,17 @@ namespace ome
           w(0),
           h(0)
         {}
+
+        /**
+         * Is the region valid?
+         *
+         * @returns @c true if the region has a nonzero width and
+         * height, @c false otherwise.
+         */
+        bool
+        valid() const {
+          return w && h;
+        }
 
         /**
          * Construct from coordinates, width and height.
@@ -212,6 +269,17 @@ namespace ome
           w(w),
           h(h)
         {}
+
+        /**
+         * Get area.
+         *
+         * @returns the covered area.
+         */
+        dimension_size_type
+        area() const
+        {
+          return w * h;
+        }
       };
 
       /**
@@ -254,6 +322,68 @@ namespace ome
 
         return PlaneRegion(il, it, ir-il, ib-it);
       }
+
+      /**
+       * Combine (union) two regions.
+       *
+       * If the regions do not abut about a common edge, a
+       * default-constructed region of zero size will be returned.
+       *
+       * @param a the first region.
+       * @param b the second region.
+       * @returns the union of the two regions.
+       */
+      inline
+      PlaneRegion
+      operator|(const PlaneRegion& a,
+                const PlaneRegion& b)
+      {
+        dimension_size_type l1 = a.x;
+        dimension_size_type r1 = a.x + a.w;
+
+        dimension_size_type l2 = b.x;
+        dimension_size_type r2 = b.x + b.w;
+
+        dimension_size_type t1 = a.y;
+        dimension_size_type b1 = a.y + a.h;
+
+        dimension_size_type t2 = b.y;
+        dimension_size_type b2 = b.y + b.h;
+
+        if (l1 == l2 && r1 == r2 &&
+            (t1 == b2 || t2 == b1)) // union along top or bottom edges
+          {
+            dimension_size_type it = std::min(t1, t2);
+            dimension_size_type ib = std::max(b1, b2);
+            return PlaneRegion(l1, it, r1-l1, ib-it);
+          }
+        else if (t1 == t2 && b1 == b2 &&
+                 (l1 == r2 || l2 == r1)) // union along left or right edges
+          {
+            dimension_size_type il = std::min(l1, l2);
+            dimension_size_type ir = std::max(r1, r2);
+            return PlaneRegion(il, t1, ir-il, b1-t1);
+          }
+        return PlaneRegion();
+      }
+
+        /**
+         * Output PlaneRegion to output stream.
+         *
+         * @param os the output stream.
+         * @param region the PlaneRegion to output.
+         * @returns the output stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_ostream<charT,traits>&
+        operator<< (std::basic_ostream<charT,traits>& os,
+                    const PlaneRegion& region)
+        {
+          return os << "x=" << region.x
+                    << " y=" << region.y
+                    << " w=" << region.w
+                    << " h=" << region.h;
+        }
 
     }
   }

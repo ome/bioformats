@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,14 +44,14 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
  * The strategies employed by this reader are highly suboptimal, as we
  * have very little information on the Slidebook format.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SlidebookReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/SlidebookReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -94,6 +94,7 @@ public class SlidebookReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     stream.seek(4);
@@ -112,6 +113,7 @@ public class SlidebookReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -168,6 +170,7 @@ public class SlidebookReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -184,6 +187,7 @@ public class SlidebookReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -1285,8 +1289,8 @@ public class SlidebookReader extends FormatReader {
         setSeries(i);
         if (pixelSize.get(i) != null) {
           Double size = new Double(pixelSize.get(i));
-          PositiveFloat x = FormatTools.getPhysicalSizeX(size);
-          PositiveFloat y = FormatTools.getPhysicalSizeY(size);
+          Length x = FormatTools.getPhysicalSizeX(size);
+          Length y = FormatTools.getPhysicalSizeY(size);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, i);
           }
@@ -1300,7 +1304,7 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx));
+          Length z = FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx));
           if (z != null) {
             store.setPixelsPhysicalSizeZ(z, i);
           }
@@ -1309,10 +1313,11 @@ public class SlidebookReader extends FormatReader {
         for (int plane=0; plane<getImageCount(); plane++) {
           int c = getZCTCoords(plane)[1];
           if (exposureIndex + c < exposureTimes.size() &&
-            exposureIndex + c >= 0)
+            exposureIndex + c >= 0 &&
+            exposureTimes.get(exposureIndex + c) != null)
           {
             store.setPlaneExposureTime(
-              new Double(exposureTimes.get(exposureIndex + c)), i, plane);
+              new Time(new Double(exposureTimes.get(exposureIndex + c)), UNITS.S), i, plane);
           }
         }
         exposureIndex += getSizeC();

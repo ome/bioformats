@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,10 +50,6 @@ import org.slf4j.LoggerFactory;
  * Pseudo-extension of java.io.File that supports reading over HTTP (among
  * other things).
  * It is strongly recommended to use this instead of java.io.File.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Location.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/Location.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Location {
 
@@ -68,6 +64,7 @@ public class Location {
   /** Map from given filenames to actual filenames. */
   private static ThreadLocal<HashMap<String, Object>> idMap =
     new ThreadLocal<HashMap<String, Object>>() {
+      @Override
       protected HashMap<String, Object> initialValue() {
         return new HashMap<String, Object>();
       }
@@ -306,13 +303,13 @@ public class Location {
       if (id.startsWith("http://")) {
         handle = new URLHandle(mapId);
       }
-      else if (allowArchiveHandles && ZipHandle.isZipFile(id)) {
+      else if (allowArchiveHandles && ZipHandle.isZipFile(mapId)) {
         handle = new ZipHandle(mapId);
       }
-      else if (allowArchiveHandles && GZipHandle.isGZipFile(id)) {
+      else if (allowArchiveHandles && GZipHandle.isGZipFile(mapId)) {
         handle = new GZipHandle(mapId);
       }
-      else if (allowArchiveHandles && BZip2Handle.isBZip2File(id)) {
+      else if (allowArchiveHandles && BZip2Handle.isBZip2File(mapId)) {
         handle = new BZip2Handle(mapId);
       }
       else {
@@ -504,6 +501,7 @@ public class Location {
    * @see java.io.File#equals(Object)
    * @see java.net.URL#equals(Object)
    */
+  @Override
   public boolean equals(Object obj) {
     String absPath = getAbsolutePath();
     String thatPath = null;
@@ -518,6 +516,7 @@ public class Location {
     return absPath.equals(thatPath);
   }
 
+  @Override
   public int hashCode() {
     return getAbsolutePath().hashCode();
   }
@@ -737,6 +736,7 @@ public class Location {
    * @see java.io.File#toString()
    * @see java.net.URL#toString()
    */
+  @Override
   public String toString() {
     return isURL ? url.toString() : file.toString();
   }

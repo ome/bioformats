@@ -44,14 +44,17 @@ public class ThreadNameBasedDiscriminator implements Discriminator<ILoggingEvent
         return KEY;
     }
  
+    @Override
     public void start() {
         started = true;
     }
  
+    @Override
     public void stop() {
         started = false;
     }
  
+    @Override
     public boolean isStarted() {
         return started;
     }

@@ -171,13 +171,15 @@ namespace ome
               TIFFClose(tiff);
               if (!sentry.getMessage().empty())
                 sentry.error();
+              tiff = 0;
             }
         }
       };
 
+      // Note boost::make_shared can't be used here.
       TIFF::TIFF(const std::string& filename,
                  const std::string& mode):
-        impl(std::make_shared<Impl>(filename, mode))
+        impl(std::shared_ptr<Impl>(new Impl(filename, mode)))
       {
         registerImageJTags();
       }
@@ -196,7 +198,18 @@ namespace ome
       TIFF::open(const std::string& filename,
                  const std::string& mode)
       {
-        return std::make_shared<TIFFConcrete>(filename, mode);
+        std::shared_ptr<TIFF> ret;
+        try
+          {
+            // Note boost::make_shared can't be used here.
+            ret = std::shared_ptr<TIFF>(new TIFFConcrete(filename, mode));
+          }
+        catch (const std::exception& e)
+          {
+            // All exception types are propagated as an Exception.
+            throw Exception(e.what());
+          }
+        return ret;
       }
 
       void
@@ -237,6 +250,22 @@ namespace ome
 
         std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::openOffset(t, offset);
+      }
+
+      std::shared_ptr<IFD>
+      TIFF::getCurrentDirectory() const
+      {
+        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
+        return IFD::current(t);
+      }
+
+      void
+      TIFF::writeCurrentDirectory()
+      {
+        Sentry sentry;
+
+        if (!TIFFWriteDirectory(impl->tiff))
+          sentry.error("Failed to write current directory");
       }
 
       TIFF::iterator

@@ -13,7 +13,7 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/version.xml"/>
   <import file="${root.dir}/ant/xsd-fu.xml"/>
 
-  <taskdef name="testng" classpath="${testng.jar}"
+  <taskdef name="testng" classpath="${lib.dir}/testng-${testng.version}.jar"
     classname="org.testng.TestNGAntTask"/>
   <if>
     <isset property="findbugs.home"/>
@@ -63,7 +63,7 @@ Type "ant -p" for a list of targets.
     <if>
       <equals arg1="${component.junit}" arg2="true"/>
       <then>
-        <junit haltonfailure="true">
+        <junit haltonfailure="true" fork="true">
           <classpath>
             <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
             <pathelement location="${artifact.dir}/junit-4.8.2.jar"/>

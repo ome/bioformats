@@ -253,20 +253,6 @@ namespace ome
                                   index_type imageIndex,
                                   index_type binDataIndex = 0) = 0;
 
-        /**
-         * Set the Mask binary data property on a ROI Shape.
-         *
-         * @param binData the mask data.
-         * @param ROIIndex the ROI index.
-         * @param shapeIndex the Shape index.
-         *
-         * @todo correct type for mask bin data?
-         */
-        virtual void
-        setMaskBinData(const byte_array& binData,
-                       index_type ROIIndex,
-                       index_type shapeIndex) = 0;
-
 	/**
          * Set the Map value of MapAnnotation.
          *
@@ -274,7 +260,7 @@ namespace ome
          * @param mapAnnotationIndex the MapAnnotation index.
          */
         virtual void
-        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                               index_type mapAnnotationIndex) = 0;
 
 	/**
@@ -285,7 +271,7 @@ namespace ome
          * @param lightSourceIndex the LightSource index.
          */
         virtual void
-        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex) = 0;
 
@@ -296,7 +282,7 @@ namespace ome
          * @param imageIndex the Image index.
          */
         virtual void
-        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                  index_type imageIndex) = 0;
 
 {% if debug %}\

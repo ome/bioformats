@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,15 +37,12 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * MRCReader is the file format reader for MRC files.
  * Specifications available at
  * http://bio3d.colorado.edu/imod/doc/mrc_format.txt
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MRCReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MRCReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MRCReader extends FormatReader {
 
@@ -81,6 +78,7 @@ public class MRCReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /** @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return FormatTools.validStream(stream, HEADER_SIZE, false);
   }
@@ -88,6 +86,7 @@ public class MRCReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -116,6 +115,7 @@ public class MRCReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -126,6 +126,7 @@ public class MRCReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -193,7 +194,7 @@ public class MRCReader extends FormatReader {
       case 16:
         m.sizeC = 3;
         m.pixelType = FormatTools.UINT8;
-	m.rgb = true;
+        m.rgb = true;
         break;
     }
 
@@ -304,9 +305,9 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (level != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xSize);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(ySize);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(xSize);
+      Length sizeY = FormatTools.getPhysicalSizeY(ySize);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

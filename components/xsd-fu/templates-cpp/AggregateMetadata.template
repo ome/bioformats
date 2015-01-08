@@ -852,11 +852,11 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       AggregateMetadata::getUUID() const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
@@ -979,37 +979,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setMaskBinData(const byte_array& binData,
-                       index_type ROIIndex,
-                       index_type shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      AggregateMetadata::setMaskBinData(const byte_array& binData,
-                                        index_type ROIIndex,
-                                        index_type shapeIndex)
-      {
-        for (delegate_list_type::iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataStore> store = std::dynamic_pointer_cast<MetadataStore>(*i);
-            if (store)
-              store->setMaskBinData(binData, ROIIndex, shapeIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                               index_type mapAnnotationIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
+      AggregateMetadata::setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                                index_type mapAnnotationIndex)
       {
         for (delegate_list_type::iterator i = delegates.begin();
@@ -1027,13 +1002,13 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+      AggregateMetadata::setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                                        index_type instrumentIndex,
                                                        index_type lightSourceIndex)
       {
@@ -1054,12 +1029,12 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                  index_type imageIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
+      AggregateMetadata::setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
                                                   index_type imageIndex)
       {
         for (delegate_list_type::iterator i = delegates.begin();

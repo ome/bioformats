@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -52,10 +52,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Parses TIFF data from an input source.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/TiffParser.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/TiffParser.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -71,7 +67,7 @@ public class TiffParser {
   // -- Fields --
 
   /** Input source from which to parse TIFF data. */
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
 
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;
@@ -663,6 +659,11 @@ public class TiffParser {
       pixel > 1)
     {
       stripByteCounts[countIndex] *= pixel;
+    }
+    else if (stripByteCounts[countIndex] < 0 && countIndex > 0) {
+      LOGGER.debug("byte count #{} was {}; correcting to {}", countIndex,
+        stripByteCounts[countIndex], stripByteCounts[countIndex - 1]);
+      stripByteCounts[countIndex] = stripByteCounts[countIndex - 1];
     }
 
     long stripOffset = 0;

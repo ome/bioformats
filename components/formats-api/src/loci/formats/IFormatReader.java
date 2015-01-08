@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,10 +41,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * Interface for all biological file format readers.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/IFormatReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/IFormatReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
@@ -170,23 +166,6 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Modulo getModuloC();
 
   Modulo getModuloT();
-
-  /**
-   * Gets the lengths of each subdimension of C,
-   * in fastest-to-slowest rasterization order.
-   *
-   * @deprecated
-   */
-  int[] getChannelDimLengths();
-
-  /**
-   * Gets the name of each subdimension of C,
-   * in fastest-to-slowest rasterization order.
-   * Common subdimensional types are enumerated in {@link FormatTools}.
-   *
-   * @deprecated
-   */
-  String[] getChannelDimTypes();
 
   /** Get the size of the X dimension for the thumbnail. */
   int getThumbSizeX();
@@ -552,14 +531,14 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /**
    * Set the resolution level.
    *
-   * @see getResolutionCount()
+   * @see #getResolutionCount()
    */
   void setResolution(int resolution);
 
   /**
    * Get the current resolution level.
    *
-   * @see getResolutionCount()
+   * @see #getResolutionCount()
    */
   int getResolution();
 
@@ -569,10 +548,10 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Set whether or not to flatten resolutions into individual series. */
   void setFlattenedResolutions(boolean flatten);
 
-  // -- Deprecated methods --
-
-  /** Obtains the core metadata values for the current file.
-   * @deprecated Use #getCoreMetadataList instead.
+  /**
+   * Reopen any files that were closed, and which are expected to be open
+   * while the reader is open.  This assumes that {@link #setId} has been
+   * called, but close(false) has not been called.
    */
-  CoreMetadata[] getCoreMetadata();
+  void reopenFile() throws IOException;
 }

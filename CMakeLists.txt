@@ -60,7 +60,30 @@ include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 
 include(GNUInstallDirs)
+
+set(OME_BIOFORMATS_DATADIR ome/bioformats)
+set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_DATADIR}")
+set(OME_BIOFORMATS_INSTALL_FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_DATADIR}")
+
+# Use standard path if using a prefix.
+if(CMAKE_INSTALL_PREFIX)
+  set(OME_BIOFORMATS_ICONDIR icons/hicolor/scalable)
+else()
+  set(OME_BIOFORMATS_ICONDIR icons)
+endif()
+set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_ICONDIR}")
+set(OME_BIOFORMATS_INSTALL_FULL_ICONDIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_ICONDIR}")
+
+set(OME_BIOFORMATS_SCHEMADIR xml/ome)
+set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_SCHEMADIR}")
+set(OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_SCHEMADIR}")
+
+set(OME_BIOFORMATS_TRANSFORMDIR xsl/ome)
+set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_TRANSFORMDIR}")
+set(OME_BIOFORMATS_INSTALL_FULL_TRANSFORMDIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_TRANSFORMDIR}")
+
 include(CompilerChecks)
+include(PlatformChecks)
 include(BoostChecks)
 include(RegexChecks)
 include(ThreadChecks)
@@ -77,7 +100,18 @@ add_subdirectory(cpp)
 set(LIBRARY_PREFIX OME)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/cpp/cmake/bf)
+file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf
+     DESTINATION ${PROJECT_BINARY_DIR}
+     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 if(WIN32)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config.bat)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/bf.bat)
 endif()
+
+message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")
+message("NOTE: API stability will not be guaranteed until version 5.2")

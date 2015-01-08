@@ -51,20 +51,28 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+
+import ome.units.unit.Unit;
+import ome.units.quantity.Angle;
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Power;
+import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A utility class for format reader and writer implementations.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/FormatTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/FormatTools.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class FormatTools {
 
@@ -649,6 +657,25 @@ public final class FormatTools {
   }
 
   /**
+   * Determines whether the given reader represents any floating point data.
+   * @param reader the reader to check
+   * @return true if any of the reader's series have a floating point pixel type
+   * @see #isFloatingPoint(int)
+   */
+  public static boolean isFloatingPoint(IFormatReader reader) {
+    int originalSeries = reader.getSeries();
+    for (int s=0; s<reader.getSeriesCount(); s++) {
+      reader.setSeries(s);
+      if (isFloatingPoint(reader.getPixelType())) {
+        reader.setSeries(originalSeries);
+        return true;
+      }
+    }
+    reader.setSeries(originalSeries);
+    return false;
+  }
+
+  /**
    * Determines whether the given pixel type is floating point or integer.
    * @param pixelType the pixel type as retrieved from
    *   {@link IFormatReader#getPixelType()}.
@@ -878,9 +905,9 @@ public final class FormatTools {
     if (timestamp != null) {
       date = timestamp.getValue();
       if (retrieve.getPlaneCount(series) > image) {
-        Double deltaT = retrieve.getPlaneDeltaT(series, image);
+        Time deltaT = retrieve.getPlaneDeltaT(series, image);
         if (deltaT != null) {
-          stamp = (long) (deltaT * 1000);
+          stamp = (long) (deltaT.value(UNITS.S).doubleValue() * 1000);
         }
       }
       stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
@@ -1077,7 +1104,7 @@ public final class FormatTools {
    * specified output file.  The ImageReader and ImageWriter classes are used
    * for input and output, respectively.  To use other IFormatReader or
    * IFormatWriter implementation,
-   * @see convert(IFormatReader, IFormatWriter, String).
+   * @see #convert(IFormatReader, IFormatWriter, String).
    *
    * @param input the full path name of the existing input file
    * @param output the full path name of the output file to be created
@@ -1167,7 +1194,7 @@ public final class FormatTools {
    * rendering.
    *
    * @param pixelType the pixel type.
-   * @returns an array containing the min and max as elements 0 and 1,
+   * @return an array containing the min and max as elements 0 and 1,
    * respectively.
    * @throws IOException if the pixel type is floating point or invalid.
    */
@@ -1211,61 +1238,61 @@ public final class FormatTools {
 
   // -- OME-XML primitive type methods --
 
-  public static PositiveFloat getPhysicalSizeX(Double value) {
+  public static Length getPhysicalSizeX(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
     return null;
   }
 
-  public static PositiveFloat getPhysicalSizeY(Double value) {
+  public static Length getPhysicalSizeY(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
     return null;
   }
 
-  public static PositiveFloat getPhysicalSizeZ(Double value) {
+  public static Length getPhysicalSizeZ(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
     return null;
   }
 
-  public static PositiveFloat getEmissionWavelength(Double value) {
+  public static Length getEmissionWavelength(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return createLength(new PositiveFloat(value), UNITS.NM);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
       value);
     return null;
   }
 
-  public static PositiveFloat getExcitationWavelength(Double value) {
+  public static Length getExcitationWavelength(Double value) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return new PositiveFloat(value);
+      return createLength(new PositiveFloat(value), UNITS.NM);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
       value);
     return null;
   }
 
-  public static PositiveFloat getWavelength(Double value) {
+  public static Length getWavelength(Double value) {
     if (value != null && value > 0) {
-      return new PositiveFloat(value);
+      return new Length(value, UNITS.NM);
     }
     LOGGER.debug("Expected positive value for Wavelength; got {}", value);
     return null;
@@ -1280,28 +1307,206 @@ public final class FormatTools {
     return null;
   }
 
-  public static PositiveInteger getCutIn(Integer value) {
+  public static Length getCutIn(Double value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new Length(value, UNITS.NM);
     }
     LOGGER.debug("Expected positive value for CutIn; got {}", value);
     return null;
   }
 
-  public static PositiveInteger getCutOut(Integer value) {
+  public static Length getCutOut(Double value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new Length(value, UNITS.NM);
     }
     LOGGER.debug("Expected positive value for CutOut; got {}", value);
     return null;
   }
 
-  public static NonNegativeInteger getFontSize(Integer value) {
+  public static Length getFontSize(Integer value) {
     if (value != null && value >= 0) {
-      return new NonNegativeInteger(value);
+      return new Length(value, UNITS.PT);
     }
     LOGGER.debug("Expected non-negative value for FontSize; got {}", value);
     return null;
+  }
+
+  // -- Quantity helper methods --
+
+  // Angle
+  public static Angle createAngle(Double value, Unit<Angle> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Angle(value, valueUnit);
+  }
+
+  public static Angle createAngle(Integer value, Unit<Angle> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Angle(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Angle createAngle(T value, Unit<Angle> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Angle(value.getNumberValue(), valueUnit);
+  }
+
+  // ElectricPotential
+  public static ElectricPotential createElectricPotential(Double value, Unit<ElectricPotential> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new ElectricPotential(value, valueUnit);
+  }
+
+  public static ElectricPotential createElectricPotential(Integer value, Unit<ElectricPotential> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new ElectricPotential(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> ElectricPotential createElectricPotential(T value, Unit<ElectricPotential> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new ElectricPotential(value.getNumberValue(), valueUnit);
+  }
+
+  // Frequency
+  public static Frequency createFrequency(Double value, Unit<Frequency> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Frequency(value, valueUnit);
+  }
+
+  public static Frequency createFrequency(Integer value, Unit<Frequency> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Frequency(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Frequency createFrequency(T value, Unit<Frequency> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Frequency(value.getNumberValue(), valueUnit);
+  }
+
+  // Power
+  public static Power createPower(Double value, Unit<Power> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Power(value, valueUnit);
+  }
+
+  public static Power createPower(Integer value, Unit<Power> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Power(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Power createPower(T value, Unit<Power> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Power(value.getNumberValue(), valueUnit);
+  }
+
+  // Length
+  public static Length createLength(Double value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value, valueUnit);
+  }
+
+  public static Length createLength(Integer value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Length createLength(T value, Unit<Length> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Length(value.getNumberValue(), valueUnit);
+  }
+
+  // Pressure
+  public static Pressure createPressure(Double value, Unit<Pressure> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Pressure(value, valueUnit);
+  }
+
+  public static Pressure createPressure(Integer value, Unit<Pressure> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Pressure(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Pressure createPressure(T value, Unit<Pressure> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Pressure(value.getNumberValue(), valueUnit);
+  }
+
+  // Temperature
+    public static Temperature createTemperature(Double value, Unit<Temperature> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Temperature(value, valueUnit);
+  }
+
+  public static Temperature createTemperature(Integer value, Unit<Temperature> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Temperature(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Temperature createTemperature(T value, Unit<Temperature> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Temperature(value.getNumberValue(), valueUnit);
+  }
+
+  // Time
+  public static Time createTime(Double value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static Time createTime(Integer value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value, valueUnit);
+  }
+
+  public static <T extends PrimitiveNumber> Time createTime(T value, Unit<Time> valueUnit) {
+    if (value == null) {
+      return null;
+    }
+    return new Time(value.getNumberValue(), valueUnit);
   }
 
 }

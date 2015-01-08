@@ -34,7 +34,6 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -49,7 +48,6 @@ import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
@@ -57,13 +55,11 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/CellWorxReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/CellWorxReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CellWorxReader extends FormatReader {
 
@@ -103,6 +99,7 @@ public class CellWorxReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "pnl") || checkSuffix(name, "htd")) {
       return super.isThisType(name, open);
@@ -127,6 +124,7 @@ public class CellWorxReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -162,6 +160,7 @@ public class CellWorxReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -204,6 +203,7 @@ public class CellWorxReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -227,6 +227,7 @@ public class CellWorxReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // first, make sure that we have the .htd file
 
@@ -607,8 +608,10 @@ public class CellWorxReader extends FormatReader {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
               int field = fieldRow * fieldMap[fieldRow].length + fieldCol;
-              store.setWellSamplePositionX(posX, 0, well, field);
-              store.setWellSamplePositionY(posY, 0, well, field);
+              Length px = new Length(posX, UNITS.REFERENCEFRAME);
+              Length py = new Length(posY, UNITS.REFERENCEFRAME);
+              store.setWellSamplePositionX(px, 0, well, field);
+              store.setWellSamplePositionY(py, 0, well, field);
 
               addGlobalMetaList("X position for position", axes[0]);
               addGlobalMetaList("Y position for position", axes[1]);
@@ -623,8 +626,8 @@ public class CellWorxReader extends FormatReader {
           Double xSize = new Double(value.substring(0, s).trim());
           Double ySize = new Double(value.substring(s + 1, end).trim());
 
-          PositiveFloat x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
-          PositiveFloat y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
+          Length x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
+          Length y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
 
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
@@ -678,10 +681,8 @@ public class CellWorxReader extends FormatReader {
               Double emission = new Double(em);
               Double excitation = new Double(ex);
 
-              PositiveFloat exWave =
-                FormatTools.getExcitationWavelength(excitation);
-              PositiveFloat emWave =
-                FormatTools.getEmissionWavelength(emission);
+              Length exWave = FormatTools.getExcitationWavelength(excitation);
+              Length emWave = FormatTools.getEmissionWavelength(emission);
 
               for (int field=0; field<fieldCount; field++) {
                 if (exWave != null) {

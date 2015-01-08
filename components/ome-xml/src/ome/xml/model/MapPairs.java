@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -40,9 +40,10 @@ package ome.xml.model;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import ome.xml.model.AbstractOMEModelObject;
@@ -58,10 +59,6 @@ import org.w3c.dom.Element;
 /**
  * @author rleigh
  *
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MapPairs.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MapPairs.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MapPairs implements OMEModelObject {
 
@@ -97,24 +94,27 @@ public class MapPairs implements OMEModelObject {
     public static final String MAPNAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/" + VERSION;
     public static final String PAIRSNAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
 
-    private Map<String, String> map;
+    private List<MapPair> pairs;
 
     /** Default constructor. */
     public MapPairs()
     {
-        map = new HashMap<String, String>();
+        pairs = new ArrayList<MapPair>();
     }
 
-    /** Construct from an existing Map. */
-    public MapPairs(Map<String, String> m)
+    /** Copies {@link List} argument */
+    public MapPairs(List<MapPair> pairs)
     {
-       map = new HashMap<String, String>(m);
+    	this();
+        if (pairs != null) {
+            this.pairs.addAll(pairs);	
+        }
     }
 
     /** Copy constructor. */
     public MapPairs(MapPairs orig)
     {
-        map = new HashMap<String, String>(orig.getMap());
+        this(orig.pairs);
     }
 
     /**
@@ -132,16 +132,12 @@ public class MapPairs implements OMEModelObject {
         update(element, model);
     }
 
-    public Map<String, String> getMap()
+    public List<MapPair> getPairs()
     {
-        return map;
+        return Collections.unmodifiableList(pairs);
     }
 
-    public void setMap(Map<String, String> m)
-    {
-       map = new HashMap<String, String>(m);
-    }
-
+    @Override
     public Element asXMLElement(Document document)
     {
         return asXMLElement(document, null);
@@ -157,12 +153,10 @@ public class MapPairs implements OMEModelObject {
             pairs = document.createElementNS(MAPNAMESPACE, "Value");
         }
 
-        Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<String, String> entry = entries.next();
+        for (MapPair entry : this.pairs) {
 
             Element pair = document.createElementNS(PAIRSNAMESPACE, "M");
-            pair.setAttribute("K", entry.getKey());
+            pair.setAttribute("K", entry.getName());
             pair.setTextContent(entry.getValue());
             pairs.appendChild(pair);
         }
@@ -170,6 +164,7 @@ public class MapPairs implements OMEModelObject {
         return pairs;
     }
 
+    @Override
     public void update(Element element, OMEModel model) throws EnumerationException
     {
         String tagName = element.getTagName();
@@ -181,13 +176,14 @@ public class MapPairs implements OMEModelObject {
             if (child.hasAttribute("K")) {
                 String key = child.getAttribute("K");
                 String value = child.getTextContent();
-                map.put(key, value);
+                pairs.add(new MapPair(key, value));
             } else {
                 LOGGER.debug("MapPairs entry M does not contain key attribute K");
             }
         }
     }
 
+    @Override
     public boolean link(Reference reference, OMEModelObject o)
     {
         return false;

@@ -79,9 +79,9 @@ function(ome_version)
     endif (git_log_fail)
     string(REPLACE "\n" "" commit_date_unix "${commit_date_unix}")
 
-    set(OME_VCS_REVISION ${commit_hash} PARENT_SCOPE)
-    set(OME_VCS_DATE ${commit_date_unix} PARENT_SCOPE)
-    set(OME_VCS_DATE_S ${commit_date_string} PARENT_SCOPE)
+    set(OME_VCS_REVISION ${commit_hash})
+    set(OME_VCS_DATE ${commit_date_unix})
+    set(OME_VCS_DATE_S ${commit_date_string})
 
     execute_process(COMMAND "${GIT_EXECUTABLE}" describe --match=v[0-9]* --exact
                     OUTPUT_VARIABLE describe_exact_output
@@ -109,6 +109,10 @@ function(ome_version)
       endif(NOT describe_fail)
     endif(NOT describe_exact_fail)
   endif(EXISTS "${PROJECT_SOURCE_DIR}/cpp/cmake/GitVersion.cmake")
+
+  set(OME_VCS_REVISION "${OME_VCS_REVISION}" PARENT_SCOPE)
+  set(OME_VCS_DATE "${OME_VCS_DATE}" PARENT_SCOPE)
+  set(OME_VCS_DATE_S "${OME_VCS_DATE_S}" PARENT_SCOPE)
 
   string(REGEX MATCH "^v(.*)" commit_valid1 ${OME_VERSION})
   if (commit_valid1)

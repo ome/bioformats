@@ -1596,7 +1596,8 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = OME_HAVE_MEMORY \
                          OME_HAVE_TUPLE \
                          OME_HAVE_NOEXCEPT \
-                         OME_HAVE_BOOST_FORMAT
+                         OME_HAVE_BOOST_FORMAT \
+                         OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

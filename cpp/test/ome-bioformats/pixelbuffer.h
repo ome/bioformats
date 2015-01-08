@@ -39,16 +39,15 @@
 #ifndef TEST_PIXELBUFFER_H
 #define TEST_PIXELBUFFER_H
 
+#include <ome/bioformats/PixelBuffer.h>
+
+#include <ome/test/test.h>
+
+#include "pixel.h"
+
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
-
-#include <ome/bioformats/PixelBuffer.h>
-
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
-
-#include "pixel.h"
 
 using ome::bioformats::Dimensions;
 using ome::bioformats::PixelEndianProperties;
@@ -430,6 +429,7 @@ TYPED_TEST_P(PixelBufferType, SetIndex)
 
 TYPED_TEST_P(PixelBufferType, SetIndexDeathTest)
 {
+#ifndef NDEBUG
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
   PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
@@ -442,6 +442,7 @@ TYPED_TEST_P(PixelBufferType, SetIndexDeathTest)
 
   ASSERT_DEATH_IF_SUPPORTED(buf.at(badidx) = 4U, "Assertion.*failed");
   ASSERT_DEATH_IF_SUPPORTED(cbuf.at(badidx), "Assertion.*failed");
+#endif // ! NDEBUG
 }
 
 TYPED_TEST_P(PixelBufferType, StreamInput)

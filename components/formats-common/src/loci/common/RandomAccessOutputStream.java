@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,10 +42,6 @@ import java.nio.ByteOrder;
 /**
  * RandomAccessOutputStream provides methods for writing to files and
  * byte arrays.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/RandomAccessOutputStream.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/RandomAccessOutputStream.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class RandomAccessOutputStream extends OutputStream implements DataOutput, Closeable
 {
@@ -74,6 +70,11 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
    */
   public RandomAccessOutputStream(IRandomAccess handle) {
     outputFile = handle;
+  }
+
+  /** Constructs a random access stream around the given byte array. */
+  public RandomAccessOutputStream(byte[] array) throws IOException {
+    this(new ByteArrayHandle(array));
   }
 
   // -- RandomAccessOutputStream API methods --
@@ -162,12 +163,14 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput#write(byte[]) */
+  @Override
   public void write(byte[] b) throws IOException {
     flush();
     outputFile.write(b);
   }
 
   /* @see java.io.DataOutput#write(byte[], int, int) */
+  @Override
   public void write(byte[] b, int off, int len) throws IOException {
     flush();
     outputFile.write(b, off, len);
@@ -195,72 +198,84 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
   }
 
   /* @see java.io.DataOutput#write(int) */
+  @Override
   public void write(int b) throws IOException {
     flush();
     outputFile.write(b);
   }
 
   /* @see java.io.DataOutput#writeBoolean(boolean) */
+  @Override
   public void writeBoolean(boolean v) throws IOException {
     flush();
     outputFile.writeBoolean(v);
   }
 
   /* @see java.io.DataOutput#writeByte(int) */
+  @Override
   public void writeByte(int v) throws IOException {
     flush();
     outputFile.writeByte(v);
   }
 
   /* @see java.io.DataOutput#writeBytes(String) */
+  @Override
   public void writeBytes(String s) throws IOException {
     flush();
     outputFile.writeBytes(s);
   }
 
   /* @see java.io.DataOutput#writeChar(int) */
+  @Override
   public void writeChar(int v) throws IOException {
     flush();
     outputFile.writeChar(v);
   }
 
   /* @see java.io.DataOutput#writeChars(String) */
+  @Override
   public void writeChars(String s) throws IOException {
     flush();
     outputFile.writeChars(s);
   }
 
   /* @see java.io.DataOutput#writeDouble(double) */
+  @Override
   public void writeDouble(double v) throws IOException {
     flush();
     outputFile.writeDouble(v);
   }
 
   /* @see java.io.DataOutput#writeFloat(float) */
+  @Override
   public void writeFloat(float v) throws IOException {
     flush();
     outputFile.writeFloat(v);
   }
 
   /* @see java.io.DataOutput#writeInt(int) */
+  @Override
   public void writeInt(int v) throws IOException {
     flush();
     outputFile.writeInt(v);
   }
 
   /* @see java.io.DataOutput#writeLong(long) */
+  @Override
   public void writeLong(long v) throws IOException {
     flush();
     outputFile.writeLong(v);
   }
 
   /* @see java.io.DataOutput#writeShort(int) */
+  @Override
   public void writeShort(int v) throws IOException {
     flush();
     outputFile.writeShort(v);
   }
 
   /* @see java.io.DataOutput#writeUTF(String) */
+  @Override
   public void writeUTF(String str) throws IOException {
     flush();
     outputFile.writeUTF(str);
@@ -269,12 +284,14 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
   // -- OutputStream API methods --
 
   /* @see java.io.OutputStream#close() */
+  @Override
   public void close() throws IOException {
     flush();
     outputFile.close();
   }
 
   /* @see java.io.OutputStream#flush() */
+  @Override
   public void flush() throws IOException {
     if (dirtyByte) {
       outputFile.writeByte(currentByte);

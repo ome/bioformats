@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,15 +45,13 @@ import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * BMPReader is the file format reader for Microsoft Bitmap (BMP) files.
  * See http://astronomy.swin.edu.au/~pbourke/dataformats/bmp/ for a nice
  * description of the BMP file format.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BMPReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/BMPReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -96,6 +94,7 @@ public class BMPReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 2;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -103,6 +102,7 @@ public class BMPReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return palette;
@@ -111,6 +111,7 @@ public class BMPReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -121,7 +122,8 @@ public class BMPReader extends FormatReader {
     }
 
     int rowsToSkip = invertY ? y : getSizeY() - (h + y);
-    int rowLength = getSizeX() * (isIndexed() ? 1 : getSizeC());
+    int rowLength = (getSizeX() * (isIndexed() ? 1 : getSizeC()) * bpp) / 8;
+
     in.seek(global + rowsToSkip * rowLength);
 
     int pad = ((rowLength * bpp) / 8) % 2;
@@ -131,7 +133,7 @@ public class BMPReader extends FormatReader {
     if (bpp >= 8) planeSize *= (bpp / 8);
     else planeSize /= (8 / bpp);
     planeSize += pad * h;
-    if (planeSize + in.getFilePointer() > in.length()) {
+    if (planeSize + in.getFilePointer() + rowsToSkip * pad > in.length()) {
       planeSize -= (pad * h);
 
       // sometimes we have RGB images with a single padding byte
@@ -180,6 +182,7 @@ public class BMPReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -193,6 +196,7 @@ public class BMPReader extends FormatReader {
   // -- Internel FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -328,8 +332,8 @@ public class BMPReader extends FormatReader {
       double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
       double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(correctedX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(correctedY);
+      Length sizeX = FormatTools.getPhysicalSizeX(correctedX);
+      Length sizeY = FormatTools.getPhysicalSizeY(correctedY);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

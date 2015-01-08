@@ -186,6 +186,7 @@ namespace ome
          * @param mode the file open mode (@c r to read, @c w to write
          * or @c a to append).
          * @returns the the open TIFF.
+         * @throws an Exception on failure.
          */
         static std::shared_ptr<TIFF>
         open(const std::string& filename,
@@ -230,6 +231,26 @@ namespace ome
          */
         std::shared_ptr<IFD>
         getDirectoryByOffset(offset_type offset) const;
+
+        /**
+         * Get the currently active IFD.
+         *
+         * @returns the IFD.
+         * @throws an Exception if the IFD could not be accessed.
+         */
+        std::shared_ptr<IFD>
+        getCurrentDirectory() const;
+
+        /**
+         * Write the currently active IFD.
+         *
+         * The pixel data accompanying this IFD must have been written
+         * using IFD::writeImage() prior to calling this method, or
+         * else the TIFF tags for strip and tile offsets will be
+         * incomplete and the file will fail to read.
+         */
+        void
+        writeCurrentDirectory();
 
         /**
          * Get the underlying libtiff @c \::TIFF instance.

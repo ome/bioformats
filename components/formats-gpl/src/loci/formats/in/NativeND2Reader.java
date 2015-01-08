@@ -51,6 +51,13 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.
  * The JAI ImageIO library is required to use this reader; it is available from
@@ -60,10 +67,6 @@ import ome.xml.model.primitives.PositiveInteger;
  * (2) the JAI jar file precedes JJ2000 in the classpath.
  *
  * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NativeND2Reader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NativeND2Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NativeND2Reader extends FormatReader {
 
@@ -93,9 +96,9 @@ public class NativeND2Reader extends FormatReader {
 
   private long xOffset, yOffset, zOffset;
 
-  private ArrayList<Double> posX;
-  private ArrayList<Double> posY;
-  private ArrayList<Double> posZ;
+  private ArrayList<Length> posX;
+  private ArrayList<Length> posY;
+  private ArrayList<Length> posZ;
   private ArrayList<Double> exposureTime = new ArrayList<Double>();
 
   private Hashtable<String, Integer> channelColors;
@@ -130,6 +133,7 @@ public class NativeND2Reader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -139,6 +143,7 @@ public class NativeND2Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     if (FormatTools.getBytesPerPixel(getPixelType()) != 1 ||
       !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
@@ -171,6 +176,7 @@ public class NativeND2Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() {
     if (FormatTools.getBytesPerPixel(getPixelType()) != 2 ||
       !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
@@ -205,6 +211,7 @@ public class NativeND2Reader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -303,6 +310,7 @@ public class NativeND2Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -333,6 +341,7 @@ public class NativeND2Reader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -1093,7 +1102,8 @@ public class NativeND2Reader extends FormatReader {
       if (posX.size() == 0 && xOffset != 0) {
         in.seek(xOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double x = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length x = new Length(number, UNITS.REFERENCEFRAME);
           if (!posX.contains(x)) {
             uniqueX++;
           }
@@ -1103,7 +1113,8 @@ public class NativeND2Reader extends FormatReader {
       if (posY.size() == 0 && yOffset != 0) {
         in.seek(yOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double y = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length y = new Length(number, UNITS.REFERENCEFRAME);
           if (!posY.contains(y)) {
             uniqueY++;
           }
@@ -1113,12 +1124,15 @@ public class NativeND2Reader extends FormatReader {
       if (posZ.size() == 0 && zOffset != 0) {
         in.seek(zOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double z = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length z = new Length(number, UNITS.REFERENCEFRAME);
           if (!posZ.contains(z)) {
             boolean unique = true;
             for (int q=0; q<posZ.size(); q++) {
               // account for potential stage drift
-              if (Math.abs(z - posZ.get(q)) <= 0.05) {
+              final double z1 = z.value(UNITS.REFERENCEFRAME).doubleValue();
+              final double z2 = posZ.get(q).value(UNITS.REFERENCEFRAME).doubleValue();
+              if (Math.abs(z1 - z2) <= 0.05) {
                 unique = false;
                 break;
               }
@@ -1142,6 +1156,18 @@ public class NativeND2Reader extends FormatReader {
           core.add(core.get(0));
         }
         numSeries = core.size();
+      }
+
+      // reset the series count if we're confident that the image count
+      // covers all of the offsets; this prevents too much memory being used
+      // when the offsets array is allocated
+      if (getImageCount() == imageOffsets.size() && numSeries > 1 &&
+        getSizeC() == 1)
+      {
+        CoreMetadata first = core.get(0);
+        core.clear();
+        core.add(first);
+        numSeries = 1;
       }
 
       offsets = new long[numSeries][getImageCount()];
@@ -1595,13 +1621,12 @@ public class NativeND2Reader extends FormatReader {
             value = in.readLong();
             break;
           case (8): // String
-            //in.read(); // size of string
-            long start = in.getFilePointer();
-            value = DataTools.stripString(in.findString("\0\0\0"));
-            long end = in.getFilePointer();
-            if ((end - start) % 2 != 0) {
-              in.skipBytes(1);
+            char currentChar = 0;
+            StringBuilder resultString = new StringBuilder();
+            while((currentChar = in.readChar()) != 0) {
+                resultString.append(currentChar);
             }
+            value = resultString.toString();
             break;
           case (9): // ByteArray
             long length = in.readLong();
@@ -1694,7 +1719,7 @@ public class NativeND2Reader extends FormatReader {
       ArrayList<String> posNames = handler.getPositionNames();
       for (int i=0; i<getSeriesCount(); i++) {
         String suffix =
-          i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
+          (i < posNames.size() && !posNames.get(i).equals("")) ? posNames.get(i) : "(series " + (i + 1) + ")";
         String name = filename + " " + suffix;
         store.setImageName(name.trim(), i);
       }
@@ -1757,23 +1782,23 @@ public class NativeND2Reader extends FormatReader {
         double sizeZ = handler.getPixelSizeZ();
 
         if (trueSizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
+          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(trueSizeX), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+          Length size = FormatTools.getPhysicalSizeX(sizeX);
           if (size != null) {
             store.setPixelsPhysicalSizeX(size, i);
           }
         }
         if (trueSizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeY), i);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(trueSizeY), i);
         }
         else if (trueSizeX > 0) {
           // if the X size is set, assume X and Y are equal
-          store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeX), i);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(trueSizeX), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+          Length size = FormatTools.getPhysicalSizeY(sizeY);
           if (size == null) {
             // if the X size is set, assume X and Y are equal
             size = FormatTools.getPhysicalSizeY(sizeX);
@@ -1783,10 +1808,10 @@ public class NativeND2Reader extends FormatReader {
           }
         }
         if (trueSizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(trueSizeZ), i);
+          store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(trueSizeZ), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+          Length size = FormatTools.getPhysicalSizeZ(sizeZ);
           if (size != null) {
             store.setPixelsPhysicalSizeZ(size, i);
           }
@@ -1809,14 +1834,14 @@ public class NativeND2Reader extends FormatReader {
             stampIndex = coords[0];
           }
           double stamp = tsT.get(stampIndex).doubleValue();
-          store.setPlaneDeltaT(stamp, i, n);
+          store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
 
           int index = i * getSizeC() + coords[1];
           if (exposureTime.size() == getSizeC()) {
             index = coords[1];
           }
-          if (exposureTime != null && index < exposureTime.size()) {
-            store.setPlaneExposureTime(exposureTime.get(index), i, n);
+          if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
+            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.S), i, n);
           }
         }
       }
@@ -1897,7 +1922,7 @@ public class NativeND2Reader extends FormatReader {
 
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
-          store.setChannelPinholeSize(pinholeSize, i, c);
+          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), i, c);
         }
         if (index < channelNames.size()) {
           String channelName = channelNames.get(index);
@@ -1913,7 +1938,7 @@ public class NativeND2Reader extends FormatReader {
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Double value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          PositiveFloat emission = FormatTools.getEmissionWavelength(value);
+          Length emission = FormatTools.getEmissionWavelength(value);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);
           }
@@ -1922,7 +1947,7 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          PositiveFloat excitation =
+          Length excitation =
             FormatTools.getExcitationWavelength(exWave.get(index));
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);
@@ -1936,7 +1961,8 @@ public class NativeND2Reader extends FormatReader {
           store.setDetectorSettingsGain(gain.get(index), i, c);
         }
         if (index < speed.size()) {
-          store.setDetectorSettingsReadOutRate(speed.get(index), i, c);
+          store.setDetectorSettingsReadOutRate(
+                  new Frequency(speed.get(index), UNITS.HZ), i, c);
         }
         store.setDetectorSettingsID(detectorID, i, c);
       }
@@ -1945,14 +1971,16 @@ public class NativeND2Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       if (i * getSizeC() < temperature.size()) {
         Double temp = temperature.get(i * getSizeC());
-        store.setImagingEnvironmentTemperature(temp, i);
+        store.setImagingEnvironmentTemperature(
+                new Temperature(temp, UNITS.DEGREEC), i);
       }
     }
 
     // populate DetectorSettings
     Double voltage = handler.getVoltage();
     if (voltage != null) {
-      store.setDetectorSettingsVoltage(voltage, 0, 0);
+      store.setDetectorSettingsVoltage(
+              new ElectricPotential(voltage, UNITS.V), 0, 0);
     }
 
     // populate Objective

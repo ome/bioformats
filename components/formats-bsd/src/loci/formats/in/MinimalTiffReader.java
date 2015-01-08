@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -60,10 +60,6 @@ import loci.formats.tiff.TiffParser;
  * MinimalTiffReader is the superclass for file format readers compatible with
  * or derived from the TIFF 6.0 file format.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MinimalTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MinimalTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class MinimalTiffReader extends FormatReader {
@@ -88,7 +84,7 @@ public class MinimalTiffReader extends FormatReader {
    */
   protected List<IFDList> subResolutionIFDs;
 
-  protected TiffParser tiffParser;
+  protected transient TiffParser tiffParser;
 
   protected boolean equalStrips = false;
 
@@ -138,11 +134,13 @@ public class MinimalTiffReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return new TiffParser(stream).isValidHeader();
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
@@ -179,6 +177,7 @@ public class MinimalTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
@@ -209,6 +208,7 @@ public class MinimalTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.FormatReader#getThumbSizeX() */
+  @Override
   public int getThumbSizeX() {
     if (thumbnailIFDs != null && thumbnailIFDs.size() > 0) {
       try {
@@ -222,6 +222,7 @@ public class MinimalTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.FormatReader#getThumbSizeY() */
+  @Override
   public int getThumbSizeY() {
     if (thumbnailIFDs != null && thumbnailIFDs.size() > 0) {
       try {
@@ -235,10 +236,14 @@ public class MinimalTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.FormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (thumbnailIFDs == null || thumbnailIFDs.size() <= no) {
       return super.openThumbBytes(no);
+    }
+    if (tiffParser == null) {
+      initTiffParser();
     }
     tiffParser.fillInIFD(thumbnailIFDs.get(no));
     int[] bps = null;
@@ -268,6 +273,7 @@ public class MinimalTiffReader extends FormatReader {
   /**
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -283,6 +289,13 @@ public class MinimalTiffReader extends FormatReader {
         ifd = subResolutionIFDs.get(no).get(getCoreIndex() - 1);
       }
       setResolutionLevel(ifd);
+    }
+
+    if (tiffParser == null) {
+      if (in == null) {
+        in = new RandomAccessInputStream(getCurrentFile());
+      }
+      initTiffParser();
     }
 
     tiffParser.getSamples(ifd, buf, x, y, w, h);
@@ -339,6 +352,7 @@ public class MinimalTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -365,6 +379,7 @@ public class MinimalTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -377,6 +392,7 @@ public class MinimalTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -406,12 +422,11 @@ public class MinimalTiffReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    tiffParser = new TiffParser(in);
-    tiffParser.setDoCaching(false);
-    tiffParser.setUse64BitOffsets(use64Bit);
+    initTiffParser();
     Boolean littleEndian = tiffParser.checkHeader();
     if (littleEndian == null) {
       throw new FormatException("Invalid TIFF file");
@@ -592,9 +607,29 @@ public class MinimalTiffReader extends FormatReader {
    * IFD if <code>currentSeries > 0</code>.
    */
   protected void setResolutionLevel(IFD ifd) {
+    if (tiffParser == null) {
+      initTiffParser();
+    }
     j2kCodecOptions.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     LOGGER.debug("Using JPEG 2000 resolution level {}",
         j2kCodecOptions.resolution);
     tiffParser.setCodecOptions(j2kCodecOptions);
   }
+
+
+  /** Reinitialize the underlying TiffParser. */
+  protected void initTiffParser() {
+    if (in == null) {
+      try {
+        in = new RandomAccessInputStream(getCurrentFile());
+      }
+      catch (IOException e) {
+        LOGGER.error("Could not initialize stream", e);
+      }
+    }
+    tiffParser = new TiffParser(in);
+    tiffParser.setDoCaching(false);
+    tiffParser.setUse64BitOffsets(use64Bit);
+  }
+
 }

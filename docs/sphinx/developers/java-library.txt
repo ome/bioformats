@@ -60,6 +60,10 @@ all be found in our :sourcedir:`Git repository <jar>`.
 Examples of usage
 -----------------
 
+:source:`MinimumWriter <components/formats-gpl/utils/MinimumWriter.java>` -
+A command line utility demonstrating the minimum amount of metadata needed to
+write a file.
+
 :source:`ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` -
 A simple command line tool for converting between formats.
 
@@ -67,10 +71,6 @@ A simple command line tool for converting between formats.
 A more involved command line utility for thoroughly reading an input file,
 printing some information about it, and displaying the pixels
 onscreen using the Bio-Formats viewer.
-
-:source:`MinimumWriter <components/formats-gpl/utils/MinimumWriter.java>` -
-A command line utility demonstrating the minimum amount of metadata needed to
-write a file.
 
 :source:`PrintTimestamps <components/formats-gpl/utils/PrintTimestamps.java>` -
 A command line example demonstrating how to extract timestamps from a file.
@@ -93,8 +93,8 @@ A Note on Java Web Start (bioformats\_package.jar vs. formats-gpl.jar)
 ----------------------------------------------------------------------
 
 To use Bio-Formats with your Java Web Start application, we recommend
-using **formats-gpl.jar** rather than **bioformats\_package.jar**—the latter is
-merely a bundle of **formats-gpl.jar** plus all its optional
+using **formats-gpl.jar** rather than **bioformats\_package.jar**—the latter
+is merely a bundle of **formats-gpl.jar** plus all its optional
 dependencies.
 
 The **bioformats\_package.jar** bundle is intended as a convenience (e.g. to
@@ -128,3 +128,4 @@ For an explicit enumeration of all the optional libraries included in
 :source:`ant/toplevel.properties <ant/toplevel.properties>`
 file of the distribution. You can also read our notes about each in the
 source distribution's Ant :source:`build.xml <build.xml#L240>` script.
+

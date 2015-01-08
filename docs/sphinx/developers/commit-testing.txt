@@ -1,9 +1,9 @@
-Testing individual commits (internal developers)
-================================================
+Testing code changes
+====================
 
 At the bottom of many commit messages in
-`https://github.com/openmicroscopy/bioformats <https://github.com/openmicroscopy/bioformats>`_,
-you will find a few lines similar to this:
+https://github.com/openmicroscopy/bioformats, you will find a few lines
+similar to this:
 
 ::
 
@@ -61,7 +61,7 @@ output similar to this:
     test-automated:
        [testng] [Parser] Running:
        [testng]   Bio-Formats software test suite
-       [testng] 
+       [testng]
        [testng] Scanning for files...
        [testng] Building list of tests...
        [testng] Ready to test 490 files
@@ -75,7 +75,7 @@ and then eventually:
        [testng] Bio-Formats software test suite
        [testng] Total tests run: 19110, Failures: 0, Skips: 0
        [testng] ===============================================
-       [testng] 
+       [testng]
 
     BUILD SUCCESSFUL
     Total time: 16 minutes 42 seconds
@@ -84,10 +84,11 @@ Each of the dots represents a single passed test; a '-' is a skipped
 test, and an 'F' is a failed test. This is mostly just for your
 amusement if you happen to be staring at the console while the tests
 run, as a more detailed report is logged to
-bio-formats-software-test-$DATE.log (where "$DATE" is the date on which the tests
+:file:`bio-formats-software-test-$DATE.log`
+(where "$DATE" is the date on which the tests
 started in "yyyy-MM-dd_hh-mm-ss" format).
 
 If Ant reports that the build was successful, then there is nothing that
 you need to do. Otherwise, it is helpful if you can provide the command,
 branch name, number of failures at the bottom of the Ant output, and the
-bio-formats-software-test-\*.log file.
+:file:`bio-formats-software-test-\*.log` file.

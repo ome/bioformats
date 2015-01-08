@@ -57,15 +57,16 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * LeicaReader is the file format reader for Leica files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/LeicaReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/LeicaReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -169,11 +170,13 @@ public class LeicaReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, LEI_SUFFIX)) return true;
     if (!checkSuffix(name, TiffReader.TIFF_SUFFIXES) &&
@@ -202,6 +205,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -210,6 +214,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -227,6 +232,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -244,6 +250,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
@@ -251,6 +258,7 @@ public class LeicaReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -281,6 +289,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> v = new Vector<String>();
@@ -296,6 +305,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (tiff != null) tiff.close(fileOnly);
@@ -325,6 +335,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     if (tileWidth != null && tileWidth[getSeries()] != 0) {
@@ -334,6 +345,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     if (tileHeight != null && tileHeight[getSeries()] != 0) {
@@ -345,6 +357,7 @@ public class LeicaReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     close();
 
@@ -703,9 +716,9 @@ public class LeicaReader extends FormatReader {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizes[i][0]);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizes[i][1]);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizes[i][2]);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizes[i][0]);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizes[i][1]);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizes[i][2]);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
@@ -717,16 +730,16 @@ public class LeicaReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       if ((int) physicalSizes[i][4] > 0) {
-        store.setPixelsTimeIncrement(physicalSizes[i][4], i);
+        store.setPixelsTimeIncrement(new Time(physicalSizes[i][4], UNITS.S), i);
       }
 
       for (int j=0; j<ms.imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
           double elapsedTime = (double) (time - firstPlane) / 1000;
-          store.setPlaneDeltaT(elapsedTime, i, j);
+          store.setPlaneDeltaT(new Time(elapsedTime, UNITS.S), i, j);
           if (exposureTime[i] > 0) {
-            store.setPlaneExposureTime(exposureTime[i], i, j);
+            store.setPlaneExposureTime(new Time(exposureTime[i], UNITS.S), i, j);
           }
         }
       }
@@ -904,7 +917,10 @@ public class LeicaReader extends FormatReader {
       // grab the file patterns
       Vector<String> filePatterns = new Vector<String>();
       for (String q : listing) {
-        Location l = new Location(dirPrefix, q).getAbsoluteFile();
+        Location l = new Location(q).getAbsoluteFile();
+        if (!l.exists()) {
+          l = new Location(dirPrefix, q).getAbsoluteFile();
+        }
         FilePattern pattern = new FilePattern(l);
         if (!pattern.isValid()) continue;
 
@@ -1414,22 +1430,21 @@ public class LeicaReader extends FormatReader {
         int channel = Integer.parseInt(tokens[1].substring(ndx + 1)) - 1;
 
         if (tokens[2].equals("Wavelength")) {
-          Integer wavelength = new Integer((int) Double.parseDouble(data));
+          Double wavelength = Double.parseDouble(data);
           store.setFilterModel(tokens[1], series, channel);
 
           String filterID = MetadataTools.createLSID("Filter", series, channel);
           store.setFilterID(filterID, series, channel);
 
           int index = activeChannelIndices.indexOf(new Integer(channel));
-          CoreMetadata ms = core.get(series);
-          if (index >= 0 && index < ms.sizeC) {
+          if (index >= 0 && index < getEffectiveSizeC()) {
             if (!filterRefPopulated[series][index]) {
               store.setLightPathEmissionFilterRef(filterID, series, index, 0);
               filterRefPopulated[series][index] = true;
             }
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
-              PositiveInteger cutIn = FormatTools.getCutIn(wavelength);
+              Length cutIn = FormatTools.getCutIn(wavelength);
               if (cutIn != null) {
                 store.setTransmittanceRangeCutIn(cutIn, series, channel);
               }
@@ -1437,7 +1452,7 @@ public class LeicaReader extends FormatReader {
             }
             else if (tokens[3].equals("1") && !cutOutPopulated[series][index])
             {
-              PositiveInteger cutOut = FormatTools.getCutOut(wavelength);
+              Length cutOut = FormatTools.getCutOut(wavelength);
               if (cutOut != null) {
                 store.setTransmittanceRangeCutOut(cutOut, series, channel);
               }
@@ -1461,7 +1476,9 @@ public class LeicaReader extends FormatReader {
         // NB: there is only one stage position specified for each series
         if (tokens[2].equals("XPos")) {
           for (int q=0; q<ms.imageCount; q++) {
-            store.setPlanePositionX(new Double(data), series, q);
+            final Double number = Double.valueOf(data);
+            final Length length = new Length(number, UNITS.REFERENCEFRAME);
+            store.setPlanePositionX(length, series, q);
             if (q == 0) {
               addGlobalMetaList("X position for position", data);
             }
@@ -1469,24 +1486,28 @@ public class LeicaReader extends FormatReader {
         }
         else if (tokens[2].equals("YPos")) {
           for (int q=0; q<ms.imageCount; q++) {
-            store.setPlanePositionY(new Double(data), series, q);
+            final Double number = Double.valueOf(data);
+            final Length length = new Length(number, UNITS.REFERENCEFRAME);
+            store.setPlanePositionY(length, series, q);
             if (q == 0) {
               addGlobalMetaList("Y position for position", data);
             }
           }
         }
         else if (tokens[2].equals("ZPos")) {
+          final Double number = Double.valueOf(data);
+          final Length length = new Length(number, UNITS.REFERENCEFRAME);
           store.setStageLabelName("Position", series);
-          store.setStageLabelZ(new Double(data), series);
+          store.setStageLabelZ(length, series);
           addGlobalMetaList("Z position for position", data);
         }
       }
       else if (tokens[0].equals("CScanActuator") &&
         tokens[1].equals("Z Scan Actuator") && tokens[2].equals("Position"))
       {
-        double pos = Double.parseDouble(data) * 1000000;
+        final double pos = Double.parseDouble(data) * 1000000;
         store.setStageLabelName("Position", series);
-        store.setStageLabelZ(pos, series);
+        store.setStageLabelZ(new Length(pos, UNITS.REFERENCEFRAME), series);
         addGlobalMetaList("Z position for position", pos);
       }
 
@@ -1520,7 +1541,9 @@ public class LeicaReader extends FormatReader {
       // link Detector to Image, if the detector was actually used
       if (detector.active) {
         store.setDetectorOffset(detector.offset, series, nextDetector);
-        store.setDetectorVoltage(detector.voltage, series, nextDetector);
+        store.setDetectorVoltage(
+                new ElectricPotential(detector.voltage, UNITS.V), series,
+                nextDetector);
         store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
 
         String detectorID =
@@ -1571,20 +1594,20 @@ public class LeicaReader extends FormatReader {
         }
         if (channel < emWaves[i].size()) {
           Double wave = new Double(emWaves[i].get(channel).toString());
-          PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
+          Length emission = FormatTools.getEmissionWavelength(wave);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, channel);
           }
         }
         if (channel < exWaves[i].size()) {
           Double wave = new Double(exWaves[i].get(channel).toString());
-          PositiveFloat ex = FormatTools.getExcitationWavelength(wave);
+          Length ex = FormatTools.getExcitationWavelength(wave);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, i, channel);
           }
         }
         if (i < pinhole.length) {
-          store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);
+          store.setChannelPinholeSize(new Length(pinhole[i], UNITS.MICROM), i, channel);
         }
         if (channel < channelColor[i].length) {
           store.setChannelColor(channelColor[i][channel], i, channel);

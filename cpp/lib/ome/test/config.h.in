@@ -2,7 +2,7 @@
  * #%L
  * OME-INTERNAL C++ headers for internal use only
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2013 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,12 +36,14 @@
  * #L%
  */
 
-#ifndef OME_INTERNAL_CONFIG_H
-#define OME_INTERNAL_CONFIG_H
+#ifndef OME_TEST_CONFIG_H
+#define OME_TEST_CONFIG_H
 
 // Configuration of source and build trees
 
 #define PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}"
 #define PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}"
 
-#endif // OME_INTERNAL_CONFIG_H
+#cmakedefine EXTENDED_TESTS 1
+
+#endif // OME_TEST_CONFIG_H

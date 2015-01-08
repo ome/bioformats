@@ -38,16 +38,16 @@
 
 #include <sstream>
 #include <stdexcept>
-#include <iostream>
 
 #include <ome/bioformats/VariantPixelBuffer.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+#include <ome/test/test.h>
 
 #include "pixel.h"
 
 using ome::bioformats::PixelBuffer;
+using ome::bioformats::PixelBufferBase;
+using ome::bioformats::PixelProperties;
 using ome::bioformats::VariantPixelBuffer;
 typedef ome::xml::model::enums::PixelType PT;
 
@@ -126,6 +126,72 @@ struct AssignTestVisitor : public boost::static_visitor<>
     for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
       {
         ASSERT_EQ(*(buf.data<value_type>()+i), pixel_value<value_type>(i));
+      }
+  }
+};
+
+/*
+ * Assign buffer with (not quite) random values and check.  The
+ * purpose is to fill a buffer with a unique arrangement of values for
+ * checking storage ordering.
+ */
+struct RandomAssignTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+
+  RandomAssignTestVisitor(VariantPixelBuffer& buf):
+    buf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& v)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    VariantPixelBuffer::size_type size(buf.num_elements());
+    std::vector<value_type> data;
+    for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+      data.push_back(pixel_value<value_type>(i * 13));
+    buf.assign(data.begin(), data.end());
+
+    ASSERT_TRUE(buf.data());
+    ASSERT_TRUE(buf.data<value_type>());
+    ASSERT_TRUE(v->data());
+    for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+      {
+        ASSERT_EQ(*(buf.data<value_type>()+i), pixel_value<value_type>(i * 13));
+      }
+  }
+
+  void
+  operator() (const std::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
+  {
+    typedef PixelProperties<PT::BIT>::std_type value_type;
+
+    VariantPixelBuffer::size_type size(buf.num_elements());
+    std::vector<value_type> data;
+    // For bool, we split the range into 0 and 1 to give a useful set
+    // of values or else all would be 1.  Must not give the same
+    // ordering for a different storage order.
+    for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+      {
+        uint32_t v = i * 13; // prime multiplied
+        uint32_t s = i % 8;  // shift to select bit
+        v = (v >> s) & 1;
+        data.push_back(pixel_value<value_type>(v));
+      }
+    buf.assign(data.begin(), data.end());
+
+    ASSERT_TRUE(buf.data());
+    ASSERT_TRUE(buf.data<value_type>());
+    ASSERT_TRUE(v->data());
+    for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+      {
+        uint32_t v = i * 13; // prime multiplied
+        uint32_t s = i % 8;  // shift to select bit
+        v = (v >> s) & 1;
+        ASSERT_EQ(*(buf.data<value_type>()+i), pixel_value<value_type>(v));
       }
   }
 };
@@ -590,6 +656,127 @@ TEST_P(VariantPixelBufferTest, ConstructCopy)
   ASSERT_NE(buf1, buf2);
 }
 
+TEST_P(VariantPixelBufferTest, OperatorEquals)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf1(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true));
+  VariantPixelBuffer buf2(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true));
+
+  RandomAssignTestVisitor v1(buf1);
+  boost::apply_visitor(v1, buf1.vbuffer());
+  RandomAssignTestVisitor v2(buf2);
+  boost::apply_visitor(v2, buf2.vbuffer());
+
+  EXPECT_TRUE(buf1 == buf2);
+  EXPECT_FALSE(buf1 != buf2);
+}
+
+TEST_P(VariantPixelBufferTest, OperatorEqualsIncompatibleTypes)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf1(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true));
+  VariantPixelBuffer buf2(boost::extents[5][2][3][4][1][3][1][1][1],
+                          (params.type == PT::UINT8 ? PT::UINT16 : PT::UINT8),
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true));
+
+  RandomAssignTestVisitor v1(buf1);
+  boost::apply_visitor(v1, buf1.vbuffer());
+  RandomAssignTestVisitor v2(buf2);
+  boost::apply_visitor(v2, buf2.vbuffer());
+
+  EXPECT_FALSE(buf1 == buf2);
+  EXPECT_FALSE(buf2 == buf1);
+  EXPECT_TRUE(buf1 != buf2);
+  EXPECT_TRUE(buf2 != buf1);
+}
+
+TEST_P(VariantPixelBufferTest, OperatorNotEquals)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf1(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true));
+  VariantPixelBuffer buf2(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, false));
+
+  RandomAssignTestVisitor v1(buf1);
+  boost::apply_visitor(v1, buf1.vbuffer());
+
+  EXPECT_TRUE(buf1 != buf2);
+  EXPECT_TRUE(buf2 != buf1);
+  EXPECT_FALSE(buf1 == buf2);
+  EXPECT_FALSE(buf2 == buf1);
+}
+
+TEST_P(VariantPixelBufferTest, OperatorNotEqualsIncompatibleTypes)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf1(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true));
+  VariantPixelBuffer buf2(boost::extents[5][2][3][4][1][3][1][1][1],
+                          (params.type == PT::UINT8 ? PT::UINT16 : PT::UINT8),
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, false));
+
+  RandomAssignTestVisitor v1(buf1);
+  boost::apply_visitor(v1, buf1.vbuffer());
+
+  EXPECT_TRUE(buf1 != buf2);
+  EXPECT_FALSE(buf1 == buf2);
+}
+
+TEST_P(VariantPixelBufferTest, OperatorAssign)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf1(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true));
+  VariantPixelBuffer buf2(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, false));
+  VariantPixelBuffer buf3(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYTCZ, true));
+  VariantPixelBuffer buf4(boost::extents[5][2][3][4][1][3][1][1][1],
+                          params.type,
+                          PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYTCZ, false));
+
+  RandomAssignTestVisitor v1(buf1);
+  boost::apply_visitor(v1, buf1.vbuffer());
+  RandomAssignTestVisitor v2(buf2);
+  boost::apply_visitor(v2, buf2.vbuffer());
+  RandomAssignTestVisitor v3(buf3);
+  boost::apply_visitor(v3, buf3.vbuffer());
+  RandomAssignTestVisitor v4(buf4);
+  boost::apply_visitor(v4, buf4.vbuffer());
+
+  EXPECT_TRUE(buf1 == buf1);
+  EXPECT_TRUE(buf1 != buf2);
+  EXPECT_TRUE(buf1 != buf3);
+  EXPECT_TRUE(buf1 != buf4);
+
+  buf2 = buf1;
+  buf3 = buf1;
+  buf4 = buf1;
+
+  EXPECT_TRUE(buf1 == buf1);
+  EXPECT_TRUE(buf1 == buf2);
+  EXPECT_TRUE(buf1 == buf3);
+  EXPECT_TRUE(buf1 == buf4);
+}
+
 TEST_P(VariantPixelBufferTest, Array)
 {
   const VariantPixelBufferTestParameters& params = GetParam();
@@ -794,6 +981,7 @@ TEST_P(VariantPixelBufferTest, SetIndex)
 
 TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 {
+#ifndef NDEBUG
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
   const VariantPixelBufferTestParameters& params = GetParam();
@@ -801,8 +989,9 @@ TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
   VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
                          params.type);
 
-  SetIndexTestVisitor v(buf);
+  SetIndexDeathTestVisitor v(buf);
   boost::apply_visitor(v, buf.vbuffer());
+#endif // ! NDEBUG
 }
 
 TEST_P(VariantPixelBufferTest, StreamInput)
@@ -848,6 +1037,7 @@ VariantPixelBufferTestParameters variant_params[] =
 #  if defined __clang__ || defined __APPLE__
 #    pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
 INSTANTIATE_TEST_CASE_P(VariantPixelBufferVariants, VariantPixelBufferTest, ::testing::ValuesIn(variant_params));

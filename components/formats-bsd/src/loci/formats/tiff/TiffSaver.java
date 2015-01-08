@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,12 +35,14 @@ package loci.formats.tiff;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
@@ -52,10 +54,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Parses TIFF data from an input source.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/TiffSaver.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/TiffSaver.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
@@ -618,7 +616,7 @@ public class TiffSaver {
       }
     }
     else if (value instanceof String) { // ASCII
-      char[] q = ((String) value).toCharArray();
+      byte[] q = ((String) value).getBytes(Charset.forName(Constants.ENCODING));
       out.writeShort(IFDType.ASCII.getCode()); // type
       writeIntValue(out, q.length + 1);
       if (q.length < dataLength) {

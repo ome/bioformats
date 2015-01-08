@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,10 +50,6 @@ import loci.formats.services.POIService;
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ZeissZVIReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ZeissZVIReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ZeissZVIReader extends BaseZeissReader {
@@ -66,8 +62,9 @@ public class ZeissZVIReader extends BaseZeissReader {
 
   // -- Fields --
 
-  protected POIService poi;
+  protected transient POIService poi;
   protected String[] files;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -79,6 +76,7 @@ public class ZeissZVIReader extends BaseZeissReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 65536;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -90,10 +88,15 @@ public class ZeissZVIReader extends BaseZeissReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     lastPlane = no;
+
+    if (poi == null) {
+      initPOIService();
+    }
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bytes * getRGBChannelCount();
@@ -165,6 +168,7 @@ public class ZeissZVIReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (poi != null) poi.close();
@@ -174,6 +178,7 @@ public class ZeissZVIReader extends BaseZeissReader {
 
   // -- Internal FormatReader API methods --
 
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     super.initFileMain(id);
@@ -200,8 +205,14 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
   }
 
+  @Override
   protected void initVars(String id) throws FormatException, IOException {
     super.initVars(id);
+    initPOIService();
+    countImages();
+  }
+
+  private void initPOIService() throws FormatException, IOException {
     try {
       ServiceFactory factory = new ServiceFactory();
       poi = factory.getInstance(POIService.class);
@@ -209,11 +220,11 @@ public class ZeissZVIReader extends BaseZeissReader {
     catch (DependencyException de) {
       throw new FormatException("POI library not found", de);
     }
-    poi.initialize(Location.getMappedId(id));
-    countImages();
+    poi.initialize(Location.getMappedId(getCurrentFile()));
   }
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void fillMetadataPass1(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass1(store);
 
@@ -315,6 +326,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
   }
 
+    @Override
     protected void fillMetadataPass3(MetadataStore store) throws FormatException, IOException {
       super.fillMetadataPass3(store);
 
@@ -347,6 +359,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
   }
 
+    @Override
     protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
       super.fillMetadataPass5(store);
 
@@ -356,10 +369,12 @@ public class ZeissZVIReader extends BaseZeissReader {
       }
     }
 
+  @Override
   protected void countImages() {
     // count number of images
     files = (String[]) poi.getDocumentList().toArray(new String[0]);
     Arrays.sort(files, new Comparator() {
+      @Override
       public int compare(Object o1, Object o2) {
         int n1 = getImageNumber((String) o1, -1);
         int n2 = getImageNumber((String) o2, -1);

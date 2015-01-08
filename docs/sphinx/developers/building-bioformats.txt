@@ -113,6 +113,16 @@ We recommend using Eclipse 4.3 (Kepler), specifically -
 You can then import the Bio-Formats source by choosing
 :menuselection:`File --> Import --> Existing Maven Projects` from the menu
 and browsing to the top-level folder of your Bio-Formats working copy.
+Alternatively, run the Eclipse Maven target with :command:`mvn
+eclipse:eclipse` to create the Eclipse project files, then use
+:menuselection:`File --> Import --> Existing Projects into Workspace`.
+
+To remove post-import errors, either close the ``ome-xml`` project or run::
+
+  ant jars && mvn generate-sources
+
+.. seealso::
+   `[ome-devel] Importing source into eclipse <http://lists.openmicroscopy.org.uk/pipermail/ome-devel/2014-March/002719.html>`_
 
 Command line
 ^^^^^^^^^^^^
@@ -136,3 +146,22 @@ in ~/.m2/repository. Simply run::
 
 With either Ant or Maven, you can use similar commands in any subproject
 folder to build just that component.
+
+Using Gradle, Maven or Ivy
+--------------------------
+
+All released :file:`.jar` artifacts may be obtained through the OME
+`Artifactory server
+<http://artifacts.openmicroscopy.org/artifactory>`_.  The "Client
+Settings" section of the Artifactory main page provides example code
+snippets for inclusion into your Gradle, Maven or Ivy project, which
+will enable the use of this repository.
+
+Example snippets for using the Bio-Formats |version|-SNAPSHOT
+``formats-gpl`` artifact are available for :download:`Gradle
+<artifactory/build.gradle>` and for :download:`Maven
+<artifactory/pom.xml>`.  These may be copied into your project to
+enable the use of the Bio-Formats library components, and may be
+adjusted to use different components or different release or
+development versions of Bio-Formats.
+

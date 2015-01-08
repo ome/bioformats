@@ -43,10 +43,6 @@ import ome.xml.model.enums.EnumerationException;
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/meta/OMEXMLMetadataRoot.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/meta/OMEXMLMetadataRoot.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Roger Leigh rleigh at dundee.ac.uk
  */
 public class OMEXMLMetadataRoot extends OME implements MetadataRoot {

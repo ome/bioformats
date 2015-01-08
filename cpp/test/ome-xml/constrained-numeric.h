@@ -39,7 +39,7 @@
 #ifndef TEST_CONSTRAINED_NUMERIC_H
 #define TEST_CONSTRAINED_NUMERIC_H
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 #include <cmath>
 #include <sstream>

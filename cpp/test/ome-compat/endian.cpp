@@ -39,7 +39,7 @@
 #include <ome/compat/endian.h>
 #include <ome/compat/cstdint.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 using namespace ome;
 

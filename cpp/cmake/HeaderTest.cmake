@@ -77,6 +77,11 @@ function(header_test_from_file component library path)
   file(MAKE_DIRECTORY ${headerdir})
 
   foreach(header ${TEST_INCLUDES})
+    # We compile each header twice in separate compilation units.
+    # Each alone is sufficient to test that the header is functional,
+    # but both are needed to check for link errors, which can happen
+    # if the header accidentally defines a variable, e.g. a global or
+    # class static member.
     foreach(repeat 1 2)
     string(REPLACE "/" "_" genheader ${header})
       string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
@@ -85,7 +90,7 @@ function(header_test_from_file component library path)
       string(REGEX REPLACE "[/.]" "_" safeheader ${include})
       string(CONFIGURE "#include <@include@>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 TEST(Header, ${safeheader}_${repeat})
 {

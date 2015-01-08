@@ -32,6 +32,10 @@
 
 package loci.formats.in;
 
+import static ome.xml.model.Pixels.getPhysicalSizeXUnitXsdDefault;
+import static ome.xml.model.Pixels.getPhysicalSizeYUnitXsdDefault;
+import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -61,9 +67,17 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.specification.XMLMockObjects;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.MapPair;
 import ome.xml.model.OME;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.unit.Unit;
+import ome.units.UNITS;
 
 /**
  * FakeReader is the file format reader for faking input data.
@@ -80,10 +94,6 @@ import ome.xml.model.primitives.Timestamp;
  *  <li>showinf '64bit-floating&amp;pixelType=double&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  * </ul></p>
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/FakeReader.java">Trac</a>
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/FakeReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FakeReader extends FormatReader {
 
@@ -117,7 +127,10 @@ public class FakeReader extends FormatReader {
   // -- Fields --
 
   /** exposure time per plane info */
-  private Float exposureTime = null;
+  private Time exposureTime = null;
+
+  /* physical sizes */
+  private Length physicalSizeX, physicalSizeY, physicalSizeZ;
 
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
@@ -510,7 +523,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
-      else if (key.equals("exposureTime")) exposureTime = (float) doubleValue;
+      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.S);
       else if (key.equals("acquisitionDate")) acquisitionDate = value;
       else if (key.equals("plates")) plates = intValue;
       else if (key.equals("plateRows")) plateRows = intValue;
@@ -526,6 +539,9 @@ public class FakeReader extends FormatReader {
       else if (key.equals("annTag")) annTag = intValue;
       else if (key.equals("annTerm")) annTerm = intValue;
       else if (key.equals("annXml")) annXml = intValue;
+      else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
+      else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
+      else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
       else if (key.equals("color")) {
         defaultColor = parseColor(value);
       }
@@ -627,6 +643,7 @@ public class FakeReader extends FormatReader {
     String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
+    fillPhysicalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
@@ -674,9 +691,9 @@ public class FakeReader extends FormatReader {
         nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
         store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
         store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-        Map<String, String> mapValue = new HashMap<String,String>();
+        List<MapPair> mapValue = new ArrayList<MapPair>();
         for (int keyNum=0; keyNum<10; keyNum++) {
-          mapValue.put("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1));
+          mapValue.add(new MapPair("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
         }
         store.setMapAnnotationValue(mapValue, annotationMapCount);
         store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
@@ -787,16 +804,25 @@ public class FakeReader extends FormatReader {
     }
   }
 
+  private void fillPhysicalSizes(MetadataStore store) {
+    if (physicalSizeX == null && physicalSizeY == null && physicalSizeZ == null) return;
+    for (int s=0; s<getSeriesCount(); s++) {
+      store.setPixelsPhysicalSizeX(physicalSizeX, s);
+      store.setPixelsPhysicalSizeY(physicalSizeY, s);
+      store.setPixelsPhysicalSizeZ(physicalSizeZ, s);
+    }
+  }
+
   private void fillExposureTime(MetadataStore store) {
     if (exposureTime == null) return;
     int oldSeries = getSeries();
     for (int s=0; s<getSeriesCount(); s++) {
       setSeries(s);
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(exposureTime.doubleValue(), s, i);
+        store.setPlaneExposureTime(exposureTime, s, i);
       }
-      setSeries(oldSeries);
     }
+    setSeries(oldSeries);
   }
 
 // -- Helper methods --
@@ -939,4 +965,26 @@ public class FakeReader extends FormatReader {
     return 0;
   }
 
+  private Length parseLength(String value, String defaultUnit) {
+      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([\\D\\S]*)\\s*").matcher(value);
+      if (!m.matches()) {
+        throw new RuntimeException(String.format(
+                "%s does not match a physical size!", value));
+      }
+      String number = m.group(1);
+      String unit = m.group(2);
+      if (unit == null || unit.trim().length() == 0) {
+        unit = defaultUnit;
+      }
+
+      double d = Double.valueOf(number);
+      Unit<Length> l = null;
+      try {
+        l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
+      } catch (EnumerationException e) {
+        throw new RuntimeException(String.format(
+                "%s does not match a length unit!", unit));
+      }
+      return new Length(d, l);
+  }
 }

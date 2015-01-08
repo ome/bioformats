@@ -35,7 +35,6 @@
 # #L%
 
 # Doxygen documentation
-include(FindDoxygen)
 find_package(Doxygen)
 set(DOXYGEN_DEFAULT OFF)
 if (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)

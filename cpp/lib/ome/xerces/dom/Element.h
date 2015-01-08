@@ -39,16 +39,13 @@
 #ifndef OME_XERCES_DOM_ELEMENT_H
 #define OME_XERCES_DOM_ELEMENT_H
 
-#include <ome/compat/config.h>
-
-#include <cassert>
 #include <string>
-#include <ostream>
 
 #include <xercesc/dom/DOMElement.hpp>
 
-#include <ome/xerces/dom/Node.h>
 #include <ome/xerces/String.h>
+#include <ome/xerces/dom/Node.h>
+#include <ome/xerces/dom/Wrapper.h>
 
 namespace ome
 {
@@ -64,15 +61,14 @@ namespace ome
        * wrapped object.  It can also be cast to a pointer to the
        * wrapped object, so can substitute for it directly.
        */
-      class Element : public Node
+      class Element : public Wrapper<xercesc::DOMElement, Node>
       {
       public:
         /**
          * Construct a NULL Element.
          */
         Element ():
-          Node(),
-          xmlelem()
+          Wrapper<xercesc::DOMElement, Node>()
         {
         }
 
@@ -82,74 +78,51 @@ namespace ome
          * @param element the Element to copy.
          */
         Element (const Element& element):
-          Node(element),
-          xmlelem(element.xmlelem)
+          Wrapper<xercesc::DOMElement, Node>(element)
         {
         }
 
         /**
-         * Construct an Element from a node.
+         * Copy construct an Element.
          *
-         * @param node the node to copy.
+         * @param base the base type to copy (must be an Element).
          */
-        Element (Node& node):
-          Node(node),
-          xmlelem(dynamic_cast<xercesc::DOMElement *>(&*node))
+        Element (const Wrapper<xercesc::DOMElement, Node>::base_type& base):
+          Wrapper<xercesc::DOMElement, Node>(base)
         {
-          if (!xmlelem)
-            static_cast<Node>(*this) = static_cast<xercesc::DOMNode *>(0);
         }
 
         /**
          * Construct an Element from a xercesc::DOMElement *.
          *
          * @param element the Element to wrap.
+         * @param managed is the value to be managed?
          */
-        Element (xercesc::DOMElement *element):
-          xmlelem(element)
+        Element (xercesc::DOMElement *element,
+                 bool                 managed):
+          Wrapper<xercesc::DOMElement, Node>(managed ?
+                                             Wrapper<xercesc::DOMElement, Node>(element, std::mem_fun(&base_element_type::release)) :
+                                             Wrapper<xercesc::DOMElement, Node>(element, &ome::xerces::dom::detail::unmanaged<base_element_type>))
         {
         }
 
         /**
          * Construct an Element from a xercesc::DOMNode *.
          *
-         * @param node the node to wrap.
+         * @param base the DOMNode to wrap.
+         * @param managed is the value to be managed?
          */
-        Element (xercesc::DOMNode *node):
-          xmlelem()
+        Element (Wrapper<xercesc::DOMElement, Node>::base_element_type *base,
+                 bool                                                   managed):
+          Wrapper<xercesc::DOMElement, Node>(managed ?
+                                             Wrapper<xercesc::DOMElement, Node>(base, std::mem_fun(&base_element_type::release)) :
+                                             Wrapper<xercesc::DOMElement, Node>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>))
         {
-          *this = node;
         }
 
         /// Destructor.
         ~Element()
         {
-        }
-
-        /**
-         * Get wrapped xercesc::DOMElement *.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMElement.
-         */
-        xercesc::DOMElement*
-        get()
-        {
-          return xmlelem;
-        }
-
-        /**
-         * Get wrapped xercesc::DOMElement *.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped xercesc::DOMElement.
-         */
-        const xercesc::DOMElement*
-        get() const
-        {
-          return xmlelem;
         }
 
         /**
@@ -160,7 +133,7 @@ namespace ome
         String
         getTagName () const
         {
-          return xmlelem->getTagName();
+          return (*this)->getTagName();
         }
 
         /**
@@ -173,7 +146,7 @@ namespace ome
         bool
         hasAttribute (const std::string& attr) const
         {
-          return xmlelem->hasAttribute(xerces::String(attr));
+          return (*this)->hasAttribute(xerces::String(attr));
         }
 
         /**
@@ -185,7 +158,7 @@ namespace ome
         String
         getAttribute (const std::string& attr) const
         {
-          return xmlelem->getAttribute(xerces::String(attr));
+          return (*this)->getAttribute(xerces::String(attr));
         }
 
         /**
@@ -198,7 +171,7 @@ namespace ome
         setAttribute (const std::string& attr,
                       const std::string& val)
         {
-          return xmlelem->setAttribute(xerces::String(attr),
+          return (*this)->setAttribute(xerces::String(attr),
                                        xerces::String(val));
         }
 
@@ -210,7 +183,7 @@ namespace ome
         String
         getTextContent () const
         {
-          return xmlelem->getTextContent();
+          return (*this)->getTextContent();
         }
 
         /**
@@ -221,126 +194,8 @@ namespace ome
         void
         setTextContent (const std::string& val)
         {
-          return xmlelem->setTextContent(xerces::String(val));
+          return (*this)->setTextContent(xerces::String(val));
         }
-
-        /**
-         * Assign an Element.
-         *
-         * @param element the Element to assign.
-         * @returns the Element.
-         */
-        Element&
-        operator= (Element& element)
-        {
-          static_cast<Node>(*this) = element;
-          this->xmlelem = element.xmlelem;
-          return *this;
-        }
-
-        /**
-         * Assign a Node.
-         *
-         * @param node the Node to assign.
-         * @returns the Element.
-         */
-        Element&
-        operator= (Node& node)
-        {
-          xercesc::DOMNode *xnode = node.Node::get();
-          this->xmlelem = dynamic_cast<xercesc::DOMElement*>(xnode);
-          if (this->xmlelem)
-            static_cast<Node>(*this) = node;
-          return *this;
-        }
-
-        /**
-         * Assign a xercesc::DOMElement *.
-         *
-         * @param element the Element to assign.
-         * @returns the Element.
-         */
-        Element&
-        operator= (xercesc::DOMElement *element)
-        {
-          this->xmlelem = element;
-          return *this;
-        }
-
-        /**
-         * Assign a xercesc::DOMNode *.
-         *
-         * @param node the node to assign.
-         * @returns the Element.
-         */
-        Element&
-        operator= (xercesc::DOMNode *node)
-        {
-          this->xmlelem = dynamic_cast<xercesc::DOMElement *>(node);
-          return *this;
-        }
-
-        /**
-         * Dereference to xercesc::DOMElement.
-         *
-         * @returns the wrapped xercesc::DOMElement.
-         */
-        xercesc::DOMElement&
-        operator* () noexcept
-        {
-          assert(xmlelem != 0);
-          return *xmlelem;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMElement.
-         *
-         * @returns the wrapped xercesc::DOMElement.
-         */
-        const xercesc::DOMElement&
-        operator* () const noexcept
-        {
-          assert(xmlelem != 0);
-          return *xmlelem;
-        }
-
-        /**
-         * Dereference to xercesc::DOMElement.
-         *
-         * @returns the wrapped xercesc::DOMElement.
-         */
-        xercesc::DOMElement *
-        operator-> () noexcept
-        {
-          assert(xmlelem != 0);
-          return xmlelem;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMElement.
-         *
-         * @returns the wrapped xercesc::DOMElement.
-         */
-        const xercesc::DOMElement *
-        operator-> () const noexcept
-        {
-          assert(xmlelem != 0);
-          return xmlelem;
-        }
-
-        /**
-         * Check if the wrapped Element is NULL.
-         *
-         * @returns true if valid, false if NULL.
-         */
-        operator bool () const
-        {
-          return xmlelem != 0;
-        }
-
-      private:
-        /// The wrapped xercesc::DOMElement.
-        xercesc::DOMElement *xmlelem;
       };
 
     }

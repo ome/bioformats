@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # xmlindent: a script for prettifying blocks of XML
 

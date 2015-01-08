@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,13 +44,10 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NDPIReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NDPIReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NDPIReader extends BaseTiffReader {
 
@@ -126,6 +123,7 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /** @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return MUST_GROUP;
   }
@@ -133,6 +131,7 @@ public class NDPIReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -185,6 +184,7 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
@@ -233,6 +233,7 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     if (!fileOnly) {
       service.close();
@@ -248,12 +249,14 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return 1024;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return 1024;
@@ -262,6 +265,7 @@ public class NDPIReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     RandomAccessInputStream s = new RandomAccessInputStream(id);
     use64Bit = s.length() >= Math.pow(2, 32);
@@ -272,6 +276,7 @@ public class NDPIReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -280,7 +285,8 @@ public class NDPIReader extends BaseTiffReader {
     // fix the offsets for > 4 GB files
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
     for (int i=0; i<ifds.size(); i++) {
-      long[] stripOffsets = ifds.get(i).getStripOffsets();
+      IFD ifd = ifds.get(i);
+      long[] stripOffsets = ifd.getStripOffsets();
 
       boolean neededAdjustment = false;
       for (int j=0; j<stripOffsets.length; j++) {
@@ -288,34 +294,38 @@ public class NDPIReader extends BaseTiffReader {
         long prevByteCount =
           i == 0 ? 0 : ifds.get(i - 1).getStripByteCounts()[0];
 
-        long newOffset = stripOffsets[j] + 0x100000000L;
-        if (newOffset < stream.length() && ((j > 0 &&
-          (stripOffsets[j] < stripOffsets[j - 1])) ||
-          (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
-        {
-          stripOffsets[j] = newOffset;
-          neededAdjustment = true;
+        while (stripOffsets[j] < prevOffset || stripOffsets[j] < prevOffset + prevByteCount) {
+          long newOffset = stripOffsets[j] + 0x100000000L;
+          if (newOffset < stream.length() && ((j > 0 &&
+            (stripOffsets[j] < stripOffsets[j - 1])) ||
+            (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
+          {
+            stripOffsets[j] = newOffset;
+            neededAdjustment = true;
+          }
         }
       }
       if (neededAdjustment) {
-        ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+        ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
       }
 
       neededAdjustment = false;
 
-      long[] stripByteCounts = ifds.get(i).getStripByteCounts();
+      long[] stripByteCounts = ifd.getStripByteCounts();
       for (int j=0; j<stripByteCounts.length; j++) {
         long newByteCount = stripByteCounts[j] + 0x100000000L;
         if (stripByteCounts[j] < 0 || neededAdjustment ||
-          newByteCount + ifds.get(i).getStripOffsets()[0] < in.length())
+          newByteCount + stripOffsets[j] < in.length())
         {
-          stripByteCounts[j] = newByteCount;
-          neededAdjustment = true;
+          if (newByteCount < ifd.getImageWidth() * ifd.getImageLength()) {
+            stripByteCounts[j] = newByteCount;
+            neededAdjustment = true;
+          }
         }
       }
 
       if (neededAdjustment) {
-        ifds.get(i).putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
+        ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
       }
     }
     stream.close();
@@ -346,18 +356,13 @@ public class NDPIReader extends BaseTiffReader {
 
       if (markerTag != null) {
         if (markerTag.getValueOffset() > in.length()) {
-          long markerOffset = markerTag.getValueOffset() & 0xffffffffL;
-          if (markerOffset < prevMarkerOffset || (use64Bit && i == 0 &&
-            markerOffset < in.length() / 2))
-          {
-            markerOffset += 0x100000000L;
-          }
-          markerTag = new TiffIFDEntry(markerTag.getTag(), markerTag.getType(),
-            markerTag.getValueCount(), markerOffset);
-          prevMarkerOffset = markerOffset;
+          // can't rely upon the MARKER_TAG to be detected correctly
+          ifds.get(i).remove(MARKER_TAG);
         }
-        Object value = tiffParser.getIFDValue(markerTag);
-        ifds.get(i).putIFDValue(MARKER_TAG, value);
+        else {
+          Object value = tiffParser.getIFDValue(markerTag);
+          ifds.get(i).putIFDValue(MARKER_TAG, value);
+        }
       }
 
       tiffParser.fillInIFD(ifds.get(i));
@@ -407,6 +412,7 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
@@ -426,8 +432,8 @@ public class NDPIReader extends BaseTiffReader {
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xResolution);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(yResolution);
+        Length sizeX = FormatTools.getPhysicalSizeX(xResolution);
+        Length sizeY = FormatTools.getPhysicalSizeY(yResolution);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);

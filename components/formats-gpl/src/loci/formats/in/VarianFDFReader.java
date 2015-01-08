@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,13 +39,11 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 /**
  * VarianFDFReader is the file format reader for Varian FDF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/VarianFDFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/VarianFDFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class VarianFDFReader extends FormatReader {
 
@@ -56,9 +54,9 @@ public class VarianFDFReader extends FormatReader {
   private double pixelSizeX;
   private double pixelSizeY;
   private double pixelSizeZ;
-  private double originX;
-  private double originY;
-  private double originZ;
+  private Length originX;
+  private Length originY;
+  private Length originZ;
   private String[] units;
 
   // -- Constructor --
@@ -72,6 +70,7 @@ public class VarianFDFReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
@@ -79,6 +78,7 @@ public class VarianFDFReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean)
    */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     if (noPixels) return null;
     if (files.size() == 0) return new String[] {currentId};
@@ -88,6 +88,7 @@ public class VarianFDFReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -117,6 +118,7 @@ public class VarianFDFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -125,9 +127,9 @@ public class VarianFDFReader extends FormatReader {
       pixelSizeX = 0d;
       pixelSizeY = 0d;
       pixelSizeZ = 0d;
-      originX = 0d;
-      originY = 0d;
-      originZ = 0d;
+      originX = new Length(0d, UNITS.REFERENCEFRAME);
+      originY = new Length(0d, UNITS.REFERENCEFRAME);
+      originZ = new Length(0d, UNITS.REFERENCEFRAME);
       units = null;
     }
   }
@@ -135,6 +137,7 @@ public class VarianFDFReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     CoreMetadata m = core.get(0);
@@ -174,9 +177,9 @@ public class VarianFDFReader extends FormatReader {
     MetadataTools.populatePixels(store, this, !minMetadata);
 
     if (!minMetadata) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -267,15 +270,18 @@ public class VarianFDFReader extends FormatReader {
       else if (var.equals("origin[]")) {
         String[] values = parseArray(value);
         if (values.length > 0) {
-          originX = computePhysicalSize(1, values[0], units[0]);
+          final double size = computePhysicalSize(1, values[0], units[0]);
+          originX = new Length(size, UNITS.REFERENCEFRAME);
           addGlobalMeta("X position for position #1", originX);
         }
         if (values.length > 1) {
-          originY = computePhysicalSize(1, values[1], units[1]);
+          final double size = computePhysicalSize(1, values[1], units[1]);
+          originY = new Length(size, UNITS.REFERENCEFRAME);
           addGlobalMeta("Y position for position #1", originY);
         }
         if (values.length > 2) {
-          originZ = computePhysicalSize(1, values[2], units[2]);
+          final double size = computePhysicalSize(1, values[2], units[2]);
+          originZ = new Length(size, UNITS.REFERENCEFRAME);
           addGlobalMeta("Z position for position #1", originZ);
         }
       }

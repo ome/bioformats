@@ -40,6 +40,7 @@ import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -62,6 +63,10 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.SkipException;
@@ -78,10 +83,6 @@ import org.testng.annotations.Test;
  *
  * To run tests:
  * ant -Dtestng.directory="/path" -Dtestng.multiplier="1.0" test-all
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/FormatReaderTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/FormatReaderTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FormatReaderTest {
 
@@ -596,8 +597,8 @@ public class FormatReaderTest {
 
         // Z, C and T indices should be populated if PlaneTiming is present
 
-        Double deltaT = null;
-        Double exposure = null;
+        Time deltaT = null;
+        Time exposure = null;
         Integer z = null, c = null, t = null;
 
         if (retrieve.getPlaneCount(i) > 0) {
@@ -908,8 +909,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeX(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeX(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -933,8 +934,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeY(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeY(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -959,8 +960,8 @@ public class FormatReaderTest {
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
       }
-      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      Double size = realSize == null ? null : realSize.getValue();
+      Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
@@ -981,11 +982,11 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      Double expectedIncrement = config.getTimeIncrement();
-      Double realIncrement = retrieve.getPixelsTimeIncrement(i);
+      Time expectedIncrement = config.getTimeIncrement();
+      Time realIncrement = retrieve.getPixelsTimeIncrement(i);
 
       if (!(expectedIncrement == null && realIncrement == null) &&
-        !expectedIncrement.equals(realIncrement))
+        (expectedIncrement == null || !expectedIncrement.equals(realIncrement)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedIncrement + ", actual " + realIncrement + ")");
       }
@@ -1063,12 +1064,12 @@ public class FormatReaderTest {
 
       for (int c=0; c<config.getChannelCount(); c++) {
         if (config.hasExposureTime(c)) {
-          Double exposureTime = config.getExposureTime(c);
+          Time exposureTime = config.getExposureTime(c);
 
           for (int p=0; p<reader.getImageCount(); p++) {
             int[] zct = reader.getZCTCoords(p);
             if (zct[1] == c && p < retrieve.getPlaneCount(i)) {
-              Double planeExposureTime = retrieve.getPlaneExposureTime(i, p);
+              Time planeExposureTime = retrieve.getPlaneExposureTime(i, p);
 
               if (exposureTime == null && planeExposureTime == null) {
                 continue;
@@ -1100,8 +1101,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveFloat realWavelength =
-          retrieve.getChannelEmissionWavelength(i, c);
+        Length realWavelength = retrieve.getChannelEmissionWavelength(i, c);
         Double expectedWavelength = config.getEmissionWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
@@ -1109,9 +1109,9 @@ public class FormatReaderTest {
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
+          Math.abs(expectedWavelength - realWavelength.value(UNITS.NM).doubleValue()) > Constants.EPSILON)
         {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
         }
       }
     }
@@ -1129,8 +1129,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveFloat realWavelength =
-          retrieve.getChannelExcitationWavelength(i, c);
+        Length realWavelength = retrieve.getChannelExcitationWavelength(i, c);
         Double expectedWavelength = config.getExcitationWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
@@ -1138,9 +1137,9 @@ public class FormatReaderTest {
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
+          Math.abs(expectedWavelength - realWavelength.value(UNITS.NM).doubleValue()) > Constants.EPSILON)
         {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
         }
       }
     }
@@ -1355,6 +1354,93 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"all", "type", "automated"})
+  public void testRequiredDirectories() {
+    if (!initFile()) return;
+    String testName = "testRequiredDirectories";
+    String file = reader.getCurrentFile();
+    int directories = -1;
+
+    try {
+      directories = reader.getRequiredDirectories(reader.getUsedFiles());
+    }
+    catch (Exception e) {
+      LOGGER.warn("Could not retrieve directory count", e);
+    }
+
+    if (directories < 0) {
+      result(testName, false, "Invalid directory count (" + directories + ")");
+    }
+    else {
+      // make sure the directory count is not too small
+      // we can't reliably test for the directory count being too large,
+      // since a different fileset in the same format may need more directories
+
+      String[] usedFiles = reader.getUsedFiles();
+      String[] newFiles = new String[usedFiles.length];
+
+      // find the common parent
+
+      String commonParent = new Location(usedFiles[0]).getParent();
+      for (int i=1; i<usedFiles.length; i++) {
+        while (!usedFiles[i].startsWith(commonParent)) {
+          commonParent = commonParent.substring(0, commonParent.lastIndexOf(File.separator));
+        }
+      }
+
+      // remove extra directories
+
+      String split = File.separatorChar == '\\' ? "\\\\" : File.separator;
+      String[] f = commonParent.split(split);
+      StringBuilder toRemove = new StringBuilder();
+      for (int i=0; i<f.length - directories - 1; i++) {
+        toRemove.append(f[i]);
+        if (i < f.length - directories - 2) {
+          toRemove.append(File.separator);
+        }
+      }
+
+      // map new file names and verify that setId still works
+
+      String newFile = null;
+      for (int i=0; i<usedFiles.length; i++) {
+        newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
+        Location.mapId(newFiles[i], usedFiles[i]);
+
+        if (usedFiles[i].equals(file)) {
+          newFile = newFiles[i];
+        }
+      }
+      if (newFile == null) {
+        newFile = newFiles[0];
+      }
+
+      IFormatReader check = new FileStitcher();
+      try {
+        check.setId(newFile);
+        int nFiles = check.getUsedFiles().length;
+        result(testName, nFiles == usedFiles.length,
+          "Found " + nFiles + "; expected " + usedFiles.length);
+      }
+      catch (Exception e) {
+        LOGGER.info("Initialization failed", e);
+        result(testName, false, e.getMessage());
+      }
+      finally {
+        try {
+          check.close();
+        }
+        catch (IOException e) {
+          LOGGER.warn("Could not close reader", e);
+        }
+
+        for (int i=0; i<newFiles.length; i++) {
+          Location.mapId(newFiles[i], null);
+        }
+      }
+    }
+  }
+
+  @Test(groups = {"all", "type", "automated"})
   public void testSaneUsedFiles() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
@@ -1418,6 +1504,11 @@ public class FormatReaderTest {
 
           // DICOM companion files may not be detected
           if (reader.getFormat().equals("DICOM") && !base[i].equals(file)) {
+            continue;
+          }
+
+          // QuickTime resource forks are not detected
+          if (reader.getFormat().equals("QuickTime") && !base[i].equals(file)) {
             continue;
           }
 
@@ -2051,6 +2142,11 @@ public class FormatReaderTest {
               continue;
             }
 
+            // QuickTime reader doesn't pick up resource forks
+            if (!result && i > 0 && r instanceof QTReader) {
+              continue;
+            }
+
             // the pattern reader only picks up pattern files
             if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
               r instanceof FilePatternReader)
@@ -2084,6 +2180,63 @@ public class FormatReaderTest {
       success = false;
     }
     result(testName, success, msg);
+  }
+
+  @Test(groups = {"all",  "automated"})
+  public void testMemoFileUsage() {
+    String testName = "testMemoFileUsage";
+    if (!initFile()) result(testName, false, "initFile");
+    File memoFile = null;
+    File memoDir = null;
+    try {
+      // this should prevent conflicts when running multiple tests
+      // on the same system and/or in multiple threads
+      String tmpdir = System.getProperty("java.io.tmpdir");
+      memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
+      memoDir.mkdir();
+      Memoizer memo = new Memoizer(0, memoDir);
+      memo.setId(reader.getCurrentFile());
+      memo.close();
+      memoFile = memo.getMemoFile(reader.getCurrentFile());
+      if (!memo.isSavedToMemo()) {
+        result(testName, false, "Memo file not saved");
+      }
+      memo.setId(reader.getCurrentFile());
+      if (!memo.isLoadedFromMemo()) {
+        result(testName, false, "Memo file could not be loaded");
+      }
+      memo.openBytes(0, 0, 0, 1, 1);
+      memo.close();
+      result(testName, true);
+    }
+    catch (Throwable t) {
+      LOGGER.warn("", t);
+      result(testName, false, t.getMessage());
+    }
+    finally {
+      if (memoFile != null) {
+        // log the memo file's size
+        try {
+          RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath());
+          LOGGER.warn("memo file size for {} = {} bytes", reader.getCurrentFile(), s.length());
+          s.close();
+        }
+        catch (IOException e) {
+          LOGGER.warn("memo file size not available");
+        }
+
+        memoFile.delete();
+        // recursively delete, as the original file's path is replicated
+        // within the memo directory
+        while (!memoFile.getParentFile().equals(memoDir)) {
+          memoFile = memoFile.getParentFile();
+          memoFile.delete();
+        }
+      }
+      if (memoDir != null) {
+        memoDir.delete();
+      }
+    }
   }
 
   @Test(groups = {"config"})

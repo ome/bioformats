@@ -84,6 +84,9 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+{% if debug %}\
+	// MARKER [A-GET]
+{% end debug %}\
 	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -98,6 +101,9 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
+{% if debug %}\
+	// MARKER [B-GET]
+{% end debug %}\
 	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -112,6 +118,9 @@
 	}
 {% end %}\
 {% otherwise %}\
+{% if debug %}\
+	// MARKER [C-GET]
+{% end debug %}\
 	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -219,6 +228,16 @@ import java.util.List;
 import ${lang.omexml_model_package}.*;
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -567,7 +586,7 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this annotation */
-	public java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex)
+	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -575,7 +594,7 @@ ${counter(k, o, v)}\
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				java.util.Map<String, String> result = retrieve.getMapAnnotationValue(mapAnnotationIndex);
+				java.util.List<ome.xml.model.MapPair> result = retrieve.getMapAnnotationValue(mapAnnotationIndex);
 				if (result != null) return result;
 			}
 		}
@@ -583,7 +602,7 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this generic light source */
-	public java.util.Map<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -591,7 +610,7 @@ ${counter(k, o, v)}\
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				java.util.Map<String, String> result = retrieve.getGenericExcitationSourceMap(instrumentIndex, lightSourceIndex);
+				java.util.List<ome.xml.model.MapPair> result = retrieve.getGenericExcitationSourceMap(instrumentIndex, lightSourceIndex);
 				if (result != null) return result;
 			}
 		}
@@ -599,7 +618,7 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this imaging environment */
-	public java.util.Map<String, String> getImagingEnvironmentMap(int imageIndex)
+	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -607,7 +626,7 @@ ${counter(k, o, v)}\
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				java.util.Map<String, String> result = retrieve.getImagingEnvironmentMap(imageIndex);
+				java.util.List<ome.xml.model.MapPair> result = retrieve.getImagingEnvironmentMap(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -650,7 +669,10 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [AAA-AGG]
+{% end debug %}\
 	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
 
@@ -674,8 +696,16 @@ ${getter(k, o, prop, v)}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [FFF-AGG]
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
+{% if debug %}\
+	// MARKER [HHH-AGG]
+{% end debug %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -730,7 +760,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
+	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -744,7 +774,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -758,7 +788,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.Map<String, String> map, int imageIndex)
+	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -806,7 +836,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
 
@@ -828,6 +858,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [GGG-AGG]
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

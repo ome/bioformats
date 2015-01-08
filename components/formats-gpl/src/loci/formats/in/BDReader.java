@@ -27,7 +27,6 @@ package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -58,12 +57,12 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * BDReader is the file format reader for BD Pathway datasets.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BDReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/BDReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Shawn Garbett  Shawn.Garbett a t Vanderbilt.edu
  */
@@ -108,6 +107,7 @@ public class BDReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (name.endsWith(EXPERIMENT_FILE)) return true;
     if (!open) return false;
@@ -132,6 +132,7 @@ public class BDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser p = new TiffParser(stream);
     IFD ifd = p.getFirstIFD();
@@ -144,18 +145,24 @@ public class BDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
     Vector<String> files = new Vector<String>();
+    files.add(new Location(currentId).getAbsolutePath());
     for (String file : metadataFiles) {
-      if (file != null) files.add(file);
+      if (file != null && !files.contains(file)) {
+        files.add(file);
+      }
     }
 
     if (!noPixels && tiffs != null) {
       int well = getSeries() / (fieldRows * fieldCols);
       for (int i = 0; i<tiffs[well].length; i++) {
-        files.add(tiffs[well][i]);
+        if (!files.contains(tiffs[well][i])) {
+          files.add(tiffs[well][i]);
+        }
       }
     }
 
@@ -163,6 +170,7 @@ public class BDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -182,11 +190,13 @@ public class BDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
@@ -194,6 +204,7 @@ public class BDReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -232,12 +243,14 @@ public class BDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return reader.getOptimalTileWidth() / fieldCols;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return (int) Math.max(1, reader.getOptimalTileHeight() / fieldRows);
@@ -246,6 +259,7 @@ public class BDReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // make sure we have the experiment file
     id = locateExperimentFile(id);
@@ -442,10 +456,8 @@ public class BDReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
 
-          PositiveFloat emission =
-            FormatTools.getEmissionWavelength(emWave[c]);
-          PositiveFloat excitation =
-            FormatTools.getExcitationWavelength(exWave[c]);
+          Length emission = FormatTools.getEmissionWavelength(emWave[c]);
+          Length excitation = FormatTools.getExcitationWavelength(exWave[c]);
 
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);
@@ -465,7 +477,7 @@ public class BDReader extends FormatReader {
         long firstPlane = 0;
         for (int p=0; p<getImageCount(); p++) {
           int[] zct = getZCTCoords(p);
-          store.setPlaneExposureTime(exposure[zct[1]], i, p);
+          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.S), i, p);
           String file = getFilename(i, p);
           if (file != null) {
             long plane = getTimestamp(file);
@@ -473,7 +485,7 @@ public class BDReader extends FormatReader {
               firstPlane = plane;
             }
             double timestamp = (plane - firstPlane) / 1000.0;
-            store.setPlaneDeltaT(timestamp, i, p);
+            store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, p);
           }
         }
       }
@@ -511,7 +523,7 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
-    FileInputStream idStream = new FileInputStream(id);
+    RandomAccessInputStream idStream = new RandomAccessInputStream(id);
     IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
       idStream, Constants.ENCODING)));
     IniList plate = null;
@@ -520,13 +532,13 @@ public class BDReader extends FormatReader {
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
-        FileInputStream stream = new FileInputStream(filename);
+        RandomAccessInputStream stream = new RandomAccessInputStream(filename);
         plate = parser.parseINI(new BufferedReader(new InputStreamReader(
           stream, Constants.ENCODING)));
         stream.close();
       }
       else if (checkSuffix(filename, "xyz")) {
-        FileInputStream stream = new FileInputStream(filename);
+        RandomAccessInputStream stream = new RandomAccessInputStream(filename);
         xyz = parser.parseINI(new BufferedReader(new InputStreamReader(
           stream, Constants.ENCODING)));
         stream.close();
@@ -656,7 +668,8 @@ public class BDReader extends FormatReader {
 
     for (int c=0; c<channelNames.size(); c++) {
       Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
-      FileInputStream stream = new FileInputStream(dyeFile.getAbsolutePath());
+      RandomAccessInputStream stream =
+        new RandomAccessInputStream(dyeFile.getAbsolutePath());
       IniList dye = new IniParser().parseINI(new BufferedReader(
         new InputStreamReader(stream, Constants.ENCODING)));
 

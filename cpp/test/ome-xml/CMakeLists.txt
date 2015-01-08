@@ -46,6 +46,16 @@ if(BUILD_TESTS)
   target_link_libraries(enum ome-xml)
   target_link_libraries(enum ome-test)
 
+  if(UNIX)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/metadata-convert-coverage.cmake.in
+                   ${CMAKE_CURRENT_BINARY_DIR}/scripts/metadata-convert-coverage)
+    file(COPY ${CMAKE_CURRENT_BINARY_DIR}/scripts/metadata-convert-coverage
+         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+         GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    add_test(ome-xml/metadata-convert-coverage ${CMAKE_CURRENT_BINARY_DIR}/metadata-convert-coverage)
+  endif()
+
   add_executable(constrained-numeric
                  non-negative-float.cpp
                  non-negative-integer.cpp
@@ -61,12 +71,14 @@ if(BUILD_TESTS)
   target_link_libraries(timestamp ome-xml)
   target_link_libraries(timestamp ome-test)
 
-  add_test(ome-xml/color color)
-  add_test(ome-xml/enum enum)
-  add_test(ome-xml/constrained-numeric constrained-numeric)
-  add_test(ome-xml/timestamp timestamp)
+  bf_add_test(ome-xml/color color)
+  bf_add_test(ome-xml/enum enum)
+  bf_add_test(ome-xml/constrained-numeric constrained-numeric)
+  bf_add_test(ome-xml/timestamp timestamp)
 
-  header_test_from_file(ome-xml ome-xml ome/xml)
-  target_link_libraries(ome-xml-headers ome-xml)
-  add_test(ome-xml/headers ome-xml-headers)
+  if(extended-tests)
+    header_test_from_file(ome-xml ome-xml ome/xml)
+    target_link_libraries(ome-xml-headers ome-xml)
+    bf_add_test(ome-xml/headers ome-xml-headers)
+  endif(extended-tests)
 endif(BUILD_TESTS)
