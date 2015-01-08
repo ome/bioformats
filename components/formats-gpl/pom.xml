@@ -157,12 +157,20 @@
       <version>${logback.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--
     <dependency>
-      <groupId>jhdf5</groupId>
-      <artifactId>org.cisd</artifactId>
+      <groupId>ch.systems.cisd</groupId>
+      <artifactId>jhdf5</artifactId>
       <version>2.9</version>
+      
       <scope>system</scope>
       <systemPath>${basedir}/../../jar/cisd-jhdf5-batteries_included_lin_win_mac.jar</systemPath>
+       
+    </dependency>-->
+    <dependency>
+      <groupId>ch.systems.cisd</groupId>
+      <artifactId>jhdf5</artifactId>
+      <version>2.9</version>
     </dependency>
   </dependencies>
 
