@@ -358,26 +358,7 @@ public class CellH5Reader extends FormatReader {
         // Series. This is why they only will be loaded if the CellH5 contains
         // a single image / series
         if (seriesCount == 1) {
-            ButtonGroup group = new ButtonGroup();
-                        
-            JRadioButton bbox_rb = new JRadioButton("Bounding box (faster)");
-            JRadioButton roi_rb = new JRadioButton("Contour");
-            
-            group.add(bbox_rb);
-            group.add(roi_rb);
-            
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            panel.add(bbox_rb);  
-            panel.add(roi_rb);
-            bbox_rb.setSelected(true);
-            
-            panel.add(new JLabel("Read segmentation ROIs?"));
-            int dialogButton = JOptionPane.YES_NO_OPTION;
-            int dialogResult = JOptionPane.showConfirmDialog (null, panel, "CellH5 reader", dialogButton);
-            if (dialogResult == JOptionPane.YES_OPTION) {
-                parseROIs(bbox_rb.isSelected());
-            }
+            parseROIs();
         }
     }
 
@@ -525,156 +506,90 @@ public class CellH5Reader extends FormatReader {
         return polygonStr;
     }
 
-    private void parseROIs(boolean render_bbox) {
+    private void parseROIs() {
         int shapeIndex = 0;
         int seriesOffset = 0;
         int objectIdx = 0;
         
         Vector<int[]> classColors = new Vector<int[]>();
-        JProgressBar progressBar = initProgressBar("CellH5 reader", "Loading segmentation ROIs...");
-        
-        try {
-        
-            for (int s=0;s<seriesCount;s++) {
-                //setSeries(s);
-                progressBar.setMinimum(0);
-                int roiIndexOffset = 0;
-
-                for (String cellObjectName : cellObjectNames) {
-                    LOGGER.info(String.format("Parse segmentation ROIs for cell object %s : %d", cellObjectName, objectIdx));
-
-
-                    String pathToContour = pathToPosition.get(s) + "/feature/" + cellObjectName + "/crack_contour";
-                    String pathToBoundingBox = pathToPosition.get(s) + "/feature/" + cellObjectName + "/bounding_box";
-                    String pathToClassDefinition = pathToDefinition + "/feature/" + cellObjectName + "/object_classification/class_labels";
-                    boolean hasClassification = false;
-                    if (jhdf.exists(pathToClassDefinition)) {
-                        String classColorHexString;
-                        HDF5CompoundDataMap[] classDef = jhdf.readCompoundArrayDataMap(pathToClassDefinition);
-                        for (int cls = 0; cls < classDef.length; cls++) {
-                            classColorHexString = (String) classDef[cls].get("color");
-                            classColors.add(hex2Rgb(classColorHexString));
-                        }
-                        if (classDef.length > 0) {
-                            hasClassification = true;
-                            classes = jhdf.readCompoundArrayDataMap(pathToPosition.get(s) + "/feature/" + cellObjectName + "/object_classification/prediction");
-                        }
+        for (int s=0;s<seriesCount;s++) {
+            int roiIndexOffset = 0;
+            for (String cellObjectName : cellObjectNames) {
+                LOGGER.info(String.format("Parse segmentation ROIs for cell object %s : %d", cellObjectName, objectIdx));
+                String pathToBoundingBox = pathToPosition.get(s) + "/feature/" + cellObjectName + "/bounding_box";
+                String pathToClassDefinition = pathToDefinition + "/feature/" + cellObjectName + "/object_classification/class_labels";
+                boolean hasClassification = false;
+                if (jhdf.exists(pathToClassDefinition)) {
+                    String classColorHexString;
+                    HDF5CompoundDataMap[] classDef = jhdf.readCompoundArrayDataMap(pathToClassDefinition);
+                    for (int cls = 0; cls < classDef.length; cls++) {
+                        classColorHexString = (String) classDef[cls].get("color");
+                        classColors.add(hex2Rgb(classColorHexString));
                     }
-
-                    if (jhdf.exists(pathToContour) && !render_bbox) {
-                        rois = jhdf.readStringArray(pathToContour);
-                        times = jhdf.readCompoundArrayDataMap(pathToPosition.get(s) + "/object/" + cellObjectName);
-
-                        progressBar.setMaximum(rois.length * cellObjectNames.size());
-
-
-
-                        int roiChannel = getChannelIndexOfCellObjectName(cellObjectName);
-                        int roiZSlice = (Integer) 0;
-                        String polygonStr = "";
-
-                        for (int roiIndex = 0; roiIndex < rois.length; roiIndex++) {
-                            int roiManagerRoiIndex = roiIndex + roiIndexOffset + seriesOffset;
-                            progressBar.setValue(roiManagerRoiIndex);
-                            int roiTime = (Integer) times[roiIndex].get("time_idx");
-                            int objectLabelId = (Integer) times[roiIndex].get("obj_label_id");
-
-                            String roiID = MetadataTools.createLSID("ROI", roiManagerRoiIndex);
-                            store.setROIID(roiID, roiManagerRoiIndex);
-                            store.setImageROIRef(roiID, s, roiManagerRoiIndex);
-
-                            String polylineID = MetadataTools.createLSID("Shape", roiManagerRoiIndex, 0);
-                            //store.setPolygonID(polylineID, roiManagerRoiIndex, 0);
-                            polygonStr = parseCrackContour(rois[roiIndex]);
-                            store.setPolygonPoints(polygonStr, roiManagerRoiIndex, 0);
-                            store.setPolygonTheT(new NonNegativeInteger(roiTime + 1), roiManagerRoiIndex, 0);
-                            store.setPolygonTheC(new NonNegativeInteger(roiChannel + 1), roiManagerRoiIndex, 0);
-                            store.setPolygonTheZ(new NonNegativeInteger(roiZSlice + 1), roiManagerRoiIndex, 0);
-                            store.setROIName(cellObjectName + " " + String.valueOf(objectLabelId), roiManagerRoiIndex);
-                            store.setPolygonID(cellObjectName + "::" + String.valueOf(objectLabelId), roiManagerRoiIndex, 0);
-                            Color strokeColor;
-                            if (hasClassification) {
-                                int classLabelIDx = (Integer) classes[roiIndex].get("label_idx");
-                                int[] rgb = classColors.get(classLabelIDx);
-                                strokeColor = new Color(rgb[0], rgb[1], rgb[2], 0xff);
-                            } else {
-                                strokeColor = new Color(COLORS[objectIdx][0], COLORS[objectIdx][1], COLORS[objectIdx][2], 0xff);
-                            }
-                            store.setPolygonStrokeColor(strokeColor, roiManagerRoiIndex, 0);
-                            store.setPolygonStrokeWidth(1.0, roiIndex, 0);
-                            store.setPolygonLocked(true, roiManagerRoiIndex, 0);
-                            //store.setLabelText(String.valueOf(objectLabelId), roiManagerRoiIndex, shapeIndex);
-                            store.setPolygonText(cellObjectName, roiManagerRoiIndex, 0);
-                        }
-
-                        objectIdx++;
-                        roiIndexOffset += rois.length;
-                    }
-                    else if (jhdf.exists(pathToBoundingBox)&& render_bbox){
-                        bbox = jhdf.readCompoundArrayDataMap(pathToBoundingBox);
-                        times = jhdf.readCompoundArrayDataMap(pathToPosition.get(s) + "/object/" + cellObjectName);
-
-                        progressBar.setMaximum(bbox.length * cellObjectNames.size());
-
-                        int roiChannel = getChannelIndexOfCellObjectName(cellObjectName);
-                        int roiZSlice = (Integer) 0;
-
-                        for (int roiIndex = 0; roiIndex < bbox.length; roiIndex++) {
-                            int roiManagerRoiIndex = roiIndex + roiIndexOffset + seriesOffset;
-                            progressBar.setValue(roiManagerRoiIndex);
-                            int roiTime = (Integer) times[roiIndex].get("time_idx");
-                            int objectLabelId = (Integer) times[roiIndex].get("obj_label_id");
-
-                            int left = (Integer) bbox[roiIndex].get("left");
-                            int right = (Integer) bbox[roiIndex].get("right");
-                            int top = (Integer) bbox[roiIndex].get("top");
-                            int bottom = (Integer) bbox[roiIndex].get("bottom");
-                            int width = right - left;
-                            int height = bottom - top;
-
-                            String roiID = MetadataTools.createLSID("ROI", roiManagerRoiIndex);
-                            store.setROIID(roiID, roiManagerRoiIndex);
-                            store.setImageROIRef(roiID, s, roiManagerRoiIndex);
-
-                            store.setRectangleX((double) left , roiManagerRoiIndex, 0);
-                            store.setRectangleY((double) top , roiManagerRoiIndex, 0);
-                            store.setRectangleWidth((double) width , roiManagerRoiIndex, 0);
-                            store.setRectangleHeight((double) height , roiManagerRoiIndex, 0);
-
-                            store.setRectangleTheT(new NonNegativeInteger(roiTime + 1), roiManagerRoiIndex, 0);
-                            store.setRectangleTheC(new NonNegativeInteger(roiChannel + 1), roiManagerRoiIndex, 0);
-                            store.setRectangleTheZ(new NonNegativeInteger(roiZSlice + 1), roiManagerRoiIndex, 0);
-                            store.setROIName(cellObjectName + " " + String.valueOf(objectLabelId), roiManagerRoiIndex);
-                            store.setRectangleID(cellObjectName + "::" + String.valueOf(objectLabelId), roiManagerRoiIndex, 0);
-                            Color strokeColor;
-                            if (hasClassification) {
-                                int classLabelIDx = (Integer) classes[roiIndex].get("label_idx");
-                                int[] rgb = classColors.get(classLabelIDx);
-                                strokeColor = new Color(rgb[0], rgb[1], rgb[2], 0xff);
-                            } else {
-                                strokeColor = new Color(COLORS[objectIdx][0], COLORS[objectIdx][1], COLORS[objectIdx][2], 0xff);
-                            }
-                            store.setRectangleStrokeColor(strokeColor, roiManagerRoiIndex, 0);
-                            store.setRectangleStrokeWidth(1.0, roiIndex, 0);
-                            store.setRectangleLocked(true, roiManagerRoiIndex, 0);
-                            //store.setLabelText(String.valueOf(objectLabelId), roiManagerRoiIndex, shapeIndex);
-                            //store.setRectangleText(cellObjectName, roiManagerRoiIndex, 0);
-                        }
-
-                        objectIdx++;
-                        roiIndexOffset += bbox.length;
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(null, "No Segmentation data found...", "CellH5 reader", 0);
-                        break;
+                    if (classDef.length > 0) {
+                        hasClassification = true;
+                        classes = jhdf.readCompoundArrayDataMap(pathToPosition.get(s) + "/feature/" + cellObjectName + "/object_classification/prediction");
                     }
                 }
-                seriesOffset += roiIndexOffset;
+
+                if (jhdf.exists(pathToBoundingBox)){
+                    bbox = jhdf.readCompoundArrayDataMap(pathToBoundingBox);
+                    times = jhdf.readCompoundArrayDataMap(pathToPosition.get(s) + "/object/" + cellObjectName);
+                    int roiChannel = getChannelIndexOfCellObjectName(cellObjectName);
+                    int roiZSlice = (Integer) 0;
+
+                    for (int roiIndex = 0; roiIndex < bbox.length; roiIndex++) {
+                        int roiManagerRoiIndex = roiIndex + roiIndexOffset + seriesOffset;
+                        int roiTime = (Integer) times[roiIndex].get("time_idx");
+                        int objectLabelId = (Integer) times[roiIndex].get("obj_label_id");
+
+                        int left = (Integer) bbox[roiIndex].get("left");
+                        int right = (Integer) bbox[roiIndex].get("right");
+                        int top = (Integer) bbox[roiIndex].get("top");
+                        int bottom = (Integer) bbox[roiIndex].get("bottom");
+                        int width = right - left;
+                        int height = bottom - top;
+
+                        String roiID = MetadataTools.createLSID("ROI", roiManagerRoiIndex);
+                        store.setROIID(roiID, roiManagerRoiIndex);
+                        store.setImageROIRef(roiID, s, roiManagerRoiIndex);
+
+                        store.setRectangleX((double) left , roiManagerRoiIndex, 0);
+                        store.setRectangleY((double) top , roiManagerRoiIndex, 0);
+                        store.setRectangleWidth((double) width , roiManagerRoiIndex, 0);
+                        store.setRectangleHeight((double) height , roiManagerRoiIndex, 0);
+
+                        store.setRectangleTheT(new NonNegativeInteger(roiTime + 1), roiManagerRoiIndex, 0);
+                        store.setRectangleTheC(new NonNegativeInteger(roiChannel + 1), roiManagerRoiIndex, 0);
+                        store.setRectangleTheZ(new NonNegativeInteger(roiZSlice + 1), roiManagerRoiIndex, 0);
+                        store.setROIName(cellObjectName + " " + String.valueOf(objectLabelId), roiManagerRoiIndex);
+                        store.setRectangleID(cellObjectName + "::" + String.valueOf(objectLabelId), roiManagerRoiIndex, 0);
+                        Color strokeColor;
+                        if (hasClassification) {
+                            int classLabelIDx = (Integer) classes[roiIndex].get("label_idx");
+                            int[] rgb = classColors.get(classLabelIDx);
+                            strokeColor = new Color(rgb[0], rgb[1], rgb[2], 0xff);
+                        } else {
+                            strokeColor = new Color(COLORS[objectIdx][0], COLORS[objectIdx][1], COLORS[objectIdx][2], 0xff);
+                        }
+                        store.setRectangleStrokeColor(strokeColor, roiManagerRoiIndex, 0);
+                        store.setRectangleStrokeWidth(1.0, roiIndex, 0);
+                        store.setRectangleLocked(true, roiManagerRoiIndex, 0);
+                        //store.setLabelText(String.valueOf(objectLabelId), roiManagerRoiIndex, shapeIndex);
+                        //store.setRectangleText(cellObjectName, roiManagerRoiIndex, 0);
+                    }
+
+                    objectIdx++;
+                    roiIndexOffset += bbox.length;
+                }
+                else {
+                    LOGGER.info("No Segmentation data found...");
+                    break;
+                }
             }
+            seriesOffset += roiIndexOffset;
         }
-        finally {
-            progressBar.getTopLevelAncestor().setVisible(false);
-        }
+        
     }
 
 }
