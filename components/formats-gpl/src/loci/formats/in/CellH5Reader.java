@@ -573,8 +573,8 @@ public class CellH5Reader extends FormatReader {
                             strokeColor = new Color(COLORS[objectIdx][0], COLORS[objectIdx][1], COLORS[objectIdx][2], 0xff);
                         }
                         store.setRectangleStrokeColor(strokeColor, roiManagerRoiIndex, 0);
-                        store.setRectangleStrokeWidth(1.0, roiIndex, 0);
-                        store.setRectangleLocked(true, roiManagerRoiIndex, 0);
+                        //store.setRectangleStrokeWidth(1.0, roiIndex, 0);
+                        //store.setRectangleLocked(true, roiManagerRoiIndex, 0);
                         //store.setLabelText(String.valueOf(objectLabelId), roiManagerRoiIndex, shapeIndex);
                         //store.setRectangleText(cellObjectName, roiManagerRoiIndex, 0);
                     }
