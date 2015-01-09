@@ -58,6 +58,12 @@ import ome.xml.model.Polygon;
 import ome.xml.model.Polyline;
 import ome.xml.model.Shape;
 import ome.xml.model.Union;
+import omero.model.EllipseI;
+import omero.model.LineI;
+import omero.model.PointI;
+import omero.model.PolygonI;
+import omero.model.PolylineI;
+import omero.model.RectI;
 
 // TODO: Stored ROIs are not correctly linked to Image.
 
@@ -427,4 +433,131 @@ public class ROIHandler {
         return coordinates;
     }
 
+
+    public static void saveOmeroRoiToMetadataStore(List<omero.model.Roi> rois,
+            MetadataStore store) {
+        // TODO Auto-generated method stub
+        int n = rois.size();
+
+        for (int thisROI=0  ; thisROI<n ; thisROI++){
+            omero.model.Roi roi = rois.get(thisROI-1);
+            int numShapes = roi.sizeOfShapes();
+            int roiNum = thisROI;
+            for(int ns=0 ; ns<numShapes ; ns++){
+                omero.model.Shape shape = roi.getShape(ns-1);
+
+                int shapeNum= ns;
+                if(shape instanceof PolygonI || shape instanceof PolylineI) {
+                    storeOmeroPolygon(shape,store, roiNum, shapeNum);
+                }
+                if(shape instanceof LineI){
+                    storeOmeroLine(shape,store, roiNum, shapeNum);
+                }
+                if(shape instanceof PointI){
+                    storeOmeroPoint(shape,store, roiNum, shapeNum);
+                }
+                if(shape instanceof EllipseI){
+                    storeOmeroEllipse(shape,store, roiNum, shapeNum);
+                }
+                if(shape instanceof RectI){
+                    storeOmeroRect(shape,store, roiNum, shapeNum);
+                }
+            }
+        }
+
+    }
+    
+
+    private static void storeOmeroRect(omero.model.Shape shape,
+            MetadataStore store, int roiNum, int shapeNum) {
+        // TODO Auto-generated method stub
+        RectI shape1 = (RectI) shape;
+
+        double x1 = shape1.getX().getValue();
+        double y1 = shape1.getY().getValue();
+        double width = shape1.getWidth().getValue();
+        double height = shape1.getHeight().getValue();
+
+        String polylineID = MetadataTools.createLSID("Shape", roiNum, shapeNum);
+        store.setRectangleID(polylineID, roiNum, shapeNum);
+        store.setRectangleX(x1, roiNum, shapeNum);
+        store.setRectangleY(y1, roiNum, shapeNum);
+        store.setRectangleWidth(width, roiNum, shapeNum);
+        store.setRectangleHeight(height, roiNum, shapeNum);
+
+    }
+
+    private static void storeOmeroEllipse(omero.model.Shape shape,
+            MetadataStore store, int roiNum, int shapeNum) {
+        // TODO Auto-generated method stub
+        EllipseI shape1 = (EllipseI) shape;
+
+        double x1 = shape1.getCx().getValue();
+        double y1 = shape1.getCy().getValue();
+        double width = shape1.getRx().getValue();
+        double height = shape1.getRy().getValue();
+
+        String polylineID = MetadataTools.createLSID("Shape", roiNum, shapeNum);
+        store.setEllipseID(polylineID, roiNum, shapeNum);
+        store.setEllipseX(x1, roiNum, shapeNum);
+        store.setEllipseY(y1, roiNum, shapeNum);
+        store.setEllipseRadiusX(width, roiNum, shapeNum);
+        store.setEllipseRadiusY(height, roiNum, shapeNum);
+
+    }
+
+    private static void storeOmeroPoint(omero.model.Shape shape,
+            MetadataStore store, int roiNum, int shapeNum) {
+        // TODO Auto-generated method stub
+        PointI shape1 = (PointI) shape;
+        double ox1 = shape1.getCx().getValue();
+        double oy1 = shape1.getCy().getValue();
+
+        String polylineID = MetadataTools.createLSID("Shape", roiNum, shapeNum);
+        store.setPointID(polylineID, roiNum, shapeNum);
+        store.setPointX(ox1, roiNum, shapeNum);
+        store.setPointY(oy1, roiNum, shapeNum);
+
+    }
+
+    private static void storeOmeroLine(omero.model.Shape shape,
+            MetadataStore store, int roiNum, int shapeNum) {
+        // TODO Auto-generated method stub
+        LineI shape1 = (LineI) shape;
+        double x1 = shape1.getX1().getValue();
+        double y1 = shape1.getY1().getValue();
+        double x2 = shape1.getX2().getValue();
+        double y2 = shape1.getY2().getValue();
+
+        String polylineID = MetadataTools.createLSID("Shape", roiNum, shapeNum);
+        store.setLineID(polylineID, roiNum, shapeNum);
+
+        store.setLineX1(new Double(x1), roiNum, shapeNum);
+        store.setLineX2(new Double(x2), roiNum, shapeNum);
+        store.setLineY1(new Double(y1), roiNum, shapeNum);
+        store.setLineY2(new Double(y2), roiNum, shapeNum);
+
+    }
+
+    private static void storeOmeroPolygon(omero.model.Shape shape, MetadataStore store,
+            int roiNum, int shapeNum){
+
+        String points=null;
+        String polylineID = MetadataTools.createLSID("Shape", roiNum, shapeNum);
+
+        if(shape instanceof PolygonI){
+            PolygonI shape1 = (PolygonI) shape;
+            points = shape1.getPoints().getValue();
+
+            store.setPolygonID(polylineID, roiNum, shapeNum);
+            store.setPolygonPoints(points.toString(), roiNum, shapeNum);
+        }else{
+            PolylineI shape1 = (PolylineI) shape;
+            points = shape1.getPoints().getValue();
+
+            store.setPolylineID(polylineID, roiNum, shapeNum);
+            store.setPolylinePoints(points.toString(), roiNum, shapeNum);
+        }
+
+    }
 }
