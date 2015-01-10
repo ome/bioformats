@@ -292,9 +292,6 @@ public class MinimalTiffReader extends FormatReader {
     }
 
     if (tiffParser == null) {
-      if (in == null) {
-        in = new RandomAccessInputStream(getCurrentFile());
-      }
       initTiffParser();
     }
 
@@ -425,7 +422,7 @@ public class MinimalTiffReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessInputStream(id);
+    in = new RandomAccessInputStream(id, 16);
     initTiffParser();
     Boolean littleEndian = tiffParser.checkHeader();
     if (littleEndian == null) {
@@ -625,7 +622,7 @@ public class MinimalTiffReader extends FormatReader {
   protected void initTiffParser() {
     if (in == null) {
       try {
-        in = new RandomAccessInputStream(getCurrentFile());
+        in = new RandomAccessInputStream(getCurrentFile(), 16);
       }
       catch (IOException e) {
         LOGGER.error("Could not initialize stream", e);

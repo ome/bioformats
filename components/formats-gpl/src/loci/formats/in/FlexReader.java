@@ -1201,7 +1201,8 @@ public class FlexReader extends FormatReader {
     Boolean firstCompressed = null;
     int firstIFDCount = 0;
     for (String file : fileList) {
-      RandomAccessInputStream s = new RandomAccessInputStream(file);
+      LOGGER.warn("parsing {}", file);
+      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
       TiffParser parser = new TiffParser(s);
       IFD firstIFD = parser.getFirstIFD();
       int ifdCount = parser.getIFDOffsets().length;
@@ -1354,7 +1355,7 @@ public class FlexReader extends FormatReader {
     if (Location.getMappedFile(flexFile) != null) {
       return Location.getMappedFile(flexFile);
     }
-    return new NIOFileHandle(Location.getMappedId(flexFile), "r");
+    return new NIOFileHandle(new File(Location.getMappedId(flexFile)), "r", 16);
   }
 
   private FlexFile lookupFile(int wellRow, int wellColumn, int field) {

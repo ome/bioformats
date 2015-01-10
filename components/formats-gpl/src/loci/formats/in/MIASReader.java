@@ -939,7 +939,7 @@ public class MIASReader extends FormatReader {
   private Color getChannelColorFromFile(String file)
     throws FormatException, IOException
   {
-    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
     TiffParser tp = new TiffParser(s);
     IFD ifd = tp.getFirstIFD();
     s.close();

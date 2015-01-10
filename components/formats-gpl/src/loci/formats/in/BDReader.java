@@ -777,7 +777,7 @@ public class BDReader extends FormatReader {
   }
 
   private long getTimestamp(String file) throws FormatException, IOException {
-    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
     TiffParser parser = new TiffParser(s);
     parser.setDoCaching(false);
     IFD firstIFD = parser.getFirstIFD();
