@@ -162,7 +162,7 @@ public class NRRDReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (initializeHelper && dataFile != null) {
+    if (initializeHelper && dataFile != null && helper.getCurrentFile() == null) {
       helper.setId(dataFile);
     }
 
