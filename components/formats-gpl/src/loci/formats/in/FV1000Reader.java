@@ -631,7 +631,7 @@ public class FV1000Reader extends FormatReader {
         String tiff = replaceExtension(file, ".pty", ".tif");
         Location tiffFile = new Location(tiff);
         if (tiffFile.exists()) {
-          tiffs.add(ii, tiff);
+          tiffs.add(ii, tiffFile.getAbsolutePath());
           continue;
         }
         else {
@@ -658,12 +658,10 @@ public class FV1000Reader extends FormatReader {
         while (file.indexOf("GST") != -1) {
           file = removeGST(file);
         }
-        if (!mappedOIF) {
-          if (isOIB) {
-            file = tiffPath + File.separator + file;
-          }
-          else file = new Location(tiffPath, file).getAbsolutePath();
+        if (isOIB) {
+          file = tiffPath + File.separator + file;
         }
+        else file = new Location(tiffPath, file).getAbsolutePath();
         tiffs.add(ii, file);
       }
 
@@ -931,10 +929,15 @@ public class FV1000Reader extends FormatReader {
           ifds.add(null);
           continue;
         }
-        TiffParser tp = new TiffParser(plane);
-        IFDList ifd = tp.getIFDs();
-        ifds.add(ifd);
-      } 
+        try {
+          TiffParser tp = new TiffParser(plane);
+          IFDList ifd = tp.getIFDs();
+          ifds.add(ifd);
+        }
+        finally {
+          plane.close();
+        }
+      }
     }
 
     // populate MetadataStore
