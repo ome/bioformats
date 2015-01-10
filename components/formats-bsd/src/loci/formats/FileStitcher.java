@@ -668,6 +668,7 @@ public class FileStitcher extends ReaderWrapper {
     for (ExternalSeries s : externals) {
       String[] f = s.getFiles();
       for (String file : f) {
+        file = new Location(file).getAbsolutePath();
         if (!files.contains(file)) files.add(file);
       }
 
@@ -677,6 +678,7 @@ public class FileStitcher extends ReaderWrapper {
           readers[i].setId(f[i]);
           String[] used = readers[i].getUsedFiles();
           for (String file : used) {
+            file = new Location(file).getAbsolutePath();
             if (!files.contains(file)) files.add(file);
           }
           readers[i].close();
@@ -838,6 +840,13 @@ public class FileStitcher extends ReaderWrapper {
   /* @see IFormatReader#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
+    if (getCurrentFile() != null &&
+      new Location(id).getAbsolutePath().equals(getCurrentFile()))
+    {
+      // already initialized this file
+      return;
+    }
+
     close();
     initFile(id);
   }
