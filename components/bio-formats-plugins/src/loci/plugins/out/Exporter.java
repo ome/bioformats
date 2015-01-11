@@ -534,9 +534,12 @@ public class Exporter {
                     GenericDialog gd =
                             new GenericDialog("Bio-Formats Exporter Options");
 
-
                     gd.addChoice("Compression type: ", codecs, codecs[0]);
-                    gd.addCheckbox("Export ROI's", false);
+                    if (saveRoi != null) {
+                        gd.addCheckbox("Export ROI's", saveRoi.booleanValue());
+                    } else {
+                        gd.addCheckbox("Export ROI's", false);
+                    }
                     gd.showDialog();
                     saveRoi = gd.getNextBoolean();
 
