@@ -166,6 +166,7 @@ public class ROIHandler {
     public static Roi[] readFromRoiManager(){
 
         RoiManager manager = RoiManager.getInstance();
+        if (manager == null) return null;
         Roi[] rois = manager.getRoisAsArray();
         return rois;
     }
@@ -174,6 +175,7 @@ public class ROIHandler {
     public static void saveROIs(MetadataStore store) {
         Roi[] rois = readFromRoiManager();
 
+        if (rois == null || rois.length == 0) return;
         List<String> discardList = new ArrayList<String>();
         String roiID = null;int cntr = 0;
         for (int i=0; i<rois.length; i++) {
