@@ -544,11 +544,13 @@ public class Exporter {
                     saveRoi = gd.getNextBoolean();
 
                     if (gd.wasCanceled()) return;
-
-                    w.setCompression(gd.getNextChoice());
-                } else w.setCompression(compression);
+                    compression = gd.getNextChoice();
+                }
             }
 
+            if (compression != null) {
+                w.setCompression(compression);
+            }
             //Save ROI's
             if (saveRoi.booleanValue()==true){
                 ROIHandler.saveROIs(store);
