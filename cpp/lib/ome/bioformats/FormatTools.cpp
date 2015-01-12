@@ -57,7 +57,7 @@ namespace ome
       {
         boost::format fmt("Invalid %1% %2%: %3%");
         fmt % dim % what % value;
-        throw new std::logic_error(fmt.str());
+        throw std::logic_error(fmt.str());
       }
 
       void
@@ -68,7 +68,7 @@ namespace ome
       {
         boost::format fmt("Invalid %1% %2%: %3%/%4%");
         fmt % dim % what % value1 % value2;
-        throw new std::logic_error(fmt.str());
+        throw std::logic_error(fmt.str());
       }
 
       void
@@ -85,7 +85,7 @@ namespace ome
           {
             boost::format fmt("Invalid dimension order: %1%");
             fmt % order;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
 
         std::string::size_type sz, st, sc;
@@ -99,7 +99,7 @@ namespace ome
           {
             boost::format fmt("Invalid dimension order: %1%");
             fmt % order;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
 
         iz = sz - 2;
@@ -123,7 +123,7 @@ namespace ome
           {
             boost::format fmt("Invalid image count: %1%");
             fmt % num;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
 
         if (num != (zSize * cSize * tSize))
@@ -133,7 +133,7 @@ namespace ome
             // else the input file is invalid
             boost::format fmt("ZCT/image count mismatch (sizeZ=%1%, sizeT=%2%, sizeC=%3%, total=%4%");
             fmt % zSize % tSize % cSize % num;
-            throw new std::logic_error(fmt.str());
+            throw std::logic_error(fmt.str());
           }
       }
 
@@ -265,6 +265,33 @@ namespace ome
       return v0 + (v1 * len0) + (v2 * len0 * len1);
     }
 
+    dimension_size_type
+    getIndex(const std::string& order,
+             dimension_size_type zSize,
+             dimension_size_type cSize,
+             dimension_size_type tSize,
+             dimension_size_type moduloZSize,
+             dimension_size_type moduloCSize,
+             dimension_size_type moduloTSize,
+             dimension_size_type num,
+             dimension_size_type z,
+             dimension_size_type c,
+             dimension_size_type t,
+             dimension_size_type moduloZ,
+             dimension_size_type moduloC,
+             dimension_size_type moduloT)
+    {
+      return getIndex(order,
+                      zSize,
+                      cSize,
+                      tSize,
+                      num,
+                      (z * moduloZSize) + moduloZ,
+                      (c * moduloCSize) + moduloC,
+                      (t * moduloTSize) + moduloT);
+
+    }
+
     std::array<dimension_size_type, 3>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
@@ -273,7 +300,7 @@ namespace ome
                  dimension_size_type num,
                  dimension_size_type index)
     {
-      dimension_size_type iz, it, ic;
+      dimension_size_type iz = 0, it = 0, ic = 0;
       validate_dimensions(order, zSize, cSize, tSize, num, iz, ic, it);
 
       // assign rasterization order
@@ -287,6 +314,36 @@ namespace ome
       ret[0] = iz == 0 ? v0 : (iz == 1 ? v1 : v2); // z
       ret[1] = ic == 0 ? v0 : (ic == 1 ? v1 : v2); // c
       ret[2] = it == 0 ? v0 : (it == 1 ? v1 : v2); // t
+
+      return ret;
+    }
+
+    std::array<dimension_size_type, 6>
+    getZCTCoords(const std::string& order,
+                 dimension_size_type zSize,
+                 dimension_size_type cSize,
+                 dimension_size_type tSize,
+                 dimension_size_type moduloZSize,
+                 dimension_size_type moduloCSize,
+                 dimension_size_type moduloTSize,
+                 dimension_size_type num,
+                 dimension_size_type index)
+    {
+      std::array<dimension_size_type, 3> coords
+        (getZCTCoords(order,
+                      zSize,
+                      cSize,
+                      tSize,
+                      num,
+                      index));
+
+      std::array<dimension_size_type, 6> ret;
+      ret[0] = coords[0] / moduloZSize;
+      ret[1] = coords[1] / moduloCSize;
+      ret[2] = coords[2] / moduloTSize;
+      ret[3] = coords[0] % moduloZSize;
+      ret[4] = coords[1] % moduloCSize;
+      ret[5] = coords[2] % moduloTSize;
 
       return ret;
     }
