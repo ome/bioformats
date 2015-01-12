@@ -185,9 +185,7 @@ public class ScanrReader extends FormatReader {
       int offset = getSeries() * getImageCount();
       for (int i=0; i<getImageCount(); i++) {
         if (offset + i < tiffs.length && tiffs[offset + i] != null) {
-          if (isThisType(tiffs[offset + i])) {
-            files.add(tiffs[offset + i]);
-          }
+          files.add(tiffs[offset + i]);
         }
       }
     }
@@ -333,7 +331,7 @@ public class ScanrReader extends FormatReader {
 
     for (String file : list) {
       Location f = new Location(dir, file);
-      if (!f.isDirectory() && checkSuffix(file, METADATA_SUFFIXES)) {
+      if (checkSuffix(file, METADATA_SUFFIXES) && !f.isDirectory()) {
         metadataFiles.add(f.getAbsolutePath());
       }
     }

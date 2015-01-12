@@ -85,6 +85,8 @@ public class CellWorxReader extends FormatReader {
   private HashMap<Integer, Timestamp> timestamps =
     new HashMap<Integer, Timestamp>();
 
+  private String[] directoryList;
+
   // -- Constructor --
 
   /** Constructs a new CellWorx reader. */
@@ -180,7 +182,7 @@ public class CellWorxReader extends FormatReader {
         lastReader.close();
       }
       try {
-        lastReader = getReader(file);
+        lastReader = getReader(file, false);
       }
       catch (IOException e) {
         // this almost always means that the file does not exist
@@ -221,6 +223,7 @@ public class CellWorxReader extends FormatReader {
       doChannels = false;
       service = null;
       timestamps.clear();
+      directoryList = null;
     }
   }
 
@@ -239,8 +242,8 @@ public class CellWorxReader extends FormatReader {
 
       if (!new Location(id).exists()) {
         Location parent = new Location(id).getAbsoluteFile().getParentFile();
-        String[] list = parent.list(true);
-        for (String f : list) {
+        directoryList = parent.list(true);
+        for (String f : directoryList) {
           if (checkSuffix(f, "htd")) {
             id = new Location(parent, f).getAbsolutePath();
             LOGGER.info("Found .htd file {}", f);
@@ -386,7 +389,7 @@ public class CellWorxReader extends FormatReader {
       }
       file = getFile(seriesIndex, planeIndex);
     }
-    IFormatReader pnl = getReader(file);
+    IFormatReader pnl = getReader(file, true);
 
     core.clear();
     for (int i=0; i<seriesCount; i++) {
@@ -703,7 +706,7 @@ public class CellWorxReader extends FormatReader {
     setSeries(oldSeries);
   }
 
-  private IFormatReader getReader(String file)
+  private IFormatReader getReader(String file, boolean omexml)
     throws FormatException, IOException
   {
     IFormatReader pnl = new DeltavisionReader();
@@ -711,14 +714,16 @@ public class CellWorxReader extends FormatReader {
       pnl = new MetamorphReader();
     }
 
-    IMetadata metadata;
-    try{
-      metadata = service.createOMEXMLMetadata();
+    if (omexml) {
+      IMetadata metadata;
+      try {
+        metadata = service.createOMEXMLMetadata();
+      }
+      catch (ServiceException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+      pnl.setMetadataStore(metadata);
     }
-    catch (ServiceException exc) {
-      throw new FormatException("Could not create OME-XML store.", exc);
-    }
-    pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;
   }
@@ -765,9 +770,11 @@ public class CellWorxReader extends FormatReader {
       nextFile = 0;
       Location parent =
         new Location(currentId).getAbsoluteFile().getParentFile();
-      String[] list = parent.list(true);
-      Arrays.sort(list);
-      for (String f : list) {
+      if (directoryList == null) {
+        directoryList = parent.list(true);
+        Arrays.sort(directoryList);
+      }
+      for (String f : directoryList) {
         if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
           String path = new Location(parent, f).getAbsolutePath();
           if (path.startsWith(base) && path.indexOf("_thumb_") < 0) {
