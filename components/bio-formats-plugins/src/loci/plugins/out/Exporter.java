@@ -537,9 +537,9 @@ public class Exporter {
 
                     gd.addChoice("Compression type: ", codecs, codecs[0]);
                     if (saveRoi != null) {
-                        gd.addCheckbox("Export ROI's", saveRoi.booleanValue());
+                        gd.addCheckbox("Export ROIs", saveRoi.booleanValue());
                     } else {
-                        gd.addCheckbox("Export ROI's", false);
+                        gd.addCheckbox("Export ROIs", false);
                     }
                     gd.showDialog();
                     saveRoi = gd.getNextBoolean();
