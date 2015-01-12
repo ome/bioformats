@@ -1,0 +1,60 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    # Copyright (C) 2003 - 2014 Open Microscopy Environment
+    #       Massachusetts Institute of Technology,
+    #       National Institutes of Health,
+    #       University of Dundee,
+    #       University of Wisconsin at Madison
+    #
+    # This work is licensed under the
+    #       Creative Commons Attribution 3.0 Unported License.
+    # To view a copy of this license, visit
+    #       http://creativecommons.org/licenses/by/3.0/
+    # or send a letter to
+    #       Creative Commons, 444 Castro Street, Suite 900,
+    #       Mountain View, California, 94041, USA.
+    # For attribution instructions, visit
+    #       http://www.openmicroscopy.org/info/attribution
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Written by:  Josiah Johnston <siah@nih.gov>, Andrew J Patterson
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<xsd:schema
+	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2"
+	xmlns:HDF = "http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version = "1"
+	elementFormDefault = "qualified">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2/ome.xsd"/>
+	<xsd:annotation>
+		<xsd:documentation>
+			The elements in this file are not yet represented by classes in the EA diagrams - ajp
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="Hdf5Data"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Hdf5DataBlock</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				This describes the location of the pixel data in a HDF5 file.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Path" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						Path to the pixel hypervolume in the HDF5 file.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

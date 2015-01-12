@@ -12,6 +12,8 @@ Include this in components generating sources using xsd-fu.
   <property name="xsdfu.templatepath" value="${root.dir}/components/xsd-fu"/>
   <property name="xsdfu.schema.ome" value="${xsdfu.schemapath}/ome.xsd"/>
   <property name="xsdfu.schema.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>
+  <property name="xsdfu.schema.hdf5file" value="${xsdfu.schemapath}/HDF5File.xsd"/>
+  <property name="xsdfu.schema.tifffile" value="${xsdfu.schemapath}/TIFFFile.xsd"/>
   <property name="xsdfu.schema.roi" value="${xsdfu.schemapath}/ROI.xsd"/>
   <property name="xsdfu.schema.sa" value="${xsdfu.schemapath}/SA.xsd"/>
   <property name="xsdfu.schema.spw" value="${xsdfu.schemapath}/SPW.xsd"/>
@@ -40,6 +42,8 @@ Include this in components generating sources using xsd-fu.
 	<arg value="--print-generated"/>
 	<arg value="${xsdfu.schema.ome}"/>
 	<arg value="${xsdfu.schema.binaryfile}"/>
+        <arg value="${xsdfu.schema.hdf5file}"/>
+        <arg value="${xsdfu.schema.tifffile}"/>
 	<arg value="${xsdfu.schema.roi}"/>
 	<arg value="${xsdfu.schema.sa}"/>
 	<arg value="${xsdfu.schema.spw}"/>

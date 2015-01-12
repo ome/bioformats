@@ -29,6 +29,8 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
+	xmlns:HDF="http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2"
+	xmlns:TIFF="http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2"
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-2"
@@ -37,6 +39,10 @@
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2/HDF5File.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2/TIFFFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
@@ -353,10 +359,11 @@
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
 					</xsd:annotation>
-                </xsd:element>
+				</xsd:element>
 				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
-					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="HDF:Hdf5Data" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="TIFF:TiffData" minOccurs="1" maxOccurs="unbounded"/>
 					<xsd:element ref="MetadataOnly" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
@@ -415,10 +422,10 @@
 					<xsd:documentation>
 						This is true if the pixels data was written in BigEndian order.
 
-						If this value is present it should match the value used in BinData
-						or TiffData. If it does not a reader should honour the value used
-						in the BinData or TiffData. This values is useful for MetadataOnly
-						files and is to allow for future storage solutions.
+						If this value is present it should match the value used in BinData,
+						Hdf5Data or TiffData. If it does not a reader should honour the value
+						used in BinData, Hdf5Data or TiffData. This value is useful for
+						MetadataOnly files and is to allow for future storage solutions.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -734,85 +741,6 @@
 				This place holder means there is on pixel data in this file.
 			</xsd:documentation>
 		</xsd:annotation>
-	</xsd:element>
-	<xsd:element name="TiffData"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>TiffDataBlocks</plural></xsdfu></xsd:appinfo>
-			<xsd:documentation>
-				This described the location of the pixel data in a tiff file.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="UUID" minOccurs="0" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation>
-							This must be used when the IFDs are located in another file.
-							Note: It is permissible for this to be self referential.
-						</xsd:documentation>
-					</xsd:annotation>
-					<xsd:complexType>
-						<xsd:simpleContent>
-							<xsd:extension base = "UniversallyUniqueIdentifier">
-								<xsd:attribute name="FileName" use="optional" type="xsd:string">
-									<xsd:annotation>
-										<xsd:documentation>
-											This can be used when the IFDs are located in another file.
-											The / (forward slash) is used as the path separator.
-											A relative path is recommended. However an absolute path can be specified.
-											Default is to use the file the ome-xml data has been pulled from.
-											Note: It is permissible for this to be self referential. The file image1.tiff
-											may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
-										</xsd:documentation>
-									</xsd:annotation>
-								</xsd:attribute>
-							</xsd:extension>
-						</xsd:simpleContent>
-					</xsd:complexType>
-				</xsd:element>
-			</xsd:sequence>
-			<xsd:attribute name="IFD" type="NonNegativeInt" default="0" use="optional">
-				<xsd:annotation>
-					<xsd:documentation>
-						Gives the IFD(s) for which this element is applicable. Indexed from 0.
-						Default is 0 (the first IFD). [units:none]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="FirstZ" type="NonNegativeInt" default="0" use="optional">
-				<xsd:annotation>
-					<xsd:documentation>
-						Gives the Z position of the image plane at the specified IFD. Indexed from 0.
-						Default is 0 (the first Z position). [units:none]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="FirstT" type="NonNegativeInt" default="0" use="optional">
-				<xsd:annotation>
-					<xsd:documentation>
-						Gives the T position of the image plane at the specified IFD. Indexed from 0.
-						Default is 0 (the first T position). [units:none]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="FirstC" type="NonNegativeInt" default="0" use="optional">
-				<xsd:annotation>
-					<xsd:documentation>
-						Gives the C position of the image plane at the specified IFD. Indexed from 0.
-						Default is 0 (the first C position). [units:none]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="PlaneCount" use="optional" type="NonNegativeInt">
-				<xsd:annotation>
-					<xsd:documentation>
-						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
-						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
-						file, unless an IFD is specified, in which case the default is 1. [units:none]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="StageLabel"> <!-- top level definition -->
 		<xsd:annotation>
