@@ -605,8 +605,9 @@ public class BDReader extends FormatReader {
     }
 
     for (String filename : rootList) {
-      if (new Location(filename).getName().startsWith("Well ")) {
-        wellLabels.add(filename.split("\\s|\\.")[1]);
+      String name = new Location(filename).getName();
+      if (name.startsWith("Well ")) {
+        wellLabels.add(name.split("\\s|\\.")[1]);
       }
     }
 
