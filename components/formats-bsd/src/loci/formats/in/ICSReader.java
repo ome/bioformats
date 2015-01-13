@@ -1407,7 +1407,7 @@ public class ICSReader extends FormatReader {
         m.moduloC.typeDescription = "TCSPC";
         m.moduloC.start = 0;
         m.moduloC.step = 1;
-        m.moduloC.end = clen0;
+        m.moduloC.end = clen0 - 1;
       }
     }
 
