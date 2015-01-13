@@ -2395,7 +2395,7 @@ public class ZeissCZIReader extends FormatReader {
 
       String attrName = attr.getNodeName();
       String attrValue = attr.getNodeValue();
-      
+
       String keyString = key.toString();
       if (attrName.endsWith("|")){
         attrName = attrName.substring(0, attrName.length() - 1);
@@ -3075,7 +3075,6 @@ public class ZeissCZIReader extends FormatReader {
         s.skipBytes(12); // reserved
         attachment = new AttachmentEntry(s);
         dataOffset = s.getFilePointer() + 112; // skip reserved bytes
-        allocatedSize = (dataOffset - startingPosition - HEADER_SIZE) + dataSize;
       }
       finally {
         if (stream == null) {
