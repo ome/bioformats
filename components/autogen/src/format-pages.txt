@@ -19,6 +19,8 @@ using the SlideBook software.  Bio-Formats is not likely to support the full \n
 range of metadata that is included in .sld files, and so exporting to \n
 OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
 preserved. \n
+Free software from 3I can export the files to OME-TIFF post-acquisition, see \n
+`https://www.slidebook.com/reader.php <https://www.slidebook.com/reader.php>`_ \n
 \n
 .. seealso:: \n
   `Slidebook software overview <https://www.slidebook.com>`_ \n
@@ -516,6 +518,10 @@ utilityRating = Fair
 reader = DicomReader.java
 notes = * DICOM stands for "Digital Imaging and Communication in Medicine". \n
 * Bio-Formats supports both compressed and uncompressed DICOM files. \n
+\n
+If you have a problematic DICOM file which you cannot send us for privacy \n
+reasons, please send us the exact error message and be aware that it may take \n
+several attempts to fix the problem blind. \n
 \n
 .. seealso:: \n
   `DICOM homepage <http://medical.nema.org/>`_
@@ -2358,6 +2364,10 @@ utilityRating = Good
 privateSpecification = true
 reader = ZeissZVIReader.java
 notes = Bio-Formats uses a modified version of the `Apache Jakarta POI library <http://jakarta.apache.org/poi/>`_ to read ZVI files. \n
+ImageJ/FIJI will use the ZVI reader plugin in preference to Bio-Formats if \n
+both are installed. If you have a problem which is solved by opening the file \n
+using the Bio-Formats Importer plugin, you can just remove the \n
+ZVI_Reader.class from the plugins folder. \n
 \n
 Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. \n
 \n
