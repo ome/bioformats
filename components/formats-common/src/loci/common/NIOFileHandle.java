@@ -265,7 +265,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
     buf.position(off);
     int realLength = (int) Math.min(len, length() - position);
     if (realLength < 0) {
-      throw new EOFException();
+      return -1;
     }
     buf.limit(off + realLength);
     buffer(position, realLength);
