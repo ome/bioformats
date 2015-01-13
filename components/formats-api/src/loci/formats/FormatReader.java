@@ -1092,11 +1092,23 @@ public abstract class FormatReader extends FormatHandler
     return FormatTools.getIndex(this, z, c, t);
   }
 
+  /* @see IFormatReader#getIndex(int, int, int, int, int, int) */
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+    FormatTools.assertId(currentId, true, 1);
+    return FormatTools.getIndex(this, z, c, t, moduloZ, moduloC, moduloT);
+  }
+
   /* @see IFormatReader#getZCTCoords(int) */
   @Override
   public int[] getZCTCoords(int index) {
     FormatTools.assertId(currentId, true, 1);
     return FormatTools.getZCTCoords(this, index);
+  }
+
+  /* @see IFormatReader#getZCTModuloCoords(int) */
+  public int[] getZCTModuloCoords(int index) {
+    FormatTools.assertId(currentId, true, 1);
+    return FormatTools.getZCTModuloCoords(this, index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */

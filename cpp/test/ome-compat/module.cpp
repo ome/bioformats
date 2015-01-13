@@ -59,15 +59,6 @@ public:
 
 class ModulePathTest : public ::testing::TestWithParam<ModulePathTestParameters>
 {
-public:
-  bool verbose;
-
-  void
-  SetUp()
-  {
-    verbose = (getenv("BIOFORMATS_TEST_VERBOSE")
-               && std::string(getenv("BIOFORMATS_TEST_VERBOSE")) == "true");
-  }
 };
 
 TEST_P(ModulePathTest, CheckPath)
@@ -79,18 +70,18 @@ TEST_P(ModulePathTest, CheckPath)
   try
     {
       boost::filesystem::path path(ome::compat::module_runtime_path(params.dtype));
-      if (verbose)
+      if (verbose())
         std::cout << params.dtype << " path is: " << path << '\n';
     }
   catch (const std::runtime_error& e)
     {
-      if (verbose)
+      if (verbose())
         std::cout << params.dtype << " threw a runtime_error: " << e.what() << '\n';
       ASSERT_FALSE(params.logic_error);
     }
   catch (const std::logic_error& e)
     {
-      if (verbose)
+      if (verbose())
         std::cout << params.dtype << " threw a logic_error: " << e.what() << '\n';
       ASSERT_TRUE(params.logic_error);
     }

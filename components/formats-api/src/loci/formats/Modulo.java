@@ -62,7 +62,8 @@ public class Modulo {
     if (labels != null) {
       return labels.length;
     }
-    return (int) Math.rint((end - start) / step) + 1;
+    int len = (int) Math.rint((end - start) / step) + 1;
+    return (len < 1) ? 1 : len; // Can't ever be less than 1.
   }
 
   public String toXMLAnnotation() {

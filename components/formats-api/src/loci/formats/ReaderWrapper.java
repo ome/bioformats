@@ -458,8 +458,18 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   @Override
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+    return reader.getIndex(z, c, t, moduloZ, moduloC, moduloT);
+  }
+
+  @Override
   public int[] getZCTCoords(int index) {
     return reader.getZCTCoords(index);
+  }
+
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    return reader.getZCTModuloCoords(index);
   }
 
   @Override

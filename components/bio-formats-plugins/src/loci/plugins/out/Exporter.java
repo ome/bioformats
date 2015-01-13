@@ -38,6 +38,7 @@ import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.plugin.frame.Recorder;
+import ij.plugin.frame.RoiManager;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -118,6 +119,7 @@ public class Exporter {
         Boolean splitC = null;
         Boolean splitT = null;
         Boolean saveRoi = null;
+        String compression = null;
 
         if (plugin.arg != null) {
             outfile = Macro.getValue(plugin.arg, "outfile", null);
@@ -126,6 +128,7 @@ public class Exporter {
             String c = Macro.getValue(plugin.arg, "splitC", null);
             String t = Macro.getValue(plugin.arg, "splitT", null);
             String sr = Macro.getValue(plugin.arg, "saveRoi", null);
+            compression = Macro.getValue(plugin.arg, "compression", null);
 
             splitZ = z == null ? null : Boolean.valueOf(z);
             splitC = c == null ? null : Boolean.valueOf(c);
@@ -519,22 +522,38 @@ public class Exporter {
             }
 
             if (codecs != null && codecs.length > 1) {
-                GenericDialog gd =
-                        new GenericDialog("Bio-Formats Exporter Options");
+                boolean selected = false;
+                if (compression != null) {
+                    for (int i = 0; i < codecs.length; i++) {
+                        if (codecs[i].equals(compression)) {
+                            selected = true;
+                            break;
+                        }
+                    }
+                }
+                if (!selected) {
+                    GenericDialog gd =
+                            new GenericDialog("Bio-Formats Exporter Options");
 
+                    gd.addChoice("Compression type: ", codecs, codecs[0]);
+                    if (saveRoi != null) {
+                        gd.addCheckbox("Export ROIs", saveRoi.booleanValue());
+                    } else {
+                        gd.addCheckbox("Export ROIs", false);
+                    }
+                    gd.showDialog();
+                    saveRoi = gd.getNextBoolean();
 
-                gd.addChoice("Compression type: ", codecs, codecs[0]);
-                gd.addCheckbox("Export ROI's", false);
-                gd.showDialog();
-                saveRoi = gd.getNextBoolean();
-
-                if (gd.wasCanceled()) return;
-
-                w.setCompression(gd.getNextChoice());
+                    if (gd.wasCanceled()) return;
+                    compression = gd.getNextChoice();
+                }
             }
 
+            if (compression != null) {
+                w.setCompression(compression);
+            }
             //Save ROI's
-            if (saveRoi.booleanValue()==true){
+            if (saveRoi.booleanValue()) {
                 ROIHandler.saveROIs(store);
             }
             w.setMetadataRetrieve(store);

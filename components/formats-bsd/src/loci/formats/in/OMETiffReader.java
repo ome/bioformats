@@ -890,6 +890,9 @@ public class OMETiffReader extends FormatReader {
         }
         m.falseColor = true;
         m.metadataComplete = true;
+        if (meta.getPixelsSignificantBits(i) != null) {
+          m.bitsPerPixel = meta.getPixelsSignificantBits(i).getValue();
+        }
       }
       catch (NullPointerException exc) {
         throw new FormatException("Incomplete Pixels metadata", exc);

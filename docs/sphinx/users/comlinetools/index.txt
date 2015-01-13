@@ -60,7 +60,9 @@ Some of these tools also work in combination, for example
 :doc:`xml-validation` uses both ``tiffcomment`` and ``xmlvalid``.
 
 Running any of these commands without any arguments will print usage
-information to help you.
+information to help you. When run with the ``-version`` argument, ``showinf``
+and ``bfconvert`` will display the version of Bio-Formats that is being used
+(version number, build date, and Git commit reference).
 
 Using the tools directly from source
 ------------------------------------
