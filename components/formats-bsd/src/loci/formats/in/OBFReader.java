@@ -3,7 +3,12 @@
  * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) Max Planck Institute for Biophysical Chemistry, 
- * Goettingen, 2014
+ * Goettingen, 2014 - 2015
+ *
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
