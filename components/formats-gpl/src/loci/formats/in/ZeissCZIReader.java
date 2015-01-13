@@ -2442,9 +2442,9 @@ public class ZeissCZIReader extends FormatReader {
       segment = new SubBlock();
     }
     else if (segmentID.equals("ZISRAWATTACH")) {
-      segment = new Attachment(filename);
-       // attachments can be large, so only read binary data on demand
-       skipData = true;
+      segment = new Attachment(filename, startingPosition);
+      // attachments can be large, so only read binary data on demand
+      skipData = true;
     }
     else if (segmentID.equals("ZISRAWDIRECTORY")) {
       segment = new Directory();
@@ -2485,7 +2485,7 @@ public class ZeissCZIReader extends FormatReader {
       in.seek(in.length());
     }
 
-    if (skipData) {
+    if (skipData && !(segment instanceof Attachment)) {
       segment.close();
       return null;
     }
@@ -3063,8 +3063,9 @@ public class ZeissCZIReader extends FormatReader {
     public byte[] attachmentData;
     public long dataOffset;
 
-    public Attachment(String filename) throws IOException {
+    public Attachment(String filename, long position) throws IOException {
       super(filename);
+      this.startingPosition = position;
       super.fillInData();
       RandomAccessInputStream s = getStream();
       try {
@@ -3074,6 +3075,7 @@ public class ZeissCZIReader extends FormatReader {
         s.skipBytes(12); // reserved
         attachment = new AttachmentEntry(s);
         dataOffset = s.getFilePointer() + 112; // skip reserved bytes
+        allocatedSize = (dataOffset - startingPosition - HEADER_SIZE) + dataSize;
       }
       finally {
         if (stream == null) {
