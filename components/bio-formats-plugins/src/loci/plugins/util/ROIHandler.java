@@ -40,7 +40,6 @@ import ij.gui.TextRoi;
 import ij.plugin.frame.RoiManager;
 
 import java.awt.Color;
-
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,6 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import ome.xml.model.Ellipse;
-
 import ome.xml.model.OME;
 import ome.xml.model.Point;
 import ome.xml.model.Polygon;
@@ -157,7 +155,6 @@ public class ROIHandler {
                         double y = label.getY().doubleValue();
                         String labelText = label.getText();
                         roi = new TextRoi((int) x,(int) y, labelText);
-                        
                     }
 
                     if (roi != null) {
@@ -219,7 +216,7 @@ public class ROIHandler {
 
             else if (ijRoi instanceof Line) { //Check if its a Line or Arrow ROI
                 boolean checkpoint = ijRoi.isDrawingTool();
-                if (checkpoint != true){
+                if (!checkpoint){
                     store.setLineID(polylineID, cntr, 0);
                     storeLine((Line) ijRoi, store, cntr, 0);
                 }
@@ -253,7 +250,7 @@ public class ROIHandler {
 
                     if (ijShape instanceof Line) {
                         boolean checkpoint = ijShape.isDrawingTool();
-                        if (checkpoint != true){
+                        if (!checkpoint){
                             store.setLineID(polylineID, cntr, 0);
                             storeLine((Line) ijShape, store, cntr, 0);
                         }
@@ -321,9 +318,8 @@ public class ROIHandler {
     private static void storePoint(PointRoi roi, MetadataStore store,
             int roiNum, int shape) {
 
-
-        int[] xCoordinates = roi.getPolygon().xpoints;;
-        int[] yCoordinates = roi.getPolygon().ypoints;;
+        int[] xCoordinates = roi.getPolygon().xpoints;
+        int[] yCoordinates = roi.getPolygon().ypoints;
 
         for (int cntr=0 ; cntr<xCoordinates.length; cntr++){
             String polylineID = MetadataTools.createLSID("Shape", roiNum, shape+cntr);
@@ -358,30 +354,30 @@ public class ROIHandler {
     private static void storePolygon(PolygonRoi roi, MetadataStore store,
             int roiNum, int shape)
     {
-//        Rectangle bounds = roi.getBounds();
-//        int[] xCoordinates = roi.getXCoordinates();
-//        int[] yCoordinates = roi.getYCoordinates();
-//        StringBuffer points = new StringBuffer();
-//        for (int i=0; i<xCoordinates.length; i++) {
-//            points.append(xCoordinates[i] + bounds.x);
-//            points.append(",");
-//            points.append(yCoordinates[i] + bounds.y);
-//            if (i < xCoordinates.length - 1) points.append(" ");
-//        }
-        
+        //        Rectangle bounds = roi.getBounds();
+        //        int[] xCoordinates = roi.getXCoordinates();
+        //        int[] yCoordinates = roi.getYCoordinates();
+        //        StringBuffer points = new StringBuffer();
+        //        for (int i=0; i<xCoordinates.length; i++) {
+        //            points.append(xCoordinates[i] + bounds.x);
+        //            points.append(",");
+        //            points.append(yCoordinates[i] + bounds.y);
+        //            if (i < xCoordinates.length - 1) points.append(" ");
+        //        }
+
         int[] xCoordinates = roi.getPolygon().xpoints;
         int[] yCoordinates = roi.getPolygon().ypoints;
         String st1 = roi.getTypeAsString();
         String points = "1";
         for (int i=0 ; i<xCoordinates.length ; i++){
-            System.out.println(xCoordinates[i] + "," + yCoordinates[i]);  
+
             if(i==0){                    
                 points = (xCoordinates[i] + "," + yCoordinates[i]);
             }else{
                 points= (points + " " + xCoordinates[i] + "," + yCoordinates[i]);
             }
         }
-        
+
         if (st1.matches("Polyline") || st1.matches("Freeline") || st1.matches("Angle")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
         }
@@ -391,7 +387,7 @@ public class ROIHandler {
         else{
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
-            
+
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
@@ -410,8 +406,7 @@ public class ROIHandler {
         store.setEllipseY(((double) y + ry/2), roiNum, shape);
         store.setEllipseRadiusX((double) rx/2, roiNum, shape);
         store.setEllipseRadiusY((double) ry/2, roiNum, shape);
-        // TODO: storeOval
-        // TODO: storeOval
+
     }
 
     /**
