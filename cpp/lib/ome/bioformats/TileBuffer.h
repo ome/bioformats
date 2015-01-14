@@ -35,36 +35,84 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_TYPES_H
-#define OME_BIOFORMATS_TYPES_H
+#ifndef OME_BIOFORMATS_TILEBUFFER_H
+#define OME_BIOFORMATS_TILEBUFFER_H
 
-#include <algorithm>
-#include <cstddef>
-#include <iterator>
-#include <stdexcept>
-#include <string>
-#include <vector>
+#include <ome/bioformats/Types.h>
 
-#include <boost/format.hpp>
-#include <boost/optional.hpp>
-
-#include <ome/compat/cstdint.h>
+#include <ome/xml/model/enums/PixelType.h>
 
 namespace ome
 {
   namespace bioformats
   {
 
-    /// Size type for image dimensions.
-    typedef std::size_t dimension_size_type;
+    /**
+     * Tile pixel data buffer.
+     *
+     * Pixel data for a single tile.
+     */
+    class TileBuffer
+    {
+    public:
+      /**
+       * Constructor.
+       *
+       * @param size the buffer size (bytes).
+       */
+      explicit
+      TileBuffer(dimension_size_type size);
 
-    /// Size type for pixel bit depths.
-    typedef uint32_t pixel_size_type;
+      /// Destructor.
+      virtual ~TileBuffer();
+
+    private:
+      // To avoid unintentional and expensive copies, copying and
+      // assignment of buffers is prevented.
+
+      /// Copy constructor (deleted).
+      TileBuffer (const TileBuffer&);
+
+      /// Assignment operator (deleted).
+      TileBuffer&
+      operator= (const TileBuffer&);
+
+    public:
+      /**
+       * Get the buffer size.
+       *
+       * @returns the buffer size.
+       */
+      dimension_size_type
+      size() const;
+
+      /**
+       * Get the buffer data.
+       *
+       * @returns a pointer to the data.
+       */
+      uint8_t *
+      data();
+
+      /**
+       * Get the buffer data.
+       *
+       * @returns a pointer to the data.
+       */
+      const uint8_t *
+      data() const;
+
+    private:
+      /// Buffer size (bytes).
+      dimension_size_type bufsize;
+      /// Raw buffer.
+      uint8_t *buf;
+    };
 
   }
 }
 
-#endif // OME_BIOFORMATS_TYPES_H
+#endif // OME_BIOFORMATS_TILEBUFFER_H
 
 /*
  * Local Variables:

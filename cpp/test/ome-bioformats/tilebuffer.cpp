@@ -1,6 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
+ * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -35,92 +36,17 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_TIFF_TILEBUFFER_H
-#define OME_BIOFORMATS_TIFF_TILEBUFFER_H
+#include <ome/bioformats/TileBuffer.h>
 
-#include <ome/bioformats/Types.h>
-#include <ome/bioformats/tiff/Types.h>
+#include <ome/test/test.h>
 
-#include <ome/xml/model/enums/PixelType.h>
+using ome::bioformats::TileBuffer;
 
-namespace ome
+TEST(TileBuffer, Construct)
 {
-  namespace bioformats
-  {
-    namespace tiff
-    {
+  TileBuffer b(50);
+  ASSERT_EQ(50U, b.size());
 
-      class IFD;
-
-      /**
-       * Tile pixel data buffer.
-       *
-       * Pixel data for a single tile.
-       */
-      class TileBuffer
-      {
-      public:
-        /**
-         * Constructor.
-         *
-         * @param size the buffer size (bytes).
-         */
-        TileBuffer(dimension_size_type size);
-
-        /// Destructor.
-        virtual ~TileBuffer();
-
-      private:
-        // To avoid unintentional and expensive copies, copying and
-        // assignment of buffers is prevented.
-
-        /// Copy constructor (deleted).
-        TileBuffer (const TileBuffer&);
-
-        /// Assignment operator (deleted).
-        TileBuffer&
-        operator= (const TileBuffer&);
-
-      public:
-        /**
-         * Get the buffer size.
-         *
-         * @returns the buffer size.
-         */
-        dimension_size_type
-        size() const;
-
-        /**
-         * Get the buffer data.
-         *
-         * @returns a pointer to the data.
-         */
-        uint8_t *
-        data();
-
-        /**
-         * Get the buffer data.
-         *
-         * @returns a pointer to the data.
-         */
-        const uint8_t *
-        data() const;
-
-      private:
-        /// Buffer size (bytes).
-        dimension_size_type bufsize;
-        /// Raw buffer.
-        uint8_t *buf;
-      };
-
-    }
-  }
+  for (int i =0; i < 50; ++i)
+    ASSERT_EQ(0U, *(b.data()+i));
 }
-
-#endif // OME_BIOFORMATS_TIFF_TILEBUFFER_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */

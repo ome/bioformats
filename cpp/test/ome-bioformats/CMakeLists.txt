@@ -107,10 +107,13 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-bioformats/pixelproperties pixelproperties)
 
-  add_executable(tiff
-                 tiff.cpp
-                 tiff-tilecache.cpp
-                 tiff-coverage.cpp)
+  add_executable(planeregion planeregion.cpp)
+  target_link_libraries(planeregion ome-bioformats)
+  target_link_libraries(planeregion ome-test)
+
+  bf_add_test(ome-bioformats/planeregion planeregion)
+
+  add_executable(tiff tiff.cpp)
   target_link_libraries(tiff ome-bioformats)
   target_link_libraries(tiff ome-test ${PNG_LIBRARIES})
   add_dependencies(tiff gentestimages)
@@ -128,6 +131,24 @@ if(BUILD_TESTS)
   target_link_libraries(tiffreader ome-test)
 
   bf_add_test(ome-bioformats/tiffreader tiffreader)
+
+  add_executable(tilebuffer tilebuffer.cpp)
+  target_link_libraries(tilebuffer ome-bioformats)
+  target_link_libraries(tilebuffer ome-test)
+
+  bf_add_test(ome-bioformats/tilebuffer tilebuffer)
+
+  add_executable(tilecache tilecache.cpp)
+  target_link_libraries(tilecache ome-bioformats)
+  target_link_libraries(tilecache ome-test)
+
+  bf_add_test(ome-bioformats/tilecache tilecache)
+
+  add_executable(tilecoverage tilecoverage.cpp)
+  target_link_libraries(tilecoverage ome-bioformats)
+  target_link_libraries(tilecoverage ome-test)
+
+  bf_add_test(ome-bioformats/tilecoverage tilecoverage)
 
   add_executable(variantpixelbuffer variantpixelbuffer.cpp)
   target_link_libraries(variantpixelbuffer ome-bioformats)
