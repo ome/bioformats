@@ -48,6 +48,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import ome.model.units.Length;
+import ome.units.UNITS;
 import ome.xml.model.Ellipse;
 import ome.xml.model.OME;
 import ome.xml.model.Point;
@@ -79,7 +81,7 @@ public class ROIHandler {
         int nextRoi = 0;
         RoiManager manager = RoiManager.getInstance();
 
-        OME root = (OME) retrieve.getRoot();
+        OME root = (OME) retrieve.getRoot();        
 
         int imageCount = images.length;
         for (int imageNum=0; imageNum<imageCount; imageNum++) {
@@ -191,14 +193,10 @@ public class ROIHandler {
             if (ijRoi.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
                 if (ijRoi.getTypeAsString().matches("Text")){
                     store.setLabelID(polylineID, cntr, 0);
-                    TextRoi c1 = (TextRoi) ijRoi;
-
-                    store.setLabelText(c1.getText(), cntr, 0);
-                    store.setLabelX(c1.getPolygon().getBounds().getX(), cntr, 0);
-                    store.setLabelY(c1.getPolygon().getBounds().getY(), cntr, 0);
+                    storeText(ijRoi, store, cntr, 0);
 
                 }
-                else if (rois[cntr].getTypeAsString().matches("Rectangle")){
+                else if (ijRoi.getTypeAsString().matches("Rectangle")){
                     store.setRectangleID(polylineID, cntr, 0);
                     storeRectangle(ijRoi, store, cntr, 0);
                 }
@@ -247,8 +245,25 @@ public class ROIHandler {
                     polylineID = MetadataTools.createLSID("Shape", cntr, q);
                     roiID = MetadataTools.createLSID("ROI", cntr, q);
                     Roi ijShape = subRois[q];
+                    
+                    if (ijShape.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
+                        if (ijShape.getTypeAsString().matches("Text")){
+                            store.setLabelID(polylineID, cntr, q);
+                            storeText(ijShape, store, cntr, q);
 
-                    if (ijShape instanceof Line) {
+                        }
+                        else if (ijShape.getTypeAsString().matches("Rectangle")){
+                            store.setRectangleID(polylineID, cntr, q);
+                            storeRectangle(ijShape, store, cntr, q);
+                        }
+                        else {
+                            roiID = null;
+                            String type = ijShape.getName();
+                            IJ.log("ROI ID : " + type + " ROI type : " +  "Arrow (Drawing Tool) is not supported");
+                        }
+                    }
+
+                    else if (ijShape instanceof Line) {
                         boolean checkpoint = ijShape.isDrawingTool();
                         if (!checkpoint){
                             store.setLineID(polylineID, cntr, 0);
@@ -315,6 +330,26 @@ public class ROIHandler {
 
     // -- Helper methods --
 
+    private static void storeText(Roi ijRoi, MetadataStore store, int roiNum, int shape) {
+        // TODO Auto-generated method stub
+        TextRoi roi = (TextRoi) ijRoi;
+
+        store.setLabelX(roi.getPolygon().getBounds().getX(), roiNum, shape);
+        store.setLabelY(roi.getPolygon().getBounds().getY(), roiNum, shape);
+
+        store.setLabelText(roi.getText(), roiNum, shape);
+        if (roi.getStrokeWidth() > 0) {
+            store.setLabelStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+        }
+        if (roi.getStrokeColor() != null) {
+            store.setLabelStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
+        }
+        if (roi.getFillColor() != null){
+            store.setLabelFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getRGB()) , roiNum, shape);
+        }
+
+    }
+
     private static void storePoint(PointRoi roi, MetadataStore store,
             int roiNum, int shape) {
 
@@ -326,7 +361,19 @@ public class ROIHandler {
             store.setPointID(polylineID, roiNum, shape+cntr);
             store.setPointX((double) xCoordinates[cntr], roiNum, shape+cntr);
             store.setPointY((double) yCoordinates[cntr], roiNum, shape+cntr);
+            store.setPointText(roi.getName(), roiNum, shape+cntr);
+            if (roi.getStrokeWidth() > 0) {
+                store.setPointStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape+cntr);
+            }
+            if (roi.getStrokeColor() != null) {
+                store.setPointStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape+cntr);
+            }
+            if (roi.getFillColor() != null){
+                store.setPointFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getRGB()) , roiNum, shape+cntr);
+            }
+
         }
+
     }
 
     /** Store a Line ROI in the given MetadataStore. */
@@ -337,6 +384,18 @@ public class ROIHandler {
         store.setLineX2(new Double(roi.x2), roiNum, shape);
         store.setLineY1(new Double(roi.y1), roiNum, shape);
         store.setLineY2(new Double(roi.y2), roiNum, shape);
+
+        store.setLineText(roi.getName(), roiNum, shape);
+        if (roi.getStrokeWidth() > 0) {
+            store.setLineStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+        }
+        if (roi.getStrokeColor() != null) {
+            store.setLineStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
+        }
+        if (roi.getFillColor() != null){
+            store.setLineFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getRGB()) , roiNum, shape);
+        }
+
     }
 
     /** Store an Roi (rectangle) in the given MetadataStore. */
@@ -348,6 +407,18 @@ public class ROIHandler {
         store.setRectangleY(new Double(bounds.y), roiNum, shape);
         store.setRectangleWidth(new Double(bounds.width), roiNum, shape);
         store.setRectangleHeight(new Double(bounds.height), roiNum, shape);
+
+        store.setRectangleText(roi.getName(), roiNum, shape);
+        if (roi.getStrokeWidth() > 0) {
+            store.setRectangleStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+        }
+        if (roi.getStrokeColor() != null) {
+            store.setRectangleStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
+        }
+        if (roi.getFillColor() != null){
+            store.setRectangleFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getRGB()) , roiNum, shape);
+        }
+
     }
 
     /** Store a Polygon ROI in the given MetadataStore. */
@@ -387,6 +458,17 @@ public class ROIHandler {
         else{
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
+        store.setPolygonText(roi.getName(), roiNum, shape);
+        if (roi.getStrokeWidth() > 0) {
+            store.setPolygonStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+        }
+        if (roi.getStrokeColor() != null) {
+            store.setPolygonStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
+        }
+        if (roi.getFillColor() != null){
+            store.setPolygonFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getRGB()) , roiNum, shape);
+        }
+
 
     }
 
@@ -406,6 +488,16 @@ public class ROIHandler {
         store.setEllipseY(((double) y + ry/2), roiNum, shape);
         store.setEllipseRadiusX((double) rx/2, roiNum, shape);
         store.setEllipseRadiusY((double) ry/2, roiNum, shape);
+        store.setEllipseText(roi.getName(), roiNum, shape);
+        if (roi.getStrokeWidth() > 0) {
+            store.setEllipseStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+        }
+        if (roi.getStrokeColor() != null) {
+            store.setEllipseStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
+        }
+        if (roi.getFillColor() != null){
+            store.setEllipseFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getRGB()) , roiNum, shape);
+        }
 
     }
 
