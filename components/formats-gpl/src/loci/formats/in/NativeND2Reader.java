@@ -823,7 +823,7 @@ public class NativeND2Reader extends FormatReader {
         core.add(ms0);
       }
 
-      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && imageOffsets.size() % extraZDataCount == 0) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
+      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && (extraZDataCount == getSizeC())) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
         CoreMetadata ms0 = core.get(0);
         if (getSeriesCount() > ms0.sizeZ) {
           ms0.sizeZ = getSeriesCount();
@@ -932,7 +932,7 @@ public class NativeND2Reader extends FormatReader {
           FormatTools.getBytesPerPixel(getPixelType());
       }
 
-      if (availableBytes % planeSize != 0) {
+      if (planeSize > 0 && availableBytes % planeSize != 0) {
         // an extra 4K block of zeros may have been appended
         if ((availableBytes - 4096) % planeSize == 0) {
           availableBytes -= 4096;
