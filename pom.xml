@@ -223,7 +223,9 @@
                   // there should be a ant/gitversion.xml file with the
                   // version information used when the package was created
 
-                  def xml = new XmlParser().parse("./ant/gitversion.xml")
+                  def xmlfile = project.properties.get('project.rootdir') + "/ant/gitversion.xml"
+
+                  def xml = new XmlParser().parse(xmlfile)
                   for (property in xml.property) {
                     println "parsing " + property.'@name'
                     if ('release.version' == property.'@name') {
