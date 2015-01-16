@@ -50,6 +50,9 @@ import loci.formats.*;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 /**
  * A plugin for opening life sciences files in MIPAV using Bio-Formats.
@@ -194,17 +197,18 @@ public class PlugInBioFormatsImporter implements PlugInFile {
           }
 
           // harvest physical resolution
-          Float dimPhysSizeX = store.getDimensionsPhysicalSizeX(0, 0);
-          Float dimPhysSizeY = store.getDimensionsPhysicalSizeY(0, 0);
-          Float dimPhysSizeZ = store.getDimensionsPhysicalSizeZ(0, 0);
-          Float dimTimeInc = store.getDimensionsTimeIncrement(0, 0);
+          Length dimPhysSizeX = store.getPixelsPhysicalSizeX(0);
+          Length dimPhysSizeY = store.getPixelsPhysicalSizeY(0);
+          Length dimPhysSizeZ = store.getPixelsPhysicalSizeZ(0);
+          Time dimTimeInc = store.getPixelsTimeIncrement(0);
           float physSizeX = dimPhysSizeX == null ?
-            1.0f : dimPhysSizeX.floatValue();
+            1.0f : dimPhysSizeX.value(UNITS.MICROM).floatValue();
           float physSizeY = dimPhysSizeY == null ?
-            1.0f : dimPhysSizeY.floatValue();
+            1.0f : dimPhysSizeY.value(UNITS.MICROM).floatValue();
           float physSizeZ = dimPhysSizeZ == null ?
-            1.0f : dimPhysSizeZ.floatValue();
-          float timeInc = dimTimeInc == null ? 1.0f : dimTimeInc.floatValue();
+            1.0f : dimPhysSizeZ.value(UNITS.MICROM).floatValue();
+          float timeInc = dimTimeInc == null ? 1.0f :
+            dimTimeInc.value(UNITS.S).floatValue();
 
           // compute dimensional extents
           int[] dimExtents = {sizeX, sizeY, sizeZ, sizeT};
