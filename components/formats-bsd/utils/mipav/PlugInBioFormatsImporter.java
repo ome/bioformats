@@ -30,11 +30,16 @@
  * #L%
  */
 
-import gov.nih.mipav.model.file.*;
+import gov.nih.mipav.model.file.FileInfoBase;
+import gov.nih.mipav.model.file.FileInfoImageXML;
+import gov.nih.mipav.model.file.FileUtility;
 import gov.nih.mipav.model.structures.ModelImage;
 import gov.nih.mipav.model.structures.ModelStorageBase;
 import gov.nih.mipav.plugins.PlugInFile;
-import gov.nih.mipav.view.*;
+import gov.nih.mipav.view.MipavUtil;
+import gov.nih.mipav.view.Preferences;
+import gov.nih.mipav.view.ViewJFrameImage;
+import gov.nih.mipav.view.ViewUserInterface;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -46,7 +51,10 @@ import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.*;
+import loci.formats.ChannelSeparator;
+import loci.formats.DimensionSwapper;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
