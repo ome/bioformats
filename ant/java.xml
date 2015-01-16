@@ -176,12 +176,12 @@ your FindBugs installation's lib directory. E.g.:
   <target name="utils" depends="jar"
     description="compile extra utilities">
     <delete>
-      <fileset dir="${utils.dir}" includes="*.class"/>
+      <fileset dir="${utils.dir}" includes="**/*.class"/>
     </delete>
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="true" source="1.6" target="1.6"
       encoding="UTF-8"
-      srcdir="${utils.dir}" includes="*.java"
+      srcdir="${utils.dir}" includes="**/*.java"
       classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
