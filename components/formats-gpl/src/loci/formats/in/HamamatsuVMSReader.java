@@ -177,8 +177,8 @@ public class HamamatsuVMSReader extends FormatReader {
       files.clear();
       if (service != null) {
         service.close();
+        service = null;
       }
-      service = null;
       jpeg = null;
       restartMarkers.clear();
       initializedSeries = -1;
