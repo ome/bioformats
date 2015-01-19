@@ -380,8 +380,8 @@ public class CellSensReader extends FormatReader {
   private ArrayList<Integer> tileX = new ArrayList<Integer>();
   private ArrayList<Integer> tileY = new ArrayList<Integer>();
 
-  private ArrayList<HashMap<TileCoordinate, Integer>> tileMap =
-    new ArrayList<HashMap<TileCoordinate, Integer>>();
+  private ArrayList<ArrayList<TileCoordinate>> tileMap =
+    new ArrayList<ArrayList<TileCoordinate>>();
   private ArrayList<Integer> nDimensions = new ArrayList<Integer>();
   private boolean inDimensionProperties = false;
   private boolean foundChannelTag = false;
@@ -913,8 +913,9 @@ public class CellSensReader extends FormatReader {
       t.coordinate[t.coordinate.length - 1] = resIndex;
     }
 
-    Integer index = (Integer) tileMap.get(getCoreIndex()).get(t);
-    if (index == null) {
+    ArrayList<TileCoordinate> map = tileMap.get(getCoreIndex());
+    Integer index = map.indexOf(t);
+    if (index == null || index < 0) {
       // fill in the tile with the stored background color
       // usually this is either black or white
       byte[] tile = new byte[getTileSize()];
@@ -1185,10 +1186,9 @@ public class CellSensReader extends FormatReader {
       cols.add(1);
     }
 
-    HashMap<TileCoordinate, Integer> map =
-      new HashMap<TileCoordinate, Integer>();
+    ArrayList<TileCoordinate> map = new ArrayList<TileCoordinate>();
     for (int i=0; i<tmpTiles.size(); i++) {
-      map.put(tmpTiles.get(i), i);
+      map.add(tmpTiles.get(i));
     }
     tileMap.add(map);
 
