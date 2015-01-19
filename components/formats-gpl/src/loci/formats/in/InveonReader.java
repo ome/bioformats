@@ -264,7 +264,19 @@ public class InveonReader extends FormatReader {
           value = value.substring(value.lastIndexOf(File.separator) + 1);
 
           Location header = new Location(currentId).getAbsoluteFile();
-          datFile = new Location(header.getParent(), value).getAbsolutePath();
+          Location dat = new Location(header.getParent(), value);
+          if (dat.exists()) {
+            datFile = dat.getAbsolutePath();
+          }
+          else {
+            // usually this means that the files were renamed
+            String[] allFiles = header.getParentFile().list(true);
+            for (String file : allFiles) {
+              if (header.getName().startsWith(file)) {
+                datFile = new Location(header.getParent(), file).getAbsolutePath();
+              }
+            }
+          }
         }
         else if (key.equals("time_frames")) {
           int sizeT = Integer.parseInt(value);
