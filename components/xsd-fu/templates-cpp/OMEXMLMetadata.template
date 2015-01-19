@@ -414,13 +414,6 @@ ${customContent[obj.name][prop.name]}
 {% for header in fu.OBJECT_HEADERS %}\
 #include <${header}>
 {% end %}\
-
-namespace
-{
-
-  const std::string xsi_ns("http://www.w3.org/2001/XMLSchema-instance");
-
-}
 {% end source%}\
 
 namespace ome
@@ -547,15 +540,7 @@ namespace ome
         resolveReferences();
 
         ome::xerces::dom::Document doc(ome::xerces::dom::createEmptyDocument("OME"));
-        ome::xerces::dom::Element r = root->asXMLElement(doc);
-
-        std::string ns(root->getXMLNamespace());
-
-        r.setAttribute("xmlns:xsi", xsi_ns);
-        r.setAttribute("xsi:schemaLocation", ns + " " + ns + "/ome.xsd");
-        r.setAttribute("xmlns", ns);
-
-        doc.appendChild(r);
+        ome::xerces::dom::Element ome = root->asXMLElement(doc);
 
         std::string text;
         ome::xerces::dom::writeDocument(doc, text);

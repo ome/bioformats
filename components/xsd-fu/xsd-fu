@@ -149,6 +149,8 @@ def main(model, opts):
         if obj.name in opts.lang.model_type_map.keys():
             continue
 
+        parents = model.resolve_parents(obj.name)
+
         fu.SOURCE_TYPE = opts.filetype;
 
         CUSTOM_CLASS_TEMPLATE = os.path.join(
@@ -190,7 +192,6 @@ def main(model, opts):
             content = content.render(encoding='utf-8')
             customAsXMLElementPropertyContent[propertyName] = content
         # END Custom templates for asXMLElment()
-        parents = model.resolve_parents(obj.name)
 
         if opts.debug:
             if obj.name in ["StructuredAnnotations"]:

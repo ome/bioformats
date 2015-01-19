@@ -110,7 +110,9 @@ namespace ome
 {% if fu.SOURCE_TYPE == "source" %}\
       namespace
       {
+
         const std::string NAMESPACE("${klass.namespace}");
+
       }
 
 {% end source %}\
@@ -1165,6 +1167,12 @@ ${customUpdatePropertyContent[prop.name]}
       {
         // Create XML block for ${klass.name}
 
+{% if klass.name == "OME" %}\
+        static const std::string XSI_NAMESPACE("http://www.w3.org/2001/XMLSchema-instance");
+        element.setAttribute("xmlns:xsi", XSI_NAMESPACE);
+        element.setAttribute("xsi:schemaLocation", NAMESPACE + " " + NAMESPACE + "/ome.xsd");
+        element.setAttribute("xmlns", NAMESPACE);
+{% end %}\
 {% if klass.isAbstractProprietary %}\
         // Class is abstract so we may need to create its "container" element
         if (std::string(element.getTagName()) != "${klass.name}")
@@ -1250,8 +1258,17 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // Attribute property ${prop.name}
           {
             std::ostringstream os;
+{% if prop.minOccurs == 1 %}\
             os << ${prop.instanceVariableName};
             element.setAttribute("${prop.name}", os.str());
+{% end %}\
+{% if prop.minOccurs == 0 %}\
+            if (${prop.instanceVariableName})
+              {
+                os << *${prop.instanceVariableName};
+                element.setAttribute("${prop.name}", os.str());
+              }
+{% end %}\
           }
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
@@ -1267,11 +1284,23 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // Element property ${prop.name} which is not complex (has no
           // sub-elements)
           {
+{% if prop.minOccurs == 1 %}\
             xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
             std::ostringstream os;
             os << ${prop.instanceVariableName};
             child.setTextContent(os.str());
             element.appendChild(child);
+{% end %}\
+{% if prop.minOccurs == 0 %}\
+            if (${prop.instanceVariableName})
+              {
+                xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+                std::ostringstream os;
+                os << *${prop.instanceVariableName};
+                child.setTextContent(os.str());
+                element.appendChild(child);
+              }
+{% end %}\
           }
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() %}\
