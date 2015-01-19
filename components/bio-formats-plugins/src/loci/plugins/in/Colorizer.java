@@ -130,7 +130,7 @@ public class Colorizer {
           // but had at least one lookup table defined. We use the color
           // display mode, with missing LUTs as grayscale.
           mode = CompositeImage.COLOR;
-          luts = makeLUTs(channelLUTs, false); // preserve original LUTs
+          luts = makeLUTs(channelLUTs, true); // preserve original LUTs
         }
         else {
           // NB: The original data had only one channel per plane,
