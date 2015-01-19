@@ -37,6 +37,9 @@
 
 #include <ome/bioformats/in/TIFFReader.h>
 
+#include <ome/xerces/Platform.h>
+#include <ome/xerces/dom/Document.h>
+
 #include <ome/xml/meta/MetadataStore.h>
 #include <ome/xml/meta/MetadataRetrieve.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
@@ -277,8 +280,33 @@ namespace showinf
         std::shared_ptr<ome::xml::meta::OMEXMLMetadata> omemeta(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(reader->getMetadataStore()));
         if (omemeta)
           {
-            stream << "OME-XML metadata:\n";
-            stream << omemeta->dumpXML();
+            ome::xerces::Platform xmlplat;
+
+            std::string omexml;
+            bool omexml_dumped = false;
+            try
+              {
+                omexml = omemeta->dumpXML();
+                stream << "OME-XML metadata:\n" << omexml << '\n';
+                omexml_dumped = true;
+              }
+            catch (const std::exception& e)
+              {
+                stream << "Failed to get OME-XML metadata: " << e.what() << '\n';
+              }
+
+            if (omexml_dumped && opts.validate)
+              {
+                try
+                  {
+                    ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(omexml));
+                    stream << "OME-XML validation successful\n";
+                  }
+                catch (const std::exception& e)
+                  {
+                    stream << "Failed to validate OME-XML metadata: " << e.what() << '\n';
+                  }
+              }
           }
       }
   }
