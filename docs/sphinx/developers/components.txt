@@ -249,7 +249,7 @@ OME-XML files in each of the released schema versions.
 
 :source:`stubs <components/stubs>`:
 
-`Ant: jar-lwf-stubs`
+`Ant: jar-lwf-stubs, jar-mipav-stubs`
 
 This component provides empty classes that mirror third-party dependencies
 which are required at compile time but cannot be included in the build system
