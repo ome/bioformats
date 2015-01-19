@@ -65,7 +65,7 @@ namespace ome
           // Nothing to copy.
         }
 
-        xerces::dom::Element&
+        xerces::dom::Element
         OMEModelObject::asXMLElementInternal (xerces::dom::Document& /* document */,
                                               xerces::dom::Element&  element) const
         {

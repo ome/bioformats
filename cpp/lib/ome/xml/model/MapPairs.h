@@ -148,12 +148,12 @@ namespace ome
         setMap (const map_type& map);
 
         /// @copydoc ome::xml::model::OMEModelObject::asXMLElement
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElement (xerces::dom::Document& document) const;
 
       protected:
         // Documented in base class.
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElementInternal (xerces::dom::Document& document,
                               xerces::dom::Element&  element) const;
 

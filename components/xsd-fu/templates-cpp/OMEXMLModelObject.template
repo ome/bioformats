@@ -1132,15 +1132,20 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElement (xerces::dom::Document& document) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element&
+      xerces::dom::Element
       ${klass.name}::asXMLElement (xerces::dom::Document& document) const
       {
-        xerces::dom::Element nullelem;
-        return asXMLElementInternal(document, nullelem);
+{% if klass.name != "OME" %}\
+        xerces::dom::Element element(document.createElementNS(NAMESPACE, "${klass.name}"));
+{% end if %}\
+{% if klass.name == "OME" %}\
+        xerces::dom::Element element(document.getDocumentElement());
+{% end if %}\
+        return asXMLElementInternal(document, element);
       }
 {% end source %}\
 
@@ -1149,12 +1154,12 @@ ${customUpdatePropertyContent[prop.name]}
 
       protected:
         // Documented in base class.
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElementInternal (xerces::dom::Document& document,
                               xerces::dom::Element&  element) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element&
+      xerces::dom::Element
       ${klass.name}::asXMLElementInternal (xerces::dom::Document& document,
                                            xerces::dom::Element&  element) const
       {
@@ -1170,11 +1175,6 @@ ${customUpdatePropertyContent[prop.name]}
             element = abstractElement;
           }
 {% end %}\
-        if (!element)
-          {
-            xerces::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
-            element = newElement;
-          }
 
 {% if klass.langBaseType is not None %}\
         // Element's text data

@@ -120,7 +120,7 @@ namespace ome
          * @param document document for element creation
          * @returns an XML DOM tree root element for this model object.
          */
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElement (xerces::dom::Document& document) const = 0;
 
         /**

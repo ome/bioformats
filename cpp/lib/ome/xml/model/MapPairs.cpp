@@ -131,14 +131,14 @@ namespace ome
         return false;
       }
 
-      xerces::dom::Element&
+      xerces::dom::Element
       MapPairs::asXMLElement (xerces::dom::Document& document) const
       {
         xerces::dom::Element nullelem;
         return asXMLElementInternal(document, nullelem);
       }
 
-      xerces::dom::Element&
+      xerces::dom::Element
       MapPairs::asXMLElementInternal (xerces::dom::Document& document,
                                       xerces::dom::Element&  element) const
       {
