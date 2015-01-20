@@ -48,7 +48,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
-import ome.model.units.Length;
+import ome.units.quantity.Length;
 import ome.units.UNITS;
 import ome.xml.model.Ellipse;
 import ome.xml.model.OME;
