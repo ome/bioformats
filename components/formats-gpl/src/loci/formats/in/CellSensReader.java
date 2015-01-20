@@ -554,6 +554,12 @@ public class CellSensReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    parser = new TiffParser(currentId);
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
