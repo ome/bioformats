@@ -539,7 +539,7 @@ public class Exporter {
                     if (saveRoi != null) {
                         gd.addCheckbox("Export ROIs", saveRoi.booleanValue());
                     } else {
-                        gd.addCheckbox("Export ROIs", false);
+                        gd.addCheckbox("Export ROIs", true);
                     }
                     gd.showDialog();
                     saveRoi = gd.getNextBoolean();
