@@ -802,6 +802,8 @@ public class CellSensReader extends FormatReader {
           }
           for (int z=0; z<core.get(i).sizeZ; z++) {
             for (int t=0; t<core.get(i).sizeT; t++) {
+              nextPlane = getIndex(z, c, t);
+
               Long exp = pyramid.defaultExposureTime;
               if (c < pyramid.exposureTimes.size()) {
                 exp = pyramid.exposureTimes.get(c);
@@ -814,7 +816,6 @@ public class CellSensReader extends FormatReader {
                 FormatTools.createLength(pyramid.originX, UNITS.MICROM), ii, nextPlane);
               store.setPlanePositionY(
                 FormatTools.createLength(pyramid.originY, UNITS.MICROM), ii, nextPlane);
-              nextPlane++;
             }
           }
         }
