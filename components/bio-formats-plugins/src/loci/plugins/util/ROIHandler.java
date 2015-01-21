@@ -245,7 +245,7 @@ public class ROIHandler {
                     polylineID = MetadataTools.createLSID("Shape", cntr, q);
                     roiID = MetadataTools.createLSID("ROI", cntr, q);
                     Roi ijShape = subRois[q];
-                    
+
                     if (ijShape.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
                         if (ijShape.getTypeAsString().matches("Text")){
                             store.setLabelID(polylineID, cntr, q);
@@ -331,7 +331,7 @@ public class ROIHandler {
     // -- Helper methods --
 
     private static void storeText(Roi ijRoi, MetadataStore store, int roiNum, int shape) {
-        // TODO Auto-generated method stub
+
         TextRoi roi = (TextRoi) ijRoi;
 
         store.setLabelX(roi.getPolygon().getBounds().getX(), roiNum, shape);
@@ -339,7 +339,7 @@ public class ROIHandler {
 
         store.setLabelText(roi.getText(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
-            store.setLabelStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+            store.setLabelStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
             store.setLabelStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
@@ -363,7 +363,7 @@ public class ROIHandler {
             store.setPointY((double) yCoordinates[cntr], roiNum, shape+cntr);
             store.setPointText(roi.getName(), roiNum, shape+cntr);
             if (roi.getStrokeWidth() > 0) {
-                store.setPointStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape+cntr);
+                store.setPointStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape+cntr);
             }
             if (roi.getStrokeColor() != null) {
                 store.setPointStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape+cntr);
@@ -387,7 +387,7 @@ public class ROIHandler {
 
         store.setLineText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
-            store.setLineStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+            store.setLineStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
             store.setLineStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
@@ -410,7 +410,7 @@ public class ROIHandler {
 
         store.setRectangleText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
-            store.setRectangleStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+            store.setRectangleStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
             store.setRectangleStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
@@ -460,7 +460,7 @@ public class ROIHandler {
         }
         store.setPolygonText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
-            store.setPolygonStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+            store.setPolygonStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
             store.setPolygonStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
@@ -490,7 +490,7 @@ public class ROIHandler {
         store.setEllipseRadiusY((double) ry/2, roiNum, shape);
         store.setEllipseText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
-            store.setEllipseStrokeWidth( new ome.units.quantity.Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+            store.setEllipseStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
             store.setEllipseStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getRGB()) , roiNum, shape);
