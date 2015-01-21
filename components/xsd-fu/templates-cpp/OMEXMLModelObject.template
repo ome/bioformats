@@ -349,6 +349,8 @@ ${customContent}\
           if (!text.empty())
             {
               std::istringstream is(text);
+              is.imbue(std::locale::classic());
+
               if (!(is >> this->value))
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
@@ -410,7 +412,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% if klass.langBaseType != 'std::string' %}\
              ${prop.langTypeNS} id;
              std::istringstream is(element.getAttribute("${prop.name}"));
+             is.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
              is >> id;
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+             is >> std::boolalpha >> id;
+{% end %}\
              if (!is)
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
@@ -446,13 +454,24 @@ ${customUpdatePropertyContent[prop.name]}
             {
 {% if prop.instanceVariableType != 'std::string' %}\
               std::istringstream is(element.getAttribute("${prop.name}"));
+              is.imbue(std::locale::classic());
 {% if prop.minOccurs == 0 %}\
               ${prop.instanceVariableType} attr(std::make_shared< ${prop.langTypeNS}>());
+{% if prop.langTypeNS != 'bool' %}\
               is >> *attr;
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+              is >> std::boolalpha >> *attr;
+{% end %}\
 {% end %}\
 {% if prop.minOccurs > 0 %}\
               ${prop.langTypeNS} attr;
+{% if prop.langTypeNS != 'bool' %}\
               is >> attr;
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+              is >> std::boolalpha >> attr;
+{% end %}\
 {% end %}\
               if (!is)
                 {
@@ -506,7 +525,13 @@ ${customUpdatePropertyContent[prop.name]}
             ${prop.langTypeNS} attr;
 
             std::istringstream is(text);
+            is.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
             if (is >> attr)
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+            if (is >> std::boolalpha >> attr)
+{% end %}\
               set${prop.methodName}(attr);
             else
               {
@@ -1231,7 +1256,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% if klass.langBaseType != 'std::string' %}\
         {
           std::ostringstream os;
+          os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
           os << this->value;
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+          os << std::boolalpha << this->value;
+{% end %}\
           element.setTextContent(os.str());
         }
 {% end %}\
@@ -1299,14 +1330,25 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // Attribute property ${prop.name}
           {
             std::ostringstream os;
+            os.imbue(std::locale::classic());
 {% if prop.minOccurs == 1 %}\
-            os << ${prop.instanceVariableName};
+{% if prop.langTypeNS != 'bool' %}\
+          os << ${prop.instanceVariableName};
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+          os << std::boolalpha << ${prop.instanceVariableName};
+{% end %}\
             element.setAttribute("${prop.name}", os.str());
 {% end %}\
 {% if prop.minOccurs == 0 %}\
             if (${prop.instanceVariableName})
               {
+{% if prop.langTypeNS != 'bool' %}\
                 os << *${prop.instanceVariableName};
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+                os << std::boolalpha << *${prop.instanceVariableName};
+{% end %}\
                 element.setAttribute("${prop.name}", os.str());
               }
 {% end %}\
@@ -1328,7 +1370,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% if prop.minOccurs == 1 %}\
             xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
             std::ostringstream os;
+            os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
             os << ${prop.instanceVariableName};
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+            os << std::boolalpha << ${prop.instanceVariableName};
+{% end %}\
             child.setTextContent(os.str());
             element.appendChild(child);
 {% end %}\
@@ -1337,7 +1385,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
               {
                 xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
                 std::ostringstream os;
+                os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
                 os << *${prop.instanceVariableName};
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+                os << std::boolalpha << *${prop.instanceVariableName};
+{% end %}\
                 child.setTextContent(os.str());
                 element.appendChild(child);
               }
@@ -1371,7 +1425,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 xerces::dom::Element ${prop.instanceVariableName}_element =
                                                                    document.createElementNS(NAMESPACE, "${prop.name}");
                 std::ostringstream os;
+                os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
                 os << *i;
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+                os << std::boolalpha << *i;
+{% end %}\
                 ${prop.instanceVariableName}_element.setTextContent(os.str());
                 xerces::dom::Element child(${prop.instanceVariableName}_element);
                 element.appendChild(child);
