@@ -118,13 +118,11 @@ namespace ome
         OMEModelObject::stripNamespacePrefix (const std::string& value) {
           std::string ret;
           std::string::size_type i = value.find_last_of(':');
-          if (i != std::string::npos)
-            {
-              ++i;
-              if (i < value.size())
-                ret = value.substr(i);
-            }
-          return value;
+          if (i != std::string::npos && ++i < value.size())
+            ret = value.substr(i);
+          else
+            ret = value;
+          return ret;
         }
 
       }
