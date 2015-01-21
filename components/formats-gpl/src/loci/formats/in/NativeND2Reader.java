@@ -487,6 +487,7 @@ public class NativeND2Reader extends FormatReader {
             imageLengths.clear();
             customDataOffsets.clear();
             customDataLengths.clear();
+            textChannelNames.clear();
             foundMetadata = false;
             extraZDataCount = 0;
             useLastText = true;
@@ -723,9 +724,16 @@ public class NativeND2Reader extends FormatReader {
 
       // parse text blocks
 
+      int nChannelNames = textChannelNames.size();
       for (int i=0; i<textStrings.size(); i++) {
         parseText(textStrings.get(i), imageOffsets.size(),
           validDimensions.get(i));
+      }
+      if (textChannelNames.size() > nChannelNames) {
+        int diff = textChannelNames.size() - nChannelNames;
+        while (textChannelNames.size() > diff) {
+          textChannelNames.remove(0);
+        }
       }
 
       // parse XML blocks
@@ -1741,14 +1749,11 @@ public class NativeND2Reader extends FormatReader {
       else if (channelNames.size() < getEffectiveSizeC()) {
         channelNames = textChannelNames;
       }
-      for (int i=0; i<getSeriesCount(); i++) {
-        for (int c=0; c<getEffectiveSizeC(); c++) {
-          int index = i * getSizeC() + c;
-          if (index < channelNames.size()) {
-            String channelName = channelNames.get(index);
-            Integer channelColor = channelColors.get(channelName);
-            colors[c] = channelColor == null ? 0 : channelColor.intValue();
-          }
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (c < channelNames.size()) {
+          String channelName = channelNames.get(c);
+          Integer channelColor = channelColors.get(channelName);
+          colors[c] = channelColor == null ? 0 : channelColor.intValue();
         }
       }
     }
