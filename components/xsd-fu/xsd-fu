@@ -193,25 +193,6 @@ def main(model, opts):
             customAsXMLElementPropertyContent[propertyName] = content
         # END Custom templates for asXMLElment()
 
-        if opts.debug:
-            if obj.name in ["StructuredAnnotations"]:
-                CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
-                customContent = ''
-                if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-                    customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
-                    customContent = customTemplate.generate(
-                        fu=fu, klass=obj, parents=parents, model=model, opts=opts, lang=opts.lang, debug=opts.debug)
-                    customContent = customContent.render(encoding='utf-8')
-                print("Dump: %s" % obj.__dict__)
-                print("Element Dump: %s" % obj.element.__dict__)
-                print(" +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type))
-                for prop in obj.properties.values():
-                    print("Dump: %s" % prop.__dict__)
-                    print("Delegate Dump: %s" % prop.delegate.__dict__)
-                    print(" +---- %s(%s) [%d:%d]" % \
-                        (prop.name, prop.type, prop.minOccurs, prop.maxOccurs))
-                print("\n")
-
         try:
             fullname = opts.lang.generatedFilename(obj.name, opts.filetype)
             fullname = os.path.join("ome", "xml", "model", fullname)
@@ -240,9 +221,6 @@ def main(model, opts):
             f = codecs.open(fullname, "w", encoding='utf-8')
             f.write(classContent.decode('utf-8'))
             f.close()
-
-        if opts.debug:
-            print(classContent)
 
     if opts.print_depends:
         for file in sorted(used_files):
