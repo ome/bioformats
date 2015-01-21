@@ -365,7 +365,7 @@ ${customContent}\
         }
 {% end %}\
 {% if not klass.isAbstractProprietary %}\
-        std::string tagName(element.getTagName());
+        std::string tagName(stripNamespacePrefix(element.getTagName()));
         if (tagName != "${klass.name}")
           {
             std::clog << "Expecting node name of ${klass.name} got " << tagName << std::endl;
