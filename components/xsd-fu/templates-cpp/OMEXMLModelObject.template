@@ -115,6 +115,43 @@ namespace ome
 
       }
 
+      // ModelObject: ${klass.name}
+      // Namespace:   ${klass.namespace}
+      //
+      // Parent:                    ${klass.parentName}
+{% if klass.modelBaseType is not None %}\
+      // InstanceVariableName:      ${klass.instanceVariableName}
+      // ModelBaseType:             ${klass.modelBaseType}
+{% end %}\
+{% if klass.langBaseType is not None %}\
+      // LangBaseType:              ${klass.langBaseType}
+      // LangType:                  ${klass.langType}
+      // LangTypeNS:                ${klass.langTypeNS}
+{% end %}\
+      //
+      // Abstract:                  ${klass.isAbstract}
+      // AbstractProprietary:       ${klass.isAbstractProprietary}
+      // ParentAbstractProprietary: ${klass.isParentAbstractProprietary}
+      // Annotation:                ${klass.isAnnotation}
+      // Annotated:                 ${klass.isAnnotated}
+      // Described:                 ${klass.isDescribed}
+      // Named:                     ${klass.isNamed}
+      // Reference:                 ${klass.isReference}
+      //
+      // Properties:
+{% for prop in klass.instanceVariables %}\
+{% if prop[0] is not None %}\
+      //   ${prop[1]}
+      //     Instance type: ${prop[0]}
+{% if prop[2] is not None %}\
+      //     Default:       ${prop[2]}
+{% end no default %}\
+{% if prop[3] is not None %}\
+      //     Comment:       ${prop[3]}
+{% end no comment %}\
+{% end has instance type %}\
+{% end for %}\
+
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if len(klass.instanceVariables) > 0 %}\
