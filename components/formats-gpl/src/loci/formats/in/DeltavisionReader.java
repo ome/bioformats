@@ -2377,7 +2377,7 @@ public class DeltavisionReader extends FormatReader {
         energyConvFactor = in.readFloat();
 
         // the stored value could be a percent fraction or a percentage
-        if (ndFilter > 1) {
+        if (ndFilter >= 1) {
           ndFilter /= 100;
         }
       }
