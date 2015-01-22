@@ -1270,6 +1270,10 @@ ${customUpdatePropertyContent[prop.name]}
         element.setTextContent(this->value);
 {% end %}\
 {% end %}\
+{% if klass.isAnnotation %}\
+		// Ensure any base annotations add their Elements first
+        element = ${klass.parentName}::asXMLElementInternal(document, element);
+{% end if isAnnotation %}\
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
         {
@@ -1447,7 +1451,14 @@ ${customAsXMLElementPropertyContent[prop.name]}
         }
 {% end %}\
 {% end %}\
+{% choose %}\
+{% when klass.isAnnotation %}\
+        return element;
+{% end when isAnnotation %}\
+{% otherwise %}\
         return ${klass.parentName}::asXMLElementInternal(document, element);
+{% end otherwise %}\
+{% end choose %}\
       }
 {% end source %}\
 
