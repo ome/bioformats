@@ -135,7 +135,6 @@ public class Exporter {
             splitC = c == null ? null : Boolean.valueOf(c);
             splitT = t == null ? null : Boolean.valueOf(t);
             saveRoi = sr == null ? null : Boolean.valueOf(sr);
-            IJ.log("id:"+id);
             if (id != null) {
                 try {
                     int imageID = Integer.parseInt(id);
