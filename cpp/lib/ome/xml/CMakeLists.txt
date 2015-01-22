@@ -58,6 +58,7 @@ set(OME_XML_STATIC_SOURCES
   model/ModelException.cpp
   model/detail/OMEModel.cpp
   model/detail/OMEModelObject.cpp
+  model/detail/Parse.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -88,7 +89,8 @@ set(OME_XML_STATIC_MODEL_HEADERS
 
 set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
     model/detail/OMEModel.h
-    model/detail/OMEModelObject.h)
+    model/detail/OMEModelObject.h
+    model/detail/Parse.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
     model/enums/EnumerationException.h)

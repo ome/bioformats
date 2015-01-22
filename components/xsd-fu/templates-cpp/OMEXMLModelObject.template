@@ -69,6 +69,7 @@
 #include <ome/xerces/String.h>
 
 #include <ome/xml/model/ModelException.h>
+#include <ome/xml/model/detail/Parse.h>
 
 #include <boost/format.hpp>
 
@@ -348,15 +349,9 @@ ${customContent}\
 {% if klass.langBaseType != 'std::string' %}\
           if (!text.empty())
             {
-              std::istringstream is(text);
-              is.imbue(std::locale::classic());
-
-              if (!(is >> this->value))
-                {
-                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
-                  fmt % text;
-                  throw ModelException(fmt.str());
-                }
+              set_value(text
+                        *this, &${klass.name}::setValue,
+                        "${klass.name}", "value");
             }
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
@@ -410,22 +405,9 @@ ${customUpdatePropertyContent[prop.name]}
            {
              // ID property
 {% if klass.langBaseType != 'std::string' %}\
-             ${prop.langTypeNS} id;
-             std::istringstream is(element.getAttribute("${prop.name}"));
-             is.imbue(std::locale::classic());
-{% if prop.langTypeNS != 'bool' %}\
-             is >> id;
-{% end %}\
-{% if prop.langTypeNS == 'bool' %}\
-             is >> std::boolalpha >> id;
-{% end %}\
-             if (!is)
-                {
-                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
-                  fmt % is.str();
-                  throw ModelException(fmt.str());
-                }
-             set${prop.methodName}(id);
+             set_value(element.getAttribute("${prop.name}"),
+                       *this, &${klass.name}::set${prop.methodName},
+                       "${klass.name}", "${prop.name}");
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
              set${prop.methodName}(element.getAttribute("${prop.name}"));
@@ -453,34 +435,9 @@ ${customUpdatePropertyContent[prop.name]}
             // Attribute property ${prop.name}
             {
 {% if prop.instanceVariableType != 'std::string' %}\
-              std::istringstream is(element.getAttribute("${prop.name}"));
-              is.imbue(std::locale::classic());
-{% if prop.minOccurs == 0 %}\
-              ${prop.instanceVariableType} attr(std::make_shared< ${prop.langTypeNS}>());
-{% if prop.langTypeNS != 'bool' %}\
-              is >> *attr;
-{% end %}\
-{% if prop.langTypeNS == 'bool' %}\
-              is >> std::boolalpha >> *attr;
-{% end %}\
-{% end %}\
-{% if prop.minOccurs > 0 %}\
-              ${prop.langTypeNS} attr;
-{% if prop.langTypeNS != 'bool' %}\
-              is >> attr;
-{% end %}\
-{% if prop.langTypeNS == 'bool' %}\
-              is >> std::boolalpha >> attr;
-{% end %}\
-{% end %}\
-              if (!is)
-                {
-                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
-                  fmt % is.str();
-                  throw ModelException(fmt.str());
-                }
-
-              set${prop.methodName}(attr);
+              set_value(element.getAttribute("${prop.name}"),
+                        *this, &${klass.name}::set${prop.methodName},
+                        "${klass.name}", "${prop.name}");
 {% end %}\
 {% if prop.instanceVariableType == 'std::string' %}\
               set${prop.methodName}(element.getAttribute("${prop.name}"));
@@ -522,23 +479,9 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% if prop.minOccurs > 0 %}\
 {% if prop.langTypeNS != 'std::string' %}\
-            ${prop.langTypeNS} attr;
-
-            std::istringstream is(text);
-            is.imbue(std::locale::classic());
-{% if prop.langTypeNS != 'bool' %}\
-            if (is >> attr)
-{% end %}\
-{% if prop.langTypeNS == 'bool' %}\
-            if (is >> std::boolalpha >> attr)
-{% end %}\
-              set${prop.methodName}(attr);
-            else
-              {
-                format fmt("Failed to parse ${klass.name} ${prop.name} property value ‘%1%’");
-                fmt % is.str();
-                throw ModelException(fmt.str());
-              }
+             set_value(text,
+                       *this, &${klass.name}::set${prop.methodName},
+                       "${klass.name}", "${prop.name}");
 {% end %}\
 {% if prop.langTypeNS == 'std::string' %}\
             set${prop.methodName}(text);
