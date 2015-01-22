@@ -33,6 +33,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Macro;
 import ij.Prefs;
+import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
@@ -129,11 +130,22 @@ public class Exporter {
             String t = Macro.getValue(plugin.arg, "splitT", null);
             String sr = Macro.getValue(plugin.arg, "saveRoi", null);
             compression = Macro.getValue(plugin.arg, "compression", null);
-
+            String id = Macro.getValue(plugin.arg, "imageid", null);
             splitZ = z == null ? null : Boolean.valueOf(z);
             splitC = c == null ? null : Boolean.valueOf(c);
             splitT = t == null ? null : Boolean.valueOf(t);
             saveRoi = sr == null ? null : Boolean.valueOf(sr);
+            IJ.log("id:"+id);
+            if (id != null) {
+                try {
+                    int imageID = Integer.parseInt(id);
+                    ImagePlus plus = WindowManager.getImage(imageID);
+                    IJ.log("plus:"+plus);
+                    if (plus != null) imp = plus;
+                } catch (Exception e) {
+                    //nothing to do, we use the current imagePlus
+                }
+            }
             plugin.arg = null;
         }
 
