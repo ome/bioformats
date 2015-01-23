@@ -1798,11 +1798,10 @@ public class MetamorphReader extends BaseTiffReader {
 
     switch (type) {
       case 1:
-        in.skipBytes(1);
         while (getGlobalMeta("Channel #" + index + " " + key) != null) {
           index++;
         }
-        addGlobalMeta("Channel #" + index + " " + key, in.readDouble());
+        addGlobalMeta("Channel #" + index + " " + key, readRational(in).doubleValue());
         break;
       case 2:
         int valueLength = in.read();
