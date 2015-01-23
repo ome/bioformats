@@ -494,6 +494,9 @@ public class MetamorphReader extends BaseTiffReader {
       if (z != null) zc = Integer.parseInt(z);
       if (c != null) cc = Integer.parseInt(c);
       if (t != null) tc = Integer.parseInt(t);
+      else if (!doTimelapse) {
+        tc = 1;
+      }
 
       if (cc == 0) cc = 1;
       if (cc == 1 && bizarreMultichannelAcquisition) {
