@@ -347,10 +347,10 @@ public class ROIHandler {
             store.setLabelStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
-            store.setLabelStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getColorSpace().getType()) , roiNum, shape);
+            store.setLabelStrokeColor(toOMExmlColor(roi.getStrokeColor()) , roiNum, shape);
         }
         if (roi.getFillColor() != null){
-            store.setLabelFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getColorSpace().getType()) , roiNum, shape);
+            store.setLabelFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
         }
 
     }
@@ -371,10 +371,10 @@ public class ROIHandler {
                 store.setPointStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape+cntr);
             }
             if (roi.getStrokeColor() != null) {
-                store.setPointStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getColorSpace().getType()) , roiNum, shape+cntr);
+                store.setPointStrokeColor(toOMExmlColor(roi.getStrokeColor()) , roiNum, shape+cntr);
             }
             if (roi.getFillColor() != null){
-                store.setPointFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getColorSpace().getType()) , roiNum, shape+cntr);
+                store.setPointFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape+cntr);
             }
 
         }
@@ -395,10 +395,10 @@ public class ROIHandler {
             store.setLineStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
-            store.setLineStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getColorSpace().getType()) , roiNum, shape);
+            store.setLineStrokeColor(toOMExmlColor(roi.getStrokeColor()) , roiNum, shape);
         }
         if (roi.getFillColor() != null){
-            store.setLineFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getColorSpace().getType()) , roiNum, shape);
+            store.setLineFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
         }
 
     }
@@ -418,10 +418,10 @@ public class ROIHandler {
             store.setRectangleStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
-            store.setRectangleStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getColorSpace().getType()) , roiNum, shape);
+            store.setRectangleStrokeColor(toOMExmlColor(roi.getStrokeColor()) , roiNum, shape);
         }
         if (roi.getFillColor() != null){
-            store.setRectangleFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getColorSpace().getType()) , roiNum, shape);
+            store.setRectangleFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
         }
 
     }
@@ -456,24 +456,30 @@ public class ROIHandler {
 
         if (st1.matches("Polyline") || st1.matches("Freeline") || st1.matches("Angle")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
+            store.setPolylineText(roi.getName(), roiNum, shape);
+            if (roi.getStrokeWidth() > 0) {
+                store.setPolylineStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+            }
+            if (roi.getStrokeColor() != null) {
+                store.setPolylineStrokeColor(toOMExmlColor(roi.getStrokeColor()) , roiNum, shape);
+            }
+            if (roi.getFillColor() != null){
+                store.setPolylineFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
+            }
         }
         else if (st1.matches("Polygon") || st1.matches("Freehand") || st1.matches("Traced")){
             store.setPolygonPoints(points.toString(), roiNum, shape);
+            store.setPolygonText(roi.getName(), roiNum, shape);
+            if (roi.getStrokeWidth() > 0) {
+                store.setPolygonStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
+            }
+            if (roi.getStrokeColor() != null) {
+                store.setPolygonStrokeColor(toOMExmlColor(roi.getStrokeColor()) , roiNum, shape);
+            }
+            if (roi.getFillColor() != null){
+                store.setPolygonFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
+            }
         }
-        else{
-            store.setPolygonPoints(points.toString(), roiNum, shape);
-        }
-        store.setPolygonText(roi.getName(), roiNum, shape);
-        if (roi.getStrokeWidth() > 0) {
-            store.setPolygonStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
-        }
-        if (roi.getStrokeColor() != null) {
-            store.setPolygonStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getColorSpace().getType()) , roiNum, shape);
-        }
-        if (roi.getFillColor() != null){
-            store.setPolygonFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getColorSpace().getType()) , roiNum, shape);
-        }
-
 
     }
 
@@ -497,10 +503,10 @@ public class ROIHandler {
             store.setEllipseStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
         if (roi.getStrokeColor() != null) {
-            store.setEllipseStrokeColor(new ome.xml.model.primitives.Color(roi.getStrokeColor().getColorSpace().getType()) , roiNum, shape);
+            store.setEllipseStrokeColor(toOMExmlColor(roi.getStrokeColor()) , roiNum, shape);
         }
         if (roi.getFillColor() != null){
-            store.setEllipseFillColor(new ome.xml.model.primitives.Color(roi.getFillColor().getColorSpace().getType()) , roiNum, shape);
+            store.setEllipseFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
         }
 
     }
@@ -525,6 +531,13 @@ public class ROIHandler {
                     (int) Double.parseDouble(pointList[q].substring(delim + 1));
         }
         return coordinates;
+    }
+    
+    private static ome.xml.model.primitives.Color toOMExmlColor(java.awt.Color color){
+        
+        ome.xml.model.primitives.Color test = new ome.xml.model.primitives.Color(color.getRed(),color.getGreen(),color.getBlue(),color.getAlpha());
+        return test ;
+        
     }
 
 }
