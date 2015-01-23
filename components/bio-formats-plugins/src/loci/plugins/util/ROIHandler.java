@@ -192,13 +192,17 @@ public class ROIHandler {
 
             if (ijRoi.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
                 if (ijRoi.getTypeAsString().matches("Text")){
-                    store.setLabelID(polylineID, cntr, 0);
-                    storeText((TextRoi) ijRoi, store, cntr, 0);
+                    if (ijRoi instanceof TextRoi){
+                        store.setLabelID(polylineID, cntr, 0);
+                        storeText((TextRoi) ijRoi, store, cntr, 0);
+                    }
 
                 }
                 else if (ijRoi.getTypeAsString().matches("Rectangle")){
-                    store.setRectangleID(polylineID, cntr, 0);
-                    storeRectangle(ijRoi, store, cntr, 0);
+                    if (ijRoi instanceof Roi){
+                        store.setRectangleID(polylineID, cntr, 0);
+                        storeRectangle(ijRoi, store, cntr, 0);
+                    }
                 }
                 else {
                     roiID = null;
@@ -248,13 +252,16 @@ public class ROIHandler {
 
                     if (ijShape.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
                         if (ijShape.getTypeAsString().matches("Text")){
-                            store.setLabelID(polylineID, cntr, q);
-                            storeText((TextRoi) ijShape, store, cntr, q);
-
+                            if (ijShape instanceof TextRoi){
+                                store.setLabelID(polylineID, cntr, q);
+                                storeText((TextRoi) ijShape, store, cntr, q);
+                            }
                         }
                         else if (ijShape.getTypeAsString().matches("Rectangle")){
-                            store.setRectangleID(polylineID, cntr, q);
-                            storeRectangle(ijShape, store, cntr, q);
+                            if (ijShape instanceof Roi){
+                                store.setRectangleID(polylineID, cntr, q);
+                                storeRectangle(ijShape, store, cntr, q);
+                            }
                         }
                         else {
                             roiID = null;
@@ -335,7 +342,7 @@ public class ROIHandler {
         store.setLabelX(roi.getPolygon().getBounds().getX(), roiNum, shape);
         store.setLabelY(roi.getPolygon().getBounds().getY(), roiNum, shape);
 
-        store.setLabelText(roi.getText(), roiNum, shape);
+        store.setLabelText(roi.getText().trim(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
             store.setLabelStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
