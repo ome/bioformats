@@ -295,53 +295,6 @@ namespace ome
       }
 {% end source %}\
 
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                              index_type mapAnnotationIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                            index_type mapAnnotationIndex)
-      {
-        store->setMapAnnotationValue(map, mapAnnotationIndex);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                      index_type instrumentIndex,
-                                      index_type lightSourceIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                                    index_type instrumentIndex,
-                                                    index_type lightSourceIndex)
-      {
-        store->setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                 index_type imageIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                               index_type imageIndex)
-      {
-        store->setImagingEnvironmentMap(map, imageIndex);
-      }
-{% end source %}\
-
 {% if debug %}\
 	// -- Entity storage (code generated definitions) --
 

@@ -92,7 +92,6 @@ namespace
       convertFileAnnotations();
       convertListAnnotations();
       convertLongAnnotations();
-      convertMapAnnotations();
       convertTagAnnotations();
       convertTermAnnotations();
       convertTimestampAnnotations();
@@ -449,7 +448,6 @@ namespace
               transfer(&MR::getImagingEnvironmentAirPressure, &MS::setImagingEnvironmentAirPressure, i);
               transfer(&MR::getImagingEnvironmentCO2Percent,  &MS::setImagingEnvironmentCO2Percent,  i);
               transfer(&MR::getImagingEnvironmentHumidity,    &MS::setImagingEnvironmentHumidity,    i);
-              transfer(&MR::getImagingEnvironmentMap,         &MS::setImagingEnvironmentMap,         i);
               transfer(&MR::getImagingEnvironmentTemperature, &MS::setImagingEnvironmentTemperature, i);
 
               if (transfer(&MR::getObjectiveSettingsID, &MS::setObjectiveSettingsID, i))
@@ -539,10 +537,6 @@ namespace
                       index_type exFilterRefCount(src.getLightPathExcitationFilterRefCount(i, c));
                       for (index_type q = 0; q < exFilterRefCount; ++q)
                         transfer(&MR::getLightPathExcitationFilterRef, &MS::setLightPathExcitationFilterRef, i, c, q);
-
-                      index_type lightPathAnnotationRefCount(src.getLightPathAnnotationRefCount(i, c));
-                      for (index_type q = 0; q < lightPathAnnotationRefCount; ++q)
-                        transfer(&MR::getLightPathAnnotationRef, &MS::setLightPathAnnotationRef, i, c, q);
                     }
                 }
 
@@ -610,10 +604,6 @@ namespace
                   transfer(&MR::getArcPower,        &MS::setArcPower,        instrumentIndex, lightSource);
                   transfer(&MR::getArcSerialNumber, &MS::setArcSerialNumber, instrumentIndex, lightSource);
                   transfer(&MR::getArcType,         &MS::setArcType,         instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getArcAnnotationRef, &MS::setArcAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
           else if (type == "Filament")
@@ -627,26 +617,6 @@ namespace
                   transfer(&MR::getFilamentPower,        &MS::setFilamentPower,        instrumentIndex, lightSource);
                   transfer(&MR::getFilamentSerialNumber, &MS::setFilamentSerialNumber, instrumentIndex, lightSource);
                   transfer(&MR::getFilamentType,         &MS::setFilamentType,         instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getFilamentAnnotationRef, &MS::setFilamentAnnotationRef, instrumentIndex, lightSource, r);
-                }
-            }
-          else if (type == "GenericExcitationSource")
-            {
-              if (transfer(&MR::getGenericExcitationSourceID, &MS::setGenericExcitationSourceID, instrumentIndex, lightSource))
-                {
-                  transfer(&MR::getGenericExcitationSourceMap,          &MS::setGenericExcitationSourceMap,          instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceLotNumber,    &MS::setGenericExcitationSourceLotNumber,    instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceManufacturer, &MS::setGenericExcitationSourceManufacturer, instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceModel,        &MS::setGenericExcitationSourceModel,        instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourcePower,        &MS::setGenericExcitationSourcePower,        instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceSerialNumber, &MS::setGenericExcitationSourceSerialNumber, instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getGenericExcitationSourceAnnotationRef, &MS::setGenericExcitationSourceAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
           else if (type == "Laser")
@@ -668,10 +638,6 @@ namespace
                   transfer(&MR::getLaserRepetitionRate,          &MS::setLaserRepetitionRate,          instrumentIndex, lightSource);
                   transfer(&MR::getLaserTuneable,                &MS::setLaserTuneable,                instrumentIndex, lightSource);
                   transfer(&MR::getLaserWavelength,              &MS::setLaserWavelength,              instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getLaserAnnotationRef, &MS::setLaserAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
           else if (type == "LightEmittingDiode")
@@ -683,10 +649,6 @@ namespace
                   transfer(&MR::getLightEmittingDiodeModel,        &MS::setLightEmittingDiodeModel,        instrumentIndex, lightSource);
                   transfer(&MR::getLightEmittingDiodePower,        &MS::setLightEmittingDiodePower,        instrumentIndex, lightSource);
                   transfer(&MR::getLightEmittingDiodeSerialNumber, &MS::setLightEmittingDiodeSerialNumber, instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getLightEmittingDiodeAnnotationRef, &MS::setLightEmittingDiodeAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
         }
@@ -722,10 +684,6 @@ namespace
                       transfer(&MR::getDetectorType,              &MS::setDetectorType,              i, q);
                       transfer(&MR::getDetectorVoltage,           &MS::setDetectorVoltage,           i, q);
                       transfer(&MR::getDetectorZoom,              &MS::setDetectorZoom,              i, q);
-
-                      index_type detectorAnnotationRefCount(src.getDetectorAnnotationRefCount(i, q));
-                      for (index_type r = 0; r < detectorAnnotationRefCount; ++r)
-                        transfer(&MR::getDetectorAnnotationRef, &MS::setDetectorAnnotationRef, i, q, r);
                     }
                 }
 
@@ -738,10 +696,6 @@ namespace
                       transfer(&MR::getDichroicManufacturer, &MS::setDichroicManufacturer, i, q);
                       transfer(&MR::getDichroicModel,        &MS::setDichroicModel,        i, q);
                       transfer(&MR::getDichroicSerialNumber, &MS::setDichroicSerialNumber, i, q);
-
-                      index_type dichroicAnnotationRefCount(src.getDichroicAnnotationRefCount(i,q));
-                      for (index_type r = 0; r < dichroicAnnotationRefCount; ++r)
-                        transfer(&MR::getDichroicAnnotationRef, &MS::setDichroicAnnotationRef, i, q, r);
                     }
                 }
 
@@ -761,10 +715,6 @@ namespace
                       transfer(&MR::getTransmittanceRangeCutOut,          &MS::setTransmittanceRangeCutOut,          i, q);
                       transfer(&MR::getTransmittanceRangeCutOutTolerance, &MS::setTransmittanceRangeCutOutTolerance, i, q);
                       transfer(&MR::getTransmittanceRangeTransmittance,   &MS::setTransmittanceRangeTransmittance,   i, q);
-
-                      index_type filterAnnotationRefCount(src.getFilterAnnotationRefCount(i, q));
-                      for (index_type r = 0; r < filterAnnotationRefCount; ++r)
-                        transfer(&MR::getFilterAnnotationRef, &MS::setFilterAnnotationRef, i, q, r);
                     }
                 }
 
@@ -784,10 +734,6 @@ namespace
                       transfer(&MR::getObjectiveNominalMagnification,    &MS::setObjectiveNominalMagnification,    i, q);
                       transfer(&MR::getObjectiveSerialNumber,            &MS::setObjectiveSerialNumber,            i, q);
                       transfer(&MR::getObjectiveWorkingDistance,         &MS::setObjectiveWorkingDistance,         i, q);
-
-                      index_type objectiveAnnotationRefCount(src.getObjectiveAnnotationRefCount(i, q));
-                      for (index_type r = 0; r < objectiveAnnotationRefCount; ++r)
-                        transfer(&MR::getObjectiveAnnotationRef, &MS::setObjectiveAnnotationRef, i, q, r);
                     }
                 }
 
@@ -813,10 +759,6 @@ namespace
                 }
 
               convertLightSources(i);
-
-              index_type instrumentAnnotationRefCount(src.getInstrumentAnnotationRefCount(i));
-              for (index_type r = 0; r < instrumentAnnotationRefCount; ++r)
-                transfer(&MR::getInstrumentAnnotationRef, &MS::setInstrumentAnnotationRef, i, r);
             }
         }
     }
@@ -858,27 +800,6 @@ namespace
               index_type annotationRefCount(src.getLongAnnotationAnnotationCount(i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getLongAnnotationAnnotationRef, &MS::setLongAnnotationAnnotationRef, i, a);
-            }
-        }
-    }
-
-    /// Convert map annotations.
-    void
-    convertMapAnnotations()
-    {
-      index_type mapAnnotationCount(src.getMapAnnotationCount());
-      for (index_type i = 0; i < mapAnnotationCount; ++i)
-        {
-          if (transfer(&MR::getMapAnnotationID,          &MS::setMapAnnotationID,          i))
-            {
-              transfer(&MR::getMapAnnotationDescription, &MS::setMapAnnotationDescription, i);
-              transfer(&MR::getMapAnnotationNamespace,   &MS::setMapAnnotationNamespace,   i);
-              transfer(&MR::getMapAnnotationValue,       &MS::setMapAnnotationValue,       i);
-              transfer(&MR::getMapAnnotationAnnotator,   &MS::setMapAnnotationAnnotator,   i);
-
-              index_type annotationRefCount(src.getMapAnnotationAnnotationCount(i));
-              for (index_type a = 0; a < annotationRefCount; ++a)
-                transfer(&MR::getMapAnnotationAnnotationRef, &MS::setMapAnnotationAnnotationRef, i, a);
             }
         }
     }
@@ -1031,10 +952,6 @@ namespace
                           transfer(&MR::getEllipseRadiusY,         &MS::setEllipseRadiusY,         i, q);
                           transfer(&MR::getEllipseX,               &MS::setEllipseX,               i, q);
                           transfer(&MR::getEllipseY,               &MS::setEllipseY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getEllipseAnnotationRef, &MS::setEllipseAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Label")
@@ -1059,10 +976,6 @@ namespace
                           transfer(&MR::getLabelVisible,         &MS::setLabelVisible,         i, q);
                           transfer(&MR::getLabelX,               &MS::setLabelX,               i, q);
                           transfer(&MR::getLabelY,               &MS::setLabelY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getLabelAnnotationRef, &MS::setLabelAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Line")
@@ -1091,10 +1004,6 @@ namespace
                           transfer(&MR::getLineX2,              &MS::setLineX2,              i, q);
                           transfer(&MR::getLineY1,              &MS::setLineY1,              i, q);
                           transfer(&MR::getLineY2,              &MS::setLineY2,              i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getLineAnnotationRef, &MS::setLineAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Mask")
@@ -1121,10 +1030,6 @@ namespace
                           transfer(&MR::getMaskWidth,           &MS::setMaskWidth,           i, q);
                           transfer(&MR::getMaskX,               &MS::setMaskX,               i, q);
                           transfer(&MR::getMaskY,               &MS::setMaskY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getMaskAnnotationRef, &MS::setMaskAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Point")
@@ -1149,10 +1054,6 @@ namespace
                           transfer(&MR::getPointVisible,         &MS::setPointVisible,         i, q);
                           transfer(&MR::getPointX,               &MS::setPointX,               i, q);
                           transfer(&MR::getPointY,               &MS::setPointY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getPointAnnotationRef, &MS::setPointAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Polygon")
@@ -1176,10 +1077,6 @@ namespace
                           transfer(&MR::getPolygonTransform,       &MS::setPolygonTransform,       i, q);
                           transfer(&MR::getPolygonVisible,         &MS::setPolygonVisible,         i, q);
                           transfer(&MR::getPolygonPoints,          &MS::setPolygonPoints,          i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getPolygonAnnotationRef, &MS::setPolygonAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Polyline")
@@ -1205,10 +1102,6 @@ namespace
                           transfer(&MR::getPolylineMarkerEnd,       &MS::setPolylineMarkerEnd,       i, q);
                           transfer(&MR::getPolylineMarkerStart,     &MS::setPolylineMarkerStart,     i, q);
                           transfer(&MR::getPolylinePoints,          &MS::setPolylinePoints,          i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getPolylineAnnotationRef, &MS::setPolylineAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Rectangle")
@@ -1235,10 +1128,6 @@ namespace
                           transfer(&MR::getRectangleWidth,           &MS::setRectangleWidth,           i, q);
                           transfer(&MR::getRectangleX,               &MS::setRectangleX,               i, q);
                           transfer(&MR::getRectangleY,               &MS::setRectangleY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getRectangleAnnotationRef, &MS::setRectangleAnnotationRef, i, q, r);
                         }
                     }
                 }

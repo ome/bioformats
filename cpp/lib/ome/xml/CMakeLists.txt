@@ -68,8 +68,7 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveFloat.cpp
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
-  model/primitives/Timestamp.cpp
-  model/MapPairs.cpp)
+  model/primitives/Timestamp.cpp)
 
 # Not installed, internal only.
 set(OME_XML_META_PRIVATE_STATIC_HEADERS
@@ -82,7 +81,6 @@ set(OME_XML_META_STATIC_HEADERS
     meta/OMEXMLMetadataRoot.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
-    model/MapPairs.h
     model/ModelException.h
     model/OMEModel.h
     model/OMEModelObject.h)
