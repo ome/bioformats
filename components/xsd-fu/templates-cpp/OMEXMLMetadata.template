@@ -539,7 +539,7 @@ namespace ome
 
         resolveReferences();
 
-        ome::xerces::dom::Document doc(ome::xerces::dom::createEmptyDocument("OME"));
+        ome::xerces::dom::Document doc(ome::xerces::dom::createEmptyDocument("${model.getObjectByName("OME").namespace}", "OME"));
         ome::xerces::dom::Element ome = root->asXMLElement(doc);
 
         std::string text;

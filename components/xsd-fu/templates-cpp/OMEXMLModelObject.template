@@ -1175,7 +1175,6 @@ ${customUpdatePropertyContent[prop.name]}
         static const std::string XSI_NAMESPACE("http://www.w3.org/2001/XMLSchema-instance");
         element.setAttribute("xmlns:xsi", XSI_NAMESPACE);
         element.setAttribute("xsi:schemaLocation", NAMESPACE + " " + NAMESPACE + "/ome.xsd");
-        element.setAttribute("xmlns", NAMESPACE);
 {% end %}\
 {% if klass.isAbstractProprietary %}\
         // Class is abstract so we may need to create its "container" element
