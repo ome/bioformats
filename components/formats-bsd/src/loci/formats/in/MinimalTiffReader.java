@@ -558,10 +558,8 @@ public class MinimalTiffReader extends FormatReader {
         ms0.resolutionCount = seriesCount;
       }
 
-      if (ifds.size() + 1 < ms0.sizeT) {
-        ms0.sizeT = subResolutionIFDs.size();
-        ms0.imageCount = ms0.sizeT;
-      }
+      ms0.sizeT = subResolutionIFDs.size();
+      ms0.imageCount = ms0.sizeT;
 
       if (ms0.sizeT <= 0) {
         ms0.sizeT = 1;
