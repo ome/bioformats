@@ -61,19 +61,6 @@ namespace ome
         /// Constructor.
         OMEXMLMetadataRoot();
 
-	/**
-         * Construct OME-XML model recursively from an XML DOM tree.
-         *
-         * @param element root of the XML DOM tree to from which to
-         * construct the model object graph.
-         * @param model handler for the OME model used to track
-         * instances and references seen during the update.
-         * @throws EnumerationException if there is an error
-         * instantiating an enumeration during model object creation.
-         */
-        OMEXMLMetadataRoot(::ome::xerces::dom::Element& element,
-			   ::ome::xml::model::OMEModel& model);
-
 	/// Copy constructor.
 	OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy);
 

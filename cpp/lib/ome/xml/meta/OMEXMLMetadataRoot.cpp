@@ -55,14 +55,6 @@ namespace ome
       {
       }
 
-      OMEXMLMetadataRoot::OMEXMLMetadataRoot(::ome::xerces::dom::Element& element,
-					     ::ome::xml::model::OMEModel& model):
-        ome::xml::model::OMEModelObject(),
-	MetadataRoot(),
-	OME(element, model)
-      {
-      }
-
       OMEXMLMetadataRoot::~OMEXMLMetadataRoot()
       {
       }

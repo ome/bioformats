@@ -216,54 +216,6 @@ namespace ome
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        /**
-         * Construct a ${klass.name} recursively from an XML DOM tree.
-         *
-         * @param element root of the XML DOM tree to from which to
-         * construct the model object graph.
-         * @param model handler for the OME model used to track
-         * instances and references seen during the update.
-         * @throws EnumerationException if there is an error
-         * instantiating an enumeration during model object creation.
-         */
-        ${klass.name} (xerces::dom::Element& element, ${lang.omexml_model_package}::OMEModel& model);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      ${klass.name}::${klass.name} (xerces::dom::Element& element, ${lang.omexml_model_package}::OMEModel& model):
-{% if klass.parentName is not None %}\
-{% if len(klass.instanceVariables) == 0 %}\
-        ${klass.parentName}()
-{% end has no instance variables %}\
-{% if len(klass.instanceVariables) > 0 %}\
-        ${klass.parentName}(),
-{% end has instance variables %}\
-{% end has parent %}\
-{% for prop in klass.instanceVariables %}\
-{% if prop[0] is not None %}\
-{% if prop == klass.instanceVariables[-1] %}\
-{% if prop[2] is not None %}\
-        ${prop[1]}(${prop[2]})
-{% end has default %}\
-{% if prop[2] is None %}\
-        ${prop[1]}()
-{% end no default %}\
-{% end last member %}\
-{% if prop != klass.instanceVariables[-1] %}\
-{% if prop[2] is not None %}\
-        ${prop[1]}(${prop[2]}),
-{% end has default %}\
-{% if prop[2] is None %}\
-        ${prop[1]}(),
-{% end no default %}\
-{% end not last member %}\
-{% end has instance type %}\
-{% end for %}\
-      {
-        update(element, model);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
         /// Destructor.
         virtual
         ~${klass.name} ();
@@ -272,6 +224,37 @@ namespace ome
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::~${klass.name} ()
       {
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+
+        /**
+         * Create a ${klass.name} model object from DOM element.
+         *
+         * @param element root of the XML DOM tree to from which to
+         * construct the model object graph.
+         * @param model handler for the OME model used to track
+         * instances and references seen during the update.
+         * @throws EnumerationException if there is an error
+         * instantiating an enumeration during model object creation,
+         * or ModelException if there are any consistency or validity
+         * errors found during processing.
+         *
+         * @returns a new model object.
+         */
+        static std::shared_ptr< ${klass.name}>
+        create(const xerces::dom::Element& element,
+               ${lang.omexml_model_package}::OMEModel& model);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      std::shared_ptr< ${klass.name}>
+      ${klass.name}::create(const xerces::dom::Element& element,
+                              ${lang.omexml_model_package}::OMEModel& model)
+      {
+        std::shared_ptr< ${klass.name}> newinstance(std::make_shared< ${klass.name}>());
+        newinstance->update(element, model);
+        return newinstance;
       }
 {% end source %}\
 {% if len(customContent) > 0 %}\
@@ -450,7 +433,7 @@ ${customUpdatePropertyContent[prop.name]}
             xerces::dom::Element elem(${prop.name}_nodeList.at(0));
             // While std::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
-            ${prop.instanceVariableType} p(new ${prop.langTypeNS}(elem, model));
+            ${prop.instanceVariableType} p(${prop.langTypeNS}::create(elem, model));
 {% end %}\
 {% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %} \
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
@@ -507,7 +490,7 @@ ${customUpdatePropertyContent[prop.name]}
                      // While std::make_shared<> works, here,
                      // boost::make_shared<> does not, so use new
                      // directly.
-                     std::shared_ptr<${prop.methodName}> object(new ${inner_prop.langTypeNS}(*elem, model));
+                     std::shared_ptr<${prop.methodName}> object(${inner_prop.langTypeNS}::create(*elem, model));
                      object->update(*inner_elem, model);
                      add${prop.methodName}(object);
                    }
@@ -525,7 +508,7 @@ ${customUpdatePropertyContent[prop.name]}
           {
             // While std::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
-            std::shared_ptr<${prop.methodName}> object(new ${prop.langTypeNS}(*elem, model));
+            std::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(*elem, model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -539,7 +522,7 @@ ${customUpdatePropertyContent[prop.name]}
              ++elem)
           {
             std::string text(element.getTextContent());
-            std::shared_ptr<${prop.methodName}> object(std::make_shared< ${prop.langTypeNS}>(text, model));
+            std::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(text, model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -1183,6 +1166,11 @@ ${customUpdatePropertyContent[prop.name]}
             element = abstractElement;
           }
 {% end %}\
+        if (!element)
+          {
+            xerces::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
+            element = newElement;
+          }
 
 {% if klass.langBaseType is not None %}\
         // Element's text data
