@@ -217,6 +217,17 @@ namespace ome
         }
 
         /**
+         * Check if the NodeList is empty.
+         *
+         * @returns @c true if empty, @c false if not empty.
+         */
+        bool
+        empty() const
+        {
+          return size() == 0;
+        }
+
+        /**
          * Get an iterator pointing to the first element in the NodeList.
          *
          * @returns an iterator pointing to the first element in the NodeList.
