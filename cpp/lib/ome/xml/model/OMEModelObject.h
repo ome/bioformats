@@ -165,6 +165,14 @@ namespace ome
         virtual bool
         link (std::shared_ptr<Reference>&      reference,
               std::shared_ptr<OMEModelObject>& object) = 0;
+
+        /**
+         * Get the XML namespace for this model object.
+         *
+         * @returns the XML namespace.
+         */
+        virtual const std::string&
+        getXMLNamespace() const = 0;
       };
 
     }

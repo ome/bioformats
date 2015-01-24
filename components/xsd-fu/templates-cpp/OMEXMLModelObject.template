@@ -1147,7 +1147,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
- protected:
+      protected:
         // Documented in base class.
         virtual xerces::dom::Element&
         asXMLElementInternal (xerces::dom::Document& document,
@@ -1306,6 +1306,20 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end %}\
 {% end %}\
         return ${klass.parentName}::asXMLElementInternal(document, element);
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+      public:
+       // Documented in superclass.
+       const std::string&
+       getXMLNamespace() const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::getXMLNamespace() const
+      {
+        return NAMESPACE;
       }
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\

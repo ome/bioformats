@@ -40,6 +40,7 @@
 
 #include <ome/internal/version.h>
 
+#include <ome/xml/model/OME.h>
 #include <ome/xml/model/MapPairs.h>
 
 namespace ome
@@ -182,6 +183,17 @@ namespace ome
       MapPairs::setMap (const map_type& map)
       {
         this->map = map;
+      }
+
+      const std::string&
+      MapPairs::getXMLNamespace() const
+      {
+        // This is a hack; we don't have direct access to the
+        // namespace at present since it's emitted by the code
+        // generator.  Copy the namespace from the generated OME
+        // class.
+        OME ome;
+        return ome.getXMLNamespace();
       }
 
     }

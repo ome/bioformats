@@ -151,11 +151,16 @@ namespace ome
         virtual xerces::dom::Element&
         asXMLElement (xerces::dom::Document& document) const;
 
- protected:
+      protected:
         // Documented in base class.
         virtual xerces::dom::Element&
         asXMLElementInternal (xerces::dom::Document& document,
                               xerces::dom::Element&  element) const;
+
+      public:
+        // Documented in superclass.
+        const std::string&
+        getXMLNamespace() const;
       };
 
     }
