@@ -385,7 +385,7 @@ ${customUpdatePropertyContent[prop.name]}
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
-             std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(shared_from_this());
+             std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(std::dynamic_pointer_cast<  ${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
              model.addModelObject(getID(), thisptr);
            }
 {% end %}\
@@ -1158,7 +1158,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${klass.name}::asXMLElementInternal (xerces::dom::Document& document,
                                            xerces::dom::Element&  element) const
       {
-        // Creating XML block for ${klass.name}
+        // Create XML block for ${klass.name}
 
 {% if klass.isAbstractProprietary %}\
         // Class is abstract so we may need to create its "container" element
@@ -1215,11 +1215,12 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 // the API to allow consistency for future
                 // refactoring.
                 std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
-                std::shared_ptr<${prop.langTypeNS}> is(*i);
+                std::shared_ptr<${prop.langTypeNS}> is(i->lock());
                 if (is)
                   {
                     o->setID(is->getID());
-                    element.appendChild(o->asXMLElement(document));
+                    xerces::dom::Element child(o->asXMLElement(document));
+                    element.appendChild(child);
                   }
               }
           }
@@ -1231,9 +1232,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
             // shared_ptr, but keep compatible with the rest of the
             // API to allow consistency for future refactoring.
             std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
-            std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName});
-            o->setID(sv->getID());
-            element.appendChild(o->asXMLElement(document));
+            std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName}.lock());
+            if (sv)
+              {
+                o->setID(sv->getID());
+                xerces::dom::Element child(o->asXMLElement(document));
+                element.appendChild(child);
+              }
           }
 {% end %}\
 {% when prop.isBackReference %}\
@@ -1253,18 +1258,20 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // Element property ${prop.name} which is complex (has
           // sub-elements)
           if (${prop.instanceVariableName})
-            element.appendChild(${prop.instanceVariableName}->asXMLElement(document));
+            {
+              xerces::dom::Element child(${prop.instanceVariableName}->asXMLElement(document));
+              element.appendChild(child);
+            }
 {% end %}\
 {% when prop.maxOccurs == 1 %}\
           // Element property ${prop.name} which is not complex (has no
           // sub-elements)
           {
-            xerces::dom::Element ${prop.instanceVariableName}_element =
-                                                               document.createElementNS(NAMESPACE, "${prop.name}");
+            xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
             std::ostringstream os;
             os << ${prop.instanceVariableName};
-            ${prop.instanceVariableName}_element.setTextContent(os.str());
-            element.appendChild(${prop.instanceVariableName}_element);
+            child.setTextContent(os.str());
+            element.appendChild(child);
           }
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() %}\
@@ -1275,7 +1282,11 @@ ${customAsXMLElementPropertyContent[prop.name]}
                  i != ${prop.instanceVariableName}.end();
                  ++i)
               {
-                element.appendChild((*i)->asXMLElement(document));
+                if (*i)
+                  {
+                    xerces::dom::Element child((*i)->asXMLElement(document));
+                    element.appendChild(child);
+                  }
               }
           }
 {% end %}\
@@ -1292,7 +1303,8 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 std::ostringstream os;
                 os << *i;
                 ${prop.instanceVariableName}_element.setTextContent(os.str());
-                element.appendChild(${prop.instanceVariableName}_element);
+                xerces::dom::Element child(${prop.instanceVariableName}_element);
+                element.appendChild(child);
               }
           }
 {% end %}\
