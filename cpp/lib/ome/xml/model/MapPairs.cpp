@@ -89,6 +89,13 @@ namespace ome
       {
       }
 
+      const std::string&
+      MapPairs::elementName() const
+      {
+        static const std::string type("MapPairs");
+        return type;
+      }
+
       void
       MapPairs::update(const xerces::dom::Element&  element,
                        ::ome::xml::model::OMEModel& model)

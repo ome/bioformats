@@ -112,6 +112,10 @@ namespace ome
         virtual
         ~MapPairs ();
 
+        // Documented in superclass.
+        const std::string&
+        elementName() const;
+
         /// @copydoc ome::xml::model::OMEModelObject::update
         virtual void
         update(const xerces::dom::Element&  element,

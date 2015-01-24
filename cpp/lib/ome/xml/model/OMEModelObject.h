@@ -104,6 +104,16 @@ namespace ome
         ~OMEModelObject ()
         {}
 
+        /**
+         * Get the element name of this model object.
+         *
+         * This will be the most-derived class name.
+         *
+         * @returns the element type.
+         */
+        virtual const std::string&
+        elementName() const = 0;
+
       private:
         /// Copy constructor (deleted).
         OMEModelObject (const OMEModelObject&);

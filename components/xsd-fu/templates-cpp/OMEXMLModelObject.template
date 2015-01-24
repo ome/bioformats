@@ -227,6 +227,7 @@ namespace ome
       }
 {% end source %}\
 
+{% if not klass.isAbstract and not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
         /**
@@ -257,6 +258,22 @@ namespace ome
         return newinstance;
       }
 {% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in superclass.
+        const std::string&
+        elementName() const;
+
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::elementName() const
+      {
+        static const std::string type("${klass.name}");
+        return type;
+      }
+{% end source %}\
+{% end not Abstract %}\
 {% if len(customContent) > 0 %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -287,8 +304,8 @@ ${customContent}\
                             ${lang.omexml_model_package}::OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
-{% if klass.langBaseType is not None %}\
 
+{% if klass.langBaseType is not None %}\
         {
           // Element's text data
           std::string text(element.getTextContent());
