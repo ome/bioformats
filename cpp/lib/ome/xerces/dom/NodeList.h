@@ -237,6 +237,15 @@ namespace ome
         {
           return iterator();
         }
+
+        /**
+         * Get the element at a particular index.
+         *
+         * @param index the index of the element.
+         * @returns the Node at the specified index.
+         */
+        Node
+        at(size_type index);
       };
 
     }
