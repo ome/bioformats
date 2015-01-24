@@ -374,13 +374,11 @@ ${customContent}\
 {% end %}\
         }
 {% end %}\
-{% if not klass.isAbstractProprietary %}\
-        std::string tagName(stripNamespacePrefix(element.getTagName()));
-        if (tagName != "${klass.name}")
+        const std::string tagName(stripNamespacePrefix(element.getTagName()));
+        if (!validElementName(tagName))
           {
-            std::clog << "Expecting node name of ${klass.name} got " << tagName << std::endl;
+            std::clog << tagName << " is an invalid element name for ${klass.name}" << std::endl;
           }
-{% end %}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.name in customUpdatePropertyContent %}\
