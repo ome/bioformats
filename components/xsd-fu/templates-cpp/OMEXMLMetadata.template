@@ -405,11 +405,22 @@ ${customContent[obj.name][prop.name]}
 
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
+#include <ome/internal/version.h>
+
+#include <ome/xerces/Platform.h>
+
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
 {% for header in fu.OBJECT_HEADERS %}\
 #include <${header}>
 {% end %}\
+
+namespace
+{
+
+  const std::string xsi_ns("http://www.w3.org/2001/XMLSchema-instance");
+
+}
 {% end source%}\
 
 namespace ome
@@ -531,11 +542,24 @@ namespace ome
       std::string
       OMEXMLMetadata::dumpXML()
       {
+        ome::xerces::Platform xmlplat;
+
         resolveReferences();
-        /// @todo Merge implementation from AbstractOMEXMLMetadata.
-        /// @todo remove dummy return
-        //          return dumpXMLImpl();
-        return std::string();
+
+        ome::xerces::dom::Document doc(ome::xerces::dom::createEmptyDocument("OME"));
+        ome::xerces::dom::Element r = root->asXMLElement(doc);
+
+        std::string ns(root->getXMLNamespace());
+
+        r.setAttribute("xmlns:xsi", xsi_ns);
+        r.setAttribute("xsi:schemaLocation", ns + " " + ns + "/ome.xsd");
+        r.setAttribute("xmlns", ns);
+
+        doc.appendChild(r);
+
+        std::string text;
+        ome::xerces::dom::writeDocument(doc, text);
+        return text;
       }
 {% end source %}\
 
