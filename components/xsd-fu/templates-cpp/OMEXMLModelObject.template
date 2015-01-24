@@ -300,7 +300,6 @@ namespace ome
         // Documented in superclass.
         const std::string&
         elementName() const;
-
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
@@ -311,8 +310,8 @@ namespace ome
       }
 {% end source %}\
 {% end not Abstract %}\
-{% if len(customContent) > 0 %}\
 
+{% if len(customContent) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
       private:
         /// Assignment operator (deleted).
