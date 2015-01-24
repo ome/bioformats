@@ -76,6 +76,10 @@ namespace ome
            */
           OMEModelObject (const OMEModelObject& copy);
 
+          /// @copydoc ome::xml::model::OMEModelObject::validElementName
+          bool
+          validElementName(const std::string& name) const = 0;
+
         protected:
           /**
            * Transform the object hierarchy rooted at this element to

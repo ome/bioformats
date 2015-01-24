@@ -312,6 +312,21 @@ namespace ome
 {% end source %}\
 {% end not Abstract %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in superclass.
+        bool
+        validElementName(const std::string& name) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      bool
+      ${klass.name}::validElementName(const std::string& name) const
+      {
+        static const std::string expectedTagName("${klass.name}");
+
+        return expectedTagName == name || ${klass.parentName}::validElementName(name);
+      }
+{% end source %}\
+
 {% if len(customContent) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
       private:

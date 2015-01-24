@@ -116,6 +116,10 @@ namespace ome
         const std::string&
         elementName() const;
 
+        // Documented in superclass.
+        bool
+        validElementName(const std::string& name) const;
+
         /// @copydoc ome::xml::model::OMEModelObject::update
         virtual void
         update(const xerces::dom::Element&  element,

@@ -96,6 +96,14 @@ namespace ome
         return type;
       }
 
+      bool
+      MapPairs::validElementName(const std::string& name) const
+      {
+        static const std::string expectedTagName("MapPairs");
+
+        return expectedTagName == name || detail::OMEModelObject::validElementName(name);
+      }
+
       void
       MapPairs::update(const xerces::dom::Element&  element,
                        ::ome::xml::model::OMEModel& model)

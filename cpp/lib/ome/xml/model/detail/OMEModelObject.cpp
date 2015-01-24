@@ -65,6 +65,12 @@ namespace ome
           // Nothing to copy.
         }
 
+        bool
+        OMEModelObject::validElementName(const std::string& /* name */) const
+        {
+          return false;
+        }
+
         xerces::dom::Element
         OMEModelObject::asXMLElementInternal (xerces::dom::Document& /* document */,
                                               xerces::dom::Element&  element) const

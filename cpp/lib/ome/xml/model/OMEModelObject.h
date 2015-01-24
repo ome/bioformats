@@ -114,6 +114,19 @@ namespace ome
         virtual const std::string&
         elementName() const = 0;
 
+        /**
+         * Check if a given element name is valid for processing by
+         * this model object.
+         *
+         * Used for processing nodes when interitance is involved.
+         *
+         * @param name the element name to check.
+         *
+         * @returns @c true if valid, @c false if invalid.
+         */
+        virtual bool
+        validElementName(const std::string& name) const = 0;
+
       private:
         /// Copy constructor (deleted).
         OMEModelObject (const OMEModelObject&);
