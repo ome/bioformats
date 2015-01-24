@@ -349,7 +349,7 @@ class OMEModelObject(OMEModelEntity):
         name = self.modelBaseType
 
         if (parent is not None and parent.isAbstractProprietary and
-            self.name not in config.ANNOTATION_OVERRIDE):
+                self.name not in config.ANNOTATION_OVERRIDE):
             name = parent.name
 
         return name
@@ -362,12 +362,14 @@ class OMEModelObject(OMEModelEntity):
         abstract = False
 
         if (parent is not None and parent.isAbstractProprietary and
-            self.name not in config.ANNOTATION_OVERRIDE):
-                abstract = True
+                self.name not in config.ANNOTATION_OVERRIDE):
+            abstract = True
 
         return abstract
     isParentAbstractProprietary = property(
-        _get_isParentAbstractProprietary, doc="""Returns whether or not the model object has an abstract proprietary parent.""")
+        _get_isParentAbstractProprietary,
+        doc="""Returns whether or not the model object has an abstract"""
+        """ proprietary parent.""")
 
     def __str__(self):
         return self.__repr__()
