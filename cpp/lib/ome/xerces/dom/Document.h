@@ -177,6 +177,18 @@ namespace ome
         {
           return Element((*this)->getDocumentElement(), false);
         }
+
+        /**
+         * Get child elements with a given tag name.
+         *
+         * @param name the element name to use.
+         * @returns the child nodes (if any).
+         */
+        NodeList
+        getElementsByTagName(const std::string& name)
+        {
+          return (*this)->getElementsByTagName(String(name));
+        }
       };
 
       /**
