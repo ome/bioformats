@@ -203,7 +203,6 @@ namespace ome
          * value.
          * @param klass the class owning the property.
          * @param property the property name.
-         * @returns the parsed value.
          * @throws a ModelException on failure.
          */
         template<class C, typename T>
