@@ -228,6 +228,43 @@ namespace
       return ok;
     }
 
+    /**
+     * Transfer a single metadata value (four index arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param set a setter method from MetadataStore.
+     * @returns @c true if the transfer succeeded, @c false if an
+     * exception was thrown.
+     */
+    template<typename T, typename P>
+    bool
+    transfer(T    (MetadataRetrieve::* get)(P param1,
+                                            P param2,
+                                            P param3,
+                                            P param4) const,
+             void (MetadataStore::*    set)(T value,
+                                            P param1,
+                                            P param2,
+                                            P param3,
+                                            P param4),
+             P                         param1,
+             P                         param2,
+             P                         param3,
+             P                         param4)
+    {
+      bool ok = true;
+      try
+        {
+          (dest.*set)((src.*get)(param1, param2, param3, param4),
+                      param1, param2, param3, param4);
+        }
+      catch (const std::runtime_error& /* e */)
+        {
+          ok = false;
+        }
+      return ok;
+    }
+
     /// Convert boolean annotations.
     void
     convertBooleanAnnotations()
@@ -484,8 +521,12 @@ namespace
               for (index_type q = 0; q < binDataCount; ++q)
                 transfer(&MR::getPixelsBinDataBigEndian, &MS::setPixelsBinDataBigEndian, i, q);
 
-              index_type annotationRefCount(src.getImageAnnotationRefCount(i));
-              for (index_type q = 0; q < annotationRefCount; ++q)
+              index_type pixelsAnnotationRefCount(src.getPixelsAnnotationRefCount(i));
+              for (index_type q = 0; q < pixelsAnnotationRefCount; ++q)
+                transfer(&MR::getPixelsAnnotationRef, &MS::setPixelsAnnotationRef, i, q);
+
+              index_type imageAnnotationRefCount(src.getImageAnnotationRefCount(i));
+              for (index_type q = 0; q < imageAnnotationRefCount; ++q)
                 transfer(&MR::getImageAnnotationRef, &MS::setImageAnnotationRef, i, q);
 
               index_type channelCount(src.getChannelCount(i));
@@ -853,6 +894,10 @@ namespace
                               transfer(&MR::getWellSamplePositionY, &MS::setWellSamplePositionY, i, q, w);
                               transfer(&MR::getWellSampleTimepoint, &MS::setWellSampleTimepoint, i, q, w);
                             }
+
+                          index_type wellSampleAnnotationRefCount(src.getWellSampleAnnotationRefCount(i, q, w));
+                          for (index_type s = 0; s < wellSampleAnnotationRefCount; ++s)
+                            transfer(&MR::getWellSampleAnnotationRef, &MS::setWellSampleAnnotationRef, i, q, w, s);
                         }
                     }
                 }
