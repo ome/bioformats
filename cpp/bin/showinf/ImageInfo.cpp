@@ -271,6 +271,16 @@ namespace showinf
       {
         std::cerr << "Failed to get metadata: " << e.what() << '\n';
       }
+
+    if (opts.showomexml)
+      {
+        std::shared_ptr<ome::xml::meta::OMEXMLMetadata> omemeta(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(reader->getMetadataStore()));
+        if (omemeta)
+          {
+            stream << "OME-XML metadata:\n";
+            stream << omemeta->dumpXML();
+          }
+      }
   }
 
   void
