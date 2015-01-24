@@ -487,7 +487,6 @@ public class NativeND2Reader extends FormatReader {
             imageLengths.clear();
             customDataOffsets.clear();
             customDataLengths.clear();
-            textChannelNames.clear();
             foundMetadata = false;
             extraZDataCount = 0;
             useLastText = true;
