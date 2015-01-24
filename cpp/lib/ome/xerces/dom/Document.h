@@ -390,7 +390,7 @@ namespace ome
                     const WriteParameters& params = WriteParameters());
 
       /**
-       * Write a Document to a stream.
+       * Write a Document to a string.
        *
        * @param document the document to use.
        * @param text the string to store the text in.
