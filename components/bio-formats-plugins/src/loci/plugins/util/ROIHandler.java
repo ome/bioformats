@@ -109,11 +109,17 @@ public class ROIHandler {
                         int ry = ellipse.getRadiusY().intValue();
                         roi = new OvalRoi(cx - rx, cy - ry, rx * 2, ry * 2);
 
-                        ome.xml.model.primitives.Color StrokeColor = ellipse.getStrokeColor();
-                        sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        ome.xml.model.primitives.Color FillColor = ellipse.getFillColor();
-                        fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        sw = ellipse.getStrokeWidth().value().floatValue();
+                        if( ellipse.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = ellipse.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if(ellipse.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = ellipse.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if(ellipse.getStrokeWidth() != null){
+                            sw = ellipse.getStrokeWidth().value().floatValue();
+                        }
                     }
                     else if (shapeObject instanceof ome.xml.model.Line) {
                         ome.xml.model.Line line = (ome.xml.model.Line) shapeObject;
@@ -123,11 +129,17 @@ public class ROIHandler {
                         int y2 = line.getY2().intValue();
                         roi = new Line(x1, y1, x2, y2);
 
-                        ome.xml.model.primitives.Color StrokeColor = line.getStrokeColor();
-                        sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        ome.xml.model.primitives.Color FillColor = line.getFillColor();
-                        fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        sw = line.getStrokeWidth().value().floatValue();
+                        if(line.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = line.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if(line.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = line.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if(line.getStrokeWidth() != null){
+                            sw = line.getStrokeWidth().value().floatValue();
+                        }
                     }
                     else if (shapeObject instanceof Point) {
                         Point point = (Point) shapeObject;
@@ -135,11 +147,17 @@ public class ROIHandler {
                         int y = point.getY().intValue();
                         roi = new OvalRoi(x, y, 0, 0);
 
-                        ome.xml.model.primitives.Color StrokeColor = point.getStrokeColor();
-                        sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        ome.xml.model.primitives.Color FillColor = point.getFillColor();
-                        fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        sw = point.getStrokeWidth().value().floatValue();
+                        if (point.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = point.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if (point.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = point.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if (point.getStrokeWidth() != null){
+                            sw = point.getStrokeWidth().value().floatValue();
+                        }
                     }
                     else if (shapeObject instanceof Polyline) {
                         Polyline polyline = (Polyline) shapeObject;
@@ -148,11 +166,17 @@ public class ROIHandler {
                         roi = new PolygonRoi(coordinates[0], coordinates[1],
                                 coordinates[0].length, Roi.POLYLINE);
 
-                        ome.xml.model.primitives.Color StrokeColor = polyline.getStrokeColor();
-                        sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        ome.xml.model.primitives.Color FillColor = polyline.getFillColor();
-                        fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        sw = polyline.getStrokeWidth().value().floatValue();
+                        if (polyline.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = polyline.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if (polyline.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = polyline.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if (polyline.getStrokeWidth() != null){
+                            sw = polyline.getStrokeWidth().value().floatValue();
+                        }
                     }
                     else if (shapeObject instanceof Polygon) {
                         Polygon polygon = (Polygon) shapeObject;
@@ -161,11 +185,17 @@ public class ROIHandler {
                         roi = new PolygonRoi(coordinates[0], coordinates[1],
                                 coordinates[0].length, Roi.POLYGON);
 
-                        ome.xml.model.primitives.Color StrokeColor = polygon.getStrokeColor();
-                        sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        ome.xml.model.primitives.Color FillColor = polygon.getFillColor();
-                        fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        sw = polygon.getStrokeWidth().value().floatValue();
+                        if (polygon.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = polygon.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if (polygon.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = polygon.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if (polygon.getStrokeWidth() != null){
+                            sw = polygon.getStrokeWidth().value().floatValue();
+                        }
                     }
                     else if (shapeObject instanceof ome.xml.model.Rectangle) {
                         ome.xml.model.Rectangle rectangle =
@@ -182,11 +212,17 @@ public class ROIHandler {
                             roi = new Roi(x, y, w, h);
                         }
 
-                        ome.xml.model.primitives.Color StrokeColor = rectangle.getStrokeColor();
-                        sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        ome.xml.model.primitives.Color FillColor = rectangle.getFillColor();
-                        fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        sw = rectangle.getStrokeWidth().value().floatValue();
+                        if (rectangle.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = rectangle.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if (rectangle.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = rectangle.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if (rectangle.getStrokeWidth() != null){
+                            sw = rectangle.getStrokeWidth().value().floatValue();
+                        }
                     }
                     else if (shapeObject instanceof ome.xml.model.Label){
                         //add support for TextROI's
@@ -197,11 +233,17 @@ public class ROIHandler {
                         String labelText = label.getText();
                         roi = new TextRoi((int) x,(int) y, labelText);
 
-                        ome.xml.model.primitives.Color StrokeColor = label.getStrokeColor();
-                        sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        ome.xml.model.primitives.Color FillColor = label.getFillColor();
-                        fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        sw = label.getStrokeWidth().value().floatValue();
+                        if (label.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = label.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if (label.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = label.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if (label.getStrokeWidth() != null){
+                            sw = label.getStrokeWidth().value().floatValue();
+                        }
                     }
 
                     if (roi != null) {
