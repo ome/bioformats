@@ -57,14 +57,12 @@ namespace ome
      * PixelBuffer for all combinations of pixel type (excluding
      * endian variants).
      *
-     * While direct access to the pixel data is possible using this
-     * class, please be aware that this will not provide high
-     * performance.  For high performance access to the pixel data,
-     * use of a @c boost::static_visitor is recommended.  This has the
-     * benefit of generalising the algorithm to operate on all
-     * PixelBuffer types, as well as allowing special casing for
-     * particular types (e.g. integer vs. float, signed vs. unsigned,
-     * simple vs. complex, or any other distinction which affects the
+     * For high performance access to the pixel data, use of a @c
+     * boost::static_visitor is recommended.  This has the benefit of
+     * generalising the algorithm to operate on all PixelBuffer types,
+     * as well as allowing special casing for particular types
+     * (e.g. integer vs. float, signed vs. unsigned, simple
+     * vs. complex, or any other distinction which affects the
      * algorithm).  This will also allow subsetting of the data if
      * required, again for all pixel types with special casing being
      * possible.
@@ -659,52 +657,6 @@ namespace ome
       void
       assign(InputIterator begin,
              InputIterator end);
-
-      /**
-       * Get the pixel value at an index.
-       *
-       * @note If the index is out of bounds, an assertion failure
-       * will immediately abort the program, so take care to ensure it
-       * is always valid.
-       *
-       * @param indices the multi-dimensional array index.
-       * @returns a reference to the pixel value.
-       * @throws if the contained PixelBuffer is not of the specified
-       * type.
-       */
-      template<typename T>
-      T&
-      at(const indices_type& indices)
-      {
-        std::shared_ptr<PixelBuffer<T> >& r
-          = boost::get<std::shared_ptr<PixelBuffer<T> > >(buffer);
-        if (!r)
-          throw std::runtime_error("Null pixel type");
-        return r->array()(indices);
-      }
-
-      /**
-       * Get the pixel value at an index.
-       *
-       * @note If the index is out of bounds, an assertion failure
-       * will immediately abort the program, so take care to ensure it
-       * is always valid.
-       *
-       * @param indices the multi-dimensional array index.
-       * @returns a constant reference to the pixel value.
-       * @throws if the contained PixelBuffer is not of the specified
-       * type.
-       */
-      template<typename T>
-      const T&
-      at(const indices_type& indices) const
-      {
-        const std::shared_ptr<PixelBuffer<T> >& r
-          = boost::get<std::shared_ptr<PixelBuffer<T> > >(buffer);
-        if (!r)
-          throw std::runtime_error("Null pixel type");
-        return r->array()(indices);
-      }
 
       /**
        * Read raw pixel data from a stream in physical storage order.
