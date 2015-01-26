@@ -137,6 +137,19 @@ namespace ome
           }
       }
 
+      template<typename I>
+      inline std::vector<std::string>
+      domain_strings(I begin,
+                     I end)
+      {
+        std::vector<std::string> ret;
+
+        for (I i = begin; i < end; ++i)
+          ret.push_back(getDomain(*i));
+
+        return ret;
+      }
+
     }
 
     // No switch default to avoid -Wunreachable-code errors.
@@ -154,72 +167,72 @@ namespace ome
 
       switch(domain)
         {
-        case UNKNOWN:
+        case UNKNOWN_DOMAIN:
           {
             return unk;
           }
           break;
-        case HCS:
+        case HCS_DOMAIN:
           {
             static const std::string hcs("High-Content Screening (HCS)");
             return hcs;
           }
           break;
-        case LM:
+        case LM_DOMAIN:
           {
             static const std::string lm("Light Microscopy (LM)");
             return lm;
           }
           break;
-        case EM:
+        case EM_DOMAIN:
           {
             static const std::string em("Electron Microscopy (EM)");
             return em;
           }
           break;
-        case SPM:
+        case SPM_DOMAIN:
           {
             static const std::string spm("Scanning Probe Microscopy (SPM)");
             return spm;
           }
           break;
-        case SEM:
+        case SEM_DOMAIN:
           {
             static const std::string sem("Scanning Electron Microscopy (SEM)");
             return sem;
           }
           break;
-        case FLIM:
+        case FLIM_DOMAIN:
           {
             static const std::string flim("Fluorescence-Lifetime Imaging (FLIM)");
             return flim;
           }
           break;
-        case MEDICAL:
+        case MEDICAL_DOMAIN:
           {
             static const std::string mi("Medical Imaging");
             return mi;
           }
           break;
-        case HISTOLOGY:
+        case HISTOLOGY_DOMAIN:
           {
             static const std::string hs("Histology");
             return hs;
           }
           break;
-        case GEL:
+        case GEL_DOMAIN:
           {
             static const std::string gel("Gel/Blot Imaging");
             return gel;
           }
           break;
-        case ASTRONOMY:
+        case ASTRONOMY_DOMAIN:
           {
             static const std::string astronomy("Astronomy");
             return astronomy;
           }
           break;
-        case GRAPHICS:
+        case GRAPHICS_DOMAIN:
           {
             static const std::string graphics("Graphics");
             return graphics;
@@ -230,6 +243,106 @@ namespace ome
       // Fallback if enum is unknown.
       return unk;
     }
+
+    const std::vector<std::string>&
+    getDomainCollection(DomainCollection domains)
+    {
+      switch(domains)
+        {
+        case NON_GRAPHICS_DOMAINS:
+          {
+            const Domain non_graphics_enums[] =
+              {
+                UNKNOWN_DOMAIN,
+                HCS_DOMAIN,
+                LM_DOMAIN,
+                EM_DOMAIN,
+                SPM_DOMAIN,
+                SEM_DOMAIN,
+                FLIM_DOMAIN,
+                MEDICAL_DOMAIN,
+                HISTOLOGY_DOMAIN,
+                GEL_DOMAIN,
+                ASTRONOMY_DOMAIN
+              };
+            static const std::vector<std::string> non_graphics_domains
+              (domain_strings(non_graphics_enums,
+                              non_graphics_enums + (sizeof(non_graphics_enums) / sizeof(non_graphics_enums[0]))));
+            return non_graphics_domains;
+          }
+          break;
+        case NON_HCS_DOMAINS:
+          {
+            const Domain non_hcs_enums[] =
+              {
+                UNKNOWN_DOMAIN,
+                LM_DOMAIN,
+                EM_DOMAIN,
+                SPM_DOMAIN,
+                SEM_DOMAIN,
+                FLIM_DOMAIN,
+                MEDICAL_DOMAIN,
+                HISTOLOGY_DOMAIN,
+                GEL_DOMAIN,
+                ASTRONOMY_DOMAIN
+              };
+            static const std::vector<std::string> non_hcs_domains
+              (domain_strings(non_hcs_enums,
+                              non_hcs_enums + (sizeof(non_hcs_enums) / sizeof(non_hcs_enums[0]))));
+            return non_hcs_domains;
+          }
+          break;
+        case NON_SPECIAL_DOMAINS:
+          {
+            const Domain non_special_enums[] =
+              {
+                UNKNOWN_DOMAIN,
+                LM_DOMAIN,
+                EM_DOMAIN,
+                SPM_DOMAIN,
+                SEM_DOMAIN,
+                FLIM_DOMAIN,
+                MEDICAL_DOMAIN,
+                HISTOLOGY_DOMAIN,
+                GEL_DOMAIN,
+                ASTRONOMY_DOMAIN
+              };
+            static const std::vector<std::string> non_special_domains
+              (domain_strings(non_special_enums,
+                              non_special_enums + (sizeof(non_special_enums) / sizeof(non_special_enums[0]))));
+            return non_special_domains;
+          }
+          break;
+        case ALL_DOMAINS:
+          {
+            const Domain all_enums[] =
+              {
+                UNKNOWN_DOMAIN,
+                HCS_DOMAIN,
+                LM_DOMAIN,
+                EM_DOMAIN,
+                SPM_DOMAIN,
+                SEM_DOMAIN,
+                FLIM_DOMAIN,
+                MEDICAL_DOMAIN,
+                HISTOLOGY_DOMAIN,
+                GEL_DOMAIN,
+                ASTRONOMY_DOMAIN,
+                GRAPHICS_DOMAIN
+              };
+            static const std::vector<std::string> all_domains
+              (domain_strings(all_enums,
+                              all_enums + (sizeof(all_enums) / sizeof(all_enums[0]))));
+            return all_domains;
+          }
+          break;
+        }
+
+      // Fallback if enum is unknown.
+      static const std::vector<std::string> unk;
+      return unk;
+    }
+
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop

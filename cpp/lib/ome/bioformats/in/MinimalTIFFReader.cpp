@@ -90,7 +90,7 @@ namespace ome
         tiff(),
         series_ifd_map()
       {
-        domains.push_back(getDomain(GRAPHICS));
+        domains.push_back(getDomain(GRAPHICS_DOMAIN));
       }
 
       MinimalTIFFReader::MinimalTIFFReader(const ReaderProperties& readerProperties):
@@ -98,7 +98,7 @@ namespace ome
         tiff(),
         series_ifd_map()
       {
-        domains.push_back(getDomain(GRAPHICS));
+        domains.push_back(getDomain(GRAPHICS_DOMAIN));
       }
 
       MinimalTIFFReader::~MinimalTIFFReader()
