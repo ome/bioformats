@@ -78,7 +78,7 @@ ${fully_qualified_link_class_name(o, prop)}\
                 return False
             if x.name in ('BinaryOnly', 'Contact', 'Leader', 'MetadataOnly',
                           'OME', 'TiffData', 'UUID', 'Union', 'FormatType',
-                          'StructuredAnnotations'):
+                          'StructuredAnnotations', 'RenderingDefinitions'):
                 return False
             return True
         return filter(f, objects)

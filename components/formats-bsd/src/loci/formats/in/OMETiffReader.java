@@ -424,7 +424,7 @@ public class OMETiffReader extends FormatReader {
     try {
       meta = service.createOMEXMLMetadata(xml);
       if (companion) {
-        String firstTIFF = meta.getUUIDFileName(0, 0);
+        String firstTIFF = meta.getTiffDataUUIDFileName(0, 0);
         initFile(new Location(dir, firstTIFF).getAbsolutePath());
         return;
       }
@@ -516,7 +516,7 @@ public class OMETiffReader extends FormatReader {
           filename = id;
         }
         else {
-          filename = meta.getUUIDFileName(i, td);
+          filename = meta.getTiffDataUUIDFileName(i, td);
           if (!new Location(dir, filename).exists()) filename = null;
           if (filename == null) {
             if (uuid.equals(currentUUID) || currentUUID == null) {
@@ -657,7 +657,7 @@ public class OMETiffReader extends FormatReader {
         String filename = null;
         String uuid = null;
         try {
-          filename = meta.getUUIDFileName(i, td);
+          filename = meta.getTiffDataUUIDFileName(i, td);
         } catch (NullPointerException e) {
           LOGGER.debug("Ignoring null UUID object when retrieving filename.");
         }
@@ -839,7 +839,7 @@ public class OMETiffReader extends FormatReader {
         String uuidFileName = "";
         try {
           if (meta.getTiffDataCount(i) > 0) {
-            uuidFileName = meta.getUUIDFileName(i, 0);
+            uuidFileName = meta.getTiffDataUUIDFileName(i, 0);
           }
         }
         catch (NullPointerException e) { }

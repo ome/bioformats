@@ -72,9 +72,18 @@ import ${lang.omexml_model_package}.primitives.*;
 
 {% choose %}\
 {% when klass.isAbstractProprietary or klass.isAbstract %}\
+{% if debug and klass.isAbstractProprietary %}\
+	// MARKER [isAbstractProprietary]
+{% end debug %}\
+{% if debug and klass.isAbstract %}\
+	// MARKER [isAbstract]
+{% end debug %}\
 public abstract class ${klass.name} extends ${klass.parentName}
 {% end %}\
 {% when not klass.isAbstractProprietary and not klass.isAbstract %}\
+{% if debug %}\
+	// MARKER [NOT isAbstractProprietary and NOT isAbstract]
+{% end debug %}\
 public class ${klass.name} extends ${klass.parentName}
 {% end %}\
 {% end %}\

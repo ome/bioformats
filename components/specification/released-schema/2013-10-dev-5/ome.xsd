@@ -31,6 +31,7 @@
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+	xmlns:RD="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1"
@@ -41,6 +42,8 @@
 		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5/RD.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5/ROI.xsd"/>
 
@@ -91,6 +94,7 @@
 						<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
 						<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
 						<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="RD:RenderingDefinitions" minOccurs="0" maxOccurs="1"/>
 					</xsd:sequence>
 					<!-- Or: Single BinaryOnly element -->
 					<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">
@@ -308,6 +312,11 @@
 					</xsd:annotation>
 				</xsd:element>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="RD:RendererSettings" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
 					</xsd:annotation>
@@ -801,32 +810,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="UUID" minOccurs="0" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation>
-							This must be used when the IFDs are located in another file.
-							Note: It is permissible for this to be self referential.
-						</xsd:documentation>
-					</xsd:annotation>
-					<xsd:complexType>
-						<xsd:simpleContent>
-							<xsd:extension base = "UniversallyUniqueIdentifier">
-								<xsd:attribute name="FileName" use="optional" type="xsd:string">
-									<xsd:annotation>
-										<xsd:documentation>
-											This can be used when the IFDs are located in another file.
-											The / (forward slash) is used as the path separator.
-											A relative path is recommended. However an absolute path can be specified.
-											Default is to use the file the ome-xml data has been pulled from.
-											Note: It is permissible for this to be self referential. The file image1.tiff
-											may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
-										</xsd:documentation>
-									</xsd:annotation>
-								</xsd:attribute>
-							</xsd:extension>
-						</xsd:simpleContent>
-					</xsd:complexType>
-				</xsd:element>
+				<xsd:element ref="UUID" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="IFD" type="NonNegativeInt" default="0" use="optional">
 				<xsd:annotation>
@@ -871,6 +855,54 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
+	<xsd:element name="TiffLookupTable"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>TiffLookupTables</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				This described the location of a lookup table in a tiff file.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="UUID" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+			<xsd:attribute name="IFD" type="NonNegativeInt" default="0" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the IFD for which this element is applicable. Indexed from 0.
+						Default is 0 (the first IFD). [units:none]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="UUID"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				This must be used when the IFDs are located in another file.
+				Note: It is permissible for this to be self referential.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "UniversallyUniqueIdentifier">
+					<xsd:attribute name="FileName" use="optional" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								This can be used when the IFDs are located in another file.
+								The / (forward slash) is used as the path separator.
+								A relative path is recommended. However an absolute path can be specified.
+								Default is to use the file the ome-xml data has been pulled from.
+								Note: It is permissible for this to be self referential. The file image1.tiff
+								may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+
 	<xsd:element name="StageLabel"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>StageLabels</plural></xsdfu></xsd:appinfo>

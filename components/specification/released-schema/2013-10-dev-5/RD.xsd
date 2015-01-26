@@ -1,0 +1,643 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    # Copyright (C) 2014 Open Microscopy Environment
+    #       Massachusetts Institute of Technology,
+    #       National Institutes of Health,
+    #       University of Dundee,
+    #       University of Wisconsin at Madison
+    #
+    # This work is licensed under the
+    #       Creative Commons Attribution 3.0 Unported License.
+    # To view a copy of this license, visit
+    #       http://creativecommons.org/licenses/by/3.0/
+    # or send a letter to
+    #       Creative Commons, 444 Castro Street, Suite 900,
+    #       Mountain View, California, 94041, USA.
+    # For attribution instructions, visit
+    #       http://www.openmicroscopy.org/info/attribution
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Written by:  Andrew J Patterson
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/RD/2013-10-dev-5"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1" elementFormDefault="qualified">
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd"/>
+
+	<xsd:element name="RenderingDefinitions"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation> An unordered collection of render definitions attached to objects in
+				the OME data model. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="LookupTable" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="Renderer" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="VirtualChannel" minOccurs="1" maxOccurs="1"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="LookupTable"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>LookupTables</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> A lookup table used by an output renderer. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the lookup table. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="OME:TiffLookupTable" minOccurs="1" maxOccurs="1"/>
+				</xsd:choice>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="LookupTableID"/>
+			<xsd:attribute name="Name" use="required" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation> A name for the lookup table.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="RequiredPixelType" use="optional" type="OME:PixelType">
+				<xsd:annotation>
+					<xsd:documentation>
+						The required type used to represent each pixel in the image
+						for this lookup table to be applied. If not present it is
+						assumed the table is not tied to one pixel type.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="LookupTableRef"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				The LookupTableRef element is a reference to a lookup table.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:Reference">
+					<xsd:attribute name="ID" use="required" type="LookupTableID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="LookupTableID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern
+				value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:LookupTable:\S+)|(LookupTable:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="Renderer"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Renderers</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> A Renderer that processes the channels from the image into a display space. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the renderer. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="VirtualChannelSettings" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ChannelRenderer" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element ref="OutputRenderer" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="RendererID"/>
+			<xsd:attribute name="Name" use="required" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation> A name for the renderer.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="BlendMode" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						The blend mode used when combining overlapping images.
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Add"/>
+						<xsd:enumeration value="Mean"/>
+						<xsd:enumeration value="Multiply"/>
+						<xsd:enumeration value="Max"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="RendererSettings">
+		<!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>RendererSettingsCombinations</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> This holds the setting applied to a renderer as well as a reference
+				to the renderer. The ID is the renderer used in this case. The values stored in
+				RendererSettings represent the variable that describe how the Renderer is to be
+				applied to the image. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:Settings">
+					<xsd:sequence>
+						<xsd:element name="ChannelOptions" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><plural>ChannelOptionsCollections</plural></xsdfu></xsd:appinfo>
+								<xsd:documentation>This defines the per channel options of the renderer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:attribute name="Channel" type="OME:NonNegativeInt" use="required">
+									<xsd:annotation>
+										<xsd:documentation>The number of the channel in the image</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="InputStart" type="xsd:float" use="optional">
+									<xsd:annotation>
+										<xsd:documentation>
+											The lower bound used for the input channel pixel data.
+											TODO: If not present?
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="InputEnd" type="xsd:float" use="optional">
+									<xsd:annotation>
+										<xsd:documentation>
+											The upper bound used for the input channel pixel data.
+											TODO: If not present?
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="Active" type="xsd:boolean" use="optional" default="true">
+									<xsd:annotation>
+										<xsd:documentation>True is the channel is displayed in the final image.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="Grayscale" type="xsd:boolean" use="optional" default="true">
+									<xsd:annotation>
+										<xsd:documentation>True is the channel is displayed in grayscale, regardless of color or lookup settings.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="Color" type="OME:Color" use="optional">
+									<xsd:annotation>
+										<xsd:documentation>The color used to construct a color ramp lookup table if no
+											lookup table is supplied.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="LookupTableRef" type="LookupTableID" use="optional">
+									<xsd:annotation>
+										<xsd:documentation>The lookup table used to output this channel.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="ViewportOptions" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This defines the viewport options of the renderer.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:attribute name="Zoom" type="xsd:float" use="optional">
+									<xsd:annotation>
+										<xsd:documentation>
+											The lower bound used for the input channel pixel data.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterX" use="optional" type="xsd:float">
+									<xsd:annotation>
+										<xsd:documentation>
+											The X position of the center of the viewport. Units are set by CenterXUnit.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterXUnit" use="optional" default="pixel" type="OME:UnitsLength">
+									<xsd:annotation>
+										<xsd:documentation>The units of the X stage center of the viewport - default:[pixel].</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterY" use="optional" type="xsd:float">
+									<xsd:annotation>
+										<xsd:documentation>
+											The Y position of the center of the viewport. Units are set by CenterYUnit.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="CenterYUnit" use="optional" default="pixel" type="OME:UnitsLength">
+									<xsd:annotation>
+										<xsd:documentation>The units of the Y stage center of the viewport - default:[pixel].</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="TheZ" use="optional" type="OME:NonNegativeInt">
+									<xsd:annotation>
+										<xsd:documentation>
+											The z-section to render by default. If not specified then
+											0 is assumed. [units:none]
+											This is numbered from 0.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+								<xsd:attribute name="TheT" use="optional" type="OME:NonNegativeInt">
+									<xsd:annotation>
+										<xsd:documentation>
+											The timepoint to render by default. If not specified then
+											0 is assumed. [units:none]
+											This is numbered from 0.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+					<xsd:attribute name="ID" use="required" type="RendererID"/>
+					<xsd:attribute name="BackgroundColor" use="optional" type="OME:Color">
+						<xsd:annotation>
+							<xsd:documentation> The Background Color used by the renderer when 
+								rendering sparse data. This is also used as the base value for a
+								constructed color ramp lookup table if no lookup table is supplied.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="RendererSettingsOwner" use="optional" type="OME:ExperimenterID">
+						<xsd:annotation>
+							<xsd:documentation>
+								The RendererSettingsOwner is the person who attached these
+								render settings to the image.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="RendererID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Renderer:\S+)|(Renderer:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="ChannelRenderer"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>ChannelRenderers</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> A Channel Renderer processes one or more channels from the image into a display space. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the renderer. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="Normalizer" minOccurs="1" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><plural>Normalizers</plural></xsdfu></xsd:appinfo>
+						<xsd:documentation>The normalizer to go from the input space to the processing space.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="Processor" type="BaseProcessor" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><plural>Processors</plural></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="Channel" type="OME:NonNegativeInt" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						Normally number of the channel in the image to process.
+						If the attribute Virtual is set however it refers to the
+						number of a virtual channel in the renderer instead.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Virtual" use="optional" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:documentation>
+						If true then the channel number refers to a virtual channel.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="VirtualChannel"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>VirtualChannels</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> An input channel for the renderer created by pre-processing other channels.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the VirtualChannel. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="VirtualProcessor" type="BaseProcessor" minOccurs="1" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><plural>VirtualProcessors</plural></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="VirtualChannelID"/>
+			<xsd:attribute name="Name" use="required" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation> A name for the Virtual Channel.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="InputStart" type="xsd:float" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						The lower bound used for the input channel pixel data.
+						TODO: If not present?
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="InputEnd" type="xsd:float" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						The upper bound used for the input channel pixel data.
+						TODO: If not present?
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Active" type="xsd:boolean" use="optional" default="true">
+				<xsd:annotation>
+					<xsd:documentation>True is the channel is displayed in the final image.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Color" type="OME:Color" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>The color used to construct a color ramp lookup table if no
+						lookup table is supplied.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="LookupTableRef" type="LookupTableID" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>The lookup table used to output this channel.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="VirtualChannelSettings"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>RendererSettingsCombinations</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> This holds the setting applied to a renderer as well as a reference
+				to the renderer. The ID is the renderer used in this case. The values stored in
+				RendererSettings represent the variable that describe how the Renderer is to be
+				applied to the image. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:Settings">
+					<xsd:sequence>
+						<xsd:element name="Input" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><plural>Inputs</plural></xsdfu></xsd:appinfo>
+								<xsd:documentation>Each Input is a channel from the source image.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:attribute name="Channel" use="required" type="OME:NonNegativeInt"/>
+								<xsd:attribute name="Virtual" use="optional" type="xsd:boolean" default="false">
+									<xsd:annotation>
+										<xsd:documentation>
+											If true then the channel number refers to a virtual channel.
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+					<xsd:attribute name="ID" use="required" type="VirtualChannelID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="VirtualChannelID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern
+				value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:VirtualChannel:\S+)|(VirtualChannel:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:element name="Normalizer"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Normalizers</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> A Normalizer maps from the pixel space of the image
+					to the 0-1 real number space used by the processor pipeline. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the Normalizer. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="OME:Map" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A collection of settings for the normalizer.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="Name" use="required" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation> A name for the Normalizer.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="NormalizerType" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						The method used by the Normalizer to map the input space to the processing space.
+						TODO: Is this required?
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Linear"/>
+						<xsd:enumeration value="Polynomial"/>
+						<xsd:enumeration value="Exponential"/>
+						<xsd:enumeration value="Logramithic"/>
+						<xsd:enumeration value="Other"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="CurveCoefficient" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation> The curve coefficient used by the Normalizer.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="BaseProcessor"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Processors</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> A pixel value processor working in the 0-1 normalised space.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> A description for the processor. [plane text multi-line
+						string] </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="preserve"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element ref="OME:Map" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation> A collection of settings for the
+						processor.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="Name" use="required" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation> A name for the processor.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ProcessorType" use="required">
+			<xsd:annotation>
+				<xsd:documentation> The method used to process the channel. TODO: Is this required?
+				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="XXXXX"/>
+					<xsd:enumeration value="Invert"/>
+					<xsd:enumeration value="NoiseReduction"/>
+					<xsd:enumeration value="Other"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:element name="OutputRenderer"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>OutputRenderers</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation> An output renderer converts the 0-1 normalised space
+				used by the processors into the output pixel type used by the display. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A description for the output renderer. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element ref="LookupTableRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OME:Map" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> A collection of settings for the output renderer.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="Name" use="required" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation> A name for the output renderer.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Type" use="required" type="OME:PixelType">
+				<xsd:annotation>
+					<xsd:documentation>
+						The variable type used to represent each pixel in the image.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="OutputStart" type="xsd:float" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						The lower bound used for the output channel pixel data.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="OutputEnd" type="xsd:float" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						The upper bound used for the output channel pixel data.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
+
