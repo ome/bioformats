@@ -139,7 +139,6 @@ public class Exporter {
                 try {
                     int imageID = Integer.parseInt(id);
                     ImagePlus plus = WindowManager.getImage(imageID);
-                    IJ.log("plus:"+plus);
                     if (plus != null) imp = plus;
                 } catch (Exception e) {
                     //nothing to do, we use the current imagePlus
