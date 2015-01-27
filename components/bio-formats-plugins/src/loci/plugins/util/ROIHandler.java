@@ -40,7 +40,9 @@ import ij.gui.TextRoi;
 import ij.plugin.frame.RoiManager;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,7 @@ import ome.xml.model.Polygon;
 import ome.xml.model.Polyline;
 import ome.xml.model.Shape;
 import ome.xml.model.Union;
+import ome.xml.model.enums.FontStyle;
 
 
 // TODO: Stored ROIs are not correctly linked to Image.
@@ -197,6 +200,33 @@ public class ROIHandler {
                             sw = polygon.getStrokeWidth().value().floatValue();
                         }
                     }
+                    else if (shapeObject instanceof ome.xml.model.Label){
+                        //add support for TextROI's
+                        ome.xml.model.Label label =
+                                (ome.xml.model.Label) shapeObject;
+                        double x = label.getX().doubleValue();
+                        double y = label.getY().doubleValue();
+                        String labelText = label.getText();
+
+                        int size = label.getFontSize().value().intValue();
+//                        String style = label.getFontStyle().getValue();
+//                        IJ.log(style);
+                        java.awt.Font font = new Font(labelText, Font.PLAIN, size);
+                        roi = new TextRoi((int) x,(int) y, labelText,font);
+
+                        if (label.getStrokeColor() != null){
+                            ome.xml.model.primitives.Color StrokeColor = label.getStrokeColor();
+                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                        }
+                        if (label.getFillColor() != null){
+                            ome.xml.model.primitives.Color FillColor = label.getFillColor();
+                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                        }
+                        if (label.getStrokeWidth() != null){
+                            sw = label.getStrokeWidth().value().floatValue();
+                        }
+
+                    }
                     else if (shapeObject instanceof ome.xml.model.Rectangle) {
                         ome.xml.model.Rectangle rectangle =
                                 (ome.xml.model.Rectangle) shapeObject;
@@ -204,13 +234,8 @@ public class ROIHandler {
                         int y = rectangle.getY().intValue();
                         int w = rectangle.getWidth().intValue();
                         int h = rectangle.getHeight().intValue();
-                        String label = shapeObject.getText();
-                        if (label != null) {
-                            roi = new TextRoi(x, y, label);
-                        }
-                        else {
-                            roi = new Roi(x, y, w, h);
-                        }
+
+                        roi = new Roi(x, y, w, h);
 
                         if (rectangle.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = rectangle.getStrokeColor();
@@ -224,27 +249,7 @@ public class ROIHandler {
                             sw = rectangle.getStrokeWidth().value().floatValue();
                         }
                     }
-                    else if (shapeObject instanceof ome.xml.model.Label){
-                        //add support for TextROI's
-                        ome.xml.model.Label label =
-                                (ome.xml.model.Label) shapeObject;
-                        double x = label.getX().doubleValue();
-                        double y = label.getY().doubleValue();
-                        String labelText = label.getText();
-                        roi = new TextRoi((int) x,(int) y, labelText);
 
-                        if (label.getStrokeColor() != null){
-                            ome.xml.model.primitives.Color StrokeColor = label.getStrokeColor();
-                            sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
-                        }
-                        if (label.getFillColor() != null){
-                            ome.xml.model.primitives.Color FillColor = label.getFillColor();
-                            fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
-                        }
-                        if (label.getStrokeWidth() != null){
-                            sw = label.getStrokeWidth().value().floatValue();
-                        }
-                    }
 
                     if (roi != null) {
                         Roi.setColor(Color.WHITE);
@@ -430,12 +435,15 @@ public class ROIHandler {
 
     // -- Helper methods --
 
+    @SuppressWarnings("static-access")
     private static void storeText(TextRoi roi, MetadataStore store, int roiNum, int shape) {
 
         store.setLabelX(roi.getPolygon().getBounds().getX(), roiNum, shape);
         store.setLabelY(roi.getPolygon().getBounds().getY(), roiNum, shape);
 
         store.setLabelText(roi.getText().trim(), roiNum, shape);
+        store.setLabelFontSize(new Length(roi.getCurrentFont().getSize(), UNITS.PIXEL), roiNum, shape);
+
         if (roi.getStrokeWidth() > 0) {
             store.setLabelStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
