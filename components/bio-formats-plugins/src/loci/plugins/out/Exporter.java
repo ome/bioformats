@@ -39,7 +39,6 @@ import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.plugin.frame.Recorder;
-import ij.plugin.frame.RoiManager;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
