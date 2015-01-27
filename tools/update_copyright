@@ -14,8 +14,7 @@ COPYRIGHTS=( "Copyright (C) " "Copyright © " )
 YEAR="[0-9]\{4\}"
 RANGE=" - "
 AUTHOR=" Open Microscopy Environment"
-CURRENT_YEAR=${1:-$(date +%Y)}
-echo "Updating copyright with $CURRENT_YEAR"
+echo "Updating copyright with last commit year"
 
 # Update year range copyrights
 for COPYRIGHT in "${COPYRIGHTS[@]}";
