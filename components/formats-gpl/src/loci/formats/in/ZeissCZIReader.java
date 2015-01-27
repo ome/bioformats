@@ -849,15 +849,25 @@ public class ZeissCZIReader extends FormatReader {
         if (p.stageX != null) {
           store.setPlanePositionX(p.stageX, i, plane);
         }
-        else if (positionsX != null && i < positionsX.length) {
+        else if (positionsX != null && i < positionsX.length &&
+          positionsX[i] != null)
+        {
           store.setPlanePositionX(positionsX[i], i, plane);
+        }
+        else {
+          store.setPlanePositionX(new Length(p.col, UNITS.REFERENCEFRAME), i, plane);
         }
 
         if (p.stageY != null) {
           store.setPlanePositionY(p.stageY, i, plane);
         }
-        else if (positionsY != null && i < positionsY.length) {
+        else if (positionsY != null && i < positionsY.length &&
+          positionsY[i] != null)
+        {
           store.setPlanePositionY(positionsY[i], i, plane);
+        }
+        else {
+          store.setPlanePositionY(new Length(p.row, UNITS.REFERENCEFRAME), i, plane);
         }
 
         if (p.stageZ != null) {
