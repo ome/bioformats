@@ -154,6 +154,7 @@ public class Exporter {
             }
         }
 
+        File f = null;
         if (outfile == null || outfile.length() == 0) {
             // open a dialog prompting for the filename to save
 
@@ -189,7 +190,7 @@ public class Exporter {
                 Macro.abort();
                 return;
             }
-            File f = fc.getSelectedFile();
+            f = fc.getSelectedFile();
 
             if (f.exists()) {
                 int ret = JOptionPane.showConfirmDialog(fc,
@@ -558,6 +559,8 @@ public class Exporter {
                 }
             }
 
+            //We are now ready to write the image
+            if (f != null) f.delete(); //delete the file.
             if (compression != null) {
                 w.setCompression(compression);
             }
