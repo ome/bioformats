@@ -558,18 +558,11 @@ public class Exporter {
                     compression = gd.getNextChoice();
                 }
             }
-
-            //Check if the outputfiles
-            File dir = new File(outfile).getParentFile();
-            String[] files = dir.list();
             boolean in = false;
             for (int i = 0; i < outputFiles.length; i++) {
-                String name = new File(outputFiles[i]).getName();
-                for (int j = 0; j < files.length; j++) {
-                    if (files[j].equals(name)) {
-                        in = true;
-                        break;
-                    }
+                if (new File(outputFiles[i]).exists()) {
+                    in = true;
+                    break;
                 }
             }
             if (in) {
