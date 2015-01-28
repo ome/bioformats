@@ -238,35 +238,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        dimension_size_type series = getSeries();
-
-        if (series >= series_ifd_map.size())
-          {
-            boost::format fmt("Invalid series number ‘%1%’");
-            fmt % series;
-            throw FormatException(fmt.str());
-          }
-        const series_ifd_map_type::value_type range(series_ifd_map.at(series));
-
-        // Compute timepoint and subchannel from plane number.
-        dimension_size_type plane = no;
-        dimension_size_type S = 0U;
-        if (isRGB())
-          {
-            plane = no / getSizeC();
-            S = no % getSizeC();
-          }
-        dimension_size_type ifdidx = range.first + plane;
-        assert(range.first <= plane && plane < range.second);
-
-        if (plane >= (range.second - range.first))
-          {
-            boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
-            fmt % plane % series;
-            throw FormatException(fmt.str());
-          }
-
-        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
+        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         if (isRGB())
           {
@@ -274,6 +246,7 @@ namespace ome
             VariantPixelBuffer tmp;
             ifd->readImage(tmp, x, y, w, h);
 
+            dimension_size_type S = no % getSizeC();
             detail::CopySubchannelVisitor v(buf, S);
             boost::apply_visitor(v, tmp.vbuffer());
           }
