@@ -235,12 +235,10 @@ public class ChannelFiller extends ReaderWrapper {
   {
     byte[][] lut8 = reader.get8BitLookupTable();
     if (lut8 != null) return lut8.length;
+
     short[][] lut16 = reader.get16BitLookupTable();
     if (lut16 != null) return lut16.length;
-    lut8 = reader.get8BitLookupTable();
-    if (lut8 != null) return lut8.length;
-    lut16 = reader.get16BitLookupTable();
-    if (lut16 != null) return lut16.length;
+
     return 0; // LUTs are missing
   }
 
