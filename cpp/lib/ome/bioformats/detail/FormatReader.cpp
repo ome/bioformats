@@ -117,13 +117,13 @@ namespace ome
         return readerProperties.description;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatReader::getSuffixes() const
       {
         return readerProperties.suffixes;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatReader::getCompressionSuffixes() const
       {
         return readerProperties.compression_suffixes;
@@ -136,12 +136,12 @@ namespace ome
       }
 
       void
-      FormatReader::initFile(const std::string& id)
+      FormatReader::initFile(const boost::filesystem::path& id)
       {
         if (currentId)
           {
-            const std::vector<std::string>& s = getUsedFiles();
-            for (std::vector<std::string>::const_iterator i = s.begin();
+            const std::vector<path>& s = getUsedFiles();
+            for (std::vector<path>::const_iterator i = s.begin();
                  i != s.end();
                  ++i)
               {
@@ -164,7 +164,7 @@ namespace ome
       }
 
       bool
-      FormatReader::isUsedFile(const std::string& file)
+      FormatReader::isUsedFile(const boost::filesystem::path& file)
       {
         bool used = false;
 
@@ -173,8 +173,8 @@ namespace ome
             path thisfile = ome::compat::canonical(path(file));
 
             /// @todo: Use a set rather than a list?
-            const std::vector<std::string>& s = getUsedFiles();
-            for (std::vector<std::string>::const_iterator i = s.begin();
+            const std::vector<path>& s = getUsedFiles();
+            for (std::vector<path>::const_iterator i = s.begin();
                  i != s.end();
                  ++i)
               {
@@ -414,8 +414,8 @@ namespace ome
       }
 
       bool
-      FormatReader::isThisType(const std::string& name,
-                               bool               open) const
+      FormatReader::isThisType(const boost::filesystem::path& name,
+                               bool                           open) const
       {
         // if file extension ID is insufficient and we can't open the file, give up
         if (!suffixSufficient && !open)
@@ -467,7 +467,7 @@ namespace ome
       }
 
       bool
-      FormatReader::isFilenameThisTypeImpl(const std::string& /* name */) const
+      FormatReader::isFilenameThisTypeImpl(const boost::filesystem::path& /* name */) const
       {
         return false;
       }
@@ -850,29 +850,29 @@ namespace ome
         return saveOriginalMetadata;
       }
 
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       FormatReader::getUsedFiles(bool noPixels) const
       {
         SaveSeries sentry(*this);
-        std::set<std::string> files;
+        std::set<path> files;
         for (dimension_size_type i = 0; i < getSeriesCount(); ++i)
           {
             setSeries(i);
-            std::vector<std::string> s = getSeriesUsedFiles(noPixels);
-            for (std::vector<std::string>::const_iterator file = s.begin();
+            std::vector<path> s = getSeriesUsedFiles(noPixels);
+            for (std::vector<path>::const_iterator file = s.begin();
                  file != s.end();
                  ++file)
               {
                 files.insert(*file);
               }
           }
-        return std::vector<std::string>(files.begin(), files.end());
+        return std::vector<path>(files.begin(), files.end());
       }
 
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       FormatReader::getSeriesUsedFiles(bool noPixels) const
       {
-        std::vector<std::string> ret;
+        std::vector<path> ret;
         if (!noPixels && currentId)
           ret.push_back(currentId.get());
         return ret;
@@ -881,10 +881,10 @@ namespace ome
       std::vector<FileInfo>
       FormatReader::getAdvancedUsedFiles(bool noPixels) const
       {
-        std::vector<std::string> files = getUsedFiles(noPixels);
+        std::vector<path> files = getUsedFiles(noPixels);
         std::vector<FileInfo> infos(files.size());
 
-        for (std::vector<std::string>::iterator file = files.begin();
+        for (std::vector<path>::iterator file = files.begin();
              file != files.end();
              ++file)
           {
@@ -893,11 +893,11 @@ namespace ome
             info.reader = getFormat();
             info.usedToInitialize = false;
 
-            const boost::optional<std::string> currentid = getCurrentFile();
+            const boost::optional<path> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = ome::compat::canonical(path(currentid.get()));
-                path thisfile = ome::compat::canonical(path(*file));
+                path current = ome::compat::canonical(currentid.get());
+                path thisfile = ome::compat::canonical(*file);
 
                 info.usedToInitialize = (thisfile == current);
               }
@@ -910,10 +910,10 @@ namespace ome
       std::vector<FileInfo>
       FormatReader::getAdvancedSeriesUsedFiles(bool noPixels) const
       {
-        std::vector<std::string> files = getSeriesUsedFiles(noPixels);
+        std::vector<path> files = getSeriesUsedFiles(noPixels);
         std::vector<FileInfo> infos(files.size());
 
-        for (std::vector<std::string>::iterator file = files.begin();
+        for (std::vector<path>::iterator file = files.begin();
              file != files.end();
              ++file)
           {
@@ -922,11 +922,11 @@ namespace ome
             info.reader = getFormat();
             info.usedToInitialize = false;
 
-            const boost::optional<std::string> currentid = getCurrentFile();
+            const boost::optional<path> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = ome::compat::canonical(path(currentid.get()));
-                path thisfile = ome::compat::canonical(path(*file));
+                path current = ome::compat::canonical(currentid.get());
+                path thisfile = ome::compat::canonical(*file);
 
                 info.usedToInitialize = (thisfile == current);
               }
@@ -936,7 +936,7 @@ namespace ome
         return infos;
       }
 
-      const boost::optional<std::string>&
+      const boost::optional<boost::filesystem::path>&
       FormatReader::getCurrentFile() const
       {
         return currentId;
@@ -1080,7 +1080,7 @@ namespace ome
       }
 
       bool
-      FormatReader::isSingleFile(const std::string& /* id */) const
+      FormatReader::isSingleFile(const boost::filesystem::path& /* id */) const
       {
         return true;
       }
@@ -1305,7 +1305,7 @@ namespace ome
       }
 
       void
-      FormatReader::setId(const std::string& id)
+      FormatReader::setId(const boost::filesystem::path& id)
       {
         //    LOGGER.debug("{} initializing {}", getFormat(), id);
         if (!currentId || id != currentId.get())

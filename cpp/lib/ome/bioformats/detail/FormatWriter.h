@@ -64,15 +64,28 @@ namespace ome
         /// Format description.
         std::string description;
         /// Filename suffixes this format can handle.
-        std::vector<std::string> suffixes;
+        std::vector<boost::filesystem::path> suffixes;
         /// Filename compression suffixes this format can handle.
-        std::vector<std::string> compression_suffixes;
+        std::vector<boost::filesystem::path> compression_suffixes;
         /// Supported compression types.
         std::set<std::string> compression_types;
         /// Supported pixel types.
         codec_pixel_type_map codec_pixel_types;
         /// Stacks are supported.
         bool stacks;
+
+        WriterProperties(const std::string& name,
+                         const std::string& description):
+          name(name),
+          description(description),
+          suffixes(),
+          compression_suffixes(),
+          compression_types(),
+          codec_pixel_types(),
+          stacks()
+        {
+          compression_suffixes.push_back(boost::filesystem::path(""));
+        }
       };
 
       /**
@@ -94,7 +107,7 @@ namespace ome
         const WriterProperties& writerProperties;
 
         /// The identifier (path) of the currently open file.
-        boost::optional<std::string> currentId;
+        boost::optional<boost::filesystem::path> currentId;
 
         /// Current output.
         std::shared_ptr<std::ostream> out;
@@ -136,8 +149,8 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isThisType(const std::string& name,
-                   bool               open = true) const;
+        isThisType(const boost::filesystem::path& name,
+                   bool                           open = true) const;
 
         // Documented in superclass.
         void
@@ -220,7 +233,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        changeOutputFile(const std::string& id);
+        changeOutputFile(const boost::filesystem::path& id);
 
         // Documented in superclass.
         void
@@ -232,7 +245,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        setId(const std::string& id);
+        setId(const boost::filesystem::path& id);
 
         // Documented in superclass.
         void
@@ -247,11 +260,11 @@ namespace ome
         getFormatDescription() const;
 
         // Documented in superclass.
-        const std::vector<std::string>&
+        const std::vector<boost::filesystem::path>&
         getSuffixes() const;
 
         // Documented in superclass.
-        const std::vector<std::string>&
+        const std::vector<boost::filesystem::path>&
         getCompressionSuffixes() const;
       };
 

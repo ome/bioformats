@@ -67,12 +67,11 @@ namespace ome
         ReaderProperties
         tiff_properties()
         {
-          ReaderProperties p;
+          ReaderProperties p("MinimalTIFF",
+                             "Baseline Tagged Image File Format");
 
-          p.name = "MinimalTIFF";
-          p.description = "Baseline Tagged Image File Format";
-          p.suffixes = std::vector<std::string>(suffixes,
-                                                suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
+          p.suffixes = std::vector<boost::filesystem::path>(suffixes,
+                                                            suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
           p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
           p.metadata_levels.insert(MetadataOptions::METADATA_NO_OVERLAYS);
           p.metadata_levels.insert(MetadataOptions::METADATA_ALL);
@@ -108,7 +107,7 @@ namespace ome
       }
 
       bool
-      MinimalTIFFReader::isFilenameThisTypeImpl(const std::string& name) const
+      MinimalTIFFReader::isFilenameThisTypeImpl(const boost::filesystem::path& name) const
       {
         return static_cast<bool>(TIFF::open(name, "r"));
       }
@@ -156,7 +155,7 @@ namespace ome
       }
 
       void
-      MinimalTIFFReader::initFile(const std::string& id)
+      MinimalTIFFReader::initFile(const boost::filesystem::path& id)
       {
         ::ome::bioformats::detail::FormatReader::initFile(id);
 
@@ -165,7 +164,7 @@ namespace ome
         if (!tiff)
           {
             boost::format fmt("Failed to open ‘%1%’");
-            fmt % id;
+            fmt % id.native();
             throw FormatException(fmt.str());
           }
 

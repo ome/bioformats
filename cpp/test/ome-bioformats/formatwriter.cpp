@@ -165,10 +165,7 @@ namespace
   WriterProperties
   test_properties()
   {
-    WriterProperties p;
-
-    p.name = "TestWriter";
-    p.description = "Writer for unit testing";
+    WriterProperties p("TestWriter", "Writer for unit testing");
     p.suffixes.push_back("test");
     p.compression_suffixes.push_back("gz");
 

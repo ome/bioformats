@@ -71,6 +71,8 @@ namespace ome
                          virtual public MetadataConfigurable
     {
     public:
+      using FormatHandler::isThisType;
+
       /// File grouping options.
       enum FileGroupOption
         {
@@ -151,8 +153,8 @@ namespace ome
       // Documented in superclass.
       virtual
       bool
-      isThisType(const std::string& name,
-                 bool               open = true) const = 0;
+      isThisType(const boost::filesystem::path& name,
+                 bool                           open = true) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -713,7 +715,7 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       getUsedFiles(bool noPixels = false) const = 0;
 
       /**
@@ -724,7 +726,7 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       getSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
@@ -757,7 +759,7 @@ namespace ome
        * @returns the filename.
        */
       virtual
-      const boost::optional<std::string>&
+      const boost::optional<boost::filesystem::path>&
       getCurrentFile() const = 0;
 
       /**
@@ -995,7 +997,7 @@ namespace ome
        */
       virtual
       bool
-      isSingleFile(const std::string& id) const = 0;
+      isSingleFile(const boost::filesystem::path& id) const = 0;
 
       /**
        * Get required parent directories.

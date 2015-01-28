@@ -89,7 +89,7 @@ namespace ome
       protected:
         // Documented in superclass.
         void
-        initFile(const std::string& id);
+        initFile(const boost::filesystem::path& id);
 
         /**
          * Read metadata from IFDs.
@@ -100,7 +100,7 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isFilenameThisTypeImpl(const std::string& name) const;
+        isFilenameThisTypeImpl(const boost::filesystem::path& name) const;
 
         /**
          * Get the IFD index for a plane in the current series.

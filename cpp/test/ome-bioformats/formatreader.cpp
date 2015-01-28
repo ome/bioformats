@@ -97,10 +97,7 @@ namespace
   ReaderProperties
   test_properties()
   {
-    ReaderProperties p;
-
-    p.name = "TestReader";
-    p.description = "Reader for unit testing";
+    ReaderProperties p("TestReader", "Reader for unit testing");
     p.suffixes.push_back("test");
     p.compression_suffixes.push_back("gz");
     p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
@@ -185,7 +182,7 @@ protected:
   }
 
   void
-  initFile(const std::string& id)
+  initFile(const boost::filesystem::path& id)
   {
     ::ome::bioformats::detail::FormatReader::initFile(id);
 
@@ -234,7 +231,7 @@ protected:
 
 public:
   bool
-  isUsedFile(const std::string& file)
+  isUsedFile(const boost::filesystem::path& file)
   {
     return ::ome::bioformats::detail::FormatReader::isUsedFile(file);
   }
@@ -307,9 +304,17 @@ TEST_P(FormatReaderTest, IsThisType)
   EXPECT_FALSE(r.isThisType("invalid.file", true));
   EXPECT_FALSE(r.isThisType("invalid.file", false));
 
+  EXPECT_FALSE(r.isThisType("invalid.file.gz"));
+  EXPECT_FALSE(r.isThisType("invalid.file.gz", true));
+  EXPECT_FALSE(r.isThisType("invalid.file.gz", false));
+
   EXPECT_TRUE(r.isThisType("valid.test"));
   EXPECT_TRUE(r.isThisType("valid.test", true));
   EXPECT_TRUE(r.isThisType("valid.test", false));
+
+  EXPECT_TRUE(r.isThisType("valid.test.gz"));
+  EXPECT_TRUE(r.isThisType("valid.test.gz", true));
+  EXPECT_TRUE(r.isThisType("valid.test.gz", false));
 
   EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
                             reinterpret_cast<uint8_t *>(&*icontent.end())));

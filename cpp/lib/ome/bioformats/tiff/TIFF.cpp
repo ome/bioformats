@@ -84,8 +84,8 @@ namespace ome
         class TIFFConcrete : public TIFF
         {
         public:
-          TIFFConcrete(const std::string& filename,
-                       const std::string& mode):
+          TIFFConcrete(const boost::filesystem::path& filename,
+                       const std::string&             mode):
             TIFF(filename, mode)
           {
           }
@@ -115,13 +115,13 @@ namespace ome
          * @param filename the filename to open.
          * @param mode the file open mode.
          */
-        Impl(const std::string& filename,
-             const std::string& mode):
+        Impl(const boost::filesystem::path& filename,
+             const std::string&             mode):
           tiff()
         {
           Sentry sentry;
 
-          tiff = TIFFOpen(filename.c_str(), mode.c_str());
+          tiff = TIFFOpen(filename.native().c_str(), mode.c_str());
           if (!tiff)
             sentry.error();
         }
@@ -177,8 +177,8 @@ namespace ome
       };
 
       // Note boost::make_shared can't be used here.
-      TIFF::TIFF(const std::string& filename,
-                 const std::string& mode):
+      TIFF::TIFF(const boost::filesystem::path& filename,
+                 const std::string&             mode):
         impl(std::shared_ptr<Impl>(new Impl(filename, mode)))
       {
         registerImageJTags();
@@ -195,7 +195,7 @@ namespace ome
       }
 
       std::shared_ptr<TIFF>
-      TIFF::open(const std::string& filename,
+      TIFF::open(const boost::filesystem::path& filename,
                  const std::string& mode)
       {
         std::shared_ptr<TIFF> ret;

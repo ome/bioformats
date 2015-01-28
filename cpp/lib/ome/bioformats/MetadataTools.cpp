@@ -237,12 +237,12 @@ namespace ome
         {
           reader.setSeries(s);
 
-          const boost::optional<std::string>& cfile(reader.getCurrentFile());
+          const boost::optional<boost::filesystem::path>& cfile(reader.getCurrentFile());
 
           std::ostringstream nos;
           if (doImageName && !!cfile)
             {
-              nos << *cfile;
+              nos << (*cfile).native();
               if (reader.getSeriesCount() > 1)
                 nos << " #" << (s + 1);
             }
@@ -253,7 +253,7 @@ namespace ome
           if (!imageName.empty())
             store.setImageID(createID("Image", s), s);
           if (!!cfile)
-            setDefaultCreationDate(store, s, boost::filesystem::path(*cfile));
+            setDefaultCreationDate(store, s, *cfile);
 
           fillPixels(store, reader);
 
