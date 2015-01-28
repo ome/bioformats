@@ -460,7 +460,8 @@ namespace ome
 
         // Documented in superclass.
         void
-        getLookupTable(VariantPixelBuffer& buf) const;
+        getLookupTable(VariantPixelBuffer& buf,
+                       dimension_size_type no) const;
 
         // Documented in superclass.
         Modulo&

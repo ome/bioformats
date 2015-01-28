@@ -591,7 +591,8 @@ namespace ome
       }
 
       void
-      FormatReader::getLookupTable(VariantPixelBuffer& /* buf */) const
+      FormatReader::getLookupTable(VariantPixelBuffer& /* buf */,
+                                   dimension_size_type /* no */) const
       {
         throw std::runtime_error("Reader does not implement lookup tables");
       }
