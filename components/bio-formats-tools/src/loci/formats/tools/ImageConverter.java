@@ -36,6 +36,7 @@ import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import loci.common.Constants;
@@ -476,6 +477,7 @@ public final class ImageConverter {
       total += numImages;
 
       int count = 0;
+      HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
       for (int i=startPlane; i<endPlane; i++) {
         int[] coords = reader.getZCTCoords(i);
 
@@ -485,14 +487,22 @@ public final class ImageConverter {
           continue;
         }
 
-        writer.setId(FormatTools.getFilename(q, i, reader, out));
+        String outputName = FormatTools.getFilename(q, i, reader, out);
+        writer.setId(outputName);
         if (compression != null) writer.setCompression(compression);
 
+        int outputIndex = 0;
+        if (nextOutputIndex.containsKey(outputName)) {
+          outputIndex = nextOutputIndex.get(outputName);
+        }
+
         long s = System.currentTimeMillis();
-        long m = convertPlane(writer, i, startPlane);
+        long m = convertPlane(writer, i, outputIndex);
         long e = System.currentTimeMillis();
         read += m - s;
         write += e - m;
+
+        nextOutputIndex.put(outputName, outputIndex + 1);
 
         // log number of planes processed every second or so
         if (count == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
@@ -531,7 +541,7 @@ public final class ImageConverter {
 
   // -- Helper methods --
 
-  private long convertPlane(IFormatWriter writer, int index, int startPlane)
+  private long convertPlane(IFormatWriter writer, int index, int outputIndex)
     throws FormatException, IOException
   {
     if (DataTools.safeMultiply64(width, height) >=
@@ -543,7 +553,7 @@ public final class ImageConverter {
       if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
         (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
       {
-        return convertTilePlane(writer, index, startPlane);
+        return convertTilePlane(writer, index, outputIndex);
       }
     }
 
@@ -553,11 +563,11 @@ public final class ImageConverter {
     autoscalePlane(buf, index);
     applyLUT(writer);
     long m = System.currentTimeMillis();
-    writer.saveBytes(index - startPlane, buf);
+    writer.saveBytes(outputIndex, buf);
     return m;
   }
 
-  private long convertTilePlane(IFormatWriter writer, int index, int startPlane)
+  private long convertTilePlane(IFormatWriter writer, int index, int outputIndex)
     throws FormatException, IOException
   {
     int w = reader.getOptimalTileWidth();
@@ -593,13 +603,13 @@ public final class ImageConverter {
         }
 
         if (writer instanceof TiffWriter) {
-          ((TiffWriter) writer).saveBytes(index - startPlane, buf,
+          ((TiffWriter) writer).saveBytes(outputIndex, buf,
             ifd, tileX, tileY, tileWidth, tileHeight);
         }
         else if (writer instanceof ImageWriter) {
           IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
           if (baseWriter instanceof TiffWriter) {
-            ((TiffWriter) baseWriter).saveBytes(index - startPlane, buf, ifd,
+            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
               tileX, tileY, tileWidth, tileHeight);
           }
         }
