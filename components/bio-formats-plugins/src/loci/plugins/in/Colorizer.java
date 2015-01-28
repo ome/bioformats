@@ -130,7 +130,7 @@ public class Colorizer {
           // but had at least one lookup table defined. We use the color
           // display mode, with missing LUTs as grayscale.
           mode = CompositeImage.COLOR;
-          luts = makeLUTs(channelLUTs, false); // preserve original LUTs
+          luts = makeLUTs(channelLUTs, true); // preserve original LUTs
         }
         else {
           // NB: The original data had only one channel per plane,
@@ -314,6 +314,12 @@ public class Colorizer {
   }
 
   private LUT[] makeLUTs(ColorModel[] cm, boolean colorize) {
+    // lookup tables can come from one of three places (in order of precedence):
+    //   1) Color attribute defined in the MetadataStore
+    //   2) lookup table returned by the reader's get8BitLookupTable or
+    //      get16BitLookupTable methods
+    //   3) EmissionWavelength attribute defined in the MetadataStore
+
     final ImporterOptions options = process.getOptions();
     final LUT[] luts = new LUT[cm.length];
     for (int c=0; c<luts.length; c++) {
@@ -321,50 +327,50 @@ public class Colorizer {
       else if (cm[c] instanceof IndexColorModel) {
         luts[c] = new LUT((IndexColorModel) cm[c], 0, 255);
       }
-      else {
-        Color color = null;
-        if (colorize) {
-          // rather than always assuming that the first channel is red, the
-          // second green, etc. we will take into account the channel color
-          // metadata and the acquisition wavelength
-          ImageReader reader = process.getImageReader();
-          MetadataStore store = reader.getMetadataStore();
-          if (store instanceof MetadataRetrieve) {
-            MetadataRetrieve retrieve = (MetadataRetrieve) store;
 
-            if (c < retrieve.getChannelCount(reader.getSeries())) {
-              ome.xml.model.primitives.Color metaColor =
-                retrieve.getChannelColor(reader.getSeries(), c);
-              if (metaColor != null) {
-                int r = metaColor.getRed();
-                int g = metaColor.getGreen();
-                int b = metaColor.getBlue();
-                int a = metaColor.getAlpha();
-                color = new Color(r, g, b, a);
-              }
-              else {
-                Length wavelength =
-                  retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
-                if (wavelength != null) {
-                  double wave = wavelength.value(UNITS.NM).doubleValue();
-                  if (wave >= BLUE_MIN && wave < BLUE_TO_GREEN_MIN) {
-                    color = Color.BLUE;
-                  }
-                  else if (wave >= BLUE_TO_GREEN_MIN && wave < GREEN_TO_RED_MIN) {
-                    color = Color.GREEN;
-                  }
-                  else if (wave >= GREEN_TO_RED_MIN && wave <= RED_MAX) {
-                    color = Color.RED;
-                  }
+      Color color = null;
+      if (colorize) {
+        // rather than always assuming that the first channel is red, the
+        // second green, etc. we will take into account the channel color
+        // metadata and the acquisition wavelength
+        ImageReader reader = process.getImageReader();
+        MetadataStore store = reader.getMetadataStore();
+        if (store instanceof MetadataRetrieve) {
+          MetadataRetrieve retrieve = (MetadataRetrieve) store;
+
+          if (c < retrieve.getChannelCount(reader.getSeries())) {
+            ome.xml.model.primitives.Color metaColor =
+              retrieve.getChannelColor(reader.getSeries(), c);
+            if (metaColor != null) {
+              int r = metaColor.getRed();
+              int g = metaColor.getGreen();
+              int b = metaColor.getBlue();
+              int a = metaColor.getAlpha();
+              color = new Color(r, g, b, a);
+            }
+            else if (luts[c] == null) {
+              Length wavelength =
+                retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
+              if (wavelength != null) {
+                double wave = wavelength.value(UNITS.NM).doubleValue();
+                if (wave >= BLUE_MIN && wave < BLUE_TO_GREEN_MIN) {
+                  color = Color.BLUE;
+                }
+                else if (wave >= BLUE_TO_GREEN_MIN && wave < GREEN_TO_RED_MIN) {
+                  color = Color.GREEN;
+                }
+                else if (wave >= GREEN_TO_RED_MIN && wave <= RED_MAX) {
+                  color = Color.RED;
                 }
               }
             }
           }
         }
-        if (color == null) {
-          color = options.getDefaultCustomColor(c);
-        }
-
+      }
+      if (color == null && luts[c] == null) {
+        color = options.getDefaultCustomColor(c);
+      }
+      if (color != null) {
         luts[c] = makeLUT(color);
       }
     }
