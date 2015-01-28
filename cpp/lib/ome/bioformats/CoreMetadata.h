@@ -166,6 +166,10 @@ namespace ome
        * @param copy the CoreMetadata to copy.
        */
       CoreMetadata(const CoreMetadata& copy);
+
+      /// Destructor.
+      virtual
+      ~CoreMetadata();
     };
 
     /**
