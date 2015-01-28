@@ -559,6 +559,32 @@ public class Exporter {
                 }
             }
 
+            //Check if the outputfiles
+            File dir = new File(outfile).getParentFile();
+            String[] files = dir.list();
+            boolean in = false;
+            for (int i = 0; i < outputFiles.length; i++) {
+                String name = new File(outputFiles[i]).getName();
+                for (int j = 0; j < files.length; j++) {
+                    if (files[j].equals(name)) {
+                        in = true;
+                        break;
+                    }
+                }
+            }
+            if (in) {
+                int ret1 = JOptionPane.showConfirmDialog(null,
+                        "Some files already exist. \n" +
+                                "Would you like to replace them?", "Replace?",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (ret1 != JOptionPane.OK_OPTION) {
+                    return;
+                }
+                //Delete the files overwrite does not correctly work
+                for (int i = 0; i < outputFiles.length; i++) {
+                    new File(outputFiles[i]).delete();
+                }
+            }
             //We are now ready to write the image
             if (f != null) f.delete(); //delete the file.
             if (compression != null) {
