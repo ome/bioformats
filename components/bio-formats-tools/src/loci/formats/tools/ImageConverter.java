@@ -345,6 +345,19 @@ public final class ImageConverter {
       dimensionsSet = false;
     }
 
+    if (channel >= reader.getEffectiveSizeC()) {
+      throw new FormatException("Invalid channel '" + channel + "' (" +
+        reader.getEffectiveSizeC() + " channels in source file)");
+    }
+    if (timepoint >= reader.getSizeT()) {
+      throw new FormatException("Invalid timepoint '" + timepoint + "' (" +
+        reader.getSizeT() + " timepoints in source file)");
+    }
+    if (zSection >= reader.getSizeZ()) {
+      throw new FormatException("Invalid Z section '" + zSection + "' (" +
+        reader.getSizeZ() + " Z sections in source file)");
+    }
+
     if (store instanceof MetadataRetrieve) {
       if (series >= 0) {
         try {
