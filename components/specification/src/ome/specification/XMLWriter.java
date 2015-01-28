@@ -230,6 +230,9 @@ public class XMLWriter
 		//Add Planar data
 		if (binaryData) {
 			NodeList nodes = document.getElementsByTagName(BIN_DATA_NS + ":" + BIN_DATA_TAG);
+			if (nodes == null || nodes.getLength() == 0) {
+			    nodes = document.getElementsByTagName(BIN_DATA_TAG);
+			}
 			for (int i = 0; i < nodes.getLength(); i++) {
 				nodes.item(i).setTextContent(PLANE);
 			}
