@@ -117,6 +117,11 @@ namespace ome
         void
         close(bool fileOnly = false);
 
+        // Documented in superclass.
+        void
+        getLookupTable(VariantPixelBuffer& buf,
+                       dimension_size_type no) const;
+
       protected:
         // Documented in superclass.
         void

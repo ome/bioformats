@@ -229,6 +229,26 @@ namespace ome
       }
 
       void
+      MinimalTIFFReader::getLookupTable(VariantPixelBuffer& buf,
+                                        dimension_size_type no) const
+      {
+        assertId(currentId, true);
+
+        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+
+        try
+          {
+            ifd->readLookupTable(buf);
+          }
+        catch (const std::exception& e)
+          {
+            boost::format fmt("Failed to get lookup table:");
+            fmt % e.what();
+            throw FormatException(fmt.str());
+          }
+      }
+
+      void
       MinimalTIFFReader::openBytesImpl(dimension_size_type no,
                                        VariantPixelBuffer& buf,
                                        dimension_size_type x,
