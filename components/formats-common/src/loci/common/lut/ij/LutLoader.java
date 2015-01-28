@@ -15,7 +15,7 @@ import java.io.InputStream;
 	(256 reds, 256 greens and 256 blues), LUTs in text format,
 	or generates the LUT specified by the string argument
 	passed to the run() method. */
-public class LutLoader {
+class LutLoader {
 
     private static class FileInfo {
         int lutSize;
@@ -71,6 +71,22 @@ public class LutLoader {
 			fi.fileName = arg;
 			return;
 		}
+	}
+
+	public int getLutSize() {
+	    return fi.lutSize;
+	}
+
+	public byte[] getReds() {
+	    return fi.reds;
+	}
+
+	public byte[] getGreens() {
+	    return fi.greens;
+	}
+
+	public byte[] getBlues() {
+	    return fi.blues;
 	}
 
 	// Remove void showLut(FileInfo, boolean)

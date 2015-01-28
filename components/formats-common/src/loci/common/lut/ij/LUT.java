@@ -12,7 +12,7 @@ import java.util.Locale;
 
 	/** This is an indexed color model that allows an
 		lower and upper bound to be specified. */
-    public class LUT extends IndexColorModel implements Cloneable {
+    class LUT extends IndexColorModel implements Cloneable {
         public double min, max;
 	
     /** Constructs a LUT from red, green and blue byte arrays, which must have a length of 256. */
