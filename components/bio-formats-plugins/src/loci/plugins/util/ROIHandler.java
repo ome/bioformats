@@ -301,13 +301,13 @@ public class ROIHandler {
             else {
                 roiID = null;
                 String type = ijRoi.getName();
-                IJ.log("ROI ID : " + type + " ROI type : " + rois[cntr].getTypeAsString() + "is not supported");
+                IJ.log("ROI ID : " + type + " ROI type : " + ijRoi.getTypeAsString() + "is not supported");
             }
 
             //Save Roi's using ROIHandler
             if (roiID != null) {
-                store.setROIID(roiID, i);
-                store.setImageROIRef(roiID, 0, i);
+                store.setROIID(roiID, cntr);
+                store.setImageROIRef(roiID, 0, cntr);
                 cntr++;
             }
         }
