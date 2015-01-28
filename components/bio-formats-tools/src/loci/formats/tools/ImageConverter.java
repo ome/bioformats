@@ -34,20 +34,21 @@ package loci.formats.tools;
 
 import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStreamReader;
 
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DebugTools;
 import loci.common.Location;
+import loci.common.lut.ij.ImageJLutSource;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
+import loci.formats.Colorizer;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -60,10 +61,8 @@ import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
-import loci.formats.ReaderWrapper;
 import loci.formats.UpgradeChecker;
 import loci.formats.gui.Index16ColorModel;
-import loci.formats.in.OMETiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -71,7 +70,6 @@ import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
-
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.enums.PixelType;
@@ -97,6 +95,7 @@ public final class ImageConverter {
   private String in = null, out = null;
   private String map = null;
   private String compression = null;
+  private String colorize = null;
   private boolean stitch = false, separate = false, merge = false, fill = false;
   private boolean bigtiff = false, group = true;
   private boolean printVersion = false;
@@ -129,6 +128,7 @@ public final class ImageConverter {
             DebugTools.enableLogging("DEBUG");
           }
           else if (args[i].equals("-stitch")) stitch = true;
+          else if (args[i].equals("-colorize")) colorize = args[++i];
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-expand")) fill = true;
@@ -216,6 +216,7 @@ public final class ImageConverter {
         "     -expand: expand indexed color to RGB",
         "    -bigtiff: force BigTIFF files to be written",
         "-compression: specify the codec to use when saving images",
+        "   -colorize: specify a LUT to be applied to the image",
         "     -series: specify which image series to convert",
         "        -map: specify file on disk to which name should be mapped",
         "      -range: specify range of planes to convert (inclusive)",
@@ -305,6 +306,12 @@ public final class ImageConverter {
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
+    if (colorize != null) {
+        Colorizer colorizer = new Colorizer(reader);
+        ImageJLutSource source = new ImageJLutSource(colorize);
+        colorizer.setLutSource(source);
+        reader = colorizer;
+    }
     minMax = null;
     if (autoscale) {
       reader = new MinMaxCalculator(reader);
