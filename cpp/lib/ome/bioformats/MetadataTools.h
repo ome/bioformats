@@ -116,13 +116,40 @@ namespace ome
              dimension_size_type idx4);
 
     /**
-     * Create OME-XML metadata from XML document.
+     * Create OME-XML metadata from DOM Document.
      *
-     * @param document the XML document source.
+     * @param document the XML document.
      * @returns the OME-XML metadata.
      */
     std::shared_ptr< ::ome::xml::meta::Metadata>
-    createOMEXMLMetadata(const std::string& document);
+    createOMEXMLMetadata(ome::xerces::dom::Document& document);
+
+    /**
+     * Create OME-XML metadata from XML file.
+     *
+     * @param file the XML file.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const boost::filesystem::path& file);
+
+    /**
+     * Create OME-XML metadata from XML string.
+     *
+     * @param text the XML string.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const std::string& text);
+
+    /**
+     * Create OME-XML metadata from XML input stream.
+     *
+     * @param stream the XML input stream.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(std::istream& stream);
 
     /**
      * Create OME-XML metadata from reader core metadata.

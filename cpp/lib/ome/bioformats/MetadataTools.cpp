@@ -151,11 +151,9 @@ namespace ome
     }
 
     std::shared_ptr< ::ome::xml::meta::Metadata>
-    createOMEXMLMetadata(const std::string& document)
+    createOMEXMLMetadata(ome::xerces::dom::Document& document)
     {
-      // Parse OME-XML into DOM Document.
-      ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(document));
-      ome::xerces::dom::Element docroot(doc.getDocumentElement());
+      ome::xerces::dom::Element docroot(document.getDocumentElement());
 
       std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
       ome::xml::model::detail::OMEModel model;
@@ -163,6 +161,30 @@ namespace ome
       root->update(docroot, model);
 
       return std::static_pointer_cast< ::ome::xml::meta::Metadata>(meta);
+    }
+
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const boost::filesystem::path& file)
+    {
+      // Parse OME-XML into DOM Document.
+      ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(file));
+      return createOMEXMLMetadata(doc);
+    }
+
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(const std::string& text)
+    {
+      // Parse OME-XML into DOM Document.
+      ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(text));
+      return createOMEXMLMetadata(doc);
+    }
+
+    std::shared_ptr< ::ome::xml::meta::Metadata>
+    createOMEXMLMetadata(std::istream& stream)
+    {
+      // Parse OME-XML into DOM Document.
+      ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(stream));
+      return createOMEXMLMetadata(doc);
     }
 
     std::shared_ptr<Metadata>
