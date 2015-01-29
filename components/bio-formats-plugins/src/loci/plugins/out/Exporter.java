@@ -191,19 +191,15 @@ public class Exporter {
                 return;
             }
             f = fc.getSelectedFile();
-
+            dir = fc.getCurrentDirectory().getPath() + File.separator;
+            name = fc.getName(f);
             if (f.exists()) {
                 int ret = JOptionPane.showConfirmDialog(fc,
                         "The file " + f.getName() + " already exists. \n" +
                                 "Would you like to replace it?", "Replace?",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (ret != JOptionPane.OK_OPTION) f = null;
-            }
-            if (f == null) Macro.abort();
-            else {
-                dir = fc.getCurrentDirectory().getPath() + File.separator;
-                name = fc.getName(f);
-
+            } else {
                 // ensure filename matches selected filter
                 FileFilter filter = fc.getFileFilter();
                 if (filter instanceof ExtensionFileFilter) {
@@ -236,15 +232,12 @@ public class Exporter {
                     }
 
                 }
-                if (f == null) {
-                    Macro.abort();
-                    return;
-                }
-                else{
-                    // do some ImageJ bookkeeping
-                    OpenDialog.setDefaultDirectory(dir);
-                    if (Recorder.record) Recorder.recordPath("save", dir+name);
-                }
+            }
+            if (f == null) Macro.abort();
+            else {
+                // do some ImageJ bookkeeping
+                OpenDialog.setDefaultDirectory(dir);
+                if (Recorder.record) Recorder.recordPath("save", dir+name);
             }
 
             if (dir == null || name == null) return;
@@ -559,10 +552,12 @@ public class Exporter {
                 }
             }
             boolean in = false;
-            for (int i = 0; i < outputFiles.length; i++) {
-                if (new File(outputFiles[i]).exists()) {
-                    in = true;
-                    break;
+            if (outputFiles.length > 1) {
+                for (int i = 0; i < outputFiles.length; i++) {
+                    if (new File(outputFiles[i]).exists()) {
+                        in = true;
+                        break;
+                    }
                 }
             }
             if (in) {
