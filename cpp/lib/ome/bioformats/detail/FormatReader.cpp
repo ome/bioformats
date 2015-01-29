@@ -1310,7 +1310,16 @@ namespace ome
         //    LOGGER.debug("{} initializing {}", getFormat(), id);
         if (!currentId || id != currentId.get())
           {
-            initFile(id);
+            path canonicalID(id);
+            try
+              {
+                // Attempt to canonicalise the path.
+                canonicalID = ome::compat::canonical(id);
+              }
+            catch (const std::exception& /* e */)
+              {
+              }
+            initFile(canonicalID);
 
             const std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>& store =
               std::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(getMetadataStore());
