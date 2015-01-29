@@ -1226,7 +1226,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if klass.isAnnotation %}\
-		// Ensure any base annotations add their Elements first
+        // Ensure any base annotations add their Elements first
         element = ${klass.parentName}::asXMLElementInternal(document, element);
 {% end if isAnnotation %}\
 {% for prop in klass.properties.values() %}\
