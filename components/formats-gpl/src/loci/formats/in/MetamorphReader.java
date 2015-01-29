@@ -618,7 +618,7 @@ public class MetamorphReader extends BaseTiffReader {
       String file = locateFirstValidFile();
       if (file == null) {
         throw new FormatException(
-            "Unable to locate at lease one valid STK file!");
+            "Unable to locate at least one valid STK file!");
       }
 
       RandomAccessInputStream s = new RandomAccessInputStream(file);
