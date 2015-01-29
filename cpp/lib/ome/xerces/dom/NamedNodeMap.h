@@ -1,6 +1,7 @@
 /*
  * #%L
- * OME-BIOFORMATS C++ library for image IO.
+ * OME-XERCES C++ library for working with Xerces C++.
+ * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -35,54 +36,85 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
-#define OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
+#ifndef OME_XERCES_DOM_NAMEDNODEMAP_H
+#define OME_XERCES_DOM_NAMEDNODEMAP_H
 
-#include <ome/compat/cstdint.h>
+#include <ome/compat/config.h>
 
-#include <ome/xml/meta/MetadataRoot.h>
-#include <ome/xml/model/OME.h>
+#include <cassert>
 
+#include <ome/xerces/dom/Base.h>
+#include <ome/xerces/dom/Wrapper.h>
+
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
 
 namespace ome
 {
-  namespace xml
+  namespace xerces
   {
-    namespace meta
+    namespace dom
     {
 
+      class Node;
+
       /**
-       * OME-XML metadata root node.
+       * DOM NamedNodeMap wrapper.  The wrapper behaves as though is
+       * the wrapped DOMNamedNodeMap; it can be dereferenced using the
+       * "*" or "->" operators to obtain a reference or pointer to the
+       * wrapped object.  It can also be cast to a pointer to the
+       * wrapped object, so can substitute for it directly.
        */
-      class OMEXMLMetadataRoot : public ::ome::xml::model::OME,
-				 virtual public ::ome::xml::meta::MetadataRoot
+      class NamedNodeMap : public Wrapper<xercesc::DOMNamedNodeMap, Base<xercesc::DOMNamedNodeMap> >
       {
       public:
-        /// Constructor.
-        OMEXMLMetadataRoot();
+        /**
+         * Construct a NULL NamedNodeMap.
+         */
+        NamedNodeMap ():
+          Wrapper<xercesc::DOMNamedNodeMap, Base<xercesc::DOMNamedNodeMap> >()
+        {
+        }
 
-	/// Copy constructor.
-	OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy);
+        /**
+         * Copy construct a NamedNodeMap.
+         *
+         * @param nodelist the NamedNodeMap to copy.
+         */
+        NamedNodeMap (const NamedNodeMap& nodelist):
+          Wrapper<xercesc::DOMNamedNodeMap, Base<xercesc::DOMNamedNodeMap> >(nodelist)
+        {
+        }
 
-	/// Copy constructor.
-	OMEXMLMetadataRoot(const xml::model::OME& copy);
+        /**
+         * Construct a NamedNodeMap from a xercesc::DOMNamedNodeMap * (unmanaged).
+         *
+         * @param nodelist the NamedNodeMap to wrap.
+         */
+        NamedNodeMap (xercesc::DOMNamedNodeMap *nodelist):
+          Wrapper<xercesc::DOMNamedNodeMap, Base<xercesc::DOMNamedNodeMap> >(static_cast<base_element_type *>(nodelist))
+        {
+        }
 
-      public:
         /// Destructor.
-        virtual
-        ~OMEXMLMetadataRoot();
+        ~NamedNodeMap ()
+        {
+        }
 
-      private:
-        /// Assignment operator (deleted).
-        OMEXMLMetadataRoot&
-        operator= (const OMEXMLMetadataRoot&);
+        /**
+         * Get an item by name.
+         *
+         * @param name the name of the item
+         * @returns the item, which will be null if not found.
+         */
+        Node
+        getNamedItem(const std::string& name);
       };
 
     }
   }
 }
 
-#endif // OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
+#endif // OME_XERCES_DOM_NAMEDNODEMAP_H
 
 /*
  * Local Variables:

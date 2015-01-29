@@ -121,6 +121,12 @@ namespace ome
         else return index == rhs.index;
       }
 
+      Node
+      NodeList::at(size_type index)
+      {
+        return Node((*this)->item(index), false);
+      }
+
     }
   }
 }

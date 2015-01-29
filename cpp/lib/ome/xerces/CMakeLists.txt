@@ -41,6 +41,7 @@ set(ome_xerces_sources
     EntityResolver.cpp
     ErrorReporter.cpp
     dom/Document.cpp
+    dom/NamedNodeMap.cpp
     dom/NodeList.cpp)
 
 set(ome_xerces_base_headers
@@ -53,6 +54,7 @@ set(ome_xerces_dom_headers
     dom/Base.h
     dom/Document.h
     dom/Element.h
+    dom/NamedNodeMap.h
     dom/Node.h
     dom/NodeList.h
     dom/Wrapper.h)

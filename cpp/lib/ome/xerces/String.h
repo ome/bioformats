@@ -98,8 +98,8 @@ namespace ome
        */
       inline
       String(const char *str):
-      narrow(xercesc::XMLString::replicate(str)),
-      wide(xercesc::XMLString::transcode(str))
+        narrow(xercesc::XMLString::replicate(str)),
+        wide(xercesc::XMLString::transcode(str))
       {
         assert(this->narrow != 0);
         assert(this->wide != 0);

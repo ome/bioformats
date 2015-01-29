@@ -40,6 +40,7 @@
 
 #include <ome/internal/version.h>
 
+#include <ome/xml/model/OME.h>
 #include <ome/xml/model/MapPairs.h>
 
 namespace ome
@@ -88,6 +89,21 @@ namespace ome
       {
       }
 
+      const std::string&
+      MapPairs::elementName() const
+      {
+        static const std::string type("MapPairs");
+        return type;
+      }
+
+      bool
+      MapPairs::validElementName(const std::string& name) const
+      {
+        static const std::string expectedTagName("MapPairs");
+
+        return expectedTagName == name || detail::OMEModelObject::validElementName(name);
+      }
+
       void
       MapPairs::update(const xerces::dom::Element&  element,
                        ::ome::xml::model::OMEModel& model)
@@ -130,14 +146,14 @@ namespace ome
         return false;
       }
 
-      xerces::dom::Element&
+      xerces::dom::Element
       MapPairs::asXMLElement (xerces::dom::Document& document) const
       {
         xerces::dom::Element nullelem;
         return asXMLElementInternal(document, nullelem);
       }
 
-      xerces::dom::Element&
+      xerces::dom::Element
       MapPairs::asXMLElementInternal (xerces::dom::Document& document,
                                       xerces::dom::Element&  element) const
       {
@@ -182,6 +198,17 @@ namespace ome
       MapPairs::setMap (const map_type& map)
       {
         this->map = map;
+      }
+
+      const std::string&
+      MapPairs::getXMLNamespace() const
+      {
+        // This is a hack; we don't have direct access to the
+        // namespace at present since it's emitted by the code
+        // generator.  Copy the namespace from the generated OME
+        // class.
+        OME ome;
+        return ome.getXMLNamespace();
       }
 
     }

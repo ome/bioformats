@@ -58,6 +58,7 @@ set(OME_XML_STATIC_SOURCES
   model/ModelException.cpp
   model/detail/OMEModel.cpp
   model/detail/OMEModelObject.cpp
+  model/detail/Parse.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -67,8 +68,7 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveFloat.cpp
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
-  model/primitives/Timestamp.cpp
-  model/MapPairs.cpp)
+  model/primitives/Timestamp.cpp)
 
 # Not installed, internal only.
 set(OME_XML_META_PRIVATE_STATIC_HEADERS
@@ -81,14 +81,14 @@ set(OME_XML_META_STATIC_HEADERS
     meta/OMEXMLMetadataRoot.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
-    model/MapPairs.h
     model/ModelException.h
     model/OMEModel.h
     model/OMEModelObject.h)
 
 set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
     model/detail/OMEModel.h
-    model/detail/OMEModelObject.h)
+    model/detail/OMEModelObject.h
+    model/detail/Parse.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
     model/enums/EnumerationException.h)

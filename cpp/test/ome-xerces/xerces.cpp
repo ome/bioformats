@@ -147,11 +147,26 @@ TEST_P(XercesTest, EmptyDocument)
   ASSERT_TRUE(document);
 }
 
+TEST_P(XercesTest, EmptyDocumentNS)
+{
+  xml::dom::Document document(ome::xerces::dom::createEmptyDocument("http://example.com/test/namespace", "root"));
+  ASSERT_TRUE(document);
+}
+
 TEST_P(XercesTest, EmptyDocumentCreateElement)
 {
   xml::dom::Document document(ome::xerces::dom::createEmptyDocument("root"));
   ASSERT_TRUE(document);
   xml::dom::Element e(document.createElementNS("http://example.com/test/namespace", "test"));
+  xml::dom::Element root(document.getDocumentElement());
+  root.appendChild(e);
+}
+
+TEST_P(XercesTest, EmptyDocumentCreateElementNS)
+{
+  xml::dom::Document document(ome::xerces::dom::createEmptyDocument("http://example.com/test/namespace1", "root"));
+  ASSERT_TRUE(document);
+  xml::dom::Element e(document.createElementNS("http://example.com/test/namespace2", "test"));
   xml::dom::Element root(document.getDocumentElement());
   root.appendChild(e);
 }

@@ -137,6 +137,18 @@ namespace ome
         }
 
         /**
+         * Get child elements with a given tag name.
+         *
+         * @param name the element name to use.
+         * @returns the child nodes (if any).
+         */
+        NodeList
+        getElementsByTagName(const std::string& name)
+        {
+          return (*this)->getElementsByTagName(String(name));
+        }
+
+        /**
          * Check if the Element has the specified attribute.
          *
          * @param attr the attribute to check.

@@ -537,27 +537,6 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
-        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataRetrieve> retrieve = std::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getMapAnnotationAnnotationCount(mapAnnotationIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
         getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -780,72 +759,6 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const ::${lang.omexml_model_package}::MapPairs::map_type&
-        getMapAnnotationValue(index_type mapAnnotationIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const ::${lang.omexml_model_package}::MapPairs::map_type&
-      AggregateMetadata::getMapAnnotationValue(index_type mapAnnotationIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataRetrieve> retrieve = std::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getMapAnnotationValue(mapAnnotationIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const ::${lang.omexml_model_package}::MapPairs::map_type&
-        getGenericExcitationSourceMap(index_type instrumentIndex,
-                                      index_type lightSourceIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const ::${lang.omexml_model_package}::MapPairs::map_type&
-      AggregateMetadata::getGenericExcitationSourceMap(index_type instrumentIndex,
-                                                       index_type lightSourceIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataRetrieve> retrieve = std::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getGenericExcitationSourceMap(instrumentIndex,
-                                                             lightSourceIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const ::${lang.omexml_model_package}::MapPairs::map_type&
-        getImagingEnvironmentMap(index_type imageIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const ::${lang.omexml_model_package}::MapPairs::map_type&
-      AggregateMetadata::getImagingEnvironmentMap(index_type imageIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataRetrieve> retrieve = std::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getImagingEnvironmentMap(imageIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -971,79 +884,6 @@ ${getter(k, o, prop, v)}\
             std::shared_ptr<MetadataStore> store = std::dynamic_pointer_cast<MetadataStore>(*i);
             if (store)
               store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                              index_type mapAnnotationIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      AggregateMetadata::setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                               index_type mapAnnotationIndex)
-      {
-        for (delegate_list_type::iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataStore> store = std::dynamic_pointer_cast<MetadataStore>(*i);
-            if (store)
-              store->setMapAnnotationValue(map, mapAnnotationIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                      index_type instrumentIndex,
-                                      index_type lightSourceIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      AggregateMetadata::setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                                       index_type instrumentIndex,
-                                                       index_type lightSourceIndex)
-      {
-        for (delegate_list_type::iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataStore> store = std::dynamic_pointer_cast<MetadataStore>(*i);
-            if (store)
-              store->setGenericExcitationSourceMap(map,
-                                                   instrumentIndex,
-                                                   lightSourceIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                 index_type imageIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      AggregateMetadata::setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                                  index_type imageIndex)
-      {
-        for (delegate_list_type::iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataStore> store = std::dynamic_pointer_cast<MetadataStore>(*i);
-            if (store)
-              store->setImagingEnvironmentMap(map, imageIndex);
           }
         throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
       }

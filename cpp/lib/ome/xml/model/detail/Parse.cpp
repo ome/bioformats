@@ -1,6 +1,7 @@
 /*
  * #%L
- * OME-BIOFORMATS C++ library for image IO.
+ * OME-XML C++ library for working with OME-XML metadata structures.
+ * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -35,57 +36,31 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
-#define OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
+#include <boost/format.hpp>
 
-#include <ome/compat/cstdint.h>
-
-#include <ome/xml/meta/MetadataRoot.h>
-#include <ome/xml/model/OME.h>
-
+#include <ome/xml/model/ModelException.h>
+#include <ome/xml/model/detail/Parse.h>
 
 namespace ome
 {
   namespace xml
   {
-    namespace meta
+    namespace model
     {
-
-      /**
-       * OME-XML metadata root node.
-       */
-      class OMEXMLMetadataRoot : public ::ome::xml::model::OME,
-				 virtual public ::ome::xml::meta::MetadataRoot
+      namespace detail
       {
-      public:
-        /// Constructor.
-        OMEXMLMetadataRoot();
 
-	/// Copy constructor.
-	OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy);
+        void
+        parse_value_fail(const std::string& text,
+                         const std::string& klass,
+                         const std::string& property)
+        {
+          boost::format fmt("Failed to parse %1% %2% property value ‘%1%’");
+          fmt % klass % property % text;
+          throw ModelException(fmt.str());
+        }
 
-	/// Copy constructor.
-	OMEXMLMetadataRoot(const xml::model::OME& copy);
-
-      public:
-        /// Destructor.
-        virtual
-        ~OMEXMLMetadataRoot();
-
-      private:
-        /// Assignment operator (deleted).
-        OMEXMLMetadataRoot&
-        operator= (const OMEXMLMetadataRoot&);
-      };
-
+      }
     }
   }
 }
-
-#endif // OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */

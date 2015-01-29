@@ -104,6 +104,29 @@ namespace ome
         ~OMEModelObject ()
         {}
 
+        /**
+         * Get the element name of this model object.
+         *
+         * This will be the most-derived class name.
+         *
+         * @returns the element type.
+         */
+        virtual const std::string&
+        elementName() const = 0;
+
+        /**
+         * Check if a given element name is valid for processing by
+         * this model object.
+         *
+         * Used for processing nodes when interitance is involved.
+         *
+         * @param name the element name to check.
+         *
+         * @returns @c true if valid, @c false if invalid.
+         */
+        virtual bool
+        validElementName(const std::string& name) const = 0;
+
       private:
         /// Copy constructor (deleted).
         OMEModelObject (const OMEModelObject&);
@@ -120,7 +143,7 @@ namespace ome
          * @param document document for element creation
          * @returns an XML DOM tree root element for this model object.
          */
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElement (xerces::dom::Document& document) const = 0;
 
         /**
@@ -165,6 +188,14 @@ namespace ome
         virtual bool
         link (std::shared_ptr<Reference>&      reference,
               std::shared_ptr<OMEModelObject>& object) = 0;
+
+        /**
+         * Get the XML namespace for this model object.
+         *
+         * @returns the XML namespace.
+         */
+        virtual const std::string&
+        getXMLNamespace() const = 0;
       };
 
     }

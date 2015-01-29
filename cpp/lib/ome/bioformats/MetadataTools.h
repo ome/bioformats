@@ -165,10 +165,13 @@ namespace ome
      * string.
      *
      * @param omexml the OME-XML metadata store.
+     * @param validate @c true to validate the OME-XML, @c false to
+     * skip validation.
      * @returns the OME-XML metadata as an XML document string.
      */
     std::string
-    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml);
+    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml,
+              bool                              validate = true);
 
     /**
      * Validate an OME-XML document.
@@ -232,6 +235,39 @@ namespace ome
     addMetadataOnly(::ome::xml::meta::OMEXMLMetadata& omexml,
                     dimension_size_type               series,
                     bool                              resolve = true);
+
+    /**
+     * Get ModuloAlongZ annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModuloAlongZ(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image);
+
+    /**
+     * Get ModuloAlongT annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModuloAlongT(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image);
+
+    /**
+     * Get ModuloAlongC annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModuloAlongC(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image);
 
     /**
      * Get Modulo annotation from OME-XML metadata.

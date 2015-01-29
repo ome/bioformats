@@ -1,6 +1,7 @@
 /*
  * #%L
- * OME-BIOFORMATS C++ library for image IO.
+ * OME-XERCES C++ library for working with Xerces C++.
+ * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -35,57 +36,23 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
-#define OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
-
-#include <ome/compat/cstdint.h>
-
-#include <ome/xml/meta/MetadataRoot.h>
-#include <ome/xml/model/OME.h>
-
+#include <ome/xerces/String.h>
+#include <ome/xerces/dom/NamedNodeMap.h>
+#include <ome/xerces/dom/Node.h>
 
 namespace ome
 {
-  namespace xml
+  namespace xerces
   {
-    namespace meta
+    namespace dom
     {
 
-      /**
-       * OME-XML metadata root node.
-       */
-      class OMEXMLMetadataRoot : public ::ome::xml::model::OME,
-				 virtual public ::ome::xml::meta::MetadataRoot
+      Node
+      NamedNodeMap::getNamedItem(const std::string& name)
       {
-      public:
-        /// Constructor.
-        OMEXMLMetadataRoot();
-
-	/// Copy constructor.
-	OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy);
-
-	/// Copy constructor.
-	OMEXMLMetadataRoot(const xml::model::OME& copy);
-
-      public:
-        /// Destructor.
-        virtual
-        ~OMEXMLMetadataRoot();
-
-      private:
-        /// Assignment operator (deleted).
-        OMEXMLMetadataRoot&
-        operator= (const OMEXMLMetadataRoot&);
-      };
+        return Node((*this)->getNamedItem(String(name)), false);
+      }
 
     }
   }
 }
-
-#endif // OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */

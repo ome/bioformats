@@ -166,14 +166,6 @@ class OMEModelObject(OMEModelEntity):
         _get_baseObjectProperties,
         doc="""The model object's base object properties.""")
 
-    def _get_refNodeName(self):
-        if self.base == "Reference":
-            return self.properties["ID"].langType
-        return None
-    refNodeName = property(
-        _get_refNodeName,
-        doc="""The name of this node's reference node; None otherwise.""")
-
     def _get_langType(self):
         return self.name
     langType = property(_get_langType, doc="""The model object's type.""")
@@ -342,26 +334,42 @@ class OMEModelObject(OMEModelEntity):
     parents = property(
         _get_parents, doc="""The parents for this object.""")
 
-    def _get_parentName(self):
+    def _get_parent(self):
         parents = self.model.resolve_parents(self.name)
 
-        name = self.modelBaseType
+        parent = None
 
         if parents is not None:
             parent = self.model.getObjectByName(parents.keys()[0])
-            if (parent is not None and parent.isAbstractProprietary and
-                    self.name not in config.ANNOTATION_OVERRIDE):
-                name = parent.name
+
+        return parent
+
+    def _get_parentName(self):
+        parent = self._get_parent()
+        name = self.modelBaseType
+
+        if (parent is not None and parent.isAbstractProprietary and
+                self.name not in config.ANNOTATION_OVERRIDE):
+            name = parent.name
 
         return name
     parentName = property(
         _get_parentName, doc="""The parent class name for this object.""")
 
-    def isComplex(self):
-        """
-        Returns whether or not the model object has a "complex" content type.
-        """
-        return self.element.isComplex()
+    def _get_isParentAbstractProprietary(self):
+        parent = self._get_parent()
+
+        abstract = False
+
+        if (parent is not None and parent.isAbstractProprietary and
+                self.name not in config.ANNOTATION_OVERRIDE):
+            abstract = True
+
+        return abstract
+    isParentAbstractProprietary = property(
+        _get_isParentAbstractProprietary,
+        doc="""Returns whether or not the model object has an abstract"""
+        """ proprietary parent.""")
 
     def __str__(self):
         return self.__repr__()
