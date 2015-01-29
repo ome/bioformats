@@ -43,12 +43,12 @@
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 
-	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5</xsl:variable>
-	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5</xsl:variable>
+	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2015-01</xsl:variable>
+	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2015-01</xsl:variable>
 	<xsl:variable name="newBINNS"
-		>http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5</xsl:variable>
-	<xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5</xsl:variable>
-	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5</xsl:variable>
+		>http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01</xsl:variable>
+	<xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2015-01</xsl:variable>
+	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2015-01</xsl:variable>
 
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
@@ -97,15 +97,15 @@
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
-		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
-			xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
-			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-5"
-			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
-			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
-			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-5"
+		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+			xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
+			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5
-			http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd">
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
+			http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>

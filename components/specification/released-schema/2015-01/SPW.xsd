@@ -2,7 +2,7 @@
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2003 - 2014 Open Microscopy Environment
+    # Copyright (C) 2003 - 2015 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -24,18 +24,18 @@
 	# Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-5"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	version="1"
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-5/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-5/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2015-01/SA.xsd"/>
 
 	<xsd:annotation>
 		<xsd:documentation>

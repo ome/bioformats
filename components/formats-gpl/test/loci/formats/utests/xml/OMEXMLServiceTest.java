@@ -65,7 +65,7 @@ public class OMEXMLServiceTest {
 
   @Test
   public void testGetLatestVersion() {
-    assertEquals("2013-10-dev-5", service.getLatestVersion());
+    assertEquals("2015-01", service.getLatestVersion());
   }
 
   @Test
@@ -91,7 +91,7 @@ public class OMEXMLServiceTest {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2013-10-dev-5",
+    assertEquals("2015-01",
       service.getOMEXMLVersion(service.createOMEXMLMetadata(xml)));
   }
 
