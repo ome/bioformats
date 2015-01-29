@@ -1,6 +1,15 @@
 Version history
 ===============
 
+5.0.7 (2015 February 5)
+-----------------------
+
+* Several bug fixes, including:
+    - ND filter parsing for Deltavision
+    - Timepoint count and original metadata parsing for Metamorph
+    - Build issues when Genshi or Git are missing
+    - LZW image decoding
+
 5.0.6 (2014 November 11)
 ------------------------
 
