@@ -183,8 +183,13 @@ public class ColumbusReader extends FormatReader {
     int index = getSeries() * getImageCount() + no;
     Plane p = planes.get(index);
 
-    reader.setId(p.file);
-    reader.openBytes(p.fileIndex, buf, x, y, w, h);
+    if (new Location(p.file).exists()) {
+      reader.setId(p.file);
+      reader.openBytes(p.fileIndex, buf, x, y, w, h);
+    }
+    else {
+      Arrays.fill(buf, (byte) 0);
+    }
     return buf;
   }
 
@@ -316,6 +321,7 @@ public class ColumbusReader extends FormatReader {
     int nextWell = -1;
     Timestamp date = new Timestamp(acquisitionDate);
     long timestampSeconds = date.asInstant().getMillis() / 1000;
+    int nextWellSample = 0;
     for (int plane=0; plane<planes.size(); plane++) {
       Plane p = planes.get(plane);
 
@@ -327,6 +333,17 @@ public class ColumbusReader extends FormatReader {
       }
 
       if (plane % getImageCount() == 0) {
+        // fill in empty WellSamples for missing fields
+        while (nextWellSample < p.field) {
+          String wellSampleID = MetadataTools.createLSID("WellSample", 0, nextWell, nextWellSample);
+          store.setWellSampleID(wellSampleID, 0, nextWell, nextWellSample);
+          nextWellSample++;
+        }
+
+        if (nextWellSample == nFields) {
+          nextWellSample = 0;
+        }
+
         String wellSampleID = MetadataTools.createLSID("WellSample", 0, nextWell, p.field);
         store.setWellSampleID(wellSampleID, 0, nextWell, p.field);
         store.setWellSampleIndex(new NonNegativeInteger(wellSample), 0, nextWell, p.field);
