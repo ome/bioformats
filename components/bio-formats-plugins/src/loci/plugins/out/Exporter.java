@@ -258,6 +258,7 @@ public class Exporter {
             splitZ = multiFile.getNextBoolean();
             splitT = multiFile.getNextBoolean();
             splitC = multiFile.getNextBoolean();
+            if (multiFile.wasCanceled()) return;
         }
 
         try {
