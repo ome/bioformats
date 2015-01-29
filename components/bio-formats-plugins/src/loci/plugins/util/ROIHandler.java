@@ -33,6 +33,7 @@ import ij.gui.EllipseRoi;
 import ij.gui.Line;
 import ij.gui.MessageDialog;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
@@ -171,9 +172,25 @@ public class ROIHandler {
         return rois;
     }
 
+    public static Roi[] readFromOverlays(){
+
+        ImagePlus image = IJ.getImage();
+        Overlay overlay = image.getOverlay();
+        Roi[] rois = new Roi[overlay.size()];
+        for (int i=0 ; i<overlay.size() ; i++){
+            rois[i] = overlay.get(i);
+        }
+        return rois;
+
+    }
+
     /** Save ROIs in the ROI manager to the given MetadataStore. */
     public static void saveROIs(MetadataStore store) {
-        Roi[] rois = readFromRoiManager();
+
+        Roi[] rois = readFromOverlays();
+        if (rois==null){
+            rois = readFromRoiManager();
+        }
 
         if (rois == null || rois.length == 0) return;
         List<String> discardList = new ArrayList<String>();
@@ -351,17 +368,17 @@ public class ROIHandler {
     private static void storePolygon(PolygonRoi roi, MetadataStore store,
             int roiNum, int shape)
     {
-//        Rectangle bounds = roi.getBounds();
-//        int[] xCoordinates = roi.getXCoordinates();
-//        int[] yCoordinates = roi.getYCoordinates();
-//        StringBuffer points = new StringBuffer();
-//        for (int i=0; i<xCoordinates.length; i++) {
-//            points.append(xCoordinates[i] + bounds.x);
-//            points.append(",");
-//            points.append(yCoordinates[i] + bounds.y);
-//            if (i < xCoordinates.length - 1) points.append(" ");
-//        }
-        
+        //        Rectangle bounds = roi.getBounds();
+        //        int[] xCoordinates = roi.getXCoordinates();
+        //        int[] yCoordinates = roi.getYCoordinates();
+        //        StringBuffer points = new StringBuffer();
+        //        for (int i=0; i<xCoordinates.length; i++) {
+        //            points.append(xCoordinates[i] + bounds.x);
+        //            points.append(",");
+        //            points.append(yCoordinates[i] + bounds.y);
+        //            if (i < xCoordinates.length - 1) points.append(" ");
+        //        }
+
         int[] xCoordinates = roi.getPolygon().xpoints;
         int[] yCoordinates = roi.getPolygon().ypoints;
         String st1 = roi.getTypeAsString();
@@ -374,7 +391,7 @@ public class ROIHandler {
                 points= (points + " " + xCoordinates[i] + "," + yCoordinates[i]);
             }
         }
-        
+
         if (st1.matches("Polyline") || st1.matches("Freeline") || st1.matches("Angle")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
         }
@@ -384,7 +401,7 @@ public class ROIHandler {
         else{
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
-            
+
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
