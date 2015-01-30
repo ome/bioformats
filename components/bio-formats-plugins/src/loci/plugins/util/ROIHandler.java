@@ -157,6 +157,9 @@ public class ROIHandler {
                         Roi.setColor(Color.WHITE);
                         roi.setImage(images[imageNum]);
                         manager.add(images[imageNum], roi, nextRoi++);
+                        manager.runCommand("Select All");
+                        manager.runCommand("Show All");
+
                     }
                 }
             }
@@ -354,17 +357,17 @@ public class ROIHandler {
     private static void storePolygon(PolygonRoi roi, MetadataStore store,
             int roiNum, int shape)
     {
-//        Rectangle bounds = roi.getBounds();
-//        int[] xCoordinates = roi.getXCoordinates();
-//        int[] yCoordinates = roi.getYCoordinates();
-//        StringBuffer points = new StringBuffer();
-//        for (int i=0; i<xCoordinates.length; i++) {
-//            points.append(xCoordinates[i] + bounds.x);
-//            points.append(",");
-//            points.append(yCoordinates[i] + bounds.y);
-//            if (i < xCoordinates.length - 1) points.append(" ");
-//        }
-        
+        //        Rectangle bounds = roi.getBounds();
+        //        int[] xCoordinates = roi.getXCoordinates();
+        //        int[] yCoordinates = roi.getYCoordinates();
+        //        StringBuffer points = new StringBuffer();
+        //        for (int i=0; i<xCoordinates.length; i++) {
+        //            points.append(xCoordinates[i] + bounds.x);
+        //            points.append(",");
+        //            points.append(yCoordinates[i] + bounds.y);
+        //            if (i < xCoordinates.length - 1) points.append(" ");
+        //        }
+
         int[] xCoordinates = roi.getPolygon().xpoints;
         int[] yCoordinates = roi.getPolygon().ypoints;
         String st1 = roi.getTypeAsString();
@@ -377,7 +380,7 @@ public class ROIHandler {
                 points= (points + " " + xCoordinates[i] + "," + yCoordinates[i]);
             }
         }
-        
+
         if (st1.matches("Polyline") || st1.matches("Freeline") || st1.matches("Angle")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
         }
@@ -387,7 +390,7 @@ public class ROIHandler {
         else{
             store.setPolygonPoints(points.toString(), roiNum, shape);
         }
-            
+
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
