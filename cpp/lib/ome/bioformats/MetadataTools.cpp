@@ -150,7 +150,7 @@ namespace ome
       return fmt.str();
     }
 
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(ome::xerces::dom::Document& document)
     {
       ome::xerces::dom::Element docroot(document.getDocumentElement());
@@ -160,10 +160,10 @@ namespace ome
       std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta->getRoot()));
       root->update(docroot, model);
 
-      return std::static_pointer_cast< ::ome::xml::meta::Metadata>(meta);
+      return meta;
     }
 
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const boost::filesystem::path& file)
     {
       // Parse OME-XML into DOM Document.
@@ -171,7 +171,7 @@ namespace ome
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const std::string& text)
     {
       // Parse OME-XML into DOM Document.
@@ -179,7 +179,7 @@ namespace ome
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(std::istream& stream)
     {
       // Parse OME-XML into DOM Document.
@@ -187,12 +187,12 @@ namespace ome
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr<Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane,
                          bool                doImageName)
     {
-      std::shared_ptr<Metadata> metadata(std::make_shared<OMEXMLMetadata>());
+      std::shared_ptr<OMEXMLMetadata> metadata(std::make_shared<OMEXMLMetadata>());
       std::shared_ptr<MetadataStore> store(std::static_pointer_cast<MetadataStore>(metadata));
       fillMetadata(*store, reader, doPlane, doImageName);
       return metadata;
@@ -207,21 +207,21 @@ namespace ome
       return meta ? meta->getRoot() : std::shared_ptr< ::ome::xml::meta::MetadataRoot>();
     }
 
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
     {
-      std::shared_ptr<Metadata> ret;
+      std::shared_ptr<OMEXMLMetadata> ret;
 
       if (retrieve)
         {
           std::shared_ptr<OMEXMLMetadata> omexml(std::dynamic_pointer_cast<OMEXMLMetadata>(retrieve));
           if (omexml)
             {
-              ret = std::static_pointer_cast<Metadata>(omexml);
+              ret = omexml;
             }
           else
             {
-              ret = std::shared_ptr<Metadata>(new OMEXMLMetadata());
+              ret = std::shared_ptr<OMEXMLMetadata>(std::make_shared<OMEXMLMetadata>());
               ome::xml::meta::convert(*retrieve, *ret);
             }
         }
