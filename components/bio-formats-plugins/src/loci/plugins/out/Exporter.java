@@ -309,6 +309,7 @@ public class Exporter {
             OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
 
             if (store == null) IJ.error("OME-XML Java library not found.");
+
             if (xml == null | root.sizeOfROIList()>0) {
                 store.createRoot();
             }
