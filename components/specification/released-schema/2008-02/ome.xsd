@@ -759,7 +759,7 @@
 				<xsd:choice>
 					<xsd:annotation>
 						<xsd:documentation>
-							At lease one of (FirstName, LastName, Email, OMEName)
+							At least one of (FirstName, LastName, Email, OMEName)
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:sequence>
