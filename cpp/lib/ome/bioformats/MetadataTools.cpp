@@ -54,6 +54,7 @@
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
 
 #include <ome/xml/model/Annotation.h>
+#include <ome/xml/model/Channel.h>
 #include <ome/xml/model/Image.h>
 #include <ome/xml/model/MetadataOnly.h>
 #include <ome/xml/model/OMEModel.h>
@@ -542,6 +543,33 @@ namespace ome
                     }
                   std::shared_ptr<ome::xml::model::MetadataOnly> metadataOnly;
                   pixels->setMetadataOnly(metadataOnly);
+                }
+            }
+        }
+    }
+
+    void
+    removeChannels(::ome::xml::meta::OMEXMLMetadata& omexml,
+                   dimension_size_type               image,
+                   dimension_size_type               sizeC)
+    {
+      omexml.resolveReferences();
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          std::shared_ptr<ome::xml::model::Image>& imageref(root->getImage(image));
+          if (image)
+            {
+              std::shared_ptr<ome::xml::model::Pixels> pixels(imageref->getPixels());
+              if (pixels)
+                {
+                  std::vector<std::shared_ptr<ome::xml::model::Channel> > channels(pixels->getChannelList());
+                  for (Metadata::index_type c = 0U; c < channels.size(); ++c)
+                    {
+                      std::shared_ptr<ome::xml::model::Channel> channel(channels.at(c));
+                      if (channel->getID().empty() || c >= sizeC)
+                        pixels->removeChannel(channel);
+                    }
                 }
             }
         }

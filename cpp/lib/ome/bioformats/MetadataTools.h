@@ -329,6 +329,19 @@ namespace ome
     removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml);
 
     /**
+     * Remove all but the specified number of valid Channel elements
+     * from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @param sizeC the number of channels to retain.
+     */
+    void
+    removeChannels(::ome::xml::meta::OMEXMLMetadata& omexml,
+                   dimension_size_type               image,
+                   dimension_size_type               sizeC);
+
+    /**
      * Check if default creation date is enabled.
      *
      * @returns @c true if enabled, @c false otherwise.
