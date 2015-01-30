@@ -59,7 +59,6 @@ import ome.xml.model.Polygon;
 import ome.xml.model.Polyline;
 import ome.xml.model.Shape;
 import ome.xml.model.Union;
-import ome.xml.model.enums.FontStyle;
 
 
 // TODO: Stored ROIs are not correctly linked to Image.
