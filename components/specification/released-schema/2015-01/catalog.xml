@@ -5,5 +5,4 @@
   <uri name="http://www.openmicroscopy.org/Schemas/SPW/2015-01/SPW.xsd" uri="SPW.xsd"/>
   <uri name="http://www.openmicroscopy.org/Schemas/SA/2015-01/SA.xsd" uri="SA.xsd"/>
   <uri name="http://www.openmicroscopy.org/Schemas/ROI/2015-01/ROI.xsd" uri="ROI.xsd"/>
-  <uri name="http://www.openmicroscopy.org/Schemas/OMERO/2015-01/OMERO.xsd" uri="OMERO.xsd"/>
 </catalog>
