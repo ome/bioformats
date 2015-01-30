@@ -321,6 +321,14 @@ namespace ome
                   dimension_size_type                 series = 0U);
 
     /**
+     * Remove all BinData elements from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     */
+    void
+    removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml);
+
+    /**
      * Check if default creation date is enabled.
      *
      * @returns @c true if enabled, @c false otherwise.

@@ -516,6 +516,37 @@ namespace ome
         }
     }
 
+    void
+    removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml)
+    {
+      omexml.resolveReferences();
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          std::vector<std::shared_ptr<ome::xml::model::Image> >& images(root->getImageList());
+          for(std::vector<std::shared_ptr<ome::xml::model::Image> >::const_iterator image = images.begin();
+              image != images.end();
+              ++image)
+            {
+              std::shared_ptr<ome::xml::model::Pixels> pixels((*image)->getPixels());
+              if (pixels)
+                {
+                  // Note a copy not a reference to avoid iterator
+                  // invalidation during removal.
+                  std::vector<std::shared_ptr<ome::xml::model::BinData> > binData(pixels->getBinDataList());
+                  for (std::vector<std::shared_ptr<ome::xml::model::BinData> >::iterator bin = binData.begin();
+                   bin != binData.end();
+                       ++bin)
+                    {
+                      pixels->removeBinData(*bin);
+                    }
+                  std::shared_ptr<ome::xml::model::MetadataOnly> metadataOnly;
+                  pixels->setMetadataOnly(metadataOnly);
+                }
+            }
+        }
+    }
+
     std::string
     getModelVersion()
     {
