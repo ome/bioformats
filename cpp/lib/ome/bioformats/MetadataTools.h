@@ -318,7 +318,7 @@ namespace ome
      */
     void
     verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
-                    dimension_size_type               series = 0U);
+                  dimension_size_type                 series = 0U);
 
     /**
      * Check if default creation date is enabled.
