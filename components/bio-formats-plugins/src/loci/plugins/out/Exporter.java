@@ -306,8 +306,10 @@ public class Exporter {
             catch (DependencyException de) { }
             catch (ServiceException se) { }
 
+            OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
+
             if (store == null) IJ.error("OME-XML Java library not found.");
-            if (xml == null) {
+            if (xml == null | root.sizeOfROIList()>0) {
                 store.createRoot();
             }
             else if (store.getImageCount() > 1) {
@@ -349,7 +351,6 @@ public class Exporter {
                 }
                 else if (matchingSeries.size() == 1) series = matchingSeries.get(0);
 
-                OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
                 ome.xml.model.Image exportImage = root.getImage(series);
                 List<ome.xml.model.Image> allImages = root.copyImageList();
                 for (ome.xml.model.Image img : allImages) {
@@ -357,6 +358,7 @@ public class Exporter {
                         root.removeImage(img);
                     }
                 }
+
                 store.setRoot(root);
             }
 
