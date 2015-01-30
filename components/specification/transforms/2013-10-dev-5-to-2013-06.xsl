@@ -43,6 +43,8 @@
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 
+	<xsl:import href="units-conversion.xsl"/>
+
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2013-06</xsl:variable>
 	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2013-06</xsl:variable>
 	<xsl:variable name="newBINNS"
@@ -63,19 +65,33 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValueEm" select="@EmissionWavelength"/>
+			<xsl:variable name="theConvertedValueEm">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@EmissionWavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@EmissionWavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">EmissionWavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">Channel</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'EmissionWavelength']">
-				<xsl:if test="$theValueEm=round($theValueEm)">
+				<xsl:if test="$theConvertedValueEm=round($theConvertedValueEm)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValueEm)"/>
+						<xsl:value-of select="round($theConvertedValueEm)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
-			<xsl:variable name="theValueEx" select="@ExcitationWavelength"/>
+			<xsl:variable name="theConvertedValueEx">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@ExcitationWavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@ExcitationWavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">ExcitationWavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">Channel</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'ExcitationWavelength']">
-				<xsl:if test="$theValueEx=round($theValueEx)">
+				<xsl:if test="$theConvertedValueEx=round($theConvertedValueEx)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValueEx)"/>
+						<xsl:value-of select="round($theConvertedValueEx)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
@@ -86,16 +102,23 @@
 	<!-- strip Wavelength from LightSourceSettings ONLY if it is not an integer -->
 	<xsl:template match="OME:LightSourceSettings">
 		<xsl:element name="OME:LightSourceSettings" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'Wavelength')]">
+			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValue" select="@Wavelength"/>
+			<xsl:variable name="theConvertedValue">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Wavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Wavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">LightSourceSettings</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theValue=round($theValue)">
+				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValue)"/>
+						<xsl:value-of select="round($theConvertedValue)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
@@ -106,16 +129,23 @@
 	<!-- strip Wavelength from Laser ONLY if it is not an integer -->
 	<xsl:template match="OME:Laser">
 		<xsl:element name="OME:Laser" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'Wavelength')]">
+			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:variable name="theValue" select="@Wavelength"/>
+			<xsl:variable name="theConvertedValue">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Wavelength"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WavelengthUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Wavelength</xsl:with-param>
+					<xsl:with-param name="theElementName">Laser</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theValue=round($theValue)">
+				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theValue)"/>
+						<xsl:value-of select="round($theConvertedValue)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
@@ -203,6 +233,18 @@
 		</xsl:element>
 	</xsl:template>
 
+	<!-- strip GenericExcitationSource and terminate -->
+	<xsl:template match="OME:GenericExcitationSource">
+		<xsl:comment>GenericExcitationSource elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
+		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - GenericExcitationSource elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+	</xsl:template>
+
+	<!-- strip GenericExcitationSource and terminate -->
+	<xsl:template match="SA:MapAnnotation">
+		<xsl:comment>MapAnnotation elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
+		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - MapAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
@@ -220,7 +262,8 @@
 
 	<xsl:template match="OME:*">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*|node()"/>
+			<xsl:call-template name="attribute-units-conversion"/>
+			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -248,6 +291,45 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template name="attribute-units-conversion">
+		<xsl:variable name="unit-attributes" select="@* [substring(name(), string-length(name()) - string-length('Unit') +1) = 'Unit']"/>
+		<xsl:variable name="unit-attributes-count" select="count($unit-attributes)"/>
+		<xsl:for-each select="@*">
+			<xsl:choose>
+				<xsl:when test="substring(name(), string-length(name()) - string-length('Unit') +1) = 'Unit'">
+					<!-- Units attribute so do not copy -->
+				</xsl:when>
+				<xsl:when test="$unit-attributes-count != 0">
+					<xsl:variable name="match-name"><xsl:value-of select="name()"/>Unit</xsl:variable>
+					<xsl:choose>
+						<xsl:when test="count($unit-attributes[name() = $match-name]) = 1">
+							<!-- This attribute has units specified so convert -->
+							<xsl:variable name="theUnitName"><xsl:value-of select="local-name()"/>Unit</xsl:variable>
+							<xsl:variable name="theConvertedValue">
+								<xsl:call-template name="ConvertValueToDefault">
+									<xsl:with-param name="theValue"><xsl:value-of select="."/></xsl:with-param>
+									<xsl:with-param name="theCurrentUnit"><xsl:value-of select="../@*[name() = $theUnitName]"/></xsl:with-param>
+									<xsl:with-param name="theAttributeName"><xsl:value-of select="local-name(.)"/></xsl:with-param>
+									<xsl:with-param name="theElementName"><xsl:value-of select="local-name(parent::node())"/></xsl:with-param>
+								</xsl:call-template>
+							</xsl:variable>
+							<xsl:attribute name="{local-name(.)}">
+								<xsl:value-of select="$theConvertedValue"/>
+							</xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise>
+							<!-- Units used but this attribute has no units specified -->
+							<xsl:apply-templates select="."/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:otherwise>
+					<!-- No units being used -->
+					<xsl:apply-templates select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:for-each>
+	</xsl:template>
 	<!-- Default processing -->
 	<xsl:template match="@*|node()">
 		<xsl:copy>

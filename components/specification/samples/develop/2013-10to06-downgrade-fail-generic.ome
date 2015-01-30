@@ -113,10 +113,12 @@
 	<Instrument ID="Instrument:0">
 		<Microscope Type="Dissection"/>
 		<LightSource ID="LightSource:0">
-			<Arc/>
+			<GenericExcitationSource>
+				<Map><M K="a">1</M><M K="b">2</M><M K="c">3</M></Map>
+			</GenericExcitationSource>
 		</LightSource>
 		<LightSource ID="LightSource:1" Manufacturer="OME-Inc">
-			<Laser Wavelength="655300" WavelengthUnit="pm" Tuneable="false"/>
+			<Laser Wavelength="655.3" Tuneable="false"/>
 		</LightSource>
 		<LightSource ID="LightSource:2" Power="2.3">
 			<Laser Wavelength="755" LaserMedium="Alexandrite"/>
@@ -124,12 +126,6 @@
 		<LightSource ID="LightSource:3">
 			<Arc Type="Hg"/>
 			<SA:AnnotationRef ID="Annotation:LightSource:3"/>
-		</LightSource>
-		<LightSource ID="LightSource:4" Manufacturer="OME-Inc">
-			<Laser Wavelength="655000" WavelengthUnit="pm" Tuneable="false"/>
-		</LightSource>
-		<LightSource ID="LightSource:5" Power="2.3">
-			<Laser Wavelength="755.8" LaserMedium="Alexandrite"/>
 		</LightSource>
 		<Detector ID="Detector:0">
 			<SA:AnnotationRef ID="Annotation:Detector:0"/>
@@ -151,7 +147,7 @@
 		<ExperimenterRef ID="Experimenter:1"/>
 		<ImagingEnvironment 
 			AirPressure="999" AirPressureUnit="mbar"
-			Temperature="73.94" TemperatureUnit="°F"
+			Temperature="23.3" TemperatureUnit="°C"
 			CO2Percent="0.05" Humidity="0.35"/>
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0"
 			PhysicalSizeX="10000.0" PhysicalSizeXUnit="nm"
@@ -160,7 +156,7 @@
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
 				EmissionWavelength="577.2" ExcitationWavelength="655.8"
 				ID="Channel:0">
-				<LightSourceSettings ID="LightSource:1" Wavelength="0.000655" WavelengthUnit="mm"/>
+				<LightSourceSettings ID="LightSource:1" Wavelength="0.6554" WavelengthUnit="mm"/>
 				<LightPath>
 					<ExcitationFilterRef ID="Filter:0"/>
 					<DichroicRef ID="Dichroic:0"/>
@@ -196,11 +192,11 @@
 				<test2/>
 			</SA:Value>
 		</SA:XMLAnnotation>
-		<SA:XMLAnnotation ID="Annotation:2">
+		<SA:MapAnnotation ID="Annotation:2">
 			<SA:Value>
 				<M K="a">1</M><M K="b">2</M><M K="c">3</M>
 			</SA:Value>
-		</SA:XMLAnnotation>
+		</SA:MapAnnotation>
 		<SA:LongAnnotation ID="Annotation:Detector:0">
 			<SA:Value>1</SA:Value>
 		</SA:LongAnnotation>
