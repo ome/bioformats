@@ -83,11 +83,13 @@ set(OME_XML_META_STATIC_HEADERS
 set(OME_XML_STATIC_MODEL_HEADERS
     model/ModelException.h
     model/OMEModel.h
-    model/OMEModelObject.h)
+    model/OMEModelObject.h
+    model/OriginalMetadataAnnotation.h)
 
 set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
     model/detail/OMEModel.h
     model/detail/OMEModelObject.h
+    model/OriginalMetadataAnnotation.cpp
     model/detail/Parse.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
