@@ -169,6 +169,20 @@ namespace ome
         }
 
         /**
+         * Create Element without namespace.
+         *
+         * @param name the element name.
+         * @returns the created Element.
+         */
+        Element
+        createElement(const std::string& name)
+        {
+          xerces::String xname(name);
+
+          return Element((*this)->createElement(xname), false);
+        }
+
+        /**
          * Get the root element of this document.
          *
          * @returns the root element.
