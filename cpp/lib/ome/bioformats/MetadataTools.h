@@ -342,6 +342,15 @@ namespace ome
                    dimension_size_type               sizeC);
 
     /**
+     * Get original metadata from OME-XML metadata StructuredAnnotations.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @returns a map of the original metadata annotations.
+     */
+    MetadataMap
+    getOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml);
+
+    /**
      * Check if default creation date is enabled.
      *
      * @returns @c true if enabled, @c false otherwise.

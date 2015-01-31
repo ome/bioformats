@@ -46,6 +46,7 @@
 
 #include <ome/internal/version.h>
 
+#include <ome/xerces/Platform.h>
 #include <ome/xerces/dom/Document.h>
 #include <ome/xerces/dom/Element.h>
 #include <ome/xerces/dom/NodeList.h>
@@ -57,10 +58,15 @@
 #include <ome/xml/model/Channel.h>
 #include <ome/xml/model/Image.h>
 #include <ome/xml/model/MetadataOnly.h>
+#include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/OMEModel.h>
+#include <ome/xml/model/OriginalMetadataAnnotation.h>
 #include <ome/xml/model/Pixels.h>
+#include <ome/xml/model/StructuredAnnotations.h>
 #include <ome/xml/model/XMLAnnotation.h>
 #include <ome/xml/model/primitives/Timestamp.h>
+
+using boost::format;
 
 using ome::xml::meta::Metadata;
 using ome::xml::meta::MetadataStore;
@@ -70,7 +76,11 @@ using ome::xml::meta::OMEXMLMetadataRoot;
 
 using ome::xml::model::Image;
 using ome::xml::model::MetadataOnly;
+using ome::xml::model::ModelException;
 using ome::xml::model::Pixels;
+using ome::xml::model::StructuredAnnotations;
+using ome::xml::model::XMLAnnotation;
+using ome::xml::model::OriginalMetadataAnnotation;
 using ome::xml::model::OMEModel;
 using ome::xml::model::primitives::Timestamp;
 using ome::xml::model::primitives::PositiveInteger;
@@ -573,6 +583,83 @@ namespace ome
                 }
             }
         }
+    }
+
+    MetadataMap
+    getOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml)
+    {
+      MetadataMap map;
+
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          std::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
+          if (sa)
+            {
+              for (OMEXMLMetadata::index_type i = 0; i < sa->sizeOfXMLAnnotationList(); ++i)
+                {
+                  // Check if this is an OriginalMetadataAnnotation object.
+                  std::shared_ptr<XMLAnnotation> annotation(sa->getXMLAnnotation(i));
+                  std::shared_ptr<OriginalMetadataAnnotation> original(std::dynamic_pointer_cast<OriginalMetadataAnnotation>(annotation));
+                  if (original)
+                    {
+                      const OriginalMetadataAnnotation::metadata_type kv(original->getMetadata());
+                      map.set(kv.first, kv.second);
+                      continue;
+                    }
+
+                  // Fall back to parsing by hand.
+                  try
+                    {
+                      xerces::dom::ParseParameters params;
+                      params.validationScheme = xercesc::XercesDOMParser::Val_Never;
+                      xerces::dom::Document doc(ome::xerces::dom::createDocument(annotation->getValue()));
+
+                      std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc, "OriginalMetadata");
+                      if (OriginalMetadataValue_nodeList.size() > 1)
+                        {
+                          format fmt("Value node list size %1% != 1");
+                          fmt % OriginalMetadataValue_nodeList.size();
+                          throw ModelException(fmt.str());
+                        }
+                      else if (OriginalMetadataValue_nodeList.size() != 0)
+                        {
+                          OriginalMetadataAnnotation::metadata_type kv;
+                          std::vector<xerces::dom::Element> Key_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Key");
+                          if (Key_nodeList.size() > 1)
+                            {
+                              format fmt("Key node list size %1% != 1");
+                              fmt % Key_nodeList.size();
+                              throw ModelException(fmt.str());
+                            }
+                          else if (Key_nodeList.size() != 0)
+                            {
+                              kv.first = Key_nodeList.at(0).getTextContent();
+                            }
+                          std::vector<xerces::dom::Element> Value_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Value");
+                          if (Value_nodeList.size() > 1)
+                            {
+                              format fmt("Value node list size %1% != 1");
+                              fmt % Value_nodeList.size();
+                              throw ModelException(fmt.str());
+                            }
+                          else if (Value_nodeList.size() != 0)
+                            {
+                              kv.second = Value_nodeList.at(0).getTextContent();
+                            }
+                          map.set(kv.first, kv.second);
+                          continue;
+                        }
+                    }
+                  catch (const std::exception& /* e */)
+                    {
+                      /// @todo log error
+                    }
+                }
+            }
+        }
+
+      return map;
     }
 
     std::string
