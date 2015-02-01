@@ -424,7 +424,10 @@ public class NDPIReader extends BaseTiffReader {
       String[] entries = metadataTag.split("\n");
       for (String entry : entries) {
         int eq = entry.indexOf("=");
-       String key = entry.substring(0, eq).trim();
+        if (eq < 0) {
+          continue;
+        }
+        String key = entry.substring(0, eq).trim();
         String value = entry.substring(eq + 1).trim();
 
         addGlobalMeta(key, value);
