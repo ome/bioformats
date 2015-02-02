@@ -80,6 +80,8 @@ public class CellomicsReader extends FormatReader {
   private Pattern cellomicsPattern;
   private String[] files;
 
+  private ArrayList<String> metadataFiles = new ArrayList<String>();
+
   // -- Constructor --
 
   /** Constructs a new Cellomics reader. */
@@ -142,10 +144,17 @@ public class CellomicsReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
+    if (noPixels) {
+      return metadataFiles.toArray(new String[metadataFiles.size()]);
+    }
+
     int nFiles = files.length / getSeriesCount();
-    String[] seriesFiles = new String[nFiles];
-    System.arraycopy(files, getSeries() * nFiles, seriesFiles, 0, nFiles);
-    return seriesFiles;
+    ArrayList<String> seriesFiles = new ArrayList<String>();
+    seriesFiles.addAll(metadataFiles);
+    for (int i=0; i<nFiles; i++) {
+      seriesFiles.add(files[getSeries() * nFiles + i]);
+    }
+    return seriesFiles.toArray(new String[seriesFiles.size()]);
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -171,13 +180,15 @@ public class CellomicsReader extends FormatReader {
     if (plateName != null && isGroupFiles()) {
       String[] list = parent.list();
       for (String f : list) {
-        if (plateName.equals(getPlateName(f)) &&
-          (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
-        {
-          Location loc = new Location(parent, f);
+        boolean hasPlateName = plateName.equals(getPlateName(f));
+        Location loc = new Location(parent, f);
+        if (hasPlateName && checkSuffix(f, "c01") || checkSuffix(f, "dib")) {
           if ((!f.startsWith(".") || !loc.isHidden()) && getChannel(f) >= 0) {
             pixelFiles.add(loc.getAbsolutePath());
           }
+        }
+        else if (hasPlateName) {
+          metadataFiles.add(loc.getAbsolutePath());
         }
       }
     }
@@ -344,10 +355,11 @@ public class CellomicsReader extends FormatReader {
     int wellCntr = 0;
     int wellIndexPrev = 0;
     int wellIndex = 0;
+
     for (int i=0; i<getSeriesCount(); i++) {
       String file = files[i * getSizeC()];
 
-      int fieldIndex = getField(file);
+      int fieldIndex = uniqueFields.indexOf(getField(file));
       int row = getWellRow(file);
       int col = getWellColumn(file);
 
