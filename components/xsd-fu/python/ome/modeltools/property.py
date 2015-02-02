@@ -369,7 +369,10 @@ class OMEModelProperty(OMEModelEntity):
         doc="""If the property is an enumeration, its default value.""")
 
     def _get_defaultXsdValue(self):
-        return self.delegate.default
+        if hasattr(self.delegate, 'default'):
+            return self.delegate.default
+        else:
+            return None
     defaultXsdValue = property(
         _get_defaultXsdValue,
         doc="""The default value, if any, that is set on the attribute.""")
