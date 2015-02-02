@@ -127,7 +127,9 @@ namespace ome
                                            boost::dividable2<ConstrainedNumeric<N, C, E>, N,
                                            boost::dividable<ConstrainedNumeric<N, C, E>,
                                            boost::multipliable2<ConstrainedNumeric<N, C, E>, N,
-                                           boost::multipliable<ConstrainedNumeric<N, C, E> > > > > > > > > > > > >
+                                           boost::multipliable<ConstrainedNumeric<N, C, E>,
+                                           boost::incrementable<ConstrainedNumeric<N, C, E>,
+                                           boost::decrementable<ConstrainedNumeric<N, C, E> > > > > > > > > > > > > > >
         {
         public:
           /// The type to constrain.
@@ -401,6 +403,36 @@ namespace ome
           operator%= (const value_type& value)
           {
             this->value %= value;
+            check();
+            return *this;
+          }
+
+          /**
+           * Increment the constrained value by one.  If the new value
+           * fails the constraint check, this will cause an error.
+           *
+           * @param value the value to compute the modulus with.
+           * @returns the new value.
+           */
+          inline ConstrainedNumeric&
+          operator++ ()
+          {
+            ++this->value;
+            check();
+            return *this;
+          }
+
+          /**
+           * Decrement the constrained value by one.  If the new value
+           * fails the constraint check, this will cause an error.
+           *
+           * @param value the value to compute the modulus with.
+           * @returns the new value.
+           */
+          inline ConstrainedNumeric&
+          operator-- ()
+          {
+            --this->value;
             check();
             return *this;
           }
