@@ -322,14 +322,19 @@ public class ColumbusReader extends FormatReader {
     Timestamp date = new Timestamp(acquisitionDate);
     long timestampSeconds = date.asInstant().getMillis() / 1000;
     int nextWellSample = 0;
+
+    int prevRow = -1, prevCol = -1;
     for (int plane=0; plane<planes.size(); plane++) {
       Plane p = planes.get(plane);
 
-      if (plane % (getImageCount() * nFields) == 0) {
+      if (p.row != prevRow || p.col != prevCol) {
         nextWell++;
         store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
         store.setWellRow(new NonNegativeInteger(p.row), 0, nextWell);
         store.setWellColumn(new NonNegativeInteger(p.col), 0, nextWell);
+
+        prevRow = p.row;
+        prevCol = p.col;
       }
 
       if (plane % getImageCount() == 0) {
@@ -340,7 +345,7 @@ public class ColumbusReader extends FormatReader {
           nextWellSample++;
         }
 
-        if (nextWellSample == nFields) {
+        if (nextWellSample == nFields - 1) {
           nextWellSample = 0;
         }
 
