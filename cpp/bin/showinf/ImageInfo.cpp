@@ -36,6 +36,7 @@
  */
 
 #include <ome/bioformats/in/TIFFReader.h>
+#include <ome/bioformats/in/OMETIFFReader.h>
 
 #include <ome/xerces/Platform.h>
 #include <ome/xerces/dom/Document.h>
@@ -83,7 +84,7 @@ namespace showinf
   ImageInfo::testRead(std::ostream& stream)
   {
     if (!reader)
-      reader = std::make_shared<in::TIFFReader>();
+      reader = std::make_shared<in::OMETIFFReader>();
 
     preInit(stream);
 
