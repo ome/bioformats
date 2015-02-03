@@ -178,6 +178,7 @@ namespace ome
     createOMEXMLMetadata(const boost::filesystem::path& file)
     {
       // Parse OME-XML into DOM Document.
+      ome::xerces::Platform xmlplat;
       ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(file));
       return createOMEXMLMetadata(doc);
     }
@@ -186,6 +187,7 @@ namespace ome
     createOMEXMLMetadata(const std::string& text)
     {
       // Parse OME-XML into DOM Document.
+      ome::xerces::Platform xmlplat;
       ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(text));
       return createOMEXMLMetadata(doc);
     }
@@ -194,6 +196,7 @@ namespace ome
     createOMEXMLMetadata(std::istream& stream)
     {
       // Parse OME-XML into DOM Document.
+      ome::xerces::Platform xmlplat;
       ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(stream));
       return createOMEXMLMetadata(doc);
     }
@@ -432,6 +435,7 @@ namespace ome
             {
               try
                 {
+                  ome::xerces::Platform xmlplat;
                   ::ome::xerces::dom::Document xmlroot(::ome::xerces::dom::createDocument(xmlannotation->getValue()));
                   ::ome::xerces::dom::NodeList nodes(xmlroot.getElementsByTagName(tag));
 
@@ -611,6 +615,7 @@ namespace ome
                   // Fall back to parsing by hand.
                   try
                     {
+                      xerces::Platform xmlplat;
                       xerces::dom::ParseParameters params;
                       params.validationScheme = xercesc::XercesDOMParser::Val_Never;
                       xerces::dom::Document doc(ome::xerces::dom::createDocument(annotation->getValue()));
