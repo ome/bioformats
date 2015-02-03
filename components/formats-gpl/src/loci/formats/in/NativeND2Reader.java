@@ -95,6 +95,7 @@ public class NativeND2Reader extends FormatReader {
   private int fieldIndex;
 
   private long xOffset, yOffset, zOffset;
+  private long pfsOffset, pfsStateOffset;
 
   private ArrayList<Length> posX;
   private ArrayList<Length> posY;
@@ -312,6 +313,7 @@ public class NativeND2Reader extends FormatReader {
 
       fieldIndex = 0;
       xOffset = yOffset = zOffset = 0;
+      pfsOffset = pfsStateOffset = 0;
       posX = posY = posZ = null;
       channelColors = null;
       split = false;
@@ -698,22 +700,31 @@ public class NativeND2Reader extends FormatReader {
         else if (getMetadataOptions().getMetadataLevel() !=
           MetadataLevel.MINIMUM)
         {
+          int nDoubles = len / 8;
+          int nInts = len / 4;
+          long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
+          long intOffset = fp + 4 * (nInts - imageOffsets.size());
           if (blockType.startsWith("CustomData|A")) {
             customDataOffsets.add(new Long(fp));
             customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
-            int nDoubles = len / 8;
-            zOffset = fp + 8 * (nDoubles - imageOffsets.size());
+            zOffset = doubleOffset;
             extraZDataCount++;
           }
           else if (blockType.startsWith("CustomData|X")) {
-            int nDoubles = len / 8;
-            xOffset = fp + 8 * (nDoubles - imageOffsets.size());
+            xOffset = doubleOffset;
           }
           else if (blockType.startsWith("CustomData|Y")) {
-            int nDoubles = len / 8;
-            yOffset = fp + 8 * (nDoubles - imageOffsets.size());
+            yOffset = doubleOffset;
+          }
+          else if (blockType.startsWith("CustomData|P")) {
+            if (pfsOffset == 0) {
+              pfsOffset = intOffset;
+            }
+            else if (pfsStateOffset == 0) {
+              pfsStateOffset = intOffset;
+            }
           }
         }
         if (skip > 0 && skip + in.getFilePointer() <= in.length()) {
@@ -1151,6 +1162,18 @@ public class NativeND2Reader extends FormatReader {
             }
           }
           posZ.add(z);
+        }
+      }
+      if (pfsOffset != 0) {
+        in.seek(pfsOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          addGlobalMetaList("PFS Offset", in.readInt());
+        }
+      }
+      if (pfsStateOffset != 0) {
+        in.seek(pfsStateOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          addGlobalMetaList("PFS Status", in.readInt());
         }
       }
 
