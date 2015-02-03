@@ -78,7 +78,8 @@ public class CellomicsReader extends FormatReader {
   private static final Pattern PATTERN_D = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(d\\d+)?[^_]+$");
 
   private Pattern cellomicsPattern;
-  private String[] files;
+
+  private ArrayList<ChannelFile> files = new ArrayList<ChannelFile>();
 
   private ArrayList<String> metadataFiles = new ArrayList<String>();
 
@@ -119,11 +120,16 @@ public class CellomicsReader extends FormatReader {
 
     int[] zct = getZCTCoords(no);
 
-    String file = files[getSeries() * getSizeC() + zct[1]];
-    try (RandomAccessInputStream s = getDecompressedStream(file)) {
-      int planeSize = FormatTools.getPlaneSize(this);
-      s.seek(52 + zct[0] * planeSize);
-      readPlane(s, x, y, w, h, buf);
+    ChannelFile file = lookupFile(getSeries(), zct[1]);
+    if (file != null && file.filename != null) {
+      try (RandomAccessInputStream s = getDecompressedStream(file.filename)) {
+        int planeSize = FormatTools.getPlaneSize(this);
+        s.seek(52 + zct[0] * planeSize);
+        readPlane(s, x, y, w, h, buf);
+      }
+    }
+    else {
+      Arrays.fill(buf, (byte) 0);
     }
 
     return buf;
@@ -134,7 +140,7 @@ public class CellomicsReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      files = null;
+      files.clear();
       cellomicsPattern = null;
     }
   }
@@ -148,11 +154,13 @@ public class CellomicsReader extends FormatReader {
       return metadataFiles.toArray(new String[metadataFiles.size()]);
     }
 
-    int nFiles = files.length / getSeriesCount();
     ArrayList<String> seriesFiles = new ArrayList<String>();
     seriesFiles.addAll(metadataFiles);
-    for (int i=0; i<nFiles; i++) {
-      seriesFiles.add(files[getSeries() * nFiles + i]);
+    for (int c=0; c<getSizeC(); c++) {
+      ChannelFile f = lookupFile(getSeries(), c);
+      if (f != null && f.filename != null) {
+        seriesFiles.add(f.filename);
+      }
     }
     return seriesFiles.toArray(new String[seriesFiles.size()]);
   }
@@ -194,33 +202,8 @@ public class CellomicsReader extends FormatReader {
     }
     else pixelFiles.add(id);
 
-    files = pixelFiles.toArray(new String[pixelFiles.size()]);
-
-    int wellRows = 0;
-    int wellColumns = 0;
-    int fields = 0;
-
-    ArrayList<Integer> uniqueRows = new ArrayList<Integer>();
-    ArrayList<Integer> uniqueCols = new ArrayList<Integer>();
-    ArrayList<Integer> uniqueFields = new ArrayList<Integer>();
-    ArrayList<Integer> uniqueChannels = new ArrayList<Integer>();
-    for (String f : files) {
-      int wellRow = getWellRow(f);
-      int wellCol = getWellColumn(f);
-      int field = getField(f);
-      int channel = getChannel(f);
-
-      if (!uniqueRows.contains(wellRow)) uniqueRows.add(wellRow);
-      if (!uniqueCols.contains(wellCol)) uniqueCols.add(wellCol);
-      if (!uniqueFields.contains(field)) uniqueFields.add(field);
-      if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
-    }
-
-    fields = uniqueFields.size();
-    wellRows = uniqueRows.size();
-    wellColumns = uniqueCols.size();
-
-    Arrays.sort(files, new Comparator<String>() {
+    String[] filenames = pixelFiles.toArray(new String[pixelFiles.size()]);
+    Arrays.sort(filenames, new Comparator<String>() {
         @Override
         public int compare(String f1, String f2) {
 
@@ -257,12 +240,43 @@ public class CellomicsReader extends FormatReader {
         }
     });
 
+    int wellRows = 0;
+    int wellColumns = 0;
+    int fields = 0;
+
+    ArrayList<Integer> uniqueRows = new ArrayList<Integer>();
+    ArrayList<Integer> uniqueCols = new ArrayList<Integer>();
+    ArrayList<Integer> uniqueFields = new ArrayList<Integer>();
+    ArrayList<Integer> uniqueChannels = new ArrayList<Integer>();
+    for (String f : filenames) {
+      int wellRow = getWellRow(f);
+      int wellCol = getWellColumn(f);
+      int field = getField(f);
+      int channel = getChannel(f);
+
+      if (!uniqueRows.contains(wellRow)) uniqueRows.add(wellRow);
+      if (!uniqueCols.contains(wellCol)) uniqueCols.add(wellCol);
+      if (!uniqueFields.contains(field)) uniqueFields.add(field);
+      if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
+
+      files.add(new ChannelFile(f, wellRow, wellCol, field, channel));
+    }
+
+    fields = uniqueFields.size();
+    wellRows = uniqueRows.size();
+    wellColumns = uniqueCols.size();
+
+    for (int file=0; file<files.size(); file++) {
+      ChannelFile f = files.get(file);
+      int row = uniqueRows.indexOf(f.row);
+      int col = uniqueCols.indexOf(f.col);
+      int field = uniqueFields.indexOf(f.field);
+      f.series = row * wellColumns * fields + col * fields + field;
+    }
+
     core.clear();
 
-    int seriesCount = files.length;
-    if (uniqueChannels.size() > 0) {
-      seriesCount /= uniqueChannels.size();
-    }
+    int seriesCount = wellRows * wellColumns * fields;
 
     for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
@@ -338,7 +352,7 @@ public class CellomicsReader extends FormatReader {
     int realRows = wellRows;
     int realCols = wellColumns;
 
-    if (files.length == 1) {
+    if (files.size() == 1) {
       realRows = 1;
       realCols = 1;
     }
@@ -351,71 +365,50 @@ public class CellomicsReader extends FormatReader {
       realCols = 24;
     }
 
-    int fieldCntr = 0;
-    int wellCntr = 0;
-    int wellIndexPrev = 0;
-    int wellIndex = 0;
+    for (int row=0; row<realRows; row++) {
+      for (int col=0; col<realCols; col++) {
+        int well = row * realCols + col;
 
-    for (int i=0; i<getSeriesCount(); i++) {
-      String file = files[i * getSizeC()];
+        if (files.size() == 1) {
+          row = files.get(0).row;
+          col = files.get(0).col;
+        }
 
-      int fieldIndex = uniqueFields.indexOf(getField(file));
-      int row = getWellRow(file);
-      int col = getWellColumn(file);
+        store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
+        store.setWellRow(new NonNegativeInteger(row), 0, well);
+        store.setWellColumn(new NonNegativeInteger(col), 0, well);
+      }
+    }
 
-      store.setImageName(
-        String.format("Well %s%02d, Field #%02d",
+    int image = 0;
+    for (Integer row : uniqueRows) {
+      for (Integer col : uniqueCols) {
+        for (Integer field : uniqueFields) {
+          int fieldIndex = uniqueFields.indexOf(field);
+          store.setImageName(
+            String.format("Well %s%02d, Field #%02d",
                       new String(Character.toChars(row+'A')),
-                      col + 1, fieldIndex), i);
+                      col + 1, field), image);
 
-      if (files.length == 1) {
-        row = 0;
-        col = 0;
-      }
-
-      if (i>0 && files.length != 1){
-          String prevFile = files[(i-1) * getSizeC()];
-          int prevRow = getWellRow(prevFile);
-          int prevCol = getWellColumn(prevFile);
-          if (prevRow < realRows && prevCol < realCols){
-              wellIndexPrev = prevRow * realCols + prevCol;
-          }
-      }
-
-      String imageID = MetadataTools.createLSID("Image", i);
-      store.setImageID(imageID, i);
-      if (row < realRows && col < realCols) {
-        wellIndex = row * realCols + col;
-
-        if ((wellIndexPrev != wellIndex) || i==0){
-          if(i>0){
-            wellCntr++;
-            fieldCntr = 0;
-          }else{
-            wellIndexPrev = wellIndex;
+          if (files.size() == 1) {
+            row = 0;
+            col = 0;
           }
 
-          store.setWellID(MetadataTools.createLSID("Well", 0, wellIndex), 0, wellCntr);
-          store.setWellRow(new NonNegativeInteger(row), 0, wellCntr);
-          store.setWellColumn(new NonNegativeInteger(col), 0, wellCntr);
+          String imageID = MetadataTools.createLSID("Image", image);
+          store.setImageID(imageID, image);
+          if (row < realRows && col < realCols) {
+            int wellIndex = row * realCols + col;
+
+            String wellSampleID = MetadataTools.createLSID("WellSample",
+              0, wellIndex, fieldIndex);
+            store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
+            store.setWellSampleIndex(
+              new NonNegativeInteger(image), 0, wellIndex, fieldIndex);
+            store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
+          }
+          image++;
         }
-
-        if (files.length == 1) {
-          fieldIndex = 0;
-        }
-
-        if (fieldIndex == 0){
-          fieldCntr=0;
-        }
-
-        String wellSampleID =
-          MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
-        store.setWellSampleID(wellSampleID, 0, wellCntr, fieldCntr);
-        store.setWellSampleIndex(
-          new NonNegativeInteger(i), 0, wellCntr, fieldCntr);
-        store.setWellSampleImageRef(imageID, 0, wellCntr, fieldCntr);
-
-        fieldCntr++;
       }
     }
 
@@ -518,6 +511,32 @@ public class CellomicsReader extends FormatReader {
       }
     }
     return s;
+  }
+
+  private ChannelFile lookupFile(int seriesIndex, int channel) {
+    for (ChannelFile f : files) {
+      if (f.series == seriesIndex && f.channel == channel) {
+        return f;
+      }
+    }
+    return null;
+  }
+
+  class ChannelFile {
+    public String filename;
+    public int row;
+    public int col;
+    public int field;
+    public int channel;
+    public int series;
+
+    public ChannelFile(String filename, int row, int col, int field, int channel) {
+      this.filename = filename;
+      this.row = row;
+      this.col = col;
+      this.field = field;
+      this.channel = channel;
+    }
   }
 
 }
