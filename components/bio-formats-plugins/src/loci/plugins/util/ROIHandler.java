@@ -252,14 +252,14 @@ public class ROIHandler {
 
                     if (roi != null) {
                         Roi.setColor(Color.WHITE);
-                        Roi.setDefaultFillColor(Color.WHITE);
 
                         roi.setImage(images[imageNum]);
                         if (sw != null) roi.setStrokeWidth(sw);
                         if (sc != null) roi.setStrokeColor(sc);
-                        if (fc != null) roi.setFillColor(fc);
+//                        if (fc != null) roi.setFillColor(fc);
 
                         manager.add(images[imageNum], roi, nextRoi++);
+                        manager.setAlwaysOnTop(true);
                     }
                 }
             }
