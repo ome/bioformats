@@ -26,11 +26,11 @@
         // Parents: ${repr(parents[obj.name])}
 {% if obj.isReference %}\
         // ${obj.name} is a reference
-        return root->${"->".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOfLinked%sList()" % obj.name.replace('Ref', '')])};
+        return ${safe_accessor(['root']+accessor(obj.name, parent, obj.name)[:-1] + ["sizeOfLinked%sList()" % obj.name.replace('Ref', '')])};
 {% end %}\
 {% if not obj.isReference %}\
         // ${obj.name} is not a reference
-        return root->${"->".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOf%sList()" % obj.name.replace('Ref', '')])};
+        return ${safe_accessor(['root']+accessor(obj.name, parent, obj.name)[:-1] + ["sizeOf%sList()" % obj.name.replace('Ref', '')])};
 {% end %}\
       }
 {% end source %}\
@@ -81,23 +81,23 @@
         // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
         // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
         // DUMMYLINE
-        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(root->${"->".join(accessor(obj.name, parent, prop)[:-1])});
-        ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}));
+        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1])});
+        ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (ret)
           return ret->getID();
         throw(std::runtime_error("Internal metadata store inconsistency: null object"));
 {% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${parent} is abstract proprietary
-        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(root->${"->".join(accessor(obj.name, parent, prop)[:-1])});
-        ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}());
+        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1])});
+        ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
         if (ret)
           return ret->getID();
         throw(std::runtime_error("Internal metadata store inconsistency: null object"));
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract proprietary and not a reference
-        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(root->${"->".join(accessor(obj.name, parent, prop)[:-1])});
+        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1])});
 {% if prop.minOccurs == 0 %}\
         ${prop.retType[' const']} ret = o->get${prop.methodName}();
         if (ret)
@@ -110,7 +110,7 @@
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
         // ${prop.name} is reference and occurs more than once
-        std::shared_ptr< ${prop.langTypeNS}> annotation(root->${"->".join(accessor(obj.name, parent, prop))}->getLinked${prop.methodName}(${index_name_string(prop.name)}));
+        std::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop))}->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (annotation)
           return annotation->getID();
         /// @todo: Need an exception for store inconsistency.
@@ -118,7 +118,7 @@
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs only once
-        std::shared_ptr< ${prop.langTypeNS}> annotation(root->${"->".join(accessor(obj.name, parent, prop))}->getLinked${prop.methodName}());
+        std::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop))}->getLinked${prop.methodName}().lock());
         if (annotation)
           return annotation->getID();
         /// @todo: Need an exception for store inconsistency.
@@ -127,13 +127,13 @@
 {% otherwise %}\
         // ${prop.name} is not a reference
 {% if prop.minOccurs == 0 %}\
-        ${prop.retType[' const']} ret = root->${"->".join(accessor(obj.name, parent, prop))}->get${prop.methodName}();
+        ${prop.retType[' const']} ret = ${safe_accessor(['root']+accessor(obj.name, parent, prop))}->get${prop.methodName}();
         if (ret)
           return *ret;
         throw(std::runtime_error("Internal metadata store inconsistency: null annotation"));
 {% end %}\
 {% if prop.minOccurs == 1 %}\
-        return root->${"->".join(accessor(obj.name, parent, prop))}->get${prop.methodName}();
+        return ${safe_accessor(['root']+accessor(obj.name, parent, prop))}->get${prop.methodName}();
 {% end %}\
 {% end %}\
 {% end %}\
@@ -185,7 +185,7 @@
         // ${prop.name} is abstract proprietary and is a reference
         std::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared< ${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
-        std::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o_base(std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(root->${"->".join(accessor(obj.name, parent, prop)[:-1])}));
+        std::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o_base(std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1])}));
         std::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(std::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
 
         model->addReference(o_base, ref);
@@ -251,7 +251,7 @@
         std::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared< ${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
         std::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject
-          (std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(root->${"->".join(accessor(obj.name, parent, prop))}));
+          (std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop))}));
         std::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(std::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
 
         model->addReference(modelObject, ref);
@@ -347,6 +347,18 @@ ${customContent[obj.name][prop.name]}
                 if len(results.keys()) == 0:
                         raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
                 return results[parent]
+
+        def safe_accessor(calls):
+                ret = None
+                if len(calls) == 1:
+                        ret = "safe_fetch(%s)" % calls[0]
+                else:
+                        for call in range(len(calls)):
+                                if call == 0:
+                                        ret = "safe_fetch(%s)" % (calls[call])
+                                else:
+                                        ret = "safe_fetch(%s->%s)" % (ret, calls[call])
+                return ret
 %}\
 \
 \
@@ -414,6 +426,41 @@ ${customContent[obj.name][prop.name]}
 {% for header in fu.OBJECT_HEADERS %}\
 #include <${header}>
 {% end %}\
+
+namespace
+{
+
+  // Throw an exception if a pointer is invalid.
+  template<typename T>
+  std::shared_ptr<T>
+  safe_fetch(std::shared_ptr<T> ptr)
+  {
+    if (!ptr)
+      throw(std::runtime_error("Internal metadata store inconsistency: "));
+    return ptr;
+  }
+
+  // Throw an exception if a pointer is invalid.
+  template<typename T>
+  std::shared_ptr<T>
+  safe_fetch(std::weak_ptr<T> ptr)
+  {
+    std::shared_ptr<T> shared(ptr.lock());
+    if (!shared)
+      throw(std::runtime_error("Internal metadata store inconsistency: "));
+    return shared;
+  }
+
+  // Pass through for value types.
+  template<typename T>
+  T
+  safe_fetch(T value)
+  {
+    return value;
+  }
+
+}
+
 {% end source%}\
 
 namespace ome
@@ -581,7 +628,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getPixelsBinDataCount(index_type imageIndex) const
       {
-        return root->getImage(imageIndex)->getPixels()->sizeOfBinDataList();
+        return safe_fetch(safe_fetch(root->getImage(imageIndex))->getPixels())->sizeOfBinDataList();
       }
 {% end source %}\
 
@@ -594,7 +641,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getBooleanAnnotationAnnotationCount(index_type booleanAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getBooleanAnnotation(booleanAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getBooleanAnnotation(booleanAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -607,7 +654,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getCommentAnnotationAnnotationCount(index_type commentAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getCommentAnnotation(commentAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getCommentAnnotation(commentAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -620,7 +667,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getDoubleAnnotationAnnotationCount(index_type doubleAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getDoubleAnnotation(doubleAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getDoubleAnnotation(doubleAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -633,7 +680,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getFileAnnotationAnnotationCount(index_type fileAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getFileAnnotation(fileAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getFileAnnotation(fileAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -646,7 +693,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getListAnnotationAnnotationCount(index_type listAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getListAnnotation(listAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getListAnnotation(listAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -659,7 +706,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getLongAnnotationAnnotationCount(index_type longAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getLongAnnotation(longAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getLongAnnotation(longAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -672,7 +719,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getTagAnnotation(tagAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getTagAnnotation(tagAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -685,7 +732,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getTermAnnotationAnnotationCount(index_type termAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getTermAnnotation(termAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getTermAnnotation(termAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -698,7 +745,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getTimestampAnnotationAnnotationCount(index_type timestampAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getTimestampAnnotation(timestampAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getTimestampAnnotation(timestampAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -711,7 +758,7 @@ namespace ome
       OMEXMLMetadata::index_type
       OMEXMLMetadata::getXMLAnnotationAnnotationCount(index_type xmlAnnotationIndex) const
       {
-        return root->getStructuredAnnotations()->getXMLAnnotation(xmlAnnotationIndex)->sizeOfLinkedAnnotationList();
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations())->getXMLAnnotation(xmlAnnotationIndex))->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -726,7 +773,7 @@ namespace ome
       OMEXMLMetadata::getLightSourceType(index_type instrumentIndex,
                                          index_type lightSourceIndex) const
       {
-        std::shared_ptr<const ::${lang.omexml_model_package}::LightSource> o = root->getInstrument(instrumentIndex)->getLightSource(lightSourceIndex);
+        std::shared_ptr<const ::${lang.omexml_model_package}::LightSource> o = safe_fetch(root->getInstrument(instrumentIndex))->getLightSource(lightSourceIndex);
         return o->getLightSourceType();
       }
 {% end source %}\
@@ -742,8 +789,7 @@ namespace ome
       OMEXMLMetadata::getShapeType(index_type roiIndex,
                                    index_type shapeIndex) const
       {
-        std::shared_ptr<const ::${lang.omexml_model_package}::Shape> o = root->getROI(roiIndex)->getUnion()->getShape(shapeIndex);
-        return o->getShapeType();
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex))->getUnion())->getShape(shapeIndex))->getShapeType();
       }
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -806,7 +852,7 @@ namespace ome
       ${o.langBaseType}
       OMEXMLMetadata::get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const
       {
-        return root->getImage(imageIndex)->getPixels()->getTiffData(tiffDataIndex)->getUUID()->getValue();
+        return safe_fetch(safe_fetch(safe_fetch(safe_fetch(root->getImage(imageIndex))->getPixels())->getTiffData(tiffDataIndex))->getUUID())->getValue();
       }
 {% end source %}\
 
@@ -836,11 +882,14 @@ ${counter(k, o, v)}\
       OMEXMLMetadata::getPixelsBinDataBigEndian(index_type imageIndex,
                                                 index_type binDataIndex) const
       {
-        std::shared_ptr<bool> bigEndian = root->getImage(imageIndex)->getPixels()->getBigEndian();
+        std::shared_ptr<bool> bigEndian = safe_fetch(safe_fetch(root->getImage(imageIndex))->getPixels())->getBigEndian();
+
         if (bigEndian) { // not null
           return *bigEndian;
         }
-        return root->getImage(imageIndex)->getPixels()->getBinData(binDataIndex)->getBigEndian();
+
+        // Fall back to BinData
+        return safe_fetch(safe_fetch(safe_fetch(root->getImage(imageIndex))->getPixels())->getBinData(binDataIndex))->getBigEndian();
       }
 {% end source %}\
 
