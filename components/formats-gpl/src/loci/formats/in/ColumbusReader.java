@@ -180,10 +180,18 @@ public class ColumbusReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int index = getSeries() * getImageCount() + no;
-    Plane p = planes.get(index);
+    int[] zct = getZCTCoords(no);
+    Plane p = null;
+    for (Plane plane : planes) {
+      if (plane.series == getSeries() && plane.timepoint == zct[2] &&
+        plane.channel == zct[1])
+      {
+        p = plane;
+        break;
+      }
+    }
 
-    if (new Location(p.file).exists()) {
+    if (p != null && new Location(p.file).exists()) {
       reader.setId(p.file);
       reader.openBytes(p.fileIndex, buf, x, y, w, h);
     }
@@ -270,12 +278,20 @@ public class ColumbusReader extends FormatReader {
     m.sizeT = 0;
 
     ArrayList<Integer> uniqueSamples = new ArrayList<Integer>();
+    ArrayList<Integer> uniqueRows = new ArrayList<Integer>();
+    ArrayList<Integer> uniqueCols = new ArrayList<Integer>();
     for (Plane p : tmpPlanes) {
       planes.add(p);
 
       int sampleIndex = p.row * handler.getPlateColumns() + p.col;
       if (!uniqueSamples.contains(sampleIndex)) {
         uniqueSamples.add(sampleIndex);
+      }
+      if (!uniqueRows.contains(p.row)) {
+        uniqueRows.add(p.row);
+      }
+      if (!uniqueCols.contains(p.col)) {
+        uniqueCols.add(p.col);
       }
 
       // missing wells are allowed, but the field/channel/timepoint
@@ -315,66 +331,61 @@ public class ColumbusReader extends FormatReader {
     store.setPlateColumns(new PositiveInteger(handler.getPlateColumns()), 0);
 
     String imagePrefix = handler.getPlateName() + " Well ";
-    int planeIndex = 0;
     int wellSample = 0;
 
     int nextWell = -1;
     Timestamp date = new Timestamp(acquisitionDate);
     long timestampSeconds = date.asInstant().getMillis() / 1000;
-    int nextWellSample = 0;
 
-    int prevRow = -1, prevCol = -1;
-    for (int plane=0; plane<planes.size(); plane++) {
-      Plane p = planes.get(plane);
-
-      if (p.row != prevRow || p.col != prevCol) {
+    for (Integer row : uniqueRows) {
+      for (Integer col : uniqueCols) {
         nextWell++;
         store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
-        store.setWellRow(new NonNegativeInteger(p.row), 0, nextWell);
-        store.setWellColumn(new NonNegativeInteger(p.col), 0, nextWell);
+        store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
+        store.setWellColumn(new NonNegativeInteger(col), 0, nextWell);
 
-        prevRow = p.row;
-        prevCol = p.col;
-        nextWellSample = 0;
+        for (int field=0; field<nFields; field++) {
+          Plane p = lookupPlane(row, col, field, 0, 0);
+          String wellSampleID = MetadataTools.createLSID("WellSample", 0, nextWell, field);
+          store.setWellSampleID(wellSampleID, 0, nextWell, field);
+          store.setWellSampleIndex(new NonNegativeInteger(wellSample), 0, nextWell, field);
+
+          if (p != null) {
+            store.setWellSamplePositionX(p.positionX, 0, nextWell, field);
+            store.setWellSamplePositionY(p.positionY, 0, nextWell, field);
+          }
+
+          String imageID = MetadataTools.createLSID("Image", wellSample);
+          store.setImageID(imageID, wellSample);
+          store.setWellSampleImageRef(imageID, 0, nextWell, field);
+
+          store.setImageName(
+            imagePrefix + (char) (row + 'A') + (col + 1) + " Field #" + (field + 1), wellSample);
+          store.setImageAcquisitionDate(date, wellSample);
+          if (p != null) {
+            p.series = wellSample;
+
+            store.setPixelsPhysicalSizeX(new PositiveFloat(p.sizeX), p.series);
+            store.setPixelsPhysicalSizeY(new PositiveFloat(p.sizeY), p.series);
+
+            for (int c=0; c<getSizeC(); c++) {
+              p = lookupPlane(row, col, field, 0, c);
+              store.setChannelName(p.channelName, p.series, p.channel);
+              store.setChannelEmissionWavelength(
+                new PositiveInteger((int) p.emWavelength), p.series, p.channel);
+              store.setChannelExcitationWavelength(
+                new PositiveInteger((int) p.exWavelength), p.series, p.channel);
+              store.setChannelColor(p.channelColor, p.series, p.channel);
+
+              for (int t=0; t<getSizeT(); t++) {
+                p = lookupPlane(row, col, field, t, c);
+                store.setPlaneDeltaT(p.deltaT - timestampSeconds, p.series, getIndex(0, c, t));
+              }
+            }
+          }
+          wellSample++;
+        }
       }
-
-      if (plane % getImageCount() == 0) {
-        String wellSampleID = MetadataTools.createLSID("WellSample", 0, nextWell, nextWellSample);
-        store.setWellSampleID(wellSampleID, 0, nextWell, nextWellSample);
-        store.setWellSampleIndex(new NonNegativeInteger(wellSample), 0, nextWell, nextWellSample);
-        store.setWellSamplePositionX(p.positionX, 0, nextWell, nextWellSample);
-        store.setWellSamplePositionY(p.positionY, 0, nextWell, nextWellSample);
-
-        String imageID = MetadataTools.createLSID("Image", wellSample);
-        store.setImageID(imageID, wellSample);
-        store.setWellSampleImageRef(imageID, 0, nextWell, nextWellSample);
-
-        store.setImageName(
-          imagePrefix + (char) (p.row + 'A') + (p.col + 1) + " Field #" + (p.field + 1), wellSample);
-        store.setImageAcquisitionDate(date, wellSample);
-
-        p.series = wellSample;
-        wellSample++;
-
-        nextWellSample++;
-
-        store.setPixelsPhysicalSizeX(new PositiveFloat(p.sizeX), p.series);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(p.sizeY), p.series);
-      }
-      else {
-        p.series = wellSample - 1;
-      }
-
-      if (plane % getImageCount() < getSizeC()) {
-        store.setChannelName(p.channelName, p.series, p.channel);
-        store.setChannelEmissionWavelength(
-          new PositiveInteger((int) p.emWavelength), p.series, p.channel);
-        store.setChannelExcitationWavelength(
-          new PositiveInteger((int) p.exWavelength), p.series, p.channel);
-        store.setChannelColor(p.channelColor, p.series, p.channel);
-      }
-
-      store.setPlaneDeltaT(p.deltaT - timestampSeconds, p.series, getIndex(0, p.channel, p.timepoint));
     }
   }
 
@@ -503,6 +514,17 @@ public class ColumbusReader extends FormatReader {
       return v /= 1000;
     }
     return v;
+  }
+
+  private Plane lookupPlane(int row, int col, int field, int t, int c) {
+    for (Plane p : planes) {
+      if (p.row == row && p.col == col && p.field == field &&
+        p.timepoint == t && p.channel == c)
+      {
+        return p;
+      }
+    }
+    return null;
   }
 
   // -- Helper classes --
