@@ -102,7 +102,17 @@
         ${prop.retType[' const']} ret = o->get${prop.methodName}();
         if (ret)
           return *ret;
+{% if prop.maxOccurs != 1 or prop.defaultXsdValue is None %}\
         throw(std::runtime_error("Internal metadata store inconsistency: null annotation"));
+{% end %}\
+{% if prop.maxOccurs == 1 and prop.defaultXsdValue is not None %}\
+{% if prop.langType == 'std::string' or prop.isEnumeration %}\
+        return "${prop.defaultXsdValue}";
+{% end %}\
+{% if prop.langType != 'std::string' and not prop.isEnumeration %}\
+        return ${prop.defaultXsdValue};
+{% end %}\
+{% end %}\
 {% end %}\
 {% if prop.minOccurs == 1 %}\
         return o->get${prop.methodName}();
