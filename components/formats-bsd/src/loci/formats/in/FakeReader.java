@@ -850,7 +850,7 @@ public class FakeReader extends FormatReader {
     for (String pathToken : fakeSeries.get(fakeSeries.size() - 1)
         .split(regExFileSeparator)) {
       if (pathToken.startsWith(ResourceNamer.RUN)) {
-        plateAcqs = Integer.valueOf(pathToken.substring(pathToken.lastIndexOf(
+        plateAcqs = Integer.parseInt(pathToken.substring(pathToken.lastIndexOf(
             ResourceNamer.RUN) + ResourceNamer.RUN.length(),
             pathToken.length())) + 1;
       } else if (pathToken.startsWith(ResourceNamer.WELL)) {
@@ -859,10 +859,10 @@ public class FakeReader extends FormatReader {
             pathToken.length());
         String[] elements = wellId.split("(?<=\\p{L})(?=\\d)");
         rows = ResourceNamer.alphabeticIndexCount(elements[0]);
-        cols = Integer.valueOf(elements[1]) + 1;
+        cols = Integer.parseInt(elements[1]) + 1;
       } else if (pathToken.startsWith(ResourceNamer.FIELD)) {
         String fieldName = pathToken.substring(0, pathToken.lastIndexOf("."));
-        fields = Integer.valueOf(fieldName.substring(fieldName.lastIndexOf(
+        fields = Integer.parseInt(fieldName.substring(fieldName.lastIndexOf(
             ResourceNamer.FIELD) + ResourceNamer.FIELD.length(),
             fieldName.length())) + 1;
       }
