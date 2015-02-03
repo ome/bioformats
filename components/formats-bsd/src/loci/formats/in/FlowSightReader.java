@@ -72,9 +72,7 @@ public class FlowSightReader extends FormatReader {
    * to function properly
    */
   final private static int [] MINIMAL_TAGS = {
-    CHANNEL_COUNT_TAG,
-    CHANNEL_NAMES_TAG,
-    CHANNEL_DESCS_TAG
+    METADATA_XML_TAG
   };
 
   private transient TiffParser tiffParser;
@@ -140,23 +138,26 @@ public class FlowSightReader extends FormatReader {
      */
     final IFD ifd0 = tiffParser.getFirstIFD();
     tiffParser.fillInIFD(ifd0);
-    final int channelCount = ifd0.getIFDIntValue(CHANNEL_COUNT_TAG);
+    final int channelCount = ifd0.getIFDIntValue(CHANNEL_COUNT_TAG, 1);
     final String channelNamesString = ifd0.getIFDStringValue(CHANNEL_NAMES_TAG);
-    channelNames = channelNamesString.split("\\|");
-    if (channelNames.length != channelCount) {
-      throw new FormatException(String.format(
-          "Channel count (%d) does not match number of channel names (%d) in string \"%s\"",
-          channelCount, channelNames.length, channelNamesString));
+    if (channelNamesString != null) {
+      channelNames = channelNamesString.split("\\|");
+      if (channelNames.length != channelCount) {
+        throw new FormatException(String.format(
+            "Channel count (%d) does not match number of channel names (%d) in string \"%s\"",
+            channelCount, channelNames.length, channelNamesString));
+      }
+      LOGGER.debug("Found {} channels: {}",
+          channelCount, channelNamesString.replace('|', ','));
     }
-    LOGGER.debug(String.format(
-        "Found %d channels: %s", 
-        channelCount, channelNamesString.replace('|', ',')));
     final String channelDescsString = ifd0.getIFDStringValue(CHANNEL_DESCS_TAG);
-    channelDescs =  channelDescsString.split("\\|");
-    if (channelDescs.length != channelCount) {
-      throw new FormatException(String.format(
-          "Channel count (%d) does not match number of channel descriptions (%d) in string \"%s\"",
-          channelCount, channelDescs.length, channelDescsString));
+    if (channelDescsString != null) {
+      channelDescs = channelDescsString.split("\\|");
+      if (channelDescs.length != channelCount) {
+        throw new FormatException(String.format(
+            "Channel count (%d) does not match number of channel descriptions (%d) in string \"%s\"",
+            channelCount, channelDescs.length, channelDescsString));
+      }
     }
     /*
      * Scan the remaining IFDs
@@ -197,18 +198,21 @@ public class FlowSightReader extends FormatReader {
      * for all the series.
      */
     final MetadataStore store = getMetadataStore();
-    String [] maskDescs = new String [channelCount];
-    for (int i=0; i<channelCount; i++) {
-      maskDescs[i] = channelDescs[i] + " Mask";
-    }
     MetadataTools.populatePixels(store, this);
-    for (int series=0; series < ifdOffsets.length-1; series++) {
-      final boolean isMask = (core.get(series).pixelType == FormatTools.UINT8);
-      String [] descs = isMask ? maskDescs : channelDescs;
-      for (int channel=0; channel < channelCount; channel++) {
-        store.setChannelName(descs[channel], series, channel);
-        String cid = MetadataTools.createLSID("Channel", series, channel) + ":";
-        store.setChannelID(cid + channelNames[channel], series, channel);
+
+    if (channelNames != null && channelDescs != null) {
+      String [] maskDescs = new String [channelCount];
+      for (int i=0; i<channelCount; i++) {
+        maskDescs[i] = channelDescs[i] + " Mask";
+      }
+      for (int series=0; series < ifdOffsets.length-1; series++) {
+        final boolean isMask = core.get(series).pixelType == FormatTools.UINT8;
+        String[] descs = isMask ? maskDescs : channelDescs;
+        for (int channel=0; channel < channelCount; channel++) {
+          store.setChannelName(descs[channel], series, channel);
+          String cid = MetadataTools.createLSID("Channel", series, channel) + ":";
+          store.setChannelID(cid + channelNames[channel], series, channel);
+        }
       }
     }
   }
@@ -232,16 +236,16 @@ public class FlowSightReader extends FormatReader {
 
   @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-      throws FormatException, IOException {
-    if (no > getChannelCount()) {
-      throw new FormatException("Only one plane per series");
-    }
+      throws FormatException, IOException
+  {
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
     final int idx = getSeries() + 1;
     final IFD ifd = tiffParser.getIFD(ifdOffsets[idx]);
     final int imageWidth = (int) (ifd.getImageWidth());
     final int imageHeight = (int) (ifd.getImageLength());
-    final int wOff = x + no * imageWidth / getChannelCount();
-    if ((y+h > imageHeight) || (x+w > imageWidth / getChannelCount()) ) {
+    final int wOff = x + no * imageWidth / getSizeC();
+    if (x+w > imageWidth / getSizeC()) {
       throw new FormatException("Requested tile dimensions extend beyond those of the image.");
     }
     final int compression = ifd.getIFDIntValue(IFD.COMPRESSION);
@@ -426,13 +430,6 @@ public class FlowSightReader extends FormatReader {
       thisRow = temp;
     }
     return buffer;
-  }
-
-  /**
-   * @return number of channels per series
-   */
-  private int getChannelCount() {
-    return channelNames.length;
   }
 
 }
