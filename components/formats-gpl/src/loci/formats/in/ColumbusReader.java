@@ -322,6 +322,7 @@ public class ColumbusReader extends FormatReader {
     Timestamp date = new Timestamp(acquisitionDate);
     long timestampSeconds = date.asInstant().getMillis() / 1000;
     int nextWellSample = 0;
+    int nextSeries = 0;
 
     int prevRow = -1, prevCol = -1;
     for (int plane=0; plane<planes.size(); plane++) {
@@ -339,10 +340,13 @@ public class ColumbusReader extends FormatReader {
 
       if (plane % getImageCount() == 0) {
         // fill in empty WellSamples for missing fields
+        boolean addEmptySamples = nextWellSample < p.field;
         while (nextWellSample < p.field) {
           String wellSampleID = MetadataTools.createLSID("WellSample", 0, nextWell, nextWellSample);
           store.setWellSampleID(wellSampleID, 0, nextWell, nextWellSample);
+          store.setWellSampleIndex(new NonNegativeInteger(wellSample), 0, nextWell, nextWellSample);
           nextWellSample++;
+          wellSample++;
         }
 
         if (nextWellSample == nFields - 1) {
@@ -355,22 +359,27 @@ public class ColumbusReader extends FormatReader {
         store.setWellSamplePositionX(p.positionX, 0, nextWell, p.field);
         store.setWellSamplePositionY(p.positionY, 0, nextWell, p.field);
 
-        String imageID = MetadataTools.createLSID("Image", wellSample);
-        store.setImageID(imageID, wellSample);
+        String imageID = MetadataTools.createLSID("Image", nextSeries);
+        store.setImageID(imageID, nextSeries);
         store.setWellSampleImageRef(imageID, 0, nextWell, p.field);
 
         store.setImageName(
-          imagePrefix + (char) (p.row + 'A') + (p.col + 1) + " Field #" + (p.field + 1), wellSample);
-        store.setImageAcquisitionDate(date, wellSample);
+          imagePrefix + (char) (p.row + 'A') + (p.col + 1) + " Field #" + (p.field + 1), nextSeries);
+        store.setImageAcquisitionDate(date, nextSeries);
 
-        p.series = wellSample;
+        p.series = nextSeries;
         wellSample++;
+        nextSeries++;
+
+        if (!addEmptySamples && p.field < nFields - 1) {
+          nextWellSample++;
+        }
 
         store.setPixelsPhysicalSizeX(new PositiveFloat(p.sizeX), p.series);
         store.setPixelsPhysicalSizeY(new PositiveFloat(p.sizeY), p.series);
       }
       else {
-        p.series = wellSample - 1;
+        p.series = nextSeries - 1;
       }
 
       if (plane % getImageCount() < getSizeC()) {
