@@ -275,7 +275,8 @@ namespace ome
        */
       Document
       createDocument(const std::string&     text,
-                     const ParseParameters& params = ParseParameters());
+                     const ParseParameters& params = ParseParameters(),
+                     const std::string&     id = "membuf");
 
       /**
        * Construct a Document from the content of an input stream.
@@ -286,7 +287,8 @@ namespace ome
        */
       Document
       createDocument(std::istream&          stream,
-                     const ParseParameters& params = ParseParameters());
+                     const ParseParameters& params = ParseParameters(),
+                     const std::string&     id = "streambuf");
 
       /**
        * Parameters controlling DOM writing.
