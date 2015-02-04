@@ -501,8 +501,10 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS}
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                itype = {' const': "const std::vector<std::shared_ptr<%s> >" % ns_sep,
-                         '':      "std::vector<std::shared_ptr<%s> >" % ns_sep}
+                itype = {' const': "const std::vector<std::shared_ptr<%s> >"
+                         % ns_sep,
+                         '':      "std::vector<std::shared_ptr<%s> >"
+                         % ns_sep}
 
         return itype
     retType = property(_get_retType, doc="""The property's return type.""")
@@ -562,12 +564,14 @@ class OMEModelProperty(OMEModelEntity):
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.argType()
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif (self.maxOccurs > 1
+                    and not self.parent.isAbstractProprietary):
                 itype = {' const': "const std::shared_ptr<%s>&" % ns_sep,
                          '':      "std::shared_ptr<%s>&" % ns_sep}
 
         return itype
-    elementRetType = property(_get_elementRetType, doc="""The property's element return type (for lists).""")
+    elementRetType = property(_get_elementRetType,
+                              doc="""The property's element return type (for lists).""")
 
     def _get_assignableType(self):
         """
@@ -613,9 +617,12 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS,
                              '':       "%s&" % self.langTypeNS}
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                itype = {' const': "const std::vector<std::shared_ptr<%s> >" % ns_sep,
-                         '':      "std::vector<std::shared_ptr<%s> >" % ns_sep}
+            elif (self.maxOccurs > 1
+                    and not self.parent.isAbstractProprietary):
+                itype = {' const': "const std::vector<std::shared_ptr<%s> >"
+                         % ns_sep,
+                         '':      "std::vector<std::shared_ptr<%s> >"
+                         % ns_sep}
 
         return itype
     assignableType = property(
