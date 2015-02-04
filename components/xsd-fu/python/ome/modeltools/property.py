@@ -534,7 +534,9 @@ class OMEModelProperty(OMEModelEntity):
                 itype = "std::shared_ptr<%s>&" % ns_sep
 
         return itype
-    elementArgType = property(_get_elementArgType, doc="""The property's element argument type (for lists).""")
+    elementArgType = property
+        (_get_elementArgType,
+         doc="""The property's element argument type (for lists).""")
 
     def _get_elementRetType(self):
         """
@@ -570,8 +572,9 @@ class OMEModelProperty(OMEModelEntity):
                          '':      "std::shared_ptr<%s>&" % ns_sep}
 
         return itype
-    elementRetType = property(_get_elementRetType,
-                              doc="""The property's element return type (for lists).""")
+    elementRetType = property
+        (_get_elementRetType,
+         doc="""The property's element return type (for lists).""")
 
     def _get_assignableType(self):
         """
