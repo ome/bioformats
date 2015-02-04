@@ -175,8 +175,16 @@ namespace ome
         bool match = true;
 
         boost::filesystem::path filename(name);
+#if !defined(BOOST_VERSION) || BOOST_VERSION >= 105000 // Boost >= 1.50
         boost::filesystem::path ext;
         ext.replace_extension(suffix); // Adds leading dot if missing
+#else // Boost < 1.50
+        // replace_extension doesn't work nicely with older Boost versions.
+        boost::filesystem::path ext(suffix);
+        std::string suffixString(ext.string());
+        if (!suffixString.empty() && suffixString[0] != '.')
+          ext = boost::filesystem::path(std::string(".") + suffixString);
+#endif // Boost version
 
         while(true)
           {
@@ -248,16 +256,14 @@ namespace ome
                  si != suffixes.end();
                  ++si)
               {
-#if !defined(BOOST_VERSION) || BOOST_VERSION >= 105000
-                // Boost >= 1.50
+#if !defined(BOOST_VERSION) || BOOST_VERSION >= 105000 // Boost >= 1.50
                 boost::filesystem::path suffix(*si);
                 suffix += boost::filesystem::path(".");
                 suffix += *csi;
-#else
-                // Boost < 1.50
+#else // Boost < 1.50
                 boost::filesystem::path suffix(si->parent_path());
                 suffix /= boost::filesystem::path(si->filename().string() + "." + csi->string());
-#endif
+#endif // Boost version
 
                 if (checkSuffix(name, suffix))
                   return true;
