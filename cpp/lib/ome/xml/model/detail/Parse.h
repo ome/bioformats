@@ -122,6 +122,14 @@ namespace ome
             parse_value_fail(text, klass, property);
         }
 
+    // Disable -Wunused-parameter temporarily.  We can't comment out
+    // the names since they are needed for docstrings when used
+    // inline.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
         /**
          * Parse a string value.
          *
@@ -140,6 +148,10 @@ namespace ome
         {
           value = text;
         }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
         /**
          * Parse an arbitrary value.
