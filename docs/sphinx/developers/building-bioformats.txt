@@ -114,6 +114,13 @@ You can then import the Bio-Formats source by choosing
 :menuselection:`File --> Import --> Existing Maven Projects` from the menu
 and browsing to the top-level folder of your Bio-Formats working copy.
 
+To remove post-import errors, either close the ``ome-xml`` project or run::
+
+  ant jars && mvn generate-sources
+
+.. seealso::
+   `[ome-devel] Importing source into eclipse <http://lists.openmicroscopy.org.uk/pipermail/ome-devel/2014-March/002719.html>`_
+
 Command line
 ^^^^^^^^^^^^
 

@@ -2141,37 +2141,38 @@ public class ZeissCZIReader extends FormatReader {
       for (int i=0; i<groups.getLength(); i++) {
         Element group = (Element) groups.item(i);
 
-        int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
-        int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
-
         Element position = getFirstNode(group, "Position");
+        if (position != null) {
+          int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
+          int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
 
-        String x = position.getAttribute("X");
-        String y = position.getAttribute("Y");
-        String z = position.getAttribute("Z");
+          String x = position.getAttribute("X");
+          String y = position.getAttribute("Y");
+          String z = position.getAttribute("Z");
 
-        Double xPos = null;
-        try {
-          xPos = new Double(x);
-        }
-        catch (NumberFormatException e) { }
-        Double yPos = null;
-        try {
-          yPos = new Double(y);
-        }
-        catch (NumberFormatException e) { }
-        Double zPos = null;
-        try {
-          zPos = new Double(z);
-        }
-        catch (NumberFormatException e) { }
+          Double xPos = null;
+          try {
+            xPos = new Double(x);
+          }
+          catch (NumberFormatException e) { }
+          Double yPos = null;
+          try {
+            yPos = new Double(y);
+          }
+          catch (NumberFormatException e) { }
+          Double zPos = null;
+          try {
+            zPos = new Double(z);
+          }
+          catch (NumberFormatException e) { }
 
-        for (int tile=0; tile<tilesX * tilesY; tile++) {
-          int index = i * tilesX * tilesY + tile;
-          if (index < positionsX.length) {
-            positionsX[index] = xPos;
-            positionsY[index] = yPos;
-            positionsZ[index] = zPos;
+          for (int tile=0; tile<tilesX * tilesY; tile++) {
+            int index = i * tilesX * tilesY + tile;
+            if (index < positionsX.length) {
+              positionsX[index] = xPos;
+              positionsY[index] = yPos;
+              positionsZ[index] = zPos;
+            }
           }
         }
       }

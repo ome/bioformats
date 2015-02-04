@@ -173,6 +173,7 @@ public class OMEXMLReader extends FormatReader {
       bzip.read(pixels, 0, pixels.length);
       tempPixels = null;
       bais.close();
+      bzip.close();
       bais = null;
       bzip = null;
     }
@@ -304,6 +305,9 @@ public class OMEXMLReader extends FormatReader {
       ms.falseColor = true;
       ms.pixelType = FormatTools.pixelTypeFromString(pixType);
       ms.orderCertain = true;
+      if (omexmlMeta.getPixelsSignificantBits(i) != null) {
+        ms.bitsPerPixel = omexmlMeta.getPixelsSignificantBits(i).getValue();
+      }
     }
     setSeries(oldSeries);
 

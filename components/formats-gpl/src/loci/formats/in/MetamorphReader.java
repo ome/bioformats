@@ -487,6 +487,9 @@ public class MetamorphReader extends BaseTiffReader {
       if (z != null) zc = Integer.parseInt(z);
       if (c != null) cc = Integer.parseInt(c);
       if (t != null) tc = Integer.parseInt(t);
+      else if (!doTimelapse) {
+        tc = 1;
+      }
 
       if (cc == 0) cc = 1;
       if (cc == 1 && bizarreMultichannelAcquisition) {
@@ -1776,11 +1779,10 @@ public class MetamorphReader extends BaseTiffReader {
 
     switch (type) {
       case 1:
-        in.skipBytes(1);
         while (getGlobalMeta("Channel #" + index + " " + key) != null) {
           index++;
         }
-        addGlobalMeta("Channel #" + index + " " + key, in.readDouble());
+        addGlobalMeta("Channel #" + index + " " + key, readRational(in).doubleValue());
         break;
       case 2:
         int valueLength = in.read();

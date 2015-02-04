@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.0.6</version>
+  <version>5.0.7</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -47,7 +47,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.0.6</release.version>
+    <release.version>5.0.7</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2014</year>
     <project.rootdir>${basedir}</project.rootdir>
@@ -219,7 +219,9 @@
                   // there should be a ant/gitversion.xml file with the
                   // version information used when the package was created
 
-                  def xml = new XmlParser().parse("./ant/gitversion.xml")
+                  def xmlfile = project.properties.get('project.rootdir') + "/ant/gitversion.xml"
+
+                  def xml = new XmlParser().parse(xmlfile)
                   for (property in xml.property) {
                     println "parsing " + property.'@name'
                     if ('release.version' == property.'@name') {
