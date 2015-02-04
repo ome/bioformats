@@ -179,7 +179,18 @@ namespace ome
     {
       // Parse OME-XML into DOM Document.
       ome::xerces::Platform xmlplat;
-      ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(file));
+      ome::xerces::dom::Document doc;
+      try
+        {
+          doc = ome::xerces::dom::createDocument(file);
+        }
+      catch (const std::runtime_error&)
+        {
+          ome::xerces::dom::ParseParameters params;
+          params.doSchema = false;
+          params.validationSchemaFullChecking = false;
+          doc = ome::xerces::dom::createDocument(file, params);
+        }
       return createOMEXMLMetadata(doc);
     }
 
@@ -188,7 +199,19 @@ namespace ome
     {
       // Parse OME-XML into DOM Document.
       ome::xerces::Platform xmlplat;
-      ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(text));
+      ome::xerces::dom::Document doc;
+      try
+        {
+          doc = ome::xerces::dom::createDocument(text, ome::xerces::dom::ParseParameters(),
+                                                 "OME-XML");
+        }
+      catch (const std::runtime_error&)
+        {
+          ome::xerces::dom::ParseParameters params;
+          params.doSchema = false;
+          params.validationSchemaFullChecking = false;
+          doc = ome::xerces::dom::createDocument(text, params, "Broken OME-XML");
+        }
       return createOMEXMLMetadata(doc);
     }
 
@@ -197,7 +220,19 @@ namespace ome
     {
       // Parse OME-XML into DOM Document.
       ome::xerces::Platform xmlplat;
-      ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(stream));
+      ome::xerces::dom::Document doc;
+      try
+        {
+          doc = ome::xerces::dom::createDocument(stream, ome::xerces::dom::ParseParameters(),
+                                                 "OME-XML");
+        }
+      catch (const std::runtime_error&)
+        {
+          ome::xerces::dom::ParseParameters params;
+          params.doSchema = false;
+          params.validationSchemaFullChecking = false;
+          doc = ome::xerces::dom::createDocument(stream, params, "Broken OME-XML");
+        }
       return createOMEXMLMetadata(doc);
     }
 
