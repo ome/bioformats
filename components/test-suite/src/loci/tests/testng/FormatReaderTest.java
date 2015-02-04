@@ -1356,6 +1356,9 @@ public class FormatReaderTest {
   @Test(groups = {"all", "type", "automated"})
   public void testRequiredDirectories() {
     if (!initFile()) return;
+    if (reader.getFormat().equals("Woolz")) {
+      throw new SkipException(SKIP_MESSAGE);
+    }
     String testName = "testRequiredDirectories";
     String file = reader.getCurrentFile();
     int directories = -1;
