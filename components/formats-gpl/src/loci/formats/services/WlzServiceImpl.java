@@ -526,6 +526,11 @@ public class WlzServiceImpl extends AbstractService
         objGType = WlzGreyType.WLZ_GREY_ERROR;
       }
       else {
+        // throw an exception here instead of segfaulting during readBytes*
+        if (WlzObject.WlzGetObjectValuesType(wlzObj) > WlzObjectType.WLZ_GREY_TAB_TILED) {
+          throw new FormatException("Value table data not supported");
+        }
+
         objGType = WlzObject.WlzGreyTypeFromObj(wlzObj);
       }
     }
