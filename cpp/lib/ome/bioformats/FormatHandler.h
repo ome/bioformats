@@ -46,6 +46,7 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
+#include <boost/version.hpp>
 
 #include <ome/compat/filesystem.h>
 
@@ -247,9 +248,16 @@ namespace ome
                  si != suffixes.end();
                  ++si)
               {
+#if !defined(BOOST_VERSION) || BOOST_VERSION >= 105000
+                // Boost >= 1.50
                 boost::filesystem::path suffix(*si);
                 suffix += boost::filesystem::path(".");
                 suffix += *csi;
+#else
+                // Boost < 1.50
+                boost::filesystem::path suffix(si->parent_path());
+                suffix /= boost::filesystem::path(si->filename().string() + "." + csi->string());
+#endif
 
                 if (checkSuffix(name, suffix))
                   return true;
