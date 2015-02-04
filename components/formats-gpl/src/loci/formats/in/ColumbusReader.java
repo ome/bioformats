@@ -370,6 +370,7 @@ public class ColumbusReader extends FormatReader {
 
             for (int c=0; c<getSizeC(); c++) {
               p = lookupPlane(row, col, field, 0, c);
+              p.series = wellSample;
               store.setChannelName(p.channelName, p.series, p.channel);
               store.setChannelEmissionWavelength(
                 new PositiveInteger((int) p.emWavelength), p.series, p.channel);
@@ -379,6 +380,7 @@ public class ColumbusReader extends FormatReader {
 
               for (int t=0; t<getSizeT(); t++) {
                 p = lookupPlane(row, col, field, t, c);
+                p.series = wellSample;
                 store.setPlaneDeltaT(p.deltaT - timestampSeconds, p.series, getIndex(0, c, t));
               }
             }
