@@ -283,7 +283,7 @@ private:
 
 public:
   void
-  setId(const std::string& id)
+  setId(const boost::filesystem::path& id)
   {
     if (!currentId)
       {
