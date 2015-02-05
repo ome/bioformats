@@ -75,8 +75,46 @@ public class CellH5Reader extends FormatReader {
 
   // -- Constants --
     public static final String HDF_MAGIC_STRING = "HDF";
+    
+    public class CellH5Constants {
+        public final static String PREFIX_PATH = "/sample/0/";
+        public final static String IMAGE_PATH = "image/channel/";
+        public final static String SEGMENTATION_PATH = "image/region/";
 
-    private static final String[] DELIMITERS = {" ", "-", "."};
+        public final static String PLATE = "plate/";
+        public final static String WELL = "/experiment/";
+        public final static String SITE = "/position/";
+    }
+
+    public class CellH5Coordinate {
+        public String plate;
+        public String well;
+        public Integer site;
+
+        protected String pathToImageData;
+        protected String pathToSegmentationData;
+        protected String pathToPosition;
+
+        CellH5Coordinate(String plate, String well, Integer site) {
+            this.plate = plate;
+            this.well = well;
+            this.site = site;
+
+            pathToPosition = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE + 
+                             this.plate + CellH5Constants.WELL + this.well + 
+                             CellH5Constants.SITE + this.site.toString() + "/";
+
+            this.pathToImageData = pathToPosition + CellH5Constants.IMAGE_PATH;
+            this.pathToSegmentationData = pathToPosition + CellH5Constants.SEGMENTATION_PATH; 
+            
+            System.out.println(pathToImageData);
+        }
+        
+        public String toString() {
+            return String.format("%s %s_%d", plate, well, site);
+        }
+        
+    }
 
   // -- Fields --
     private double pixelSizeX, pixelSizeY, pixelSizeZ;
@@ -85,28 +123,21 @@ public class CellH5Reader extends FormatReader {
     private JHDFService jhdf;
 
     private MetadataStore store;
-
-    // channel parameters
-    // private Vector<String> emWave, exWave, channelMin, channelMax;
-    // private Vector<String> gain, pinhole, channelName, microscopyMode;
     private int lastChannel = 0;
 
-    private List<String> pathToImageData = new LinkedList<String>();
-    private List<String> pathToPosition = new LinkedList<String>();
-    private List<String> seriesNames = new LinkedList<String>();
+    private List<CellH5Coordinate> CellH5PositionList = new LinkedList<CellH5Coordinate>();    
     
     private String pathToDefinition = "/definition";
     private String pathToObjectDefinition = pathToDefinition + "/object";
     private Vector<String> cellObjectNames = new Vector<String>();
 
     // Default colors 
-    private int[][] COLORS = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255},
+    private final int[][] COLORS = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255},
                               {255, 255, 0}, {0, 255, 255}, {255, 0, 255},
                               {255, 255, 255}, {255, 0, 128}, {0, 255, 128},
                               {0, 128, 256}, {128, 0, 128}, {255, 128, 0},
                               {64, 128, 0}, {0, 64, 128}, {128, 0, 64}};
 
-    private String[] rois;
     private HDF5CompoundDataMap[] times = null;
     private HDF5CompoundDataMap[] classes = null;
     private HDF5CompoundDataMap[] bbox = null;
@@ -135,7 +166,6 @@ public class CellH5Reader extends FormatReader {
             return true;
         }
         return false;
-
     }
 
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -318,29 +348,6 @@ public class CellH5Reader extends FormatReader {
         }
     }
 
-    private static JProgressBar initProgressBar(String title, String text) {
-        JFrame parentFrame = new JFrame();
-        parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        parentFrame.setVisible(false);
-
-        final JDialog dlg = new JDialog(parentFrame, title, true);
-        JProgressBar dpb = new JProgressBar(0, 100);
-        dlg.add(BorderLayout.CENTER, dpb);
-        dlg.add(BorderLayout.NORTH, new JLabel(text));
-        dpb.setStringPainted(true);
-        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        dlg.setSize(300, 75);
-        dlg.setLocationRelativeTo(parentFrame);
-
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                dlg.setVisible(true);
-            }
-        });
-        t.start();
-        return dpb;
-    }
-
   // -- Internal FormatReader API methods --
     protected void initFile(String id) throws FormatException, IOException {
         super.initFile(id);
@@ -358,7 +365,7 @@ public class CellH5Reader extends FormatReader {
         // Series. This is why they only will be loaded if the CellH5 contains
         // a single image / series
         if (seriesCount == 1) {
-            parseROIs();
+            //parseROIs();
         }
     }
 
@@ -371,7 +378,7 @@ public class CellH5Reader extends FormatReader {
         int time = zct[2];
         int width = getSizeX();
                 
-        MDIntArray test = jhdf.readIntBlockArray(pathToImageData.get(series), new int[]{channel, time, zslice, 0, 0},
+        MDIntArray test = jhdf.readIntBlockArray(CellH5PositionList.get(series).pathToImageData, new int[]{channel, time, zslice, 0, 0},
                 new int[]{1, 1, 1, height, width});
         byte[][] image = new byte[height][width];
         
@@ -389,61 +396,60 @@ public class CellH5Reader extends FormatReader {
         pixelSizeX = pixelSizeY = pixelSizeZ = 1;
         // read experiment structure
 
-        String path = "/sample/";
-        String sample = jhdf.getMember(path).get(0);
-        path += sample + "/plate/";
-        String plate = jhdf.getMember(path).get(0);
-        path += plate + "/experiment/";
+        String path = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
+        for (String plate : jhdf.getMember(path)) {
+            path += plate + "/" + CellH5Constants.WELL;
+            for (String well : jhdf.getMember(path)) {
+                path += well + "/" + CellH5Constants.SITE;
+                for (String site : jhdf.getMember(path)) {
+                    Integer site_int = Integer.parseInt(site);
+                    CellH5PositionList.add(new CellH5Coordinate(plate, well, site_int));
+                }
+            }
+        }
         
+        core.clear();
         
-        String currentPathToPosition;
-        for (String well : jhdf.getMember(path)) {
-            for (String pos : jhdf.getMember(path + well + "/position/")) {
-                currentPathToPosition = path + well + "/position/" + pos;
-                pathToPosition.add(currentPathToPosition);
-                pathToImageData.add(currentPathToPosition + "/image/channel");
-                seriesNames.add(String.format("%s, %s_%s", plate, well, pos));
+        int s = 0;
+        for (CellH5Coordinate coord : CellH5PositionList) {
+            if (jhdf.exists(coord.pathToImageData)) {
+                CoreMetadata core_s = new CoreMetadata();
+                core.add(core_s);
+  
+                LOGGER.debug(coord.pathToImageData);
+                int[] ctzyx = jhdf.getShape(coord.pathToImageData);
+                core.get(s).sizeC = ctzyx[0];
+                core.get(s).sizeT = ctzyx[1];
+                core.get(s).sizeZ = ctzyx[2];
+                core.get(s).sizeY = ctzyx[3];
+                core.get(s).sizeX = ctzyx[4];
+                core.get(s).resolutionCount = 1;
+                core.get(s).thumbnail = false;
+                core.get(s).imageCount = getSizeC() * getSizeT() * getSizeZ();
+                core.get(s).dimensionOrder = "XYZCT";
+                core.get(s).rgb = false;
+                core.get(s).thumbSizeX = 128;
+                core.get(s).thumbSizeY = 128;
+                core.get(s).orderCertain = false;
+                core.get(s).littleEndian = true;
+                core.get(s).interleaved = false;
+                core.get(s).indexed = true;
+                core.get(s).pixelType = FormatTools.UINT8;    
                 seriesCount++;
-                LOGGER.debug(String.format("Found sample '%s', plate: '%s', well: '%s' and position: '%s' in path: '%s'", sample, plate, well, pos, currentPathToPosition));
             }
         }
-        
-        if (seriesCount > 1) {
-            for (int i=1; i<seriesCount; i++) {
-                core.add(new CoreMetadata());
-            }
-        }
-
-        for (int k=0; k < pathToImageData.size(); k++) {
-            int[] ctzyx = jhdf.getShape(pathToImageData.get(k));
-            core.get(k).sizeC = ctzyx[0];
-            core.get(k).sizeT = ctzyx[1];
-            core.get(k).sizeZ = ctzyx[2];
-            core.get(k).sizeY = ctzyx[3];
-            core.get(k).sizeX = ctzyx[4];
-            core.get(k).resolutionCount = 1;
-            core.get(k).thumbnail = false;
-            core.get(k).imageCount = getSizeC() * getSizeT() * getSizeZ();
-            core.get(k).dimensionOrder = "XYZCT";
-            core.get(k).rgb = false;
-            core.get(k).thumbSizeX = 128;
-            core.get(k).thumbSizeY = 128;
-            core.get(k).orderCertain = false;
-            core.get(k).littleEndian = true;
-            core.get(k).interleaved = false;
-            core.get(k).indexed = true;
-            core.get(k).pixelType = FormatTools.UINT8;
-        }
-
-        parseCellObjects();
+        //parseCellObjects();
         
         store = makeFilterMetadata();
         MetadataTools.populatePixels(store, this);
         
-        for (int s=0; s<seriesCount; s++ ) {
-            store.setImageName(seriesNames.get(s), s);
+        s = 0;
+        for (CellH5Coordinate coord : CellH5PositionList) {
+            if (jhdf.exists(coord.pathToImageData)) {
+                store.setImageName(coord.toString(), s);
+            }
         }
-        
+
         setSeries(0);    
     }
 
@@ -475,35 +481,6 @@ public class CellH5Reader extends FormatReader {
             Integer.valueOf(colorStr.substring(1, 3), 16),
             Integer.valueOf(colorStr.substring(3, 5), 16),
             Integer.valueOf(colorStr.substring(5, 7), 16)};
-    }
-    
-    private String parseCrackContour(String input) {
-        byte[] zipaa = null;
-        String polygonStr = "";
-                
-        try {
-            zipaa = new Base64Codec().decompress(input.getBytes());
-        } catch (FormatException e) {
-            LOGGER.info(String.format("Error in BASE64 %s", e.toString()));
-        }
-
-        try {
-            Inflater decompresser = new Inflater();
-            decompresser.setInput(zipaa);
-            byte[] result = new byte[1048576];
-            int resultLength = decompresser.inflate(result);
-            decompresser.end();
-            String outputString = new String(result, 0, resultLength, "UTF-8");
-
-            String[] parts = outputString.split(",");
-            polygonStr = "";
-            for (int j = 0; j < parts.length - 2; j += 2) {
-                polygonStr += parts[j] + "," + parts[j + 1] + " ";
-            }
-        } catch (Exception e) {
-            LOGGER.info(String.format("Error decompressing %s", e.toString()));
-        }
-        return polygonStr;
     }
 
     private void parseROIs() {
@@ -588,8 +565,6 @@ public class CellH5Reader extends FormatReader {
                 }
             }
             seriesOffset += roiIndexOffset;
-        }
-        
+        }   
     }
-
 }

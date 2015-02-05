@@ -154,28 +154,21 @@ public class ROIHandler {
                     }
 
                     if (roi != null) {
-            roi.setName(shapeObject.getID());
+                        roi.setName(shapeObject.getID());
                         Roi.setColor(Color.WHITE);
-            // Localize ROI with channel, zslice and time
-            int c = shapeObject.getTheC().getValue();
-            int z = shapeObject.getTheZ().getValue();
-            int t = shapeObject.getTheT().getValue();
-            roi.setPosition(c, z, t);
+                        // Localize ROI with channel, zslice and time
+                        int c = shapeObject.getTheC().getValue();
+                        int z = shapeObject.getTheZ().getValue();
+                        int t = shapeObject.getTheT().getValue();
+                        roi.setPosition(c, z, t);
+
+                        // Forward stroke color
+                        int r = shapeObject.getStrokeColor().getRed();
+                        int g = shapeObject.getStrokeColor().getGreen();
+                        int b = shapeObject.getStrokeColor().getBlue();
+                        int a = shapeObject.getStrokeColor().getAlpha();
+                        roi.setStrokeColor(new Color(r,g,b,a));
             
-            // Forward stroke color
-            int r = shapeObject.getStrokeColor().getRed();
-            int g = shapeObject.getStrokeColor().getGreen();
-            int b = shapeObject.getStrokeColor().getBlue();
-            int a = shapeObject.getStrokeColor().getAlpha();
-            roi.setStrokeColor(new Color(r,g,b,a));
-            
-            // Set stroke width
-            if (shapeObject.getStrokeWidth()!=null) {
-                roi.setStrokeWidth(shapeObject.getStrokeWidth());
-            }
-            else {
-                roi.setStrokeWidth(1.0);
-            }
             
                         roi.setImage(images[imageNum]);
                         manager.add(images[imageNum], roi, nextRoi++);
