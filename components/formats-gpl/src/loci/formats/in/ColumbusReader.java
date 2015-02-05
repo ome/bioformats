@@ -339,6 +339,10 @@ public class ColumbusReader extends FormatReader {
 
     for (Integer row : uniqueRows) {
       for (Integer col : uniqueCols) {
+        if (!uniqueSamples.contains(row * handler.getPlateColumns() + col)) {
+          continue;
+        }
+
         nextWell++;
         store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
         store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
