@@ -411,7 +411,6 @@ namespace ome
            * Increment the constrained value by one.  If the new value
            * fails the constraint check, this will cause an error.
            *
-           * @param value the value to compute the modulus with.
            * @returns the new value.
            */
           inline ConstrainedNumeric&
@@ -426,7 +425,6 @@ namespace ome
            * Decrement the constrained value by one.  If the new value
            * fails the constraint check, this will cause an error.
            *
-           * @param value the value to compute the modulus with.
            * @returns the new value.
            */
           inline ConstrainedNumeric&

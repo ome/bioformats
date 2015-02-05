@@ -74,6 +74,12 @@ namespace ome
         /// Stacks are supported.
         bool stacks;
 
+        /**
+         * Constructor.
+         *
+         * @param name the format name.
+         * @param description a short description of the format.
+         */
         WriterProperties(const std::string& name,
                          const std::string& description):
           name(name),

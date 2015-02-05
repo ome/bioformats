@@ -212,7 +212,6 @@ namespace ome
        *
        * @param name the name to check.
        * @param suffixes the suffixes to match.
-       * @param compression_suffixes the compression suffixes to match.
        *
        * @returns @c true if the suffix is suppored, @c false otherwise.
        */

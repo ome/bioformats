@@ -285,6 +285,7 @@ namespace ome
        *
        * @param text the string to use.
        * @param params XML parser parameters.
+       * @param id document filename (for error reporting only).
        * @returns the new Document.
        */
       Document
@@ -297,6 +298,7 @@ namespace ome
        *
        * @param stream the stream to read.
        * @param params XML parser parameters.
+       * @param id document filename (for error reporting only).
        * @returns the new Document.
        */
       Document

@@ -76,6 +76,12 @@ namespace ome
         /// Supported metadata levels.  A typical default is {METADATA_MINIMUM,METADATA_NO_OVERLAYS,METADATA_ALL}.
         std::set<MetadataOptions::MetadataLevel> metadata_levels;
 
+        /**
+         * Constructor.
+         *
+         * @param name the format name.
+         * @param description a short description of the format.
+         */
         ReaderProperties(const std::string& name,
                          const std::string& description):
           name(name),
@@ -303,8 +309,8 @@ namespace ome
          *
          * @param index the core index.
          * @returns the CoreMetadata.
-         * @throws @c std::range_error if the core index is invalid,
-         * or @c std::logic_error if the metadata is null.
+         * @throws std::range_error if the core index is invalid.
+         * @throws std::logic_error if the metadata is null.
          */
         const CoreMetadata&
         getCoreMetadata(dimension_size_type index) const
@@ -320,8 +326,8 @@ namespace ome
          *
          * @param index the core index.
          * @returns the CoreMetadata.
-         * @throws @c std::range_error if the core index is invalid,
-         * or @c std::logic_error if the metadata is null.
+         * @throws std::range_error if the core index is invalid.
+         * @throws std::logic_error if the metadata is null.
          */
         CoreMetadata&
         getCoreMetadata(dimension_size_type index)
