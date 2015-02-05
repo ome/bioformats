@@ -334,8 +334,8 @@ TEST_P(FormatWriterTest, WriterProperties)
   w.setId("output.test");
   ASSERT_EQ(props.name, w.getFormat());
   ASSERT_EQ(props.description, w.getFormatDescription());
-  ASSERT_EQ(props.suffixes, w.getSuffixes());
-  ASSERT_EQ(props.compression_suffixes, w.getCompressionSuffixes());
+  ASSERT_TRUE(props.suffixes == w.getSuffixes());
+  ASSERT_TRUE(props.compression_suffixes == w.getCompressionSuffixes());
   ASSERT_EQ(props.compression_types, w.getCompressionTypes());
   ASSERT_EQ(props.stacks, w.canDoStacks());
 }

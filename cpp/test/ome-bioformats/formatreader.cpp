@@ -289,8 +289,8 @@ TEST_P(FormatReaderTest, ReaderProperties)
   r.setId("test");
   ASSERT_EQ(props.name, r.getFormat());
   ASSERT_EQ(props.description, r.getFormatDescription());
-  ASSERT_EQ(props.suffixes, r.getSuffixes());
-  ASSERT_EQ(props.compression_suffixes, r.getCompressionSuffixes());
+  ASSERT_TRUE(props.suffixes == r.getSuffixes());
+  ASSERT_TRUE(props.compression_suffixes == r.getCompressionSuffixes());
 }
 
 TEST_P(FormatReaderTest, IsThisType)
