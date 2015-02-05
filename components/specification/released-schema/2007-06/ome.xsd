@@ -731,7 +731,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:choice>
 					<xsd:annotation>
 						<xsd:documentation>
-							At lease one of (FirstName, LastName, Email, OMEName)
+							At least one of (FirstName, LastName, Email, OMEName)
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:sequence>
