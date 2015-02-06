@@ -1313,7 +1313,7 @@ namespace ome
             path canonicalID(id);
             try
               {
-                // Attempt to canonicalise the path.
+                // Attempt to canonicalize the path.
                 canonicalID = ome::compat::canonical(id);
               }
             catch (const std::exception& /* e */)
