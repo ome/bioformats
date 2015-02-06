@@ -80,7 +80,7 @@ public interface JHDFService extends Service {
     public List<String> getMember(String path);
     
     /**
-     * Retrieves the all members of a group.
+     * Retrieves the Element Size of a dataset in Byte.
      *
      * @param path HDF path to the group.
      * @return List<String> of members.
@@ -114,7 +114,7 @@ public interface JHDFService extends Service {
     public MDIntArray readIntBlockArray(String path, int[] offset, int[] size);
     
     /**
-     * Reads a multi-dimensional sub-block int array from path.
+     * Reads a multi-dimensional sub-block byte array from path.
      *
      * @param path HDF path to the dataset.
      * @param offset Offset of the block to read.
@@ -124,7 +124,7 @@ public interface JHDFService extends Service {
     public MDByteArray readByteBlockArray(String path, int[] offset, int[] size);
     
     /**
-     * Reads a multi-dimensional sub-block int array from path.
+     * Reads a multi-dimensional sub-block short array from path.
      *
      * @param path HDF path to the dataset.
      * @param offset Offset of the block to read.

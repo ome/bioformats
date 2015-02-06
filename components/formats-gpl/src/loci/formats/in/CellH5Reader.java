@@ -96,20 +96,20 @@ public class CellH5Reader extends FormatReader {
     public class CellH5Coordinate {
         public String plate;
         public String well;
-        public Integer site;
+        public String site;
 
         protected String pathToImageData;
         protected String pathToSegmentationData;
         protected String pathToPosition;
 
-        CellH5Coordinate(String plate, String well, Integer site) {
+        CellH5Coordinate(String plate, String well, String site) {
             this.plate = plate;
             this.well = well;
             this.site = site;
 
             pathToPosition = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE + 
                              this.plate + CellH5Constants.WELL + this.well + 
-                             CellH5Constants.SITE + this.site.toString() + "/";
+                             CellH5Constants.SITE + this.site + "/";
 
             this.pathToImageData = pathToPosition + CellH5Constants.IMAGE_PATH;
             this.pathToSegmentationData = pathToPosition + CellH5Constants.SEGMENTATION_PATH; 
@@ -118,7 +118,7 @@ public class CellH5Reader extends FormatReader {
         }
         
         public String toString() {
-            return String.format("%s %s_%d", plate, well, site);
+            return String.format("%s %s_%s", plate, well, site);
         }
         
     }
@@ -133,11 +133,10 @@ public class CellH5Reader extends FormatReader {
     private int lastChannel = 0;
 
     private List<CellH5Coordinate> CellH5PositionList = new LinkedList<CellH5Coordinate>();    
-    private List<String> CellH5PathsToImageData = new LinkedList<String>();  
-    
-    private Vector<String> cellObjectNames = new Vector<String>();
+    private List<String> CellH5PathsToImageData = new LinkedList<String>(); 
+    private List<String> cellObjectNames = new LinkedList<String>();
 
-    // Default colors 
+    // Default colors for bounding box colors if no classification present
     private final int[][] COLORS = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255},
                               {255, 255, 0}, {0, 255, 255}, {255, 0, 255},
                               {255, 255, 255}, {255, 0, 128}, {0, 255, 128},
@@ -234,57 +233,6 @@ public class CellH5Reader extends FormatReader {
         return lut;
     }
 
-//    /* @see loci.formats.IFormatReaderget16BitLookupTable() */
-//    public short[][] get16BitLookupTable() {
-//        FormatTools.assertId(currentId, true, 1);
-//        if (getPixelType() != FormatTools.UINT16 || !isIndexed()) {
-//            return null;
-//        }
-//
-//        if (lastChannel < 0 || lastChannel >= 9) {
-//            return null;
-//        }
-//
-//        short[][] lut = new short[3][65536];
-//        for (int i = 0; i < 65536; i++) {
-//            switch (lastChannel) {
-//                case 0:
-//                    // red
-//                    lut[0][i] = (short) (i & 0xff);
-//                    break;
-//                case 1:
-//                    // green
-//                    lut[1][i] = (short) (i & 0xff);
-//                    break;
-//                case 2:
-//                    // blue
-//                    lut[2][i] = (short) (i & 0xff);
-//                    break;
-//                case 3:
-//                    // cyan
-//                    lut[1][i] = (short) (i & 0xff);
-//                    lut[2][i] = (short) (i & 0xff);
-//                    break;
-//                case 4:
-//                    // magenta
-//                    lut[0][i] = (short) (i & 0xff);
-//                    lut[2][i] = (short) (i & 0xff);
-//                    break;
-//                case 5:
-//                    // yellow
-//                    lut[0][i] = (short) (i & 0xff);
-//                    lut[1][i] = (short) (i & 0xff);
-//                    break;
-//                default:
-//                    // gray
-//                    lut[0][i] = (short) (i & 0xff);
-//                    lut[1][i] = (short) (i & 0xff);
-//                    lut[2][i] = (short) (i & 0xff);
-//            }
-//        }
-//        return lut;
-//    }
-
     /**
      * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int,
      * int)
@@ -370,7 +318,7 @@ public class CellH5Reader extends FormatReader {
         // The ImageJ RoiManager can not distinguish ROIs from different
         // Series. This is why they only will be loaded if the CellH5 contains
         // two image / series assuming that the first is the image and 2nd the labels
-        if (seriesCount <= 4) {
+        if (seriesCount <= 2) {
             parseROIs(0);
         }
     }
@@ -385,8 +333,7 @@ public class CellH5Reader extends FormatReader {
         int width = getSizeX();
         
         int elementSize = jhdf.getElementSize(CellH5PathsToImageData.get(series));
-            
-
+         
         MDIntArray test = jhdf.readIntBlockArray(CellH5PathsToImageData.get(series), new int[]{channel, time, zslice, 0, 0},
                 new int[]{1, 1, 1, height, width});
         
@@ -413,12 +360,12 @@ public class CellH5Reader extends FormatReader {
             return image;
         }
         else {
-            byte[][] image = new byte[height][width];
+            int[][] image = new int[height][width];
 
             // Slice x, y dimension
             for (int yy = 0; yy < height; yy++) {
                 for (int xx = 0; xx < width; xx++) {
-                    image[yy][xx] = (byte) test.get(0, 0, 0, yy, xx);
+                    image[yy][xx] = (int) test.get(0, 0, 0, yy, xx);
                 }
             }
             return image;
@@ -429,7 +376,7 @@ public class CellH5Reader extends FormatReader {
         seriesCount = 0;
         pixelSizeX = pixelSizeY = pixelSizeZ = 1;
         core.clear();
-        // read experiment structure
+        // read experiment structure and collect coordinates
 
         String path = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
         for (String plate : jhdf.getMember(path)) {
@@ -437,13 +384,17 @@ public class CellH5Reader extends FormatReader {
             for (String well : jhdf.getMember(path)) {
                 path += well + "/" + CellH5Constants.SITE;
                 for (String site : jhdf.getMember(path)) {
-                    Integer site_int = Integer.parseInt(site);
-                    CellH5PositionList.add(new CellH5Coordinate(plate, well, site_int));
+                    CellH5PositionList.add(new CellH5Coordinate(plate, well, site));
                 }
             }
         }
         
+        if (CellH5PositionList.size() == 0) {
+            throw new FormatException("No series found in file...");
+        }
+        
         List<String> seriesNames = new LinkedList<String>();
+        
         int s = 0;
         for (CellH5Coordinate coord : CellH5PositionList) {
             if (jhdf.exists(coord.pathToImageData)) {
@@ -470,10 +421,11 @@ public class CellH5Reader extends FormatReader {
                 core.get(s).interleaved = false;
                 core.get(s).indexed = true;
                 core.get(s).pixelType = FormatTools.UINT8;    
-                seriesCount++;
-                seriesNames.add(String.format("P%s, W%s_%d", coord.plate, coord.well, coord.site));
+                
+                seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
                 CellH5PathsToImageData.add(coord.pathToImageData);
                 s++;
+                seriesCount++;
             }
         }
         
@@ -504,11 +456,16 @@ public class CellH5Reader extends FormatReader {
                 core.get(s).interleaved = false;
                 core.get(s).indexed = true;
                 core.get(s).pixelType = FormatTools.UINT16;   
-                seriesCount++;
-                seriesNames.add(String.format("P%s, W%s_%d label image", coord.plate, coord.well, coord.site));
+                
+                seriesNames.add(String.format("P_%s, W_%s_%s label image", coord.plate, coord.well, coord.site));
                 CellH5PathsToImageData.add(coord.pathToSegmentationData);
                 s++;
+                seriesCount++;
             }
+        }
+        
+        if (seriesCount == 0) {
+            throw new FormatException("No image data found...");
         }
         
         store = makeFilterMetadata();
@@ -555,7 +512,7 @@ public class CellH5Reader extends FormatReader {
 
     private void parseROIs(int s) {
         int objectIdx = 0;
-        Vector<int[]> classColors = new Vector<int[]>();
+        List<int[]> classColors = new LinkedList<int[]>();
         int roiIndexOffset = 0;
         
         CellH5Coordinate coord = CellH5PositionList.get(0);
