@@ -132,7 +132,7 @@ namespace ome
             std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = getChildrenByTagName(XMLValue_nodeList.at(0), "OriginalMetadata");
             if (OriginalMetadataValue_nodeList.size() > 1)
               {
-                format fmt("Value node list size %1% != 1");
+                format fmt("OriginalMetadata node list size %1% != 1");
                 fmt % OriginalMetadataValue_nodeList.size();
                 throw ModelException(fmt.str());
               }
@@ -141,7 +141,7 @@ namespace ome
                 std::vector<xerces::dom::Element> Key_nodeList = getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Key");
                 if (Key_nodeList.size() > 1)
                   {
-                    format fmt("Key node list size %1% != 1");
+                    format fmt("OriginalMetadata Key node list size %1% != 1");
                     fmt % Key_nodeList.size();
                     throw ModelException(fmt.str());
                   }
@@ -152,7 +152,7 @@ namespace ome
                 std::vector<xerces::dom::Element> Value_nodeList = getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Value");
                 if (Value_nodeList.size() > 1)
                   {
-                    format fmt("Value node list size %1% != 1");
+                    format fmt("OriginalMetadata Value node list size %1% != 1");
                     fmt % Value_nodeList.size();
                     throw ModelException(fmt.str());
                   }
