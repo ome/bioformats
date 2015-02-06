@@ -1,8 +1,6 @@
 /*
  * #%L
- * Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
- * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
- * Data Browser and Stack Slicer.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -48,7 +46,7 @@ public class Colorizer extends BytesWrapper {
   protected LutSource lutSource = null;
 
   // -- Constructor --
-  
+
   public Colorizer(IFormatReader reader) {
       super(reader);
   }
@@ -68,7 +66,10 @@ public class Colorizer extends BytesWrapper {
     throws FormatException, IOException
   {
     buf = reader.openBytes(no, buf, x, y, w, h);
-    return lutSource.applyLut(no, buf, x, y, w, h);
+    if (lutSource != null) {
+      return lutSource.applyLut(no, buf, x, y, w, h);
+    }
+    return buf;
   }
 
   @Override
