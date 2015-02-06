@@ -77,11 +77,11 @@ using ome::xml::meta::OMEXMLMetadataRoot;
 using ome::xml::model::Image;
 using ome::xml::model::MetadataOnly;
 using ome::xml::model::ModelException;
+using ome::xml::model::OMEModel;
+using ome::xml::model::OriginalMetadataAnnotation;
 using ome::xml::model::Pixels;
 using ome::xml::model::StructuredAnnotations;
 using ome::xml::model::XMLAnnotation;
-using ome::xml::model::OriginalMetadataAnnotation;
-using ome::xml::model::OMEModel;
 using ome::xml::model::primitives::Timestamp;
 using ome::xml::model::primitives::PositiveInteger;
 
