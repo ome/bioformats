@@ -40,6 +40,7 @@ Currently available tools include:
 
     formatlist
         Displays a list of supported file formats in HTML, plaintext or XML.
+        See :doc:`formatlist` for details.
 
     xmlindent
         A simple XML prettifier similar to ``xmllint --format`` but more

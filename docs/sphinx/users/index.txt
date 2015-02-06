@@ -36,6 +36,7 @@ for carrying out a variety of tasks:
     comlinetools/xml-validation
     comlinetools/edit
     comlinetools/domainlist
+    comlinetools/formatlist
 
 
 
