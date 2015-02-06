@@ -1,6 +1,11 @@
 Version history
 ===============
 
+5.0.8 (2015 February 10)
+------------------------
+
+* No changes - release to keep version numbers in sync with OMERO
+
 5.0.7 (2015 February 5)
 -----------------------
 
