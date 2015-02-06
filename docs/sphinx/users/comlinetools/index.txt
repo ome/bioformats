@@ -55,6 +55,10 @@ Currently available tools include:
         for examining the OME-XML block in an OME-TIFF file (also see
         :doc:`edit`).
 
+    domainlist
+        Displays a list of imaging domains and the supported formats
+        associated with each domain.  See :doc:`domainlist` for more
+        information.
 
 Some of these tools also work in combination, for example
 :doc:`xml-validation` uses both ``tiffcomment`` and ``xmlvalid``.
