@@ -83,20 +83,7 @@ public abstract class BytesWrapper extends ReaderWrapper
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    int ch = getRGBChannelCount();
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    byte[] newBuffer;
-    try {
-      newBuffer = DataTools.allocate(w, h, ch, bpp);
-    }
-    catch (IllegalArgumentException e) {
-      throw new FormatException("Image plane too large. Only 2GB of data can " +
-        "be extracted at one time. You can workaround the problem by opening " +
-        "the plane in tiles; for further details, see: " +
-        "http://www.openmicroscopy.org/site/support/faq/bio-formats/" +
-        "i-see-an-outofmemory-or-negativearraysize-error-message-when-" +
-        "attempting-to-open-an-svs-or-jpeg-2000-file.-what-does-this-mean", e);
-    }
+    byte[] newBuffer = FormatTools.allocatePlane(this, w, h);
     return openBytes(no, newBuffer, x, y, w, h);
   }
 

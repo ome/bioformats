@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
@@ -1218,6 +1219,28 @@ public final class FormatTools {
       }
     }
     return rtn;
+  }
+
+  /**
+   * Allocates a byte array for a plane of the given width and height.
+   * @throws FormatException if the allocated size would be greater than 2 GB
+   */
+  public static byte[] allocatePlane(IFormatReader r, int w, int h) throws FormatException {
+    int ch = r.getRGBChannelCount();
+    int bpp = getBytesPerPixel(r.getPixelType());
+    byte[] newBuffer;
+    try {
+      newBuffer = DataTools.allocate(w, h, ch, bpp);
+    }
+    catch (IllegalArgumentException e) {
+      throw new FormatException("Image plane too large. Only 2GB of data can " +
+        "be extracted at one time. You can workaround the problem by opening " +
+        "the plane in tiles; for further details, see: " +
+        "http://www.openmicroscopy.org/site/support/faq/bio-formats/" +
+        "i-see-an-outofmemory-or-negativearraysize-error-message-when-" +
+        "attempting-to-open-an-svs-or-jpeg-2000-file.-what-does-this-mean", e);
+    }
+    return newBuffer;
   }
 
   // -- Conversion convenience methods --
