@@ -26,6 +26,7 @@ package loci.formats.services;
 
 import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
+import ch.systemsx.cisd.base.mdarray.MDShortArray;
 import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -77,6 +78,14 @@ public interface JHDFService extends Service {
      * @return List<String> of members.
      */
     public List<String> getMember(String path);
+    
+    /**
+     * Retrieves the all members of a group.
+     *
+     * @param path HDF path to the group.
+     * @return List<String> of members.
+     */
+    public int getElementSize(String path);
 
     /**
      * Reads a multi-dimensional byte array from path.
@@ -103,6 +112,26 @@ public interface JHDFService extends Service {
      * @return MDIntArray array of int.
      */
     public MDIntArray readIntBlockArray(String path, int[] offset, int[] size);
+    
+    /**
+     * Reads a multi-dimensional sub-block int array from path.
+     *
+     * @param path HDF path to the dataset.
+     * @param offset Offset of the block to read.
+     * @param size Output size of the array.
+     * @return MDIntArray array of int.
+     */
+    public MDByteArray readByteBlockArray(String path, int[] offset, int[] size);
+    
+    /**
+     * Reads a multi-dimensional sub-block int array from path.
+     *
+     * @param path HDF path to the dataset.
+     * @param offset Offset of the block to read.
+     * @param size Output size of the array.
+     * @return MDIntArray array of int.
+     */
+    public MDShortArray readShortBlockArray(String path, int[] offset, int[] size);
 
     /**
      * Reads String array array from path.

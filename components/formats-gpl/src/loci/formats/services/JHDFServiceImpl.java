@@ -40,6 +40,7 @@ import loci.common.services.ServiceException;
 
 import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
+import ch.systemsx.cisd.base.mdarray.MDShortArray;
 import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
@@ -142,6 +143,30 @@ public class JHDFServiceImpl extends AbstractService
         return this.hdfReader.int32().readMDArrayBlockWithOffset(path, size, longOffset);
         //return this.hdfReader.int32().readMDArrayBlockWithOffset(path, new int[]{1,1,1,h,w}, new long[]{c,t,z,0,0});
     }
+    
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#readIntBlockArray()
+     */
+    public MDByteArray readByteBlockArray(String path, int[] offset, int[] size) {
+        long[] longOffset = new long[offset.length];
+        for (int k = 0; k < offset.length; k++) {
+            longOffset[k] = (long) offset[k];
+        }
+        return this.hdfReader.int8().readMDArrayBlockWithOffset(path, size, longOffset);
+        //return this.hdfReader.int32().readMDArrayBlockWithOffset(path, new int[]{1,1,1,h,w}, new long[]{c,t,z,0,0});
+    }
+    
+     /* (non-Javadoc)
+     * @see loci.formats.JHDFService#readIntBlockArray()
+     */
+    public MDShortArray readShortBlockArray(String path, int[] offset, int[] size) {
+        long[] longOffset = new long[offset.length];
+        for (int k = 0; k < offset.length; k++) {
+            longOffset[k] = (long) offset[k];
+        }
+        return this.hdfReader.int16().readMDArrayBlockWithOffset(path, size, longOffset);
+        //return this.hdfReader.int32().readMDArrayBlockWithOffset(path, new int[]{1,1,1,h,w}, new long[]{c,t,z,0,0});
+    }
 
     /* (non-Javadoc)
      * @see loci.formats.JHDFService#readStringArray()
@@ -157,6 +182,13 @@ public class JHDFServiceImpl extends AbstractService
         return this.hdfReader.readCompoundArray(path, HDF5CompoundDataMap.class);
     }
 
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#exists()
+     */
+    public int getElementSize(String path) {
+        return this.hdfReader.getDataSetInformation(path).getTypeInformation().getElementSize();
+    }
+    
     /* (non-Javadoc)
      * @see loci.formats.JHDFService#exists()
      */
