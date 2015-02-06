@@ -6,9 +6,6 @@ package loci.common.lut.ij;
 
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 
 	/** This is an indexed color model that allows an
 		lower and upper bound to be specified. */
