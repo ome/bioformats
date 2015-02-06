@@ -71,43 +71,20 @@ public class ImageJLutSource extends AbstractLutSource {
         this.blues = blues;
     }
 
+    @Override
     public byte[] applyLut(int no, byte[] buf, int x, int y, int w, int h) {
-
-      // FIXME The following is non-functional and only for testing purposes.
 
       // copied from ImageTools which is in bsd
       byte[][] lut = new byte[][] { reds, greens, blues };
-      byte[][] rtn = new byte[lut.length][buf.length];
+      byte[] rtn = new byte[lut.length * buf.length];
 
+      // currently assumes 8-bit data only
       for (int i=0; i<buf.length; i++) {
         for (int j=0; j<lut.length; j++) {
-          rtn[j][i] = lut[j][buf[i] & 0xff];
+          rtn[i * lut.length + j] = lut[j][buf[i] & 0xff];
         }
       }
 
-      // partial copy from ChannelFiller. Needs refactoring.
-      byte[][] b = rtn; // ImageTools.indexedToRGB(new byte[][]{reds, greens, blues}, buf);
-      // non-interleaved
-      if (false) {
-        LOGGER.info("b.length={}", b.length);
-        LOGGER.info("buf.length={}", buf.length);
-        LOGGER.info("lut.length={}", lut.length);
-        LOGGER.info("lut[0].length={}", lut[0].length);
-        for (int i=0; i<b.length; i++) {
-          LOGGER.info("b[{}] = {}", i, b[i].length);
-          System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
-        }
-        return buf;
-      }
-
-      // interleaved
-      int pt = 0;
-      for (int i=0; i<b[0].length; i++) {
-        //for (int j=0; j<b.length; j++) {
-        for (int j=0; j<1; j++) { // FIXME
-          buf[pt++] = b[j][i];
-        }
-      }
-      return buf;
+      return rtn;
     }
 }

@@ -83,6 +83,16 @@ public class Colorizer extends BytesWrapper {
   }
 
   @Override
+  public boolean isRGB() {
+    return lutSource == null ? super.isRGB() : true;
+  }
+
+  @Override
+  public boolean isInterleaved() {
+    return lutSource == null ? super.isInterleaved() : true;
+  }
+
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return super.get8BitLookupTable();
   }
