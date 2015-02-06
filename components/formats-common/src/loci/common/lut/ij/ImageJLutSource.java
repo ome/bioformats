@@ -34,6 +34,8 @@ package loci.common.lut.ij;
 
 import loci.common.lut.AbstractLutSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link LutSource} which makes use of the {@link loci.commons.lut.ij.LutLoader}
@@ -43,10 +45,14 @@ import loci.common.lut.AbstractLutSource;
  */
 public class ImageJLutSource extends AbstractLutSource {
 
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+      LoggerFactory.getLogger(ImageJLutSource.class);
+
     private final byte[] reds;
     private final byte[] greens;
     private final byte[] blues;
-    
+
     public ImageJLutSource(String ijArg) {
         LutLoader loader = new LutLoader();
         loader.run(ijArg);
@@ -83,12 +89,12 @@ public class ImageJLutSource extends AbstractLutSource {
       byte[][] b = rtn; // ImageTools.indexedToRGB(new byte[][]{reds, greens, blues}, buf);
       // non-interleaved
       if (false) {
-        System.out.println("b.length=" + b.length);
-        System.out.println("buf.length=" + buf.length);
-        System.out.println("lut.length=" + lut.length);
-        System.out.println("lut[0].length=" + lut[0].length);
+        LOGGER.info("b.length={}", b.length);
+        LOGGER.info("buf.length={}", buf.length);
+        LOGGER.info("lut.length={}", lut.length);
+        LOGGER.info("lut[0].length={}", lut[0].length);
         for (int i=0; i<b.length; i++) {
-          System.out.println("b[" + i + "]=" + b[i].length);
+          LOGGER.info("b[{}] = {}", i, b[i].length);
           System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
         }
         return buf;
@@ -104,5 +110,4 @@ public class ImageJLutSource extends AbstractLutSource {
       }
       return buf;
     }
-
 }
