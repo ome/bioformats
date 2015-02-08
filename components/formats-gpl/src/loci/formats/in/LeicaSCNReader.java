@@ -68,6 +68,10 @@ public class LeicaSCNReader extends BaseTiffReader {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(LeicaSCNReader.class);
 
+  private static final String SCHEMA_2010_03 =
+    "http://www.leica-microsystems.com/scn/2010/03/10";
+  private static final String SCHEMA_2010_10 =
+    "http://www.leica-microsystems.com/scn/2010/10/01";
 
   // -- Fields --
   LeicaSCNHandler handler;
@@ -89,33 +93,29 @@ public class LeicaSCNReader extends BaseTiffReader {
    */
   @Override
   public boolean isThisType(String name, boolean open) {
-    boolean isThisType = super.isThisType(name, open);
-    if (isThisType && open) {
-      isThisType = false;
+    if (super.isThisType(name, open) && open) {
       RandomAccessInputStream stream = null;
       try {
         stream = new RandomAccessInputStream(name);
         TiffParser tiffParser = new TiffParser(stream);
         if (!tiffParser.isValidHeader()) {
-          isThisType = false;
-        } else {
-          String imageDescription = tiffParser.getComment();
-          if (imageDescription != null) {
-            try {
-              // Test if XML is valid SCN metadata
-              LeicaSCNHandler handler = new LeicaSCNHandler();
-              XMLTools.parseXML(imageDescription, handler);
-              isThisType = true;
-            }
-            catch (Exception se) {
-              isThisType = false;
-            }
+          return false;
+        }
+
+        String imageDescription = tiffParser.getComment();
+        if (imageDescription != null) {
+          try {
+            // Test if XML is valid SCN metadata
+            LeicaSCNHandler handler = new LeicaSCNHandler();
+            XMLTools.parseXML(imageDescription, handler);
+            return true;
+          }
+          catch (Exception se) {
           }
         }
       }
       catch (IOException e) {
         LOGGER.debug("I/O exception during isThisType() evaluation.", e);
-        isThisType = false;
       }
       finally {
         try {
@@ -127,25 +127,21 @@ public class LeicaSCNReader extends BaseTiffReader {
           LOGGER.debug("I/O exception during stream closure.", e);
         }
       }
-    } else {
-      isThisType = false;
     }
-    return isThisType;
+    return false;
   }
 
   private int imageIFD(int no) {
     int s = getCoreIndex();
-    LeicaSCNHandler.Image i = handler.imageMap.get(s);
+    Image i = handler.imageMap.get(s);
 
-    CoreMetadata ms = core.get(s);
-    int[] dims = FormatTools.getZCTCoords(ms.dimensionOrder, ms.sizeZ, ms.imageCount/(ms.sizeZ * ms.sizeT), ms.sizeT, ms.imageCount, no);
+    int[] dims = getZCTCoords(no);
     int dz = dims[0];
     int dc = dims[1];
-    int dr = getCoreIndex() - i.imageNumStart;
+    int dr = s - i.imageNumStart;
 
-    return i.pixels.dimIFD[dz][dc][dr];
+    return i.pixels.lookupDimension(dz, dc, dr).ifd;
   }
-
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -167,7 +163,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     int originalIndex = getCoreIndex();
-    LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
+    Image i = handler.imageMap.get(getCoreIndex());
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
     setCoreIndex(thumbseries);
@@ -180,7 +176,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   @Override
   public int getThumbSizeX() {
     int originalIndex = getCoreIndex();
-    LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
+    Image i = handler.imageMap.get(getCoreIndex());
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
     setCoreIndex(thumbseries);
@@ -193,7 +189,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   @Override
   public int getThumbSizeY() {
     int originalIndex = getCoreIndex();
-    LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
+    Image i = handler.imageMap.get(getCoreIndex());
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
     setCoreIndex(thumbseries);
@@ -241,17 +237,15 @@ public class LeicaSCNReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   protected void initCoreMetadata(int s) throws FormatException, IOException {
-    LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
-    LeicaSCNHandler.Image i = handler.imageMap.get(s);
+    ImageCollection c = handler.collectionMap.get(s);
+    Image i = handler.imageMap.get(s);
 
-    if (c == null || i == null || !(i.imageNumStart <= s && i.imageNumEnd >= s))
+    if (c == null || i == null || !(i.imageNumStart <= s && i.imageNumEnd >= s)) {
       throw new FormatException("Error setting core metadata for image number " + s);
+    }
 
     // repopulate core metadata
-    int r = s-i.imageNumStart; // subresolution
-    IFD ifd = ifds.get(i.pixels.dimIFD[0][0][r]);
-    PhotoInterp pi = ifd.getPhotometricInterpretation();
-    int samples = ifd.getSamplesPerPixel();
+    int subresolution = s - i.imageNumStart;
 
     CoreMetadata ms = core.get(s);
 
@@ -259,28 +253,41 @@ public class LeicaSCNReader extends BaseTiffReader {
       ms.resolutionCount = i.pixels.sizeR;
     }
 
+    Dimension dimension = i.pixels.lookupDimension(0, 0, subresolution);
+    if (dimension == null) {
+      throw new FormatException(
+        "No dimension information for subresolution=" + subresolution);
+    }
+
+    IFD ifd = ifds.get(dimension.ifd);
+    PhotoInterp pi = ifd.getPhotometricInterpretation();
+    int samples = ifd.getSamplesPerPixel();
+
     ms.rgb = samples > 1 || pi == PhotoInterp.RGB;
-    ms.sizeX = (int) i.pixels.dimSizeX[0][0][r];
-    ms.sizeY = (int) i.pixels.dimSizeY[0][0][r];
+    ms.sizeX = (int) dimension.sizeX;
+    ms.sizeY = (int) dimension.sizeY;
     ms.sizeZ = (int) i.pixels.sizeZ;
     ms.sizeT = 1;
     ms.sizeC = ms.rgb ? samples : i.pixels.sizeC;
 
-    if ((ifd.getImageWidth() != ms.sizeX) ||
-        (ifd.getImageLength() != ms.sizeY))
-      throw new FormatException("IFD dimensions do not match XML dimensions for image number " + s + ": x=" + ifd.getImageWidth() + ", " + ms.sizeX + ", y=" + ifd.getImageLength() + ", " + ms.sizeY);
+    if ((ifd.getImageWidth() != ms.sizeX) || (ifd.getImageLength() != ms.sizeY))
+    {
+      throw new FormatException("IFD dimensions do not match XML dimensions for image " +
+        s + ": x=" + ifd.getImageWidth() + ", " + ms.sizeX + ", y=" + ifd.getImageLength() +
+        ", " + ms.sizeY);
+    }
 
     ms.orderCertain = true;
     ms.littleEndian = ifd.isLittleEndian();
-    ms.indexed = (pi == PhotoInterp.RGB_PALETTE &&
-        (get8BitLookupTable() != null || get16BitLookupTable() != null));
+    ms.indexed = pi == PhotoInterp.RGB_PALETTE &&
+      (get8BitLookupTable() != null || get16BitLookupTable() != null);
     ms.imageCount = i.pixels.sizeZ * i.pixels.sizeC;
     ms.pixelType = ifd.getPixelType();
     ms.metadataComplete = true;
     ms.interleaved = false;
     ms.falseColor = false;
-    ms.dimensionOrder = i.pixels.dataOrder;
-    ms.thumbnail = (i.imageThumbnail == r);
+    ms.dimensionOrder = "XYCZT";
+    ms.thumbnail = i.imageThumbnail == subresolution;
   }
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
@@ -294,7 +301,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     handler = new LeicaSCNHandler();
     if (imageDescription != null) {
       try {
-        // Test if XML is valid SCN metadata
+        // parse the XML description
         XMLTools.parseXML(imageDescription, handler);
       }
       catch (Exception se) {
@@ -313,7 +320,6 @@ public class LeicaSCNReader extends BaseTiffReader {
       tiffParser.fillInIFD(ifds.get(handler.IFDMap.get(i)));
       initCoreMetadata(i);
     }
-    setSeries(0);
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -322,46 +328,50 @@ public class LeicaSCNReader extends BaseTiffReader {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this, true);
 
-    HashMap<String,String> instruments = new HashMap<String,String>();
     HashMap<String,Integer> instrumentIDs = new HashMap<String,Integer>();
     int instrumentidno = 0;
     HashMap<String,String> objectives = new HashMap<String,String>();
-    HashMap<String,Integer> objectiveIDs = new HashMap<String,Integer>();
     int objectiveidno = 0;
 
     for (int s=0; s<getSeriesCount(); s++) {
-      LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
-      LeicaSCNHandler.Image i = handler.imageMap.get(s);
-      int r = s-i.imageNumStart; // subresolution
+      int coreIndex = seriesToCoreIndex(s);
+      ImageCollection c = handler.collectionMap.get(coreIndex);
+      Image i = handler.imageMap.get(coreIndex);
+      int subresolution = coreIndex - i.imageNumStart;
+
+      Dimension dimension = i.pixels.lookupDimension(0, 0, subresolution);
+      if (dimension == null) {
+        throw new FormatException(
+          "No dimension information for subresolution=" + subresolution);
+      }
 
       // Leica units are nanometres; convert to µm
-      double sizeX = ((double) i.vSizeX) / 1000;
-      double sizeY = ((double) i.vSizeY) / 1000;
-      final Length offsetX =
-              new Length(i.vOffsetX / 1000.0d, UNITS.REFERENCEFRAME);
-      final Length offsetY =
-              new Length(i.vOffsetY / 1000.0d, UNITS.REFERENCEFRAME);
-      double sizeZ = (double) i.vSpacingZ / 1000;
+      double sizeX = i.vSizeX / 1000.0;
+      double sizeY = i.vSizeY / 1000.0;
+      final Length offsetX = new Length(i.vOffsetX, UNITS.REFERENCEFRAME);
+      final Length offsetY = new Length(i.vOffsetY, UNITS.REFERENCEFRAME);
+      double sizeZ = i.vSpacingZ / 1000.0;
 
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX/i.pixels.dimSizeX[0][0][r]), s);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY/i.pixels.dimSizeY[0][0][r]), s);
-      if (sizeZ > 0) // awful hack to cope with PositiveFloat
-        store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(sizeZ), s);
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(sizeX / dimension.sizeX), s);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(sizeY / dimension.sizeY), s);
+      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(sizeZ), s);
 
-      if (instruments.get(i.devModel) == null) {
+      if (instrumentIDs.get(i.devModel) == null) {
         String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);
-        instruments.put(i.devModel, instrumentID);
-        instrumentIDs.put(i.devModel, new Integer(instrumentidno));
+        instrumentIDs.put(i.devModel, instrumentidno);
         store.setInstrumentID(instrumentID, instrumentidno);
         instrumentidno++;
       }
 
-      if (objectives.get(i.devModel+":"+i.objMag) == null) {
-        int inst = instrumentIDs.get(i.devModel);
+      int inst = instrumentIDs.get(i.devModel);
+      String objectiveName = i.devModel + ":" + i.objMag;
+      if (objectives.get(objectiveName) == null) {
         String objectiveID = MetadataTools.createLSID("Objective", inst, objectiveidno);
-        objectives.put(i.devModel+":"+i.objMag, objectiveID);
-        objectiveIDs.put(i.devModel+":"+i.objMag, new Integer(objectiveidno));
+        objectives.put(objectiveName, objectiveID);
         store.setObjectiveID(objectiveID, inst, objectiveidno);
 
         Double mag = Double.parseDouble(i.objMag);
@@ -371,300 +381,225 @@ public class LeicaSCNReader extends BaseTiffReader {
         objectiveidno++;
       }
 
-      store.setImageInstrumentRef(instruments.get(i.devModel), s);
-      store.setObjectiveSettingsID(objectives.get(i.devModel+":"+i.objMag), s);
-      String channelID = MetadataTools.createLSID("Channel", s);
-      store.setChannelID(channelID, s, 0);
-      // TODO: Only "brightfield has been seen in example files
+      store.setImageInstrumentRef(
+        MetadataTools.createLSID("Instrument", inst), s);
+      store.setObjectiveSettingsID(objectives.get(objectiveName), s);
+      // TODO: Only "brightfield" has been seen in example files
       if (i.illumSource.equals("brightfield")) {
         store.setChannelIlluminationType(IlluminationType.TRANSMITTED, s, 0);
       } else {
         store.setChannelIlluminationType(IlluminationType.OTHER, s, 0);
-        LOGGER.debug("Unknown illumination source {}; please report this", i.illumSource);
+        LOGGER.debug("Unknown illumination source {}", i.illumSource);
       }
 
       CoreMetadata ms = core.get(s);
 
       for (int q=0; q<ms.imageCount; q++) {
-        int[] dims = FormatTools.getZCTCoords(ms.dimensionOrder, ms.sizeZ, ms.imageCount/(ms.sizeZ * ms.sizeT), ms.sizeT, ms.imageCount, q);
-
-        store.setPlaneTheZ(new NonNegativeInteger(dims[0]), s, q);
-        store.setPlaneTheC(new NonNegativeInteger(dims[1]), s, q);
-        store.setPlaneTheT(new NonNegativeInteger(dims[2]), s, q);
         store.setPlanePositionX(offsetX, s, q);
         store.setPlanePositionY(offsetY, s, q);
       }
 
-      store.setImageName(i.name + " (R" + (s-i.imageNumStart) + ")", s);
+      store.setImageName(i.name + " (R" + subresolution + ")", s);
       store.setImageDescription("Collection " + c.name, s);
 
       store.setImageAcquisitionDate(new Timestamp(i.creationDate), s);
 
       // Original metadata...
-      addGlobalMeta("collection.name", c.name);
-      addGlobalMeta("collection.uuid", c.uuid);
-      addGlobalMeta("collection.barcode", c.barcode);
-      addGlobalMeta("collection.ocr", c.ocr);
-      addGlobalMeta("creationDate", i.creationDate);
+      addSeriesMeta("collection.name", c.name);
+      addSeriesMeta("collection.uuid", c.uuid);
+      addSeriesMeta("collection.barcode", c.barcode);
+      addSeriesMeta("collection.ocr", c.ocr);
+      addSeriesMeta("creationDate", i.creationDate);
 
-      addGlobalMetaList("device.model for image", i.devModel);
-      addGlobalMetaList("device.version for image", i.devVersion);
-      addGlobalMetaList("view.sizeX for image", i.vSizeX);
-      addGlobalMetaList("view.sizeY for image", i.vSizeY);
-      addGlobalMetaList("view.offsetX for image", i.vOffsetX);
-      addGlobalMetaList("view.offsetY for image", i.vOffsetY);
-      addGlobalMetaList("view.spacingZ for image", i.vSpacingZ);
-      addGlobalMetaList("scanSettings.objectiveSettings.objective for image", i.objMag);
-      addGlobalMetaList( "scanSettings.illuminationSettings.numericalAperture for image", i.illumNA);
-      addGlobalMetaList("scanSettings.illuminationSettings.illuminationSource for image", i.illumSource);
+      addSeriesMeta("device.model for image", i.devModel);
+      addSeriesMeta("device.version for image", i.devVersion);
+      addSeriesMeta("view.sizeX for image", i.vSizeX);
+      addSeriesMeta("view.sizeY for image", i.vSizeY);
+      addSeriesMeta("view.offsetX for image", i.vOffsetX);
+      addSeriesMeta("view.offsetY for image", i.vOffsetY);
+      addSeriesMeta("view.spacingZ for image", i.vSpacingZ);
+      addSeriesMeta("scanSettings.objectiveSettings.objective for image", i.objMag);
+      addSeriesMeta("scanSettings.illuminationSettings.numericalAperture for image", i.illumNA);
+      addSeriesMeta("scanSettings.illuminationSettings.illuminationSource for image", i.illumSource);
     }
   }
 
-}
+  /**
+   * SAX handler for parsing XML in Leica SCN files.
+   *
+   * @author Roger Leigh <r.leigh at dundee.ac.uk>
+   */
+  class LeicaSCNHandler extends DefaultHandler {
 
-/**
- * SAX handler for parsing XML in Zeiss TIFF files.
- *
- * @author Roger Leigh <r.leigh at dundee.ac.uk>
- */
-class LeicaSCNHandler extends DefaultHandler {
+    // -- Fields --
+    boolean valid = false;
 
-  // -- Constants --
-  /** Logger for this class. */
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(LeicaSCNReader.class);
+    public ArrayList<ImageCollection> collections;
+    public ImageCollection currentCollection;
+    public Image currentImage;
+    public int seriesIndex;
+    public ArrayList<Integer> IFDMap = new ArrayList<Integer>();
+    public ArrayList<ImageCollection> collectionMap = new ArrayList<ImageCollection>();
+    public ArrayList<Image> imageMap = new ArrayList<Image>();
 
-  // -- Fields --
-  boolean valid = false;
+    // Stack of XML elements to keep track of placement in the tree.
+    public Stack<String> nameStack = new Stack<String>();
+    // CDATA text stored while parsing.  Note that this is limited to a
+    // single span between two tags, and CDATA with embedded elements is
+    // not supported.
+    public String cdata;
 
-  public ArrayList<LeicaSCNHandler.ImageCollection> collections;
-  public LeicaSCNHandler.ImageCollection currentCollection;
-  public LeicaSCNHandler.Image currentImage;
-  public LeicaSCNHandler.Dimension currentDimension;
-  public int seriesIndex;
-  public ArrayList<Integer> IFDMap = new ArrayList<Integer>();
-  public ArrayList<ImageCollection> collectionMap = new ArrayList<ImageCollection>();
-  public ArrayList<Image> imageMap = new ArrayList<Image>();
+    // -- DefaultHandler API methods --
 
-  // Stack of XML elements to keep track of placement in the tree.
-  public Stack<String> nameStack = new Stack<String>();
-  // CDATA text stored while parsing.  Note that this is limited to a
-  // single span between two tags, and CDATA with embedded elements is
-  // not supported (and not present in the Zeiss TIFF format).
-  public String cdata = new String();
-
-  // -- ZeissTIFFHandler API methods --
-
-  LeicaSCNHandler() {
-  }
-
-  @Override
-  public String toString()
-  {
-    String s = new String("TIFF-XML parsing\n");
-
-    return s;
-  }
-
-  // -- DefaultHandler API methods --
-
-  @Override
-  public void endElement(String uri,
-    String localName,
-    String qName) {
-    if (!nameStack.empty() && nameStack.peek().equals(qName))
-      nameStack.pop();
-
-    if (qName.equals("scn")) {
-      // Finalise data.
-    }
-    else if (qName.equals("collection")) {
-      currentCollection = null;
-    }
-    else if (qName.equals("image")) {
-      currentImage.imageNumStart = seriesIndex;
-      seriesIndex += currentImage.pixels.sizeR;
-      currentImage.imageNumEnd = seriesIndex - 1;
-      currentImage = null;
-    }
-    else if (qName.equals("creationDate")) {
-      currentImage.creationDate = cdata;
-    }
-    else if (qName.equals("device")) {
-    }
-    else if (qName.equals("pixels")) {
-      // Compute size of C, R and Z
-      Pixels p = currentImage.pixels;
-      int sizeC = 0;
-      int sizeR = 0;
-      int sizeZ = 0;
-
-      for (Dimension d : p.dims) {
-        if (d.c > sizeC)
-          sizeC = d.c;
-        if (d.r > sizeR)
-          sizeR = d.r;
-        if (d.z > sizeZ)
-          sizeZ = d.z;
+    @Override
+    public void endElement(String uri, String localName, String qName) {
+      if (!nameStack.empty() && nameStack.peek().equals(qName)) {
+        nameStack.pop();
       }
-      sizeC++;
-      sizeR++;
-      sizeZ++;
 
-      // Set up storage for all dimensions.
-      p.sizeC = sizeC;
-      p.sizeR = sizeR;
-      p.sizeZ = sizeZ;
-      p.dimSizeX = new long[sizeZ][sizeC][sizeR];
-      p.dimSizeY = new long[sizeZ][sizeC][sizeR];
-      p.dimIFD = new int[sizeZ][sizeC][sizeR];
+      if (qName.equals("collection")) {
+        currentCollection = null;
+      }
+      else if (qName.equals("image")) {
+        currentImage.imageNumStart = seriesIndex;
+        seriesIndex += currentImage.pixels.sizeR;
+        currentImage.imageNumEnd = seriesIndex - 1;
+        currentImage = null;
+      }
+      else if (qName.equals("creationDate")) {
+        currentImage.creationDate = cdata;
+      }
+      else if (qName.equals("pixels")) {
+        // Compute size of C, R and Z
+        Pixels p = currentImage.pixels;
+        int sizeC = 0;
+        int sizeR = 0;
+        int sizeZ = 0;
 
-      for (Dimension d : p.dims) {
-        p.dimSizeX[d.z][d.c][d.r] = d.sizeX;
-        p.dimSizeY[d.z][d.c][d.r] = d.sizeY;
-        p.dimIFD[d.z][d.c][d.r] = d.ifd;
-        if (d.r == 0 || currentImage.thumbSizeX > d.sizeX) {
-          currentImage.thumbSizeX = d.sizeX;
-          currentImage.imageThumbnail = d.r;
+        for (Dimension d : p.dims) {
+          if (d.c > sizeC) {
+            sizeC = d.c;
+          }
+          if (d.r > sizeR) {
+            sizeR = d.r;
+          }
+          if (d.z > sizeZ) {
+            sizeZ = d.z;
+          }
         }
-      }
+        sizeC++;
+        sizeR++;
+        sizeZ++;
 
-      // Dimension ordering indirection (R=image, then Z, then C)
-      for (int cr = 0; cr < sizeR; cr++) {
-        for (int cc = 0; cc < sizeC; cc++) {
-          for (int cz = 0; cz < sizeZ; cz++) {
-            IFDMap.add(p.dimIFD[cz][cc][cr]);
-            collectionMap.add(currentCollection);
-            imageMap.add(currentImage);
+        // Set up storage for all dimensions.
+        p.sizeC = sizeC;
+        p.sizeR = sizeR;
+        p.sizeZ = sizeZ;
+
+        for (Dimension d : p.dims) {
+          if (d.r == 0 || currentImage.thumbSizeX > d.sizeX) {
+            currentImage.thumbSizeX = d.sizeX;
+            currentImage.imageThumbnail = d.r;
+          }
+        }
+
+        // Dimension ordering indirection (R=image, then Z, then C)
+        for (int cr = 0; cr < sizeR; cr++) {
+          for (int cc = 0; cc < sizeC; cc++) {
+            for (int cz = 0; cz < sizeZ; cz++) {
+              IFDMap.add(p.lookupDimension(cz, cc, cr).ifd);
+              collectionMap.add(currentCollection);
+              imageMap.add(currentImage);
+            }
           }
         }
       }
+      else if (qName.equals("objective")) {
+        currentImage.objMag = cdata;
+      }
+      else if (qName.equals("numericalAperture")) {
+        currentImage.illumNA = cdata;
+      }
+      else if (qName.equals("illuminationSource")) {
+        currentImage.illumSource = cdata;
+      }
+      cdata = null;
     }
-    else if (qName.equals("dimension")) {
-      currentDimension = null;
-    }
-    else if (qName.equals("view")) {
-    }
-    else if (qName.equals("scanSettings")) {
-    }
-    else if (qName.equals("objectiveSettings")) {
-    }
-    else if (qName.equals("objective")) {
-      currentImage.objMag = cdata;
-    }
-    else if (qName.equals("illuminationSettings")) {
-    }
-    else if (qName.equals("numericalAperture")) {
-      currentImage.illumNA = cdata;
-    }
-    else if (qName.equals("illuminationSource")) {
-      currentImage.illumSource = cdata;
-    } else {
-      // Other or unknown tag; will be handled by endElement.
-      LOGGER.info("Unknown tag: " + qName);
-    }
-    cdata = null;
 
-  }
+    @Override
+    public void characters(char[] ch, int start, int length) {
+      String s = new String(ch, start, length);
+      if (cdata == null) {
+        cdata = s;
+      }
+      else {
+        cdata += s;
+      }
+    }
 
-  @Override
-  public void characters(char[] ch,
-    int start,
-    int length)
-  {
-    String s = new String(ch, start, length);
-    if (cdata == null)
-      cdata = s;
-    else
-      cdata += s;
-  }
-
-  @Override
-  public void startElement(String uri, String localName, String qName,
-    Attributes attributes) throws SAXException
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes) throws SAXException
     {
-    cdata = null;
+      cdata = null;
 
-    if (qName.equals("scn")) {
-      String ns = attributes.getValue("xmlns");
-      if (ns == null) {
+      if (qName.equals("scn")) {
+        String ns = attributes.getValue("xmlns");
+        if (ns == null) {
+          throw new SAXException("Invalid Leica SCN XML");
+        }
+        if (!(ns.equals(SCHEMA_2010_03) || ns.equals(SCHEMA_2010_10))) {
+          LOGGER.warn("Unknown Leica SCN XML schema: " + ns + "; this file may not be read correctly");
+        }
+
+        valid = true;
+        collections = new ArrayList<ImageCollection>();
+        seriesIndex = 0;
+      }
+
+      if (!valid) {
         throw new SAXException("Invalid Leica SCN XML");
       }
-      if (!(ns.equals("http://www.leica-microsystems.com/scn/2010/03/10") ||
-          ns.equals("http://www.leica-microsystems.com/scn/2010/10/01"))) {
-        LOGGER.warn("Unknown Leica SCN XML schema: " + ns + "; this file may not be read correctly: please report this");
+
+      if (qName.equals("collection")) {
+        currentCollection = new ImageCollection(attributes);
+        collections.add(currentCollection);
+        if (collections.size() != 1) {
+          throw new SAXException("Invalid Leica SCN XML: Only a single collection is permitted");
+        }
+      }
+      else if (qName.equals("image")) {
+        currentImage = new Image(attributes);
+        currentCollection.images.add(currentImage);
+      }
+      else if (qName.equals("device")) {
+        currentImage.devModel = attributes.getValue("model");
+        currentImage.devVersion = attributes.getValue("version");
+      }
+      else if (qName.equals("pixels")) {
+        if (currentImage.pixels == null) {
+          currentImage.pixels = new Pixels(attributes);
+        }
+        else {
+          throw new SAXException("Invalid Leica SCN XML: Multiple pixels elements for single image");
+        }
+      }
+      else if (qName.equals("dimension")) {
+        currentImage.pixels.dims.add(new Dimension(attributes));
+      }
+      else if (qName.equals("view")) {
+        currentImage.setView(attributes);
       }
 
-      valid = true;
-      collections = new ArrayList<LeicaSCNHandler.ImageCollection>();
-      seriesIndex = 0;
+      nameStack.push(qName);
     }
 
-    if (valid == false)
-    {
-      throw new SAXException("Invalid Leica SCN XML");
+    int count() {
+      return seriesIndex;
     }
-
-    if (qName.equals("collection")) {
-      ImageCollection c = new LeicaSCNHandler.ImageCollection(attributes);
-      collections.add(c);
-      currentCollection = c;
-      if (collections.size() != 1)
-        throw new SAXException("Invalid Leica SCN XML: Only a single collection is permitted");
-    }
-    else if (qName.equals("image")) {
-      Image i = new LeicaSCNHandler.Image(attributes);
-      currentCollection.images.add(i);
-      currentImage = i;
-    }
-    else if (qName.equals("creationDate")) {
-    }
-    else if (qName.equals("device")) {
-      currentImage.devModel = attributes.getValue("model");
-      currentImage.devVersion = attributes.getValue("version");
-    }
-    else if (qName.equals("pixels")) {
-      if (currentImage.pixels == null)
-        currentImage.pixels = new LeicaSCNHandler.Pixels(attributes);
-      else
-      {
-        throw new SAXException("Invalid Leica SCN XML: Multiple pixels elements for single image");
-      }
-    }
-    else if (qName.equals("dimension")) {
-      Dimension d = new Dimension(attributes);
-      currentImage.pixels.dims.add(d);
-      currentDimension = d;
-    }
-    else if (qName.equals("view")) {
-      currentImage.setView(attributes);
-    }
-    else if (qName.equals("scanSettings")) {
-    }
-    else if (qName.equals("objectiveSettings")) {
-    }
-    else if (qName.equals("objective")) {
-    }
-    else if (qName.equals("illuminationSettings")) {
-    }
-    else if (qName.equals("numericalAperture")) {
-    }
-    else if (qName.equals("illuminationSource")) {
-    } else {
-      // Other or unknown tag; will be handled by endElement.
-    }
-
-    nameStack.push(qName);
-    }
-
-  // -- Helper classes and functions --
-
-  int count() {
-    return seriesIndex;
   }
 
-  public class ImageCollection
-  {
+  class ImageCollection {
     String name;
     String uuid;
     long sizeX;
@@ -675,15 +610,16 @@ class LeicaSCNHandler extends DefaultHandler {
     ArrayList<Image> images;
 
     ImageCollection(Attributes attrs) {
-      String s;
       name = attrs.getValue("name");
       uuid = attrs.getValue("uuid");
-      s = attrs.getValue("sizeX");
-      if (s != null)
+      String s = attrs.getValue("sizeX");
+      if (s != null) {
         sizeX = Long.parseLong(s);
+      }
       s = attrs.getValue("sizeY");
-      if (s != null)
+      if (s != null) {
         sizeY = Long.parseLong(s);
+      }
       barcode = attrs.getValue("barcode");
       ocr = attrs.getValue("ocr");
 
@@ -691,8 +627,7 @@ class LeicaSCNHandler extends DefaultHandler {
     }
   }
 
-  public class Image
-  {
+  class Image {
     int imageNumStart; // first image number
     int imageNumEnd;   // last image number (subresolutions)
     int imageThumbnail; // image for thumbnailing
@@ -718,29 +653,31 @@ class LeicaSCNHandler extends DefaultHandler {
       uuid = attrs.getValue("uuid");
     }
 
-    void
-    setView(Attributes attrs) {
-      String s;
-      s = attrs.getValue("sizeX");
-      if (s != null)
+    void setView(Attributes attrs) {
+      String s = attrs.getValue("sizeX");
+      if (s != null) {
         vSizeX = Long.parseLong(s);
+      }
       s = attrs.getValue("sizeY");
-      if (s != null)
+      if (s != null) {
         vSizeY = Long.parseLong(s);
+      }
       s = attrs.getValue("offsetX");
-      if (s != null)
+      if (s != null) {
         vOffsetX = Long.parseLong(s);
+      }
       s = attrs.getValue("offsetY");
-      if (s != null)
+      if (s != null) {
         vOffsetY = Long.parseLong(s);
+      }
       s = attrs.getValue("spacingZ");
-      if (s != null)
+      if (s != null) {
         vSpacingZ = Long.parseLong(s);
+      }
     }
   }
 
-  public class Pixels
-  {
+  class Pixels {
     // Set up storage for each resolution and each dimension.  Set main resolution.
 
     // data order (XYCRZ) [unused; force to XYCZT]
@@ -751,34 +688,36 @@ class LeicaSCNHandler extends DefaultHandler {
     //   use 3 arrays of size C*Z*R
 
     ArrayList<Dimension> dims = new ArrayList<Dimension>();
-    String dataOrder; // Strip subresolutions and add T
     long sizeX;
     long sizeY;
     int sizeZ;
     int sizeC;
     int sizeR;
     int lastIFD;
-    long dimSizeX[][][]; // X size for [ZCR]
-    long dimSizeY[][][]; // Y size for [ZCR]
-    int dimIFD[][][];   // Corresponding IFD for [ZCR]
 
     Pixels(Attributes attrs) {
-      String s;
-
-      dataOrder = "XYCZT"; // Do not get from XML
-
       // Set main resolution.
-      s = attrs.getValue("sizeX");
-      if (s != null)
+      String s = attrs.getValue("sizeX");
+      if (s != null) {
         sizeX = Long.parseLong(s);
+      }
       s = attrs.getValue("sizeY");
-      if (s != null)
+      if (s != null) {
         sizeY = Long.parseLong(s);
+      }
+    }
+
+    public Dimension lookupDimension(int z, int c, int resolution) {
+      for (Dimension d : dims) {
+        if (d.z == z && d.c == c && d.r == resolution) {
+          return d;
+        }
+      }
+      return null;
     }
   }
 
-  public class Dimension
-  {
+  class Dimension {
     // Single image plane for given Z, C, R dimensions
     long sizeX = 0;
     long sizeY = 0;
@@ -788,27 +727,30 @@ class LeicaSCNHandler extends DefaultHandler {
     int ifd = 0;
 
     Dimension(Attributes attrs) {
-      String s;
-      s = attrs.getValue("r");
-      if (s != null)
+      String s = attrs.getValue("r");
+      if (s != null) {
         r = Integer.parseInt(s);
+      }
       s = attrs.getValue("z");
-      if (s != null)
+      if (s != null) {
         z = Integer.parseInt(s);
+      }
       s = attrs.getValue("c");
-      if (s != null)
+      if (s != null) {
         c = Integer.parseInt(s);
+      }
       s = attrs.getValue("sizeX");
-      if (s != null)
+      if (s != null) {
         sizeX = Long.parseLong(s);
+      }
       s = attrs.getValue("sizeY");
-      if (s != null)
+      if (s != null) {
         sizeY = Long.parseLong(s);
+      }
       s = attrs.getValue("ifd");
-      if (s != null)
+      if (s != null) {
         ifd = Integer.parseInt(s);
+      }
     }
   }
-
 }
-

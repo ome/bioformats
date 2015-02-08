@@ -370,41 +370,33 @@ public abstract class FormatReader extends FormatHandler
     return metadata.get(key);
   }
 
-  protected void addGlobalMetaList(String key, Object value) {
-    Vector list = (Vector) metadata.get(key);
-    metadata.remove(key);
-    addGlobalMeta(key, value);
-    Object newValue = metadata.get(key);
-    metadata.remove(key);
+  protected void addMetaList(String key, Object value,
+    Hashtable<String, Object> meta)
+  {
+    Vector list = (Vector) meta.get(key);
+    meta.remove(key);
+    addMeta(key, value, meta);
+    Object newValue = meta.get(key);
+    meta.remove(key);
     if (newValue != null) {
       if (list == null) {
         list = new Vector();
       }
 
       list.add(newValue);
-      metadata.put(key, list);
+      meta.put(key, list);
     }
     else if (list != null) {
-      metadata.put(key, list);
+      meta.put(key, list);
     }
   }
 
-  protected void addSeriesMetaList(String key, Object value) {
-    Vector list = (Vector) core.get(getCoreIndex()).seriesMetadata.get(key);
-    core.get(getCoreIndex()).seriesMetadata.remove(key);
-    addSeriesMeta(key, value);
-    Object newValue = core.get(getCoreIndex()).seriesMetadata.get(key);
-    if (newValue != null) {
-      if (list == null) {
-        list = new Vector();
-      }
+  protected void addGlobalMetaList(String key, Object value) {
+    addMetaList(key, value, metadata);
+  }
 
-      list.add(newValue);
-      core.get(getCoreIndex()).seriesMetadata.put(key, list);
-    }
-    else if (list != null) {
-      core.get(getCoreIndex()).seriesMetadata.put(key, list);
-    }
+  protected void addSeriesMetaList(String key, Object value) {
+    addMetaList(key, value, core.get(getCoreIndex()).seriesMetadata);
   }
 
   protected void flattenHashtables() {

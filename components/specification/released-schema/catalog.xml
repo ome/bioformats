@@ -20,10 +20,6 @@
   <nextCatalog catalog="2011-06/catalog.xml"/>
   <nextCatalog catalog="2012-06/catalog.xml"/>
   <nextCatalog catalog="2013-06/catalog.xml"/>
-  <nextCatalog catalog="2013-10-dev-1/catalog.xml"/>
-  <nextCatalog catalog="2013-10-dev-2/catalog.xml"/>
-  <nextCatalog catalog="2013-10-dev-3/catalog.xml"/>
-  <nextCatalog catalog="2013-10-dev-4/catalog.xml"/>
-  <nextCatalog catalog="2013-10-dev-5/catalog.xml"/>
+  <nextCatalog catalog="2015-01/catalog.xml"/>
   <nextCatalog catalog="external/catalog.xml"/>
 </catalog>
