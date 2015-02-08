@@ -39,7 +39,6 @@ import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.plugin.frame.Recorder;
-import ij.plugin.frame.RoiManager;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -139,7 +138,6 @@ public class Exporter {
                 try {
                     int imageID = Integer.parseInt(id);
                     ImagePlus plus = WindowManager.getImage(imageID);
-                    IJ.log("plus:"+plus);
                     if (plus != null) imp = plus;
                 } catch (Exception e) {
                     //nothing to do, we use the current imagePlus
@@ -156,6 +154,7 @@ public class Exporter {
             }
         }
 
+        File f = null;
         if (outfile == null || outfile.length() == 0) {
             // open a dialog prompting for the filename to save
 
@@ -191,20 +190,16 @@ public class Exporter {
                 Macro.abort();
                 return;
             }
-            File f = fc.getSelectedFile();
-
+            f = fc.getSelectedFile();
+            dir = fc.getCurrentDirectory().getPath() + File.separator;
+            name = fc.getName(f);
             if (f.exists()) {
                 int ret = JOptionPane.showConfirmDialog(fc,
                         "The file " + f.getName() + " already exists. \n" +
                                 "Would you like to replace it?", "Replace?",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (ret != JOptionPane.OK_OPTION) f = null;
-            }
-            if (f == null) Macro.abort();
-            else {
-                dir = fc.getCurrentDirectory().getPath() + File.separator;
-                name = fc.getName(f);
-
+            } else {
                 // ensure filename matches selected filter
                 FileFilter filter = fc.getFileFilter();
                 if (filter instanceof ExtensionFileFilter) {
@@ -237,15 +232,12 @@ public class Exporter {
                     }
 
                 }
-                if (f == null) {
-                    Macro.abort();
-                    return;
-                }
-                else{
-                    // do some ImageJ bookkeeping
-                    OpenDialog.setDefaultDirectory(dir);
-                    if (Recorder.record) Recorder.recordPath("save", dir+name);
-                }
+            }
+            if (f == null) Macro.abort();
+            else {
+                // do some ImageJ bookkeeping
+                OpenDialog.setDefaultDirectory(dir);
+                if (Recorder.record) Recorder.recordPath("save", dir+name);
             }
 
             if (dir == null || name == null) return;
@@ -266,6 +258,7 @@ public class Exporter {
             splitZ = multiFile.getNextBoolean();
             splitT = multiFile.getNextBoolean();
             splitC = multiFile.getNextBoolean();
+            if (multiFile.wasCanceled()) return;
         }
 
         try {
@@ -310,13 +303,15 @@ public class Exporter {
 
             if (store == null) IJ.error("OME-XML Java library not found.");
 
-            if (xml == null | root.sizeOfROIList()>0) {
+            if (root.sizeOfROIList()>0){
+                store.createRoot();
+            }
+            if (xml == null) {
                 store.createRoot();
             }
             else if (store.getImageCount() > 1) {
                 // the original dataset had multiple series
                 // we need to modify the IMetadata to represent the correct series
-
                 ArrayList<Integer> matchingSeries = new ArrayList<Integer>();
                 for (int series=0; series<store.getImageCount(); series++) {
                     String type = store.getPixelsType(series).toString();
@@ -359,7 +354,6 @@ public class Exporter {
                         root.removeImage(img);
                     }
                 }
-
                 store.setRoot(root);
             }
 
@@ -553,7 +547,7 @@ public class Exporter {
                     if (saveRoi != null) {
                         gd.addCheckbox("Export ROIs", saveRoi.booleanValue());
                     } else {
-                        gd.addCheckbox("Export ROIs", false);
+                        gd.addCheckbox("Export ROIs", true);
                     }
                     gd.showDialog();
                     saveRoi = gd.getNextBoolean();
@@ -562,7 +556,30 @@ public class Exporter {
                     compression = gd.getNextChoice();
                 }
             }
-
+            boolean in = false;
+            if (outputFiles.length > 1) {
+                for (int i = 0; i < outputFiles.length; i++) {
+                    if (new File(outputFiles[i]).exists()) {
+                        in = true;
+                        break;
+                    }
+                }
+            }
+            if (in) {
+                int ret1 = JOptionPane.showConfirmDialog(null,
+                        "Some files already exist. \n" +
+                                "Would you like to replace them?", "Replace?",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (ret1 != JOptionPane.OK_OPTION) {
+                    return;
+                }
+                //Delete the files overwrite does not correctly work
+                for (int i = 0; i < outputFiles.length; i++) {
+                    new File(outputFiles[i]).delete();
+                }
+            }
+            //We are now ready to write the image
+            if (f != null) f.delete(); //delete the file.
             if (compression != null) {
                 w.setCompression(compression);
             }

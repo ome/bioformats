@@ -13,7 +13,15 @@ the appropriate options to ``use_setuptools()``.
 
 This file can also be run as a script to install or upgrade setuptools.
 """
+
 import sys
+import os
+
+try:
+    from hashlib import md5
+except ImportError:
+    from md5 import md5
+
 DEFAULT_VERSION = "0.6c11"
 DEFAULT_URL = ("http://pypi.python.org/packages/%s/s/setuptools/"
                % sys.version[:3])
@@ -62,13 +70,6 @@ md5_data = {
     'setuptools-0.6c9-py2.5.egg': 'fe67c3e5a17b12c0e7c541b7ea43a8e6',
     'setuptools-0.6c9-py2.6.egg': 'ca37b1ff16fa2ede6e19383e7b59245a',
 }
-
-import sys
-import os
-try:
-    from hashlib import md5
-except ImportError:
-    from md5 import md5
 
 
 def _validate_md5(egg_name, data):

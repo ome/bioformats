@@ -33,6 +33,7 @@ import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.JPEGTurboService;
@@ -67,6 +68,10 @@ public class NDPIReader extends BaseTiffReader {
   private int pyramidHeight = 1;
 
   private JPEGTurboService service = new JPEGTurboServiceImpl();
+
+  private Double magnification;
+  private String serialNumber;
+  private String instrumentModel;
 
   // -- Constructor --
 
@@ -241,6 +246,9 @@ public class NDPIReader extends BaseTiffReader {
       initializedPlane = -1;
       sizeZ = 1;
       pyramidHeight = 1;
+      magnification = null;
+      serialNumber = null;
+      instrumentModel = null;
       if (tiffParser != null) {
         tiffParser.getStream().close();
       }
@@ -332,6 +340,7 @@ public class NDPIReader extends BaseTiffReader {
 
     for (int i=1; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
+
       if (ifd.getImageWidth() == ifds.get(0).getImageWidth() &&
         ifd.getImageLength() == ifds.get(0).getImageLength())
       {
@@ -409,6 +418,31 @@ public class NDPIReader extends BaseTiffReader {
       ms.dimensionOrder = "XYCZT";
       ms.thumbnail = s != 0;
     }
+
+    String metadataTag = ifds.get(0).getIFDStringValue(METADATA_TAG);
+    if (metadataTag != null) {
+      String[] entries = metadataTag.split("\n");
+      for (String entry : entries) {
+        int eq = entry.indexOf("=");
+        if (eq < 0) {
+          continue;
+        }
+        String key = entry.substring(0, eq).trim();
+        String value = entry.substring(eq + 1).trim();
+
+        addGlobalMeta(key, value);
+
+        if (key.equals("Objective.Lens.Magnificant")) { // not a typo
+          magnification = new Double(value);
+        }
+        else if (key.equals("NDP.S/N")) {
+          serialNumber = value;
+        }
+        else if (key.equals("Product")) {
+          instrumentModel = value;
+        }
+      }
+    }
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -418,8 +452,25 @@ public class NDPIReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
 
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+
+    store.setInstrumentID(instrumentID, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+
+    if (instrumentModel != null) {
+      store.setMicroscopeModel(instrumentModel, 0);
+    }
+
+    if (magnification != null) {
+      store.setObjectiveNominalMagnification(magnification, 0, 0);
+    }
+
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);
+
+      store.setImageInstrumentRef(instrumentID, i);
+      store.setObjectiveSettingsID(objectiveID, i);
 
       if (i > 0) {
         int ifdIndex = getIFDIndex(i, 0);
@@ -441,6 +492,9 @@ public class NDPIReader extends BaseTiffReader {
         if (sizeY != null) {
           store.setPixelsPhysicalSizeY(sizeY, i);
         }
+      }
+      else {
+        store.setImageDescription(serialNumber, i);
       }
     }
   }

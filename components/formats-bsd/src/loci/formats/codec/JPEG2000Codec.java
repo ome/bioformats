@@ -204,10 +204,19 @@ public class JPEG2000Codec extends BaseCodec {
       try {
         is.seek(0);
         if (!j2kOptions.writeBox) {
-          while ((is.readShort() & 0xffff) != 0xff4f) {
-            is.seek(is.getFilePointer() - 1);
+          while (is.getFilePointer() < is.length()) {
+            // checking both 0xff4f and 0xff51 prevents this from
+            // stopping at an escaped 0xff4f (i.e. 0x00ff4f) sequence
+            // in the box
+            while ((is.readShort() & 0xffff) != 0xff4f) {
+              is.seek(is.getFilePointer() - 1);
+            }
+            if ((is.readShort() & 0xffff) == 0xff51) {
+              break;
+            }
+            is.seek(is.getFilePointer() - 2);
           }
-          is.seek(is.getFilePointer() - 2);
+          is.seek(is.getFilePointer() - 4);
         }
         byte[] buf = new byte[(int) (is.length() - is.getFilePointer())];
         is.readFully(buf);

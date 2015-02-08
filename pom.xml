@@ -61,7 +61,7 @@
     <kryo.version>2.24.0</kryo.version>
     <guava.version>17.0</guava.version>
 
-    <xsdfu.schemaver>2013-10-dev-5</xsdfu.schemaver>
+    <xsdfu.schemaver>2015-01</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
     <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
