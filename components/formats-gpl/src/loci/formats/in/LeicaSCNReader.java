@@ -244,10 +244,10 @@ public class LeicaSCNReader extends BaseTiffReader {
       throw new FormatException("Error setting core metadata for image number " + s);
     }
 
-    // repopulate core metadata
-    int subresolution = s - i.imageNumStart;
-
     CoreMetadata ms = core.get(s);
+
+    // repopulate core metadata
+    int subresolution = (s - i.imageNumStart) / (i.pixels.sizeZ * i.pixels.sizeC);
 
     if (s == i.imageNumStart) {
       ms.resolutionCount = i.pixels.sizeR;
@@ -339,7 +339,7 @@ public class LeicaSCNReader extends BaseTiffReader {
       int coreIndex = seriesToCoreIndex(s);
       ImageCollection c = handler.collectionMap.get(coreIndex);
       Image i = handler.imageMap.get(coreIndex);
-      int subresolution = coreIndex - i.imageNumStart;
+      int subresolution = (coreIndex - i.imageNumStart) / (i.pixels.sizeZ * i.pixels.sizeC);
 
       Dimension dimension = i.pixels.lookupDimension(0, 0, subresolution);
       if (dimension == null) {
@@ -462,7 +462,8 @@ public class LeicaSCNReader extends BaseTiffReader {
       }
       else if (qName.equals("image")) {
         currentImage.imageNumStart = seriesIndex;
-        seriesIndex += currentImage.pixels.sizeR;
+        seriesIndex += currentImage.pixels.sizeR *
+          currentImage.pixels.sizeC * currentImage.pixels.sizeZ;
         currentImage.imageNumEnd = seriesIndex - 1;
         currentImage = null;
       }
