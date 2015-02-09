@@ -39,6 +39,7 @@ for carrying out a variety of tasks:
     comlinetools/formatlist
     comlinetools/ijview
     comlinetools/xmlindent
+    comlinetools/mkfake
 
 
 

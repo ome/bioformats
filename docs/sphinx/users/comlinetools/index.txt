@@ -61,6 +61,12 @@ Currently available tools include:
         associated with each domain.  See :doc:`domainlist` for more
         information.
 
+    mkfake
+        Creates a "fake" high-content screen with configurable dimensions.
+        This is useful for testing how HCS metadata is handled, without
+        requiring real image data from an acquired screen.  See :doc:`mkfake`
+        for more information.
+
 Some of these tools also work in combination, for example
 :doc:`xml-validation` uses both ``tiffcomment`` and ``xmlvalid``.
 
