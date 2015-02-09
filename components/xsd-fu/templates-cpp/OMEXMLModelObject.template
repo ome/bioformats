@@ -970,6 +970,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get the ${prop.methodName} list.
@@ -977,17 +978,18 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns a reference to the list.
          *
          */
-        const ${prop.instanceVariableType}&
-        get${prop.methodName}List () const;
+        ${prop.retType[qualifier]}&
+        get${prop.methodName}List ()${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const ${prop.instanceVariableType}&
-      ${klass.name}::get${prop.methodName}List () const
+      ${prop.retType[qualifier]}&
+      ${klass.name}::get${prop.methodName}List ()${qualifier}
       {
         return ${prop.instanceVariableName};
       }
 {% end source %}\
 
+{% end qualifier %}\
 {% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
@@ -997,11 +999,11 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
          */
-        ${prop.retType[qualifier]}
+        ${prop.elementRetType[qualifier]}
         get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.retType[qualifier]}
+      ${prop.elementRetType[qualifier]}
       ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier}
       {
         return ${prop.instanceVariableName}.at(index);
@@ -1019,12 +1021,12 @@ ${customUpdatePropertyContent[prop.name]}
          */
         void
         set${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                               ${prop.argType} ${prop.argumentName});
+                               ${prop.elementArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
       ${klass.name}::set${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                                            ${prop.argType} ${prop.argumentName})
+                                            ${prop.elementArgType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
         std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
@@ -1050,11 +1052,11 @@ ${customUpdatePropertyContent[prop.name]}
          * @todo Detect and handle duplicates?
          */
         void
-        add${prop.methodName} (${prop.argType} ${prop.argumentName});
+        add${prop.methodName} (${prop.elementArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::add${prop.methodName} (${prop.argType} ${prop.argumentName})
+      ${klass.name}::add${prop.methodName} (${prop.elementArgType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
         std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
@@ -1075,11 +1077,11 @@ ${customUpdatePropertyContent[prop.name]}
          * aren't preventing duplicates on insertion.
          */
         void
-        remove${prop.methodName} (${prop.argType} ${prop.argumentName});
+        remove${prop.methodName} (${prop.elementArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::remove${prop.methodName} (${prop.argType} ${prop.argumentName})
+      ${klass.name}::remove${prop.methodName} (${prop.elementArgType} ${prop.argumentName})
       {
         ${prop.instanceVariableType}::iterator i = std::find_if(${prop.instanceVariableName}.begin(),
                                                                 ${prop.instanceVariableName}.end(),
@@ -1226,7 +1228,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if klass.isAnnotation %}\
-		// Ensure any base annotations add their Elements first
+        // Ensure any base annotations add their Elements first
         element = ${klass.parentName}::asXMLElementInternal(document, element);
 {% end if isAnnotation %}\
 {% for prop in klass.properties.values() %}\

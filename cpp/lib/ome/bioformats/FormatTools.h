@@ -54,18 +54,29 @@ namespace ome
      */
     enum Domain
       {
-        UNKNOWN,   ///< Unknown
-        HCS,       ///< High-Content Screening (HCS)
-        LM,        ///< Light Microscopy (LM)
-        EM,        ///< Electron Microscopy (EM)
-        SPM,       ///< Scanning Probe Microscopy (SPM)
-        SEM,       ///< Scanning Electron Microscopy (SEM)
-        FLIM,      ///< Fluorescence-Lifetime Imaging (FLIM)
-        MEDICAL,   ///< Medical Imaging
-        HISTOLOGY, ///< Histology
-        GEL,       ///< Gel/Blot Imaging
-        ASTRONOMY, ///< Astronomy
-        GRAPHICS   ///< Graphics
+        UNKNOWN_DOMAIN,   ///< Unknown
+        HCS_DOMAIN,       ///< High-Content Screening (HCS)
+        LM_DOMAIN,        ///< Light Microscopy (LM)
+        EM_DOMAIN,        ///< Electron Microscopy (EM)
+        SPM_DOMAIN,       ///< Scanning Probe Microscopy (SPM)
+        SEM_DOMAIN,       ///< Scanning Electron Microscopy (SEM)
+        FLIM_DOMAIN,      ///< Fluorescence-Lifetime Imaging (FLIM)
+        MEDICAL_DOMAIN,   ///< Medical Imaging
+        HISTOLOGY_DOMAIN, ///< Histology
+        GEL_DOMAIN,       ///< Gel/Blot Imaging
+        ASTRONOMY_DOMAIN, ///< Astronomy
+        GRAPHICS_DOMAIN   ///< Graphics
+      };
+
+    /**
+     * Imaging domain collections.
+     */
+    enum DomainCollection
+      {
+        NON_GRAPHICS_DOMAINS,
+        NON_HCS_DOMAINS,
+        NON_SPECIAL_DOMAINS,
+        ALL_DOMAINS
       };
 
     /**
@@ -76,6 +87,15 @@ namespace ome
      */
     const std::string&
     getDomain(Domain domain);
+
+    /**
+     * Get the strings corresponding to a particular Domain collection.
+     *
+     * @param domains the Domain collection to use.
+     * @returns the string descriptions of the Domain collection.
+     */
+    const std::vector<std::string>&
+    getDomainCollection(DomainCollection domains);
 
     /**
      * Get the rasterized index corresponding to the given @c Z, @c C
