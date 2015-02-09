@@ -41,8 +41,10 @@
 
 #include <ome/compat/config.h>
 
+#include <ome/xerces/String.h>
 #include <ome/xerces/dom/Base.h>
 #include <ome/xerces/dom/NodeList.h>
+#include <ome/xerces/dom/NamedNodeMap.h>
 #include <ome/xerces/dom/Wrapper.h>
 
 #include <xercesc/dom/DOMNode.hpp>
@@ -139,6 +141,39 @@ namespace ome
         getChildNodes()
         {
           return NodeList((*this)->getChildNodes());
+        }
+
+        /**
+         * Get node attributes.
+         *
+         * @returns the attributes.
+         */
+        NamedNodeMap
+        getAttributes()
+        {
+          return NamedNodeMap((*this)->getAttributes());
+        }
+
+        /**
+         * Get node value.
+         *
+         * @returns the node value.
+         */
+        std::string
+        getNodeValue()
+        {
+          return String((*this)->getNodeValue());
+        }
+
+        /**
+         * Get node text content.
+         *
+         * @returns the text content.
+         */
+        std::string
+        getTextContent()
+        {
+          return String((*this)->getTextContent());
         }
       };
 

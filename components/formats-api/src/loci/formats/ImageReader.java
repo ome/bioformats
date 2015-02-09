@@ -527,10 +527,22 @@ public class ImageReader implements IFormatReader {
     return getReader().getIndex(z, c, t);
   }
 
+  /* @see IFormatReader#getIndex(int, int, int, int, int, int) */
+  @Override
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+    return getReader().getIndex(z, c, t, moduloZ, moduloC, moduloT);
+  }
+
   /* @see IFormatReader#getZCTCoords(int) */
   @Override
   public int[] getZCTCoords(int index) {
     return getReader().getZCTCoords(index);
+  }
+
+  /* @see IFormatReader#getZCTModuloCoords(int) */
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    return getReader().getZCTModuloCoords(index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */

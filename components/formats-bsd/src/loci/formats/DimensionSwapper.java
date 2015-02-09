@@ -261,10 +261,20 @@ public class DimensionSwapper extends ReaderWrapper {
     return FormatTools.getZCTCoords(this, no);
   }
 
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    return FormatTools.getZCTModuloCoords(this, index);
+  }
+
   /* @see IFormatReader#getIndex(int, int, int) */
   @Override
   public int getIndex(int z, int c, int t) {
     return FormatTools.getIndex(this, z, c, t);
+  }
+
+  @Override
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+      return FormatTools.getIndex(this, z, c, t, moduloZ, moduloC, moduloT);
   }
 
   /* @see IFormatReader#getCoreMetadataList() */

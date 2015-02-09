@@ -42,6 +42,9 @@
 
 #include <ome/internal/config.h>
 
+#include <ome/bioformats/PlaneRegion.h>
+#include <ome/bioformats/TileBuffer.h>
+#include <ome/bioformats/TileCache.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/Field.h>
@@ -65,6 +68,10 @@ namespace
   using ::ome::bioformats::dimension_size_type;
   using ::ome::bioformats::PixelBuffer;
   using ::ome::bioformats::PixelProperties;
+  using ::ome::bioformats::PlaneRegion;
+  using ::ome::bioformats::TileBuffer;
+  using ::ome::bioformats::TileCache;
+  using ::ome::bioformats::TileCoverage;
 
   // VariantPixelBuffer tile transfer
   // ────────────────────────────────

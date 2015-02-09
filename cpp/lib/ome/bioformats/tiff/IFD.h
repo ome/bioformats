@@ -43,7 +43,7 @@
 #include <ome/compat/memory.h>
 
 #include <ome/bioformats/CoreMetadata.h>
-#include <ome/bioformats/tiff/TileCoverage.h>
+#include <ome/bioformats/TileCoverage.h>
 #include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/VariantPixelBuffer.h>

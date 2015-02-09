@@ -637,8 +637,21 @@ namespace ome
                  dimension_size_type t) const;
 
         // Documented in superclass.
+        dimension_size_type
+        getIndex(dimension_size_type z,
+                 dimension_size_type c,
+                 dimension_size_type t,
+                 dimension_size_type moduloZ,
+                 dimension_size_type moduloC,
+                 dimension_size_type moduloT) const;
+
+        // Documented in superclass.
         std::array<dimension_size_type, 3>
         getZCTCoords(dimension_size_type index) const;
+
+        // Documented in superclass.
+        std::array<dimension_size_type, 6>
+        getZCTModuloCoords(dimension_size_type index) const;
 
         // Documented in superclass.
         const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> >&

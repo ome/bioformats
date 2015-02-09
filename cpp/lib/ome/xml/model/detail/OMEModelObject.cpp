@@ -65,7 +65,13 @@ namespace ome
           // Nothing to copy.
         }
 
-        xerces::dom::Element&
+        bool
+        OMEModelObject::validElementName(const std::string& /* name */) const
+        {
+          return false;
+        }
+
+        xerces::dom::Element
         OMEModelObject::asXMLElementInternal (xerces::dom::Document& /* document */,
                                               xerces::dom::Element&  element) const
         {
@@ -118,13 +124,11 @@ namespace ome
         OMEModelObject::stripNamespacePrefix (const std::string& value) {
           std::string ret;
           std::string::size_type i = value.find_last_of(':');
-          if (i != std::string::npos)
-            {
-              ++i;
-              if (i < value.size())
-                ret = value.substr(i);
-            }
-          return value;
+          if (i != std::string::npos && ++i < value.size())
+            ret = value.substr(i);
+          else
+            ret = value;
+          return ret;
         }
 
       }

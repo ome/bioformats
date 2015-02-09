@@ -76,18 +76,22 @@ namespace ome
            */
           OMEModelObject (const OMEModelObject& copy);
 
+          /// @copydoc ome::xml::model::OMEModelObject::validElementName
+          bool
+          validElementName(const std::string& name) const = 0;
+
         protected:
           /**
            * Transform the object hierarchy rooted at this element to
            * XML.  This internal implementation of asXMLelement also
-           * requires an XML element, which may be null, or may be
-           * instantiated and passed from superclasses.
+           * requires an XML element, which must not be null, or may
+           * be instantiated and passed from superclasses.
            *
            * @param document XML document for element creation.
            * @param element XML element for setting model data.
            * @returns an XML DOM tree root element for this model object.
            */
-          virtual xerces::dom::Element&
+          virtual xerces::dom::Element
           asXMLElementInternal (xerces::dom::Document& document,
                                 xerces::dom::Element&  element) const = 0;
 

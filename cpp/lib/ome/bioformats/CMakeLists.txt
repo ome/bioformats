@@ -48,6 +48,9 @@ set(OME_BIOFORMATS_SOURCES
     Modulo.cpp
     PixelBuffer.cpp
     PixelProperties.cpp
+    TileBuffer.cpp
+    TileCache.cpp
+    TileCoverage.cpp
     UnknownFormatException.cpp
     UnsupportedCompressionException.cpp
     VariantPixelBuffer.cpp
@@ -69,6 +72,9 @@ set(OME_BIOFORMATS_HEADERS
     Modulo.h
     PixelBuffer.h
     PixelProperties.h
+    TileBuffer.h
+    TileCache.h
+    TileCoverage.h
     Types.h
     UnknownFormatException.h
     UnsupportedCompressionException.h

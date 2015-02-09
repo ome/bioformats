@@ -2,7 +2,10 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) Max Planck Institute for Biophysical Chemistry, 
+ * Goettingen, 2014 - 2015
+ *
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -177,7 +180,11 @@ public class OBFReader extends FormatReader
 
       if (lengths.size() > 0)
       {
-        final double lengthX = Math.abs(lengths.get(0));
+        double lengthX = Math.abs(lengths.get(0)) ;
+        if (lengthX < 0.01)
+        {
+          lengthX *= 1000000;
+        }
         if (lengthX > 0)
         {
           final Length physicalSizeX = FormatTools.createLength( lengthX / obf.sizeX , UNITS.MICROM);
@@ -186,7 +193,11 @@ public class OBFReader extends FormatReader
       }
       if (lengths.size() > 1)
       {
-        final double lengthY = Math.abs(lengths.get(1));
+        double lengthY = Math.abs(lengths.get(1));
+        if (lengthY < 0.01)
+        {
+          lengthY *= 1000000;
+        }
         if (lengthY > 0)
         {
           final Length physicalSizeY = FormatTools.createLength( lengthY / obf.sizeY , UNITS.MICROM);
@@ -195,7 +206,11 @@ public class OBFReader extends FormatReader
       }
       if (lengths.size() > 2)
       {
-        final double lengthZ = Math.abs(lengths.get(2));
+        double lengthZ = Math.abs(lengths.get(2));
+        if (lengthZ < 0.01)
+        {
+          lengthZ *= 1000000 ;
+        }
         if (lengthZ > 0)
         {
           final Length physicalSizeZ = FormatTools.createLength( lengthZ / obf.sizeZ  , UNITS.MICROM);

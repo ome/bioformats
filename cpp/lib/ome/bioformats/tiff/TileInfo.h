@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_TIFF_TILEINFO_H
 #define OME_BIOFORMATS_TIFF_TILEINFO_H
 
+#include <ome/bioformats/PlaneRegion.h>
 #include <ome/bioformats/tiff/Types.h>
 
 #include <ome/compat/memory.h>

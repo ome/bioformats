@@ -23,7 +23,7 @@ Supported Metadata Fields: :doc:`Leica LAS AF LIF (Leica Image File Format) <lei
 
 Freely Available Software:
 
-- `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-af-4-advanced-fluorescence/>`_ (links at bottom of page)
+- `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (links at bottom of page)
 
 
 We currently have:

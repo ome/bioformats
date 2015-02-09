@@ -61,20 +61,15 @@ namespace
 {
 
   void
-  setup_parser(xercesc::XercesDOMParser& parser)
+  setup_parser(xercesc::XercesDOMParser&                parser,
+               const ome::xerces::dom::ParseParameters& params)
   {
-    xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto; // Val_Always
-    bool do_ns = true;
-    bool do_schema = true;
-    bool do_fullcheck = true;
-    bool do_create = true;
-
-    parser.setValidationScheme(vscheme);
-    parser.setDoNamespaces(do_ns);
-    parser.setDoSchema(do_schema);
-    parser.setHandleMultipleImports(true);
-    parser.setValidationSchemaFullChecking(do_fullcheck);
-    parser.setCreateEntityReferenceNodes(do_create);
+    parser.setValidationScheme(params.validationScheme);
+    parser.setDoNamespaces(params.doNamespaces);
+    parser.setDoSchema(params.doSchema);
+    parser.setHandleMultipleImports(params.handleMultipleImports);
+    parser.setValidationSchemaFullChecking(params.validationSchemaFullChecking);
+    parser.setCreateEntityReferenceNodes(params.createEntityReferenceNodes);
   }
 
   void
@@ -206,25 +201,42 @@ namespace ome
         if (!impl)
           throw std::runtime_error("Failed to create LS DOMImplementation");
 
-        return Document(impl->createDocument(0, String(qualifiedName), 0), true);
+        return Document(impl->createDocument(0, String(qualifiedName), 0),
+                        true);
       }
 
       Document
-      createDocument(const boost::filesystem::path& file)
+      createEmptyDocument(const std::string& namespaceURI,
+                          const std::string& qualifiedName)
+      {
+        xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(String("LS"));
+        if (!impl)
+          throw std::runtime_error("Failed to create LS DOMImplementation");
+
+        return Document(impl->createDocument(String(namespaceURI),
+                                             String(qualifiedName),
+                                             0),
+                        true);
+      }
+
+      Document
+      createDocument(const boost::filesystem::path& file,
+                     const ParseParameters&         params)
       {
         Platform xmlplat;
 
         xercesc::LocalFileInputSource source(String(file.generic_string()));
 
         xercesc::XercesDOMParser parser;
-        setup_parser(parser);
+        setup_parser(parser, params);
         read_source(parser, source);
 
         return Document(parser.adoptDocument(), true);
       }
 
       Document
-      createDocument(const std::string& text)
+      createDocument(const std::string&     text,
+                     const ParseParameters& params)
       {
         Platform xmlplat;
 
@@ -233,14 +245,15 @@ namespace ome
                                           String("membuf"));
 
         xercesc::XercesDOMParser parser;
-        setup_parser(parser);
+        setup_parser(parser, params);
         read_source(parser, source);
 
         return Document(parser.adoptDocument(), true);
       }
 
       Document
-      createDocument(std::istream& stream)
+      createDocument(std::istream&          stream,
+                     const ParseParameters& params)
       {
         Platform xmlplat;
 
@@ -263,7 +276,7 @@ namespace ome
                                           String("membuf"));
 
         xercesc::XercesDOMParser parser;
-        setup_parser(parser);
+        setup_parser(parser, params);
         read_source(parser, source);
 
         return Document(parser.adoptDocument(), true);
