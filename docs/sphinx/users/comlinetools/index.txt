@@ -45,7 +45,7 @@ Currently available tools include:
     xmlindent
         A simple XML prettifier similar to ``xmllint --format`` but more
         robust in that it attempts to produce output regardless of syntax
-        errors in the XML.
+        errors in the XML.  See :doc:`xmlindent` for details.
 
     xmlvalid
         A command-line XML validation tool, useful for checking an OME-XML

@@ -38,6 +38,7 @@ for carrying out a variety of tasks:
     comlinetools/domainlist
     comlinetools/formatlist
     comlinetools/ijview
+    comlinetools/xmlindent
 
 
 
