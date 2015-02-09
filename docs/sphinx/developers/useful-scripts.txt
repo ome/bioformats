@@ -1,8 +1,8 @@
-Scripts for performing common code updates
-==========================================
+Scripts for performing development tasks
+========================================
 
 The :code:`tools` directory contains several scripts which are useful
-for performing routine updates to the code base.
+for building and performing routine updates to the code base.
 
 bump_maven_version.py
 ---------------------
@@ -16,6 +16,21 @@ version.  For example, to update the POM versions prior to release::
 and to switch back to snapshot versions immediately after release::
 
   ./tools/bump_maven_version.py 5.1.1-SNAPSHOT
+
+test-build
+----------
+
+This is the script used by Travis to test each commit.  It compiles and runs
+tests on each of the components in the Bio-Formats repository according
+to the arguments specified.  Valid arguments are:
+
+  * `clean`: cleans the Maven build directories
+  * `maven`: builds all Java components using Maven and runs unit tests
+  * `cpp`: builds the native C++ code alone
+  * `cppwrap`: builds the auto-generated C++ bindings for the Java API
+  * `sphinx`: builds the Sphinx documentation alone
+  * `ant`: builds all Java components using Ant and runs unit tests
+  * `all`: equivalent of `clean maven cppwrap sphinx ant`
 
 update_copyright
 ----------------
