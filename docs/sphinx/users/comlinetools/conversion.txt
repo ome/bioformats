@@ -67,3 +67,16 @@ example, to use LZW compression in a TIFF file:
 
   bfconvert -compression LZW /path/to/input output-lzw.tiff
 
+If the specified output file already exists, bfconvert will prompt to
+overwrite the file.  When running bfconvert non-interactively, it may be
+useful to always allow bfconvert to overwrite the output file:
+
+::
+
+  bfconvert -overwrite /path/to/input /path/to/output
+
+or always exit without overwriting:
+
+::
+
+  bfconvert -nooverwrite /path/to/input /path/to/output
