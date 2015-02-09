@@ -31,7 +31,7 @@ Currently available tools include:
 
     ijview
         Displays the given image file in ImageJ using the Bio-Formats Importer
-        plugin.
+        plugin.  See :doc:`ijview` for details.
 
     bfconvert
         Converts an image file from one format to another. Bio-Formats must

@@ -37,6 +37,7 @@ for carrying out a variety of tasks:
     comlinetools/edit
     comlinetools/domainlist
     comlinetools/formatlist
+    comlinetools/ijview
 
 
 
