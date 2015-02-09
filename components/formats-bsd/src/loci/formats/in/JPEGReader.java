@@ -191,11 +191,11 @@ public class JPEGReader extends DelegateReader {
     protected void initFile(String id) throws FormatException, IOException {
         super.initFile(id);
 
-        MetadataStore store = this.getMetadataStore();
+        MetadataStore store = makeFilterMetadata();
         LOGGER.info("Parsing JPEG EXIF data");
 
-        File jpegFile = new File(id);
         try {
+            File jpegFile = new File(id);
             Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
 
             // obtain the Exif directory
@@ -206,7 +206,6 @@ public class JPEGReader extends DelegateReader {
                 // Set the acquisition date
                 Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
                 Timestamp timestamp = new Timestamp( new DateTime(date) );
-                MetadataTools.setDefaultDateEnabled(false);
                 store.setImageAcquisitionDate(timestamp, 0);
 
                 for (Tag tag : directory.getTags()) {
@@ -216,6 +215,9 @@ public class JPEGReader extends DelegateReader {
 
         } catch ( ImageProcessingException e ) {
             LOGGER.info("Error parsing JPEG EXIF data");
+        }
+        catch (IOException e) {
+          LOGGER.info("Error parsing JPEG EXIF data");
         }
     }
 
