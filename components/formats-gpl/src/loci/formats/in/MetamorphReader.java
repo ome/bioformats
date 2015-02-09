@@ -1155,7 +1155,7 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         }
 
-        int colon = line.indexOf(": ");
+        int colon = line.indexOf(":");
 
         String descrValue = null;
 
