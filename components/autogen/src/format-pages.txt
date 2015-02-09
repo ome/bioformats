@@ -473,7 +473,7 @@ reader = CellVoyagerReader.java
 
 [DeltaVision]
 extensions = .dv, .r3d
-owner = `Applied Precision <http://www.api.com/>`_
+owner = `GE Healthcare (formerly Applied Precision) <http://www.gelifesciences.com/webapp/wcs/stores/servlet/catalog/en/GELifeSciences-UK/brands/deltavision/>`_
 bsd = no
 export = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
@@ -493,9 +493,6 @@ notes = - The Deltavision format is based on the Medical Research Council (MRC) 
   * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
   * `SVI Huygens <http://svi.nl/>`_ \n
   * `Image-Pro Plus <http://www.mediacy.com/>`_ \n
-\n
-.. seealso:: \n
-  `DeltaVision system description <http://api.com/deltavision.asp>`_
 
 [DICOM]
 extensions = .dcm, .dicom
