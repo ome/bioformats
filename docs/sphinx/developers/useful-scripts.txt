@@ -1,0 +1,26 @@
+Scripts for performing common code updates
+==========================================
+
+The :code:`tools` directory contains several scripts which are useful
+for performing routine updates to the code base.
+
+bump_maven_version.py
+---------------------
+
+This updates the Maven POM version numbers for all pom.xml files that
+set `groupId` to `ome`.  The script takes a single argument, which is the new
+version.  For example, to update the POM versions prior to release::
+
+  ./tools/bump_maven_version.py 5.1.0
+
+and to switch back to snapshot versions immediately after release::
+
+  ./tools/bump_maven_version.py 5.1.1-SNAPSHOT
+
+update_copyright
+----------------
+
+This updates the end year in the copyright blocks of all source code files.
+The command takes no arguments, and sets the end year to be the current year.
+As `update_copyright` is a Bash script, it is not intended to be run on
+Windows.
