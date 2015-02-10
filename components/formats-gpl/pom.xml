@@ -159,7 +159,7 @@
     </dependency>
 
     <dependency>
-      <groupId>cisd</groupId>
+      <groupId>ch.systems.cisd</groupId>
       <artifactId>jhdf5</artifactId>
       <version>13.06.2</version>
     </dependency>
