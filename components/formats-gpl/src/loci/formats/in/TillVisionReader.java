@@ -207,11 +207,16 @@ public class TillVisionReader extends FormatReader {
       else if (vwsFile.isDirectory()) {
         parent = pst.getParentFile();
         String[] list = parent.list(true);
+        boolean foundVWS = false;
         for (String f : list) {
           if (checkSuffix(f, "vws")) {
             id = new Location(parent, f).getAbsolutePath();
+            foundVWS = true;
             break;
           }
+        }
+        if (!foundVWS) {
+          throw new FormatException("Could not find .vws file.");
         }
       }
       else throw new FormatException("Could not find .vws file.");
