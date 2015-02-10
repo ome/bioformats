@@ -277,13 +277,9 @@ public class ROIHandler {
     public static Roi[] readFromOverlays(){
 
         ImagePlus image = IJ.getImage();
-        Roi[] rois = null;
-        if (image.getOverlay() != null)
-        {
-            Overlay overlay = image.getOverlay();
-            rois = overlay.toArray();
-        }
-        return rois;
+        Overlay overlay = image.getOverlay();
+        if (overlay == null) return null;
+        return overlay.toArray();
 
     }
 
@@ -291,13 +287,14 @@ public class ROIHandler {
     public static void saveROIs(MetadataStore store) {
 
         Roi[] rois = readFromOverlays();
-        if (rois==null){
+        if (rois == null) {
             rois = readFromRoiManager();
         }
 
         if (rois == null || rois.length == 0) return;
         List<String> discardList = new ArrayList<String>();
-        String roiID = null;int cntr = 0;
+        String roiID = null;
+        int cntr = 0;
         for (int i=0; i<rois.length; i++) {
 
             String polylineID = MetadataTools.createLSID("Shape", cntr, 0);
