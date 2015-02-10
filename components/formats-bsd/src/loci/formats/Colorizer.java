@@ -51,6 +51,11 @@ public class Colorizer extends BytesWrapper {
       super(reader);
   }
 
+  public Colorizer(IFormatReader reader, LutSource source) {
+      super(reader);
+      setLutSource(source);
+  }
+
   // -- Colorizer methods --
 
   public void setLutSource(LutSource source) {
@@ -73,13 +78,19 @@ public class Colorizer extends BytesWrapper {
   }
 
   @Override
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+    MetadataTools.populatePixels(this.getMetadataStore(), this);
+  }
+
+  @Override
   public boolean isIndexed() {
-    return true;
+    return lutSource == null ? super.isIndexed() : true;
   }
 
   @Override
   public boolean isFalseColor() {
-    return false;
+    return lutSource == null ? super.isFalseColor() : true;
   }
 
   @Override
