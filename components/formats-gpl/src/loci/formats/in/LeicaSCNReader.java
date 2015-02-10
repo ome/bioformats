@@ -138,7 +138,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     int[] dims = getZCTCoords(no);
     int dz = dims[0];
     int dc = dims[1];
-    int dr = s - i.imageNumStart;
+    int dr = (s - i.imageNumStart) / (i.pixels.sizeZ * i.pixels.sizeC);
 
     return i.pixels.lookupDimension(dz, dc, dr).ifd;
   }
