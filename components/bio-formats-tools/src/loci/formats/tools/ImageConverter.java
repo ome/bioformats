@@ -205,7 +205,7 @@ public final class ImageConverter {
         "    [-bigtiff] [-compression codec] [-series series] [-map id]",
         "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
         "    [-timepoint timepoint] [-nogroup] [-autoscale] [-version]",
-        "    [-no-upgrade] in_file out_file",
+        "    [-colorize LUT] [-no-upgrade] in_file out_file",
         "",
         "    -version: print the library version and exit",
         " -no-upgrade: do not perform the upgrade check",

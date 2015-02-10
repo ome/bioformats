@@ -42,6 +42,7 @@ import loci.common.DataTools;
 import loci.common.DebugTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.lut.ij.ImageJLutSource;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -49,6 +50,7 @@ import loci.common.xml.XMLTools;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
+import loci.formats.Colorizer;
 import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
@@ -108,6 +110,7 @@ public class ImageInfo {
   private boolean omexml = false;
   private boolean originalMetadata = true;
   private boolean normalize = false;
+  private String colorize = null;
   private boolean fastBlit = false;
   private boolean autoscale = false;
   private boolean preload = false;
@@ -157,6 +160,7 @@ public class ImageInfo {
     omexml = false;
     originalMetadata = true;
     normalize = false;
+    colorize = null;
     fastBlit = false;
     autoscale = false;
     preload = false;
@@ -195,6 +199,7 @@ public class ImageInfo {
         else if (args[i].equals("-omexml")) omexml = true;
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
+        else if (args[i].equals("-colorize")) colorize = args[++i];
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-novalid")) validate = false;
@@ -277,6 +282,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
+      "    [-colorize LUT]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -292,6 +298,7 @@ public class ImageInfo {
       "   -separate: split RGB image into separate channels",
       "     -expand: expand indexed color to RGB",
       "     -omexml: populate OME-XML metadata",
+      "   -colorize: specify a LUT to be applied to the image",
       "  -normalize: normalize floating point images*",
       "       -fast: paint RGB images as quickly as possible*",
       "      -debug: turn on debugging output",
@@ -421,6 +428,7 @@ public class ImageInfo {
     if (expand) reader = new ChannelFiller(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
+    if (colorize != null) reader = new Colorizer(reader, new ImageJLutSource(colorize));
     minMaxCalc = null;
     if (minmax || autoscale) reader = minMaxCalc = new MinMaxCalculator(reader);
     dimSwapper = null;
