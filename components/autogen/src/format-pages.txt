@@ -477,7 +477,6 @@ owner = `GE Healthcare (formerly Applied Precision) <http://www.gelifesciences.c
 bsd = no
 export = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
-samples = `Applied Precision Datasets <http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
 weHave = * a DV specification document (v2.10 or newer, in HTML) \n
 * numerous DV datasets
 pixelsRating = Outstanding
