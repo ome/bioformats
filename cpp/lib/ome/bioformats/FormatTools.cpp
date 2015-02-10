@@ -336,6 +336,18 @@ namespace ome
             return all_domains;
           }
           break;
+        case HCS_ONLY_DOMAINS:
+          {
+            const Domain hcs_only_enums[] =
+              {
+                HCS_DOMAIN
+              };
+            static const std::vector<std::string> hcs_only_domains
+              (domain_strings(hcs_only_enums,
+                              hcs_only_enums + (sizeof(hcs_only_enums) / sizeof(hcs_only_enums[0]))));
+            return hcs_only_domains;
+          }
+          break;
         }
 
       // Fallback if enum is unknown.

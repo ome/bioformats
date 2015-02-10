@@ -76,7 +76,8 @@ namespace ome
         NON_GRAPHICS_DOMAINS,
         NON_HCS_DOMAINS,
         NON_SPECIAL_DOMAINS,
-        ALL_DOMAINS
+        ALL_DOMAINS,
+        HCS_ONLY_DOMAINS
       };
 
     /**
