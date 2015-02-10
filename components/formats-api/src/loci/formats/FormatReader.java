@@ -885,7 +885,7 @@ public abstract class FormatReader extends FormatHandler
         "be extracted at one time. You can workaround the problem by opening " +
         "the plane in tiles; for further details, see: " +
         "http://www.openmicroscopy.org/site/support/bio-formats/about/" +
-        "bug-reporting.html", e);
+        "bug-reporting.html#common-issues-to-check", e);
     }
     return openBytes(no, newBuffer, x, y, w, h);
   }
