@@ -236,13 +236,14 @@ namespace ome
 
       Document
       createDocument(const std::string&     text,
-                     const ParseParameters& params)
+                     const ParseParameters& params,
+                     const std::string&     id)
       {
         Platform xmlplat;
 
  	xercesc::MemBufInputSource source(reinterpret_cast<const XMLByte *>(text.c_str()),
                                           static_cast<XMLSize_t>(text.size()),
-                                          String("membuf"));
+                                          String(id));
 
         xercesc::XercesDOMParser parser;
         setup_parser(parser, params);
@@ -253,7 +254,8 @@ namespace ome
 
       Document
       createDocument(std::istream&          stream,
-                     const ParseParameters& params)
+                     const ParseParameters& params,
+                     const std::string&     id)
       {
         Platform xmlplat;
 
@@ -273,7 +275,7 @@ namespace ome
 
  	xercesc::MemBufInputSource source(reinterpret_cast<const XMLByte *>(data.c_str()),
                                           static_cast<XMLSize_t>(data.size()),
-                                          String("membuf"));
+                                          String(id));
 
         xercesc::XercesDOMParser parser;
         setup_parser(parser, params);

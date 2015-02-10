@@ -115,7 +115,7 @@ namespace ome
          *
          * @param key the key name.
          * @param value the value which failed to parse.
-         * @throws @c std::runtime_error.
+         * @throws std::runtime_error.
          */
         static
         void
@@ -130,7 +130,7 @@ namespace ome
          *
          * @param key the key name.
          * @param value the value to store the key's parsed string value.
-         * @throws @c std::runtime_error on parse errors.
+         * @throws std::runtime_error on parse errors.
          */
         template<typename T>
         void
@@ -162,7 +162,7 @@ namespace ome
          *
          * @param key the key name.
          * @param value the value to store the key's parsed string value.
-         * @throws @c std::runtime_error on parse errors.
+         * @throws std::runtime_error on parse errors.
          */
         void
         parse_value(const std::string& key,
@@ -176,7 +176,7 @@ namespace ome
          *
          * @param key the key name.
          * @param value the value to store the key's parsed string value.
-         * @throws @c std::runtime_error on parse errors.
+         * @throws std::runtime_error on parse errors.
          */
         void
         parse_value(const std::string& key,

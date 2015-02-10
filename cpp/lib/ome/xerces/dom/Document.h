@@ -171,6 +171,20 @@ namespace ome
         }
 
         /**
+         * Create Element without namespace.
+         *
+         * @param name the element name.
+         * @returns the created Element.
+         */
+        Element
+        createElement(const std::string& name)
+        {
+          xerces::String xname(name);
+
+          return Element((*this)->createElement(xname), false);
+        }
+
+        /**
          * Get the root element of this document.
          *
          * @returns the root element.
@@ -274,22 +288,26 @@ namespace ome
        *
        * @param text the string to use.
        * @param params XML parser parameters.
+       * @param id document filename (for error reporting only).
        * @returns the new Document.
        */
       Document
       createDocument(const std::string&     text,
-                     const ParseParameters& params = ParseParameters());
+                     const ParseParameters& params = ParseParameters(),
+                     const std::string&     id = "membuf");
 
       /**
        * Construct a Document from the content of an input stream.
        *
        * @param stream the stream to read.
        * @param params XML parser parameters.
+       * @param id document filename (for error reporting only).
        * @returns the new Document.
        */
       Document
       createDocument(std::istream&          stream,
-                     const ParseParameters& params = ParseParameters());
+                     const ParseParameters& params = ParseParameters(),
+                     const std::string&     id = "streambuf");
 
       /**
        * Parameters controlling DOM writing.

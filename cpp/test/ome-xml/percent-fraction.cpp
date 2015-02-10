@@ -97,7 +97,8 @@ struct CompareGreaterOrEqual<PercentFraction>
   { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F; }
 };
 
-// Floating point types don't implement modulo, so make it a no-op.
+// Floating point types don't implement modulo, increment or
+// decrement, so make them a no-op.
 template<>
 struct OperationModulo<PercentFraction>
 {
@@ -107,6 +108,20 @@ struct OperationModulo<PercentFraction>
 
 template<>
 struct OperationModuloAssign<PercentFraction>
+{
+  PercentFraction eval(PercentFraction lhs,             PercentFraction /* rhs */) { return lhs; }
+  PercentFraction eval(PercentFraction lhs, PercentFraction::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationIncrement<PercentFraction>
+{
+  PercentFraction eval(PercentFraction lhs,             PercentFraction /* rhs */) { return lhs; }
+  PercentFraction eval(PercentFraction lhs, PercentFraction::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationDecrement<PercentFraction>
 {
   PercentFraction eval(PercentFraction lhs,             PercentFraction /* rhs */) { return lhs; }
   PercentFraction eval(PercentFraction lhs, PercentFraction::value_type /* rhs */) { return lhs; }

@@ -62,7 +62,9 @@ enum operation
     DIVIDE,
     DIVIDE_ASSIGN,
     MODULO,
-    MODULO_ASSIGN
+    MODULO_ASSIGN,
+    INCREMENT,
+    DECREMENT
   };
 
 template <typename T>
@@ -235,6 +237,20 @@ struct OperationModuloAssign
 {
   T eval(T lhs,                      T rhs) { return lhs %= rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs %= rhs; }
+};
+
+template<typename T>
+struct OperationIncrement
+{
+  T eval(T lhs,                      T /* rhs */) { return ++lhs; }
+  T eval(T lhs, typename T::value_type /* rhs */) { return ++lhs; }
+};
+
+template<typename T>
+struct OperationDecrement
+{
+  T eval(T lhs,                      T /* rhs */) { return --lhs; }
+  T eval(T lhs, typename T::value_type /* rhs */) { return --lhs; }
 };
 
 template<typename Operation, typename Test>
@@ -507,6 +523,24 @@ TYPED_TEST_P(NumericTest, OperatorModuloAssign)
       operation_test<OperationModuloAssign<TypeParam> >(*this, *i);
 }
 
+TYPED_TEST_P(NumericTest, OperatorIncrement)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == INCREMENT)
+      operation_test<OperationIncrement<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorDecrement)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == DECREMENT)
+      operation_test<OperationDecrement<TypeParam> >(*this, *i);
+}
+
 REGISTER_TYPED_TEST_CASE_P(NumericTest,
                            DefaultConstruct,
                            Stream,
@@ -525,7 +559,9 @@ REGISTER_TYPED_TEST_CASE_P(NumericTest,
                            OperatorDivide,
                            OperatorDivideAssign,
                            OperatorModulo,
-                           OperatorModuloAssign);
+                           OperatorModuloAssign,
+                           OperatorIncrement,
+                           OperatorDecrement);
 
 #endif // TEST_CONSTRAINED_NUMERIC_H
 

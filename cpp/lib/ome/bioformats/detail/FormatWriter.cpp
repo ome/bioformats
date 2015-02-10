@@ -93,7 +93,7 @@ namespace ome
       }
 
       void
-      FormatWriter::setId(const std::string& id)
+      FormatWriter::setId(const boost::filesystem::path& id)
       {
         if (!currentId || id != currentId.get())
           {
@@ -133,8 +133,8 @@ namespace ome
       }
 
       bool
-      FormatWriter::isThisType(const std::string& name,
-                               bool               /* open */) const
+      FormatWriter::isThisType(const boost::filesystem::path& name,
+                               bool                           /* open */) const
       {
         return checkSuffix(name,
                            writerProperties.suffixes,
@@ -241,7 +241,7 @@ namespace ome
       }
 
       void
-      FormatWriter::changeOutputFile(const std::string& id)
+      FormatWriter::changeOutputFile(const boost::filesystem::path& id)
       {
         assertId(currentId, true);
 
@@ -295,13 +295,13 @@ namespace ome
         return writerProperties.description;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatWriter::getSuffixes() const
       {
         return writerProperties.suffixes;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatWriter::getCompressionSuffixes() const
       {
         return writerProperties.compression_suffixes;

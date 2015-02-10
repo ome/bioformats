@@ -45,6 +45,7 @@
 #include <ome/bioformats/tiff/Types.h>
 
 #include <ome/compat/cstdint.h>
+#include <ome/compat/filesystem.h>
 #include <ome/compat/memory.h>
 
 namespace ome
@@ -161,8 +162,8 @@ namespace ome
 
       protected:
         /// Constructor (non-public).
-        TIFF(const std::string& filename,
-             const std::string& mode);
+        TIFF(const boost::filesystem::path& filename,
+             const std::string&             mode);
 
       private:
         /// Copy constructor (deleted).
@@ -189,8 +190,8 @@ namespace ome
          * @throws an Exception on failure.
          */
         static std::shared_ptr<TIFF>
-        open(const std::string& filename,
-             const std::string& mode);
+        open(const boost::filesystem::path& filename,
+             const std::string&             mode);
 
         /**
          * Close the TIFF file.

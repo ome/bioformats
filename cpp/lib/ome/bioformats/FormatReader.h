@@ -71,6 +71,8 @@ namespace ome
                          virtual public MetadataConfigurable
     {
     public:
+      using FormatHandler::isThisType;
+
       /// File grouping options.
       enum FileGroupOption
         {
@@ -151,8 +153,8 @@ namespace ome
       // Documented in superclass.
       virtual
       bool
-      isThisType(const std::string& name,
-                 bool               open = true) const = 0;
+      isThisType(const boost::filesystem::path& name,
+                 bool                           open = true) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -343,20 +345,25 @@ namespace ome
       isFalseColor() const = 0;
 
       /**
-       * Get the color lookup table associated with the most recently
-       * opened image.
+       * Get the color lookup table associated with an image plane.
        *
        * If no image planes have been opened, or if isIndexed()
        * returns @c false, then this may throw an exception.
        *
-       * @param buf the destination pixel buffer.
+       * The VariantPixelBuffer will use the X dimension for the value
+       * index and the subchannel dimension for the color samples
+       * (order is RGB).  Depending upon the image type, the size of
+       * the X dimension may vary.  It will typically be 2^8 or 2^16,
+       * but other sizes are possible.
        *
-       * @todo use a more specific buffer type.
-       * @todo throw on failure.
+       * @param buf the destination pixel buffer.
+       * @param no the image index within the file.
+       * @throws FormatException if a lookup table could not be obtained.
        */
       virtual
       void
-      getLookupTable(VariantPixelBuffer& buf) const = 0;
+      getLookupTable(VariantPixelBuffer& buf,
+                     dimension_size_type no = 0U) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -708,7 +715,7 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       getUsedFiles(bool noPixels = false) const = 0;
 
       /**
@@ -719,7 +726,7 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       getSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
@@ -752,7 +759,7 @@ namespace ome
        * @returns the filename.
        */
       virtual
-      const boost::optional<std::string>&
+      const boost::optional<boost::filesystem::path>&
       getCurrentFile() const = 0;
 
       /**
@@ -990,7 +997,7 @@ namespace ome
        */
       virtual
       bool
-      isSingleFile(const std::string& id) const = 0;
+      isSingleFile(const boost::filesystem::path& id) const = 0;
 
       /**
        * Get required parent directories.

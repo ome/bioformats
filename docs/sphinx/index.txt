@@ -20,7 +20,7 @@ supported by Bio-Formats.
     - :doc:`developers/index`
     - :doc:`formats/index`
 
-    The version *5* releases use the *June 2013* release of the
+    The version *5.1* releases use the *January 2015* release of the
     :model_doc:`OME-Model <>`.
     
     **Bio-Formats is a community project and we welcome your input.** You can
