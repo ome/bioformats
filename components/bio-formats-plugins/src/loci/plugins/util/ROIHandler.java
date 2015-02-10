@@ -277,10 +277,11 @@ public class ROIHandler {
     public static Roi[] readFromOverlays(){
 
         ImagePlus image = IJ.getImage();
-        Overlay overlay = image.getOverlay();
-        Roi[] rois = new Roi[overlay.size()];
-        for (int i=0 ; i<overlay.size() ; i++){
-            rois[i] = overlay.get(i);
+        Roi[] rois = null;
+        if (image.getOverlay() != null)
+        {
+            Overlay overlay = image.getOverlay();
+            rois = overlay.toArray();
         }
         return rois;
 
