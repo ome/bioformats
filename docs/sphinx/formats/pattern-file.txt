@@ -1,0 +1,62 @@
+Grouping files using a pattern file
+===================================
+
+Individual files can be grouped together into a single fileset using a pattern
+file.  This works for any single-file format that Bio-Formats supports, as
+long as all files are in the same format.  It is most useful for sets of TIFF,
+JPEG, PNG, etc. files that do not have any associated metadata.
+
+All files to be grouped together should be in the same folder.  The pattern
+file should be in the same folder as the other files; it can have any name,
+but must have the `.pattern` extension.  The pattern file is what must be
+opened or imported, so it may be helpful to give it a descriptive or
+easily-recognizable name.
+
+The pattern file contains a single line of text that is specially formatted to
+describe how the files should be grouped.  The file can be created in any text
+editor.
+
+The text in the pattern file can take one of several forms.  To illustrate,
+consider a folder with the following file names:
+
+::
+
+  red.tiff
+  green.tiff
+  blue.tiff
+  test_Z0_C0.png
+  test_Z1_C0.png
+  test_Z0_C1.png
+  test_Z1_C1.png
+  test_Z0_C2.png
+  test_Z1_C2.png
+
+A pattern file that groups `red.tiff`, `green.tiff`, and `blue.tiff` in that
+order would look like:
+
+::
+
+  <red,green,blue>.tiff
+
+A pattern that groups test_Z0_C0.png, test_Z1_C0.png, test_Z0_C2.png, and
+test_Z1_C2.png:
+
+::
+
+  test_Z<0-1>_C<0-2:1>.png
+
+The `<>` notation in general can accept a single literal value, a
+comma-separate list of literal values, a range of integer values, or a range
+of integer values with a step value greater than 1 (the range and step are
+separated by `:`).
+
+A pattern file that groups all PNG files beginning with `test_` would look like:
+
+::
+
+  test_.*.png
+
+This and most other Java-style regular expressions can be used in place of the
+`<>` notation above.  See `the java.util.regex.Pattern Javadoc
+<http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html>`_
+for more information on constructing regular expressions.
