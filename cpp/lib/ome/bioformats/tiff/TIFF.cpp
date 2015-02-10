@@ -106,6 +106,8 @@ namespace ome
       public:
         /// The libtiff file handle.
         ::TIFF *tiff;
+        /// The number of IFDs.
+        directory_index_type directoryCount;
 
         /**
          * The constructor.
@@ -117,7 +119,8 @@ namespace ome
          */
         Impl(const boost::filesystem::path& filename,
              const std::string&             mode):
-          tiff()
+          tiff(),
+          directoryCount(0)
         {
           Sentry sentry;
 
@@ -221,6 +224,20 @@ namespace ome
       TIFF::operator bool ()
       {
         return impl && impl->tiff;
+      }
+
+      directory_index_type
+      TIFF::directoryCount() const
+      {
+        if (!impl->directoryCount)
+          {
+            directory_index_type nIFD = 0U;
+            for (const_iterator i = begin();
+                 i != end();
+                 ++i, ++nIFD);
+            impl->directoryCount = nIFD;
+          }
+        return impl->directoryCount;
       }
 
       std::shared_ptr<IFD>

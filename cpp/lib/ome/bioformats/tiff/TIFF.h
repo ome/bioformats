@@ -212,6 +212,14 @@ namespace ome
         operator bool ();
 
         /**
+         * Get the total number of IFDs.
+         *
+         * @returns the IFD count.
+         */
+        directory_index_type
+        directoryCount() const;
+
+        /**
          * Get an IFD by its index.
          *
          * @param index the directory index.
