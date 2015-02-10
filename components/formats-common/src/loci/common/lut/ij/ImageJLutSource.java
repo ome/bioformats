@@ -87,4 +87,9 @@ public class ImageJLutSource extends AbstractLutSource {
 
       return rtn;
     }
+
+    @Override
+    public byte[][] get8BitLookupTable() {
+        return new byte[][]{ reds, greens, blues };
+    }
 }

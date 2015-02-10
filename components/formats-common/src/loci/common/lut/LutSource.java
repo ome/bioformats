@@ -58,4 +58,6 @@ public interface LutSource {
      */
     byte[] applyLut(int no, byte[] buf, int x, int y, int w, int h);
 
+    byte[][] get8BitLookupTable();
+
 }

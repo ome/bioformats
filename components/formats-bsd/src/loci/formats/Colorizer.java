@@ -90,7 +90,7 @@ public class Colorizer extends BytesWrapper {
 
   @Override
   public boolean isFalseColor() {
-    return lutSource == null ? super.isFalseColor() : true;
+    return lutSource == null ? super.isFalseColor() : false;
   }
 
   @Override
@@ -105,7 +105,8 @@ public class Colorizer extends BytesWrapper {
 
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    return super.get8BitLookupTable();
+    return lutSource == null ? super.get8BitLookupTable() :
+        lutSource.get8BitLookupTable();
   }
 
   @Override
@@ -115,7 +116,7 @@ public class Colorizer extends BytesWrapper {
 
   @Override
   public int getBitsPerPixel() {
-    return super.getBitsPerPixel();
+    return lutSource == null ? super.getBitsPerPixel() : 8;
   }
 
 
