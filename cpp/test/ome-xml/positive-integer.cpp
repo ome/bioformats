@@ -124,7 +124,14 @@ namespace
       {   43,   43,          0, MODULO,           false, true,  false},
       {  901,  900,          1, MODULO_ASSIGN,    true,  false, false},
       {  901,  900,          2, MODULO_ASSIGN,    false, false, false},
-      {   43,   43,          0, MODULO_ASSIGN,    false, true,  false}
+      {   43,   43,          0, MODULO_ASSIGN,    false, true,  false},
+
+      {  33,     1,         34, INCREMENT,        true,  false, false},
+      {  33,     1,         33, INCREMENT,        false, false, false},
+      {   1,     1,          2, INCREMENT,        true,  false, false},
+      {  33,     1,         32, DECREMENT,        true,  false, false},
+      {  33,     1,         33, DECREMENT,        false, false, false},
+      {   1,     1,          0, DECREMENT,        false, true,  false}
     };
 
 }

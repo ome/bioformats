@@ -165,10 +165,7 @@ namespace
   WriterProperties
   test_properties()
   {
-    WriterProperties p;
-
-    p.name = "TestWriter";
-    p.description = "Writer for unit testing";
+    WriterProperties p("TestWriter", "Writer for unit testing");
     p.suffixes.push_back("test");
     p.compression_suffixes.push_back("gz");
 
@@ -286,7 +283,7 @@ private:
 
 public:
   void
-  setId(const std::string& id)
+  setId(const boost::filesystem::path& id)
   {
     if (!currentId)
       {
@@ -337,8 +334,8 @@ TEST_P(FormatWriterTest, WriterProperties)
   w.setId("output.test");
   ASSERT_EQ(props.name, w.getFormat());
   ASSERT_EQ(props.description, w.getFormatDescription());
-  ASSERT_EQ(props.suffixes, w.getSuffixes());
-  ASSERT_EQ(props.compression_suffixes, w.getCompressionSuffixes());
+  ASSERT_TRUE(props.suffixes == w.getSuffixes());
+  ASSERT_TRUE(props.compression_suffixes == w.getCompressionSuffixes());
   ASSERT_EQ(props.compression_types, w.getCompressionTypes());
   ASSERT_EQ(props.stacks, w.canDoStacks());
 }

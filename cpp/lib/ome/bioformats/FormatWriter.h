@@ -370,7 +370,7 @@ namespace ome
        */
       virtual
       void
-      changeOutputFile(const std::string& id) = 0;
+      changeOutputFile(const boost::filesystem::path& id) = 0;
 
       /**
        * Write planes sequentially.

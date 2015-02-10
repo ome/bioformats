@@ -112,6 +112,14 @@ namespace ome
         virtual
         ~MapPairs ();
 
+        // Documented in superclass.
+        const std::string&
+        elementName() const;
+
+        // Documented in superclass.
+        bool
+        validElementName(const std::string& name) const;
+
         /// @copydoc ome::xml::model::OMEModelObject::update
         virtual void
         update(const xerces::dom::Element&  element,
@@ -148,14 +156,19 @@ namespace ome
         setMap (const map_type& map);
 
         /// @copydoc ome::xml::model::OMEModelObject::asXMLElement
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElement (xerces::dom::Document& document) const;
 
- protected:
+      protected:
         // Documented in base class.
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElementInternal (xerces::dom::Document& document,
                               xerces::dom::Element&  element) const;
+
+      public:
+        // Documented in superclass.
+        const std::string&
+        getXMLNamespace() const;
       };
 
     }

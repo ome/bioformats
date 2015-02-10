@@ -46,6 +46,9 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
+#include <boost/version.hpp>
+
+#include <ome/compat/filesystem.h>
 
 namespace ome
 {
@@ -95,8 +98,8 @@ namespace ome
        */
       virtual
       bool
-      isThisType(const std::string& name,
-                 bool               open = true) const = 0;
+      isThisType(const boost::filesystem::path& name,
+                 bool                           open = true) const = 0;
 
       /**
        * Get the name of this file format.
@@ -122,7 +125,7 @@ namespace ome
        * @returns a list of file suffixes.
        */
       virtual
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       getSuffixes() const = 0;
 
       /**
@@ -131,7 +134,7 @@ namespace ome
        * @returns a list of file suffixes.
        */
       virtual
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       getCompressionSuffixes() const = 0;
 
       /**
@@ -143,7 +146,7 @@ namespace ome
        * @param id the filename to open.
        */
       virtual void
-      setId(const std::string& id) = 0;
+      setId(const boost::filesystem::path& id) = 0;
 
       /**
        * Close the currently open file.
@@ -166,14 +169,65 @@ namespace ome
        * @returns @c true if the suffix is suppored, @c false otherwise.
        */
       static bool
-      checkSuffix(const std::string& name,
-                  const std::string& suffix)
+      checkSuffix(const boost::filesystem::path& name,
+                  const boost::filesystem::path& suffix)
       {
-        std::vector<std::string> suffixes;
-        std::vector<std::string> compression_suffixes;
-        suffixes.push_back(suffix);
+        bool match = true;
 
-        return checkSuffix(name, suffixes, compression_suffixes);
+        boost::filesystem::path filename(name);
+#if !defined(BOOST_VERSION) || BOOST_VERSION >= 105000 // Boost >= 1.50
+        boost::filesystem::path ext;
+        ext.replace_extension(suffix); // Adds leading dot if missing
+#else // Boost < 1.50
+        // replace_extension doesn't work nicely with older Boost versions.
+        boost::filesystem::path ext(suffix);
+        std::string suffixString(ext.string());
+        if (!suffixString.empty() && suffixString[0] != '.')
+          ext = boost::filesystem::path(std::string(".") + suffixString);
+#endif // Boost version
+
+        while(true)
+          {
+            boost::filesystem::path filename_ext = filename.extension();
+            boost::filesystem::path current_ext = ext.extension();
+            filename.replace_extension();
+            ext.replace_extension();
+
+            if (filename_ext.empty() && current_ext.empty())
+              break; // End of matches
+            else if (!filename_ext.empty() && !current_ext.empty() &&
+                     filename_ext == current_ext) // Match OK
+              continue;
+
+            // Unbalanced or unequal extensions.
+            match = false;
+            break;
+          }
+
+        return match;
+      }
+
+      /**
+       * Perform suffix matching for the given filename.
+       *
+       * @param name the name to check.
+       * @param suffixes the suffixes to match.
+       *
+       * @returns @c true if the suffix is suppored, @c false otherwise.
+       */
+      static bool
+      checkSuffix(const boost::filesystem::path&              name,
+                  const std::vector<boost::filesystem::path>& suffixes)
+      {
+        for (std::vector<boost::filesystem::path>::const_iterator si = suffixes.begin();
+             si != suffixes.end();
+             ++si)
+          {
+            if (checkSuffix(name, *si))
+              return true;
+          }
+
+        return false;
       }
 
       /**
@@ -186,38 +240,32 @@ namespace ome
        * @returns @c true if the suffix is suppored, @c false otherwise.
        */
       static bool
-      checkSuffix(const std::string&              name,
-                  const std::vector<std::string>& suffixes,
-                  const std::vector<std::string>& compression_suffixes)
+      checkSuffix(const boost::filesystem::path&              name,
+                  const std::vector<boost::filesystem::path>& suffixes,
+                  const std::vector<boost::filesystem::path>& compression_suffixes)
       {
-        std::string lname;
-        std::transform(name.begin(), name.end(),
-                       std::back_inserter(lname),
-                       static_cast<int (*)(int)>(std::tolower));
+        if (checkSuffix(name, suffixes))
+          return true;
 
-        for (std::vector<std::string>::const_iterator si = suffixes.begin();
-             si != suffixes.end();
-             ++si)
+        for (std::vector<boost::filesystem::path>::const_iterator csi = compression_suffixes.begin();
+             csi != compression_suffixes.end();
+             ++csi)
           {
-            std::string suffix(".");
-            suffix += *si;
-            if (name >= suffix &&
-                name.compare(name.size()-suffix.size(), suffix.size(), suffix) == 0)
-              return true;
-
-            for (std::vector<std::string>::const_iterator csi = compression_suffixes.begin();
-                 csi != compression_suffixes.end();
-                 ++csi)
+            for (std::vector<boost::filesystem::path>::const_iterator si = suffixes.begin();
+                 si != suffixes.end();
+                 ++si)
               {
-                std::string csuffix(suffix);
-                csuffix += "." + *csi;
+#if !defined(BOOST_VERSION) || BOOST_VERSION >= 105000 // Boost >= 1.50
+                boost::filesystem::path suffix(*si);
+                suffix += boost::filesystem::path(".");
+                suffix += *csi;
+#else // Boost < 1.50
+                boost::filesystem::path suffix(si->parent_path());
+                suffix /= boost::filesystem::path(si->filename().string() + "." + csi->string());
+#endif // Boost version
 
-                if (name >= csuffix &&
-                    name.compare(name.size()-csuffix.size(), csuffix.size(), csuffix) == 0)
-                  return false;
-                /**
-                 * @todo Should return true when compression suffixes are supported.
-                 */
+                if (checkSuffix(name, suffix))
+                  return true;
               }
           }
         return false;
@@ -235,8 +283,8 @@ namespace ome
        * @throws std::logic_error if the assertion fails.
        */
       static void
-      assertId(const boost::optional<std::string>& id,
-               bool                                notNull = true)
+      assertId(const boost::optional<boost::filesystem::path>& id,
+               bool                                            notNull = true)
       {
         if (!id && notNull)
           {

@@ -59,6 +59,8 @@ using the SlideBook software.  Bio-Formats is not likely to support the full
 range of metadata that is included in .sld files, and so exporting to 
 OME-TIFF from SlideBook is the best way to ensure that all metadata is 
 preserved. 
+Free software from 3I can export the files to OME-TIFF post-acquisition, see 
+`https://www.slidebook.com/reader.php <https://www.slidebook.com/reader.php>`_ 
 
 .. seealso:: 
   `Slidebook software overview <https://www.slidebook.com>`_ 

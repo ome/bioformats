@@ -98,7 +98,8 @@ struct CompareGreaterOrEqual<NonNegativeFloat>
 };
 
 
-// Floating point types don't implement modulo, so make it a no-op.
+// Floating point types don't implement modulo, increment or
+// decrement, so make them a no-op.
 template<>
 struct OperationModulo<NonNegativeFloat>
 {
@@ -108,6 +109,20 @@ struct OperationModulo<NonNegativeFloat>
 
 template<>
 struct OperationModuloAssign<NonNegativeFloat>
+{
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationIncrement<NonNegativeFloat>
+{
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationDecrement<NonNegativeFloat>
 {
   NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
   NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }

@@ -38,20 +38,35 @@
 #include <string>
 
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/MetadataTools.h>
+#include <ome/bioformats/XMLTools.h>
 
 #include <ome/internal/version.h>
+
+#include <ome/xerces/Platform.h>
+#include <ome/xerces/dom/Document.h>
+#include <ome/xerces/dom/Element.h>
+#include <ome/xerces/dom/NodeList.h>
 
 #include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
 
+#include <ome/xml/model/Annotation.h>
+#include <ome/xml/model/Channel.h>
 #include <ome/xml/model/Image.h>
 #include <ome/xml/model/MetadataOnly.h>
+#include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/OMEModel.h>
+#include <ome/xml/model/OriginalMetadataAnnotation.h>
 #include <ome/xml/model/Pixels.h>
+#include <ome/xml/model/StructuredAnnotations.h>
+#include <ome/xml/model/XMLAnnotation.h>
 #include <ome/xml/model/primitives/Timestamp.h>
+
+using boost::format;
 
 using ome::xml::meta::Metadata;
 using ome::xml::meta::MetadataStore;
@@ -61,8 +76,12 @@ using ome::xml::meta::OMEXMLMetadataRoot;
 
 using ome::xml::model::Image;
 using ome::xml::model::MetadataOnly;
-using ome::xml::model::Pixels;
+using ome::xml::model::ModelException;
 using ome::xml::model::OMEModel;
+using ome::xml::model::OriginalMetadataAnnotation;
+using ome::xml::model::Pixels;
+using ome::xml::model::StructuredAnnotations;
+using ome::xml::model::XMLAnnotation;
 using ome::xml::model::primitives::Timestamp;
 using ome::xml::model::primitives::PositiveInteger;
 
@@ -71,6 +90,23 @@ namespace
 
   /// Use default creation date?
   bool defaultCreationDate = false;
+
+  template<typename T>
+  void parseNodeValue(::ome::xerces::dom::Node& node,
+                      T&                        value)
+  {
+    if (node)
+      {
+        try
+          {
+            value = boost::lexical_cast<T>(node.getNodeValue());
+          }
+        catch (boost::bad_lexical_cast const&)
+          {
+            /// @todo Warn if parsing fails.
+          }
+      }
+  }
 
 }
 
@@ -125,19 +161,87 @@ namespace ome
       return fmt.str();
     }
 
-    std::shared_ptr< ::ome::xml::meta::Metadata>
-    createOMEXMLMetadata(const std::string& document)
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(ome::xerces::dom::Document& document)
     {
-      /// @todo Parse OME-XML document.
-      return std::shared_ptr< ::ome::xml::meta::Metadata>();
+      ome::xerces::dom::Element docroot(document.getDocumentElement());
+
+      std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+      ome::xml::model::detail::OMEModel model;
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta->getRoot()));
+      root->update(docroot, model);
+
+      return meta;
     }
 
-    std::shared_ptr<Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(const boost::filesystem::path& file)
+    {
+      // Parse OME-XML into DOM Document.
+      ome::xerces::Platform xmlplat;
+      ome::xerces::dom::Document doc;
+      try
+        {
+          doc = ome::xerces::dom::createDocument(file);
+        }
+      catch (const std::runtime_error&)
+        {
+          ome::xerces::dom::ParseParameters params;
+          params.doSchema = false;
+          params.validationSchemaFullChecking = false;
+          doc = ome::xerces::dom::createDocument(file, params);
+        }
+      return createOMEXMLMetadata(doc);
+    }
+
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(const std::string& text)
+    {
+      // Parse OME-XML into DOM Document.
+      ome::xerces::Platform xmlplat;
+      ome::xerces::dom::Document doc;
+      try
+        {
+          doc = ome::xerces::dom::createDocument(text, ome::xerces::dom::ParseParameters(),
+                                                 "OME-XML");
+        }
+      catch (const std::runtime_error&)
+        {
+          ome::xerces::dom::ParseParameters params;
+          params.doSchema = false;
+          params.validationSchemaFullChecking = false;
+          doc = ome::xerces::dom::createDocument(text, params, "Broken OME-XML");
+        }
+      return createOMEXMLMetadata(doc);
+    }
+
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(std::istream& stream)
+    {
+      // Parse OME-XML into DOM Document.
+      ome::xerces::Platform xmlplat;
+      ome::xerces::dom::Document doc;
+      try
+        {
+          doc = ome::xerces::dom::createDocument(stream, ome::xerces::dom::ParseParameters(),
+                                                 "OME-XML");
+        }
+      catch (const std::runtime_error&)
+        {
+          ome::xerces::dom::ParseParameters params;
+          params.doSchema = false;
+          params.validationSchemaFullChecking = false;
+          doc = ome::xerces::dom::createDocument(stream, params, "Broken OME-XML");
+        }
+      return createOMEXMLMetadata(doc);
+    }
+
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane,
                          bool                doImageName)
     {
-      std::shared_ptr<Metadata> metadata(std::make_shared<OMEXMLMetadata>());
+      std::shared_ptr<OMEXMLMetadata> metadata(std::make_shared<OMEXMLMetadata>());
       std::shared_ptr<MetadataStore> store(std::static_pointer_cast<MetadataStore>(metadata));
       fillMetadata(*store, reader, doPlane, doImageName);
       return metadata;
@@ -148,29 +252,25 @@ namespace ome
     {
       /// @todo Implement model transforms.
 
-      // OMEModel model;
-      // std::shared_ptr<OMEXMLMetadataRoot> root(new OMEXMLMetadataRoot(xml, model));
-      // model.resolveReferences();
-      // return root;
-
-      return std::shared_ptr< ::ome::xml::meta::MetadataRoot>();
+      std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(createOMEXMLMetadata(document)));
+      return meta ? meta->getRoot() : std::shared_ptr< ::ome::xml::meta::MetadataRoot>();
     }
 
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
     {
-      std::shared_ptr<Metadata> ret;
+      std::shared_ptr<OMEXMLMetadata> ret;
 
       if (retrieve)
         {
           std::shared_ptr<OMEXMLMetadata> omexml(std::dynamic_pointer_cast<OMEXMLMetadata>(retrieve));
           if (omexml)
             {
-              ret = std::static_pointer_cast<Metadata>(omexml);
+              ret = omexml;
             }
           else
             {
-              ret = std::shared_ptr<Metadata>(new OMEXMLMetadata());
+              ret = std::shared_ptr<OMEXMLMetadata>(std::make_shared<OMEXMLMetadata>());
               ome::xml::meta::convert(*retrieve, *ret);
             }
         }
@@ -179,20 +279,21 @@ namespace ome
     }
 
     std::string
-    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml)
+    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml,
+              bool                              validate)
     {
-      /// @todo Implement OME-XML conversion to string.
+      std::string xml(omexml.dumpXML());
 
-      return omexml.dumpXML();
+      if (!validateOMEXML(xml))
+        throw std::runtime_error("Invalid OME-XML");
 
-      /// @todo Implement validation and root namespace setting.
+      return xml;
     }
 
     bool
     validateOMEXML(const std::string& document)
     {
-      /// @todo Implement validation.
-      return false;
+      return validateXML(document, "OME-XML");
     }
 
     void
@@ -207,12 +308,12 @@ namespace ome
         {
           reader.setSeries(s);
 
-          const boost::optional<std::string>& cfile(reader.getCurrentFile());
+          const boost::optional<boost::filesystem::path>& cfile(reader.getCurrentFile());
 
           std::ostringstream nos;
           if (doImageName && !!cfile)
             {
-              nos << *cfile;
+              nos << (*cfile).native();
               if (reader.getSeriesCount() > 1)
                 nos << " #" << (s + 1);
             }
@@ -223,7 +324,7 @@ namespace ome
           if (!imageName.empty())
             store.setImageID(createID("Image", s), s);
           if (!!cfile)
-            setDefaultCreationDate(store, s, boost::filesystem::path(*cfile));
+            setDefaultCreationDate(store, s, *cfile);
 
           fillPixels(store, reader);
 
@@ -322,14 +423,99 @@ namespace ome
     }
 
     Modulo
+    getModuloAlongZ(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image)
+    {
+      return getModulo(omexml, "ModuloAlongZ", image);
+    }
+
+    Modulo
+    getModuloAlongT(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image)
+    {
+      return getModulo(omexml, "ModuloAlongT", image);
+    }
+
+    Modulo
+    getModuloAlongC(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image)
+    {
+      return getModulo(omexml, "ModuloAlongC", image);
+    }
+
+    Modulo
     getModulo(const ::ome::xml::meta::OMEXMLMetadata& omexml,
               const std::string&                      tag,
               dimension_size_type                     image)
     {
       // @todo Implement Modulo retrieval.
+      ::ome::xml::meta::OMEXMLMetadata& momexml(const_cast< ::ome::xml::meta::OMEXMLMetadata&>(omexml));
 
-      throw std::runtime_error("Unimplemented");
-      return Modulo(tag); // Incorrect placeholder.
+      std::shared_ptr<OMEXMLMetadataRoot> root =
+        std::dynamic_pointer_cast<OMEXMLMetadataRoot>(momexml.getRoot());
+      if (!root) // Should never occur
+        throw std::logic_error("OMEXMLMetadata does not have an OMEXMLMetadataRoot");
+
+      std::shared_ptr< ::ome::xml::model::Image> mimage(root->getImage(image));
+      if (!mimage)
+        throw std::runtime_error("Image does not exist in OMEXMLMetadata");
+
+      for (::ome::xml::meta::MetadataStore::index_type i = 0;
+           i < mimage->sizeOfLinkedAnnotationList();
+           ++i)
+        {
+          std::shared_ptr< ::ome::xml::model::Annotation> annotation(mimage->getLinkedAnnotation(i));
+          std::shared_ptr< ::ome::xml::model::XMLAnnotation> xmlannotation(std::dynamic_pointer_cast< ::ome::xml::model::XMLAnnotation>(annotation));
+          if (xmlannotation)
+            {
+              try
+                {
+                  ome::xerces::Platform xmlplat;
+                  ::ome::xerces::dom::Document xmlroot(::ome::xerces::dom::createDocument(xmlannotation->getValue()));
+                  ::ome::xerces::dom::NodeList nodes(xmlroot.getElementsByTagName(tag));
+
+                  Modulo m(tag.substr(tag.size() ? tag.size() - 1 : 0));
+
+                  if (nodes.size() > 0)
+                    {
+                      ::ome::xerces::dom::Element modulo(nodes.at(0));
+                      ::ome::xerces::dom::NamedNodeMap attrs(modulo.getAttributes());
+
+
+                      ::ome::xerces::dom::Node start = attrs.getNamedItem("Start");
+                      ::ome::xerces::dom::Node end = attrs.getNamedItem("End");
+                      ::ome::xerces::dom::Node step = attrs.getNamedItem("Step");
+                      ::ome::xerces::dom::Node type = attrs.getNamedItem("Type");
+                      ::ome::xerces::dom::Node typeDescription = attrs.getNamedItem("TypeDescription");
+                      ::ome::xerces::dom::Node unit = attrs.getNamedItem("Unit");
+
+                      parseNodeValue(start, m.start);
+                      parseNodeValue(end, m.end);
+                      parseNodeValue(step, m.step);
+                      parseNodeValue(type, m.type);
+                      parseNodeValue(typeDescription, m.typeDescription);
+                      parseNodeValue(unit, m.unit);
+
+                      ::ome::xerces::dom::NodeList labels = modulo.getElementsByTagName("Label");
+                      if (labels && !labels.empty())
+                        {
+                          for (::ome::xerces::dom::NodeList::iterator i = labels.begin();
+                               i != labels.end();
+                               ++i)
+                            m.labels.push_back(i->getTextContent());
+                        }
+
+                    }
+                  return m;
+                }
+              catch (...)
+                {
+                  throw std::runtime_error("Error parsing Modulo annotation");
+                }
+            }
+        }
+
+      throw std::runtime_error("Modulo annotation does not exist in OMEXMLMetadata");
     }
 
     void
@@ -378,6 +564,142 @@ namespace ome
               throw FormatException(fmt.str());
             }
         }
+    }
+
+    void
+    removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml)
+    {
+      omexml.resolveReferences();
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          std::vector<std::shared_ptr<ome::xml::model::Image> >& images(root->getImageList());
+          for(std::vector<std::shared_ptr<ome::xml::model::Image> >::const_iterator image = images.begin();
+              image != images.end();
+              ++image)
+            {
+              std::shared_ptr<ome::xml::model::Pixels> pixels((*image)->getPixels());
+              if (pixels)
+                {
+                  // Note a copy not a reference to avoid iterator
+                  // invalidation during removal.
+                  std::vector<std::shared_ptr<ome::xml::model::BinData> > binData(pixels->getBinDataList());
+                  for (std::vector<std::shared_ptr<ome::xml::model::BinData> >::iterator bin = binData.begin();
+                   bin != binData.end();
+                       ++bin)
+                    {
+                      pixels->removeBinData(*bin);
+                    }
+                  std::shared_ptr<ome::xml::model::MetadataOnly> metadataOnly;
+                  pixels->setMetadataOnly(metadataOnly);
+                }
+            }
+        }
+    }
+
+    void
+    removeChannels(::ome::xml::meta::OMEXMLMetadata& omexml,
+                   dimension_size_type               image,
+                   dimension_size_type               sizeC)
+    {
+      omexml.resolveReferences();
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          std::shared_ptr<ome::xml::model::Image>& imageref(root->getImage(image));
+          if (image)
+            {
+              std::shared_ptr<ome::xml::model::Pixels> pixels(imageref->getPixels());
+              if (pixels)
+                {
+                  std::vector<std::shared_ptr<ome::xml::model::Channel> > channels(pixels->getChannelList());
+                  for (Metadata::index_type c = 0U; c < channels.size(); ++c)
+                    {
+                      std::shared_ptr<ome::xml::model::Channel> channel(channels.at(c));
+                      if (channel->getID().empty() || c >= sizeC)
+                        pixels->removeChannel(channel);
+                    }
+                }
+            }
+        }
+    }
+
+    MetadataMap
+    getOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml)
+    {
+      MetadataMap map;
+
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          std::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
+          if (sa)
+            {
+              for (OMEXMLMetadata::index_type i = 0; i < sa->sizeOfXMLAnnotationList(); ++i)
+                {
+                  // Check if this is an OriginalMetadataAnnotation object.
+                  std::shared_ptr<XMLAnnotation> annotation(sa->getXMLAnnotation(i));
+                  std::shared_ptr<OriginalMetadataAnnotation> original(std::dynamic_pointer_cast<OriginalMetadataAnnotation>(annotation));
+                  if (original)
+                    {
+                      const OriginalMetadataAnnotation::metadata_type kv(original->getMetadata());
+                      map.set(kv.first, kv.second);
+                      continue;
+                    }
+
+                  // Fall back to parsing by hand.
+                  try
+                    {
+                      xerces::Platform xmlplat;
+                      xerces::dom::ParseParameters params;
+                      params.validationScheme = xercesc::XercesDOMParser::Val_Never;
+                      xerces::dom::Document doc(ome::xerces::dom::createDocument(annotation->getValue()));
+
+                      std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc, "OriginalMetadata");
+                      if (OriginalMetadataValue_nodeList.size() > 1)
+                        {
+                          format fmt("Value node list size %1% != 1");
+                          fmt % OriginalMetadataValue_nodeList.size();
+                          throw ModelException(fmt.str());
+                        }
+                      else if (OriginalMetadataValue_nodeList.size() != 0)
+                        {
+                          OriginalMetadataAnnotation::metadata_type kv;
+                          std::vector<xerces::dom::Element> Key_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Key");
+                          if (Key_nodeList.size() > 1)
+                            {
+                              format fmt("Key node list size %1% != 1");
+                              fmt % Key_nodeList.size();
+                              throw ModelException(fmt.str());
+                            }
+                          else if (Key_nodeList.size() != 0)
+                            {
+                              kv.first = Key_nodeList.at(0).getTextContent();
+                            }
+                          std::vector<xerces::dom::Element> Value_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Value");
+                          if (Value_nodeList.size() > 1)
+                            {
+                              format fmt("Value node list size %1% != 1");
+                              fmt % Value_nodeList.size();
+                              throw ModelException(fmt.str());
+                            }
+                          else if (Value_nodeList.size() != 0)
+                            {
+                              kv.second = Value_nodeList.at(0).getTextContent();
+                            }
+                          map.set(kv.first, kv.second);
+                          continue;
+                        }
+                    }
+                  catch (const std::exception& /* e */)
+                    {
+                      /// @todo log error
+                    }
+                }
+            }
+        }
+
+      return map;
     }
 
     std::string

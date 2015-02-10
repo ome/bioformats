@@ -116,13 +116,40 @@ namespace ome
              dimension_size_type idx4);
 
     /**
-     * Create OME-XML metadata from XML document.
+     * Create OME-XML metadata from DOM Document.
      *
-     * @param document the XML document source.
+     * @param document the XML document.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::Metadata>
-    createOMEXMLMetadata(const std::string& document);
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(ome::xerces::dom::Document& document);
+
+    /**
+     * Create OME-XML metadata from XML file.
+     *
+     * @param file the XML file.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(const boost::filesystem::path& file);
+
+    /**
+     * Create OME-XML metadata from XML string.
+     *
+     * @param text the XML string.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(const std::string& text);
+
+    /**
+     * Create OME-XML metadata from XML input stream.
+     *
+     * @param stream the XML input stream.
+     * @returns the OME-XML metadata.
+     */
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(std::istream& stream);
 
     /**
      * Create OME-XML metadata from reader core metadata.
@@ -132,7 +159,7 @@ namespace ome
      * @param doImageName set image name if @c true.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane = false,
                          bool                doImageName = true);
@@ -155,7 +182,7 @@ namespace ome
      * @param retrieve the metadata to use.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
 
     /**
@@ -165,10 +192,13 @@ namespace ome
      * string.
      *
      * @param omexml the OME-XML metadata store.
+     * @param validate @c true to validate the OME-XML, @c false to
+     * skip validation.
      * @returns the OME-XML metadata as an XML document string.
      */
     std::string
-    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml);
+    getOMEXML(::ome::xml::meta::OMEXMLMetadata& omexml,
+              bool                              validate = true);
 
     /**
      * Validate an OME-XML document.
@@ -234,6 +264,39 @@ namespace ome
                     bool                              resolve = true);
 
     /**
+     * Get ModuloAlongZ annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModuloAlongZ(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image);
+
+    /**
+     * Get ModuloAlongT annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModuloAlongT(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image);
+
+    /**
+     * Get ModuloAlongC annotation from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @returns the Modulo annotation.
+     */
+    Modulo
+    getModuloAlongC(const ::ome::xml::meta::OMEXMLMetadata& omexml,
+                    dimension_size_type                     image);
+
+    /**
      * Get Modulo annotation from OME-XML metadata.
      *
      * @param omexml the OME-XML metadata store.
@@ -255,7 +318,37 @@ namespace ome
      */
     void
     verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
-                    dimension_size_type               series = 0U);
+                  dimension_size_type                 series = 0U);
+
+    /**
+     * Remove all BinData elements from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     */
+    void
+    removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml);
+
+    /**
+     * Remove all but the specified number of valid Channel elements
+     * from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @param sizeC the number of channels to retain.
+     */
+    void
+    removeChannels(::ome::xml::meta::OMEXMLMetadata& omexml,
+                   dimension_size_type               image,
+                   dimension_size_type               sizeC);
+
+    /**
+     * Get original metadata from OME-XML metadata StructuredAnnotations.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @returns a map of the original metadata annotations.
+     */
+    MetadataMap
+    getOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml);
 
     /**
      * Check if default creation date is enabled.

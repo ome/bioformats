@@ -98,5 +98,9 @@ namespace ome
     {
     }
 
+    CoreMetadata::~CoreMetadata()
+    {
+    }
+
   }
 }

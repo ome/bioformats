@@ -120,7 +120,7 @@ namespace ome
         {
           reference_map_type::iterator i = references.find(a);
 
-          if (i != references.end())
+          if (i == references.end())
             {
               std::pair<reference_map_type::iterator,bool> r =
                 references.insert(std::make_pair(a, reference_map_type::value_type::second_type()));

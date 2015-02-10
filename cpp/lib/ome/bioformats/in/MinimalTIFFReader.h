@@ -50,6 +50,7 @@ namespace ome
     {
 
       class TIFF;
+      class IFD;
 
     }
 
@@ -88,7 +89,7 @@ namespace ome
       protected:
         // Documented in superclass.
         void
-        initFile(const std::string& id);
+        initFile(const boost::filesystem::path& id);
 
         /**
          * Read metadata from IFDs.
@@ -99,12 +100,27 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isFilenameThisTypeImpl(const std::string& name) const;
+        isFilenameThisTypeImpl(const boost::filesystem::path& name) const;
+
+        /**
+         * Get the IFD index for a plane in the current series.
+         *
+         * @param no the image index within the file.
+         * @returns the IFD index.
+         * @throws FormatException if out of range.
+         */
+        const std::shared_ptr<const tiff::IFD>
+        ifdAtIndex(dimension_size_type no) const;
 
       public:
         // Documented in superclass.
         void
         close(bool fileOnly = false);
+
+        // Documented in superclass.
+        void
+        getLookupTable(VariantPixelBuffer& buf,
+                       dimension_size_type no) const;
 
       protected:
         // Documented in superclass.

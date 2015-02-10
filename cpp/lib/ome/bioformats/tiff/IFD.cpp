@@ -1210,6 +1210,45 @@ namespace ome
       }
 
       void
+      IFD::readLookupTable(VariantPixelBuffer& buf) const
+      {
+        std::array<std::vector<uint16_t>, 3> cmap;
+        getField(tiff::COLORMAP).get(cmap);
+
+        std::array<VariantPixelBuffer::size_type, 9> shape;
+        shape[DIM_SPATIAL_X] = cmap.at(0).size();
+        shape[DIM_SPATIAL_Y] = 1;
+        shape[DIM_SUBCHANNEL] = cmap.size();
+        shape[DIM_SPATIAL_Z] = shape[DIM_TEMPORAL_T] = shape[DIM_CHANNEL] =
+          shape[DIM_MODULO_Z] = shape[DIM_MODULO_T] = shape[DIM_MODULO_C] = 1;
+
+        ::ome::bioformats::PixelBufferBase::storage_order_type order_planar(::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC, false));
+
+        buf.setBuffer(shape, PixelType::UINT16, order_planar);
+
+        std::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> > uint16_buffer
+          (boost::get<std::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> > >(buf.vbuffer()));
+        assert(uint16_buffer);
+
+        for (VariantPixelBuffer::size_type s = 0U; s < shape[DIM_SUBCHANNEL]; ++s)
+          {
+            const std::vector<uint16_t>& channel(cmap.at(s));
+
+            VariantPixelBuffer::indices_type coord;
+            coord[DIM_SPATIAL_X] = 0;
+            coord[DIM_SPATIAL_Y] = 0;
+            coord[DIM_SUBCHANNEL] = s;
+            coord[DIM_SPATIAL_Z] = coord[DIM_TEMPORAL_T] =
+              coord[DIM_CHANNEL] = coord[DIM_MODULO_Z] =
+              coord[DIM_MODULO_T] = coord[DIM_MODULO_C] = 0;
+
+            std::copy(channel.begin(), channel.end(),
+                      &uint16_buffer->at(coord));
+          }
+
+      }
+
+      void
       IFD::writeImage(const VariantPixelBuffer& buf)
       {
         writeImage(buf, 0, 0, getImageWidth(), getImageHeight());

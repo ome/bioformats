@@ -972,6 +972,7 @@ public:
     pngdata_chunky.setBuffer(shape, PT::UINT8, order_chunky);
     pngdata_planar.setBuffer(shape, PT::UINT8, order_planar);
 
+    std::shared_ptr<PixelBuffer<PixelProperties<PT::UINT8>::std_type> >& uint8_pngdata_chunky(boost::get<std::shared_ptr<PixelBuffer<PixelProperties<PT::UINT8>::std_type> > >(pngdata_chunky.vbuffer()));
     std::vector<png_bytep> row_pointers(pheight);
     for (dimension_size_type y = 0; y < pheight; ++y)
       {
@@ -983,7 +984,7 @@ public:
           coord[ome::bioformats::DIM_CHANNEL] = coord[ome::bioformats::DIM_MODULO_Z] =
           coord[ome::bioformats::DIM_MODULO_T] = coord[ome::bioformats::DIM_MODULO_C] = 0;
 
-        row_pointers[y] = reinterpret_cast<png_bytep>(&pngdata_chunky.at< PixelProperties<PT::UINT8>::std_type>(coord));
+        row_pointers[y] = reinterpret_cast<png_bytep>(&(uint8_pngdata_chunky->at(coord)));
       }
 
     png_read_image(pngptr, &row_pointers[0]);

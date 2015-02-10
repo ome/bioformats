@@ -161,21 +161,6 @@ public class TestTools {
     return dot < 0 ? name : name.substring(dot + 1);
   }
 
-  /** Creates a new log file. */
-  @Deprecated
-  public static void createLogFile() {
-    LOGGER.info("Start test suite");
-
-    // close log file on exit
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        LOGGER.info(DIVIDER);
-        LOGGER.info("Test suite complete.");
-      }
-    });
-  }
-
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig)
