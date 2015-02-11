@@ -33,6 +33,7 @@
 package loci.common.lut.ij;
 
 import loci.common.lut.AbstractLutSource;
+import loci.common.lut.LutSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class ImageJLutSource extends AbstractLutSource {
     }
 
     @Override
-    public byte[] applyLut(int no, byte[] buf, int x, int y, int w, int h) {
+    public byte[] applyLut(byte[] buf) {
 
       // copied from ImageTools which is in bsd
       byte[][] lut = new byte[][] { reds, greens, blues };

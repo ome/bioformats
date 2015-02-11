@@ -32,7 +32,6 @@
 
 package loci.common.lut;
 
-
 /**
  * Generic source for loading a lookup table (LUT). The primary responsibility
  * of implementations is to take a byte array from some call to openBytes or
@@ -48,15 +47,10 @@ public interface LutSource {
      * call to {@link loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)})
      * and converts each byte based on the associated lookup table in this source.
      *
-     * @param no
      * @param buf
-     * @param x
-     * @param y
-     * @param w
-     * @param h
      * @return
      */
-    byte[] applyLut(int no, byte[] buf, int x, int y, int w, int h);
+    byte[] applyLut(byte[] buf);
 
     byte[][] get8BitLookupTable();
 

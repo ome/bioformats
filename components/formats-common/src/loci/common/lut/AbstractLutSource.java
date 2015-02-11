@@ -32,7 +32,6 @@
 
 package loci.common.lut;
 
-
 /**
  * Base class for {@link LutSource} implementations.
  *
@@ -47,15 +46,10 @@ public abstract class AbstractLutSource implements LutSource {
      *
      * By default, no action is taken.
      * 
-     * @param no
-     * @param buf
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     * @return
+     * @param buf non-null buffer of bytes which should be mapped.
+     * @return returns the original buffer by default
      */
-    public byte[] applyLut(int no, byte[] buf, int x, int y, int w, int h) {
+    public byte[] applyLut(byte[] buf) {
         return buf;
     }
 

@@ -72,7 +72,7 @@ public class Colorizer extends BytesWrapper {
   {
     buf = reader.openBytes(no, buf, x, y, w, h);
     if (lutSource != null) {
-      return lutSource.applyLut(no, buf, x, y, w, h);
+      return lutSource.applyLut(buf);
     }
     return buf;
   }
