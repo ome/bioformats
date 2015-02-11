@@ -447,6 +447,14 @@ namespace ome
                   dimension_size_type h) const;
 
         /**
+         * Read a lookup table into a pixel buffer.
+         *
+         * @param buf the destination pixel buffer.
+         */
+        void
+        readLookupTable(VariantPixelBuffer& buf) const;
+
+        /**
          * Write a whole image plane from a pixel buffer.
          *
          * @param buf the source pixel buffer.

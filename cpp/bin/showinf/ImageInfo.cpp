@@ -162,7 +162,7 @@ namespace showinf
 
     if (opts.showused)
       {
-        const std::vector<std::string> used(reader->getUsedFiles());
+        const std::vector<boost::filesystem::path> used(reader->getUsedFiles());
         if (used.empty())
           {
             stream << "Used files = []";
@@ -174,7 +174,7 @@ namespace showinf
         else
           {
             stream << "Used files\n";
-            for (std::vector<std::string>::const_iterator i = used.begin();
+            for (std::vector<boost::filesystem::path>::const_iterator i = used.begin();
                  i != used.end();
                  ++i)
               {

@@ -42,6 +42,10 @@ cmake_policy(VERSION 2.8.0)
 if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif(POLICY CMP0042)
+# Use new variable expansion policy.
+if (POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW)
+endif(POLICY CMP0053)
 
 project(bioformats)
 include(cpp/cmake/Version.cmake)

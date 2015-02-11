@@ -41,6 +41,8 @@
 #include <string>
 #include <ostream>
 
+#include <ome/compat/filesystem.h>
+
 namespace ome
 {
   namespace bioformats
@@ -52,7 +54,7 @@ namespace ome
     struct FileInfo
     {
       /// Absolute path to this file.
-      std::string filename;
+      boost::filesystem::path filename;
 
       /**
        * FormatReader implementation used to read this file.

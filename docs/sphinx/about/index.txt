@@ -96,18 +96,17 @@ metadata, original metadata, and OME metadata.
 Help
 ----
 
-For help, see the
-`Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
-`File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
-and `OME-XML and OME-TIFF 
-<http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
-sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ 
-for answers to some common questions. Please `contact us 
-<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
-you have any questions or problems with Bio-Formats.
+There is a :doc:`guide for reporting bugs here <bug-reporting>`.
 
-There is a :doc:`guide 
-for reporting bugs here <bug-reporting>`.
+For help relating to opening images in ImageJ or FIJI or when using the
+command line tools, refer to the :doc:`users documentation </users/index>`.
+You can also find tips on common issues with specific formats on the
+pages linked from the :doc:`supported formats table </supported-formats>`.
+
+Please `contact us 
+<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
+you have any questions or problems with Bio-Formats not addressed by referring
+to the documentation.
 
 Other places where questions are commonly asked and/or bugs are reported
 include:
@@ -123,11 +122,6 @@ include:
    (searchable using google with 'site:lists.openmicroscopy.org.uk')
 -  `ImageJ mailing list (for ImageJ/Fiji
    issues) <http://imagej.1557.n6.nabble.com/>`_
-
-For help relating to opening images in ImageJ or FIJI or when using the
-command line tools, refer to the :doc:`users documentation </users/index>`.
-You can also find tips on common issues with specific formats on the
-pages linked from the :doc:`supported formats table </supported-formats>`.
 
 .. toctree::
     :maxdepth: 1

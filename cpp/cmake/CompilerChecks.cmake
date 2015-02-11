@@ -168,6 +168,7 @@ if (NOT MSVC)
       -Wformat=2
       -Wimplicit-atomic-properties
       -Wmissing-declarations
+      -Wno-long-long
       -Wnon-virtual-dtor
       -Wold-style-cast
       -Woverlength-strings
