@@ -32,6 +32,7 @@ import ij.ImagePlus;
 import ij.gui.EllipseRoi;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
@@ -273,13 +274,27 @@ public class ROIHandler {
         return rois;
     }
 
+    public static Roi[] readFromOverlays(){
+
+        ImagePlus image = IJ.getImage();
+        Overlay overlay = image.getOverlay();
+        if (overlay == null) return null;
+        return overlay.toArray();
+
+    }
+
     /** Save ROIs in the ROI manager to the given MetadataStore. */
     public static void saveROIs(MetadataStore store) {
-        Roi[] rois = readFromRoiManager();
+
+        Roi[] rois = readFromOverlays();
+        if (rois == null) {
+            rois = readFromRoiManager();
+        }
 
         if (rois == null || rois.length == 0) return;
         List<String> discardList = new ArrayList<String>();
-        String roiID = null;int cntr = 0;
+        String roiID = null;
+        int cntr = 0;
         for (int i=0; i<rois.length; i++) {
 
             String polylineID = MetadataTools.createLSID("Shape", cntr, 0);
@@ -578,7 +593,6 @@ public class ROIHandler {
                 store.setPolygonFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
             }
         }
-
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
