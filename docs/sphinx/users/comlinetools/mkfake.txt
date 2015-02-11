@@ -48,7 +48,7 @@ To change the number of fields per well:
 
   mkfake -fields 2 two-field-plate.fake
 
-It's often most useful to use the arguments together to create a realistic
+It is often most useful to use the arguments together to create a realistic
 screen, for example:
 
 ::

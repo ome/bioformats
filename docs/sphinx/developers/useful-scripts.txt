@@ -1,7 +1,7 @@
 Scripts for performing development tasks
 ========================================
 
-The :code:`tools` directory contains several scripts which are useful
+The :file:`tools` directory contains several scripts which are useful
 for building and performing routine updates to the code base.
 
 bump_maven_version.py
