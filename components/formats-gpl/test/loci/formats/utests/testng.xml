@@ -29,6 +29,7 @@
         <classes>
             <class name="loci.formats.utests.MDBServiceTest"/>
             <class name="loci.formats.utests.NetCDFServiceTest"/>
+            <class name="loci.formats.utests.JHDFServiceTest"/>
             <class name="loci.formats.utests.POIServiceTest"/>
         </classes>
         <packages>
