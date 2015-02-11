@@ -191,7 +191,6 @@ extlinks = {
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
-    'faq_plone' : (oo_site_root + '/support/faq/%s', ''),
     'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
@@ -386,8 +385,7 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = ['http://www.openmicroscopy.org/site/support/faq',]
 
 import urllib
 brokenfiles_url = 'https://raw.github.com/openmicroscopy/sphinx-ignore-links/master/broken_links.txt'
-linkcheck_ignore.extend(urllib.urlopen(brokenfiles_url).read().splitlines())
+linkcheck_ignore = urllib.urlopen(brokenfiles_url).read().splitlines()
