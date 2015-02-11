@@ -257,7 +257,7 @@
 			<ROI:Shape ID="Shape:4" StrokeWidth="2" StrokeColor="15">
 				<ROI:Polygon Points="1,1 10,20, 20,20 20,10"/>
 			</ROI:Shape>
-			<ROI:Shape ID="Shape:5" StrokeWidth="2" StrokeColor="16">
+			<ROI:Shape ID="Shape:5" StrokeWidth="2" StrokeColor="16" PhysicalXUnit="µm" PhysicalYUnit="nm">
 				<ROI:Polyline Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
 					MarkerEnd="Arrow"/>
 			</ROI:Shape>

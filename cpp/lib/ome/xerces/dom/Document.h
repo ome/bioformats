@@ -52,6 +52,8 @@
 
 #include <ome/compat/filesystem.h>
 
+#include <ome/compat/filesystem.h>
+
 #include <ome/xerces/dom/Element.h>
 #include <ome/xerces/dom/NodeList.h>
 #include <ome/xerces/dom/Wrapper.h>
@@ -192,6 +194,7 @@ namespace ome
         {
           return Element((*this)->getDocumentElement(), false);
         }
+      };
 
         /**
          * Get child elements with a given tag name.

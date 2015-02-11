@@ -110,6 +110,38 @@ namespace
 
 }
 
+#include <ome/internal/version.h>
+
+#include <ome/xml/meta/Convert.h>
+#include <ome/xml/meta/OMEXMLMetadataRoot.h>
+
+#include <ome/xml/model/Image.h>
+#include <ome/xml/model/MetadataOnly.h>
+#include <ome/xml/model/OMEModel.h>
+#include <ome/xml/model/Pixels.h>
+#include <ome/xml/model/primitives/Timestamp.h>
+
+using ome::xml::meta::Metadata;
+using ome::xml::meta::MetadataStore;
+using ome::xml::meta::MetadataRoot;
+using ome::xml::meta::OMEXMLMetadata;
+using ome::xml::meta::OMEXMLMetadataRoot;
+
+using ome::xml::model::Image;
+using ome::xml::model::MetadataOnly;
+using ome::xml::model::Pixels;
+using ome::xml::model::OMEModel;
+using ome::xml::model::primitives::Timestamp;
+using ome::xml::model::primitives::PositiveInteger;
+
+namespace
+{
+
+  /// Use default creation date?
+  bool defaultCreationDate = false;
+
+}
+
 namespace ome
 {
   namespace bioformats

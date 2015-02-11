@@ -51,6 +51,8 @@
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
+#include <ome/bioformats/tiff/TileBuffer.h>
+#include <ome/bioformats/tiff/TileCache.h>
 
 #include <ome/compat/thread.h>
 #include <ome/compat/string.h>

@@ -74,6 +74,10 @@ set(OME_XML_STATIC_SOURCES
 set(OME_XML_META_PRIVATE_STATIC_HEADERS
     meta/Convert.h)
 
+# Not installed, internal only.
+set(OME_XML_META_PRIVATE_STATIC_HEADERS
+    meta/Convert.h)
+
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
     meta/Metadata.h

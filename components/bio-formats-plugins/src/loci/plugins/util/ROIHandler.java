@@ -31,6 +31,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.EllipseRoi;
 import ij.gui.Line;
+import ij.gui.MessageDialog;
 import ij.gui.OvalRoi;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;

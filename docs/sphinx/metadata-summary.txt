@@ -3031,11 +3031,15 @@ Metadata fields
    * - :schema:`TermAnnotation - AnnotationRef <OME-2015-01/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
+     - 163
+   * - :schema:`TermAnnotation - AnnotationRef <OME-2013-10-dev-5/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 164
    * - :schema:`TermAnnotation - Description <OME-2015-01/SA_xsd.html#Annotation_Description>`
      - 0
      - 0
+     - 164
+   * - :schema:`TermAnnotation - Description <OME-2013-10-dev-5/SA_xsd.html#Annotation_Description>`
      - 0
      - 164
    * - :schema:`TermAnnotation - ID <OME-2015-01/SA_xsd.html#Annotation_ID>`
@@ -3056,35 +3060,49 @@ Metadata fields
    * - :schema:`TiffData - FirstC <OME-2015-01/ome_xsd.html#TiffData_FirstC>`
      - 0
      - 0
+     - 163
+   * - :schema:`TiffData - FirstC <OME-2013-10-dev-5/ome_xsd.html#TiffData_FirstC>`
      - 0
      - 164
    * - :schema:`TiffData - FirstT <OME-2015-01/ome_xsd.html#TiffData_FirstT>`
      - 0
      - 0
+     - 164
+   * - :schema:`TiffData - FirstT <OME-2013-10-dev-5/ome_xsd.html#TiffData_FirstT>`
      - 0
      - 164
    * - :schema:`TiffData - FirstZ <OME-2015-01/ome_xsd.html#TiffData_FirstZ>`
      - 0
+     - 164
+   * - :schema:`TiffData - FirstZ <OME-2013-10-dev-5/ome_xsd.html#TiffData_FirstZ>`
      - 0
      - 0
      - 164
    * - :schema:`TiffData - IFD <OME-2015-01/ome_xsd.html#TiffData_IFD>`
      - 0
+     - 164
+   * - :schema:`TiffData - IFD <OME-2013-10-dev-5/ome_xsd.html#TiffData_IFD>`
      - 0
      - 0
      - 164
    * - :schema:`TiffData - PlaneCount <OME-2015-01/ome_xsd.html#TiffData_PlaneCount>`
      - 0
+     - 164
+   * - :schema:`TiffData - PlaneCount <OME-2013-10-dev-5/ome_xsd.html#TiffData_PlaneCount>`
      - 0
      - 0
      - 164
    * - :schema:`TimestampAnnotation - AnnotationRef <OME-2015-01/SA_xsd.html#AnnotationRef_ID>`
      - 0
+     - 164
+   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2013-10-dev-5/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 164
    * - :schema:`TimestampAnnotation - Description <OME-2015-01/SA_xsd.html#Annotation_Description>`
      - 0
+     - 164
+   * - :schema:`TimestampAnnotation - Description <OME-2013-10-dev-5/SA_xsd.html#Annotation_Description>`
      - 0
      - 0
      - 164

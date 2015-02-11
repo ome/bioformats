@@ -286,6 +286,7 @@ public final class MetadataTools {
    * Constructs an LSID, given the object type and indices.
    * For example, if the arguments are "Detector", 1, and 0, the LSID will
    * be "Detector:1:0".
+     * @param indices
    */
   public static String createLSID(String type, int... indices) {
     StringBuffer lsid = new StringBuffer(type);
