@@ -38,6 +38,8 @@
 
 #include <stdexcept>
 
+#include <boost/range/size.hpp>
+
 #include <ome/bioformats/FormatWriter.h>
 #include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
@@ -157,10 +159,10 @@ namespace
     };
 
   std::set<ome::xml::model::enums::PixelType> default_pixel_types(init_pt,
-                                                                  init_pt + (sizeof(init_pt) / sizeof(init_pt[0])));
+                                                                  init_pt + boost::size(init_pt));
 
   std::set<ome::xml::model::enums::PixelType> advanced_pixel_types(init_adv_pt,
-                                                                   init_adv_pt + (sizeof(init_adv_pt) / sizeof(init_adv_pt[0])));
+                                                                   init_adv_pt + boost::size(init_adv_pt));
 
   WriterProperties
   test_properties()

@@ -38,6 +38,7 @@
 #include <cassert>
 
 #include <boost/format.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
@@ -71,7 +72,7 @@ namespace ome
                              "Baseline Tagged Image File Format");
 
           p.suffixes = std::vector<boost::filesystem::path>(suffixes,
-                                                            suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
+                                                            suffixes + boost::size(suffixes));
           p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
           p.metadata_levels.insert(MetadataOptions::METADATA_NO_OVERLAYS);
           p.metadata_levels.insert(MetadataOptions::METADATA_ALL);
@@ -82,7 +83,7 @@ namespace ome
         const ReaderProperties props(tiff_properties());
 
         std::vector<std::string> companion_suffixes(companion_suffixes_array,
-                                                    companion_suffixes_array + (sizeof(companion_suffixes_array) / sizeof(companion_suffixes_array[0])));
+                                                    companion_suffixes_array + boost::size(companion_suffixes_array));
 
       }
 

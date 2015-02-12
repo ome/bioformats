@@ -39,6 +39,8 @@
 #include <cmath>
 #include <cstdarg>
 
+#include <boost/range/size.hpp>
+
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Sentry.h>
@@ -345,11 +347,11 @@ namespace ome
         Sentry sentry;
 
 # if TIFF_HAVE_MERGEFIELDINFO_RETURN
-        int e = TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
+        int e = TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, boost::size(ImageJFieldInfo));
         if (e)
           sentry.error();
 # else // !TIFF_HAVE_MERGEFIELDINFO_RETURN
-        TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
+        TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, boost::size(ImageJFieldInfo));
 #endif // TIFF_HAVE_MERGEFIELDINFO_RETURN
 #endif // TIFF_HAVE_MERGEFIELDINFO
       }

@@ -36,6 +36,8 @@
  * #L%
  */
 
+#include <boost/range/size.hpp>
+
 #include <ome/xml/model/primitives/PercentFraction.h>
 
 #include "constrained-numeric.h"
@@ -221,12 +223,12 @@ namespace
 template<>
 const std::vector<NumericTest<PercentFraction>::test_str>
 NumericTest<PercentFraction>::strings(init_strings,
-                                      init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+                                      init_strings + boost::size(init_strings));
 
 template<>
 const std::vector<NumericTest<PercentFraction>::test_op>
 NumericTest<PercentFraction>::ops(init_ops,
-                                  init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+                                  init_ops + boost::size(init_ops));
 
 template<>
 const PercentFraction::value_type NumericTest<PercentFraction>::error(0.0005F);

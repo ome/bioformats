@@ -49,6 +49,7 @@
 #include <ome/test/config.h>
 
 #include <boost/filesystem/operations.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/test/test.h>
 
@@ -634,7 +635,7 @@ TEST_P(FormatReaderTest, FlatSeries)
     { 0, 1, 20, 80, 21, 81, 100, 101, 123, 72, 128, 159 };
 
   for (unsigned int i = 0;
-       i < sizeof(coords)/sizeof(coords[0]);
+       i < boost::size(coords);
        ++i)
     {
       const dim coord(static_cast<dim>(coords[i]));
@@ -648,7 +649,7 @@ TEST_P(FormatReaderTest, FlatSeries)
     }
 
   for (unsigned int i = 0;
-       i < sizeof(modcoords)/sizeof(modcoords[0]);
+       i < boost::size(modcoords);
        ++i)
     {
       const moddim coord(static_cast<moddim>(modcoords[i]));
