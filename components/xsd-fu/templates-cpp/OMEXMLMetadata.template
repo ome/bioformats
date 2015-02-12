@@ -85,7 +85,8 @@
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (ret)
           return ret->getID();
-        throw(std::runtime_error("Internal metadata store inconsistency: null object"));
+        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "Internal metadata store inconsistency: null object");
 {% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${parent} is abstract proprietary
@@ -93,7 +94,8 @@
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
         if (ret)
           return ret->getID();
-        throw(std::runtime_error("Internal metadata store inconsistency: null object"));
+        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "Internal metadata store inconsistency: null object");
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract proprietary and not a reference
@@ -103,7 +105,8 @@
         if (ret)
           return *ret;
 {% if prop.maxOccurs != 1 or prop.defaultXsdValue is None %}\
-        throw(std::runtime_error("Internal metadata store inconsistency: null annotation"));
+        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "Internal metadata store inconsistency: null object");
 {% end %}\
 {% if prop.maxOccurs == 1 and prop.defaultXsdValue is not None %}\
 {% if prop.langType == 'std::string' or prop.isEnumeration %}\
@@ -124,15 +127,16 @@
         if (annotation)
           return annotation->getID();
         /// @todo: Need an exception for store inconsistency.
-        throw(std::runtime_error("Internal metadata store inconsistency: null annotation"));
+        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "Internal metadata store inconsistency: null annotation");
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs only once
         std::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop))}->getLinked${prop.methodName}().lock());
         if (annotation)
           return annotation->getID();
-        /// @todo: Need an exception for store inconsistency.
-        throw(std::runtime_error("Internal metadata store inconsistency: null annotation"));
+        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "Internal metadata store inconsistency: null annotation");
 {% end %}\
 {% otherwise %}\
         // ${prop.name} is not a reference
@@ -140,7 +144,8 @@
         ${prop.retType[' const']} ret = ${safe_accessor(['root']+accessor(obj.name, parent, prop))}->get${prop.methodName}();
         if (ret)
           return *ret;
-        throw(std::runtime_error("Internal metadata store inconsistency: null annotation"));
+        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "Internal metadata store inconsistency: null object");
 {% end %}\
 {% if prop.minOccurs == 1 %}\
         return ${safe_accessor(['root']+accessor(obj.name, parent, prop))}->get${prop.methodName}();
@@ -244,7 +249,8 @@
 {% end %}\
         std::shared_ptr< ${obj.langTypeNS}> o${i + 1}_mostderived(std::static_pointer_cast< ${obj.langTypeNS}>(o${i + 1}));
         if (!o${i + 1}_mostderived)
-          throw(std::runtime_error("Internal metadata store inconsistency: "));
+          throw MetadataException("OMEXMLMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                  "Internal metadata store inconsistency: null object");
 
 {% if not prop.isShared %}\
         o${i + 1}_mostderived->set${prop.methodName}(${prop.argumentName});
@@ -299,7 +305,8 @@
 {% end %}\
         std::shared_ptr< ${obj.langTypeNS}> o${i + 1}_mostderived(std::static_pointer_cast< ${obj.langTypeNS}>(o${i + 1}));
         if (!o${i + 1}_mostderived)
-          throw(std::runtime_error("Internal metadata store inconsistency: "));
+          throw MetadataException("OMEXMLMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                  "Internal metadata store inconsistency: null object");
 
 {% if not prop.isShared %}\
         o${i + 1}_mostderived->set${prop.methodName}(${prop.argumentName});
@@ -422,6 +429,7 @@ ${customContent[obj.name][prop.name]}
 #define ${fu.GUARD}
 
 #include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/MetadataException.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
 #include <ome/xml/model/detail/OMEModel.h>
 
@@ -446,7 +454,8 @@ namespace
   safe_fetch(std::shared_ptr<T> ptr)
   {
     if (!ptr)
-      throw(std::runtime_error("Internal metadata store inconsistency: "));
+      throw ome::xml::meta::MetadataException("OMEXMLMetadata", "safe_fetch",
+                                              "Internal metadata store inconsistency: null object");
     return ptr;
   }
 
@@ -457,7 +466,8 @@ namespace
   {
     std::shared_ptr<T> shared(ptr.lock());
     if (!shared)
-      throw(std::runtime_error("Internal metadata store inconsistency: "));
+      throw ome::xml::meta::MetadataException("OMEXMLMetadata", "safe_fetch",
+                                              "Internal metadata store inconsistency: null weak reference");
     return shared;
   }
 
@@ -568,7 +578,8 @@ namespace ome
           std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root);
 
         if (!newroot)
-          throw std::logic_error("OMEXMLMetadata root must be of type OMEXMLMetadataRoot");
+          throw MetadataException("OMEXMLMetadata", "setRoot",
+                                  "root must be of type OMEXMLMetadataRoot");
 
         this->root = newroot;
         this->genericRoot = std::static_pointer_cast<MetadataRoot>(this->root);
@@ -920,7 +931,8 @@ ${counter(k, o, v)}\
         if (uuid)
           return *root->getUUID();
         else
-          throw(std::runtime_error("Internal metadata store inconsistency: UUID is null"));
+          throw MetadataException("OMEXMLMetadata", "getUUID",
+                                  "Internal metadata store inconsistency: null object");
       }
 {% end source %}\
 
