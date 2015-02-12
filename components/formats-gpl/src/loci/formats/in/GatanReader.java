@@ -26,7 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Vector;
+
+import com.google.common.base.Charsets;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -37,7 +40,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -583,6 +585,7 @@ public class GatanReader extends FormatReader {
     in.readFully(bytes);
 
     StringBuffer newString = new StringBuffer();
+    
     for (byte b : bytes) {
       int v = b & 0xff;
       if (v > 0x7f) {
@@ -592,7 +595,8 @@ public class GatanReader extends FormatReader {
         newString.append((char) b);
       }
     }
-    return newString.toString();
+    String s = newString.toString();
+    return new String(s.getBytes(Charsets.UTF_8), Charsets.UTF_8);
   }
 
   private Double correctForUnits(Double value, String units) {
