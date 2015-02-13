@@ -165,6 +165,22 @@ public class CellomicsReader extends FormatReader {
     return seriesFiles.toArray(new String[seriesFiles.size()]);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+
+    if (noPixels) {
+      return metadataFiles.toArray(new String[metadataFiles.size()]);
+    }
+
+    ArrayList<String> allFiles = new ArrayList<String>();
+    allFiles.addAll(metadataFiles);
+    for (ChannelFile f : files) {
+      allFiles.add(f.filename);
+    }
+    return allFiles.toArray(new String[allFiles.size()]);
+  }
+
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
