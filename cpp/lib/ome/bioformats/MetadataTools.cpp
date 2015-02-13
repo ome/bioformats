@@ -650,12 +650,16 @@ namespace ome
                   // Fall back to parsing by hand.
                   try
                     {
+                      std::string wrappedValue("<wrapped>");
+                      wrappedValue += annotation->getValue();
+                      wrappedValue += "</wrapped>";
+
                       xerces::Platform xmlplat;
                       xerces::dom::ParseParameters params;
                       params.validationScheme = xercesc::XercesDOMParser::Val_Never;
-                      xerces::dom::Document doc(ome::xerces::dom::createDocument(annotation->getValue()));
+                      xerces::dom::Document doc(ome::xerces::dom::createDocument(wrappedValue));
 
-                      std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc, "OriginalMetadata");
+                      std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc.getDocumentElement(), "OriginalMetadata");
                       if (OriginalMetadataValue_nodeList.size() > 1)
                         {
                           format fmt("Value node list size %1% != 1");
