@@ -1157,16 +1157,16 @@ public class MetamorphReader extends BaseTiffReader {
 
         int colon = line.indexOf(":");
 
-        String descrValue = null;
-
         if (colon < 0) {
           // normal line (not a key/value pair)
           if (line.length() > 0) {
             // not a blank line
-            descrValue = line;
+            sb.append(line);
+            sb.append("  ");
           }
         }
         else {
+          String descrValue = null;
           if (i == 0) {
             // first line could be mangled; make a reasonable guess
             int dot = line.lastIndexOf(".", colon);
