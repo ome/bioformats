@@ -56,10 +56,32 @@ namespace ome
        *
        * @param src the source object.
        * @param dest the destination object.
+       * type; dest will take ownership of the root object.
        */
       void
       convert(const MetadataRetrieve& src,
               MetadataStore&          dest);
+
+      /**
+       * A utility class containing a method for piping a source
+       * MetadataRetrieve object into a destination MetadataStore.
+       *
+       * This allows conversion between two different storage media.
+       *
+       * @note Only skip if it is acceptable and safe for the
+       * destination object to take ownership of the source metadata
+       * root object.
+       *
+       * @param src the source object.
+       * @param dest the destination object.
+       * @param skip if @c true, skip deep copy if src and dest are of
+       * the same, else if @c false always deep copy.
+       * type; dest will take ownership of the root object.
+       */
+      void
+      convert(MetadataRetrieve& src,
+              MetadataStore&    dest,
+              bool              skip);
 
     }
   }

@@ -1449,6 +1449,22 @@ namespace ome
         converter();
       }
 
+      void
+      convert(MetadataRetrieve& src,
+              MetadataStore&    dest,
+              bool              skip)
+      {
+        MetadataStore *src_store(dynamic_cast<MetadataStore *>(&src));
+        if (typeid(src) == typeid(dest) && src_store && skip)
+          {
+            dest.setRoot(src_store->getRoot());
+          }
+        else
+          {
+            convert(src, dest);
+          }
+      }
+
     }
   }
 }

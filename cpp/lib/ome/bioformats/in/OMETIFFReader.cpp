@@ -492,7 +492,7 @@ namespace ome
           }
 
         // Transfer OME-XML metadata to metadata store for reader.
-        convert(*meta, *metadataStore);
+        convert(*meta, *metadataStore, true);
 
         // Create CoreMetadata for each image.
         index_type seriesCount = meta->getImageCount();
