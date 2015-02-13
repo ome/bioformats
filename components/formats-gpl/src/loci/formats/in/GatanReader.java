@@ -379,7 +379,7 @@ public class GatanReader extends FormatReader {
             }
             else {
               if (dataType == 10) in.skipBytes(length);
-              else value = DataTools.stripString(in.readString(length * 2));
+              else value = in.readString(length * 2);
             }
           }
           else LOGGER.warn("dataType mismatch: {}", dataType);
