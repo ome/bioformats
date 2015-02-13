@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.Collator;
 import java.util.Vector;
 
 import com.google.common.base.Charsets;
@@ -601,10 +602,11 @@ public class GatanReader extends FormatReader {
 
   private Double correctForUnits(Double value, String units) {
     Double newValue = value;
+    Collator c = Collator.getInstance();
     if ("nm".equals(units)) {
       newValue /= 1000;
     }
-    else if (!"um".equals(units) && !"µm".equals(units) && units != null) {
+    else if (units != null && !"um".equals(units) && c.compare("µm", units) != 0) {
       LOGGER.warn("Not adjusting for unknown units: {}", units);
     }
 
