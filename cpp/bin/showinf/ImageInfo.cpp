@@ -262,8 +262,8 @@ namespace showinf
               {
                 std::cout << '\t' << i->first << ": " << i->second << '\n';
               }
+            stream << '\n';
           }
-        stream << '\n';
       }
 
     try
