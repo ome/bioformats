@@ -472,7 +472,7 @@ namespace
              const char * const method)
   {
     if (!ptr)
-      throw ome::xml::meta::MetadataException("OMEXMLMetadata", "safe_fetch",
+      throw ome::xml::meta::MetadataException("OMEXMLMetadata", method,
                                               "Internal metadata store inconsistency: null object");
     return ptr;
   }
@@ -485,7 +485,7 @@ namespace
   {
     std::shared_ptr<T> shared(ptr.lock());
     if (!shared)
-      throw ome::xml::meta::MetadataException("OMEXMLMetadata", "safe_fetch",
+      throw ome::xml::meta::MetadataException("OMEXMLMetadata", method,
                                               "Internal metadata store inconsistency: null weak reference");
     return shared;
   }
@@ -494,7 +494,7 @@ namespace
   template<typename T>
   T
   safe_fetch(T                  value,
-             const char * const method)
+             const char * const /* method */)
   {
     return value;
   }
