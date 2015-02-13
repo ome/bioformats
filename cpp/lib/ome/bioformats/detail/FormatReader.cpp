@@ -47,6 +47,7 @@
 #include <ome/compat/string.h>
 
 #include <ome/bioformats/FormatTools.h>
+#include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
@@ -1358,10 +1359,7 @@ namespace ome
                         }
                     }
 
-                    /**
-                     * @todo Implement populateOriginalMetadata.  Requires bits of MetadataTools and OMEXMLServiceImpl.
-                     */
-                    // populateOriginalMetadata(store, allMetadata.flatten());
+                    fillOriginalMetadata(*store, allMetadata);
                   }
 
                 setSeries(0);
