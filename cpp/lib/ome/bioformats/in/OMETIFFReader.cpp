@@ -696,18 +696,6 @@ namespace ome
                 std::clog << "  }\n";
               }
 
-            // DEBUG
-            for (dimension_size_type q = 0;
-                 q < static_cast<dimension_size_type>(num);
-                 ++q)
-              {
-                OMETIFFPlane& plane(coreMeta->tiffPlanes.at(q));
-
-                std::clog << "    CHECK Plane[" << q
-                          << "]: file=" << plane.id.native()
-                          << ", IFD=" << plane.ifd << '\n';
-              }
-
             // Clear any unset planes.
             for (std::vector<OMETIFFPlane>::iterator plane = coreMeta->tiffPlanes.begin();
                  plane != coreMeta->tiffPlanes.end();
