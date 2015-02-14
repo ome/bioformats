@@ -24,23 +24,17 @@ import zipfile
 # attributes.  It excludes .gitignore files at this point to avoid
 # polluting the release with version control files.
 
-OME_GITVERSION = """<?xml version="1.0" encoding="utf-8"?>
+
+GITVERSION_XML = """<?xml version="1.0" encoding="utf-8"?>
 <project name="gitversion" basedir=".">
-<property name="omero.shortversion" value="%s"/>
-<property name="omero.plainversion" value="%s"/>
+    <property name="release.version" value="%s"/>
+    <property name="release.shortversion" value="%s"/>
+    <property name="vcs.revision" value="%s"/>
+    <property name="vcs.date" value="%s"/>
 </project>
 """
 
-BF_GIT_VERSION = """<?xml version="1.0" encoding="utf-8"?>
-<project name="gitversion" basedir=".">
-<property name="release.version" value="%s"/>
-<property name="release.shortversion" value="%s"/>
-<property name="vcs.revision" value="%s"/>
-<property name="vcs.date" value="%s"/>
-</project>
-"""
-
-CMAKE_VERSION = """set(OME_VERSION "%s")
+GITVERSION_CMAKE = """set(OME_VERSION "%s")
 set(OME_VERSION_SHORT "%s")
 set(OME_VCS_REVISION "%s")
 set(OME_VCS_DATE %s)
@@ -68,34 +62,16 @@ if __name__ == "__main__":
         "--bioformats-vcsdate-unix", action="store", type="string",
         dest="bioformats_vcsdate_unix")
     parser.add_option(
-        "--openmicroscopy-version", action="store", type="string",
-        dest="openmicroscopy_version")
-    parser.add_option(
-        "--openmicroscopy-shortversion", action="store", type="string",
-        dest="openmicroscopy_shortversion")
-    parser.add_option(
-        "--openmicroscopy-vcsrevision", action="store", type="string",
-        dest="openmicroscopy_vcsrevision")
-    parser.add_option(
-        "--openmicroscopy-vcsdate", action="store", type="string",
-        dest="openmicroscopy_vcsdate")
-    parser.add_option(
         "--target", action="store", type="string", dest="target")
 
     (options, args) = parser.parse_args(sys.argv)
 
     options.target = os.path.abspath(options.target)
 
-    if options.release == 'openmicroscopy':
-        version = options.openmicroscopy_version
-        shortversion = options.openmicroscopy_shortversion
-        vcsdate = options.openmicroscopy_vcsdate
-        vcsrevision = options.openmicroscopy_vcsrevision
-    elif options.release == 'bioformats':
-        version = options.bioformats_version
-        shortversion = options.bioformats_shortversion
-        vcsdate = options.bioformats_vcsdate
-        vcsrevision = options.bioformats_vcsrevision
+    version = options.bioformats_version
+    shortversion = options.bioformats_shortversion
+    vcsdate = options.bioformats_vcsdate
+    vcsrevision = options.bioformats_vcsrevision
 
     prefix = "%s-%s" % (options.release, version)
 
@@ -161,23 +137,15 @@ if __name__ == "__main__":
         os.remove(name)
 
     # Embed release number
-    if options.release == 'openmicroscopy':
-        basezip.writestr(
-            "%s/components/antlib/resources/gitversion.xml" % (prefix),
-            OME_GITVERSION % (options.openmicroscopy_shortversion,
-                              options.openmicroscopy_version))
-    if options.release == 'bioformats' or options.release == 'openmicroscopy':
-        bfprefix = prefix
-        if options.release == 'openmicroscopy':
-            bfprefix = prefix + '/components/bioformats'
-        basezip.writestr(
-            "%s/ant/gitversion.xml" % (bfprefix),
-            BF_GIT_VERSION % (
-                options.bioformats_version, options.bioformats_shortversion,
-                options.bioformats_vcsrevision, options.bioformats_vcsdate))
-        basezip.writestr(
-            "%s/cpp/cmake/GitVersion.cmake" % (bfprefix),
-            CMAKE_VERSION % (
-                options.bioformats_version, options.bioformats_shortversion,
-                options.bioformats_vcsrevision,
-                options.bioformats_vcsdate_unix, options.bioformats_vcsdate))
+    bfprefix = prefix
+    basezip.writestr(
+        "%s/ant/gitversion.xml" % (bfprefix),
+        GITVERSION_XML % (
+            options.bioformats_version, options.bioformats_shortversion,
+            options.bioformats_vcsrevision, options.bioformats_vcsdate))
+    basezip.writestr(
+        "%s/cpp/cmake/GitVersion.cmake" % (bfprefix),
+        GITVERSION_CMAKE % (
+            options.bioformats_version, options.bioformats_shortversion,
+            options.bioformats_vcsrevision,
+            options.bioformats_vcsdate_unix, options.bioformats_vcsdate))
