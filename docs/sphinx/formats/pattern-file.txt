@@ -45,12 +45,13 @@ test_Z1_C2.png:
 
 ::
 
-  test_Z<0-1>_C<0-2:1>.png
+  test_Z<0-1>_C<0-2:2>.png
 
 The `<>` notation in general can accept a single literal value, a
 comma-separated list of literal values, a range of integer values, or a range
 of integer values with a step value greater than 1 (the range and step are
-separated by `:`).
+separated by `:`).  Note that inverting the values in a range (e.g. ``<2-0>``) is not
+supported and will cause an exception to be thrown.
 
 The characters immediately preceding the `<` can affect
 which dimension is assigned to the specified values.  The values will be
