@@ -1,10 +1,10 @@
 Displaying images and metadata
 ==============================
 
-The ``showinf`` :doc:`command line tool <index>` can be used to show the
+The :command:`showinf` :doc:`command line tool <index>` can be used to show the
 images and metadata contained in a file.
 
-If no options are specified, ``showinf`` displays a summary of available
+If no options are specified, :command:`showinf` displays a summary of available
 options.
 
 To simply display images:
@@ -59,7 +59,7 @@ coordinate (0, 0) is the upper-left corner of the image; ``x + width`` must be
 less than or equal to the image width and ``y + height`` must be less than or
 equal to the image height.
 
-By default, ``showinf`` will check for a new version of Bio-Formats.  This can
+By default, :command:`showinf` will check for a new version of Bio-Formats.  This can
 take several seconds (especially on a slow internet connection); to save time,
 the update check can be disabled:
 

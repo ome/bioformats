@@ -2,7 +2,7 @@ List supported file formats
 ===========================
 
 A detailed list of supported formats can be displayed using the
-``formatlist`` command.
+:command:`formatlist` command.
 
 Current usage information can be shown by running:
 

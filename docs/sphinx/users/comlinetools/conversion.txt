@@ -1,10 +1,10 @@
 Converting a file to different format
 =====================================
 
-The ``bfconvert`` :doc:`command line tool <index>` can be used to convert
+The :command:`bfconvert` :doc:`command line tool <index>` can be used to convert
 files between :doc:`supported formats </supported-formats>`.
 
-``bfconvert`` with no options displays a summary of available options.
+:command:`bfconvert` with no options displays a summary of available options.
 
 To convert a file to single output file (e.g. TIFF):
 

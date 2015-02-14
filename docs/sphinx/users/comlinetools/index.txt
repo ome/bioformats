@@ -43,7 +43,7 @@ Currently available tools include:
         See :doc:`formatlist` for details.
 
     xmlindent
-        A simple XML prettifier similar to ``xmllint --format`` but more
+        A simple XML prettifier similar to :command:`xmllint --format` but more
         robust in that it attempts to produce output regardless of syntax
         errors in the XML.  See :doc:`xmlindent` for details.
 
@@ -68,11 +68,11 @@ Currently available tools include:
         for more information.
 
 Some of these tools also work in combination, for example
-:doc:`xml-validation` uses both ``tiffcomment`` and ``xmlvalid``.
+:doc:`xml-validation` uses both :command:`tiffcomment` and :command:`xmlvalid`.
 
 Running any of these commands without any arguments will print usage
-information to help you. When run with the ``-version`` argument, ``showinf``
-and ``bfconvert`` will display the version of Bio-Formats that is being used
+information to help you. When run with the ``-version`` argument, :command:`showinf`
+and :command:`bfconvert` will display the version of Bio-Formats that is being used
 (version number, build date, and Git commit reference).
 
 Using the tools directly from source

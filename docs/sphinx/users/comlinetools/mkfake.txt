@@ -6,7 +6,7 @@ image data will be meaningless, but it allows testing of screen, plate, and
 well metadata without having to find appropriately-sized screens from real
 acquisitions.
 
-If no arguments are specified, `mkfake` prints usage information.
+If no arguments are specified, :command:`mkfake` prints usage information.
 
 To create a single screen with default plate dimensions:
 
