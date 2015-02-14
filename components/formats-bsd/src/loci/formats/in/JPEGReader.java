@@ -45,6 +45,19 @@ import loci.formats.DelegateReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Tag;
+import com.drew.imaging.ImageProcessingException;
+import java.io.File;
+import java.util.Date;
+import org.joda.time.DateTime;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.Timestamp;
+
 /**
  * JPEGReader is the file format reader for JPEG images.
  *
@@ -172,6 +185,40 @@ public class JPEGReader extends DelegateReader {
       }
 
       return checkSuffix(name, getSuffixes());
+    }
+
+    /* @see loci.formats.FormatReader#initFile(String) */
+    protected void initFile(String id) throws FormatException, IOException {
+        super.initFile(id);
+
+        MetadataStore store = makeFilterMetadata();
+        LOGGER.info("Parsing JPEG EXIF data");
+
+        try {
+            File jpegFile = new File(id);
+            Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
+
+            // obtain the Exif directory
+            ExifSubIFDDirectory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+
+            if ( directory != null ) {
+
+                // Set the acquisition date
+                Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+                Timestamp timestamp = new Timestamp( new DateTime(date) );
+                store.setImageAcquisitionDate(timestamp, 0);
+
+                for (Tag tag : directory.getTags()) {
+                    addGlobalMeta(tag.getTagName(), tag.getDescription());
+                }
+            }
+
+        } catch ( ImageProcessingException e ) {
+            LOGGER.info("Error parsing JPEG EXIF data");
+        }
+        catch (IOException e) {
+          LOGGER.info("Error parsing JPEG EXIF data");
+        }
     }
 
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
