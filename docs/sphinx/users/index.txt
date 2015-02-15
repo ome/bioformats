@@ -35,6 +35,11 @@ for carrying out a variety of tasks:
     comlinetools/conversion
     comlinetools/xml-validation
     comlinetools/edit
+    comlinetools/domainlist
+    comlinetools/formatlist
+    comlinetools/ijview
+    comlinetools/xmlindent
+    comlinetools/mkfake
 
 
 
