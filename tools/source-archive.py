@@ -137,14 +137,13 @@ if __name__ == "__main__":
         os.remove(name)
 
     # Embed release number
-    bfprefix = prefix
     basezip.writestr(
-        "%s/ant/gitversion.xml" % (bfprefix),
+        "%s/ant/gitversion.xml" % (prefix),
         GITVERSION_XML % (
             options.bioformats_version, options.bioformats_shortversion,
             options.bioformats_vcsrevision, options.bioformats_vcsdate))
     basezip.writestr(
-        "%s/cpp/cmake/GitVersion.cmake" % (bfprefix),
+        "%s/cpp/cmake/GitVersion.cmake" % (prefix),
         GITVERSION_CMAKE % (
             options.bioformats_version, options.bioformats_shortversion,
             options.bioformats_vcsrevision,

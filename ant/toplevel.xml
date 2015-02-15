@@ -1046,7 +1046,7 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
-  <target name="store-version" description="print version information" depends="release-version">
+  <target name="store-version" description="store version information in a property file" depends="release-version">
     <delete file="${artifact.dir}/bioformats.properties"/>
     <propertyfile file="${artifact.dir}/bioformats.properties">
       <entry key="release.shortversion" value="${release.shortversion}"/>
