@@ -526,20 +526,9 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   public String readString(int n) throws IOException {
     int avail = available();
     if (n > avail) n = avail;
-    byte[] bytes = new byte[n];
-    readFully(bytes);
-    StringBuffer newString = new StringBuffer();
-    for (byte b : bytes) {
-        int v = b & 0xff;
-        if (v > 0x7f) {
-          newString.append(Character.toChars(v));
-        }
-        else {
-          newString.append((char) b);
-        }
-      }
-    String s = newString.toString();
-    return new String(s.getBytes(encoding), encoding);
+    byte[] b = new byte[n];
+    readFully(b);
+    return new String(b, encoding);
   }
 
   /** Read eight input bytes and return a long value. */
