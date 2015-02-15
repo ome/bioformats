@@ -157,6 +157,12 @@
       <version>${logback.version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>ch.systems.cisd</groupId>
+      <artifactId>jhdf5</artifactId>
+      <version>13.06.2</version>
+    </dependency>
   </dependencies>
 
   <properties>
