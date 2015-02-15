@@ -334,7 +334,7 @@ public class GatanReader extends FormatReader {
       String value = null;
 
       if (type == VALUE) {
-        labelString = readString(length);
+        labelString = in.readByteToString(length);
         skipPadding();
         skipPadding();
         int skip = in.readInt(); // equal to '%%%%' / 623191333
@@ -378,7 +378,7 @@ public class GatanReader extends FormatReader {
             }
             else {
               if (dataType == 10) in.skipBytes(length);
-              else value = in.readString(length * 2);
+              else value = in.readByteToString(length * 2);
             }
           }
           else LOGGER.warn("dataType mismatch: {}", dataType);
@@ -457,7 +457,7 @@ public class GatanReader extends FormatReader {
         }
       }
       else if (type == GROUP) {
-        labelString = readString(length);
+        labelString = in.readByteToString(length);
         in.skipBytes(2);
         skipPadding();
         skipPadding();
@@ -577,25 +577,6 @@ public class GatanReader extends FormatReader {
     if (version == 4) {
       in.skipBytes(4);
     }
-  }
-
-  private String readString(int length) throws IOException {
-    byte[] bytes = new byte[(int) Math.min(in.available(), length)];
-    in.readFully(bytes);
-
-    StringBuffer newString = new StringBuffer();
-    
-    for (byte b : bytes) {
-      int v = b & 0xff;
-      if (v > 0x7f) {
-        newString.append(Character.toChars(v));
-      }
-      else {
-        newString.append((char) b);
-      }
-    }
-    String s = newString.toString();
-    return new String(s.getBytes(Charsets.UTF_8), Charsets.UTF_8);
   }
 
   private Double correctForUnits(Double value, String units) {
