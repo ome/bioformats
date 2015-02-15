@@ -29,5 +29,5 @@ would be useful to us.
     dataset-table
     /supported-formats
     /metadata-summary
-
+    pattern-file
 
