@@ -85,8 +85,8 @@ class OMEModelProperty(OMEModelEntity):
             if self.delegate.getUse() == "optional":
                 return 0
             return 1
-        if (hasattr(self.delegate, 'choice')
-                and self.delegate.choice is not None):
+        if (hasattr(self.delegate, 'choice') and
+                self.delegate.choice is not None):
             return self.delegate.choice.getMinOccurs()
         return self.delegate.getMinOccurs()
     minOccurs = property(
@@ -407,8 +407,8 @@ class OMEModelProperty(OMEModelEntity):
         weak = False
 
         if isinstance(self.model.opts.lang, language.CXX):
-            if (self.model.opts.lang.hasFundamentalType(self.langType)
-                    and self.minOccurs > 0):
+            if (self.model.opts.lang.hasFundamentalType(self.langType) and
+                    self.minOccurs > 0):
                 pass
             elif self.isEnumeration:
                 pass
@@ -566,8 +566,8 @@ class OMEModelProperty(OMEModelEntity):
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.argType()
-            elif (self.maxOccurs > 1
-                    and not self.parent.isAbstractProprietary):
+            elif (self.maxOccurs > 1 and
+                  not self.parent.isAbstractProprietary):
                 itype = {' const': "const std::shared_ptr<%s>&" % ns_sep,
                          '':      "std::shared_ptr<%s>&" % ns_sep}
 
@@ -620,8 +620,8 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS,
                              '':       "%s&" % self.langTypeNS}
-            elif (self.maxOccurs > 1
-                    and not self.parent.isAbstractProprietary):
+            elif (self.maxOccurs > 1 and
+                    not self.parent.isAbstractProprietary):
                 itype = {' const': "const std::vector<std::shared_ptr<%s> >"
                          % ns_sep,
                          '':      "std::vector<std::shared_ptr<%s> >"
@@ -819,8 +819,8 @@ class OMEModelProperty(OMEModelEntity):
         elif isinstance(self.model.opts.lang, language.CXX):
             path = re.sub("::", "/", self.langType)
             if (not self.model.opts.lang.hasPrimitiveType(self.langType) and
-                    not self.model.opts.lang.hasFundamentalType(self.langType)
-                    and self.langType != "std::string"):
+                    not self.model.opts.lang.hasFundamentalType(
+                        self.langType) and self.langType != "std::string"):
                 if self.isEnumeration:
                     header = "ome/xml/model/enums/%s.h" % path
                 else:
@@ -839,8 +839,8 @@ class OMEModelProperty(OMEModelEntity):
                             not self.parent.isAbstractProprietary):
                         pass
             elif (self.model.opts.lang.hasPrimitiveType(self.langType) and
-                  not self.model.opts.lang.hasFundamentalType(self.langType)
-                  and self.langType != "std::string"):
+                  not self.model.opts.lang.hasFundamentalType(
+                    self.langType) and self.langType != "std::string"):
                 header = "ome/xml/model/primitives/%s.h" % path
         return header
     header = property(
