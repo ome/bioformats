@@ -1186,7 +1186,7 @@ public class MetamorphReader extends BaseTiffReader {
 
           // add key/value pair embedded in comment as separate metadata
           String key = line.substring(0, colon);
-          String value = line.substring(colon + 2);
+          String value = line.substring(colon + 1).trim();
           addSeriesMeta(key, value);
           if (key.equals("Exposure")) {
             if (value.indexOf("=") != -1) {
