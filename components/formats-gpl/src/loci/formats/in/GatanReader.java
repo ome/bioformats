@@ -580,11 +580,11 @@ public class GatanReader extends FormatReader {
     Double newValue = value;
     Collator c = Collator.getInstance();
     if (units != null) {
-        if (c.compare("nm", units) == 0) {
-            newValue /= 1000;
-          } else if (c.compare("um", units) != 0 && c.compare("µm", units) != 0) {
-            LOGGER.warn("Not adjusting for unknown units: {}", units);
-          }
+      if (c.compare("nm", units) == 0) {
+        newValue /= 1000;
+      } else if (c.compare("um", units) != 0 && c.compare("µm", units) != 0) {
+        LOGGER.warn("Not adjusting for unknown units: {}", units);
+      }
     }
     return newValue;
   }
