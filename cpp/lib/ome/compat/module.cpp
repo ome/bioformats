@@ -37,6 +37,7 @@
  */
 
 #include <boost/format.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/compat/filesystem.h>
 #include <ome/compat/module.h>
@@ -130,7 +131,7 @@ namespace
     };
 
   path_map internalpaths(paths,
-                         paths + (sizeof(paths) / sizeof(paths[0])));
+                         paths + boost::size(paths));
 }
 
 #endif // OME_HAVE_DLADDR

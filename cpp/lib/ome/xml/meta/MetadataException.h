@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-BIOFORMATS C++ library for image IO.
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -35,11 +35,10 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_CONVERT_H
-#define OME_BIOFORMATS_META_CONVERT_H
+#ifndef OME_XML_META_METADATAEXCEPTION_H
+#define OME_XML_META_METADATAEXCEPTION_H
 
-#include <ome/xml/meta/MetadataStore.h>
-#include <ome/xml/meta/MetadataRetrieve.h>
+#include <stdexcept>
 
 namespace ome
 {
@@ -49,45 +48,41 @@ namespace ome
     {
 
       /**
-       * A utility class containing a method for piping a source
-       * MetadataRetrieve object into a destination MetadataStore.
-       *
-       * This allows conversion between two different storage media.
-       *
-       * @param src the source object.
-       * @param dest the destination object.
-       * type; dest will take ownership of the root object.
+       * Exception thrown for metadata consistency and validity errors.
        */
-      void
-      convert(const MetadataRetrieve& src,
-              MetadataStore&          dest);
+      class MetadataException : public std::runtime_error
+      {
+      public:
+        /**
+         * Constructor.
+         *
+         * @param what the exception message.
+         */
+        explicit
+        MetadataException (const std::string& what);
 
-      /**
-       * A utility class containing a method for piping a source
-       * MetadataRetrieve object into a destination MetadataStore.
-       *
-       * This allows conversion between two different storage media.
-       *
-       * @note Only skip if it is acceptable and safe for the
-       * destination object to take ownership of the source metadata
-       * root object.
-       *
-       * @param src the source object.
-       * @param dest the destination object.
-       * @param skip if @c true, skip deep copy if src and dest are of
-       * the same, else if @c false always deep copy.
-       * type; dest will take ownership of the root object.
-       */
-      void
-      convert(MetadataRetrieve& src,
-              MetadataStore&    dest,
-              bool              skip);
+        /**
+         * Constructor.
+         *
+         * @param type the MetadataStore or Retrieve type.
+         * @param method the MetadataStore or Retrieve method.
+         * @param msg the exception message.
+         */
+        explicit
+        MetadataException (const std::string& type,
+                           const std::string& method,
+                           const std::string& msg);
+
+        /// Destructor.
+        virtual
+        ~MetadataException () throw();
+      };
 
     }
   }
 }
 
-#endif // OME_BIOFORMATS_META_CONVERT_H
+#endif // OME_XML_META_METADATAEXCEPTION_H
 
 /*
  * Local Variables:

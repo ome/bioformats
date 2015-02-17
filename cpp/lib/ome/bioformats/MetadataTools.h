@@ -351,6 +351,16 @@ namespace ome
     getOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml);
 
     /**
+     * Create OriginalMetadataAnnotations from MetadataMap.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param metadata the original metadata.
+     */
+    void
+    fillOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml,
+                         const MetadataMap&                metadata);
+
+    /**
      * Check if default creation date is enabled.
      *
      * @returns @c true if enabled, @c false otherwise.

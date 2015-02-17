@@ -650,12 +650,16 @@ namespace ome
                   // Fall back to parsing by hand.
                   try
                     {
+                      std::string wrappedValue("<wrapped>");
+                      wrappedValue += annotation->getValue();
+                      wrappedValue += "</wrapped>";
+
                       xerces::Platform xmlplat;
                       xerces::dom::ParseParameters params;
                       params.validationScheme = xercesc::XercesDOMParser::Val_Never;
-                      xerces::dom::Document doc(ome::xerces::dom::createDocument(annotation->getValue()));
+                      xerces::dom::Document doc(ome::xerces::dom::createDocument(wrappedValue));
 
-                      std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc, "OriginalMetadata");
+                      std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc.getDocumentElement(), "OriginalMetadata");
                       if (OriginalMetadataValue_nodeList.size() > 1)
                         {
                           format fmt("Value node list size %1% != 1");
@@ -700,6 +704,59 @@ namespace ome
         }
 
       return map;
+    }
+
+    void
+    fillOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml,
+                         const MetadataMap&                metadata)
+    {
+      omexml.resolveReferences();
+
+      if (metadata.empty())
+        return;
+
+      MetadataMap flat(metadata.flatten());
+
+      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          std::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
+          if (!sa)
+            sa = std::make_shared<StructuredAnnotations>();
+          OMEXMLMetadata::index_type annotationIndex = sa->sizeOfXMLAnnotationList();
+          OMEXMLMetadata::index_type idIndex = sa->sizeOfXMLAnnotationList();
+
+          std::set<std::string> ids;
+          for (OMEXMLMetadata::index_type i = 0; i < annotationIndex; ++i)
+            {
+              // Already in metadata store
+              ids.insert(omexml.getXMLAnnotationID(i));
+            }
+
+          for (MetadataMap::const_iterator i = flat.begin();
+               i != flat.end();
+               ++i, ++annotationIndex)
+            {
+              std::string id;
+              do
+                {
+                  id = createID("Annotation", idIndex);
+                  ++idIndex;
+                }
+              while (ids.find(id) != ids.end());
+
+              std::ostringstream value;
+              boost::apply_visitor(::ome::bioformats::detail::MetadataMapValueTypeOStreamVisitor(value), i->second);
+
+              std::shared_ptr<OriginalMetadataAnnotation> orig(std::make_shared<OriginalMetadataAnnotation>());
+              orig->setID(id);
+              orig->setMetadata(OriginalMetadataAnnotation::metadata_type(i->first, value.str()));
+              std::shared_ptr<XMLAnnotation> xmlorig(std::static_pointer_cast<XMLAnnotation>(orig));
+              sa->addXMLAnnotation(xmlorig);
+            }
+
+          root->setStructuredAnnotations(sa);
+        }
     }
 
     std::string

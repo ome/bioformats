@@ -39,6 +39,8 @@
 #include <cmath>
 #include <cstdarg>
 
+#include <boost/range/size.hpp>
+
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Sentry.h>
@@ -106,6 +108,8 @@ namespace ome
       public:
         /// The libtiff file handle.
         ::TIFF *tiff;
+        /// The number of IFDs.
+        directory_index_type directoryCount;
 
         /**
          * The constructor.
@@ -117,7 +121,8 @@ namespace ome
          */
         Impl(const boost::filesystem::path& filename,
              const std::string&             mode):
-          tiff()
+          tiff(),
+          directoryCount(0)
         {
           Sentry sentry;
 
@@ -221,6 +226,20 @@ namespace ome
       TIFF::operator bool ()
       {
         return impl && impl->tiff;
+      }
+
+      directory_index_type
+      TIFF::directoryCount() const
+      {
+        if (!impl->directoryCount)
+          {
+            directory_index_type nIFD = 0U;
+            for (const_iterator i = begin();
+                 i != end();
+                 ++i, ++nIFD);
+            impl->directoryCount = nIFD;
+          }
+        return impl->directoryCount;
       }
 
       std::shared_ptr<IFD>
@@ -328,11 +347,11 @@ namespace ome
         Sentry sentry;
 
 # if TIFF_HAVE_MERGEFIELDINFO_RETURN
-        int e = TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
+        int e = TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, boost::size(ImageJFieldInfo));
         if (e)
           sentry.error();
 # else // !TIFF_HAVE_MERGEFIELDINFO_RETURN
-        TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
+        TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, boost::size(ImageJFieldInfo));
 #endif // TIFF_HAVE_MERGEFIELDINFO_RETURN
 #endif // TIFF_HAVE_MERGEFIELDINFO
       }
