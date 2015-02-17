@@ -4,7 +4,7 @@
 Amira Mesh
 ===============================================================================
 
-Extensions: .am, .amiramesh, .grey, .hx, .labels 
+Extensions: .am, .amiramesh, .grey, .hx, .labels
 
 Developer: `Visage Imaging <http://www.amiravis.com/>`_
 

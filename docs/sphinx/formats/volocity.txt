@@ -4,7 +4,7 @@
 Volocity
 ===============================================================================
 
-Extensions: .mvd2 
+Extensions: .mvd2
 
 Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 
@@ -23,7 +23,7 @@ Supported Metadata Fields: :doc:`Volocity <volocity-metadata>`
 
 Sample Datasets:
 
-- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+- `PerkinElmer Downloads <http://cellularimaging.perkinelmer.com/downloads/>`_
 
 We currently have:
 

@@ -4,7 +4,7 @@
 MetaMorph Stack (STK)
 ===============================================================================
 
-Extensions: .stk, .nd 
+Extensions: .stk, .nd
 
 
 Owner: `Molecular Devices <http://www.moleculardevices.com/>`_

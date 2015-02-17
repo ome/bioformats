@@ -4,7 +4,7 @@
 IMOD
 ===============================================================================
 
-Extensions: .mod 
+Extensions: .mod
 
 Developer: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
 

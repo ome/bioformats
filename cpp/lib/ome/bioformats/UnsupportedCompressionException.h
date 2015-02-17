@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -46,7 +46,7 @@ namespace ome
   {
 
     /**
-     * Exception thrown for unrecognized or unsupported data streams or filenames.
+     * Exception thrown for unsupported compression types.
      */
     class UnsupportedCompressionException : public FormatException
     {

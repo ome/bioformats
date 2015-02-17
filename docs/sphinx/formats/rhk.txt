@@ -4,7 +4,7 @@
 RHK
 ===============================================================================
 
-Extensions: .sm2, .sm3 
+Extensions: .sm2, .sm3
 
 
 Owner: `RHK Technologies <http://www.rhk-tech.com>`_

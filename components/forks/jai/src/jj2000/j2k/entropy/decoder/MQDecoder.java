@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -44,7 +40,6 @@
  *
  * Description:             Class that encodes a number of bits using the
  *                          MQ arithmetic decoder
- *
  *
  *
  * COPYRIGHT:
@@ -78,8 +73,6 @@
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  *
- *
- *
  */
 package jj2000.j2k.entropy.decoder;
 
@@ -94,7 +87,6 @@ import java.io.*;
  * the software conventions decoder for better performance (i.e. execution
  * time performance). The initial states for each context of the MQ-coder are
  * specified in the constructor.
- *
  */
 
 // A trick to test for increased speed: merge the Qe and mPS into 1 thing by
@@ -715,10 +707,6 @@ public class MQDecoder {
      * Resets a context to the original probability distribution. The
      * original probability distribution depends on the actual
      * implementation of the arithmetic coder or decoder.
-     *
-     * @param c The index of the context (it starts at 0).
-     *
-     *
      *
      */
     public final void resetCtxts(){

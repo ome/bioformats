@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -43,7 +39,6 @@
  * Class:                   CBlkSizeSpec
  *
  * Description:             Specification of the code-blocks size
- *
  *
  *
  * COPYRIGHT:
@@ -123,7 +118,7 @@ public class CBlkSizeSpec extends ModuleSpec {
 
     /**
      * Creates a new CBlkSizeSpec object for the specified number of tiles and
-     * components and the ParameterList instance.
+     * components and the parameters instance.
      *
      * @param nt The number of tiles
      *
@@ -132,9 +127,7 @@ public class CBlkSizeSpec extends ModuleSpec {
      * @param type the type of the specification module i.e. tile specific,
      * component specific or both.
      *
-     * @param imgsrc The image source (used to get the image size)
-     *
-     * @param pl The ParameterList instance
+     * @param wp The parameters
      * */
     public CBlkSizeSpec(int nt, int nc, byte type, J2KImageWriteParamJava wp, String values) {
         super(nt, nc, type);
@@ -452,7 +445,7 @@ public class CBlkSizeSpec extends ModuleSpec {
      * Sets default value for specified tile and specValType tag if allowed by
      * its priority.
      *
-     * @param c Tile index.
+     * @param t Tile index.
      *
      * @param value Tile's default value
      *  */

@@ -4,7 +4,7 @@
 Targa
 ===============================================================================
 
-Extensions: .tga 
+Extensions: .tga
 
 Developer: `Truevision <http://www.truevision.com>`_
 

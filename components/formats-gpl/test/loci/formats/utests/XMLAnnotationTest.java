@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,10 +48,6 @@ import org.w3c.dom.Document;
 /**
  * Test case which outlines the problems seen in omero:#3269.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/XMLAnnotationTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/XMLAnnotationTest.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class XMLAnnotationTest {
@@ -82,8 +78,11 @@ public class XMLAnnotationTest {
     assertEquals(1, channel.sizeOfLinkedAnnotationList());
     Annotation annotation = channel.getLinkedAnnotation(0);
     assertEquals(XMLAnnotation.class, annotation.getClass());
-    assertEquals("<TestData>\n                    <key>foo</key>\n\t\t\t\t\t<value>bar</value>\n                </TestData>",
-                 ((XMLAnnotation) annotation).getValue());
+    String annotationValue = ((XMLAnnotation) annotation).getValue();
+
+    // normalize line endings if the test is run on Windows
+    annotationValue = annotationValue.replaceAll("\r\n", "\n");
+    assertEquals("<TestData>\n                    <key>foo</key>\n\t\t\t\t\t<value>bar</value>\n                </TestData>", annotationValue);
   }
 
 }

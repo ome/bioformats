@@ -1,46 +1,83 @@
         std::vector<xerces::dom::Element> Value_nodeList = getChildrenByTagName(element, "Value");
         if (Value_nodeList.size() > 1)
           {
-            // TODO: Should be its own Exception
-            // TODO: Include size informtion.
-            throw std::runtime_error("${klass.name} Value node list size != 1");
+            format fmt("Value node list size %1% != 1");
+            fmt % Value_nodeList.size();
+            throw ModelException(fmt.str());
           }
         else if (Value_nodeList.size() != 0)
           {
-            // TODO: Does this need implementing in C++?  What is its purpose?
-            // May just be to convert the child nodes to string; but if so why need a transform?
-            // Element property Value which is not complex (has no
-            // sub-elements)
-            // java.io.StringWriter sw = new java.io.StringWriter();
-            // javax.xml.transform.stream.StreamResult sr =
-            //   new javax.xml.transform.stream.StreamResult(sw);
-            // javax.xml.transform.TransformerFactory tf =
-            //   javax.xml.transform.TransformerFactory.newInstance();
+            xerces::dom::Element elem(Value_nodeList.at(0));
+            xerces::dom::NodeList nodes(elem.getChildNodes());
 
-            // try
-            //   {
-            //     javax.xml.transform.Transformer t = tf.newTransformer(
-            //                             			      new javax.xml.transform.stream.StreamSource(
-            //                             									  this.getClass().getResourceAsStream("StripWhitespace.xsl")));
-            //     t.setOutputProperty(
-            //                         javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
-            //     t.setOutputProperty(
-            //                         javax.xml.transform.OutputKeys.INDENT, "no");
-            //     NodeList childNodeList = Value_nodeList.get(0).getChildNodes();
-            //     for (int i = 0; i < childNodeList.getLength(); i++)
-            //       {
-            //         try {
-            //           t.transform(new javax.xml.transform.dom.DOMSource(
-            //                             				childNodeList.item(i)), sr);
-            //         }
-            //         catch (javax.xml.transform.TransformerException te) {
-            //           LOGGER.warn("Failed to transform node #" + i, te);
-            //         }
-            //       }
-            //     setValue(sw.toString().trim());
-            //   }
-            // catch (Exception e)
-            //   {
-            //     throw new RuntimeException(e);
-            //   }
+            std::string text;
+
+            for (xerces::dom::NodeList::iterator i = nodes.begin();
+                 i != nodes.end();
+                 ++i)
+              {
+                try
+                  {
+                    xerces::dom::Element e(*i);
+
+                    std::string textvalue;
+                    ome::xerces::dom::writeNode(*i, textvalue);
+
+                    // Trim leading and trailing whitespace
+                    std::string::size_type start(textvalue.find_first_of('<'));
+                    std::string::size_type end(textvalue.find_last_of('>'));
+                    if (end != std::string::npos)
+                      ++end;
+                    if (end >= textvalue.size())
+                      end = std::string::npos;
+                    if (start != std::string::npos)
+                      textvalue = textvalue.substr(start, end - start);
+                    else
+                      textvalue.clear();
+
+                    // If the user did not specify a namespace, it
+                    // will inherit the default (OME) namespace, which
+                    // will almost certainly lead to insertion of the
+                    // incorrect namespace and consequent validation
+                    // errors.  If no namespace was specified or it's
+                    // using the OME namespace (typical document
+                    // default), set it to nothing.
+                    if (e->getNamespaceURI() == 0 ||
+                        element->lookupNamespaceURI(0) != 0)
+                      {
+                        if (element->lookupNamespaceURI(0) != 0)
+                          {
+                            xerces::String currentNS(element->lookupNamespaceURI(0));
+                            if ((*i)->isDefaultNamespace(currentNS))
+                              {
+                                std::string stripNS(static_cast<std::string>(currentNS));
+                                std::string::size_type stripStart(textvalue.find(stripNS));
+                                if (stripStart != std::string::npos &&
+                                    stripStart != 0)
+                                  {
+                                    std::string replacement;
+
+                                    // Start of original text.
+                                    replacement = textvalue.substr(0, stripStart);
+
+                                    // Add remainder of original text.
+                                    std::string::size_type stripEnd(stripStart + stripNS.size());
+                                    if (stripEnd != std::string::npos)
+                                      replacement += textvalue.substr(stripEnd);
+                                    textvalue = replacement;
+                                  }
+                              }
+                          }
+                      }
+
+                    text += textvalue;
+
+                  }
+                catch (const std::exception& e)
+                  {
+                    // Not an Element.
+                  }
+              }
+
+            setValue(text);
           }

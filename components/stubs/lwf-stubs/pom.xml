@@ -36,7 +36,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>lwf-stubs</licenseName>
+          <licenseName>bsd_2</licenseName>
           <projectName>Luratech LWF library stub classes.</projectName>
         </configuration>
       </plugin>

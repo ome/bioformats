@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,25 +34,28 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SVSReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/SVSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class SVSReader extends BaseTiffReader {
 
@@ -69,12 +72,13 @@ public class SVSReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private float[] pixelSize;
+  private Length[] pixelSize;
   private String[] comments;
   private int[] ifdmap;
 
-  private double emissionWavelength, excitationWavelength;
-  private double exposureTime, exposureScale;
+  private Double emissionWavelength, excitationWavelength;
+  private Double exposureTime, exposureScale;
+  private Double magnification;
   private String date, time;
 
   // -- Constructor --
@@ -90,6 +94,7 @@ public class SVSReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
@@ -154,6 +159,7 @@ public class SVSReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -161,12 +167,16 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    if (tiffParser == null) {
+      initTiffParser();
+    }
     int ifd = ifdmap[getCoreIndex()];
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     if (core.size() == 1 || getSeries() >= getSeriesCount() - 2) {
       return super.openThumbBytes(no);
@@ -189,16 +199,26 @@ public class SVSReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
       pixelSize = null;
       comments = null;
       ifdmap = null;
+
+      emissionWavelength = null;
+      excitationWavelength = null;
+      exposureTime = null;
+      exposureScale = null;
+      magnification = null;
+      date = null;
+      time = null;
     }
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -212,6 +232,7 @@ public class SVSReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -227,6 +248,7 @@ public class SVSReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -234,7 +256,7 @@ public class SVSReader extends BaseTiffReader {
 
     int seriesCount = ifds.size();
 
-    pixelSize = new float[seriesCount];
+    pixelSize = new Length[seriesCount];
     comments = new String[seriesCount];
 
     core.clear();
@@ -267,7 +289,7 @@ public class SVSReader extends BaseTiffReader {
               value = t.substring(t.indexOf("=") + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
-                pixelSize[i] = Float.parseFloat(value);
+                pixelSize[i] = FormatTools.getPhysicalSizeX(Double.parseDouble(value));
               }
               else if (key.equals("Date")) {
                 date = value;
@@ -276,16 +298,19 @@ public class SVSReader extends BaseTiffReader {
                 time = value;
               }
               else if (key.equals("Emission Wavelength")) {
-                emissionWavelength = Double.parseDouble(value);
+                emissionWavelength = new Double(value);
               }
               else if (key.equals("Excitation Wavelength")) {
-                excitationWavelength = Double.parseDouble(value);
+                excitationWavelength = new Double(value);
               }
               else if (key.equals("Exposure Time")) {
-                exposureTime = Double.parseDouble(value);
+                exposureTime = new Double(value);
               }
               else if (key.equals("Exposure Scale")) {
-                exposureScale = Double.parseDouble(value);
+                exposureScale = new Double(value);
+              }
+              else if (key.equals("AppMag")) {
+                magnification = new Double(value);
               }
             }
           }
@@ -328,12 +353,22 @@ public class SVSReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
 
+    String instrument = MetadataTools.createLSID("Instrument", 0);
+    String objective = MetadataTools.createLSID("Objective", 0, 0);
+    store.setInstrumentID(instrument, 0);
+    store.setObjectiveID(objective, 0, 0);
+    store.setObjectiveNominalMagnification(magnification, 0, 0);
+
     for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageInstrumentRef(instrument, i);
+      store.setObjectiveSettingsID(objective, i);
+
       store.setImageName("Series " + (i + 1), i);
       store.setImageDescription(comments[i], i);
 
@@ -351,6 +386,10 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
+      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0) {
+        store.setPixelsPhysicalSizeX(pixelSize[i], i);
+        store.setPixelsPhysicalSizeY(pixelSize[i], i);
+      }
     }
   }
 
@@ -396,16 +435,16 @@ public class SVSReader extends BaseTiffReader {
     }
   }
 
-  protected PositiveInteger getEmission() {
-    if ((int) emissionWavelength > 0) {
-      return new PositiveInteger((int) emissionWavelength);
+  protected Length getEmission() {
+    if (emissionWavelength != null && emissionWavelength > 0) {
+      return FormatTools.getEmissionWavelength(emissionWavelength);
     }
     return null;
   }
 
-  protected PositiveInteger getExcitation() {
-    if ((int) excitationWavelength > 0) {
-      return new PositiveInteger((int) excitationWavelength);
+  protected Length getExcitation() {
+    if (excitationWavelength != null && excitationWavelength > 0) {
+      return FormatTools.getExcitationWavelength(excitationWavelength);
     }
     return null;
   }
@@ -425,6 +464,14 @@ public class SVSReader extends BaseTiffReader {
       }
     }
     return null;
+  }
+
+  protected Length[] getPhysicalSizes() {
+    return pixelSize;
+  }
+
+  protected double getMagnification() {
+    return magnification;
   }
 
 }

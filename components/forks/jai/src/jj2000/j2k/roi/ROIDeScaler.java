@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -40,11 +36,9 @@
  * $Date: 2005/02/11 05:02:21 $
  * $State: Exp $
  *
- *
  * Class:                   ROIDeScaler
  *
  * Description:             The class taking care of de-scaling ROI coeffs.
- *
  *
  *
  * COPYRIGHT:
@@ -346,7 +340,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter
      *
      * @param src The source of data that is to be descaled
      *
-     * @param pl The parameter list (or options).
+     * @param j2krparam The parameter list (or options).
      *
      * @param decSpec The decoding specifications
      *

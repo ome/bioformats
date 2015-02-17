@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -134,13 +130,13 @@ public abstract class TIFFBaseJPEGCompressor extends TIFFCompressor {
 
     /**
      * ImageWriteParam for JPEG writer.
-     * May be initialized by {@link #initJPEGWriter()}.
+     * May be initialized by {@link #initJPEGWriter(boolean, boolean)}.
      */
     protected JPEGImageWriteParam JPEGParam = null;
 
     /**
      * The JPEG writer.
-     * May be initialized by {@link #initJPEGWriter()}.
+     * May be initialized by {@link #initJPEGWriter(boolean, boolean)}.
      */
     protected ImageWriter JPEGWriter = null;
 
@@ -155,7 +151,7 @@ public abstract class TIFFBaseJPEGCompressor extends TIFFCompressor {
      * Stream metadata equivalent to a tables-only stream such as in
      * the <code>JPEGTables</code>. Default value is <code>null</code>.
      * This should be set by any subclass which sets
-     * {@link writeAbbreviatedStream} to <code>true</code>.
+     * {@link #writeAbbreviatedStream} to <code>true</code>.
      */
     protected IIOMetadata JPEGStreamMetadata = null;
 

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -68,6 +68,9 @@
 
 #include <ome/xerces/String.h>
 
+#include <ome/xml/model/ModelException.h>
+#include <ome/xml/model/detail/Parse.h>
+
 #include <boost/format.hpp>
 
 {% for include in klass.source_dependencies %}\
@@ -108,8 +111,47 @@ namespace ome
 {% if fu.SOURCE_TYPE == "source" %}\
       namespace
       {
+
         const std::string NAMESPACE("${klass.namespace}");
+
       }
+
+      // ModelObject: ${klass.name}
+      // Namespace:   ${klass.namespace}
+      //
+      // Parent:                    ${klass.parentName}
+{% if klass.modelBaseType is not None %}\
+      // InstanceVariableName:      ${klass.instanceVariableName}
+      // ModelBaseType:             ${klass.modelBaseType}
+{% end %}\
+{% if klass.langBaseType is not None %}\
+      // LangBaseType:              ${klass.langBaseType}
+      // LangType:                  ${klass.langType}
+      // LangTypeNS:                ${klass.langTypeNS}
+{% end %}\
+      //
+      // Abstract:                  ${klass.isAbstract}
+      // AbstractProprietary:       ${klass.isAbstractProprietary}
+      // ParentAbstractProprietary: ${klass.isParentAbstractProprietary}
+      // Annotation:                ${klass.isAnnotation}
+      // Annotated:                 ${klass.isAnnotated}
+      // Described:                 ${klass.isDescribed}
+      // Named:                     ${klass.isNamed}
+      // Reference:                 ${klass.isReference}
+      //
+      // Properties:
+{% for prop in klass.instanceVariables %}\
+{% if prop[0] is not None %}\
+      //   ${prop[1]}
+      //     Instance type: ${prop[0]}
+{% if prop[2] is not None %}\
+      //     Default:       ${prop[2]}
+{% end no default %}\
+{% if prop[3] is not None %}\
+      //     Comment:       ${prop[3]}
+{% end no comment %}\
+{% end has instance type %}\
+{% end for %}\
 
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -135,6 +177,7 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} ():
+        ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}()
@@ -169,49 +212,44 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
-         * Construct a ${klass.name} recursively from an XML DOM tree.
+         * Copy constructor.
          *
-         * @param element root of the XML DOM tree to from which to
-         * construct the model object graph.
-         * @param model handler for the OME model used to track
-         * instances and references seen during the update.
-         * @throws EnumerationException if there is an error
-         * instantiating an enumeration during model object creation.
+         * @param copy the ${klass.name} to copy.
          */
-        ${klass.name} (xerces::dom::Element& element, OMEModel& model);
-{% end header %}\
+        ${klass.name} (const ${klass.name}& copy);
+{% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${klass.name}::${klass.name} (xerces::dom::Element& element, OMEModel& model):
+      ${klass.name}::${klass.name} (const ${klass.name}& copy):
+        ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
-        ${klass.parentName}()
+        ${klass.parentName}(copy)
 {% end has no instance variables %}\
 {% if len(klass.instanceVariables) > 0 %}\
-        ${klass.parentName}(),
+        ${klass.parentName}(copy),
 {% end has instance variables %}\
 {% end has parent %}\
 {% for prop in klass.instanceVariables %}\
 {% if prop[0] is not None %}\
 {% if prop == klass.instanceVariables[-1] %}\
 {% if prop[2] is not None %}\
-        ${prop[1]}(${prop[2]})
+        ${prop[1]}(copy.${prop[1]})
 {% end has default %}\
 {% if prop[2] is None %}\
-        ${prop[1]}()
+        ${prop[1]}(copy.${prop[1]})
 {% end no default %}\
 {% end last member %}\
 {% if prop != klass.instanceVariables[-1] %}\
 {% if prop[2] is not None %}\
-        ${prop[1]}(${prop[2]}),
+        ${prop[1]}(copy.${prop[1]}),
 {% end has default %}\
 {% if prop[2] is None %}\
-        ${prop[1]}(),
+        ${prop[1]}(copy.${prop[1]}),
 {% end no default %}\
 {% end not last member %}\
 {% end has instance type %}\
 {% end for %}\
       {
-        update(element, model);
       }
 {% end source %}\
 
@@ -219,14 +257,85 @@ namespace ome
         /// Destructor.
         virtual
         ~${klass.name} ();
+
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::~${klass.name} ()
       {
       }
 {% end source %}\
-{% if len(customContent) > 0 %}\
 
+{% if not klass.isAbstract and not klass.isAbstractProprietary %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+
+        /**
+         * Create a ${klass.name} model object from DOM element.
+         *
+         * @param element root of the XML DOM tree to from which to
+         * construct the model object graph.
+         * @param model handler for the OME model used to track
+         * instances and references seen during the update.
+         * @throws EnumerationException if there is an error
+         * instantiating an enumeration during model object creation,
+         * or ModelException if there are any consistency or validity
+         * errors found during processing.
+         *
+         * @returns a new model object.
+         */
+        static std::shared_ptr< ${klass.name}>
+        create(const xerces::dom::Element& element,
+               ${lang.omexml_model_package}::OMEModel& model);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      std::shared_ptr< ${klass.name}>
+      ${klass.name}::create(const xerces::dom::Element& element,
+                              ${lang.omexml_model_package}::OMEModel& model)
+      {
+        std::shared_ptr< ${klass.name}> newinstance(std::make_shared< ${klass.name}>());
+        newinstance->update(element, model);
+        return newinstance;
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in superclass.
+        const std::string&
+        elementName() const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::elementName() const
+      {
+        static const std::string type("${klass.name}");
+        return type;
+      }
+{% end source %}\
+{% end not Abstract %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in superclass.
+        bool
+        validElementName(const std::string& name) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      bool
+      ${klass.name}::validElementName(const std::string& name) const
+      {
+        static const std::string expectedTagName("${klass.name}");
+
+        return expectedTagName == name || ${klass.parentName}::validElementName(name);
+      }
+{% end source %}\
+
+{% if len(customContent) > 0 %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+      private:
+        /// Assignment operator (deleted).
+        ${klass.name}&
+        operator= (const ${klass.name}&);
+
+      public:
+{% end header %}\
         // -- Custom content from ${klass.name} specific template --
 
 ${customContent}\
@@ -235,47 +344,41 @@ ${customContent}\
 
         // -- OMEModelObject API methods --
 
-        // Documented in base class.
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::update
         virtual void
-        update(const xerces::dom::Element& element,
-               OMEModel&                   model);
+        update(const xerces::dom::Element&  element,
+               ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 
       void
-      ${klass.name}::update(const xerces::dom::Element& element,
-                            OMEModel& model)
+      ${klass.name}::update(const xerces::dom::Element&  element,
+                            ${lang.omexml_model_package}::OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
-{% if klass.langBaseType is not None %}\
 
+{% if klass.langBaseType is not None %}\
         {
           // Element's text data
-{% if klass.langBaseType != 'std::string' %}\
           std::string text(element.getTextContent());
+{% if klass.langBaseType != 'std::string' %}\
           if (!text.empty())
             {
-              std::istringstream is(text);
-              if (!(is >> this->value))
-                {
-                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
-                  fmt % text;
-                  throw std::runtime_error(fmt.str());
-                }
+              set_value(text
+                        *this, &${klass.name}::setValue,
+                        "${klass.name}", "value");
             }
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
-          this->value = element.getTextContent();
+          this->value = text;
 {% end %}\
         }
 {% end %}\
-{% if not klass.isAbstractProprietary %}\
-        std::string tagName(element.getTagName());
-        if (tagName != "${klass.name}")
+        const std::string tagName(stripNamespacePrefix(element.getTagName()));
+        if (!validElementName(tagName))
           {
-            std::clog << "Expecting node name of ${klass.name} got " << tagName << std::endl;
+            std::clog << tagName << " is an invalid element name for ${klass.name}" << std::endl;
           }
-{% end %}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.name in customUpdatePropertyContent %}\
@@ -294,10 +397,10 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.name}> rcptr(new ${prop.name}());
+            std::shared_ptr<${prop.name}> rcptr(std::make_shared< ${prop.name}>());
             rcptr->setID(elem->getAttribute("ID"));
             std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
-            std::shared_ptr<OMEModelObject> optr(this);
+            std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(std::static_pointer_cast<${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
             model.addReference(optr, rptr);
           }
 {% end %}\
@@ -309,29 +412,21 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isAttribute and prop.name == "ID" %}\
         if (!element.hasAttribute("ID") && getID().empty())
           {
-            /// @todo Should be its own exception.
-            throw std::runtime_error("${klass.name} missing required ID property");
+            throw ModelException("${klass.name} missing required ID property");
           }
         if (element.hasAttribute("ID"))
            {
              // ID property
 {% if klass.langBaseType != 'std::string' %}\
-             ${prop.langTypeNS} id;
-             std::istringstream is(element.getAttribute("${prop.name}"));
-             is >> id;
-             if (!is)
-                {
-                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
-                  fmt % is.str();
-                  throw std::runtime_error(fmt.str());
-                }
-             set${prop.methodName}(id);
+             set_value(element.getAttribute("${prop.name}"),
+                       *this, &${klass.name}::set${prop.methodName},
+                       "${klass.name}", "${prop.name}");
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
-             std::shared_ptr<OMEModelObject> thisptr(shared_from_this());
+             std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(std::dynamic_pointer_cast<  ${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
              model.addModelObject(getID(), thisptr);
            }
 {% end %}\
@@ -341,7 +436,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} nattr(new ${prop.langTypeNS}(element.getAttribute("${prop.name}")));
+            std::string text(element.getAttribute("${prop.name}"));
+            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(nattr);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -352,23 +448,9 @@ ${customUpdatePropertyContent[prop.name]}
             // Attribute property ${prop.name}
             {
 {% if prop.instanceVariableType != 'std::string' %}\
-              std::istringstream is(element.getAttribute("${prop.name}"));
-{% if prop.minOccurs == 0 %}\
-              ${prop.instanceVariableType} attr(new ${prop.langTypeNS}());
-              is >> *attr;
-{% end %}\
-{% if prop.minOccurs > 0 %}\
-              ${prop.langTypeNS} attr;
-              is >> attr;
-{% end %}\
-              if (!is)
-                {
-                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
-                  fmt % is.str();
-                  throw std::runtime_error(fmt.str());
-                }
-
-              set${prop.methodName}(attr);
+              set_value(element.getAttribute("${prop.name}"),
+                        *this, &${klass.name}::set${prop.methodName},
+                        "${klass.name}", "${prop.name}");
 {% end %}\
 {% if prop.instanceVariableType == 'std::string' %}\
               set${prop.methodName}(element.getAttribute("${prop.name}"));
@@ -381,17 +463,19 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         if (${prop.name}_nodeList.size() > 1)
           {
-            /// @todo Should be its own Exception.
             format fmt("${prop.name} node list size %1% != 1");
             fmt % ${prop.name}_nodeList.size();
-            throw std::runtime_error(fmt.str());
+            throw ModelException(fmt.str());
           }
         else if (${prop.name}_nodeList.size() != 0)
           {
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
-{% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %} \
-            ${prop.instanceVariableType} p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
+{% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %}\
+            xerces::dom::Element elem(${prop.name}_nodeList.at(0));
+            // While std::make_shared<> works, here,
+            // boost::make_shared<> does not, so use new directly.
+            ${prop.instanceVariableType} p(${prop.langTypeNS}::create(elem, model));
 {% end %}\
 {% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %} \
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
@@ -401,25 +485,19 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isComplex() %}\
             // Element property ${prop.name} which is not complex (has no
             // sub-elements)
+            std::string text(${prop.name}_nodeList.at(0).getTextContent());
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} ns(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0).getTextContent()));
+            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
 {% if prop.langTypeNS != 'std::string' %}\
-            ${prop.langTypeNS} attr;
-            std::istringstream is(${prop.name}_nodeList.at(0).getTextContent());
-            if (is >> attr)
-              set${prop.methodName}(attr);
-            else
-              {
-                format fmt("Failed to parse ${klass.name} ${prop.name} property value ‘%1%’");
-                fmt % is.str();
-                throw std::runtime_error(fmt.str());
-              }
+             set_value(text,
+                       *this, &${klass.name}::set${prop.methodName},
+                       "${klass.name}", "${prop.name}");
 {% end %}\
 {% if prop.langTypeNS == 'std::string' %}\
-            set${prop.methodName}(${prop.name}_nodeList.at(0).getTextContent());
+            set${prop.methodName}(text);
 {% end %}\
 {% end %}\
 {% end %}\
@@ -443,7 +521,10 @@ ${customUpdatePropertyContent[prop.name]}
                  inner_elem != ${inner_prop.name}_nodeList.end();
                  ++inner_elem)
                    {
-                     std::shared_ptr<${prop.methodName}> object(new ${inner_prop.langTypeNS}(*elem, model));
+                     // While std::make_shared<> works, here,
+                     // boost::make_shared<> does not, so use new
+                     // directly.
+                     std::shared_ptr<${prop.methodName}> object(${inner_prop.langTypeNS}::create(*elem, model));
                      object->update(*inner_elem, model);
                      add${prop.methodName}(object);
                    }
@@ -459,7 +540,9 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.methodName}> object(new ${prop.langTypeNS}(*elem, model));
+            // While std::make_shared<> works, here,
+            // boost::make_shared<> does not, so use new directly.
+            std::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(*elem, model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -472,7 +555,8 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.methodName}> object(new ${prop.langTypeNS}(elem->getTextContent(), model));
+            std::string text(element.getTextContent());
+            std::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(text, model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -490,15 +574,15 @@ ${customUpdatePropertyContent[prop.name]}
       public:
         // -- ${klass.name} API methods --
 
-        // Documented in base class.
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::link
         bool
-        link (std::shared_ptr<Reference>&      reference,
-              std::shared_ptr<OMEModelObject>& object);
+        link (std::shared_ptr<Reference>& reference,
+              std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link (std::shared_ptr<Reference>&      reference,
-                           std::shared_ptr<OMEModelObject>& object)
+      ${klass.name}::link (std::shared_ptr<Reference>& reference,
+                           std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object)
       {
         if (${klass.parentName}::link(reference, object))
           {
@@ -514,18 +598,27 @@ ${customUpdatePropertyContent[prop.name]}
               {
 {% if not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.type}(std::shared_ptr<${klass.type}>(this));
+                o_casted->link${klass.type}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.type}>(this));
+                o_casted->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-                /// @todo Use of const since this is nonmodifying.
+{% if not prop.isReference and not prop.isBackReference %}\
                 if (contains(${prop.instanceVariableName}, o_casted))
                   {
                     ${prop.instanceVariableName}.push_back(o_casted);
                   }
+{% end %}\
+{% if prop.isReference or prop.isBackReference %}\
+                typedef OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::nth_index<1>::type container_set_type;
+                container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(o_casted));
+                if (it != this->${prop.instanceVariableName}.get<1>().end())
+                  {
+                    ${prop.instanceVariableName}.push_back(o_casted);
+                  }
+{% end %}\
 {% end %}\
 {% if prop.maxOccurs == 1 %}\
                 ${prop.instanceVariableName} = o_casted;
@@ -640,23 +733,28 @@ ${customUpdatePropertyContent[prop.name]}
          * @note The index must be valid.
          *
          * @param index the index number of the ${prop.methodName}.
-         * @param object the object to set.
+         * @param ${prop.argumentName} the ${prop.methodName} to set.
          * @returns a weak pointer to the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo object isn't a great parameter name; use something
-         * better.
          */
         const std::weak_ptr<${prop.langTypeNS}>&
         setLinked${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                                     const std::shared_ptr<${prop.langTypeNS}>& object);
+                                     const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::setLinked${prop.methodName}(${prop.instanceVariableType}::size_type index,
-                                                 const std::shared_ptr<${prop.langTypeNS}>& object)
+                                                 const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        return ${prop.instanceVariableName}.at(index) = object;
+{% if not prop.isReference and not prop.isBackReference %}\
+        return this->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
+{% end %}\
+{% if prop.isReference or prop.isBackReference %}\
+        ${prop.instanceVariableType}::iterator it(${prop.instanceVariableName}.iterator_to(${prop.instanceVariableName}.at(index)));
+        const std::weak_ptr<${prop.langTypeNS}> wp(${prop.argumentName});
+        ${prop.instanceVariableName}.replace(it, wp);
+        return *it;
+{% end %}\
       }
 {% end source %}\
 
@@ -664,7 +762,7 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Link ${prop.methodName}.
          *
-         * @param object the object to link.
+         * @param ${prop.argumentName} the ${prop.methodName} to link.
          * @returns @c true if the object was added to the internal
          * ${prop.instanceVariableName} list, otherwise @c false.
          *
@@ -672,25 +770,36 @@ ${customUpdatePropertyContent[prop.name]}
          * Is this an artifact of the Java API?
          */
         bool
-        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
+        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        object->link${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        object->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
-        if (!contains(${prop.instanceVariableName}, object))
+{% if not prop.isReference and not prop.isBackReference %}\
+        if (!contains(this->${prop.instanceVariableName}, ${prop.argumentName}))
           {
-            ${prop.instanceVariableName}.push_back(object);
+            this->${prop.instanceVariableName}.push_back(${prop.argumentName});
             return true;
           }
+{% end %}\
+{% if prop.isReference or prop.isBackReference %}\
+        typedef OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::nth_index<1>::type container_set_type;
+        container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(${prop.argumentName}));
+        if (it == this->${prop.instanceVariableName}.get<1>().end())
+          {
+            std::pair<OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::iterator, bool> res(this->${prop.instanceVariableName}.push_back(std::weak_ptr<${prop.langTypeNS}>(${prop.argumentName})));
+            return res.second;
+          }
+{% end %}\
         return false;
       }
 {% end source %}\
@@ -699,10 +808,10 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Unlink ${prop.methodName}.
          *
-         * @param object the object to unlink.
+         * @param ${prop.argumentName} the ${prop.methodName} to unlink.
          *
-         * @returns @c true if the object was unlinked, otherwise
-         * @c false if the object was not linked and could hence not be
+         * @returns @c true if the ${prop.methodName} was unlinked, otherwise
+         * @c false if the ${prop.methodName} was not linked and could hence not be
          * unlinked.
          *
          * @todo Does the return value serve any useful purpose?  Is
@@ -712,29 +821,29 @@ ${customUpdatePropertyContent[prop.name]}
          * aren't preventing duplicates on insertion.
          */
         bool
-        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
+        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        object->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        object->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
         bool found = false;
         ${prop.instanceVariableType}::iterator i =
-          std::find_if(${prop.instanceVariableName}.begin(),
-                       ${prop.instanceVariableName}.end(),
-                       compare_element<${prop.langTypeNS}>(object));
-        if (i != ${prop.instanceVariableName}.end())
+          std::find_if(this->${prop.instanceVariableName}.begin(),
+                       this->${prop.instanceVariableName}.end(),
+                       compare_element<${prop.langTypeNS}>(${prop.argumentName}));
+        if (i != this->${prop.instanceVariableName}.end())
           {
             found = true;
-            ${prop.instanceVariableName}.erase(i);
+            this->${prop.instanceVariableName}.erase(i);
           }
         return found;
       }
@@ -766,16 +875,16 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Link ${prop.methodName}.
          *
-         * @param object the ${prop.methodName} to link.
+         * @param ${prop.argumentName} the ${prop.methodName} to link.
          */
         void
-        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object);
+        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        ${prop.instanceVariableName} = object;
+        this->${prop.instanceVariableName} = ${prop.argumentName};
       }
 {% end source %}\
 
@@ -783,22 +892,22 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Unlink ${prop.methodName}.
          *
-         * @param object the object to unlink.
+         * @param ${prop.argumentName} the ${prop.methodName} to unlink.
          *
          * @todo This method is fairly pointless since it's equivalent
          * to linking a null pointer.  It could call @c link(0)
          * internally.
          */
         void
-        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object);
+        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        if (std::shared_ptr<${prop.langTypeNS}>(${prop.instanceVariableName}) == object)
+        if (std::shared_ptr<${prop.langTypeNS}>(this->${prop.instanceVariableName}) == ${prop.argumentName})
           {
-            ${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
+            this->${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
           }
       }
 {% end source %}\
@@ -861,6 +970,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get the ${prop.methodName} list.
@@ -868,17 +978,18 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns a reference to the list.
          *
          */
-        const ${prop.instanceVariableType}&
-        get${prop.methodName}List () const;
+        ${prop.retType[qualifier]}&
+        get${prop.methodName}List ()${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const ${prop.instanceVariableType}&
-      ${klass.name}::get${prop.methodName}List () const
+      ${prop.retType[qualifier]}&
+      ${klass.name}::get${prop.methodName}List ()${qualifier}
       {
         return ${prop.instanceVariableName};
       }
 {% end source %}\
 
+{% end qualifier %}\
 {% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
@@ -887,14 +998,12 @@ ${customUpdatePropertyContent[prop.name]}
          * @param index the index number of the ${prop.methodName}.
          * @returns the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo Is this a value type under all circumstances?
          */
-        ${prop.retType[qualifier]}
+        ${prop.elementRetType[qualifier]}
         get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.retType[qualifier]}
+      ${prop.elementRetType[qualifier]}
       ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier}
       {
         return ${prop.instanceVariableName}.at(index);
@@ -909,25 +1018,27 @@ ${customUpdatePropertyContent[prop.name]}
          * @param index the index number of the ${prop.methodName}.
          * @param ${prop.argumentName} the ${prop.methodName} to set.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo Is this a value type under all circumstances?
-         * @todo Return type set to void since we can't return
-         * abstract types by value.
          */
         void
         set${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                               ${prop.argType} ${prop.argumentName});
+                               ${prop.elementArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
       ${klass.name}::set${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                                            ${prop.argType} ${prop.argumentName})
+                                            ${prop.elementArgType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
+{% if not prop.isReference and not prop.isBackReference %}\
         ${prop.instanceVariableName}.at(index) = ${prop.argumentName};
+{% end %}\
+{% if prop.isReference or prop.isBackReference %}\
+        ${prop.instanceVariableType}::iterator it(${prop.instanceVariableName}.iterator_to(${prop.instanceVariableName}.at(index)));
+        ${prop.instanceVariableName}.replace(it, ${prop.argumentName});
+{% end %}\
       }
 {% end source %}\
 
@@ -941,14 +1052,14 @@ ${customUpdatePropertyContent[prop.name]}
          * @todo Detect and handle duplicates?
          */
         void
-        add${prop.methodName} (${prop.argType} ${prop.argumentName});
+        add${prop.methodName} (${prop.elementArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::add${prop.methodName} (${prop.argType} ${prop.argumentName})
+      ${klass.name}::add${prop.methodName} (${prop.elementArgType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
         ${prop.instanceVariableName}.push_back(${prop.argumentName});
@@ -966,11 +1077,11 @@ ${customUpdatePropertyContent[prop.name]}
          * aren't preventing duplicates on insertion.
          */
         void
-        remove${prop.methodName} (${prop.argType} ${prop.argumentName});
+        remove${prop.methodName} (${prop.elementArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::remove${prop.methodName} (${prop.argType} ${prop.argumentName})
+      ${klass.name}::remove${prop.methodName} (${prop.elementArgType} ${prop.argumentName})
       {
         ${prop.instanceVariableType}::iterator i = std::find_if(${prop.instanceVariableName}.begin(),
                                                                 ${prop.instanceVariableName}.end(),
@@ -999,7 +1110,7 @@ ${customUpdatePropertyContent[prop.name]}
         getLightSourceType() const = 0;
 {% end header %}\
 {% end light source%}\
-{% if klass.parents is not None and "LightSource" in klass.parents.keys() %}\
+{% if klass.name != "AnnotationRef" and klass.parents is not None and "LightSource" in klass.parents.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
         getLightSourceType() const;
@@ -1024,7 +1135,7 @@ ${customUpdatePropertyContent[prop.name]}
         getShapeType() const = 0;
 {% end header %}\
 {% end shape%}\
-{% if klass.parents is not None and "Shape" in klass.parents.keys() %}\
+{% if klass.name != "AnnotationRef" and klass.parents is not None and "Shape" in klass.parents.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
         getShapeType() const;
@@ -1041,35 +1152,45 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        virtual xerces::dom::Element&
+        /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
+        virtual xerces::dom::Element
         asXMLElement (xerces::dom::Document& document) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element&
+      xerces::dom::Element
       ${klass.name}::asXMLElement (xerces::dom::Document& document) const
       {
-        xerces::dom::Element nullelem;
-        return asXMLElementInternal(document, nullelem);
+{% if klass.name != "OME" %}\
+        xerces::dom::Element element(document.createElementNS(NAMESPACE, "${klass.name}"));
+{% end if %}\
+{% if klass.name == "OME" %}\
+        xerces::dom::Element element(document.getDocumentElement());
+{% end if %}\
+        return asXMLElementInternal(document, element);
       }
 {% end source %}\
 
 {% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
- protected:
+      protected:
         // Documented in base class.
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElementInternal (xerces::dom::Document& document,
                               xerces::dom::Element&  element) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element&
+      xerces::dom::Element
       ${klass.name}::asXMLElementInternal (xerces::dom::Document& document,
                                            xerces::dom::Element&  element) const
       {
-        // Creating XML block for ${klass.name}
+        // Create XML block for ${klass.name}
 
+{% if klass.name == "OME" %}\
+        static const std::string XSI_NAMESPACE("http://www.w3.org/2001/XMLSchema-instance");
+        element.setAttribute("xmlns:xsi", XSI_NAMESPACE);
+        element.setAttribute("xsi:schemaLocation", NAMESPACE + " " + NAMESPACE + "/ome.xsd");
+{% end %}\
 {% if klass.isAbstractProprietary %}\
         // Class is abstract so we may need to create its "container" element
         if (std::string(element.getTagName()) != "${klass.name}")
@@ -1082,7 +1203,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
         if (!element)
           {
-            element = document.createElementNS(NAMESPACE, "${klass.name}");
+            xerces::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
+            element = newElement;
           }
 
 {% if klass.langBaseType is not None %}\
@@ -1091,7 +1213,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% if klass.langBaseType != 'std::string' %}\
         {
           std::ostringstream os;
+          os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
           os << this->value;
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+          os << std::boolalpha << this->value;
+{% end %}\
           element.setTextContent(os.str());
         }
 {% end %}\
@@ -1099,8 +1227,12 @@ ${customUpdatePropertyContent[prop.name]}
         element.setTextContent(this->value);
 {% end %}\
 {% end %}\
+{% if klass.isAnnotation %}\
+        // Ensure any base annotations add their Elements first
+        element = ${klass.parentName}::asXMLElementInternal(document, element);
+{% end if isAnnotation %}\
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
         {
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\
@@ -1123,12 +1255,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 // shared_ptr, but keep compatible with the rest of
                 // the API to allow consistency for future
                 // refactoring.
-                std::shared_ptr<${prop.name}> o(new ${prop.name}());
-                std::shared_ptr<${prop.langTypeNS}> is(*i);
+                std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
+                std::shared_ptr<${prop.langTypeNS}> is(i->lock());
                 if (is)
                   {
                     o->setID(is->getID());
-                    element.appendChild(o->asXMLElement(document));
+                    xerces::dom::Element child(o->asXMLElement(document));
+                    element.appendChild(child);
                   }
               }
           }
@@ -1139,10 +1272,14 @@ ${customAsXMLElementPropertyContent[prop.name]}
             // Note that this doesn't strictly need to be a
             // shared_ptr, but keep compatible with the rest of the
             // API to allow consistency for future refactoring.
-            std::shared_ptr<${prop.name}> o(new ${prop.name}());
-            std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName});
-            o->setID(sv->getID());
-            element.appendChild(o->asXMLElement(document));
+            std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
+            std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName}.lock());
+            if (sv)
+              {
+                o->setID(sv->getID());
+                xerces::dom::Element child(o->asXMLElement(document));
+                element.appendChild(child);
+              }
           }
 {% end %}\
 {% when prop.isBackReference %}\
@@ -1154,26 +1291,72 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // Attribute property ${prop.name}
           {
             std::ostringstream os;
-            os << ${prop.instanceVariableName};
+            os.imbue(std::locale::classic());
+{% if prop.minOccurs == 1 %}\
+{% if prop.langTypeNS != 'bool' %}\
+          os << ${prop.instanceVariableName};
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+          os << std::boolalpha << ${prop.instanceVariableName};
+{% end %}\
             element.setAttribute("${prop.name}", os.str());
+{% end %}\
+{% if prop.minOccurs == 0 %}\
+            if (${prop.instanceVariableName})
+              {
+{% if prop.langTypeNS != 'bool' %}\
+                os << *${prop.instanceVariableName};
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+                os << std::boolalpha << *${prop.instanceVariableName};
+{% end %}\
+                element.setAttribute("${prop.name}", os.str());
+              }
+{% end %}\
           }
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
           // Element property ${prop.name} which is complex (has
           // sub-elements)
           if (${prop.instanceVariableName})
-            element.appendChild(${prop.instanceVariableName}->asXMLElement(document));
+            {
+              xerces::dom::Element child(${prop.instanceVariableName}->asXMLElement(document));
+              element.appendChild(child);
+            }
 {% end %}\
 {% when prop.maxOccurs == 1 %}\
           // Element property ${prop.name} which is not complex (has no
           // sub-elements)
           {
-            xerces::dom::Element ${prop.instanceVariableName}_element =
-                                                               document.createElementNS(NAMESPACE, "${prop.name}");
+{% if prop.minOccurs == 1 %}\
+            xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
             std::ostringstream os;
+            os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
             os << ${prop.instanceVariableName};
-            ${prop.instanceVariableName}_element.setTextContent(os.str());
-            element.appendChild(${prop.instanceVariableName}_element);
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+            os << std::boolalpha << ${prop.instanceVariableName};
+{% end %}\
+            child.setTextContent(os.str());
+            element.appendChild(child);
+{% end %}\
+{% if prop.minOccurs == 0 %}\
+            if (${prop.instanceVariableName})
+              {
+                xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+                std::ostringstream os;
+                os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
+                os << *${prop.instanceVariableName};
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+                os << std::boolalpha << *${prop.instanceVariableName};
+{% end %}\
+                child.setTextContent(os.str());
+                element.appendChild(child);
+              }
+{% end %}\
           }
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() %}\
@@ -1184,7 +1367,11 @@ ${customAsXMLElementPropertyContent[prop.name]}
                  i != ${prop.instanceVariableName}.end();
                  ++i)
               {
-                element.appendChild((*i)->asXMLElement(document));
+                if (*i)
+                  {
+                    xerces::dom::Element child((*i)->asXMLElement(document));
+                    element.appendChild(child);
+                  }
               }
           }
 {% end %}\
@@ -1199,9 +1386,16 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 xerces::dom::Element ${prop.instanceVariableName}_element =
                                                                    document.createElementNS(NAMESPACE, "${prop.name}");
                 std::ostringstream os;
+                os.imbue(std::locale::classic());
+{% if prop.langTypeNS != 'bool' %}\
                 os << *i;
+{% end %}\
+{% if prop.langTypeNS == 'bool' %}\
+                os << std::boolalpha << *i;
+{% end %}\
                 ${prop.instanceVariableName}_element.setTextContent(os.str());
-                element.appendChild(${prop.instanceVariableName}_element);
+                xerces::dom::Element child(${prop.instanceVariableName}_element);
+                element.appendChild(child);
               }
           }
 {% end %}\
@@ -1214,7 +1408,28 @@ ${customAsXMLElementPropertyContent[prop.name]}
         }
 {% end %}\
 {% end %}\
+{% choose %}\
+{% when klass.isAnnotation %}\
+        return element;
+{% end when isAnnotation %}\
+{% otherwise %}\
         return ${klass.parentName}::asXMLElementInternal(document, element);
+{% end otherwise %}\
+{% end choose %}\
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+      public:
+       // Documented in superclass.
+       const std::string&
+       getXMLNamespace() const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::getXMLNamespace() const
+      {
+        return NAMESPACE;
       }
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\

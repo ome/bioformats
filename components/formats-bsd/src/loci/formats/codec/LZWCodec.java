@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -78,10 +74,6 @@ import loci.formats.FormatException;
  * exceeds 1.41*(number of input bytes)+3.
  * <p>
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/LZWCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/LZWCodec.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Mikhail Kovtun mikhail.kovtun at duke.edu
  */
 public class LZWCodec extends BaseCodec {
@@ -109,6 +101,7 @@ public class LZWCodec extends BaseCodec {
     {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f};
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] input, CodecOptions options)
     throws FormatException
   {
@@ -265,6 +258,7 @@ public class LZWCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
@@ -345,7 +339,7 @@ public class LZWCodec extends BaseCodec {
           if (currCode == EOI_CODE) break;
             // write string[curr_code] to output
             // -- but here we are sure that string consists of a single byte
-            if (currOutPos >= output.length - 1) break;
+            if (currOutPos >= output.length) break;
             output[currOutPos++] = newBytes[currCode];
             oldCode = currCode;
         }
@@ -355,11 +349,15 @@ public class LZWCodec extends BaseCodec {
           int outLength = lengths[currCode];
           int i = currOutPos + outLength;
           int tablePos = currCode;
-          if (i > output.length) break;
+          while (i > output.length) {
+            tablePos = anotherCodes[tablePos];
+            i--;
+          }
           while (i > currOutPos) {
             output[--i] = newBytes[tablePos];
             tablePos = anotherCodes[tablePos];
           }
+          if (i >= output.length) break;
           currOutPos += outLength;
           // 2) Add string[old_code]+firstByte(string[curr_code]) to the table
           if (nextCode >= anotherCodes.length) break; 
@@ -382,7 +380,7 @@ public class LZWCodec extends BaseCodec {
           }
           currOutPos += outLength;
           // 2) Write firstByte(string[old_code]) to output
-          if (currOutPos >= output.length - 1) break;
+          if (currOutPos > output.length - 1) break;
           output[currOutPos++] = output[i];
           // 3) Add string[old_code]+firstByte(string[old_code]) to the table
           anotherCodes[nextCode] = oldCode;

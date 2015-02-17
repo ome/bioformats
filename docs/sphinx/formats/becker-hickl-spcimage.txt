@@ -4,7 +4,7 @@
 Becker & Hickl SPCImage
 ===============================================================================
 
-Extensions: .sdt 
+Extensions: .sdt
 
 
 Owner: `Becker-Hickl <http://www.becker-hickl.de/>`_

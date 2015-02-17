@@ -4,7 +4,7 @@
 Leica LAS AF LIF (Leica Image File Format)
 ===============================================================================
 
-Extensions: .lif 
+Extensions: .lif
 
 Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 
@@ -23,7 +23,7 @@ Supported Metadata Fields: :doc:`Leica LAS AF LIF (Leica Image File Format) <lei
 
 Freely Available Software:
 
-- `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-imaging-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
+- `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (links at bottom of page)
 
 
 We currently have:

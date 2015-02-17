@@ -10,8 +10,8 @@ four-dimensional multi-channel images of any size, from a few megabytes
 to multiple gigabytes in size.
 
 As of `version
-7.2 <http://www.bitplane.com/go/releasenotes?product=Imaris&version=7.2&patch=0>`_,
+7.2 <http://www.bitplane.com/releasenotes.aspx?product=Imaris&version=7.2&patch=0>`_,
 Imaris integrates with :doc:`/users/fiji/index`, which includes
 Bio-Formats. See `this
-page <http://www.bitplane.com/imaris/imaris>`_ for a detailed list of Imaris' 
+page <http://www.bitplane.com/imaris/imaris>`_ for a detailed list of Imaris'
 features.

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,9 +47,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/ScreenDetectionTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/ScreenDetectionTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -57,23 +54,23 @@ public class ScreenDetectionTest {
 
   private static String[][] SCREENS = new String[][] {
     {
-      "screen1/plate/well_a1",
-      "screen1/plate/well_a2",
-      "screen1/plate/well_c6",
-      "screen1/plate/well_f10",
+      "screen1" + File.separator + "plate" + File.separator + "well_a1",
+      "screen1" + File.separator + "plate" + File.separator + "well_a2",
+      "screen1" + File.separator + "plate" + File.separator + "well_c6",
+      "screen1" + File.separator + "plate" + File.separator + "well_f10",
     },
     {
-      "screen2/plate1/b05",
-      "screen2/plate1/e10",
-      "screen2/plate1/p14",
-      "screen2/plate2/f09",
-      "screen2/plate2/g03"
+      "screen2" + File.separator + "plate1" + File.separator + "b05",
+      "screen2" + File.separator + "plate1" + File.separator + "e10",
+      "screen2" + File.separator + "plate1" + File.separator + "p14",
+      "screen2" + File.separator + "plate2" + File.separator + "f09",
+      "screen2" + File.separator + "plate2" + File.separator + "g03"
     },
     {
-      "screen3/plate1/test_A1_0",
-      "screen3/plate1/test_A2_1",
-      "screen3/plate1/test_A3_2",
-      "screen3/plate1/test_A4_3",
+      "screen3" + File.separator + "plate1" + File.separator + "test_A1_0",
+      "screen3" + File.separator + "plate1" + File.separator + "test_A2_1",
+      "screen3" + File.separator + "plate1" + File.separator + "test_A3_2",
+      "screen3" + File.separator + "plate1" + File.separator + "test_A4_3",
     }
   };
 
@@ -146,7 +143,7 @@ public class ScreenDetectionTest {
       String dirPath = screen[i].substring(0, lastSeparator);
       String filename = screen[i].substring(lastSeparator + 1);
 
-      String[] dirs = dirPath.split(File.separator);
+      String[] dirs = dirPath.split(File.separatorChar == '/' ? File.separator : "\\\\");
       File dir = new File(System.getProperty("java.io.tmpdir"));
       for (String dirName : dirs) {
         dir = new File(dir, dirName);

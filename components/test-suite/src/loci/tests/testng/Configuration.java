@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,11 +47,13 @@ import loci.formats.meta.IMetadata;
 
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
+
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/Configuration.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/Configuration.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Configuration {
 
@@ -265,9 +267,9 @@ public class Configuration {
     return null;
   }
 
-  public Double getTimeIncrement() {
+  public Time getTimeIncrement() {
     String physicalSize = currentTable.get(TIME_INCREMENT);
-    return physicalSize == null ? null : new Double(physicalSize);
+    return physicalSize == null ? null : new Time(new Double(physicalSize), UNITS.S);
   }
 
   public int getChannelCount() {
@@ -286,19 +288,19 @@ public class Configuration {
     return currentTable.containsKey(EXPOSURE_TIME + channel);
   }
 
-  public Double getExposureTime(int channel) {
+  public Time getExposureTime(int channel) {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
-    return exposure == null ? null : new Double(exposure);
+    return exposure == null ? null : new Time(new Double(exposure), UNITS.S);
   }
 
-  public Integer getEmissionWavelength(int channel) {
+  public Double getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
-    return wavelength == null ? null : new Integer(wavelength);
+    return wavelength == null ? null : new Double(wavelength);
   }
 
-  public Integer getExcitationWavelength(int channel) {
+  public Double getExcitationWavelength(int channel) {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
-    return wavelength == null ? null : new Integer(wavelength);
+    return wavelength == null ? null : new Double(wavelength);
   }
 
   public String getDetector(int channel) {
@@ -337,6 +339,7 @@ public class Configuration {
 
   // -- Object API methods --
 
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof Configuration)) return false;
 
@@ -344,6 +347,7 @@ public class Configuration {
     return this.getINI().equals(thatConfig.getINI());
   }
 
+  @Override
   public int hashCode() {
     return this.getINI().hashCode();
   }
@@ -462,26 +466,29 @@ public class Configuration {
       seriesTable.put(NAME, retrieve.getImageName(series));
       seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
 
-      PositiveFloat physicalX = retrieve.getPixelsPhysicalSizeX(series);
+      Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
         seriesTable.put(PHYSICAL_SIZE_X, physicalX.toString());
       }
-      PositiveFloat physicalY = retrieve.getPixelsPhysicalSizeY(series);
+      Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
       if (physicalY != null) {
         seriesTable.put(PHYSICAL_SIZE_Y, physicalY.toString());
       }
-      PositiveFloat physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
+      Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
       if (physicalZ != null) {
         seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.toString());
       }
-      Double timeIncrement = retrieve.getPixelsTimeIncrement(series);
+      Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
       if (timeIncrement != null) {
         seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
       }
 
-      String date = retrieve.getImageAcquisitionDate(series).getValue();
-      if (date != null) {
-        seriesTable.put(DATE, date);
+      Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
+      if (acquisition != null) {
+        String date = acquisition.getValue();
+        if (date != null) {
+          seriesTable.put(DATE, date);
+        }
       }
 
       for (int c=0; c<retrieve.getChannelCount(series); c++) {
@@ -501,15 +508,14 @@ public class Configuration {
         }
         catch (NullPointerException e) { }
 
-        PositiveInteger emWavelength =
-          retrieve.getChannelEmissionWavelength(series, c);
+        Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
         if (emWavelength != null) {
-          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.toString());
+          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value(UNITS.NM).toString());
         }
-        PositiveInteger exWavelength =
+        Length exWavelength =
           retrieve.getChannelExcitationWavelength(series, c);
         if (exWavelength != null) {
-          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.toString());
+          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value(UNITS.NM).toString());
         }
         try {
           seriesTable.put(DETECTOR + c,

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -64,10 +60,6 @@ import org.slf4j.LoggerFactory;
 /**
  * PreviewPane is a panel for use as a JFileChooser accessory, displaying
  * a thumbnail for the selected image, loaded in a separate thread.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/PreviewPane.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/PreviewPane.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PreviewPane extends JPanel
   implements PropertyChangeListener, Runnable
@@ -158,6 +150,7 @@ public class PreviewPane extends JPanel
       jc.addPropertyChangeListener(this);
 
       refresher = new Runnable() {
+        @Override
         public void run() {
           iconLabel.setIcon(icon);
           iconLabel.setText(iconText);
@@ -183,6 +176,7 @@ public class PreviewPane extends JPanel
   // -- Component API methods --
 
   /* @see java.awt.Component#getPreferredSize() */
+  @Override
   public Dimension getPreferredSize() {
     Dimension prefSize = super.getPreferredSize();
     return new Dimension(148, prefSize.height);
@@ -194,6 +188,7 @@ public class PreviewPane extends JPanel
    * Property change event, to listen for when a new
    * file is selected, or the file chooser closes.
    */
+  @Override
   public void propertyChange(PropertyChangeEvent e) {
     String prop = e.getPropertyName();
     if (prop.equals("JFileChooserDialogIsClosingProperty")) {
@@ -212,6 +207,7 @@ public class PreviewPane extends JPanel
   // -- Runnable API methods --
 
   /** Thumbnail loading routine. */
+  @Override
   public void run() {
     while (loaderAlive) {
       try { Thread.sleep(100); }

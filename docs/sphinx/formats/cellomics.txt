@@ -4,7 +4,7 @@
 Cellomics
 ===============================================================================
 
-Extensions: .c01 
+Extensions: .c01
 
 Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 

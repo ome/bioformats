@@ -4,7 +4,7 @@
 PNG (Portable Network Graphics)
 ===============================================================================
 
-Extensions: .png 
+Extensions: .png
 
 Developer: `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
 

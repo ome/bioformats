@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_META_BASEMETADATA_H
 #define OME_BIOFORMATS_META_BASEMETADATA_H
 
+#include <cstddef>
 #include <vector>
 
 #include <ome/compat/cstdint.h>
@@ -60,18 +61,28 @@ namespace ome
       {
       public:
         /// Index into an array.
-        typedef uint32_t index_type;
+        typedef std::size_t index_type;
         /// An array of bytes for binary image data.
         typedef std::vector<uint8_t> byte_array;
 
       protected:
         /// Constructor.
-        BaseMetadata();
+        BaseMetadata()
+        {}
 
       public:
         /// Destructor.
         virtual
-        ~BaseMetadata();
+        ~BaseMetadata()
+        {}
+
+      private:
+        /// Copy constructor (deleted).
+        BaseMetadata (const BaseMetadata&);
+
+        /// Assignment operator (deleted).
+        BaseMetadata&
+        operator= (const BaseMetadata&);
       };
 
     }

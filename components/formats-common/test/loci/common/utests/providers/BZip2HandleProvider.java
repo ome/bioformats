@@ -1,8 +1,8 @@
 /*
  * #%L
- * Tests for the common I/O package.
+ * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -42,20 +38,18 @@ import java.io.IOException;
 
 import loci.common.BZip2Handle;
 import loci.common.IRandomAccess;
+import loci.common.NIOFileHandle;
 
 /**
  * Implementation of IRandomAccessProvider that produces instances of
  * loci.common.BZip2Handle.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/providers/BZip2HandleProvider.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/providers/BZip2HandleProvider.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see IRandomAccessProvider
  * @see loci.common.BZip2Handle
  */
 class BZip2HandleProvider implements IRandomAccessProvider {
 
+  @Override
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".dat");
@@ -64,17 +58,24 @@ class BZip2HandleProvider implements IRandomAccessProvider {
     out.write(page);
     out.close();
 
-    Runtime rt = Runtime.getRuntime();
-    Process p = rt.exec(new String[] {"bzip2", pageFile.getAbsolutePath()});
     try {
-      p.waitFor();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      Runtime rt = Runtime.getRuntime();
+      Process p = rt.exec(new String[] {"bzip2", pageFile.getAbsolutePath()});
+      try {
+        p.waitFor();
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+
+      pageFile = new File(pageFile.getAbsolutePath() + ".bz2");
+      pageFile.deleteOnExit();
+      return new BZip2Handle(pageFile.getAbsolutePath());
+    }
+    catch (IOException e) {
+      // bzip2 is likely not installed; this is typically the case on Windows
     }
 
-    pageFile = new File(pageFile.getAbsolutePath() + ".bz2");
-    pageFile.deleteOnExit();
-    return new BZip2Handle(pageFile.getAbsolutePath());
+    return new NIOFileHandle(pageFile, "r");
   }
 
 }

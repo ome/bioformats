@@ -1,3 +1,27 @@
+/*
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 /*!
 * \file         WlzReader.java
 * \author       Bill Hill
@@ -11,7 +35,7 @@
 *               Western General Hospital,
 *               Edinburgh, EH4 2XU, UK.
 * \par
-* Copyright (C), [2013],
+* Copyright (C), [2013 - 2015],
 * The University Court of the University of Edinburgh,
 * Old College, Edinburgh, UK.
 * 
@@ -30,7 +54,7 @@
 * License along with this program; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA  02110-1301, USA.
-* \brief	Woolz reader for bioformats.
+* \brief        Woolz reader for bioformats.
 */
 
 package loci.formats.in;
@@ -51,6 +75,9 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * WlzReader is a file format reader for Woolz files.
  * Woolz is available from: https://github.com/ma-tech/Woolz
@@ -66,7 +93,7 @@ public class WlzReader extends FormatReader {
 
   // -- Fields --
 
-  private	WlzService wlz = null;
+  private transient WlzService wlz = null;
 
   public static final String NO_WLZ_MSG =
     "\n" +
@@ -86,6 +113,7 @@ public class WlzReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String file, boolean open) {
     return super.isThisType(file, open);
   }
@@ -93,19 +121,34 @@ public class WlzReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if(wlz != null) {
-      FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    if (wlz != null) {
       buf = wlz.readBytes(no, buf, x, y, w, h);
     }
-    return(buf);
+    else {
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        wlz = factory.getInstance(WlzService.class);
+      }
+      catch (DependencyException e) {
+        throw new FormatException(NO_WLZ_MSG, e);
+      }
+      if (wlz != null) {
+        wlz.open(currentId, "r");
+        buf = wlz.readBytes(no, buf, x, y, w, h);
+      }
+    }
+    return buf;
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     try {
@@ -115,7 +158,7 @@ public class WlzReader extends FormatReader {
     catch (DependencyException e) {
       throw new FormatException(NO_WLZ_MSG, e);
     }
-    if(wlz != null) {
+    if (wlz != null) {
       wlz.open(id, "r");
       CoreMetadata md = core.get(0);
       MetadataStore store = makeFilterMetadata();
@@ -133,23 +176,27 @@ public class WlzReader extends FormatReader {
       PositiveFloat x = new PositiveFloat(Math.abs(wlz.getVoxSzX()));
       PositiveFloat y = new PositiveFloat(Math.abs(wlz.getVoxSzY()));
       PositiveFloat z = new PositiveFloat(Math.abs(wlz.getVoxSzZ()));
-      store.setPixelsPhysicalSizeX(x, 0);
-      store.setPixelsPhysicalSizeY(y, 0);
-      store.setPixelsPhysicalSizeZ(z, 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(x, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(y, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeZ(FormatTools.createLength(z, UNITS.MICROM), 0);
       store.setStageLabelName(wlz.getWlzOrgLabelName(), 0);
-      store.setStageLabelX((double )(wlz.getOrgX()), 0);
-      store.setStageLabelY((double )(wlz.getOrgY()), 0);
-      store.setStageLabelZ((double )(wlz.getOrgZ()), 0);
+      store.setStageLabelX(new Length(wlz.getOrgX(), UNITS.REFERENCEFRAME), 0);
+      store.setStageLabelY(new Length(wlz.getOrgY(), UNITS.REFERENCEFRAME), 0);
+      store.setStageLabelZ(new Length(wlz.getOrgZ(), UNITS.REFERENCEFRAME), 0);
       MetadataTools.populatePixels(store, this);
     }
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
-    if(wlz != null) {
-      wlz.close();
-    }
     super.close(fileOnly);
+    if (!fileOnly) {
+      if (wlz != null) {
+        wlz.close();
+        wlz = null;
+      }
+    }
   }
 
   // -- Helper methods --

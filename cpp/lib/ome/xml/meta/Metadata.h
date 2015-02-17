@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -58,17 +58,27 @@ namespace ome
        * the MetadataRetrieve and MetadataStore interfaces for use by
        * stores which provide both interfaces.
        */
-      class Metadata : public MetadataRetrieve,
-                       public MetadataStore
+      class Metadata : virtual public MetadataRetrieve,
+                       virtual public MetadataStore
       {
       protected:
         /// Constructor.
-        Metadata();
+        Metadata()
+        {}
 
       public:
         /// Destructor.
         virtual
-        ~Metadata();
+        ~Metadata()
+        {}
+
+      private:
+        /// Copy constructor (deleted).
+        Metadata (const Metadata&);
+
+        /// Assignment operator (deleted).
+        Metadata&
+        operator= (const Metadata&);
       };
 
     }

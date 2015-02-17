@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -43,10 +39,6 @@ import javax.swing.filechooser.FileFilter;
 /**
  * A file filter that selects files with no extension,
  * for use with a JFileChooser.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/NoExtensionFileFilter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/NoExtensionFileFilter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NoExtensionFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
@@ -55,22 +47,26 @@ public class NoExtensionFileFilter extends FileFilter
   // -- FileFilter API methods --
 
   /** Accepts files with no extension. */
+  @Override
   public boolean accept(File f) {
     if (f.isDirectory()) return true;
     return f.getName().lastIndexOf('.') < 0;
   }
 
   /** Gets the filter's description. */
+  @Override
   public String getDescription() { return "Files with no extension"; }
 
   // -- Object API methods --
 
   /** Gets a string representation of this file filter. */
+  @Override
   public String toString() { return "NoExtensionFileFilter"; }
 
   // -- Comparable API methods --
 
   /** Compares two FileFilter objects alphanumerically. */
+  @Override
   public int compareTo(Object o) {
     FileFilter filter = (FileFilter) o;
     return getDescription().compareToIgnoreCase(filter.getDescription());

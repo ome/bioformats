@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -43,7 +39,6 @@
  * Class:                   AnWTFilter
  *
  * Description:             The abstract class for all analysis wavelet filters
- *
  *
  *
  * COPYRIGHT:
@@ -76,8 +71,6 @@
  * derivative works of this software module.
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *
- *
  *
  */
 package jj2000.j2k.wavelet.analysis;
@@ -214,14 +207,6 @@ public abstract class AnWTFilter implements WaveletFilter{
      *
      * @param inStep This is the step, or interleave factor, of the
      * input signal samples in the inSig array. See above.
-     *
-     * @param tailOvrlp This is the number of samples in the input
-     * signal before the first sample to filter that can be used for
-     * overlap. See above.
-     *
-     * @param headOvrlp This is the number of samples in the input
-     * signal after the last sample to filter that can be used for
-     * overlap. See above.
      *
      * @param lowSig This is the array where the low-pass output
      * signal is placed. It must be of the same type as inSig and it

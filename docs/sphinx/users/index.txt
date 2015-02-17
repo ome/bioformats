@@ -20,13 +20,35 @@ it within ImageJ and Fiji:
     imagej/load-images
     imagej/managing-memory
 
+Command line tools
+==================
+
+The Bio-Formats Command line tools (bftools.zip) provide a complete package
+for carrying out a variety of tasks:
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    comlinetools/index
+    comlinetools/display
+    comlinetools/conversion
+    comlinetools/xml-validation
+    comlinetools/edit
+    comlinetools/domainlist
+    comlinetools/formatlist
+    comlinetools/ijview
+    comlinetools/xmlindent
+    comlinetools/mkfake
+
+
 
 OMERO
 =====
 
-OMERO.importer uses Bio-Formats to read image pixels and propagate metadata 
-into the OMERO.server system. Please refer to the 
-:omerodoc:`OMERO documentation <>` for further information.
+OMERO 5 uses Bio-Formats to read original files from over 130 file formats.
+Please refer to the :omerodoc:`OMERO documentation <>` for further
+information.
 
 .. only:: latex
 
@@ -40,7 +62,7 @@ into the OMERO.server system. Please refer to the
 
 .. only:: html
 
-    Many other software packages can use Bio-Formats to read and write 
+    Many other software packages can use Bio-Formats to read and write
     microscopy formats (click on the package for further details):
 
 Image server applications
@@ -52,19 +74,6 @@ Image server applications
 
     bisque/index
     ome-server/index
-
-
-Command line tools
-==================
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    comlinetools/index
-    comlinetools/display
-    comlinetools/conversion
-    comlinetools/xml-validation
 
 
 Libraries and scripting applications

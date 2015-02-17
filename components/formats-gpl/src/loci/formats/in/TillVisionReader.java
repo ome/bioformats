@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -55,12 +55,11 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * TillVisionReader is the file format reader for TillVision files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TillVisionReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/TillVisionReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TillVisionReader extends FormatReader {
 
@@ -79,7 +78,7 @@ public class TillVisionReader extends FormatReader {
   // -- Fields --
 
   private String[] pixelsFiles;
-  private RandomAccessInputStream pixelsStream;
+  private transient RandomAccessInputStream pixelsStream;
   private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
   private long[] embeddedOffset;
@@ -103,6 +102,7 @@ public class TillVisionReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "vws") || checkSuffix(name, "pst")) {
       return true;
@@ -118,6 +118,7 @@ public class TillVisionReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -141,6 +142,7 @@ public class TillVisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -158,11 +160,13 @@ public class TillVisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return !new Location(id.replaceAll(".vws", ".pst")).exists();
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -180,6 +184,7 @@ public class TillVisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
@@ -187,6 +192,7 @@ public class TillVisionReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // make sure that we have the .vws file
 
@@ -201,11 +207,16 @@ public class TillVisionReader extends FormatReader {
       else if (vwsFile.isDirectory()) {
         parent = pst.getParentFile();
         String[] list = parent.list(true);
+        boolean foundVWS = false;
         for (String f : list) {
           if (checkSuffix(f, "vws")) {
             id = new Location(parent, f).getAbsolutePath();
+            foundVWS = true;
             break;
           }
+        }
+        if (!foundVWS) {
+          throw new FormatException("Could not find .vws file.");
         }
       }
       else throw new FormatException("Could not find .vws file.");
@@ -557,7 +568,9 @@ public class TillVisionReader extends FormatReader {
         // populate PlaneTiming data
 
         for (int q=0; q<core.get(i).imageCount; q++) {
-          store.setPlaneExposureTime(exposureTimes.get(i), i, q);
+          if (exposureTimes.get(i) != null) {
+            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.S), i, q);
+          }
         }
 
         // populate Experiment data

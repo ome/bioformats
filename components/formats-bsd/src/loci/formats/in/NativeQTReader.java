@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -63,10 +59,6 @@ import loci.formats.meta.MetadataStore;
  *
  * Video codecs currently supported: raw, rle, jpeg, mjpb, rpza.
  * Additional video codecs will be added as time permits.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NativeQTReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NativeQTReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -125,7 +117,8 @@ public class NativeQTReader extends FormatReader {
   private boolean interlaced;
 
   /** Flag indicating whether the resource and data fork are separated. */
-  private boolean spork;
+  private boolean separatedFork;
+  private String forkFile;
 
   private boolean flip;
 
@@ -141,6 +134,7 @@ public class NativeQTReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 64;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -157,9 +151,21 @@ public class NativeQTReader extends FormatReader {
       s.indexOf("mdat") >= 0 || s.indexOf("ftypqt") >= 0;
   }
 
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      return forkFile == null ? null : new String[] {forkFile};
+    }
+    return forkFile == null ? new String[] {currentId} :
+      new String[] {currentId, forkFile};
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -264,6 +270,7 @@ public class NativeQTReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -275,18 +282,20 @@ public class NativeQTReader extends FormatReader {
       canUsePrevious = false;
       scale = 0;
       chunkSizes = null;
-      interlaced = spork = flip = false;
+      interlaced = separatedFork = flip = false;
+      forkFile = null;
     }
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    spork = true;
+    separatedFork = true;
     offsets = new Vector<Integer>();
     chunkSizes = new Vector<Integer>();
     LOGGER.info("Parsing tags");
@@ -314,7 +323,7 @@ public class NativeQTReader extends FormatReader {
 
     // this handles the case where the data and resource forks have been
     // separated
-    if (spork) {
+    if (separatedFork) {
       // first we want to check if there is a resource fork present
       // the resource fork will generally have the same name as the data fork,
       // but will have either the prefix "._" or the suffix ".qtr"
@@ -327,11 +336,12 @@ public class NativeQTReader extends FormatReader {
       else base = id;
 
       Location f = new Location(base + ".qtr");
-      LOGGER.debug("Searching for research fork:");
+      LOGGER.debug("Searching for resource fork:");
       if (f.exists()) {
         LOGGER.debug("\t Found: {}", f);
         if (in != null) in.close();
         in = new RandomAccessInputStream(f.getAbsolutePath());
+        forkFile = f.getAbsolutePath();
 
         stripHeader();
         parse(0, 0, in.length());
@@ -346,6 +356,7 @@ public class NativeQTReader extends FormatReader {
           LOGGER.debug("\t Found: {}", f);
           if (in != null) in.close();
           in = new RandomAccessInputStream(f.getAbsolutePath());
+          forkFile = f.getAbsolutePath();
           stripHeader();
           parse(0, in.getFilePointer(), in.length());
           m.imageCount = offsets.size();
@@ -357,6 +368,7 @@ public class NativeQTReader extends FormatReader {
             LOGGER.debug("\t Found: {}", f);
             if (in != null) in.close();
             in = new RandomAccessInputStream(f.getAbsolutePath());
+            forkFile = f.getAbsolutePath();
             stripHeader();
             parse(0, in.getFilePointer(), in.length());
             m.imageCount = offsets.size();
@@ -406,6 +418,10 @@ public class NativeQTReader extends FormatReader {
 
       if (atomSize < 0) {
         LOGGER.warn("QTReader: invalid atom size: {}", atomSize);
+      }
+      else if (atomSize > in.length()) {
+        offset += 4;
+        continue;
       }
 
       LOGGER.debug("Seeking to {}; atomType={}; atomSize={}",
@@ -478,7 +494,7 @@ public class NativeQTReader extends FormatReader {
           // we've found the plane offsets
 
           if (offsets.size() > 0) break;
-          spork = false;
+          separatedFork = false;
           in.skipBytes(4);
           int numPlanes = in.readInt();
           if (numPlanes != getImageCount()) {

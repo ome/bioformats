@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,7 +26,8 @@
 package loci.tests.testng;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,6 @@ import org.testng.annotations.Factory;
 /**
  * Factory for scanning a directory structure and generating instances of
  * {@link FormatWriterTest} based on the image files found.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FormatWriterTestFactory {
 
@@ -51,10 +48,7 @@ public class FormatWriterTestFactory {
 
   @Factory
   public Object[] createInstances() {
-    Vector files = new Vector();
-
-    // create log file
-    TestTools.createLogFile();
+    List files = new ArrayList();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
@@ -106,6 +100,10 @@ public class FormatWriterTestFactory {
     // detect maximum heap size
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);
+
+    // display local information
+    LOGGER.info("user.language = {}", System.getProperty("user.language"));
+    LOGGER.info("user.country = {}", System.getProperty("user.country"));
 
     if (filename == null) {
       // scan for files

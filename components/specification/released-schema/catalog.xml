@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <nextCatalog catalog="2003-FC/catalog.xml"/>
+  <nextCatalog catalog="2003-IR1/catalog.xml"/>
+  <nextCatalog catalog="2003-IR2/catalog.xml"/>
+  <nextCatalog catalog="2003-IR3/catalog.xml"/>
+  <nextCatalog catalog="2003-RC1/catalog.xml"/>
+  <nextCatalog catalog="2003-RC2/catalog.xml"/>
+  <nextCatalog catalog="2003-RC3/catalog.xml"/>
+  <nextCatalog catalog="2003-RC4/catalog.xml"/>
+  <nextCatalog catalog="2003-RC5/catalog.xml"/>
+  <nextCatalog catalog="2003-RC6/catalog.xml"/>
+  <nextCatalog catalog="2007-06/catalog.xml"/>
+  <nextCatalog catalog="2008-02/catalog.xml"/>
+  <nextCatalog catalog="2008-04/catalog.xml"/>
+  <nextCatalog catalog="2008-09/catalog.xml"/>
+  <nextCatalog catalog="2009-09/catalog.xml"/>
+  <nextCatalog catalog="2010-04/catalog.xml"/>
+  <nextCatalog catalog="2010-06/catalog.xml"/>
+  <nextCatalog catalog="2011-06/catalog.xml"/>
+  <nextCatalog catalog="2012-06/catalog.xml"/>
+  <nextCatalog catalog="2013-06/catalog.xml"/>
+  <nextCatalog catalog="2015-01/catalog.xml"/>
+  <nextCatalog catalog="external/catalog.xml"/>
+</catalog>

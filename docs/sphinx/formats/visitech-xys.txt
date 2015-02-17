@@ -4,7 +4,7 @@
 VisiTech XYS
 ===============================================================================
 
-Extensions: .xys, .html 
+Extensions: .xys, .html
 
 Developer: `VisiTech International <http://www.visitech.co.uk/>`_
 

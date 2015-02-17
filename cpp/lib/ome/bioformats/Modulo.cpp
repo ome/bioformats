@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -46,17 +46,29 @@ namespace ome
   {
 
     Modulo::Modulo(std::string dimension):
-      parentDimension(dimension)
+      parentDimension(dimension),
+      start(0.0),
+      step(1.0),
+      end(0.0),
+      parentType(),
+      type(),
+      typeDescription(),
+      unit(),
+      labels()
     {
     }
 
     Modulo::size_type
     Modulo::size() const
     {
+      if (!labels.empty())
+        return labels.size();
+
       /**
        * @todo Use proper rounding (compat function for round(3)).
        */
-      return static_cast<int>(floor(((end - start) / step) + 0.5) + 1.0);
+      return std::max(static_cast<size_type>(floor(((end - start) / step) + 0.5) + 1.0),
+                      size_type(1U));
     }
 
    std::string

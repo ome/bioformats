@@ -4,7 +4,7 @@
 Hamamatsu ndpi
 ===============================================================================
 
-Extensions: .ndpi 
+Extensions: .ndpi
 
 Developer: `Hamamatsu <http://www.hamamatsu.com>`_
 

@@ -1,8 +1,8 @@
 /*
  * #%L
- * Tests for the common I/O package.
+ * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -52,13 +48,11 @@ import org.testng.annotations.Test;
 /**
  * Unit tests for the loci.common.Location class.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/LocationTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/LocationTest.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @see loci.common.Location
  */
 public class LocationTest {
+
+  private static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
   // -- Fields --
 
@@ -174,7 +168,7 @@ public class LocationTest {
   @Test
   public void testIsHidden() {
     for (int i=0; i<files.length; i++) {
-      assertEquals(files[i].getName(), files[i].isHidden(), isHidden[i]);
+      assertEquals(files[i].getName(), files[i].isHidden() || IS_WINDOWS, isHidden[i] || IS_WINDOWS);
     }
   }
 
@@ -213,7 +207,12 @@ public class LocationTest {
     for (Location file : files) {
       String path = file.getAbsolutePath();
       if (path.indexOf("://") == -1) {
-        path = "file://" + path;
+        if (IS_WINDOWS) {
+          path = "file:/" + path;
+        }
+        else {
+          path = "file://" + path;
+        }
       }
       if (file.isDirectory() && !path.endsWith(File.separator)) {
         path += File.separator;

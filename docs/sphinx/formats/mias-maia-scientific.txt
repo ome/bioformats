@@ -4,7 +4,7 @@
 MIAS (Maia Scientific)
 ===============================================================================
 
-Extensions: .tif 
+Extensions: .tif
 
 Developer: `Maia Scientific <http://www.selectscience.net/supplier/maia-scientific/?compID=6088>`_
 

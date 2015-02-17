@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -37,11 +37,12 @@
  */
 
 /**
- * @file regex.h Regular expression type substitution.  This header
- * substitutes Boost types for the same types in the std namespace
- * when not using a conforming C++11 compiler.  This permits all code
- * to use the C++11 standard types irrespective of the compiler being
- * used.
+ * @file ome/compat/regex.h Regular expression type substitution.
+ *
+ * This header substitutes Boost types for the same types in the std
+ * namespace when not using a conforming C++11 compiler.  This permits
+ * all code to use the C++11 standard types irrespective of the
+ * compiler being used.
  */
 
 #ifndef OME_COMPAT_REGEX_H
@@ -58,6 +59,8 @@ namespace std {
   using std::tr1::regex_error;
   using std::tr1::regex_match;
   using std::tr1::regex_search;
+  using std::tr1::cmatch;
+  using std::tr1::smatch;
 }
 # elif OME_HAVE_BOOST_REGEX
 #  include <boost/regex.hpp>
@@ -66,6 +69,8 @@ namespace std {
   using boost::regex_error;
   using boost::regex_match;
   using boost::regex_search;
+  using boost::cmatch;
+  using boost::smatch;
 }
 # else
 #  error An regex implementation is not available

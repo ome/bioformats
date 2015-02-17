@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -47,7 +43,6 @@
  *                          This is a merger of the ScalarDZDeqInt and
  *                          ScalarDZDeqFloat classes by Joel Askelof and Diego
  *                          Santa Cruz.
- *
  *
  *
  * COPYRIGHT:
@@ -148,13 +143,11 @@ public class StdDequantizer extends Dequantizer {
      *
      * @param src From where to obtain the quantized data.
      *
-     * @param rb The number of "range bits" (bitdepth) for each component
+     * @param utrb The number of "range bits" (bitdepth) for each component
      * (must be the "range bits" of the un-transformed components). For a
      * definition of "range bits" see the getNomRangeBits() method.
      *
-     * @param qts The quantizer type spec
-     *
-     * @param qsss The dequantizer step sizes spec
+     * @param decSpec The decoder specifications
      *
      * @see Dequantizer#getNomRangeBits
      *

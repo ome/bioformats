@@ -4,7 +4,7 @@
 cellSens VSI
 ===============================================================================
 
-Extensions: .vsi 
+Extensions: .vsi
 
 Developer: `Olympus <http://www.olympus.com/>`_
 

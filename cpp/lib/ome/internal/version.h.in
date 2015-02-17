@@ -2,7 +2,7 @@
  * #%L
  * OME-INTERNAL C++ headers for internal use only
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -41,9 +41,9 @@
 
 // Version metadata as integers
 
-#define OME_VERSION_MAJOR ${OME_VERSION_MAJOR}
-#define OME_VERSION_MINOR ${OME_VERSION_MINOR}
-#define OME_VERSION_PATCH ${OME_VERSION_PATCH}
+#define OME_VERSION_MAJOR ${OME_VERSION_MAJOR}U
+#define OME_VERSION_MINOR ${OME_VERSION_MINOR}U
+#define OME_VERSION_PATCH ${OME_VERSION_PATCH}U
 
 // Version metadata as strings
 
@@ -63,5 +63,8 @@
 
 // Release date as ISO-8601 string
 #define OME_VCS_DATE_S "${OME_VCS_DATE_S}"
+
+// Current OME model version used by xsd-fu
+#define OME_MODEL_VERSION "${MODEL_VERSION}"
 
 #endif // OME_INTERNAL_VERSION_H

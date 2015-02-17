@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -57,7 +57,7 @@ namespace ome
     class Modulo {
     public:
       /// Size of the subdimension.
-      typedef uint32_t size_type;
+      typedef std::vector<std::string>::size_type size_type;
 
       /// Parent dimension being subdivided.
       std::string parentDimension;
@@ -98,18 +98,52 @@ namespace ome
       size() const;
 
       /**
-         * Convert to XML string.
-         *
-         * The object is serialised to an XML text representation.
-         * This is suitable for embedding in an
-         * ome::xml::model::XMLAnnotation, for example.
-         *
-         * @returns a string containing the XML.
-       * @copydoc ome::OMEXMLMetadata::dumpXML()
+       * Convert to XML string.
+       *
+       * The object is serialized to an XML text representation.
+       * This is suitable for embedding in an
+       * ome::xml::model::XMLAnnotation, for example.
+       *
+       * @returns a string containing the XML.
+       * @copydoc ome::xml::meta::OMEXMLMetadata::dumpXML()
        */
       std::string
       toXMLAnnotation() const;
     };
+
+    /**
+     * Output Modulo to output stream.
+     *
+     * @param os the output stream.
+     * @param modulo the Modulo to output.
+     * @returns the output stream.
+     */
+    template<class charT, class traits>
+    inline std::basic_ostream<charT,traits>&
+    operator<< (std::basic_ostream<charT,traits>& os,
+                const Modulo& modulo)
+    {
+      os << "parentDimension = " << modulo.parentDimension << '\n'
+         << "start = " << modulo.start << '\n'
+         << "step = " << modulo.step << '\n'
+         << "end = " << modulo.end << '\n'
+         << "parentType = " << modulo.parentType << '\n'
+         << "type = " << modulo.type << '\n'
+         << "typeDescription = " << modulo.typeDescription << '\n'
+         << "unit = " << modulo.unit << '\n'
+         << "labels = ";
+      for (std::vector<std::string>::const_iterator i = modulo.labels.begin();
+           i != modulo.labels.end();
+           ++i)
+        {
+          os << *i;
+          if (i + 1 != modulo.labels.end())
+            os << ", ";
+        }
+      os << '\n';
+
+      return os;
+    }
 
   }
 }

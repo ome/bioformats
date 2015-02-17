@@ -4,9 +4,9 @@
 Zeiss CZI
 ===============================================================================
 
-Extensions: .czi 
+Extensions: `.czi <http://www.zeiss.com/czi>`_
 
-Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+Developer: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 
 
 **Support**
@@ -22,7 +22,7 @@ Supported Metadata Fields: :doc:`Zeiss CZI <zeiss-czi-metadata>`
 
 Freely Available Software:
 
-- `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
+- `Zeiss ZEN 2012 <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-2012.html>`_
 
 
 We currently have:

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -45,8 +41,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -61,9 +59,6 @@ import loci.formats.services.JAIIIOServiceImpl;
  * This class implements JPEG 2000 compression and decompression.
  *
  * <dl>
- * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000Codec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEG2000Codec.java;hb=HEAD">Gitweb</a></dd></dl>
  * </dl>
  */
 public class JPEG2000Codec extends BaseCodec {
@@ -86,6 +81,7 @@ public class JPEG2000Codec extends BaseCodec {
    *
    * @see Codec#compress(byte[], CodecOptions)
    */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -101,7 +97,8 @@ public class JPEG2000Codec extends BaseCodec {
         JPEG2000CodecOptions.getDefaultOptions(options);
     }
 
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    ByteArrayHandle handle = new ByteArrayHandle();
+    RandomAccessOutputStream out = new RandomAccessOutputStream(handle);
     BufferedImage img = null;
 
     int next = 0;
@@ -120,7 +117,12 @@ public class JPEG2000Codec extends BaseCodec {
       if (j2kOptions.interleaved) {
         for (int q=0; q<plane; q++) {
           for (int c=0; c<j2kOptions.channels; c++) {
-            b[c][q] = data[next++];
+            if (next < data.length) {
+              b[c][q] = data[next++];
+            }
+            else {
+              break;
+            }
           }
         }
       }
@@ -188,6 +190,7 @@ public class JPEG2000Codec extends BaseCodec {
 
     try {
       service.writeImage(out, img, j2kOptions);
+      out.close();
     }
     catch (IOException e) {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
@@ -196,7 +199,36 @@ public class JPEG2000Codec extends BaseCodec {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
     }
 
-    return out.toByteArray();
+    try {
+      RandomAccessInputStream is = new RandomAccessInputStream(handle);
+      try {
+        is.seek(0);
+        if (!j2kOptions.writeBox) {
+          while (is.getFilePointer() < is.length()) {
+            // checking both 0xff4f and 0xff51 prevents this from
+            // stopping at an escaped 0xff4f (i.e. 0x00ff4f) sequence
+            // in the box
+            while ((is.readShort() & 0xffff) != 0xff4f) {
+              is.seek(is.getFilePointer() - 1);
+            }
+            if ((is.readShort() & 0xffff) == 0xff51) {
+              break;
+            }
+            is.seek(is.getFilePointer() - 2);
+          }
+          is.seek(is.getFilePointer() - 4);
+        }
+        byte[] buf = new byte[(int) (is.length() - is.getFilePointer())];
+        is.readFully(buf);
+        return buf;
+      }
+      finally {
+        is.close();
+      }
+    }
+    catch (IOException e) {
+    }
+    return null;
   }
 
   /**
@@ -206,6 +238,7 @@ public class JPEG2000Codec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
@@ -235,6 +268,7 @@ public class JPEG2000Codec extends BaseCodec {
    *
    * @see Codec#decompress(byte[], CodecOptions)
    */
+  @Override
   public byte[] decompress(byte[] buf, CodecOptions options)
     throws FormatException
   {

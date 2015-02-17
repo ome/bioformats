@@ -1,19 +1,21 @@
-        xerces::dom::Document Value_document = 0;
-//        try
-//          {
-            /// @todo Parse document from string value.
-//          }
-        // TODO: Catch and/or rethrow actual xerces exceptions...
+        /// @todo Catch and/or rethrow actual xerces exceptions
+
+        // Don't validate.  Currently fails due to inheriting our
+        // schema if no namespace was explicitly specified.
+        std::string wrappedValue("<wrapped>");
+        wrappedValue += value;
+        wrappedValue += "</wrapped>";
+        xerces::dom::ParseParameters params;
+        params.validationScheme = xercesc::XercesDOMParser::Val_Never;
+        xerces::dom::Document Value_document(ome::xerces::dom::createDocument(wrappedValue, params));
         xerces::dom::Element value_element = document.createElementNS(NAMESPACE, "Value");
-        // TODO: Wrap in document
-        xerces::dom::NodeList Value_subNodes = Value_document->getChildNodes();
+        xerces::dom::NodeList Value_subNodes = Value_document.getDocumentElement().getChildNodes();
 
         for (xerces::dom::NodeList::iterator elem = Value_subNodes.begin();
              elem != Value_subNodes.end();
              ++elem)
           {
-            // TODO: Wrap importNode in document.
-            xerces::dom::Node Value_subNode = document->importNode(*elem, true);
+            xerces::dom::Node Value_subNode(document->importNode(elem->get(), true), false);
             value_element.appendChild(Value_subNode);
           }
         element.appendChild(value_element);

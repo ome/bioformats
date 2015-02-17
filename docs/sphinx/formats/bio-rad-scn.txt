@@ -4,7 +4,7 @@
 Bio-Rad SCN
 ===============================================================================
 
-Extensions: .scn 
+Extensions: .scn
 
 Developer: Bio-Rad
 

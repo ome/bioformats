@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -37,9 +37,10 @@
  */
 
 /**
- * @file variant.h Variant type limit workaround.  This header
- * increases the Boost MPL size limits, if required.  Some older
- * versions of Boost.Variant throw runtime exceptions when using
+ * @file ome/compat/variant.h Variant type limit workaround.
+ *
+ * This header increases the Boost MPL size limits, if required.  Some
+ * older versions of Boost.Variant throw runtime exceptions when using
  * Variant and MPL with a number of types over a compile-time limit.
  */
 
@@ -55,11 +56,11 @@
 # endif
 # ifndef BOOST_MPL_LIMIT_VECTOR_SIZE
 /// MPL vector size limit increase.
-#  define BOOST_MPL_LIMIT_VECTOR_SIZE 30
+#  define BOOST_MPL_LIMIT_VECTOR_SIZE 40
 # endif
 # ifndef BOOST_MPL_LIMIT_LIST_SIZE
 /// MPL list size limit increase.
-#  define BOOST_MPL_LIMIT_LIST_SIZE 30
+#  define BOOST_MPL_LIMIT_LIST_SIZE 40
 # endif
 #endif
 
@@ -69,6 +70,7 @@
 #include <boost/mpl/vector.hpp>
 
 #include <boost/variant/apply_visitor.hpp>
+//#include <boost/variant/multivisitors.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/variant.hpp>
 

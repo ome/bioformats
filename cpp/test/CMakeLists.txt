@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -36,13 +36,13 @@
 
 include_directories(${GTEST_INCLUDE_DIR})
 
-if(BUILD_TESTS)
-  set(test_main_sources main.cpp)
-
-  add_library(testmain STATIC ${test_main_sources})
-
-  set(TEST_LIBS testmain ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-endif(BUILD_TESTS)
+# Add test, making sure it's run with a suitable environment.
+# If updated, make sure to update the wrappers in cpp/cmake.
+function(bf_add_test)
+  add_test(${ARGV})
+  set_tests_properties(${ARGV0}
+    PROPERTIES ENVIRONMENT "BIOFORMATS_SCHEMADIR=${PROJECT_SOURCE_DIR}/components/specification/released-schema")
+endfunction()
 
 add_subdirectory(ome-compat)
 add_subdirectory(ome-internal)

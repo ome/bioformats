@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -43,7 +39,6 @@
  * Class:                   PktHeaderBitReader
  *
  * Description:             Bit based reader for packet headers
- *
  *
  *
  * COPYRIGHT:
@@ -77,8 +72,6 @@
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  *
- *
- *
  */
 
 
@@ -90,7 +83,6 @@ import java.io.*;
 /**
  * This class provides a bit based reading facility from a byte based one,
  * applying the bit unstuffing procedure as required by the packet headers.
- *
  */
 class PktHeaderBitReader {
 

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -90,10 +90,10 @@ namespace ome
 {% for value in klass.possibleValues %}\
               /// ${value}
 {% if value == klass.possibleValues[-1] %}\
-              ${enum_value_name(value).upper()}
+              ${enum_value_name(value, False).upper()}
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              ${enum_value_name(value).upper()},
+              ${enum_value_name(value, False).upper()},
 {% end %}\
 {% end %}\
             };
@@ -225,10 +225,10 @@ namespace ome
             {
 {% for value in klass.possibleValues %}\
 {% if value == klass.possibleValues[-1] %}\
-              smap("${value}", ${klass.langType}::${enum_value_name(value).upper()}),
+              smap("${value}", ${klass.langType}::${enum_value_name(value, False).upper()}),
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              smap("${value}", ${klass.langType}::${enum_value_name(value).upper()}),
+              smap("${value}", ${klass.langType}::${enum_value_name(value, False).upper()}),
 {% end %}\
 {% end %}\
             };
@@ -237,10 +237,10 @@ namespace ome
             {
 {% for value in klass.possibleValues %}\
 {% if value == klass.possibleValues[-1] %}\
-              smap("${value.lower()}", ${klass.langType}::${enum_value_name(value).upper()})
+              smap("${value.lower()}", ${klass.langType}::${enum_value_name(value, False).upper()})
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              smap("${value.lower()}", ${klass.langType}::${enum_value_name(value).upper()}),
+              smap("${value.lower()}", ${klass.langType}::${enum_value_name(value, False).upper()}),
 {% end %}\
 {% end %}\
             };
@@ -249,10 +249,10 @@ namespace ome
             {
 {% for value in klass.possibleValues %}\
 {% if value == klass.possibleValues[-1] %}\
-              vmap(${klass.langType}::${enum_value_name(value).upper()}, "${value}")
+              vmap(${klass.langType}::${enum_value_name(value, False).upper()}, "${value}")
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              vmap(${klass.langType}::${enum_value_name(value).upper()}, "${value}"),
+              vmap(${klass.langType}::${enum_value_name(value, False).upper()}, "${value}"),
 {% end %}\
 {% end %}\
             };

@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,19 +34,32 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS})
 
-xsd_fu(omexml_model OME_XML_GENERATED_MODEL_HEADERS OME_XML_GENERATED_MODEL_SOURCES)
-xsd_fu(omexml_model_enums OME_XML_GENERATED_ENUMS_HEADERS OME_XML_GENERATED_ENUMS_SOURCES)
-xsd_fu_header(omexml_model_enum_includeall OME_XML_GENERATED_ENUMINCLUDE_HEADERS)
-xsd_fu(metadata OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
-xsd_fu(omexml_metadata OME_XML_GENERATED_METAOME_HEADERS OME_XML_GENERATED_METAOME_SOURCES)
+xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
+xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
+
+# Set ${OME_XML_GENERATED_MODEL_HEADERS}, ${OME_XML_GENERATED_ENUMS_HEADERS}
+# and ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
+foreach(hdr ${model_headers})
+  get_filename_component(hdr_name ${hdr} NAME)
+  get_filename_component(hdr_dir ${hdr} PATH)
+  file(RELATIVE_PATH hdr_dir_rel "${GEN_DIR}/ome/xml" ${hdr_dir})
+  string(TOUPPER "${hdr_dir_rel}" hdr_dir_rel)
+  string(REPLACE "/" "_" hdr_dir_rel "${hdr_dir_rel}")
+  list(APPEND "OME_XML_GENERATED_${hdr_dir_rel}_HEADERS" "${hdr}")
+endforeach(hdr)
 
 set(OME_XML_STATIC_SOURCES
-  meta/BaseMetadata.cpp
-  meta/Metadata.cpp
-  meta/MetadataRoot.cpp
+  meta/MetadataException.cpp
   meta/OMEXMLMetadataRoot.cpp
+  meta/Convert.cpp
+  model/Catalog.cpp
+  model/ModelException.cpp
+  model/detail/OMEModel.cpp
+  model/detail/OMEModelObject.cpp
+  model/detail/Parse.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -56,21 +69,30 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveFloat.cpp
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
-  model/primitives/Timestamp.cpp
-  model/OMEModel.cpp
-  model/OMEModelImpl.cpp
-  model/OMEModelObject.cpp)
+  model/primitives/Timestamp.cpp)
 
-set(OME_BIOFORMATS_META_STATIC_HEADERS
+# Not installed, internal only.
+set(OME_XML_META_PRIVATE_STATIC_HEADERS
+    meta/Convert.h)
+
+set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
     meta/Metadata.h
+    meta/MetadataException.h
     meta/MetadataRoot.h
     meta/OMEXMLMetadataRoot.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
+    model/ModelException.h
     model/OMEModel.h
-    model/OMEModelImpl.h
-    model/OMEModelObject.h)
+    model/OMEModelObject.h
+    model/OriginalMetadataAnnotation.h)
+
+set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
+    model/detail/OMEModel.h
+    model/detail/OMEModelObject.h
+    model/OriginalMetadataAnnotation.cpp
+    model/detail/Parse.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
     model/enums/EnumerationException.h)
@@ -90,26 +112,24 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
 
 set(OME_XML_STATIC_HEADERS
     ${OME_XML_STATIC_MODEL_HEADERS}
+    ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
     ${OME_XML_STATIC_PRIMITIVES_HEADERS}
     ${OME_XML_STATIC_ENUMS_HEADERS})
 
 set(OME_XML_GENERATED_HEADERS
     ${OME_XML_GENERATED_META_HEADERS}
-    ${OME_XML_GENERATED_METAOME_HEADERS}
     ${OME_XML_GENERATED_MODEL_HEADERS}
-    ${OME_XML_GENERATED_ENUMS_HEADERS}
-    ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
+    ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
 
 set(OME_XML_HEADERS
+    ${OME_XML_PRIVATE_STATIC_HEADERS}
     ${OME_XML_STATIC_HEADERS}
     ${OME_XML_GENERATED_HEADERS})
 
 set(OME_XML_SOURCES
     ${OME_XML_STATIC_SOURCES}
     ${OME_XML_GENERATED_META_SOURCES}
-    ${OME_XML_GENERATED_METAOME_SOURCES}
-    ${OME_XML_GENERATED_MODEL_SOURCES}
-    ${OME_XML_GENERATED_ENUMS_SOURCES})
+    ${OME_XML_GENERATED_MODEL_SOURCES})
 
 add_library(ome-xml SHARED
             ${OME_XML_SOURCES}
@@ -123,11 +143,13 @@ install(TARGETS ome-xml LIBRARY
 
 set(ome_xml_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xml")
 
-install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS} ${OME_XML_GENERATED_METAOME_HEADERS}
+install(FILES ${OME_XML_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS}
         DESTINATION ${ome_xml_includedir}/meta)
-install(FILES ${OME_XML_STATIC_MODEL_HEADERS} ${OME_XML_GENERATED_MODEL_HEADERS} ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
+install(FILES ${OME_XML_STATIC_MODEL_HEADERS} ${OME_XML_GENERATED_MODEL_HEADERS}
         DESTINATION ${ome_xml_includedir}/model)
-install(FILES ${OME_XML_STATIC_ENUMS_HEADERS} ${OME_XML_GENERATED_ENUMS_HEADERS}
+install(FILES ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
+        DESTINATION ${ome_xml_includedir}/model/detail)
+install(FILES ${OME_XML_STATIC_ENUMS_HEADERS} ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS}
         DESTINATION ${ome_xml_includedir}/model/enums)
 install(FILES ${OME_XML_STATIC_PRIMITIVES_HEADERS} ${OME_XML_GENERATED_PRIMITIVES_HEADERS}
         DESTINATION ${ome_xml_includedir}/model/primitives)
@@ -145,12 +167,21 @@ header_include_list_write(OME_XML_STATIC_HEADERS OME_XML_GENERATED_HEADERS ome/x
 
 # Add target to generate all xsd-fu sources
 add_custom_target(gensrc DEPENDS
-  ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
-  ${OME_XML_GENERATED_ENUMS_HEADERS}
-  ${OME_XML_GENERATED_ENUMS_SOURCES}
-  ${OME_XML_GENERATED_METAOME_HEADERS}
-  ${OME_XML_GENERATED_METAOME_SOURCES}
   ${OME_XML_GENERATED_META_HEADERS}
   ${OME_XML_GENERATED_META_SOURCES}
   ${OME_XML_GENERATED_MODEL_HEADERS}
-  ${OME_XML_GENERATED_MODEL_SOURCES})
+  ${OME_XML_GENERATED_MODEL_SOURCES}
+  ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
+
+# Find and install all schemas
+file(GLOB OME_SCHEMAS RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/released-schema/"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/catalog.xml"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/2*/*.xsd"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/2*/catalog.xml"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/external/*.xsd"
+     "${PROJECT_SOURCE_DIR}/components/specification/released-schema/external/catalog.xml")
+foreach(schema ${OME_SCHEMAS})
+  get_filename_component(SCHEMA_RELEASE ${schema} PATH)
+  install(FILES "${PROJECT_SOURCE_DIR}/components/specification/released-schema/${schema}"
+          DESTINATION "${OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR}/${SCHEMA_RELEASE}")
+endforeach(schema)

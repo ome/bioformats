@@ -1,9 +1,32 @@
 /*
+ * #%L
+ * The OME Data Model specification
+ * %%
+ * Copyright (C) 2003 - 2014 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
+/*
  * integration.XMLWriter
  *
  *------------------------------------------------------------------------------
- *  Copyright (C) 2006-2013 University of Dundee. All rights reserved.
- *
+ *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
  *
  * 	This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -120,15 +143,15 @@ public class XMLWriter
 
 	/** The schemas. */
 	private static final String[] SCHEMAS = {
-	    "http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd"};
+	    "http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd"};
 
 	/** The XML namespace. */
 	private static final String XML_NS =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-06";
+		"http://www.openmicroscopy.org/Schemas/OME/2015-01";
 
 	/** The XML namespace. */
 	private static final String BIN_NS =
-		"http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06";
+		"http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01";
 
 	/** The XSI namespace. */
 	private static final String XSI_NS =
@@ -136,7 +159,7 @@ public class XMLWriter
 
 	/** The schema location. */
 	private static final String SCHEMA_LOCATION =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd";
+		"http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd";
 
 	/** A default plane. */
 	private static final String PLANE =
@@ -206,6 +229,9 @@ public class XMLWriter
 		//Add Planar data
 		if (binaryData) {
 			NodeList nodes = document.getElementsByTagName(BIN_DATA_NS + ":" + BIN_DATA_TAG);
+			if (nodes == null || nodes.getLength() == 0) {
+			    nodes = document.getElementsByTagName(BIN_DATA_TAG);
+			}
 			for (int i = 0; i < nodes.getLength(); i++) {
 				nodes.item(i).setTextContent(PLANE);
 			}

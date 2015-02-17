@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -38,10 +34,6 @@ package loci.formats.codec;
 
 /**
  * Options for compressing and decompressing JPEG-2000 data.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000CodecOptions.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEG2000CodecOptions.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEG2000CodecOptions extends CodecOptions {
 
@@ -66,12 +58,18 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
   /**
    * The resolution level as would be provided to:
-   * {@link com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam#setResolution(int)}
+   * {@link com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam#setResolution(int)}
    * (READ). Leaving this value <code>null</code> signifies that when a JPEG
    * 2000 parameter set is created for the purposes of compression the number
    * of decomposition levels will be left as the default.
    */
   public Integer resolution;
+
+  /**
+   * Whether or not to write a boxed stream, i.e. with SOC and SIZ markers.
+   * By default, a raw code stream is written.
+   */
+  public boolean writeBox = true;
 
   // -- Constructors --
 
@@ -113,6 +111,7 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
     j2kOptions.quality = j2kOptions.lossless ? Double.MAX_VALUE : 10;
     j2kOptions.codeBlockSize = new int[] {64, 64};
+    j2kOptions.writeBox = true;
 
     return j2kOptions;
   }

@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -37,6 +37,8 @@
 if(BUILD_TESTS)
   include_directories(${OME_TOPLEVEL_INCLUDES})
 
-  header_test_from_file(ome-internal "" ome/internal)
-  add_test(ome-internal/headers ome-internal-headers)
+  if(extended-tests)
+    header_test_from_file(ome-internal "" ome/internal)
+    bf_add_test(ome-internal/headers ome-internal-headers)
+  endif(extended-tests)
 endif(BUILD_TESTS)

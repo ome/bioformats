@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ###
 # #%L
 # Bio-Formats autogen package for programmatically generating source code.
 # %%
-# Copyright (C) 2007 - 2013 Open Microscopy Environment:
+# Copyright (C) 2007 - 2014 Open Microscopy Environment:
 #   - Board of Regents of the University of Wisconsin-Madison
 #   - Glencoe Software, Inc.
 #   - University of Dundee
@@ -34,7 +34,7 @@ HEADER='# This file documents the metadata support for each file format that\n# 
 rm $outputFile
 echo -e $HEADER >> $outputFile
 
-readers=`ls $baseDir/formats-gpl/**/src/loci/formats/in/*Reader.java && ls $baseDir/formats-bsd/**/src/loci/formats/in/*Reader.java`
+readers=`ls $baseDir/formats-gpl/**/src/loci/formats/in/*Reader.java | sort -f && ls $baseDir/formats-bsd/**/src/loci/formats/in/*Reader.java | sort -f`
 
 for reader in $readers
 do

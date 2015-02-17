@@ -12,6 +12,9 @@
 {% def counter(parent, obj, indexes) %}\
 	public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
 	{
+{% if debug %}\
+		// MARKER [A-IMP]
+{% end debug %}\
 		// Parents: ${repr(parents[obj.name])}
 {% if obj.isReference %}\
 		// ${obj.name} is a reference
@@ -37,8 +40,16 @@
 {% end %}\
 {% end %}\
 	{
+{% if debug %}\
+		// MARKER [B-IMP]
+{% end debug %}\
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
+{% when is_abstract(parent) and prop.isReference and prop.maxOccurs > 1 %}\
+		// ${parent} is abstract proprietary, is reference and occurs more than once
+		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
+		return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
+{% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${parent} is abstract proprietary
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
@@ -78,6 +89,9 @@
 {% end %}\
 {% end %}\
 	{
+{% if debug %}\
+		// MARKER [C-IMP]
+{% end debug %}\
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
@@ -209,7 +223,7 @@ ${customContent[obj.name][prop.name]}
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -250,16 +264,25 @@ ${customContent[obj.name][prop.name]}
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.meta;
+package ${lang.omexml_metadata_package};
 
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import ${lang.omexml_model_package}.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
- * DOMs for the current version of OME-XML. It requires the
- * ome.xml.model package to compile (part of ome-xml.jar).
+ * DOMs for the current version of OME-XML.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
@@ -290,18 +313,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		if (root instanceof OMEXMLMetadataRoot)
 			this.root = (OMEXMLMetadataRoot) root;
-		else
-			throw new IllegalArgumentException("Expecting OMEXMLMetadataRoot class or subclass.");
-		model = new OMEModelImpl();
-	}
-
-	@Deprecated
-	public void setRoot(Object root)
-	{
-		if (root instanceof OMEXMLMetadataRoot)
-			this.root = (OMEXMLMetadataRoot) root;
-		else if (root instanceof OME)
-			this.root = new OMEXMLMetadataRoot((OME) root);
 		else
 			throw new IllegalArgumentException("Expecting OMEXMLMetadataRoot class or subclass.");
 		model = new OMEModelImpl();
@@ -347,6 +358,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
   public int getLongAnnotationAnnotationCount(int longAnnotationIndex) {
     return root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getMapAnnotationAnnotationCount(int mapAnnotationIndex) {
+    return root.getStructuredAnnotations().getMapAnnotation(mapAnnotationIndex).sizeOfLinkedAnnotationList();
   }
 
   public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
@@ -424,8 +439,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 {% if parents[o.name] is not None and not o.isAbstract %}\
 	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\
-{% if fu.max_occurs_under_parent(model, k, o.name) > 1 \
-      and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
 
 {% end %}\
@@ -445,13 +459,40 @@ ${counter(k, o, v)}\
 		return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
 	}
 
-	// -- Entity retrieval (code generated definitions) --
-
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
 	{
 		return root.getUUID();
 	}
+
+	/** Gets the Map value associated with this annotation */
+	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
+	{
+		// The getValue returns an ${lang.omexml_model_package}.MapPairs, 
+		// the getMap returns the java.util.Map holding the MapPairs
+		return root.getStructuredAnnotations().getMapAnnotation(mapAnnotationIndex).getValue().getPairs();
+	}
+
+	/** Gets the Map value associated with this generic light source */
+	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+	{
+		GenericExcitationSource o = (GenericExcitationSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
+		// The first getMap returns an ${lang.omexml_model_package}.Map which
+		// extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
+		// the java.util.Map holding the MapPairs
+		return o.getMap().getPairs();
+	}
+
+	/** Gets the Map value associated with this imaging environment */
+	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
+	{
+		// The first getMap returns an ${lang.omexml_model_package}.Map which
+		// extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
+		// the java.util.Map holding the MapPairs
+		return root.getImage(imageIndex).getImagingEnvironment().getMap().getPairs();
+	}
+
+	// -- Entity retrieval (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -485,7 +526,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
 
@@ -507,6 +548,11 @@ ${getter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -548,13 +594,67 @@ ${getter(k, o, prop, v)}\
 		// TODO: To implement
 	}
 
-	// -- Entity storage (code generated definitions) --
-
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)
 	{
 		root.setUUID(uuid);
 	}
+
+	/** Sets the Map value associated with this annotation */
+	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
+	{
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfMapAnnotationList() == mapAnnotationIndex)
+		{
+			o1.addMapAnnotation(new MapAnnotation());
+		}
+		MapAnnotation o2 = o1.getMapAnnotation(mapAnnotationIndex);
+        ${lang.omexml_model_package}.MapPairs valueAsPairs = new ${lang.omexml_model_package}.MapPairs(value);
+		o2.setValue(valueAsPairs);
+	}
+
+	/** Sets the Map value associated with this generic light source */
+	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
+	{
+		OME o0 = root;
+		if (o0.sizeOfInstrumentList() == instrumentIndex)
+		{
+			o0.addInstrument(new Instrument());
+		}
+		Instrument o1 = o0.getInstrument(instrumentIndex);
+		if (o1.sizeOfLightSourceList() == lightSourceIndex)
+		{
+			o1.addLightSource(new GenericExcitationSource());
+		}
+		LightSource o2 = o1.getLightSource(lightSourceIndex);
+		${lang.omexml_model_package}.Map mapAsOmeMap = new ${lang.omexml_model_package}.Map(map);
+		((GenericExcitationSource)o2).setMap(mapAsOmeMap);
+	}
+
+	/** Sets the Map value associated with this imaging environment */
+	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
+	{
+		OME o0 = root;
+		if (o0.sizeOfImageList() == imageIndex)
+		{
+			o0.addImage(new Image());
+		}
+		Image o1 = o0.getImage(imageIndex);
+		if (o1.getImagingEnvironment() == null)
+		{
+			o1.setImagingEnvironment(new ImagingEnvironment());
+		}
+		ImagingEnvironment o2 = o1.getImagingEnvironment();
+		${lang.omexml_model_package}.Map mapAsOmeMap = new ${lang.omexml_model_package}.Map(map);
+		o2.setMap(mapAsOmeMap);
+	}
+
+	// -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -587,7 +687,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
 
@@ -609,6 +709,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

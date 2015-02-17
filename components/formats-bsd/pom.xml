@@ -44,11 +44,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>lwf-stubs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>ome-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -65,37 +60,17 @@
     <dependency>
       <groupId>org.scijava</groupId>
       <artifactId>native-lib-loader</artifactId>
-      <version>2.0-SNAPSHOT</version>
+      <version>2.0.2</version>
     </dependency>
     <dependency>
       <groupId>com.jgoodies</groupId>
-      <artifactId>forms</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.2</version>
+      <artifactId>jgoodies-forms</artifactId>
+      <version>${jgoodies-forms.version}</version>
     </dependency>
     <dependency>
      <groupId>com.esotericsoftware.kryo</groupId>
      <artifactId>kryo</artifactId>
-     <version>2.21</version>
-     <classifier>shaded</classifier>
-       <exclusions>
-         <exclusion>
-           <groupId>com.esotericsoftware.reflectasm</groupId>
-           <artifactId>reflectasm</artifactId>
-         </exclusion>
-         <exclusion>
-           <groupId>com.esotericsoftware.minlog</groupId>
-           <artifactId>minlog</artifactId>
-         </exclusion>
-         <exclusion>
-           <groupId>org.objenesis</groupId>
-           <artifactId>objenesis</artifactId>
-         </exclusion>
-      </exclusions>
+     <version>${kryo.version}</version>
     </dependency>
     <dependency>
       <groupId>org.perf4j</groupId>
@@ -106,6 +81,31 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>lwf-stubs</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mipav-stubs</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+	    <groupId>com.drewnoakes</groupId>
+	    <artifactId>metadata-extractor</artifactId>
+	    <version>2.6.2</version>
     </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
@@ -216,7 +216,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>formats-bsd</licenseName>
+          <licenseName>bsd_2</licenseName>
           <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
         </configuration>
       </plugin>
@@ -307,6 +307,12 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+    </repository>
+    <repository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
@@ -318,8 +324,18 @@
 
   <pluginRepositories>
     <pluginRepository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+    </pluginRepository>
+    <pluginRepository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>imagej.thirdparty</id>
+      <url>http://maven.imagej.net/content/repositories/thirdparty</url>
     </pluginRepository>
   </pluginRepositories>
 

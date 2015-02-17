@@ -168,7 +168,7 @@ FindBugs Ant task
     License:   LGPL
 
 JGoodies Forms
-    JAR file:  forms-1.3.0.jar
+    JAR file:  jgoodies-forms-1.7.2.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
     Notes:     used for layout by Data Browser and OME Notes
     License:   BSD
@@ -186,13 +186,13 @@ JUnit
     License:   Common Public License
 
 Logback
-    JAR file:  logback-core-1.0.9.jar, logback-classic-1.0.9.jar
+    JAR file:  logback-core-1.1.1.jar, logback-classic-1.1.1.jar
     URL:       http://logback.qos.ch
     Notes:     (none)
     License:   EPL v1.0 and LGPL 2.1
 
 Native library loader
-    JAR file:  native-lib-loader-2.0-SNAPSHOT.jar
+    JAR file:  native-lib-loader-2.0.2.jar
     URL:       http://github.com/scijava/native-lib-loader
     Notes:     required for loading native libraries
     License:   BSD
@@ -204,7 +204,7 @@ NetCDF
     License:   LGPL
 
 Simple Logging Facade for Java API
-    JAR file:  slf4j-api-1.7.2.jar
+    JAR file:  slf4j-api-1.7.6.jar
     URL:       http://www.slf4j.org/
     Notes:     used for all logging in loci.*
     License:   BSD
@@ -248,19 +248,19 @@ Apache XML-RPC
   <import file="ant/toplevel.xml"/>
 
   <!-- OME-compatibility layer -->
-  <target name="dist" description="OME hook: build and publish Bio-Formats dist">
+  <target name="dist">
     <ant target="tools"/>
     <ant target="tools-ome"/>
     <ant target="jar-formats-bsd-tests"/>
     <ant antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
   </target>
 
-  <target name="eclipse" description="OME hook: create eclipse .classpath file">
+  <target name="eclipse">
     <ant target="eclipse" antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
   </target>
 
-  <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests"/>
+  <target name="test-compile" depends="compile-tests"/>
 
-  <target name="integration" description="No-op"/>
+  <target name="integration"/>
 
 </project>

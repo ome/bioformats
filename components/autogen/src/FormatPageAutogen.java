@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats autogen package for programmatically generating source code.
  * %%
- * Copyright (C) 2007 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2007 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,10 +45,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/autogen/src/FormatPageAutogen.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/autogen/src/FormatPageAutogen.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -94,12 +90,11 @@ public class FormatPageAutogen {
       if (table.containsKey("extensions")) {
         context.put("extensions", table.get("extensions"));
       }
-      if (table.containsKey("unindexedExtensions")) {
-        context.put("unindexedExtensions",
-          ", " + table.get("unindexedExtensions"));
+      if (table.containsKey("indexExtensions")) {
+        context.put("indexExtensions", table.get("indexExtensions"));
       }
-      else {
-        context.put("unindexedExtensions", "");
+      else if (table.containsKey("extensions")){
+        context.put("indexExtensions", table.get("extensions"));
       }
       context.put("owner", table.get("owner"));
       context.put("developer", table.get("developer"));
@@ -196,6 +191,7 @@ public class FormatPageAutogen {
     }
 
     Arrays.sort(sortedTable, new Comparator<IniTable>() {
+      @Override
       public int compare(IniTable t1, IniTable t2) {
         String page1 = t1.get("pagename");
         String page2 = t2.get("pagename");

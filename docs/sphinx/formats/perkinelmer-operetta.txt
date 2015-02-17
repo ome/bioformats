@@ -4,7 +4,7 @@
 PerkinElmer Operetta
 ===============================================================================
 
-Extensions: .tiff, .xml 
+Extensions: .tiff, .xml
 
 Developer: `PerkinElmer <http://www.perkinelmer.com/>`_
 

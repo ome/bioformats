@@ -1,13 +1,13 @@
 .. index:: $format
-#if ($extensions)
-.. index:: $extensions
+#if ($indexExtensions)
+.. index:: $indexExtensions
 #end
 
 $format
 ===============================================================================
 
 #if ($extensions)
-Extensions: $extensions $unindexedExtensions
+Extensions: $extensions
 #end
 
 #if ($developer)

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -62,10 +58,6 @@ import org.slf4j.LoggerFactory;
  *   <li>C:\data\Kevin\80&lt;01-59&gt;0&lt;2-3&gt;.pic</li>
  *   <li>/data/Josiah/cell-Z&lt;0-39&gt;.C&lt;0-1&gt;.tiff</li>
  * </ul>
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/FilePattern.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/FilePattern.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -510,6 +502,8 @@ public class FilePattern {
     if (dot < 0) baseSuffix = "";
     else baseSuffix = baseSuffix.substring(dot + 1);
 
+    String absoluteBase = new Location(base).getAbsolutePath();
+
     ArrayList<String> patterns = new ArrayList<String>();
     int[] exclude = new int[] {AxisGuesser.S_AXIS};
     for (String name : nameList) {
@@ -525,9 +519,16 @@ public class FilePattern {
       String checkPattern = findPattern(name, dir, nameList);
       String[] checkFiles = new FilePattern(checkPattern).getFiles();
 
+      // ensure that escaping is consistent with the base file
+      // this is needed to make sure that file grouping works correctly
+      // on Windows
+      for (int q=0; q<checkFiles.length; q++) {
+        checkFiles[q] = new Location(checkFiles[q]).getAbsolutePath();
+      }
+
       if (!patterns.contains(pattern) && (!new Location(pattern).exists() ||
-        base.equals(pattern)) && patternSuffix.equals(baseSuffix) &&
-        DataTools.indexOf(checkFiles, base) >= 0)
+        absoluteBase.equals(pattern)) && patternSuffix.equals(baseSuffix) &&
+        DataTools.indexOf(checkFiles, absoluteBase) >= 0)
       {
         patterns.add(pattern);
       }

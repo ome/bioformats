@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,6 +50,10 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * BaseZeissReader contains common functionality required by
  * readers for Zeiss AxioVision formats.
@@ -76,8 +80,8 @@ public abstract class BaseZeissReader extends FormatReader {
 
   protected Vector<String> tagsToParse;
   protected int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  protected Hashtable<Integer, Double> stageX = new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, Double> stageY = new Hashtable<Integer, Double>();
+  protected Hashtable<Integer, Length> stageX = new Hashtable<Integer, Length>();
+  protected Hashtable<Integer, Length> stageY = new Hashtable<Integer, Length>();
   protected int timepoint = 0;
 
   protected int[] channelColors;
@@ -88,10 +92,10 @@ public abstract class BaseZeissReader extends FormatReader {
       new Hashtable<Integer, Double>();
   protected Hashtable<Integer, Double> detectorOffset =
       new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, PositiveInteger> emWavelength =
-      new Hashtable<Integer, PositiveInteger>();
-  protected Hashtable<Integer, PositiveInteger> exWavelength =
-      new Hashtable<Integer, PositiveInteger>();
+  protected Hashtable<Integer, Length> emWavelength =
+      new Hashtable<Integer, Length>();
+  protected Hashtable<Integer, Length> exWavelength =
+      new Hashtable<Integer, Length>();
   protected Hashtable<Integer, String> channelName =
       new Hashtable<Integer, String>();
   protected Double physicalSizeX, physicalSizeY, physicalSizeZ;
@@ -355,9 +359,9 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setImageName("Tile #" + (i + 1), i);
         }
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+        Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+        Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);
@@ -385,7 +389,7 @@ public abstract class BaseZeissReader extends FormatReader {
           try { exp = new Double(exposure); }
           catch (NumberFormatException e) { }
           catch (NullPointerException e) { }
-          store.setPlaneExposureTime(exp, i, plane);
+          store.setPlaneExposureTime(new Time(exp, UNITS.S), i, plane);
 
           int posIndex = i * getImageCount() + plane;
 
@@ -393,7 +397,7 @@ public abstract class BaseZeissReader extends FormatReader {
             String timestamp = timestamps.get(new Integer(posIndex));
             long stamp = parseTimestamp(timestamp);
             stamp -= firstStamp;
-            store.setPlaneDeltaT(new Double(stamp / 1600000), i, plane);
+            store.setPlaneDeltaT(new Time(new Double(stamp / 1600000), UNITS.S), i, plane);
           }
 
           if (stageX.get(posIndex) != null) {
@@ -414,6 +418,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
@@ -682,6 +687,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     int pixelType = getPixelType();
     if ((pixelType != FormatTools.INT8 && pixelType != FormatTools.UINT8) ||
@@ -708,6 +714,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     int pixelType = getPixelType();
     if ((pixelType != FormatTools.INT16 && pixelType != FormatTools.UINT16) ||
@@ -733,6 +740,7 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -862,8 +870,8 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1) {
-            Integer wave = new Integer(value);
-            PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+            Double wave = new Double(value);
+            Length emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               emWavelength.put(cIndex, emission);
             }
@@ -871,9 +879,8 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1) {
-            Integer wave = new Integer((int) Double.parseDouble(value));
-            PositiveInteger excitation =
-              FormatTools.getExcitationWavelength(wave);
+            Double wave = new Double(Double.parseDouble(value));
+            Length excitation = FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               exWavelength.put(cIndex, excitation);
             }
@@ -932,7 +939,7 @@ public abstract class BaseZeissReader extends FormatReader {
           }
         }
         else if (key.startsWith("Objective Working Distance")) {
-          store.setObjectiveWorkingDistance(new Double(value), 0, 0);
+          store.setObjectiveWorkingDistance(new Length(new Double(value), UNITS.MICROM), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
           String immersion = "Other";
@@ -948,11 +955,13 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
         }
         else if (key.startsWith("Stage Position X")) {
-          stageX.put(image, new Double(value));
+          final Double number = Double.valueOf(value);
+          stageX.put(image, new Length(number, UNITS.REFERENCEFRAME));
           addGlobalMetaList("X position for position", value);
         }
         else if (key.startsWith("Stage Position Y")) {
-          stageY.put(image, new Double(value));
+          final Double number = Double.valueOf(value);
+          stageY.put(image, new Length(number, UNITS.REFERENCEFRAME));
           addGlobalMetaList("Y position for position", value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
@@ -1007,7 +1016,7 @@ public abstract class BaseZeissReader extends FormatReader {
    * Parse timestamp from string.  Note this may be ZVI-specific
    * due to the use of locale-specific date formats in the TIFF XML.
    * @param s
-   * @return
+   * @return a timestamp
    */
   private long parseTimestamp(String s) {
     long stamp = 0;
@@ -1126,6 +1135,7 @@ public abstract class BaseZeissReader extends FormatReader {
       return keyid != -1 && value != null && category != -1;
     }
 
+    @Override
     public String toString()
     {
       String s = new String();
@@ -2047,6 +2057,7 @@ public abstract class BaseZeissReader extends FormatReader {
     int pointCount = 0;
     double points[];
 
+    @Override
     public String toString() {
       String s = new String();
       s += "  SHAPE: " + id;
@@ -2092,6 +2103,7 @@ public abstract class BaseZeissReader extends FormatReader {
     public String name; // Layer name. (Assumed.)
     public ArrayList<Shape> shapes = new ArrayList<Shape>(); // List of shape objects, displayed deepest first, topmost last.
 
+    @Override
     public String toString() {
       String s = new String();
       s += "LAYER: " + key;

@@ -4,7 +4,7 @@
 FEI
 ===============================================================================
 
-Extensions: .img 
+Extensions: .img
 
 Developer: `FEI <http://www.fei.com/>`_
 

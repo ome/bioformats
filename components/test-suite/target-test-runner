@@ -165,7 +165,8 @@ if __name__ == '__main__':
         pass
     classpath = "%s:./build/classes" % classpath
     for f in glob.glob("../../artifacts/*.jar"):
-        classpath += ":%s" % f
+        if not f.endswith("bioformats_package.jar") and not f.endswith("loci_tools.jar") and f.find("log4j") == -1:
+            classpath += ":%s" % f
 
     revision = None
     try:

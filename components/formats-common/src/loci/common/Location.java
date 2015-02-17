@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -44,6 +40,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -53,22 +50,21 @@ import org.slf4j.LoggerFactory;
  * Pseudo-extension of java.io.File that supports reading over HTTP (among
  * other things).
  * It is strongly recommended to use this instead of java.io.File.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Location.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/Location.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Location {
 
   // -- Constants --
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
+  private static final boolean IS_WINDOWS =
+    System.getProperty("os.name").startsWith("Windows");
 
   // -- Static fields --
 
   /** Map from given filenames to actual filenames. */
   private static ThreadLocal<HashMap<String, Object>> idMap =
     new ThreadLocal<HashMap<String, Object>>() {
+      @Override
       protected HashMap<String, Object> initialValue() {
         return new HashMap<String, Object>();
       }
@@ -87,7 +83,7 @@ public class Location {
       this.time = time;
     }
   }
-  private static ConcurrentHashMap<String, ListingsResult> fileListings =
+  private static Map<String, ListingsResult> fileListings =
     new ConcurrentHashMap<String, ListingsResult>();
 
   // -- Fields --
@@ -292,6 +288,12 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable,
     boolean allowArchiveHandles) throws IOException
   {
+    return getHandle(id, writable, allowArchiveHandles, 0);
+  }
+
+  public static IRandomAccess getHandle(String id, boolean writable,
+    boolean allowArchiveHandles, int bufferSize) throws IOException
+  {
     LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
     IRandomAccess handle = getMappedFile(id);
     if (handle == null) {
@@ -301,17 +303,23 @@ public class Location {
       if (id.startsWith("http://")) {
         handle = new URLHandle(mapId);
       }
-      else if (allowArchiveHandles && ZipHandle.isZipFile(id)) {
+      else if (allowArchiveHandles && ZipHandle.isZipFile(mapId)) {
         handle = new ZipHandle(mapId);
       }
-      else if (allowArchiveHandles && GZipHandle.isGZipFile(id)) {
+      else if (allowArchiveHandles && GZipHandle.isGZipFile(mapId)) {
         handle = new GZipHandle(mapId);
       }
-      else if (allowArchiveHandles && BZip2Handle.isBZip2File(id)) {
+      else if (allowArchiveHandles && BZip2Handle.isBZip2File(mapId)) {
         handle = new BZip2Handle(mapId);
       }
       else {
-        handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        if (bufferSize > 0) {
+          handle = new NIOFileHandle(
+            new File(mapId), writable ? "rw" : "r", bufferSize);
+        }
+        else {
+          handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        }
       }
     }
     LOGGER.trace("Location.getHandle: {} -> {}", id, handle);
@@ -383,6 +391,10 @@ public class Location {
             }
           }
         }
+        is.close();
+        if (files.size() == 0) {
+          return null;
+        }
       }
       catch (IOException e) {
         LOGGER.trace("Could not retrieve directory listing", e);
@@ -393,14 +405,16 @@ public class Location {
       if (file == null) return null;
       String[] f = file.list();
       if (f == null) return null;
+      String path = file.getAbsolutePath();
       for (String name : f) {
         if (!noHiddenFiles || !(name.startsWith(".") ||
-          new Location(file.getAbsolutePath(), name).isHidden()))
+          new Location(path, name).isHidden()))
         {
           files.add(name);
         }
       }
     }
+
     result = files.toArray(new String[files.size()]);
     if (cacheListings) {
       fileListings.put(key, new ListingsResult(result, System.nanoTime()));
@@ -418,7 +432,7 @@ public class Location {
    * @see java.io.File#canRead()
    */
   public boolean canRead() {
-    return isURL ? (isDirectory() || isFile()) : file.canRead();
+    return isURL ? (isDirectory() || isFile() || exists()) : file.canRead();
   }
 
   /**
@@ -487,6 +501,7 @@ public class Location {
    * @see java.io.File#equals(Object)
    * @see java.net.URL#equals(Object)
    */
+  @Override
   public boolean equals(Object obj) {
     String absPath = getAbsolutePath();
     String thatPath = null;
@@ -501,6 +516,7 @@ public class Location {
     return absPath.equals(thatPath);
   }
 
+  @Override
   public int hashCode() {
     return getAbsolutePath().hashCode();
   }
@@ -635,7 +651,13 @@ public class Location {
    * @see java.io.File#isHidden()
    */
   public boolean isHidden() {
-    return isURL ? false : file.isHidden();
+    if (isURL) {
+      return false;
+    }
+    if (IS_WINDOWS) {
+      return file.isHidden();
+    }
+    return file.getName().startsWith(".");
   }
 
   /**
@@ -714,6 +736,7 @@ public class Location {
    * @see java.io.File#toString()
    * @see java.net.URL#toString()
    */
+  @Override
   public String toString() {
     return isURL ? url.toString() : file.toString();
   }

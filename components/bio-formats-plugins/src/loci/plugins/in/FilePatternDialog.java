@@ -1,10 +1,10 @@
 /*
  * #%L
- * Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -57,10 +57,6 @@ import loci.formats.FilePatternBlock;
 
 /**
  * Bio-Formats Importer file pattern dialog box.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/FilePatternDialog.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/FilePatternDialog.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FilePatternDialog extends ImporterDialog {
 
@@ -109,6 +105,7 @@ public class FilePatternDialog extends ImporterDialog {
 
     // construct dialog
     GenericDialog gd = new GenericDialog("Bio-Formats File Stitching") {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         super.itemStateChanged(e);
 
@@ -135,11 +132,10 @@ public class FilePatternDialog extends ImporterDialog {
       }
     };
     gd.addMessage(
-      "The list of files to be grouped can be specified in one of three ways:");
+      "The list of files to be grouped can be specified in one of the following ways:");
 
     // option one
 
-    gd.addCheckbox("", true);
     int len = id.length() + 1;
     if (len > 80) len = 80;
 
@@ -147,35 +143,40 @@ public class FilePatternDialog extends ImporterDialog {
     fp = new FilePattern(id);
 
     String[] prefixes = fp.getPrefixes();
-    int[] counts = fp.getCount();
-    paddingZeros = new int[counts.length];
-    String[][] elements = fp.getElements();
 
-    BigInteger[] first = fp.getFirst();
-    BigInteger[] step = fp.getStep();
+    if (prefixes.length > 0) {
+      gd.addCheckbox("Dimensions", true);
 
-    for (int i=0; i<prefixes.length; i++) {
-      String prefix = "Axis_" + (i + 1);
-      gd.addStringField(prefix + "_number_of_images", "" + counts[i]);
-      gd.addStringField(prefix + "_axis_first_image", first[i].toString());
-      gd.addStringField(prefix + "_axis_increment", step[i].toString());
+      int[] counts = fp.getCount();
+      paddingZeros = new int[counts.length];
+      String[][] elements = fp.getElements();
 
-      try {
-        paddingZeros[i] = elements[i][0].length() -
-          String.valueOf(Integer.parseInt(elements[i][0])).length();
+      BigInteger[] first = fp.getFirst();
+      BigInteger[] step = fp.getStep();
+
+      for (int i=0; i<prefixes.length; i++) {
+        String prefix = "Axis_" + (i + 1);
+        gd.addStringField(prefix + "_number_of_images", "" + counts[i]);
+        gd.addStringField(prefix + "_axis_first_image", first[i].toString());
+        gd.addStringField(prefix + "_axis_increment", step[i].toString());
+
+        try {
+          paddingZeros[i] = elements[i][0].length() -
+            String.valueOf(Integer.parseInt(elements[i][0])).length();
+        }
+        catch (NumberFormatException e) { }
       }
-      catch (NumberFormatException e) { }
     }
 
     // option two
 
-    gd.addCheckbox("", false);
-    gd.addStringField("File name contains:", "");
+    gd.addCheckbox("File_name", false);
+    gd.addStringField("contains", "");
 
     // option three
 
-    gd.addCheckbox("", false);
-    gd.addStringField("Pattern: ", id, len);
+    gd.addCheckbox("Pattern", false);
+    gd.addStringField("name", id, len);
 
     rebuild(gd);
 
@@ -270,22 +271,24 @@ public class FilePatternDialog extends ImporterDialog {
 
     int row = 1;
 
-    builder.add((Component) labels.get(0), cc.xyw(1, row, 5));
-    row += 2;
-    builder.add((Component) checkboxes.get(0), cc.xy(1, row));
-
-    for (int i=0; i<fields.size()-2; i++) {
-      builder.add((Component) labels.get(i + 1), cc.xy(3, row));
-      builder.add((Component) fields.get(i), cc.xy(5, row));
+    if (checkboxes.size() > 2 && fields.size() > 2) {
+      builder.add((Component) labels.get(0), cc.xyw(1, row, 5));
       row += 2;
+      builder.add((Component) checkboxes.get(0), cc.xy(1, row));
+
+      for (int i=0; i<fields.size()-2; i++) {
+        builder.add((Component) labels.get(i + 1), cc.xy(3, row));
+        builder.add((Component) fields.get(i), cc.xy(5, row));
+        row += 2;
+      }
     }
 
-    builder.add((Component) checkboxes.get(1), cc.xy(1, row));
+    builder.add((Component) checkboxes.get(checkboxes.size() - 2), cc.xy(1, row));
     builder.add((Component) labels.get(labels.size() - 2), cc.xy(3, row));
     builder.add((Component) fields.get(fields.size() - 2), cc.xy(5, row));
     row += 2;
 
-    builder.add((Component) checkboxes.get(2), cc.xy(1, row));
+    builder.add((Component) checkboxes.get(checkboxes.size() - 1), cc.xy(1, row));
     builder.add((Component) labels.get(labels.size() - 1), cc.xy(3, row));
     builder.add((Component) fields.get(fields.size() - 1), cc.xy(5, row));
     row += 2;

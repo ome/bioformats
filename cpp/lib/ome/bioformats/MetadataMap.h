@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_METADATAMAP_H
 #define OME_BIOFORMATS_METADATAMAP_H
 
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <map>
@@ -396,6 +397,63 @@ namespace ome
         discriminating_map.erase(pos);
       }
 
+    private:
+      /// Functor to get a map key.
+      struct getkey
+      {
+        /**
+         * Get key from pair.
+         *
+         * @param pair the pair to use.
+         * @returns the key.
+         */
+        template <typename T>
+        typename T::first_type operator()(T pair) const
+        {
+          return pair.first;
+        }
+      };
+
+    public:
+      /**
+       * Get a list of keys in the map.
+       *
+       * @note This is inefficient, and exists solely for
+       * compatibility with the Java implementation.  Using the
+       * iterator interface directly should be preferred.
+       *
+       * @returns a sorted list of keys.
+       */
+      std::vector<key_type>
+      keys() const
+      {
+        std::vector<key_type> ret;
+        std::transform(begin(), end(), std::back_inserter(ret), getkey());
+        std::sort(ret.begin(), ret.end());
+
+        return ret;
+      }
+
+      /**
+       * Merge a separate map into this map.
+       *
+       * @param map the map to merge.
+       * @param prefix a prefix to append to the keys of the map being
+       * merged.
+       */
+      void
+      merge(const MetadataMap& map,
+            const std::string& prefix)
+      {
+        for (const_iterator i = map.begin();
+             i != map.end();
+             ++i)
+          {
+            map_type::value_type v(prefix + i->first, i->second);
+            insert(v);
+          }
+      }
+
       /**
        * Create a flattened map.
        *
@@ -737,7 +795,7 @@ namespace ome
         {
           typename std::vector<T>::size_type idx = 1;
           // Determine the optimal padding based on the maximum digit count.
-          uint32_t sf = static_cast<uint32_t>(std::log10(static_cast<float>(c.size()))) + 1;
+          int sf = static_cast<int>(std::log10(static_cast<float>(c.size()))) + 1;
           for (typename std::vector<T>::const_iterator i = c.begin();
                i != c.end();
                ++i, ++idx)
@@ -800,7 +858,7 @@ namespace ome
         {
           typename std::vector<T>::size_type idx = 1;
           // Determine the optimal padding based on the maximum digit count.
-          uint32_t sf = static_cast<uint32_t>(std::log10(static_cast<float>(c.size()))) + 1;
+          int sf = static_cast<int>(std::log10(static_cast<float>(c.size()))) + 1;
           for (typename std::vector<T>::const_iterator i = c.begin();
                i != c.end();
                ++i, ++idx)

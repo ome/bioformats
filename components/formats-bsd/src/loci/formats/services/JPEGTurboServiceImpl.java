@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -58,10 +54,6 @@ import org.scijava.nativelib.NativeLibraryUtil;
  * Based upon the NDPI to OME-TIFF converter by Matthias Baldauf:
  *
  * http://matthias-baldauf.at/software/ndpi_converter/
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/JPEGTurboServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/JPEGTurboServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert <melissa at glencoesoftware.com>
  */
@@ -117,6 +109,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- JPEGTurboService API methods --
 
+  @Override
   public void setRestartMarkers(long[] markers) {
     restartMarkers.clear();
     if (markers != null) {
@@ -126,6 +119,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public long[] getRestartMarkers() {
     long[] markers = new long[restartMarkers.size()];
     for (int i=0; i<markers.length; i++) {
@@ -134,6 +128,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     return markers;
   }
 
+  @Override
   public void initialize(RandomAccessInputStream jpeg, int width, int height)
     throws ServiceException, IOException
   {
@@ -217,6 +212,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate,
     int width, int height)
     throws IOException
@@ -272,12 +268,13 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     return buf;
   }
 
+  @Override
   public byte[] getTile(int tileX, int tileY) throws IOException {
     if (header == null) {
       header = getFixedHeader();
     }
 
-    int dataLength = header.length + 2;
+    long dataLength = header.length + 2;
 
     int start = tileX + (tileY * xTiles * restartInterval);
     for (int row=0; row<restartInterval; row++) {
@@ -287,12 +284,12 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
         long startOffset = restartMarkers.get(start);
         long endOffset = restartMarkers.get(end);
 
-        dataLength += (int) (endOffset - startOffset);
+        dataLength += (endOffset - startOffset);
       }
       start += xTiles;
     }
 
-    byte[] data = new byte[dataLength];
+    byte[] data = new byte[(int) dataLength];
 
     int offset = 0;
     System.arraycopy(header, 0, data, offset, header.length);
@@ -338,6 +335,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  @Override
   public void close() throws IOException {
     logger = null;
     imageWidth = 0;

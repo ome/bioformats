@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -55,24 +55,11 @@ namespace ome
        * OME-XML metadata root node.
        */
       class OMEXMLMetadataRoot : public ::ome::xml::model::OME,
-				 public ::ome::xml::meta::MetadataRoot
+				 virtual public ::ome::xml::meta::MetadataRoot
       {
       public:
         /// Constructor.
         OMEXMLMetadataRoot();
-
-	/**
-         * Construct OME-XML model recursively from an XML DOM tree.
-         *
-         * @param element root of the XML DOM tree to from which to
-         * construct the model object graph.
-         * @param model handler for the OME model used to track
-         * instances and references seen during the update.
-         * @throws EnumerationException if there is an error
-         * instantiating an enumeration during model object creation.
-         */
-        OMEXMLMetadataRoot(::ome::xerces::dom::Element& element,
-			   ::ome::xml::model::OMEModel& model);
 
 	/// Copy constructor.
 	OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy);
@@ -84,6 +71,11 @@ namespace ome
         /// Destructor.
         virtual
         ~OMEXMLMetadataRoot();
+
+      private:
+        /// Assignment operator (deleted).
+        OMEXMLMetadataRoot&
+        operator= (const OMEXMLMetadataRoot&);
       };
 
     }

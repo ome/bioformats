@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -57,10 +53,6 @@ import com.esotericsoftware.kryo.io.Output;
 /**
  * Top-level class for reading from various data sources.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/RandomAccessInputStream.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/RandomAccessInputStream.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -83,6 +75,30 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   /** Maximum number of bytes to search when searching through the stream. */
   protected static final int MAX_SEARCH_SIZE = 512 * 1024 * 1024; // 512 MB
 
+  /** Various bitmasks for the 0000xxxx side of a byte. */
+  private static final int[] BACK_MASK = {
+    0x00, // 00000000
+    0x01, // 00000001
+    0x03, // 00000011
+    0x07, // 00000111
+    0x0F, // 00001111
+    0x1F, // 00011111
+    0x3F, // 00111111
+    0x7F  // 01111111
+  };
+
+  /** Various bitmasks for the xxxx0000 side of a byte. */
+  private static final int[] FRONT_MASK = {
+    0x0000, // 00000000
+    0x0080, // 10000000
+    0x00C0, // 11000000
+    0x00E0, // 11100000
+    0x00F0, // 11110000
+    0x00F8, // 11111000
+    0x00FC, // 11111100
+    0x00FE  // 11111110
+  };
+
   // -- Fields --
 
   protected IRandomAccess raf;
@@ -96,6 +112,8 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
 
   protected String encoding = Constants.ENCODING;
 
+  private int currentBit;
+
   // -- Constructors --
 
   /**
@@ -104,6 +122,15 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    */
   public RandomAccessInputStream(String file) throws IOException {
     this(Location.getHandle(file), file);
+  }
+
+  /**
+   * Constructs a hybrid RandomAccessFile/DataInputStream
+   * around the given file.
+   */
+  public RandomAccessInputStream(String file, int bufferSize) throws IOException
+  {
+    this(Location.getHandle(file, false, true, bufferSize), file);
   }
 
   /** Constructs a random access stream around the given handle. */
@@ -174,6 +201,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   }
 
   /** Closes the streams. */
+  @Override
   public void close() throws IOException {
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("RandomAccessInputStream {} CLOSE", hashCode());
@@ -350,39 +378,139 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     return saveString ? out.toString() : null;
   }
 
+  /**
+   * Skips a number of bits in the BitBuffer.
+   *
+   * @param bits Number of bits to skip
+   */
+  public void skipBits(long bits) throws IOException {
+    if (bits < 0) {
+      throw new IllegalArgumentException("Bits to skip cannot be negative");
+    }
+
+    bits += currentBit;
+    int bytesToSkip = (int) (bits / 8);
+    currentBit = (int) (bits % 8);
+    if (bytesToSkip > 0) {
+      skipBytes(bytesToSkip);
+    }
+  }
+
+  /**
+   * Returns an int value representing the value of the bits read from
+   * the byte array, from the current position. Bits are extracted from the
+   * "left side" or high side of the byte.<p>
+   * The current position is modified by this call.<p>
+   * Bits are pushed into the int from the right, endianness is not
+   * considered by the method on its own. So, if 5 bits were read from the
+   * buffer "10101", the int would be the integer representation of
+   * 000...0010101 on the target machine. <p>
+   * In general, this also means the result will be positive unless a full
+   * 32 bits are read. <p>
+   * Requesting more than 32 bits is allowed, but only up to 32 bits worth of
+   * data will be returned (the last 32 bits read). <p>
+   *
+   * @param bitsToRead the number of bits to read from the bit buffer
+   * @return the value of the bits read
+   */
+  public int readBits(int bitsToRead) throws IOException {
+    if (bitsToRead < 0) {
+      throw new IllegalArgumentException("Bits to read cannot be negative");
+    }
+
+    if (bitsToRead == 0) {
+      return 0;
+    }
+    int toStore = 0;
+    while (bitsToRead != 0 && getFilePointer() < length()) {
+      if (currentBit < 0 || currentBit > 7) {
+        throw new IllegalArgumentException("byte=" + getFilePointer() +
+          ", bit=" + currentBit);
+      }
+
+      int bitsLeft = 8 - currentBit;
+      if (bitsToRead >= bitsLeft) {
+        toStore <<= bitsLeft;
+        bitsToRead -= bitsLeft;
+        int cb = readByte();
+        if (currentBit == 0) {
+          // we can read in a whole byte, so we'll do that.
+          toStore += cb & 0xff;
+        }
+        else {
+          // otherwise, only read the appropriate number of bits off the back
+          // side of the byte, in order to "finish" the current byte in the
+          // buffer.
+          toStore += cb & BACK_MASK[bitsLeft];
+          currentBit = 0;
+        }
+      }
+      else {
+        // We will be able to finish using the current byte.
+        // read the appropriate number of bits off the front side of the byte,
+        // then push them into the int.
+        toStore = toStore << bitsToRead;
+        int cb = readByte() & 0xff;
+        seek(getFilePointer() - 1);
+        toStore += (cb & (0x00FF - FRONT_MASK[currentBit])) >>
+          (bitsLeft - bitsToRead);
+        currentBit += bitsToRead;
+        bitsToRead = 0;
+      }
+    }
+    return toStore;
+  }
+
+  /**
+   * Checks if the current position is on a byte boundary, that is the next
+   * bit in the byte array is the first bit in a byte.
+   *
+   * @return true if bit is on byte boundary, false otherwise.
+   */
+  public boolean isBitOnByteBoundary() {
+    return currentBit % 8 == 0;
+  }
+
   // -- DataInput API methods --
 
   /** Read an input byte and return true if the byte is nonzero. */
+  @Override
   public boolean readBoolean() throws IOException {
     return raf.readBoolean();
   }
 
   /** Read one byte and return it. */
+  @Override
   public byte readByte() throws IOException {
     return raf.readByte();
   }
 
   /** Read an input char. */
+  @Override
   public char readChar() throws IOException {
     return raf.readChar();
   }
 
   /** Read eight bytes and return a double value. */
+  @Override
   public double readDouble() throws IOException {
     return raf.readDouble();
   }
 
   /** Read four bytes and return a float value. */
+  @Override
   public float readFloat() throws IOException {
     return raf.readFloat();
   }
 
   /** Read four input bytes and return an int value. */
+  @Override
   public int readInt() throws IOException {
     return raf.readInt();
   }
 
   /** Read the next line of text from the input stream. */
+  @Override
   public String readLine() throws IOException {
     String line = findString("\n");
     return line.length() == 0 ? null : line;
@@ -404,36 +532,43 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   }
 
   /** Read eight input bytes and return a long value. */
+  @Override
   public long readLong() throws IOException {
     return raf.readLong();
   }
 
   /** Read two input bytes and return a short value. */
+  @Override
   public short readShort() throws IOException {
     return raf.readShort();
   }
 
   /** Read an input byte and zero extend it appropriately. */
+  @Override
   public int readUnsignedByte() throws IOException {
     return raf.readUnsignedByte();
   }
 
   /** Read two bytes and return an int in the range 0 through 65535. */
+  @Override
   public int readUnsignedShort() throws IOException {
     return raf.readUnsignedShort();
   }
 
   /** Read a string that has been encoded using a modified UTF-8 format. */
+  @Override
   public String readUTF() throws IOException {
     return raf.readUTF();
   }
 
   /** Skip n bytes within the stream. */
+  @Override
   public int skipBytes(int n) throws IOException {
     return raf.skipBytes(n);
   }
 
   /** Read bytes from the stream into the given array. */
+  @Override
   public int read(byte[] array) throws IOException {
     int rtn = raf.read(array);
     if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
@@ -443,6 +578,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
+  @Override
   public int read(byte[] array, int offset, int n) throws IOException {
     int rtn = raf.read(array, offset, n);
     if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
@@ -462,6 +598,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   }
 
   /** Read bytes from the stream into the given array. */
+  @Override
   public void readFully(byte[] array) throws IOException {
     raf.readFully(array);
   }
@@ -469,24 +606,28 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
+  @Override
   public void readFully(byte[] array, int offset, int n) throws IOException {
     raf.readFully(array, offset, n);
   }
 
   // -- InputStream API methods --
 
+  @Override
   public int read() throws IOException {
     int b = readByte();
     if (b == -1 && (getFilePointer() >= length())) return 0;
     return b;
   }
 
+  @Override
   public int available() throws IOException {
     long remain = length() - getFilePointer();
     if (remain > Integer.MAX_VALUE) remain = Integer.MAX_VALUE;
     return (int) remain;
   }
 
+  @Override
   public void mark(int readLimit) {
     try {
       markedPos = getFilePointer();
@@ -496,10 +637,12 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     }
   }
 
+  @Override
   public boolean markSupported() {
     return true;
   }
 
+  @Override
   public void reset() throws IOException {
     if (markedPos < 0) throw new IOException("No mark set");
     seek(markedPos);
@@ -507,6 +650,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
 
   // -- Externalizable API methods --
 
+  @Override
   public void read(Kryo kryo, Input in) {
     raf = (IRandomAccess) kryo.readClassAndObject(in);
     file = kryo.readObjectOrNull(in, String.class);
@@ -523,6 +667,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     encoding = kryo.readObject(in, String.class);
   }
 
+  @Override
   public void write(Kryo kryo, Output out) {
     kryo.writeClassAndObject(out, raf);
     kryo.writeObjectOrNull(out, file, String.class);

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # mkfake: a script for creating a fake file / directory structures
 #         on the file system

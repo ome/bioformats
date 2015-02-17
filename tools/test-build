@@ -30,7 +30,7 @@ cpp()
             cmake /usr/src/gtest
             make
         )
-        GTEST_ROOT=$(pwd)/gtest cmake ../..
+        CXX="g++ -std=gnu++98" GTEST_ROOT="$(pwd)/gtest" cmake -Dcxxstd-autodetect=OFF -Dextended-tests=OFF ../.. || cat CMakeFiles/CMakeError.log
         make
         make test
         make DESTDIR=../install install
@@ -57,11 +57,10 @@ cppwrap()
 sphinx()
 {
     (
+        flake8 -v .
         export SPHINXOPTS="-W"
-        cd docs/sphinx
-        make clean
-        make html
-        make latexpdf
+        ant -Dsphinx.opts=$SPHINXOPTS clean-docs-sphinx
+        ant -Dsphinx.opts=$SPHINXOPTS docs-sphinx
     )
 }
 
@@ -76,6 +75,7 @@ antbuild()
       ant clean compile-formats-common
       ant clean compile-bio-formats-plugins
       ant clean compile-lwf-stubs
+      ant clean compile-mipav-stubs
       ant clean compile-mdbtools
       ant clean compile-metakit
       ant clean compile-ome-xml
@@ -85,6 +85,7 @@ antbuild()
       ant clean compile-bio-formats-tools
       ant clean compile-tests
       ant clean compile-turbojpeg
+      ant clean utils
     )
 }
 

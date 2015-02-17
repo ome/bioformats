@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,17 +34,28 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS}
+                    ${TIFF_INCLUDE_DIR})
 
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
     FormatException.cpp
+    FormatTools.cpp
     MetadataConfigurable.cpp
     MetadataOptions.cpp
+    MetadataTools.cpp
     Modulo.cpp
+    PixelBuffer.cpp
+    PixelProperties.cpp
+    TileBuffer.cpp
+    TileCache.cpp
+    TileCoverage.cpp
     UnknownFormatException.cpp
     UnsupportedCompressionException.cpp
-    Version.cpp)
+    VariantPixelBuffer.cpp
+    Version.cpp
+    XMLTools.cpp)
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
@@ -53,20 +64,80 @@ set(OME_BIOFORMATS_HEADERS
     MetadataMap.h
     FormatHandler.h
     FormatReader.h
+    FormatTools.h
+    FormatWriter.h
     MetadataConfigurable.h
     MetadataOptions.h
+    MetadataTools.h
     Modulo.h
     PixelBuffer.h
     PixelProperties.h
+    TileBuffer.h
+    TileCache.h
+    TileCoverage.h
+    Types.h
     UnknownFormatException.h
     UnsupportedCompressionException.h
-    Version.h)
+    VariantPixelBuffer.h
+    Version.h
+    XMLTools.h)
+
+set(OME_BIOFORMATS_DETAIL_SOURCES
+    detail/FormatReader.cpp
+    detail/FormatWriter.cpp)
+
+set(OME_BIOFORMATS_DETAIL_HEADERS
+    detail/FormatReader.h
+    detail/FormatWriter.h)
+
+set(OME_BIOFORMATS_IN_SOURCES
+    in/MinimalTIFFReader.cpp
+    in/OMETIFFReader.cpp
+    in/TIFFReader.cpp)
+
+set(OME_BIOFORMATS_IN_HEADERS
+    in/MinimalTIFFReader.h
+    in/OMETIFFReader.h
+    in/TIFFReader.h)
+
+set(OME_BIOFORMATS_TIFF_SOURCES
+    tiff/Exception.cpp
+    tiff/Field.cpp
+    tiff/IFD.cpp
+    tiff/ImageJMetadata.cpp
+    tiff/Sentry.cpp
+    tiff/Tags.cpp
+    tiff/TIFF.cpp
+    tiff/TileInfo.cpp)
+
+set(OME_BIOFORMATS_TIFF_HEADERS
+    tiff/Exception.h
+    tiff/Field.h
+    tiff/IFD.h
+    tiff/ImageJMetadata.h
+    tiff/Sentry.h
+    tiff/Tags.h
+    tiff/TIFF.h
+    tiff/TileInfo.h
+    tiff/Types.h)
+
+set(OME_BIOFORMATS_OUT_SOURCES)
+
+set(OME_BIOFORMATS_OUT_HEADERS)
 
 set(BIOFORMATS_SOURCES
-    ${OME_BIOFORMATS_SOURCES})
+    ${OME_BIOFORMATS_SOURCES}
+    ${OME_BIOFORMATS_DETAIL_SOURCES}
+    ${OME_BIOFORMATS_IN_SOURCES}
+    ${OME_BIOFORMATS_OUT_SOURCES}
+    ${OME_BIOFORMATS_TIFF_SOURCES})
 
 set(BIOFORMATS_STATIC_HEADERS
-    ${OME_BIOFORMATS_HEADERS})
+    ${OME_BIOFORMATS_HEADERS}
+    ${OME_BIOFORMATS_DETAIL_HEADERS}
+    ${OME_BIOFORMATS_IN_HEADERS}
+    ${OME_BIOFORMATS_OUT_HEADERS}
+    ${OME_BIOFORMATS_TIFF_HEADERS})
 
 set(BIOFORMATS_GENERATED_HEADERS)
 
@@ -76,7 +147,10 @@ set(BIOFORMATS_HEADERS
 add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-compat ome-xml)
+target_link_libraries(ome-bioformats ome-compat ome-xml
+                      ${Boost_FILESYSTEM_LIBRARY_RELEASE}
+                      ${Boost_SYSTEM_LIBRARY_RELEASE}
+                      ${TIFF_LIBRARIES})
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 install(TARGETS ome-bioformats LIBRARY
@@ -86,6 +160,15 @@ set(ome_bioformats_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/bioformats")
 
 install(FILES ${OME_BIOFORMATS_HEADERS}
         DESTINATION ${ome_bioformats_includedir})
+install(FILES ${OME_BIOFORMATS_DETAIL_HEADERS}
+        DESTINATION ${ome_bioformats_includedir}/detail)
+install(FILES ${OME_BIOFORMATS_IN_HEADERS}
+        DESTINATION ${ome_bioformats_includedir}/in)
+install(FILES ${OME_BIOFORMATS_OUT_HEADERS}
+        DESTINATION ${ome_bioformats_includedir}/out)
+install(FILES ${OME_BIOFORMATS_TIFF_HEADERS}
+        DESTINATION ${ome_bioformats_includedir}/tiff)
+
 
 set(LIBRARY_PREFIX OME_BIOFORMATS)
 set(LIBRARY_NAME ome-bioformats)

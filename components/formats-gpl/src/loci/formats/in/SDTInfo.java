@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,10 +35,6 @@ import loci.common.RandomAccessInputStream;
 /**
  * SDTInfo encapsulates the header information for
  * Becker &amp; Hickl SPC-Image SDT files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SDTInfo.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/SDTInfo.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -79,11 +75,14 @@ public class SDTInfo {
   public static final String Y_STRING = "#SP [SP_SCAN_Y,I,";
   public static final String T_STRING = "#SP [SP_ADC_RE,I,";
   public static final String C_STRING = "#SP [SP_SCAN_RX,I,";
+  
+  public static final String X_IMG_STRING = "#SP [SP_IMG_X,I,";
+  public static final String Y_IMG_STRING = "#SP [SP_IMG_Y,I,";
 
   // -- Fields --
 
   public int width, height, timeBins, channels, timepoints;
-
+ 
   // -- Fields - File header --
 
   /** Software revision number (lower 4 bits &gt;= 10(decimal)). */
@@ -422,7 +421,7 @@ public class SDTInfo {
 
   /** reserved2 now contains block (set) length. */
   public long blockLength; // unsigned
-
+  
   // -- Constructor --
 
   /**
@@ -495,6 +494,10 @@ public class SDTInfo {
     byte[] setupBytes = new byte[setupLength];
     in.readFully(setupBytes);
     setup = new String(setupBytes, Constants.ENCODING);
+    
+    // variables to hold height & width read from header string for measMode 13
+    int mode13width = 0;
+    int mode13height = 0; 
 
     st = new StringTokenizer(setup, "\n");
     while (st.hasMoreTokens()) {
@@ -534,6 +537,20 @@ public class SDTInfo {
         int end = token.indexOf("]", ndx);
         channels = Integer.parseInt(token.substring(ndx, end));
       }
+      
+      else if (token.indexOf(X_IMG_STRING) != -1) {
+        int ndx = token.indexOf(X_IMG_STRING) + X_IMG_STRING.length();
+        int end = token.indexOf("]", ndx);
+        mode13width = Integer.parseInt(token.substring(ndx, end));
+      }
+      
+      else if (token.indexOf(Y_IMG_STRING) != -1) {
+        int ndx = token.indexOf(Y_IMG_STRING) + Y_IMG_STRING.length();
+        int end = token.indexOf("]", ndx);
+        mode13height = Integer.parseInt(token.substring(ndx, end));
+      }
+        
+      
     }
 
     // read measurement data
@@ -678,6 +695,21 @@ public class SDTInfo {
         if (scanY > 0) height = scanY;
         if (adcRE > 0) timeBins = adcRE;
         if (scanRX > 0) channels = scanRX;
+        
+        // measurement mode 0 and 1 are both single-point data
+        if (measMode == 0 || measMode == 1)  {
+          width = 1;
+          height = 1;
+        }  
+        
+        // for measurement_mode 13 one channel is stored in each block 
+        // & width & height are not in scanX & scanY
+        if (measMode == 13)  {
+          width = mode13width;
+          height = mode13height;
+          channels = noOfMeasDescBlocks;  
+        }
+        
       }
 
       if (hasMeasStopInfo) {

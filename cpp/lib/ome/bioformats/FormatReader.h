@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -42,11 +42,14 @@
 #include <vector>
 #include <map>
 
+#include <boost/optional.hpp>
+
 #include <ome/bioformats/CoreMetadata.h>
 #include <ome/bioformats/FileInfo.h>
 #include <ome/bioformats/FormatHandler.h>
 #include <ome/bioformats/MetadataConfigurable.h>
 #include <ome/bioformats/MetadataMap.h>
+#include <ome/bioformats/Types.h>
 
 #include <ome/compat/array.h>
 
@@ -57,21 +60,19 @@ namespace ome
   namespace bioformats
   {
 
-    class PixelBuffer;
-    class PixelBufferRaw;
+    class VariantPixelBuffer;
 
     /**
      * Interface for all biological file format readers.
      *
      * @note No IOException in C++.
-     *
-     * @note Metadata values can't be Object in C++; initially
-     * restricted to std::string only.
      */
     class FormatReader : virtual public FormatHandler,
                          virtual public MetadataConfigurable
     {
     public:
+      using FormatHandler::isThisType;
+
       /// File grouping options.
       enum FileGroupOption
         {
@@ -80,47 +81,80 @@ namespace ome
           CANNOT_GROUP ///< Files can not be grouped.
         };
 
-      /// @copydoc CoreMetadata::dimension_size_type
-      typedef CoreMetadata::dimension_size_type dimension_size_type;
-
-      /// @copydoc CoreMetadata::image_size_type
-      typedef CoreMetadata::image_size_type image_size_type;
-
-      /// @copydoc CoreMetadata::pixel_size_type
-      typedef CoreMetadata::pixel_size_type pixel_size_type;
-
     protected:
+      /**
+       * Sentry for saving and restoring reader series state.
+       *
+       * For any FormatReader method or subclass method which needs to
+       * set and later restore the series/coreIndex/resolution as part
+       * of its operation, this class exists to manage the safe
+       * restoration of the state.  Create an instance of this class
+       * with the reader set to @c *this.  When the instance goes out
+       * of scope, e.g. at the end of a block or method, or when an
+       * exception is thrown, the saved state will be transparently
+       * restored.
+       */
+      class SaveSeries
+      {
+      private:
+        /// Reader for which the state will be saved and restored.
+        const FormatReader& reader;
+        /// Saved state.
+        dimension_size_type coreIndex;
+
+      public:
+        /**
+         * Constructor.
+         *
+         * @param reader the reader to manage.
+         */
+        SaveSeries(const FormatReader& reader):
+          reader(reader),
+          coreIndex(reader.getCoreIndex())
+        {}
+
+        /**
+         * Destructor.
+         *
+         * Saved state will be restored when run.
+         */
+        ~SaveSeries()
+        {
+          try
+            {
+              if (coreIndex != reader.getCoreIndex())
+                reader.setCoreIndex(coreIndex);
+            }
+          catch (...)
+            {
+              // We can't throw in a destructor.
+            }
+        }
+      };
+
       /// Constructor.
-      FormatReader();
+      FormatReader()
+      {}
+
+    private:
+      /// Copy constructor (deleted).
+      FormatReader (const FormatReader&);
+
+      /// Assignment operator (deleted).
+      FormatReader&
+      operator= (const FormatReader&);
 
     public:
       /// Destructor.
       virtual
-      ~FormatReader();
+      ~FormatReader()
+      {}
 
       // Documented in superclass.
       virtual
       bool
-      isThisType(const std::string& name) = 0;
-
-      /**
-       * Check if the given file is a valid instance of this file format.
-       *
-       * @param name the file to open for checking.
-       * @param open If @c true, and the file extension is
-       *   insufficient to determine the file type, the file may be
-       *   opened for further analysis, or other relatively expensive
-       *   file system operations (such as file existence tests and
-       *   directory listings) may be performed.  If @c false, file
-       *   system access is not allowed.
-       * @returns @c true if the file is valid, @c false otherwise.
-       *
-       * @todo Could this method be static and/or const?
-       */
-      virtual
-      bool
-      isThisType(const std::string& name,
-                 bool               open) = 0;
+      isThisType(const boost::filesystem::path& name,
+                 bool                           open = true) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -137,7 +171,7 @@ namespace ome
       virtual
       bool
       isThisType(const uint8_t *begin,
-                 const uint8_t *end) = 0;
+                 const uint8_t *end) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -154,20 +188,7 @@ namespace ome
       virtual
       bool
       isThisType(const uint8_t *begin,
-                 std::size_t    length) = 0;
-
-
-      /**
-       * Check if the given input stream is a valid stream for this file format.
-       *
-       * @param stream the input stream to check.
-       * @returns @c true if the file is valid, @c false otherwise.
-       *
-       * @todo Could this method be static and/or const?
-       */
-      virtual
-      bool
-      isThisType(std::istream& stream) = 0;
+                 std::size_t    length) const = 0;
 
       /**
        * Check if the given input stream is a valid stream for this file format.
@@ -179,7 +200,7 @@ namespace ome
        */
       virtual
       bool
-      isThisType(std::FILE *stream) = 0;
+      isThisType(std::istream& stream) const = 0;
 
       /**
        * Determine the number of image planes in the current file.
@@ -187,7 +208,7 @@ namespace ome
        * @returns the number of image planes.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getImageCount() const = 0;
 
       /**
@@ -324,44 +345,25 @@ namespace ome
       isFalseColor() const = 0;
 
       /**
-       * Get the 8-bit color lookup table associated with the most
-       * recently opened image.
+       * Get the color lookup table associated with an image plane.
        *
        * If no image planes have been opened, or if isIndexed()
-       * returns @c false, then this may throw an exception. If
-       * getPixelType() returns anything other
-       * ome::xml::model::enums::PixelType::UINT8 or
-       * ome::xml::model::enums::PixelType::INT8 this method will
-       * throw an exception.
+       * returns @c false, then this may throw an exception.
+       *
+       * The VariantPixelBuffer will use the X dimension for the value
+       * index and the subchannel dimension for the color samples
+       * (order is RGB).  Depending upon the image type, the size of
+       * the X dimension may vary.  It will typically be 2^8 or 2^16,
+       * but other sizes are possible.
        *
        * @param buf the destination pixel buffer.
-       *
-       * @todo use a more specific buffer type.
-       * @todo throw on failure.
+       * @param no the image index within the file.
+       * @throws FormatException if a lookup table could not be obtained.
        */
       virtual
       void
-      get8BitLookupTable(PixelBufferRaw& buf) const = 0;
-
-      /**
-       * Get the 16-bit color lookup table associated with the most
-       * recently opened image.
-       *
-       * If no image planes have been opened, or if isIndexed()
-       * returns @c false, then this may throw and exception. Also, if
-       * getPixelType() returns anything other than
-       * ome::xml::model::enums::PixelType::UINT16 or
-       * ome::xml::model::enums::PixelType::INT16 this method will
-       * throw an exception.
-       *
-       * @param buf the destination pixel buffer.
-       *
-       * @todo use a more specific buffer type.
-       * @todo throw on failure.
-       */
-      virtual
-      void
-      get16BitLookupTable(PixelBufferRaw& buf) const = 0;
+      getLookupTable(VariantPixelBuffer& buf,
+                     dimension_size_type no = 0U) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -528,7 +530,7 @@ namespace ome
        * Obtain an image plane.
        *
        * Obtain and copy the image plane from the current file into a
-       * PixelBuffer of size
+       * VariantPixelBuffer of size
        *
        * \code{.cpp}
        * getSizeX * getSizeY * bytesPerPixel * getRGBChannelCount()
@@ -541,13 +543,14 @@ namespace ome
        */
       virtual
       void
-      openBytes(image_size_type no, PixelBufferRaw& buf) const = 0;
+      openBytes(dimension_size_type no,
+                VariantPixelBuffer& buf) const = 0;
 
       /**
        * Obtain a sub-image of an image plane.
        *
        * Obtain and copy the sub-image of an image plane from the
-       * current file into a PixelBuffer of size
+       * current file into a VariantPixelBuffer of size
        *
        * \code{.cpp}
        * w * h * bytesPerPixel * getRGBChannelCount()
@@ -564,8 +567,8 @@ namespace ome
        */
       virtual
       void
-      openBytes(image_size_type     no,
-                PixelBufferRaw&     buf,
+      openBytes(dimension_size_type no,
+                VariantPixelBuffer& buf,
                 dimension_size_type x,
                 dimension_size_type y,
                 dimension_size_type w,
@@ -575,28 +578,26 @@ namespace ome
        * Obtain a thumbnail of an image plane.
        *
        * Obtail and copy the thumbnail for the specified image plane
-       * from the current file into a PixelBuffer.
+       * from the current file into a VariantPixelBuffer.
        *
        * @param no the image index within the file.
        * @param buf the destination pixel buffer.
        */
       virtual
       void
-      openThumbBytes(image_size_type no,
-                     PixelBufferRaw& buf) const = 0;
-
-      // Documented in superclass.
-      //virtual
-      //void
-      //close(bool fileOnly) = 0;
+      openThumbBytes(dimension_size_type no,
+                     VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the number of image series in this file.
        *
        * @returns the number of image series.
+       * @throws std::logic_error if the subresolution metadata (if
+       * any) is invalid; this will only occur if the reader sets
+       * invalid metadata.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getSeriesCount() const = 0;
 
       /**
@@ -605,10 +606,15 @@ namespace ome
        * @note This also resets the resolution to 0.
        *
        * @param no the series to activate.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
+       *
+       * @throws std::logic_error if the series is invalid.
        */
       virtual
       void
-      setSeries(image_size_type no) = 0;
+      setSeries(dimension_size_type no) const = 0;
 
       /**
        * Get the active series.
@@ -616,7 +622,7 @@ namespace ome
        * @returns the active series.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getSeries() const = 0;
 
       /**
@@ -709,7 +715,7 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       getUsedFiles(bool noPixels = false) const = 0;
 
       /**
@@ -720,8 +726,8 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
-      getSeriesUsedFiles(bool noPixels = false) = 0;
+      const std::vector<boost::filesystem::path>
+      getSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the files used by this dataset.
@@ -733,7 +739,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedUsedFiles(bool noPixels) = 0;
+      getAdvancedUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the files used by the active series.
@@ -745,7 +751,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedSeriesUsedFiles(bool noPixels) = 0;
+      getAdvancedSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the currently open file.
@@ -753,8 +759,8 @@ namespace ome
        * @returns the filename.
        */
       virtual
-      const std::string&
-      getCurrentFile() = 0;
+      const boost::optional<boost::filesystem::path>&
+      getCurrentFile() const = 0;
 
       /**
        * Get the domains represented by the current file.
@@ -770,9 +776,9 @@ namespace ome
        *
        * The index is computed using the DimensionOrder.
        *
-       * @param z the @c Z coordinate.
-       * @param c the @c C coordinate.
-       * @param t the @c T coordinate.
+       * @param z the @c Z coordinate (real size).
+       * @param c the @c C coordinate (real size).
+       * @param t the @c T coordinate (real size).
        * @returns the linear index.
        *
        * @todo unify with the pixel buffer dimension indexes.
@@ -780,22 +786,75 @@ namespace ome
        * getZCTCoords.
        */
       virtual
-      int
+      dimension_size_type
       getIndex(dimension_size_type z,
                dimension_size_type c,
-               dimension_size_type t) = 0;
+               dimension_size_type t) const = 0;
+
+      /**
+       * Get the linear index of a @c Z, @c C, @c T, @c ModuloZ, @c
+       * ModuloC and @c ModuloT coordinate.
+       *
+       * The index is computed using the DimensionOrder.
+       *
+       * @note The @c Z, @c C and @c T coordinates take the modulo
+       * dimension sizes into account.  The effective size for each of
+       * these dimensions is limited to the total size of the
+       * dimension divided by the modulo size.
+       *
+       * @param z the @c Z coordinate (effective size).
+       * @param c the @c C coordinate (effective size).
+       * @param t the @c T coordinate (effective size).
+       * @param moduloZ the @c ModuloZ coordinate (effective size).
+       * @param moduloC the @c ModuloC coordinate (effective size).
+       * @param moduloT the @c ModuloT coordinate (effective size).
+       * @returns the linear index.
+       *
+       * @todo unify with the pixel buffer dimension indexes.
+       * @todo Don't use separate values to match the return of
+       * getZCTModuloCoords.
+       */
+      virtual
+      dimension_size_type
+      getIndex(dimension_size_type z,
+               dimension_size_type c,
+               dimension_size_type t,
+               dimension_size_type moduloZ,
+               dimension_size_type moduloC,
+               dimension_size_type moduloT) const = 0;
 
       /**
        * Get the @c Z, @c C and @c T coordinate of a linear index.
        *
        * @param index the linear index.
-       * @returns an array containing @c Z, @c C and @c T values.
+       * @returns an array containing @c Z, @c C and @c T values (real
+       * sizes).
        *
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
-      std::array<int, 3>
-      getZCTCoords(int index) = 0;
+      std::array<dimension_size_type, 3>
+      getZCTCoords(dimension_size_type index) const = 0;
+
+      /**
+       * Get the @c Z, @c C, @c T, @c ModuloZ, @c ModuloC and @c
+       * ModuloT coordinate of a linear index.
+       *
+       * @note The @c Z, @c C and @c T coordinates are not the same as
+       * those returned by getZCTCoords(dimension_size_type) because
+       * the size of the modulo dimensions is taken into account.  The
+       * effective size for each of these dimensions is limited to the
+       * total size of the dimension divided by the modulo size.
+       *
+       * @param index the linear index.
+       * @returns an array containing @c Z, @c C, @c T, @c ModuloZ, @c
+       * ModuloC and @c ModuloT values (effective sizes).
+       *
+       * @todo unify with the pixel buffer dimension indexes.
+       */
+      virtual
+      std::array<dimension_size_type, 6>
+      getZCTModuloCoords(dimension_size_type index) const = 0;
 
       /**
        * Get a global metadata value.
@@ -806,11 +865,11 @@ namespace ome
        * @param field the name associated with the metadata field.
        * @returns the value.
        *
-       * @todo throw exception if missing.
+       * @throws boost::bad_get on failure if the key was not found.
        */
       virtual
       const MetadataMap::value_type&
-      getMetadataValue(const std::string& field) = 0;
+      getMetadataValue(const std::string& field) const = 0;
 
       /**
        * Get a series metadata value.
@@ -821,11 +880,11 @@ namespace ome
        * @param field the name associated with the metadata field.
        * @returns the value.
        *
-       * @todo throw exception if missing.
+       * @throws boost::bad_get on failure if the key was not found.
        */
       virtual
       const MetadataMap::value_type&
-      getSeriesMetadataValue(const MetadataMap::key_type& field) = 0;
+      getSeriesMetadataValue(const MetadataMap::key_type& field) const = 0;
 
       /**
        * Get global metadata map.
@@ -860,7 +919,7 @@ namespace ome
        * @returns a const reference to the core metadata.
        */
       virtual
-      const std::vector<CoreMetadata>&
+      const std::vector<std::shared_ptr<CoreMetadata> >&
       getCoreMetadataList() const = 0;
 
       /**
@@ -938,7 +997,7 @@ namespace ome
        */
       virtual
       bool
-      isSingleFile(const std::string& id) = 0;
+      isSingleFile(const boost::filesystem::path& id) const = 0;
 
       /**
        * Get required parent directories.
@@ -972,7 +1031,7 @@ namespace ome
        */
       virtual
       uint32_t
-      getRequiredDirectories(const std::vector<std::string>& files) = 0;
+      getRequiredDirectories(const std::vector<std::string>& files) const = 0;
 
       /**
        * Get a short description of the dataset structure.
@@ -994,8 +1053,8 @@ namespace ome
        * @todo can this be a reference to static data?
        */
       virtual
-      const std::vector<std::string>
-      getPossibleDomains(const std::string& id) = 0;
+      const std::vector<std::string>&
+      getPossibleDomains(const std::string& id) const = 0;
 
       /**
        * Does this format support multi-file datasets?
@@ -1005,7 +1064,7 @@ namespace ome
        */
       virtual
       bool
-      hasCompanionFiles() = 0;
+      hasCompanionFiles() const = 0;
 
       /**
        * Get the optimal sub-image width.
@@ -1014,7 +1073,7 @@ namespace ome
        * @returns the optimal width.
        **/
       virtual
-      int
+      dimension_size_type
       getOptimalTileWidth() const = 0;
 
       /**
@@ -1024,7 +1083,7 @@ namespace ome
        * @returns the optimal height.
        **/
       virtual
-      int
+      dimension_size_type
       getOptimalTileHeight() const = 0;
 
       // Sub-resolution API methods
@@ -1036,8 +1095,8 @@ namespace ome
        * @returns the first for index for the series.
        */
       virtual
-      image_size_type
-      seriesToCoreIndex(image_size_type series) const = 0;
+      dimension_size_type
+      seriesToCoreIndex(dimension_size_type series) const = 0;
 
       /**
        * Get the series corresponding to the specified core index.
@@ -1046,8 +1105,8 @@ namespace ome
        * @returns the series for the index.
        */
       virtual
-      image_size_type
-      coreIndexToSeries(image_size_type index) const = 0;
+      dimension_size_type
+      coreIndexToSeries(dimension_size_type index) const = 0;
 
       /**
        * Get the CoreMetadata index of the current resolution/series.
@@ -1055,7 +1114,7 @@ namespace ome
        * @returns the index.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getCoreIndex() const = 0;
 
       /**
@@ -1064,11 +1123,16 @@ namespace ome
        * Equivalent to setSeries(), but with flattened resolutions always
        * set to @c false.
        *
-       * @param no the core index to set.
+       * @param index the core index to set.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
+       *
+       * @throws std::logic_error if the index is invalid.
        */
       virtual
       void
-      setCoreIndex(image_size_type no) = 0;
+      setCoreIndex(dimension_size_type index) const = 0;
 
       /**
        * Get the number of resolutions for the current series.
@@ -1080,7 +1144,7 @@ namespace ome
        * @returns the number of resolutions.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getResolutionCount() const = 0;
 
       /**
@@ -1089,10 +1153,15 @@ namespace ome
        * @param resolution the resolution to set.
        *
        * @see getResolutionCount()
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
+       *
+       * @throws std::logic_error if the resolution is invalid.
        */
       virtual
       void
-      setResolution(image_size_type resolution) = 0;
+      setResolution(dimension_size_type resolution) const = 0;
 
       /**
        * Get the active resolution level.
@@ -1102,7 +1171,7 @@ namespace ome
        * @see getResolutionCount()
        */
       virtual
-      image_size_type
+      dimension_size_type
       getResolution() const = 0;
 
       /**

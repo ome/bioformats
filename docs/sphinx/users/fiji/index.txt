@@ -11,6 +11,9 @@ Fiji compares to ImageJ as Ubuntu compares to Linux.
 Fiji works with Bio-Formats out of the box, because it comes bundled
 with the :doc:`Bio-Formats ImageJ plugins </users/imagej/index>`.
 
+For further details on Bio-Formats in Fiji, see the
+`Bio-Formats Fiji wiki page <http://fiji.sc/Bio-Formats>`_.
+
 Upgrading
 ---------
 
@@ -20,10 +23,3 @@ checks for updates every time it is launched, so you will always be
 notified when new versions of Bio-Formats (or any other bundled plugin)
 are available.
 
-.. note:: Fiji currently ships with the latest 4.4.x Bio-Formats release.
-   Alternately, you can `enable the "Bio-Formats 5" update site
-   <http://fiji.sc/Bio-Formats#Daily_builds>`_ to receive the latest
-   Bio-Formats 5 bugfixes and updates.
-
-For further details on Bio-Formats in Fiji, see the
-`Bio-Formats Fiji wiki page <http://fiji.sc/Bio-Formats>`_.

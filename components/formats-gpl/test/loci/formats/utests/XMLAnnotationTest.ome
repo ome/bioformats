@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://svn.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd">
+<?xml version="1.0" encoding="UTF-8"?><OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">
     <Plate xmlns="http://www.openmicroscopy.org/Schemas/SPW/2010-06" ColumnNamingConvention="number" Columns="2" ID="Plate:0" RowNamingConvention="letter" Rows="3">
         <Well Column="0" ID="Well:0_0" Row="0">
             <WellSample ID="WellSample:0_0" Index="0">

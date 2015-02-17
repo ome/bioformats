@@ -4,7 +4,7 @@
 SimplePCI & HCImage TIFF
 ===============================================================================
 
-Extensions: .tiff 
+Extensions: .tiff
 
 Developer: `Hamamatsu <http://hcimage.com/simple-pci-legacy/>`_
 

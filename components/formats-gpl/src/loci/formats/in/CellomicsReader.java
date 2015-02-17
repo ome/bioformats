@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,13 +45,10 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * Reader for Cellomics C01 files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/CellomicsReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/CellomicsReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CellomicsReader extends FormatReader {
 
@@ -77,7 +74,11 @@ public class CellomicsReader extends FormatReader {
   // The well name in group 2
   // The field, optionally, in group 3
   // The channel, optionally, in group 4
-  private static final Pattern cellomicsPattern = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2})?([od]\\d+)?[^_]+$");
+
+  private static final Pattern PATTERN_O = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(o\\d+)?[^_]+$");
+  private static final Pattern PATTERN_D = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(d\\d+)?[^_]+$");
+
+  private Pattern cellomicsPattern;
   private String[] files;
 
   // -- Constructor --
@@ -92,6 +93,7 @@ public class CellomicsReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -99,6 +101,7 @@ public class CellomicsReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return new String[] {FormatTools.HCS_DOMAIN};
@@ -107,6 +110,7 @@ public class CellomicsReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -126,14 +130,17 @@ public class CellomicsReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
       files = null;
+      cellomicsPattern = null;
     }
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -144,6 +151,7 @@ public class CellomicsReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
@@ -151,6 +159,7 @@ public class CellomicsReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -208,7 +217,13 @@ public class CellomicsReader extends FormatReader {
     }
 
     core.clear();
-    for (int i=0; i<files.length/uniqueChannels.size(); i++) {
+
+    int seriesCount = files.length;
+    if (uniqueChannels.size() > 0) {
+      seriesCount /= uniqueChannels.size();
+    }
+
+    for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
     }
 
@@ -317,6 +332,11 @@ public class CellomicsReader extends FormatReader {
       int row = getWellRow(file);
       int col = getWellColumn(file);
 
+      store.setImageName(
+        String.format("Well %s%02d, Field #%02d",
+                      new String(Character.toChars(row+'A')),
+                      col, fieldIndex), i);
+
       if (files.length == 1) {
         row = 0;
         col = 0;
@@ -340,10 +360,6 @@ public class CellomicsReader extends FormatReader {
 
         store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
       }
-      store.setImageName(
-        String.format("Well %s%02d, Field #%02d", 
-                      new String(Character.toChars(row+'A')), 
-                      col, fieldIndex), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -352,8 +368,8 @@ public class CellomicsReader extends FormatReader {
       double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
       double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(width);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(height);
+      Length sizeX = FormatTools.getPhysicalSizeX(width);
+      Length sizeY = FormatTools.getPhysicalSizeY(height);
       for (int i=0; i<getSeriesCount(); i++) {
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -367,8 +383,18 @@ public class CellomicsReader extends FormatReader {
 
   // -- Helper methods --
 
-  static private Matcher matchFilename(final String filename) {
+  private Matcher matchFilename(final String filename) {
     final String name = new Location(filename).getName();
+    if (cellomicsPattern == null) {
+      Matcher m = PATTERN_O.matcher(name);
+      if (m.matches() && m.group(4) != null) {
+        cellomicsPattern = PATTERN_O;
+        return m;
+      }
+      else {
+        cellomicsPattern = PATTERN_D;
+      }
+    }
     return cellomicsPattern.matcher(name);
   }
   private String getPlateName(final String filename) {

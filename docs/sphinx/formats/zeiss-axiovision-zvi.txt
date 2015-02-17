@@ -4,11 +4,11 @@
 Zeiss AxioVision ZVI (Zeiss Vision Image)
 ===============================================================================
 
-Extensions: .zvi 
+Extensions: .zvi
 
-Developer: `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axiovision>`_
+Developer: `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 
-Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 
 **Support**
 
@@ -23,7 +23,7 @@ Supported Metadata Fields: :doc:`Zeiss AxioVision ZVI (Zeiss Vision Image) <zeis
 
 Freely Available Software:
 
-- `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
+- `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/en_de/downloads/axiovision.html>`_
 
 
 We currently have:
@@ -63,8 +63,12 @@ Notes:
 format, we are not able to distribute them to third parties.**
 
 Bio-Formats uses a modified version of the `Apache Jakarta POI library <http://jakarta.apache.org/poi/>`_ to read ZVI files. 
+ImageJ/FIJI will use the ZVI reader plugin in preference to Bio-Formats if 
+both are installed. If you have a problem which is solved by opening the file 
+using the Bio-Formats Importer plugin, you can just remove the 
+ZVI_Reader.class from the plugins folder. 
 
 Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. 
 
 .. seealso:: 
-  `Axiovision software overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_
+  `Axiovision software overview <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_

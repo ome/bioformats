@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -62,10 +58,6 @@ import loci.formats.gui.CacheComponent;
 /**
  * CacheConsole provides an interactive interpreter for
  * testing the Bio-Formats caching implementation.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/CacheConsole.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/CacheConsole.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class CacheConsole {
 
@@ -90,6 +82,7 @@ public final class CacheConsole {
       new CrosshairStrategy(getLengths(reader)),
       new BufferedImageSource(reader), true);
     CacheListener l = new CacheListener() {
+      @Override
       public void cacheUpdated(CacheEvent e) {
         int type = e.getType();
         int ndx = e.getIndex();

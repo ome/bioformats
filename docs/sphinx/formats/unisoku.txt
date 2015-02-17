@@ -4,7 +4,7 @@
 Unisoku
 ===============================================================================
 
-Extensions: .dat, .hdr 
+Extensions: .dat, .hdr
 
 
 Owner: `Unisoku <http://www.unisoku.com>`_

@@ -1,5 +1,13 @@
-<?xml version="1.0"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06    http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
+<?xml version = "1.0" encoding = "UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06
+		http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
 
 	<OME:Project ID="Project:0">
 		<OME:DatasetRef ID="Dataset:0"/>
@@ -14,6 +22,7 @@
 		<SPW:Well ID="Well:0" Column="1" Row="1" Color="-2147483648" Type="TheWell0Status">
 			<SPW:WellSample ID="WellSample:0" Index="1">
 				<OME:ImageRef ID="Image:0"/>
+				<SA:AnnotationRef ID="Annotation:WS0"/>
 			</SPW:WellSample>
 		</SPW:Well>
 		<SA:AnnotationRef ID="Annotation:0"/>
@@ -23,14 +32,18 @@
 		</SPW:PlateAcquisition>
 	</SPW:Plate>
 	<SPW:Plate ID="Plate:1"/>
-	<SPW:Screen ID="Screen:0" Name="ScreenName0" ProtocolDescription="Protocol Description Test0" ProtocolIdentifier="ProtocolTest0ID" ReagentSetDescription="Reagents Set XYZ" ReagentSetIdentifier="ReagentsXYZ-ID" Type="ScreenType0">
+	<SPW:Screen ID="Screen:0" Name="ScreenName0" ProtocolDescription="Protocol Description Test0"
+		ProtocolIdentifier="ProtocolTest0ID" ReagentSetDescription="Reagents Set XYZ"
+		ReagentSetIdentifier="ReagentsXYZ-ID" Type="ScreenType0">
 		<SPW:Description>Screen 0 Description</SPW:Description>
 		<SPW:Reagent ID="Reagent:0"/>
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
 
-	<SPW:Screen ID="Screen:1" Name="ScreenName1" ProtocolDescription="Protocol Description Test1" ProtocolIdentifier="ProtocolTest1ID" ReagentSetDescription="Reagents Set PQR" ReagentSetIdentifier="ReagentsPQR-ID" Type="ScreenType1">
+	<SPW:Screen ID="Screen:1" Name="ScreenName1" ProtocolDescription="Protocol Description Test1"
+		ProtocolIdentifier="ProtocolTest1ID" ReagentSetDescription="Reagents Set PQR"
+		ReagentSetIdentifier="ReagentsPQR-ID" Type="ScreenType1">
 		<SPW:Description>Screen 1 Description</SPW:Description>
 		<SPW:Reagent ID="Reagent:1"/>
 		<SPW:PlateRef ID="Plate:1"/>
@@ -38,13 +51,17 @@
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
 
-	<SPW:Screen ID="Screen:2" Name="ScreenName2" ProtocolDescription="Protocol Description Test2" ProtocolIdentifier="ProtocolTest2ID" ReagentSetDescription="Reagents Set IJK" ReagentSetIdentifier="ReagentsIJK-ID" Type="ScreenType2">
+	<SPW:Screen ID="Screen:2" Name="ScreenName2" ProtocolDescription="Protocol Description Test2"
+		ProtocolIdentifier="ProtocolTest2ID" ReagentSetDescription="Reagents Set IJK"
+		ReagentSetIdentifier="ReagentsIJK-ID" Type="ScreenType2">
 		<SPW:Description>Screen 2 Description</SPW:Description>
 		<SPW:Reagent ID="Reagent:2"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
 
-	<SPW:Screen ID="Screen:3" Name="ScreenName3" ProtocolDescription="Protocol Description Test3" ProtocolIdentifier="ProtocolTest3ID" ReagentSetDescription="Reagents Set AJP" ReagentSetIdentifier="ReagentsAJP-ID" Type="ScreenType3">
+	<SPW:Screen ID="Screen:3" Name="ScreenName3" ProtocolDescription="Protocol Description Test3"
+		ProtocolIdentifier="ProtocolTest3ID" ReagentSetDescription="Reagents Set AJP"
+		ReagentSetIdentifier="ReagentsAJP-ID" Type="ScreenType3">
 		<SPW:Description>Screen 3 Description</SPW:Description>
 		<SPW:Reagent ID="Reagent:3"/>
 		<SPW:PlateRef ID="Plate:0"/>
@@ -52,7 +69,8 @@
 	</SPW:Screen>
 
 	<OME:Experimenter ID="Experimenter:0"/>
-	<OME:Experimenter ID="Experimenter:1" FirstName="John" MiddleName="Andrew" LastName="Smith" Email="john@example.org"> </OME:Experimenter>
+	<OME:Experimenter ID="Experimenter:1" FirstName="John" MiddleName="Andrew" LastName="Smith"
+		Email="john@example.org"> </OME:Experimenter>
 	<OME:Experimenter ID="Experimenter:2"/>
 	<OME:Experimenter ID="Experimenter:3"/>
 	<OME:Experimenter ID="Experimenter:4"/>
@@ -94,18 +112,26 @@
 	</OME:ExperimenterGroup>
 
 	<Instrument ID="Instrument:0">
-		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs" NominalMagnification="20" CalibratedMagnification="20.34"/>
+		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
+			NominalMagnification="20" CalibratedMagnification="20.34"/>
 	</Instrument>
 	<OME:Image ID="Image:0" Name="6x6x1x8-swatch.tif">
 		<OME:AcquisitionDate>2010-02-23T12:51:30</OME:AcquisitionDate>
 		<ExperimenterRef ID="Experimenter:1"/>
-		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
-			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648" ID="Channel:0"> </Channel>
-			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488" ID="Channel:1"> </Channel>
+		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+			PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
+				ID="Channel:0"> </Channel>
+			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488"
+				ID="Channel:1"> </Channel>
 			<Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2144364811" ID="Channel:2"> </Channel>
-			<Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
-			<Bin:BinData BigEndian="false" Length="32">AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</Bin:BinData>
-			<Bin:BinData BigEndian="false" Length="32">//+szuv/AP95n8PiAABHbZO3AP8dPF+G</Bin:BinData>
+			<Bin:BinData BigEndian="false" Length="32"
+				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+			<Bin:BinData BigEndian="false" Length="32"
+				>AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</Bin:BinData>
+			<Bin:BinData BigEndian="false" Length="32"
+				>//+szuv/AP95n8PiAABHbZO3AP8dPF+G</Bin:BinData>
+			<SA:AnnotationRef ID="Annotation:P0:0"/>
 		</Pixels>
 		<ROI:ROIRef ID="ROI:0"/>
 		<ROI:ROIRef ID="ROI:1"/>
@@ -122,6 +148,16 @@
 				<test2/>
 			</SA:Value>
 		</SA:XMLAnnotation>
+		<SA:XMLAnnotation ID="Annotation:WS0">
+			<SA:Value>
+				<test3/>
+			</SA:Value>
+		</SA:XMLAnnotation>
+		<SA:XMLAnnotation ID="Annotation:P0:0">
+			<SA:Value>
+				<test4/>
+			</SA:Value>
+		</SA:XMLAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
@@ -132,7 +168,9 @@
 	</ROI:ROI>
 	<ROI:ROI ID="ROI:1">
 		<ROI:Union>
-			<ROI:Shape ID="Shape:1" FillRule="NonZero" FontFamily="sans-serif" FontSize="1" FontStyle="Bold" LineCap="Butt" StrokeDashArray="1" StrokeWidth="1" TheC="2" FillColor="1" StrokeColor="1" Text="Hello">
+			<ROI:Shape ID="Shape:1" FillRule="NonZero" FontFamily="sans-serif" FontSize="1"
+				FontStyle="Bold" LineCap="Butt" StrokeDashArray="1" StrokeWidth="1" TheC="2"
+				FillColor="1" StrokeColor="1" Text="Hello">
 				<ROI:Point X="1" Y="1"/>
 			</ROI:Shape>
 		</ROI:Union>
@@ -144,20 +182,23 @@
 				<ROI:Rectangle X="1" Y="2" Width="3" Height="4"/>
 				<ROI:Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
 			</ROI:Shape>
-			<ROI:Shape ID="Shape:3" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif" Text="Hello World Text Value!(from shape 3)">
+			<ROI:Shape ID="Shape:3" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
+				Text="Hello World Text Value!(from shape 3)">
 				<ROI:Label X="1" Y="1"/>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:4" StrokeWidth="2" StrokeColor="15">
 				<ROI:Polygon Points="1,1 10,20, 20,20 20,10"/>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:5" StrokeWidth="2" StrokeColor="16">
-				<ROI:Polyline Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow" MarkerEnd="Arrow"/>
+				<ROI:Polyline Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
+					MarkerEnd="Arrow"/>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:6" StrokeWidth="2" StrokeColor="161">
 				<ROI:Polyline Points="1.1,1.1 10.1,20.1, 20.1,20.1 20.1,10.1" MarkerStart="Circle"/>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:7" StrokeWidth="2" StrokeColor="17">
-				<ROI:Line X1="1.7" Y1="2.7" X2="3.7" Y2="4.7" MarkerStart="Square" MarkerEnd="Circle"/>
+				<ROI:Line X1="1.7" Y1="2.7" X2="3.7" Y2="4.7" MarkerStart="Square"
+					MarkerEnd="Circle"/>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:8" StrokeWidth="2" StrokeColor="171">
 				<ROI:Line X1="1.71" Y1="2.71" X2="3.71" Y2="4.71" MarkerEnd="Circle"/>

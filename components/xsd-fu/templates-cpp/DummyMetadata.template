@@ -1,4 +1,5 @@
-{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x, dummy=False),indexes))}{% end %}\
+{% def indexes_string_dummy(indexes) %}${", ".join(map(lambda x: lang.index_string(x, dummy=True),indexes))}{% end %}\
 \
 {% def indexes_name_string(indexes) %}${", ".join(map(lambda x: lang.index_argname(x),indexes))}{% end %}\
 \
@@ -10,6 +11,7 @@
 {% end %}\
 \
 {% def index_string(name) %}index_type ${index_name_string(name)}{% end %}\
+{% def index_string_dummy(name) %}index_type{% end %}\
 \
 {% def counter(parent, obj, indexes) %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -19,9 +21,10 @@
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])}) const
+      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string_dummy(indexes[:-1])}) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count",
+                                "intentionally not implemented");
       }
 {% end source %}\
 {% end %}\
@@ -36,7 +39,7 @@
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const
+      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string_dummy(indexes)}, ${index_string_dummy(prop.name)}) const
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
@@ -47,7 +50,7 @@
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const
+      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string_dummy(indexes)}) const
 {% end source %}\
 {% end %}\
 {% otherwise %}\
@@ -64,7 +67,8 @@
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "intentionally not implemented");
       }
 {% end source %}\
 {% end %}\
@@ -79,7 +83,7 @@
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType}, ${indexes_string_dummy(indexes)}, ${index_string_dummy(prop.name)})
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
@@ -90,7 +94,7 @@
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType}, ${indexes_string_dummy(indexes)})
 {% end source %}\
 {% end %}\
 {% otherwise %}\
@@ -101,7 +105,7 @@
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} /* ${prop.argumentName} */)
 {% end source %}\
 {% end %}\
 {% end %}\
@@ -153,7 +157,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -199,6 +203,7 @@
 #define ${fu.GUARD}
 
 #include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/MetadataException.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <ome/xml/meta/DummyMetadata.h>
@@ -221,7 +226,7 @@ namespace ome
        * All get methods will throw an exception, since no valid data
        * exists to return.
        */
-      class DummyMetadata : public Metadata
+      class DummyMetadata : virtual public Metadata
       {
       public:
 {% end header %}\
@@ -268,7 +273,8 @@ namespace ome
       std::shared_ptr<MetadataRoot>&
       DummyMetadata::getRoot()
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getRoot",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -279,7 +285,7 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
+      DummyMetadata::setRoot(std::shared_ptr<MetadataRoot>& /* root */)
       {
       }
 {% end source %}\
@@ -295,9 +301,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getPixelsBinDataCount(index_type imageIndex) const
+      DummyMetadata::getPixelsBinDataCount(index_type /* imageIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getPixelsBinDataCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -308,9 +315,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getBooleanAnnotationAnnotationCount(index_type booleanAnnotationIndex) const
+      DummyMetadata::getBooleanAnnotationAnnotationCount(index_type /* booleanAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getBooleanAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -321,9 +329,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getCommentAnnotationAnnotationCount(index_type commentAnnotationIndex) const
+      DummyMetadata::getCommentAnnotationAnnotationCount(index_type /* commentAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getCommentAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -334,9 +343,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getDoubleAnnotationAnnotationCount(index_type doubleAnnotationIndex) const
+      DummyMetadata::getDoubleAnnotationAnnotationCount(index_type /* doubleAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getDoubleAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -347,9 +357,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getFileAnnotationAnnotationCount(index_type fileAnnotationIndex) const
+      DummyMetadata::getFileAnnotationAnnotationCount(index_type /* fileAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getFileAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -360,9 +371,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getListAnnotationAnnotationCount(index_type listAnnotationIndex) const
+      DummyMetadata::getListAnnotationAnnotationCount(index_type /* listAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getListAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -373,9 +385,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getLongAnnotationAnnotationCount(index_type longAnnotationIndex) const
+      DummyMetadata::getLongAnnotationAnnotationCount(index_type /* longAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getLongAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -386,9 +399,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const
+      DummyMetadata::getTagAnnotationAnnotationCount(index_type /* tagAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getTagAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -399,9 +413,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getTermAnnotationAnnotationCount(index_type termAnnotationIndex) const
+      DummyMetadata::getTermAnnotationAnnotationCount(index_type /* termAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getTermAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -412,9 +427,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getTimestampAnnotationAnnotationCount(index_type timestampAnnotationIndex) const
+      DummyMetadata::getTimestampAnnotationAnnotationCount(index_type /* timestampAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getTimestampAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -425,9 +441,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       BaseMetadata::index_type
-      DummyMetadata::getXMLAnnotationAnnotationCount(index_type xmlAnnotationIndex) const
+      DummyMetadata::getXMLAnnotationAnnotationCount(index_type /* xmlAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getXMLAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -439,10 +456,11 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
-      DummyMetadata::getLightSourceType(index_type instrumentIndex,
-                                        index_type lightSourceIndex) const
+      DummyMetadata::getLightSourceType(index_type /* instrumentIndex */,
+                                        index_type /* lightSourceIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getLightSourceType",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -454,10 +472,11 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
-      DummyMetadata::getShapeType(index_type roiIndex,
-                                  index_type shapeIndex) const
+      DummyMetadata::getShapeType(index_type /* roiIndex */,
+                                  index_type /* shapeIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getShapeType",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -479,7 +498,7 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+      DummyMetadata::set${o.name}Value(${o.langBaseType}, ${indexes_string_dummy(indexes[o.name].items()[0][1])})
       {
       }
 {% end source %}\
@@ -491,9 +510,10 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${o.langBaseType}
-      DummyMetadata::get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const
+      DummyMetadata::get${o.name}Value(${indexes_string_dummy(indexes[o.name].items()[0][1])}) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "get${o.name}Value",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -503,8 +523,7 @@ namespace ome
         // ${o.name} entity counting
 {% end debug %}\
 {% for k, v in indexes[o.name].items() %}\
-{% if fu.max_occurs_under_parent(model, k, o.name) > 1 \
-      and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
 
 {% end %}\
@@ -525,10 +544,11 @@ ${counter(k, o, v)}\
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      DummyMetadata::getPixelsBinDataBigEndian(index_type imageIndex,
-                                               index_type binDataIndex) const
+      DummyMetadata::getPixelsBinDataBigEndian(index_type /* imageIndex */,
+                                               index_type /* binDataIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getPixelsBinDataBigEndian",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -538,14 +558,15 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       DummyMetadata::getUUID() const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getUUID",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -632,31 +653,15 @@ ${getter(k, o, prop, v)}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setPixelsBinDataBigEndian(bool bigEndian,
+        setPixelsBinDataBigEndian(bool       bigEndian,
                                   index_type imageIndex,
                                   index_type binDataIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setPixelsBinDataBigEndian(bool bigEndian,
-                                               index_type imageIndex,
-                                               index_type binDataIndex)
-      {
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMaskBinData(const byte_array&,
-                       index_type ROIIndex,
-                       index_type shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      DummyMetadata::setMaskBinData(const byte_array&,
-                                    index_type ROIIndex,
-                                    index_type shapeIndex)
+      DummyMetadata::setPixelsBinDataBigEndian(bool       /* bigEndian */,
+                                               index_type /* imageIndex */,
+                                               index_type /* binDataIndex */)
       {
       }
 {% end source %}\
@@ -672,7 +677,7 @@ ${getter(k, o, prop, v)}\
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setUUID(const std::string& uuid)
+      DummyMetadata::setUUID(const std::string& /* uuid */)
       {
       }
 {% end source %}\

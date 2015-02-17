@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -64,10 +60,6 @@ import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
 
 /**
  * Implementation of JAIIIOService for reading and writing JPEG-2000 data.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/JAIIIOServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/JAIIIOServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JAIIIOServiceImpl extends AbstractService
   implements JAIIIOService
@@ -102,6 +94,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#writeImage(OutputStream, BufferedImage, JPEG2000CodecOptions) */
+  @Override
   public void writeImage(OutputStream out, BufferedImage img,
       JPEG2000CodecOptions options) throws IOException, ServiceException
   {
@@ -124,10 +117,13 @@ public class JAIIIOServiceImpl extends AbstractService
       (J2KImageWriteParam) writer.getDefaultWriteParam();
     param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
     param.setCompressionType("JPEG2000");
+    if (!options.lossless) {
+      param.setEncodingRate(options.quality);
+    }
     param.setLossless(options.lossless);
     param.setFilter(filter);
     param.setCodeBlockSize(options.codeBlockSize);
-    param.setEncodingRate(options.quality);
+    param.setComponentTransformation(false);
     if (options.tileWidth > 0 && options.tileHeight > 0) {
       param.setTiling(options.tileWidth, options.tileHeight,
                       options.tileGridXOffset, options.tileGridYOffset);
@@ -141,6 +137,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readImage(InputStream, JPEG2000CodecOptions) */
+  @Override
   public BufferedImage readImage(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
@@ -155,6 +152,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readImage(InputStream) */
+  @Override
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException
   {
@@ -162,6 +160,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readRaster(InputStream, JPEG2000CodecOptions) */
+  @Override
   public Raster readRaster(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
@@ -176,6 +175,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readRaster(InputStream) */
+  @Override
   public Raster readRaster(InputStream in) throws IOException, ServiceException
   {
     return readRaster(in, JPEG2000CodecOptions.getDefaultOptions());

@@ -72,7 +72,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -170,39 +170,36 @@ namespace ome
        * both MetadataStore and MetadataRetrieve, which reduces the
        * need to cast between object types.
        *
-       * See ome::xml::meta::OMEXMLMetadata for an
+       * See ${lang.omexml_metadata_package}::OMEXMLMetadata for an
        * example implementation.
        *
        * @sa MetadataStore, Metadata,
-       * ome::xml::meta::OMEXMLMetadata.
+       * ${lang.omexml_metadata_package}::OMEXMLMetadata.
        */
-      class MetadataRetrieve : public BaseMetadata
+      class MetadataRetrieve : virtual public BaseMetadata
       {
       protected:
 {% end header%}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /// Constructor.
-        MetadataRetrieve();
-{% end header%}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      MetadataRetrieve::MetadataRetrieve()
-      {
-      }
-{% end source%}\
+        MetadataRetrieve()
+        {}
 
-{% if fu.SOURCE_TYPE == "header" %}\
       public:
         /// Destructor.
         virtual
-        ~MetadataRetrieve();
-{% end header%}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      MetadataRetrieve::~MetadataRetrieve()
-      {
-      }
-{% end source%}\
+        ~MetadataRetrieve()
+        {}
 
-{% if fu.SOURCE_TYPE == "header" %}\
+      private:
+        /// Copy constructor (deleted).
+        MetadataRetrieve (const MetadataRetrieve&);
+
+        /// Assignment operator (deleted).
+        MetadataRetrieve&
+        operator= (const MetadataRetrieve&);
+
+      public:
 {% if debug %}\
         // -- Entity counting (manual definitions) --
 
@@ -393,8 +390,7 @@ namespace ome
         // ${o.name} entity counting
 {% end debug %}\
 {% for k, v in indexes[o.name].items() %}\
-{% if fu.max_occurs_under_parent(model, k, o.name) > 1 \
-      and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get the number of ${o.name} elements{% if is_multi_path[o.name] %} in ${k}{% end %}.
@@ -440,7 +436,7 @@ namespace ome
          *
          * @todo Can this be a const reference?
          */
-        virtual std::string
+        virtual const std::string&
         getUUID() const = 0;
 
 {% end header%}\

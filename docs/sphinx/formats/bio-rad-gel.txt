@@ -4,7 +4,7 @@
 Bio-Rad Gel
 ===============================================================================
 
-Extensions: .1sc 
+Extensions: .1sc
 
 
 Owner: `Bio-Rad <http://www.bio-rad.com>`_

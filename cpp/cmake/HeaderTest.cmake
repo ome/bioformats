@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -77,6 +77,11 @@ function(header_test_from_file component library path)
   file(MAKE_DIRECTORY ${headerdir})
 
   foreach(header ${TEST_INCLUDES})
+    # We compile each header twice in separate compilation units.
+    # Each alone is sufficient to test that the header is functional,
+    # but both are needed to check for link errors, which can happen
+    # if the header accidentally defines a variable, e.g. a global or
+    # class static member.
     foreach(repeat 1 2)
     string(REPLACE "/" "_" genheader ${header})
       string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
@@ -85,7 +90,7 @@ function(header_test_from_file component library path)
       string(REGEX REPLACE "[/.]" "_" safeheader ${include})
       string(CONFIGURE "#include <@include@>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 TEST(Header, ${safeheader}_${repeat})
 {
@@ -97,5 +102,5 @@ TEST(Header, ${safeheader}_${repeat})
   endforeach(header)
 
   add_executable(${component}-headers ${test_headers_SOURCES})
-  target_link_libraries(${component}-headers ${TEST_LIBS} ${library})
+  target_link_libraries(${component}-headers ${library} ome-test)
 endfunction(header_test_from_file)

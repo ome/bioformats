@@ -4,7 +4,7 @@
 Olympus ScanR
 ===============================================================================
 
-Extensions: .xml, .dat, .tif 
+Extensions: .xml, .dat, .tif
 
 Developer: `Olympus <http://www.olympus.com/>`_
 

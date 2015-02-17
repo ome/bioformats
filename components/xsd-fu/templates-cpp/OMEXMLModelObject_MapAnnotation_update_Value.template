@@ -1,0 +1,25 @@
+std::vector<xerces::dom::Element> Value_nodeList(getChildrenByTagName(element, "Value"));
+if (Value_nodeList.size() > 1)
+  {
+    format fmt("Value node list size %1% != 1");
+    fmt % Value_nodeList.size();
+    throw ModelException(fmt.str());
+    // TODO: Should be its own Exception
+  }
+ else if (Value_nodeList.size() != 0)
+   {
+     ::${lang.omexml_model_package}::MapPairs::map_type map;
+     xerces::dom::NodeList children(Value_nodeList.at(0)->getChildNodes());
+
+     for (xerces::dom::NodeList::iterator i = children.begin();
+          i != children.end();
+          ++i)
+       {
+         ome::xerces::dom::Element e(*i);
+         if (e)
+           map.insert(::${lang.omexml_model_package}::MapPairs::map_type::value_type(e.getAttribute("K"),
+                                                                      e.getTextContent()));
+       }
+     std::shared_ptr< ::${lang.omexml_model_package}::MapPairs> mapPairs(std::make_shared< ::${lang.omexml_model_package}::MapPairs>(map));
+     setValue(mapPairs);
+   }

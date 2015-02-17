@@ -4,7 +4,7 @@
 Improvision TIFF
 ===============================================================================
 
-Extensions: .tif 
+Extensions: .tif
 
 Developer: `Improvision <http://www.improvision.com/>`_
 

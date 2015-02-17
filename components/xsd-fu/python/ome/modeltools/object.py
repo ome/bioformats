@@ -1,5 +1,6 @@
 from util import odict
 import logging
+import re
 
 from xml.etree import ElementTree
 
@@ -8,6 +9,7 @@ from ome.modeltools.property import OMEModelProperty
 
 from ome.modeltools import config
 from ome.modeltools import language
+
 
 class OMEModelObject(OMEModelEntity):
     """
@@ -31,7 +33,7 @@ class OMEModelObject(OMEModelEntity):
         self.isImmutable = False
         self._isGlobal = False
         self.base in ('Annotation', 'BasicAnnotation') \
-                or self.name == 'Annotation'
+            or self.name == 'Annotation'
         self.plural = None
         self.manyToMany = False
         try:
@@ -86,18 +88,20 @@ class OMEModelObject(OMEModelEntity):
             if base.base == 'Annotation':
                 return True
             base = self.model.getObjectByName(base.base)
-    isAnnotation = property(_get_isAnnotation,
+    isAnnotation = property(
+        _get_isAnnotation,
         doc="""Whether or not the model object is an Annotation.""")
 
     def _get_isReference(self):
         if self.base == "Reference":
             return True
         typeObject = self.model.getObjectByName(self.type)
-        if typeObject is not None and typeObject.name != self.name \
-           and typeObject.isReference:
+        if (typeObject is not None and typeObject.name != self.name and
+                typeObject.isReference):
             return True
         return False
-    isReference = property(_get_isReference,
+    isReference = property(
+        _get_isReference,
         doc="""Whether or not the model object is a reference.""")
 
     def _get_isAnnotated(self):
@@ -105,7 +109,8 @@ class OMEModelObject(OMEModelEntity):
             if v.name == "AnnotationRef":
                 return True
         return False
-    isAnnotated = property(_get_isAnnotated,
+    isAnnotated = property(
+        _get_isAnnotated,
         doc="""Whether or not the model object is annotated.""")
 
     def _get_isNamed(self):
@@ -113,7 +118,8 @@ class OMEModelObject(OMEModelEntity):
             if v.name == "Name" and not v.isUnique:
                 return True
         return False
-    isNamed = property(_get_isNamed,
+    isNamed = property(
+        _get_isNamed,
         doc="""Whether or not the model object is named.""")
 
     def _get_isDescribed(self):
@@ -121,7 +127,8 @@ class OMEModelObject(OMEModelEntity):
             if v.name == "Description":
                 return True
         return False
-    isDescribed = property(_get_isDescribed,
+    isDescribed = property(
+        _get_isDescribed,
         doc="""Whether or not the model object is described.""")
 
     def _get_modelBaseType(self):
@@ -136,12 +143,14 @@ class OMEModelObject(OMEModelEntity):
         if base is None:
             base = self.model.opts.lang.getDefaultModelBaseClass()
         return base
-    modelBaseType = property(_get_modelBaseType,
+    modelBaseType = property(
+        _get_modelBaseType,
         doc="""The model object's base class.""")
 
     def _get_namespace(self):
         return self.element.namespace
-    namespace = property(_get_namespace,
+    namespace = property(
+        _get_namespace,
         doc="""The root namespace of the model object.""")
 
     def _get_baseObjectProperties(self):
@@ -153,28 +162,20 @@ class OMEModelObject(OMEModelEntity):
                 return properties
             properties += base.properties.values()
             base = base.base
-    baseObjectProperties = property(_get_baseObjectProperties,
+    baseObjectProperties = property(
+        _get_baseObjectProperties,
         doc="""The model object's base object properties.""")
-
-    def _get_refNodeName(self):
-        if self.base == "Reference":
-            return self.properties["ID"].langType
-        return None
-    refNodeName = property(_get_refNodeName,
-        doc="""The name of this node's reference node; None otherwise.""")
 
     def _get_langType(self):
         return self.name
     langType = property(_get_langType, doc="""The model object's type.""")
 
     def _get_langTypeNS(self):
-        name = self.langType
-        if isinstance(self.model.opts.lang, language.Java):
-            name = "ome.xml.model.%s" % self.langType
-        if isinstance(self.model.opts.lang, language.CXX):
-            name = "::ome::xml::model::%s" % self.langType
-        return name
-    langTypeNS = property(_get_langTypeNS, doc="""The model object's type with namespace.""")
+        return "%s%s%s" % (self.model.opts.lang.omexml_model_package,
+                           self.model.opts.lang.package_separator,
+                           self.langType)
+    langTypeNS = property(
+        _get_langTypeNS, doc="""The model object's type with namespace.""")
 
     def _get_langBaseType(self):
         if self.model.opts.lang.hasType(self.base):
@@ -188,7 +189,8 @@ class OMEModelObject(OMEModelEntity):
                 if parent is not None:
                     return parent.langBaseType
             return self.model.opts.lang.base_class
-    langBaseType = property(_get_langBaseType, doc="""The model object's base type.""")
+    langBaseType = property(
+        _get_langBaseType, doc="The model object's base type.")
 
     def _get_langBaseTypeNS(self):
         name = self.langBaseType
@@ -197,7 +199,8 @@ class OMEModelObject(OMEModelEntity):
         if isinstance(self.model.opts.lang, language.CXX):
             name = "::ome::xml::model::%s" % self.langBaseType
         return name
-    langBaseTypeNS = property(_get_langBaseTypeNS, doc="""The model object's type with namespace.""")
+    langBaseTypeNS = property(
+        _get_langBaseTypeNS, doc="The model object's type with namespace.")
 
     def _get_instanceVariableName(self):
         name = None
@@ -220,29 +223,41 @@ class OMEModelObject(OMEModelEntity):
 
         return name
 
-    instanceVariableName = property(_get_instanceVariableName,
+    instanceVariableName = property(
+        _get_instanceVariableName,
         doc="""The property's instance variable name.""")
 
     def _get_instanceVariables(self):
-        props = list();
+        props = list()
 
         if self.langBaseType != self.model.opts.lang.base_class:
-            props.append([self.langBaseType, "value", None, "Element's text data"])
+            props.append([
+                self.langBaseType, "value", None, "Element's text data",
+                False])
         for prop in self.properties.values():
-            props.append([prop.instanceVariableType, prop.instanceVariableName, prop.instanceVariableDefault, prop.instanceVariableComment])
+            props.append([
+                prop.instanceVariableType, prop.instanceVariableName,
+                prop.instanceVariableDefault, prop.instanceVariableComment,
+                prop.isUnitsEnumeration])
         return props
-    instanceVariables = property(_get_instanceVariables,
+    instanceVariables = property(
+        _get_instanceVariables,
         doc="""The instance variables of this class.""")
 
     def _get_header(self):
         header = None
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             header = "ome.xml.model.%s" % self.name
         elif isinstance(self.model.opts.lang, language.CXX):
-            header = "ome/xml/model/%s.h" % self.name
+            path = re.sub("::", "/", self.name)
+            header = "ome/xml/model/%s.h" % path
         return header
-    header = property(_get_header,
-        doc="""The model object's include/import name.  Does not include dependent headers.""")
+    header = property(
+        _get_header,
+        doc="The model object's include/import name. "
+        "Does not include dependent headers.")
 
     def _get_header_deps(self):
         deps = set()
@@ -252,11 +267,15 @@ class OMEModelObject(OMEModelEntity):
         if isinstance(self.model.opts.lang, language.Java):
             myself = "ome.xml.model.%s" % self.langBaseType
             if self.parentName is not None:
-                deps.add("ome.xml.model.%s" % self.parentName);
+                deps.add("ome.xml.model.%s" % self.parentName)
         elif isinstance(self.model.opts.lang, language.CXX):
-            myself = "ome/xml/model/%s.h" % self.langBaseType
-            if self.parentName is not None and self.parentName != self.model.opts.lang.base_class:
-                deps.add("ome/xml/model/%s.h" % self.parentName);
+            if self.langBaseType is not None:
+                path = re.sub("::", "/", self.langBaseType)
+                myself = "ome/xml/model/%s.h" % path
+            if (self.parentName is not None and
+                    self.parentName != self.model.opts.lang.base_class):
+                path = re.sub("::", "/", self.parentName)
+                deps.add("ome/xml/model/%s.h" % path)
 
         for prop in self.properties.values():
             for dep in prop.header_dependencies:
@@ -266,31 +285,36 @@ class OMEModelObject(OMEModelEntity):
             deps.remove(myself)
 
         return sorted(deps)
-    header_dependencies = property(_get_header_deps,
+    header_dependencies = property(
+        _get_header_deps,
         doc="""The object's dependencies for include/import in headers.""")
 
     def _get_source_deps(self):
         deps = set()
 
-        myself = None
-
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             pass
         elif isinstance(self.model.opts.lang, language.CXX):
-            deps.add("ome/xml/model/%s.h" % self.name)
+            path = re.sub("::", "/", self.name)
+            deps.add("ome/xml/model/%s.h" % path)
             deps.add("ome/xml/model/OMEModel.h")
 
         for prop in self.properties.values():
             deps.update(prop.source_dependencies)
 
         return sorted(deps)
-    source_dependencies = property(_get_source_deps,
+    source_dependencies = property(
+        _get_source_deps,
         doc="""The object's dependencies for include/import in sources.""")
 
     def _get_fwd(self):
         fwd = set()
 
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             pass
         elif isinstance(self.model.opts.lang, language.CXX):
             fwd.add("OMEModel")
@@ -302,33 +326,50 @@ class OMEModelObject(OMEModelEntity):
             fwd.remove(self.name)
 
         return sorted(fwd)
-    forward = property(_get_fwd,
-        doc="""The object's forward declarations for cycle breaking .""")
+    forward = property(
+        _get_fwd, doc="The object's forward declarations for cycle breaking.")
 
     def _get_parents(self):
         return self.model.resolve_parents(self.name)
-    parents = property(_get_parents,
-        doc="""The parents for this object.""")
+    parents = property(
+        _get_parents, doc="""The parents for this object.""")
 
-    def _get_parentName(self):
+    def _get_parent(self):
         parents = self.model.resolve_parents(self.name)
 
-        name = self.modelBaseType
+        parent = None
 
         if parents is not None:
             parent = self.model.getObjectByName(parents.keys()[0])
-            if parent is not None and parent.isAbstractProprietary:
-                name = parent.name
+
+        return parent
+
+    def _get_parentName(self):
+        parent = self._get_parent()
+        name = self.modelBaseType
+
+        if (parent is not None and parent.isAbstractProprietary and
+                self.name not in config.ANNOTATION_OVERRIDE):
+            name = parent.name
 
         return name
-    parentName = property(_get_parentName,
-        doc="""The parent class name for this object.""")
+    parentName = property(
+        _get_parentName, doc="""The parent class name for this object.""")
 
-    def isComplex(self):
-        """
-        Returns whether or not the model object has a "complex" content type.
-        """
-        return self.element.isComplex()
+    def _get_isParentAbstractProprietary(self):
+        parent = self._get_parent()
+
+        abstract = False
+
+        if (parent is not None and parent.isAbstractProprietary and
+                self.name not in config.ANNOTATION_OVERRIDE):
+            abstract = True
+
+        return abstract
+    isParentAbstractProprietary = property(
+        _get_isParentAbstractProprietary,
+        doc="""Returns whether or not the model object has an abstract"""
+        """ proprietary parent.""")
 
     def __str__(self):
         return self.__repr__()

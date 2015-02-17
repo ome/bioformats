@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats API for reading and writing file formats.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -71,10 +67,6 @@ import org.slf4j.LoggerFactory;
  * and OME-XML strings.
  * Most of the methods require the optional {@link loci.formats.ome}
  * package, and optional ome-xml.jar library, to be present at runtime.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/MetadataTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/MetadataTools.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class MetadataTools {
 
@@ -85,7 +77,7 @@ public final class MetadataTools {
 
   // -- Static fields --
 
-  private static boolean defaultDateEnabled = true;
+  private static boolean defaultDateEnabled = false;
 
   // -- Constructor --
 
@@ -132,6 +124,10 @@ public final class MetadataTools {
       if (doImageName) {
         Location f = new Location(r.getCurrentFile());
         imageName = f.getName();
+
+        if (r.getSeriesCount() > 1) {
+          imageName += " #" + (i + 1);
+        }
       }
       String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
 
@@ -153,7 +149,9 @@ public final class MetadataTools {
             OMEXMLMetadata omeMeta;
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
-              service.addMetadataOnly(omeMeta, i);
+              if (omeMeta.getTiffDataCount(i) == 0) {
+                service.addMetadataOnly(omeMeta, i, i == 0);
+              }
             }
             catch (ServiceException e) {
               LOGGER.warn("Failed to add MetadataOnly", e);

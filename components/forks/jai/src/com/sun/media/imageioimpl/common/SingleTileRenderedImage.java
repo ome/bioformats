@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -96,7 +92,7 @@ public class SingleTileRenderedImage extends SimpleRenderedImage {
      * and a ColorModel.
      *
      * @param ras A Raster that will define tile (0, 0) of the image.
-     * @param cm A ColorModel that will serve as the image's
+     * @param colorModel A ColorModel that will serve as the image's
      *           ColorModel.
      */
     public SingleTileRenderedImage(Raster ras, ColorModel colorModel) {

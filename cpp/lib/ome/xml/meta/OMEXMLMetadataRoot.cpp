@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -49,15 +49,9 @@ namespace ome
     {
 
       OMEXMLMetadataRoot::OMEXMLMetadataRoot():
-	OME(),
-	MetadataRoot()
-      {
-      }
-
-      OMEXMLMetadataRoot::OMEXMLMetadataRoot(::ome::xerces::dom::Element& element,
-					     ::ome::xml::model::OMEModel& model):
-	OME(element, model),
-	MetadataRoot()
+        ome::xml::model::OMEModelObject(),
+	MetadataRoot(),
+	OME()
       {
       }
 
@@ -66,14 +60,16 @@ namespace ome
       }
 
       OMEXMLMetadataRoot::OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy):
-	OME(copy),
-	MetadataRoot()
+        ome::xml::model::OMEModelObject(),
+	MetadataRoot(),
+	OME(copy)
       {
       }
 
       OMEXMLMetadataRoot::OMEXMLMetadataRoot(const xml::model::OME& copy):
-	OME(copy),
-	MetadataRoot()
+        ome::xml::model::OMEModelObject(),
+	MetadataRoot(),
+	OME(copy)
       {
       }
 

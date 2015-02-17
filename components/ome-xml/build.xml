@@ -22,35 +22,21 @@ Type "ant -p" for a list of targets.
     <delete dir="${xsdfu.metadatapath}"/>
     <delete dir="${xsdfu.omepath}"/>
 
-    <!-- Generate the OME model object classes -->
+    <!-- Generate the OME model classes -->
     <xsd_fu lang="Java" output="${xsdfu.modelpath}">
-      <arg value="omexml_model"/>
+      <arg value="omexml_model_all"/>
     </xsd_fu>
 
-    <!-- Generate the OME model enumeration classes -->
-    <xsd_fu lang="Java" output="${xsdfu.modelpath}">
-      <arg value="omexml_model_enums"/>
-    </xsd_fu>
-
-    <!-- Generate the handlers for the OME model enumeration classes -->
-    <xsd_fu lang="Java" output="${xsdfu.modelpath}">
-      <arg value="omexml_model_enum_handlers"/>
-    </xsd_fu>
-
-    <!-- Generate the metadata interfaces -->
+    <!-- Generate the OME metadata classes -->
     <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
-      <arg value="metadata"/>
-    </xsd_fu>
-    <!-- Generate the OME XML metadata interface -->
-    <xsd_fu lang="Java" output="${xsdfu.omepath}">
-      <arg value="omexml_metadata"/>
+      <arg value="omexml_metadata_all"/>
     </xsd_fu>
   </target>
 
   <target name="test" depends="jar,compile-tests" description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
-      file="${tests.dir}/ome/xml/utests/testng.xml"/>
+      file="${testng.xml}"/>
     <testng failureProperty="failedTest">
       <classpath>
         <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->

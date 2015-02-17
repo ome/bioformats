@@ -4,7 +4,7 @@
 Animated PNG
 ===============================================================================
 
-Extensions: .png 
+Extensions: .png
 
 Developer: `The Animated PNG Project <http://www.animatedpng.com/>`_
 

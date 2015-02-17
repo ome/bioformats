@@ -30,7 +30,8 @@
             if (retrieve)
               return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_name_string(indexes[:-1])});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 {% end %}\
@@ -55,7 +56,8 @@
             if (retrieve)
               return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 {% end %}\
@@ -77,7 +79,8 @@
             if (retrieve)
               return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 {% end %}\
@@ -99,7 +102,8 @@
             if (retrieve)
               return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 {% end %}\
@@ -126,7 +130,8 @@
             if (store)
               store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
+        throw MetadataException("AggregateMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "no delegate MetadataStore implementation");
       }
 {% end source %}\
 {% end %}\
@@ -148,7 +153,8 @@
             if (store)
               store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
+        throw MetadataException("AggregateMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "no delegate MetadataStore implementation");
       }
 {% end source %}\
 {% end %}\
@@ -170,7 +176,8 @@
             if (store)
               store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
+        throw MetadataException("AggregateMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "no delegate MetadataStore implementation");
       }
 {% end source %}\
 {% end %}\
@@ -219,7 +226,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -266,6 +273,7 @@
 
 #include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/MetadataException.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <ome/xml/meta/AggregateMetadata.h>
@@ -290,7 +298,7 @@ namespace ome
        * delegates the storage and retrieval to one or more
        * sub-stores.
        */
-      class AggregateMetadata : public Metadata
+      class AggregateMetadata : virtual public Metadata
       {
       public:
         /// A list of MetadataStore and MetadataRetrieve instances.
@@ -352,7 +360,7 @@ namespace ome
          * @copydoc MetadataStore::getRoot()
          * @note Unsupported by AggregateMetadata, which will throw an
          * exception if called.
-         * @throws RuntimeException Always.
+         * @throws MetadataException always.
          */
         std::shared_ptr<MetadataRoot>&
         getRoot();
@@ -361,7 +369,8 @@ namespace ome
       std::shared_ptr<MetadataRoot>&
       AggregateMetadata::getRoot()
       {
-        throw std::runtime_error("getRoot() unsupported by AggregateMetadata.");
+        throw MetadataException("AggregateMetadata", "getRoot",
+                                "unsupported");
       }
 {% end source %}\
 
@@ -370,16 +379,17 @@ namespace ome
          * @copydoc MetadataStore::setRoot()
          * @note Unsupported by AggregateMetadata, which will throw an
          * exception if called.
-         * @throws RuntimeException Always.
+         * @throws MetadataException always.
          */
         void
         setRoot(std::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
+      AggregateMetadata::setRoot(std::shared_ptr<MetadataRoot>& /* root */)
       {
-        throw std::runtime_error("setRoot unsupported by AggregateMetadata.");
+        throw MetadataException("AggregateMetadata", "setRoot",
+                                "unsupported");
       }
 {% end source %}\
 
@@ -404,7 +414,8 @@ namespace ome
             if (retrieve)
               return retrieve->getPixelsBinDataCount(imageIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getPixelsBinDataCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -425,7 +436,8 @@ namespace ome
             if (retrieve)
               return retrieve->getBooleanAnnotationAnnotationCount(booleanAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getBooleanAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -446,7 +458,8 @@ namespace ome
             if (retrieve)
               return retrieve->getCommentAnnotationAnnotationCount(commentAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getCommentAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -467,7 +480,8 @@ namespace ome
             if (retrieve)
               return retrieve->getDoubleAnnotationAnnotationCount(doubleAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getDoubleAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -488,7 +502,8 @@ namespace ome
             if (retrieve)
               return retrieve->getFileAnnotationAnnotationCount(fileAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getFileAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -509,7 +524,8 @@ namespace ome
             if (retrieve)
               return retrieve->getListAnnotationAnnotationCount(listAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getListAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -530,7 +546,8 @@ namespace ome
             if (retrieve)
               return retrieve->getLongAnnotationAnnotationCount(longAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getLongAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -551,7 +568,8 @@ namespace ome
             if (retrieve)
               return retrieve->getTagAnnotationAnnotationCount(tagAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getTagAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -572,7 +590,8 @@ namespace ome
             if (retrieve)
               return retrieve->getTermAnnotationAnnotationCount(termAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getTermAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -593,7 +612,8 @@ namespace ome
             if (retrieve)
               return retrieve->getTimestampAnnotationAnnotationCount(timestampAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getTimestampAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -614,7 +634,8 @@ namespace ome
             if (retrieve)
               return retrieve->getXMLAnnotationAnnotationCount(xmlAnnotationIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getXMLAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -638,7 +659,8 @@ namespace ome
               return retrieve->getLightSourceType(instrumentIndex,
                                                   lightSourceIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getLightSourceType",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -661,7 +683,8 @@ namespace ome
             if (retrieve)
               return retrieve->getShapeType(roiIndex, shapeIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getShapeType",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -693,7 +716,8 @@ namespace ome
             if (store)
               store->set${o.name}Value(value, ${indexes_name_string(indexes[o.name].items()[0][1])});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
+        throw MetadataException("AggregateMetadata", "set${o.name}Value",
+                                "no delegate MetadataStore implementation");
       }
 {% end source %}\
 
@@ -713,7 +737,8 @@ namespace ome
             if (retrieve)
               return retrieve->get${o.name}Value(${indexes_name_string(indexes[o.name].items()[0][1])});
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "get${o.name}Value",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -723,8 +748,7 @@ namespace ome
         // ${o.name} entity counting
 {% end debug %}\
 {% for k, v in indexes[o.name].items() %}\
-{% if fu.max_occurs_under_parent(model, k, o.name) > 1 \
-      and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
 
 {% end %}\
@@ -756,7 +780,8 @@ ${counter(k, o, v)}\
             if (retrieve)
               return retrieve->getPixelsBinDataBigEndian(imageIndex, binDataIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getPixelsBinDataBigEndian",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -766,11 +791,11 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::string
+        const std::string&
         getUUID() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       AggregateMetadata::getUUID() const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
@@ -781,7 +806,8 @@ ${counter(k, o, v)}\
             if (retrieve)
               return retrieve->getUUID();
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
+        throw MetadataException("AggregateMetadata", "getUUID",
+                                "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
 
@@ -886,32 +912,8 @@ ${getter(k, o, prop, v)}\
             if (store)
               store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMaskBinData(const byte_array& binData,
-                       index_type ROIIndex,
-                       index_type shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      AggregateMetadata::setMaskBinData(const byte_array& binData,
-                                        index_type ROIIndex,
-                                        index_type shapeIndex)
-      {
-        for (delegate_list_type::iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            std::shared_ptr<MetadataStore> store = std::dynamic_pointer_cast<MetadataStore>(*i);
-            if (store)
-              store->setMaskBinData(binData, ROIIndex, shapeIndex);
-          }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
+        throw MetadataException("AggregateMetadata", "setPixelsBinDataBigEndian",
+                                "no delegate MetadataStore implementation");
       }
 {% end source %}\
 
@@ -936,7 +938,8 @@ ${getter(k, o, prop, v)}\
             if (store)
               store->setUUID(uuid);
           }
-        throw std::runtime_error("AggregateMetadata: No delegate MetadataStore implementation");
+        throw MetadataException("AggregateMetadata", "setUUID",
+                                "no delegate MetadataStore implementation");
       }
 {% end source %}\
 

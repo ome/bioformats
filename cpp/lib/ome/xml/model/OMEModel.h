@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -57,7 +57,7 @@ namespace ome
       class Reference;
 
       /**
-       * OME model (abstract top-level container)
+       * OME model interface (abstract top-level container)
        */
       class OMEModel
       {
@@ -71,13 +71,26 @@ namespace ome
         /// Size type for reference map.
         typedef reference_map_type::size_type size_type;
 
+      protected:
         /// Constructor.
-        OMEModel ();
+        OMEModel ()
+        {}
 
+      public:
         /// Destructor.
         virtual
-        ~OMEModel ();
+        ~OMEModel ()
+        {}
 
+      private:
+        /// Copy constructor (deleted).
+        OMEModel (const OMEModel&);
+
+        /// Assignment operator (deleted).
+        OMEModel&
+        operator= (const OMEModel&);
+
+      public:
         /**
          * Add a model object to the model.  Note that the concrete
          * implementation will not add types derived from Reference.

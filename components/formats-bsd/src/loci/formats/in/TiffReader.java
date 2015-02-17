@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -57,13 +53,13 @@ import loci.formats.tiff.TiffCompression;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * TiffReader is the file format reader for regular TIFF files,
  * not of any specific TIFF variant.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/TiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -89,7 +85,7 @@ public class TiffReader extends BaseTiffReader {
   private String description;
   private String calibrationUnit;
   private Double physicalSizeZ;
-  private Double timeIncrement;
+  private Time timeIncrement;
   private Integer xOrigin, yOrigin;
 
   // -- Constructor --
@@ -102,6 +98,7 @@ public class TiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     if (noPixels) {
       return companionFile == null ? null : new String[] {companionFile};
@@ -111,6 +108,7 @@ public class TiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -127,6 +125,7 @@ public class TiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
     String comment = ifds.get(0).getComment();
@@ -225,6 +224,7 @@ public class TiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();
@@ -283,8 +283,11 @@ public class TiffReader extends BaseTiffReader {
         put("Unit", calibrationUnit);
       }
       else if (token.startsWith("finterval=")) {
-        timeIncrement = parseDouble(value);
-        put("Frame Interval", timeIncrement);
+        Double valueDouble = parseDouble(value);
+        if (valueDouble != null) {
+          timeIncrement = new Time(valueDouble, UNITS.S);
+          put("Frame Interval", timeIncrement);
+        }
       }
       else if (token.startsWith("spacing=")) {
         physicalSizeZ = parseDouble(value);
@@ -389,7 +392,7 @@ public class TiffReader extends BaseTiffReader {
     if (physicalSizeZ != null) {
       double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
-      PositiveFloat z = FormatTools.getPhysicalSizeZ(zDepth);
+      Length z = FormatTools.getPhysicalSizeZ(zDepth);
       if (z != null) {
         store.setPixelsPhysicalSizeZ(z, 0);
       }

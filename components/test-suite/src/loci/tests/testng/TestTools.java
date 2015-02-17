@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,9 +54,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility methods for use with TestNG tests.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/TestTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/TestTools.java;hb=HEAD">Gitweb</a></dd></dl>
 */
 public class TestTools {
 
@@ -164,19 +161,6 @@ public class TestTools {
     return dot < 0 ? name : name.substring(dot + 1);
   }
 
-  /** Creates a new log file. */
-  public static void createLogFile() {
-    LOGGER.info("Start test suite");
-
-    // close log file on exit
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      public void run() {
-        LOGGER.info(DIVIDER);
-        LOGGER.info("Test suite complete.");
-      }
-    });
-  }
-
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig)
@@ -234,16 +218,17 @@ public class TestTools {
     }
 
     // special config file for the test suite
-    LOGGER.info("\tconfig file");
+    LOGGER.debug("\tconfig file");
     try {
       config.parseConfigFile(subs[0]);
     }
     catch (IOException exc) {
-      LOGGER.info("", exc);
+      LOGGER.debug("", exc);
     }
     catch (Exception e) { }
 
     Arrays.sort(subs, new Comparator() {
+      @Override
       public int compare(Object o1, Object o2) {
         String s1 = o1.toString();
         String s2 = o2.toString();
@@ -275,7 +260,7 @@ public class TestTools {
 
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(subs[i]);
-      LOGGER.info("Checking {}:", subs[i]);
+      LOGGER.debug("Checking {}:", subs[i]);
 
       String filename = file.getName();
 
@@ -283,19 +268,19 @@ public class TestTools {
         continue;
       }
       else if (isIgnoredFile(subs[i], config)) {
-        LOGGER.info("\tignored");
+        LOGGER.debug("\tignored");
         continue;
       }
       else if (file.isDirectory()) {
-        LOGGER.info("\tdirectory");
+        LOGGER.debug("\tdirectory");
         getFiles(subs[i], files, config, null, null, configFileSuffix);
       }
       else if (!subs[i].endsWith("readme.txt")) {
         if (typeTester.isThisType(subs[i])) {
-          LOGGER.info("\tOK");
+          LOGGER.debug("\tOK");
           files.add(file.getAbsolutePath());
         }
-        else LOGGER.info("\tunknown type");
+        else LOGGER.debug("\tunknown type");
       }
       file = null;
     }

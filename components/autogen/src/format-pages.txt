@@ -19,6 +19,8 @@ using the SlideBook software.  Bio-Formats is not likely to support the full \n
 range of metadata that is included in .sld files, and so exporting to \n
 OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
 preserved. \n
+Free software from 3I can export the files to OME-TIFF post-acquisition, see \n
+`https://www.slidebook.com/reader.php <https://www.slidebook.com/reader.php>`_ \n
 \n
 .. seealso:: \n
   `Slidebook software overview <https://www.slidebook.com>`_ \n
@@ -114,7 +116,7 @@ extensions = .img, .hdr
 developer = `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
 bsd = no
 export = no
-weHave = * `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ \n
+weHave = * `an Analyze 7.5 specification document <http://web.archive.org/web/20070927191351/http://www.mayo.edu/bir/PDF/ANALYZE75.pdf>`_ \n
 * several Analyze 7.5 datasets
 pixelsRating = Very good
 metadataRating = Good
@@ -349,7 +351,7 @@ owner = `Bitplane <http://www.bitplane.com/>`_
 bsd = no
 export = no
 versions = 2.7, 3.0, 5.5
-weHave = * an `Imaris (RAW) specification document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
+weHave = * an `Imaris (RAW) specification document <http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
 * an Imaris 5.5 (HDF) specification document \n
 * Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++) \n
 * several older Imaris (RAW) datasets \n
@@ -471,11 +473,10 @@ reader = CellVoyagerReader.java
 
 [DeltaVision]
 extensions = .dv, .r3d
-owner = `Applied Precision <http://www.api.com/>`_
+owner = `GE Healthcare (formerly Applied Precision) <http://www.gelifesciences.com/webapp/wcs/stores/servlet/catalog/en/GELifeSciences-UK/brands/deltavision/>`_
 bsd = no
 export = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
-samples = `Applied Precision Datasets <http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
 weHave = * a DV specification document (v2.10 or newer, in HTML) \n
 * numerous DV datasets
 pixelsRating = Outstanding
@@ -491,9 +492,6 @@ notes = - The Deltavision format is based on the Medical Research Council (MRC) 
   * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
   * `SVI Huygens <http://svi.nl/>`_ \n
   * `Image-Pro Plus <http://www.mediacy.com/>`_ \n
-\n
-.. seealso:: \n
-  `DeltaVision system description <http://api.com/deltavision.asp>`_
 
 [DICOM]
 extensions = .dcm, .dicom
@@ -516,6 +514,10 @@ utilityRating = Fair
 reader = DicomReader.java
 notes = * DICOM stands for "Digital Imaging and Communication in Medicine". \n
 * Bio-Formats supports both compressed and uncompressed DICOM files. \n
+\n
+If you have a problematic DICOM file which you cannot send us for privacy \n
+reasons, please send us the exact error message and be aware that it may take \n
+several attempts to fix the problem blind. \n
 \n
 .. seealso:: \n
   `DICOM homepage <http://medical.nema.org/>`_
@@ -1054,7 +1056,7 @@ developer = `Independent JPEG Group <http://www.ijg.org/>`_
 bsd = yes
 export = yes
 software = `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
-weHave = * a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) \n
+weHave = * a JPEG 2000 specification document (free draft from 2000, no longer available online) \n
 * a few .jp2 files
 pixelsRating = Very good
 metadataRating = Poor
@@ -1132,8 +1134,6 @@ opennessRating = Poor
 presenceRating = Poor
 utilityRating = Poor
 reader = KhorosReader.java
-notes = .. seealso:: \n
-  `VisiQuest software overview (formerly known as KhorosPro) <http://www.accusoft.com/products/visiquest/>`_
 
 [Kodak BIP]
 extensions = .bip
@@ -1174,7 +1174,7 @@ developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 bsd = no
 export = no
 versions = 1.0, 2.0
-software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-imaging-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
+software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (links at bottom of page)
 weHave = * a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
 * a LIF specification document (version 1, from no later than 206 April 3, in PDF) \n
 * numerous LIF datasets
@@ -1380,8 +1380,6 @@ opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
 reader = MRWReader.java
-notes = .. seealso:: \n
-  `Description of MRW format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_
 
 [MNG (Multiple-image Network Graphics)]
 pagename = mng
@@ -1509,7 +1507,7 @@ extensions = .nd2
 developer = `Nikon USA <http://www.nikonusa.com/>`_
 bsd = no
 export = no
-software = `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
+software = `NIS-Elements Viewer from Nikon <http://www.nikoninstruments.com/Products/Software/NIS-Elements-Advanced-Research/NIS-Elements-Viewer>`_
 weHave = * many ND2 datasets
 weWant = * an official specification document
 pixelsRating = Very good
@@ -1650,7 +1648,8 @@ utilityRating = Good
 reader = SISReader.java
 
 [OME-TIFF]
-extensions = .ome.tiff
+indexExtensions = .ome.tiff
+extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
@@ -1676,7 +1675,8 @@ Commercial applications that support OME-TIFF include: \n
   :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
-extensions = .ome
+indexExtensions = .ome
+extensions = `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
@@ -1728,7 +1728,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Fair
 reader = PCXReader.java
-notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_.
+notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com.au/microscopy/en_au/downloads/lsm-5-series.html>`_.
 
 [PCORAW]
 extensions = .pcoraw, .rec
@@ -1742,6 +1742,20 @@ opennessRating = Very good
 presenceRating = Fair
 utilityRating = Good
 reader = PCORAWReader.java
+
+[PicoQuant Bin]
+extensions = .bin
+developer = `PicoQuant <http://www.picoquant.com/>`_
+bsd = no
+export = no
+software = `SymphoTime64 <http://www.picoquant.com/products/category/software/symphotime-64-fluorescence-lifetime-imaging-and-correlation-software>`_
+weHave = * a few example datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Poor
+reader = PQBinReader.java
 
 [Perkin Elmer Densitometer]
 extensions = .pds
@@ -1774,8 +1788,8 @@ utilityRating = Good
 reader = OperettaReader.java
 
 [PerkinElmer UltraView]
-extensions = .tif, .2, .3, .4
-unindexedExtensions = etc.
+indexExtensions = .tif, .2, .3, .4
+extensions = .tif, .2, .3, .4, etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
 export = no
@@ -1921,9 +1935,9 @@ reader = NativeQTReader.java
 writer = QTWriter.java
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-  * QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
-    installed. \n
-  * Native mode works on systems with no QuickTime (e.g. Linux). \n
+* QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
+  installed (32-bit JVM only, not supported with 64-bit). \n
+* Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
 Bio-Formats can save image stacks as QuickTime movies. \n
 The following table shows supported codecs: \n
@@ -2088,7 +2102,7 @@ developer = Aldus and Microsoft
 bsd = yes
 export = yes
 samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ \n
-`Big TIFF <http://tiffcentral.com/>`_
+`Big TIFF <http://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
 weHave = * a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) \n
 * many TIFF datasets \n
 * a few BigTIFF datasets
@@ -2245,7 +2259,7 @@ extensions = .mvd2
 developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 bsd = no
 export = no
-samples = `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+samples = `PerkinElmer Downloads <http://cellularimaging.perkinelmer.com/downloads/>`_
 weHave = * many example Volocity datasets
 weWant = * an official specification document \n
 * any Volocity datasets that do not open correctly
@@ -2291,7 +2305,6 @@ notes = Compressed BMP files are currently not supported. \n
 \n
 .. seealso:: \n
   `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_ \n
-  `General Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_
 
 [Woolz]
 extensions = .wlz
@@ -2310,11 +2323,11 @@ writer = WlzWriter.java
 
 [Zeiss AxioVision TIFF]
 extensions = .xml, .tiff
-owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 bsd = no
 export = no
-software = `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
+software = `Zeiss ZEN Lite <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-lite.html>`_
 weHave = * many example datasets
 weWant = * an official specification document
 pixelsRating = Very good
@@ -2327,12 +2340,12 @@ reader = ZeissTIFFReader.java
 [Zeiss AxioVision ZVI (Zeiss Vision Image)]
 pagename = zeiss-axiovision-zvi
 extensions = .zvi
-owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-developer = `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axiovision>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 bsd = no
 export = no
 versions = 1.0, 2.0
-software = `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
+software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/en_de/downloads/axiovision.html>`_
 weHave = * a ZVI specification document (v2.0.5, from 2010 August, in PDF) \n
 * an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
 * an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
@@ -2347,18 +2360,23 @@ utilityRating = Good
 privateSpecification = true
 reader = ZeissZVIReader.java
 notes = Bio-Formats uses a modified version of the `Apache Jakarta POI library <http://jakarta.apache.org/poi/>`_ to read ZVI files. \n
+ImageJ/FIJI will use the ZVI reader plugin in preference to Bio-Formats if \n
+both are installed. If you have a problem which is solved by opening the file \n
+using the Bio-Formats Importer plugin, you can just remove the \n
+ZVI_Reader.class from the plugins folder. \n
 \n
 Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. \n
 \n
 .. seealso:: \n
-  `Axiovision software overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_
+  `Axiovision software overview <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 
 [Zeiss CZI]
-extensions = .czi
-developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+indexExtensions = .czi
+extensions = `.czi <http://www.zeiss.com/czi>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 bsd = no
 export = no
-software = `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
+software = `Zeiss ZEN 2012 <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-2012.html>`_
 weHave = * many example datasets \n
 * official specification documents
 pixelsRating = Outstanding
@@ -2372,10 +2390,10 @@ reader = ZeissCZIReader.java
 [Zeiss LSM (Laser Scanning Microscope) 510/710]
 pagename = zeiss-lsm
 extensions = .lsm, .mdb
-owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 bsd = no
 export = no
-software = `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_ \n
+software = `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_ \n
 `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ \n
 `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ \n
 `DIMIN <http://www.dimin.net/>`_

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -49,12 +45,21 @@ import loci.formats.DelegateReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Tag;
+import com.drew.imaging.ImageProcessingException;
+import java.io.File;
+import java.util.Date;
+import org.joda.time.DateTime;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.Timestamp;
+
 /**
  * JPEGReader is the file format reader for JPEG images.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/JPEGReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/JPEGReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -77,9 +82,10 @@ public class JPEGReader extends DelegateReader {
     suffixNecessary = false;
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatReader API methods --
 
-  /* @see IFormatHandler#setId(String) */
+  /* @see FormatReader#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     try {
       super.setId(id);
@@ -141,12 +147,22 @@ public class JPEGReader extends DelegateReader {
       useLegacy = true;
       super.setId(id);
     }
-    currentId = id;
+    if (currentId.endsWith(".fixed")) {
+      currentId = currentId.substring(0, currentId.lastIndexOf("."));
+    }
   }
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return new String[] {currentId.replaceAll(".fixed", "")};
+  }
+
   /* @see IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     Location.mapId(currentId, null);
@@ -162,6 +178,7 @@ public class JPEGReader extends DelegateReader {
     }
 
     /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+    @Override
     public boolean isThisType(String name, boolean open) {
       if (open) {
         return super.isThisType(name, open);
@@ -170,7 +187,42 @@ public class JPEGReader extends DelegateReader {
       return checkSuffix(name, getSuffixes());
     }
 
+    /* @see loci.formats.FormatReader#initFile(String) */
+    protected void initFile(String id) throws FormatException, IOException {
+        super.initFile(id);
+
+        MetadataStore store = makeFilterMetadata();
+        LOGGER.info("Parsing JPEG EXIF data");
+
+        try {
+            File jpegFile = new File(id);
+            Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
+
+            // obtain the Exif directory
+            ExifSubIFDDirectory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+
+            if ( directory != null ) {
+
+                // Set the acquisition date
+                Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+                Timestamp timestamp = new Timestamp( new DateTime(date) );
+                store.setImageAcquisitionDate(timestamp, 0);
+
+                for (Tag tag : directory.getTags()) {
+                    addGlobalMeta(tag.getTagName(), tag.getDescription());
+                }
+            }
+
+        } catch ( ImageProcessingException e ) {
+            LOGGER.info("Error parsing JPEG EXIF data");
+        }
+        catch (IOException e) {
+          LOGGER.info("Error parsing JPEG EXIF data");
+        }
+    }
+
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+    @Override
     public boolean isThisType(RandomAccessInputStream stream) throws IOException
     {
       final int blockLen = 4;

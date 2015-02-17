@@ -4,7 +4,7 @@
 ImagePro Sequence
 ===============================================================================
 
-Extensions: .seq 
+Extensions: .seq
 
 
 Owner: `Media Cybernetics <http://www.mediacy.com/>`_

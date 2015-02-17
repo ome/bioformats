@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -44,7 +40,6 @@
  *
  * Description:             Holds information found in main and tile-part
  *                          headers 
- *
  *
  *
  * COPYRIGHT:
@@ -119,8 +114,6 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
         private int maxCompHeight = -1;
         /** 
          * Width of the specified tile-component
-         *
-         * @param t Tile index
          *
          * @param c Component index
          * */
@@ -781,7 +774,7 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
      *
      * @param t index of the tile
      *
-     * @param tp Number of tile-parts
+     * @param ntp Number of tile-parts
      * */
     public String toStringTileHeader(int t, int ntp) {
         int nc = siz.csiz;
@@ -830,7 +823,7 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
      *
      * @param t index of the tile
      *
-     * @param tp Number of tile-parts
+     * @param ntp Number of tile-parts
      * */
     public String toStringThNoSOT(int t, int ntp) {
         int nc = siz.csiz;

@@ -2,9 +2,9 @@
 #include <ome/xml/model/enums/LaserType.h>
 #include <ome/xml/model/enums/PixelType.h>
 
-#include <sstream>
+#include <ome/test/test.h>
 
-#include <gtest/gtest.h>
+#include <sstream>
 
 using ome::xml::model::enums::LaserType;
 using ome::xml::model::enums::PixelType;
@@ -187,14 +187,21 @@ EnumStringParameters string_params[] =
     EnumStringParameters("invalid3",               false, false, true)
   };
 
-INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,
-                        ::testing::ValuesIn(string_params));
 
+// This enum test is intentionally setting an invalid value, so don't
+// warn about it.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wconversion"
+#endif
 TEST(Enum, LaserTypeCreateInvalidValue)
 {
   ASSERT_THROW(LaserType(static_cast<LaserType::enum_value>(50)),
                EnumerationException);
 }
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
 template<typename E>
 class EnumValueParameters
@@ -334,8 +341,6 @@ lts_param lt_value_params[] =
               "SolidState", "FreeElectron"),
   };
 
-INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
-                        ::testing::ValuesIn(lt_value_params));
 
 template<typename E>
 void
@@ -407,3 +412,18 @@ TEST(Enum, PixelTypeInvalid)
   // No fallback to other.
   ASSERT_THROW(PixelType("Invalid"), EnumerationException);
 }
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
+#endif
+
+INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,
+                        ::testing::ValuesIn(string_params));
+
+INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
+                        ::testing::ValuesIn(lt_value_params));

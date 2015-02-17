@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -39,13 +35,14 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import loci.common.DateTools;
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -77,10 +74,6 @@ import ome.xml.model.primitives.Timestamp;
 /**
  * OMETiffReader is the file format reader for
  * <a href="http://ome-xml.org/wiki/OmeTiff">OME-TIFF</a> files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/OMETiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/OMETiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class OMETiffReader extends FormatReader {
 
@@ -99,12 +92,13 @@ public class OMETiffReader extends FormatReader {
   private int[] tileHeight;
 
   private OMEXMLService service;
+  private String metadataFile;
 
   // -- Constructor --
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
+    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff", "companion.ome"});
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
@@ -115,7 +109,13 @@ public class OMETiffReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
+    // companion files in a binary-only dataset should always have additional files
+    if (checkSuffix(id, "companion.ome")) {
+      return false;
+    }
+
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
@@ -146,10 +146,21 @@ public class OMETiffReader extends FormatReader {
       int t = meta.getPixelsSizeT(i).getValue().intValue();
       nImages += z * t * nChannels;
     }
-    return nImages <= ifdOffsets.length;
+    return nImages > 0 && nImages <= ifdOffsets.length;
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "companion.ome")) {
+      // force the reader to pick up binary-only companion files
+      return true;
+    }
+    return super.isThisType(name, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     tp.setDoCaching(false);
@@ -186,6 +197,16 @@ public class OMETiffReader extends FormatReader {
     try {
       if (service == null) setupService();
       IMetadata meta = service.createOMEXMLMetadata(comment);
+
+      try {
+        String metadataFile = meta.getBinaryOnlyMetadataFile();
+        if (metadataFile != null) {
+          return true;
+        }
+      }
+      catch (NullPointerException e) {
+      }
+
       for (int i=0; i<meta.getImageCount(); i++) {
         meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, 0);
         MetadataTools.verifyMinimumPopulated(meta, i);
@@ -208,6 +229,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
@@ -215,6 +237,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     int series = getSeries();
     if (info[series][lastPlane] == null ||
@@ -228,6 +251,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     int series = getSeries();
     if (info[series][lastPlane] == null ||
@@ -243,6 +267,7 @@ public class OMETiffReader extends FormatReader {
   /*
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -250,6 +275,12 @@ public class OMETiffReader extends FormatReader {
     int series = getSeries();
     lastPlane = no;
     int i = info[series][no].ifd;
+
+    if (!info[series][no].exists) {
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
+
     MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
     if (r.getCurrentFile() == null) {
       r.setId(info[series][no].id);
@@ -266,24 +297,37 @@ public class OMETiffReader extends FormatReader {
     TiffParser p = new TiffParser(s);
     p.getSamples(ifd, buf, x, y, w, h);
     s.close();
+
+    // reasonably safe to close the reader if the entire plane or
+    // lower-right-most tile from a single plane file has been read
+    if (r.getImageCount() == 1 && w + x == getSizeX() && h + y == getSizeY()) {
+      r.close();
+    }
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     int series = getSeries();
     if (noPixels) return null;
     Vector<String> usedFiles = new Vector<String>();
-    for (int i=0; i<info[series].length; i++) {
-      if (!usedFiles.contains(info[series][i].id)) {
-        usedFiles.add(info[series][i].id);
+    if (metadataFile != null) {
+      usedFiles.add(metadataFile);
+    }
+    if (info != null && info[series] != null) {
+      for (int i=0; i<info[series].length; i++) {
+        if (!usedFiles.contains(info[series][i].id)) {
+          usedFiles.add(info[series][i].id);
+        }
       }
     }
     return usedFiles.toArray(new String[usedFiles.size()]);
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption() */
+  @Override
   public int fileGroupOption(String id) {
     try {
       boolean single = isSingleFile(id);
@@ -299,6 +343,7 @@ public class OMETiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (info != null) {
@@ -321,16 +366,19 @@ public class OMETiffReader extends FormatReader {
       lastPlane = 0;
       tileWidth = null;
       tileHeight = null;
+      metadataFile = null;
     }
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return tileWidth[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return tileHeight[getSeries()];
@@ -339,6 +387,7 @@ public class OMETiffReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // normalize file name
     super.initFile(normalizeFilename(null, id));
@@ -350,25 +399,66 @@ public class OMETiffReader extends FormatReader {
     if (!new File(fileName).exists()) {
       fileName = currentId;
     }
-    RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     String xml;
-    IFD firstIFD;
-    try {
-      TiffParser tp = new TiffParser(ras);
-      firstIFD = tp.getFirstIFD();
-      xml = firstIFD.getComment();
+    IFD firstIFD = null;
+
+    boolean companion = false;
+    if (checkSuffix(fileName, "companion.ome")) {
+      xml = DataTools.readFile(fileName);
+      companion = true;
     }
-    finally {
-      ras.close();
+    else {
+      RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
+      try {
+        TiffParser tp = new TiffParser(ras);
+        firstIFD = tp.getFirstIFD();
+        xml = firstIFD.getComment();
+      }
+      finally {
+        ras.close();
+      }
     }
 
     if (service == null) setupService();
     OMEXMLMetadata meta;
     try {
       meta = service.createOMEXMLMetadata(xml);
+      if (companion) {
+        String firstTIFF = meta.getUUIDFileName(0, 0);
+        initFile(new Location(dir, firstTIFF).getAbsolutePath());
+        return;
+      }
     }
     catch (ServiceException se) {
       throw new FormatException(se);
+    }
+
+    String metadataPath = null;
+    try {
+      metadataPath = meta.getBinaryOnlyMetadataFile();
+    }
+    catch (NullPointerException e) {
+    }
+
+    if (metadataPath != null) {
+      // this is a binary-only file
+      // overwrite XML with what is in the companion OME-XML file
+      Location path = new Location(dir, metadataPath);
+      if (path.exists()) {
+        metadataFile = path.getAbsolutePath();
+        xml = readMetadataFile();
+
+        try {
+          meta = service.createOMEXMLMetadata(xml);
+        }
+        catch (ServiceException se) {
+          throw new FormatException(se);
+        }
+        catch (NullPointerException e) {
+          metadataFile = null;
+          metadataPath = null;
+        }
+      }
     }
 
     hasSPW = meta.getPlateCount() > 0;
@@ -618,6 +708,7 @@ public class OMETiffReader extends FormatReader {
         }
 
         Location file = new Location(filename);
+        boolean exists = true;
         if (!file.exists()) {
           // if this is an absolute file name, try using a relative name
           // old versions of OMETiffWriter wrote an absolute path to
@@ -629,6 +720,9 @@ public class OMETiffReader extends FormatReader {
 
           if (!new Location(filename).exists()) {
             filename = currentId;
+            // if only one file is defined, we have to assume that it
+            // corresponds to the current file
+            exists = fileSet.size() == 1;
           }
         }
 
@@ -639,6 +733,7 @@ public class OMETiffReader extends FormatReader {
           planes[no].id = filename;
           planes[no].ifd = ifd + q;
           planes[no].certain = true;
+          planes[no].exists = exists;
           LOGGER.debug("      Plane[{}]: file={}, IFD={}",
             new Object[] {no, planes[no].id, planes[no].ifd});
         }
@@ -649,6 +744,7 @@ public class OMETiffReader extends FormatReader {
             planes[no].reader = r;
             planes[no].id = filename;
             planes[no].ifd = planes[no - 1].ifd + 1;
+            planes[no].exists = exists;
             LOGGER.debug("      Plane[{}]: FILLED", no);
           }
         }
@@ -794,6 +890,9 @@ public class OMETiffReader extends FormatReader {
         }
         m.falseColor = true;
         m.metadataComplete = true;
+        if (meta.getPixelsSignificantBits(i) != null) {
+          m.bitsPerPixel = meta.getPixelsSignificantBits(i).getValue();
+        }
       }
       catch (NullPointerException exc) {
         throw new FormatException("Incomplete Pixels metadata", exc);
@@ -904,6 +1003,16 @@ public class OMETiffReader extends FormatReader {
     }
   }
 
+  /** Extracts the OME-XML from the current {@link #metadataFile}. */
+  private String readMetadataFile() throws IOException {
+    if (checkSuffix(metadataFile, "tif") || checkSuffix(metadataFile, "tiff")) {
+      // metadata file is an OME-TIFF file; extract OME-XML comment
+      return new TiffParser(metadataFile).getComment();
+    }
+    // assume metadata file is an XML file
+    return DataTools.readFile(metadataFile);
+  }
+
   // -- Helper classes --
 
   /** Structure containing details on where to find a particular image plane. */
@@ -916,6 +1025,13 @@ public class OMETiffReader extends FormatReader {
     public int ifd = -1;
     /** Certainty flag, for dealing with unspecified NumPlanes. */
     public boolean certain = false;
+    /**
+     * Whether or not the file meant to contain this plane exists.
+     * The value of 'id' may be changed to allow the tile and image dimensions
+     * to be populated; this flag indicates whether the originally recorded file
+     * for this plane exists.
+     */
+    public boolean exists = true;
   }
 
 }

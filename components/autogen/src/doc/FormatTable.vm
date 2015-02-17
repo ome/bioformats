@@ -27,7 +27,11 @@ Supported Formats
 
 #foreach ($format in $formats)
 #set ($pagename = $format.get("pagename"))
-#set ($extensions = $format.get("extensions"))
+#if ($format.get("extensions"))
+  #set ($extensions = $format.get("extensions"))
+#else
+  #set ($extensions = "")
+#end
 #set ($pixels = $format.get("pixelsRating"))
 #set ($metadata = $format.get("metadataRating"))
 #set ($openness = $format.get("opennessRating"))

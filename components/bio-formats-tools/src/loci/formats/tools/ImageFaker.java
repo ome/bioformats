@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats command line tools.
+ * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -122,6 +118,18 @@ public class ImageFaker {
     if (!validArgs || targetDirectoryPath == null) {
       printUsage();
       return false;
+    }
+
+    // make sure that we don't end up with just a ".fake" directory
+    if (new Location(targetDirectoryPath).exists()) {
+      Location p = new Location(targetDirectoryPath, "screen.fake");
+      int index = 1;
+      while (p.exists()) {
+        p = new Location(targetDirectoryPath, "screen" + index + ".fake");
+        index++;
+      }
+
+      targetDirectoryPath = p.getAbsolutePath();
     }
 
     Location directoryRoot;

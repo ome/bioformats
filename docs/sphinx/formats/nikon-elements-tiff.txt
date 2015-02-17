@@ -4,7 +4,7 @@
 Nikon Elements TIFF
 ===============================================================================
 
-Extensions: .tiff 
+Extensions: .tiff
 
 Developer: `Nikon <http://www.nikon.com>`_
 

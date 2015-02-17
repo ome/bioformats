@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -318,8 +314,6 @@ void readCoreMetadata() {
     bool falseColor = reader->isFalseColor();
     ByteArray2D table8 = reader->get8BitLookupTable();
     ShortArray2D table16 = reader->get16BitLookupTable();
-    IntArray cLengths = reader->getChannelDimLengths();
-    StringArray cTypes = reader->getChannelDimTypes();
     int thumbSizeX = reader->getThumbSizeX();
     int thumbSizeY = reader->getThumbSizeY();
     bool little = reader->isLittleEndian();
@@ -374,27 +368,7 @@ void readCoreMetadata() {
     cout << "\tSizeZ = " << sizeZ << endl;
     cout << "\tSizeT = " << sizeT << endl;
     cout << "\tSizeC = " << sizeC;
-    if (sizeC != effSizeC) cout << " (effectively " << effSizeC << ")";
-    int cProduct = 1;
-    int numDims = cLengths.length();
-    if (numDims == 1 && FormatTools::CHANNEL().equals(cTypes[0])) {
-      cProduct = cLengths[0];
-    }
-    else {
-      cout << " (";
-      for (int i=0; i<numDims; i++) {
-        if (i > 0) cout << " x ";
-        int cLength = cLengths[i];
-        cout << cLength << " " << cTypes[i];
-        cProduct *= cLength;
-      }
-      cout << ")";
-    }
-    cout << endl;
-    if (numDims == 0 || cProduct != sizeC) {
-      cout <<
-        "\t************ Warning: C dimension mismatch ************" << endl;
-    }
+    if (sizeC != effSizeC) cout << " (effectively " << effSizeC << ")" << endl;
     if (imageCount != sizeZ * effSizeC * sizeT) {
       cout << "\t************ Warning: ZCT mismatch ************" << endl;
     }

@@ -1,10 +1,10 @@
 /*
  * #%L
- * Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -73,10 +73,6 @@ import ome.xml.model.enums.EnumerationException;
  * After calling {@link #execute()}, the process will be ready to feed to
  * an {@link ImagePlusReader} to read in the actual {@link ij.ImagePlus}
  * objects.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/ImportProcess.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImportProcess implements StatusReporter {
 
@@ -458,18 +454,21 @@ public class ImportProcess implements StatusReporter {
 
   // -- StatusReporter methods --
 
+  @Override
   public void addStatusListener(StatusListener l) {
     synchronized (listeners) {
       listeners.add(l);
     }
   }
 
+  @Override
   public void removeStatusListener(StatusListener l) {
     synchronized (listeners) {
       listeners.remove(l);
     }
   }
 
+  @Override
   public void notifyListeners(StatusEvent e) {
     synchronized (listeners) {
       for (StatusListener l : listeners) l.statusUpdated(e);
@@ -522,8 +521,8 @@ public class ImportProcess implements StatusReporter {
 
     r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
-    if (options.isAutoscale() || FormatTools.isFloatingPoint(r.getPixelType()))
-    {
+
+    if (options.isAutoscale() || FormatTools.isFloatingPoint(r)) {
       r = minMaxCalculator = new MinMaxCalculator(r);
     }
     if (options.doStitchTiles()) {
@@ -604,19 +603,7 @@ public class ImportProcess implements StatusReporter {
     if (options.isLocal() || options.isHTTP()) {
       BF.status(options.isQuiet(), "Identifying " + idName);
       imageReader = LociPrefs.makeImageReader();
-      try {
-        baseReader = imageReader.getReader(options.getId());
-      }
-      catch (FormatException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was an error reading the file.");
-        throw exc;
-      }
-      catch (IOException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was a I/O problem reading the file.");
-        throw exc;
-      }
+      baseReader = imageReader.getReader(options.getId());
     }
     else if (options.isOMERO()) {
       BF.status(options.isQuiet(), "Establishing server connection");
@@ -682,7 +669,7 @@ public class ImportProcess implements StatusReporter {
    * HACK: This method mainly exists to prompt the user for a missing
    * LuraWave license code, in the case of LWF-compressed Flex.
    *
-   * @see ImagePlusReader#readProcessors(ImportProcess, int, Region)
+   * @see ImagePlusReader#readProcessors(ImportProcess, int, Region, boolean)
    */
   private void setId() throws FormatException, IOException {
     boolean first = true;

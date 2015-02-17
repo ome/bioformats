@@ -4,7 +4,7 @@
 NEF (Nikon Electronic Format)
 ===============================================================================
 
-Extensions: .nef, .tif 
+Extensions: .nef, .tif
 
 Developer: `Nikon <http://www.nikon.com/>`_
 

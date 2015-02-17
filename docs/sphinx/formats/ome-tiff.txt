@@ -4,7 +4,7 @@
 OME-TIFF
 ===============================================================================
 
-Extensions: .ome.tiff 
+Extensions: `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 

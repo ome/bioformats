@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats API for reading and writing file formats.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -45,10 +41,6 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * Interface for all biological file format readers.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/IFormatReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/IFormatReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
@@ -174,23 +166,6 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Modulo getModuloC();
 
   Modulo getModuloT();
-
-  /**
-   * Gets the lengths of each subdimension of C,
-   * in fastest-to-slowest rasterization order.
-   *
-   * @deprecated
-   */
-  int[] getChannelDimLengths();
-
-  /**
-   * Gets the name of each subdimension of C,
-   * in fastest-to-slowest rasterization order.
-   * Common subdimensional types are enumerated in {@link FormatTools}.
-   *
-   * @deprecated
-   */
-  String[] getChannelDimTypes();
 
   /** Get the size of the X dimension for the thumbnail. */
   int getThumbSizeX();
@@ -410,15 +385,36 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /**
    * Gets the rasterized index corresponding
-   * to the given Z, C and T coordinates.
+   * to the given Z, C and T coordinates (real sizes).
    */
   int getIndex(int z, int c, int t);
 
   /**
-   * Gets the Z, C and T coordinates corresponding
-   * to the given rasterized index value.
+   * Gets the rasterized index corresponding to the given Z, C, T,
+   * moduloZ, moduloC and moduloT coordinates (effective sizes).  Note
+   * that the Z, C and T coordinates take the modulo dimension sizes
+   * into account.  The effective size for each of these dimensions is
+   * limited to the total size of the dimension divided by the modulo
+   * size.
+   */
+  int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT);
+
+  /**
+   * Gets the Z, C and T coordinates (real sizes) corresponding to the
+   * given rasterized index value.
    */
   int[] getZCTCoords(int index);
+
+  /**
+   * Gets the Z, C, T, moduloZ, moduloC and moduloT coordinates
+   * (effective sizes) corresponding to the given rasterized index
+   * value.  Note that the Z, C and T coordinates are not the same as
+   * those returned by getZCTCoords(int) because the size of the
+   * modulo dimensions is taken into account.  The effective size for
+   * each of these dimensions is limited to the total size of the
+   * dimension divided by the modulo size.
+   */
+  int[] getZCTModuloCoords(int index);
 
   /**
    * Obtains the specified metadata field's value for the current file.
@@ -556,14 +552,14 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /**
    * Set the resolution level.
    *
-   * @see getResolutionCount()
+   * @see #getResolutionCount()
    */
   void setResolution(int resolution);
 
   /**
    * Get the current resolution level.
    *
-   * @see getResolutionCount()
+   * @see #getResolutionCount()
    */
   int getResolution();
 
@@ -573,10 +569,10 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Set whether or not to flatten resolutions into individual series. */
   void setFlattenedResolutions(boolean flatten);
 
-  // -- Deprecated methods --
-
-  /** Obtains the core metadata values for the current file.
-   * @deprecated Use #getCoreMetadataList instead.
+  /**
+   * Reopen any files that were closed, and which are expected to be open
+   * while the reader is open.  This assumes that {@link #setId} has been
+   * called, but close(false) has not been called.
    */
-  CoreMetadata[] getCoreMetadata();
+  void reopenFile() throws IOException;
 }

@@ -1,9 +1,11 @@
-function I = bfGetPlane(r, iPlane, varargin)
+function I = bfGetPlane(r, varargin)
 % BFGETPLANE Retrieve the plane data from a reader using Bio-Formats
 % 
 %   I = bfGetPlane(r, iPlane) returns a specified plane from the input
 %   format reader. The index specifying the plane to retrieve should be
-%   contained between 1 and the number of planes for the series.
+%   contained between 1 and the number of planes for the series. Given a
+%   set of (z, c, t) plane coordinates, the plane index (0-based) can be
+%   retrieved using r.getIndex(z, c, t).
 %
 %   I = bfGetPlane(r, iPlane, x, y, width, height) only returns the tile
 %   which origin is specified by (x, y) and dimensions are specified by
@@ -13,13 +15,14 @@ function I = bfGetPlane(r, iPlane, varargin)
 %
 %    I = bfGetPlane(r, 1) % First plane of the series
 %    I = bfGetPlane(r, r.getImageCount()) % Last plane of the series
+%    I = bfGetPlane(r, r.getIndex(0, 0, 0) + 1) % First plane of the series
 %    I = bfGetPlane(r, 1, 1, 1, 20, 20) % 20x20 tile originated at (0, 0)
 %
 % See also: BFGETREADER
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -40,22 +43,22 @@ function I = bfGetPlane(r, iPlane, varargin)
 
 % Input check
 ip = inputParser;
-ip.addRequired('r', @(x) isa(x, 'loci.formats.IFormatReader') && ...
-    ~isempty(x.getCurrentFile()));
+isValidReader = @(x) isa(x, 'loci.formats.IFormatReader') && ...
+    ~isempty(x.getCurrentFile());
+ip.addRequired('r', isValidReader);
 ip.parse(r);
 
 % Plane check
 isValidPlane = @(x) isscalar(x) && ismember(x, 1 : r.getImageCount());
-ip.addRequired('iPlane', isValidPlane);
-
 % Optional tile arguments check
 isValidX = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
-isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
+isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeY());
+ip.addRequired('iPlane', isValidPlane);
 ip.addOptional('x', 1, isValidX);
 ip.addOptional('y', 1, isValidY);
 ip.addOptional('width', r.getSizeX(), isValidX);
 ip.addOptional('height', r.getSizeY(), isValidY);
-ip.parse(r, iPlane, varargin{:});
+ip.parse(r, varargin{:});
 
 % Additional check for tile size
 assert(ip.Results.x - 1 + ip.Results.width <= r.getSizeX(),...
@@ -72,7 +75,8 @@ fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
 sgn = loci.formats.FormatTools.isSigned(pixelType);
 little = r.isLittleEndian();
 
-plane = r.openBytes(iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
+plane = r.openBytes(...
+    ip.Results.iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
     ip.Results.width, ip.Results.height);
     
 % convert byte array to MATLAB image

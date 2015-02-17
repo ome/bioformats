@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -50,10 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for buffered NIO logic that implements the IRandomAccess interface.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/NIOFileHandle.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/NIOFileHandle.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see IRandomAccess
  * @see java.io.RandomAccessFile
@@ -110,6 +102,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /** Provider class for NIO byte buffers, allocated or memory mapped. */
   protected NIOByteBufferProvider byteBufferProvider;
 
+  /** The original length of the file. */
+  private Long defaultLength;
+
   // -- Constructors --
 
   /**
@@ -129,6 +124,11 @@ public class NIOFileHandle extends AbstractNIOHandle {
     channel = raf.getChannel();
     byteBufferProvider = new NIOByteBufferProvider(channel, mapMode);
     buffer(position, 0);
+
+    // if we know the length won't change, cache the original length
+    if (mode.equals("r")) {
+      defaultLength = raf.length();
+    }
   }
 
   /**
@@ -179,6 +179,12 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /** Gets the FileChannel from this FileHandle. */
   public FileChannel getFileChannel() {
+    try {
+      channel.position(position);
+    }
+    catch (IOException e) {
+      LOGGER.warn("FileChannel.position failed", e);
+    }
     return channel;
   }
 
@@ -190,6 +196,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   // -- AbstractNIOHandle API methods --
 
   /* @see AbstractNIOHandle.setLength(long) */
+  @Override
   public void setLength(long length) throws IOException {
     raf.seek(length - 1);
     raf.write((byte) 0);
@@ -199,26 +206,34 @@ public class NIOFileHandle extends AbstractNIOHandle {
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess.close() */
+  @Override
   public void close() throws IOException {
     raf.close();
   }
 
   /* @see IRandomAccess.getFilePointer() */
+  @Override
   public long getFilePointer() {
     return position;
   }
 
   /* @see IRandomAccess.length() */
+  @Override
   public long length() throws IOException {
+    if (defaultLength != null) {
+      return defaultLength;
+    }
     return raf.length();
   }
 
   /* @see IRandomAccess.getOrder() */
+  @Override
   public ByteOrder getOrder() {
     return buffer == null ? order : buffer.order();
   }
 
   /* @see IRandomAccess.setOrder(ByteOrder) */
+  @Override
   public void setOrder(ByteOrder order) {
     this.order = order;
     if (buffer != null) {
@@ -227,26 +242,29 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see IRandomAccess.read(byte[]) */
+  @Override
   public int read(byte[] b) throws IOException {
     return read(ByteBuffer.wrap(b));
   }
 
   /* @see IRandomAccess.read(byte[], int, int) */
+  @Override
   public int read(byte[] b, int off, int len) throws IOException {
     return read(ByteBuffer.wrap(b), off, len);
   }
 
   /* @see IRandomAccess.read(ByteBuffer) */
+  @Override
   public int read(ByteBuffer buf) throws IOException {
     return read(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.read(ByteBuffer, int, int) */
+  @Override
   public int read(ByteBuffer buf, int off, int len) throws IOException {
     buf.position(off);
     buf.limit(off + len);
-    channel.position(position);
-    int readLength = channel.read(buf);
+    int readLength = channel.read(buf, position);
     buffer(position + readLength, 0);
     // Return value of NIO channel's is -1 when zero bytes are read at the end
     // of the file.
@@ -254,6 +272,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see IRandomAccess.seek(long) */
+  @Override
   public void seek(long pos) throws IOException {
     if (mapMode == FileChannel.MapMode.READ_WRITE && pos > length()) {
       setLength(pos);
@@ -262,11 +281,13 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readBoolean() */
+  @Override
   public boolean readBoolean() throws IOException {
     return readByte() == 1;
   }
 
   /* @see java.io.DataInput.readByte() */
+  @Override
   public byte readByte() throws IOException {
     buffer(position, 1);
     position += 1;
@@ -280,6 +301,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readChar() */
+  @Override
   public char readChar() throws IOException {
     buffer(position, 2);
     position += 2;
@@ -293,6 +315,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readDouble() */
+  @Override
   public double readDouble() throws IOException {
     buffer(position, 8);
     position += 8;
@@ -306,6 +329,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readFloat() */
+  @Override
   public float readFloat() throws IOException {
     buffer(position, 4);
     position += 4;
@@ -319,16 +343,19 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readFully(byte[]) */
+  @Override
   public void readFully(byte[] b) throws IOException {
     read(b);
   }
 
   /* @see java.io.DataInput.readFully(byte[], int, int) */
+  @Override
   public void readFully(byte[] b, int off, int len) throws IOException {
     read(b, off, len);
   }
 
   /* @see java.io.DataInput.readInt() */
+  @Override
   public int readInt() throws IOException {
     buffer(position, 4);
     position += 4;
@@ -342,6 +369,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readLine() */
+  @Override
   public String readLine() throws IOException {
     raf.seek(position);
     String line = raf.readLine();
@@ -350,6 +378,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readLong() */
+  @Override
   public long readLong() throws IOException {
     buffer(position, 8);
     position += 8;
@@ -363,6 +392,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readShort() */
+  @Override
   public short readShort() throws IOException {
     buffer(position, 2);
     position += 2;
@@ -376,16 +406,19 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.readUnsignedByte() */
+  @Override
   public int readUnsignedByte() throws IOException {
     return readByte() & 0xFF;
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
+  @Override
   public int readUnsignedShort() throws IOException {
     return readShort() & 0xFFFF;
   }
 
   /* @see java.io.DataInput.readUTF() */
+  @Override
   public String readUTF() throws IOException {
     raf.seek(position);
     String utf8 = raf.readUTF();
@@ -394,6 +427,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataInput.skipBytes(int) */
+  @Override
   public int skipBytes(int n) throws IOException {
     if (n < 1) {
       return 0;
@@ -408,21 +442,25 @@ public class NIOFileHandle extends AbstractNIOHandle {
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput.write(byte[]) */
+  @Override
   public void write(byte[] b) throws IOException {
     write(ByteBuffer.wrap(b));
   }
 
   /* @see java.io.DataOutput.write(byte[], int, int) */
+  @Override
   public void write(byte[] b, int off, int len) throws IOException {
     write(ByteBuffer.wrap(b), off, len);
   }
 
   /* @see IRandomAccess.write(ByteBuffer) */
+  @Override
   public void write(ByteBuffer buf) throws IOException {
     write(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
+  @Override
   public void write(ByteBuffer buf, int off, int len) throws IOException {
     writeSetup(len);
     buf.limit(off + len);
@@ -432,16 +470,19 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.write(int b) */
+  @Override
   public void write(int b) throws IOException {
     writeByte(b);
   }
 
   /* @see java.io.DataOutput.writeBoolean(boolean) */
+  @Override
   public void writeBoolean(boolean v) throws IOException {
     writeByte(v ? 1 : 0);
   }
 
   /* @see java.io.DataOutput.writeByte(int) */
+  @Override
   public void writeByte(int v) throws IOException {
     writeSetup(1);
     buffer.put((byte) v);
@@ -449,11 +490,13 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeBytes(String) */
+  @Override
   public void writeBytes(String s) throws IOException {
     write(s.getBytes(Constants.ENCODING));
   }
 
   /* @see java.io.DataOutput.writeChar(int) */
+  @Override
   public void writeChar(int v) throws IOException {
     writeSetup(2);
     buffer.putChar((char) v);
@@ -461,11 +504,13 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeChars(String) */
+  @Override
   public void writeChars(String s) throws IOException {
     write(s.getBytes("UTF-16BE"));
   }
 
   /* @see java.io.DataOutput.writeDouble(double) */
+  @Override
   public void writeDouble(double v) throws IOException {
     writeSetup(8);
     buffer.putDouble(v);
@@ -473,6 +518,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeFloat(float) */
+  @Override
   public void writeFloat(float v) throws IOException {
     writeSetup(4);
     buffer.putFloat(v);
@@ -480,6 +526,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeInt(int) */
+  @Override
   public void writeInt(int v) throws IOException {
     writeSetup(4);
     buffer.putInt(v);
@@ -487,6 +534,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
+  @Override
   public void writeLong(long v) throws IOException {
     writeSetup(8);
     buffer.putLong(v);
@@ -494,6 +542,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
+  @Override
   public void writeShort(int v) throws IOException {
     writeSetup(2);
     buffer.putShort((short) v);
@@ -501,6 +550,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see java.io.DataOutput.writeUTF(String)  */
+  @Override
   public void writeUTF(String str) throws IOException {
     // NB: number of bytes written is greater than the length of the string
     int strlen = str.getBytes(Constants.ENCODING).length + 2;

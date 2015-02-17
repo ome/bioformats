@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -139,7 +135,7 @@ import org.w3c.dom.Node;
  * The encoding process may re-tile image, clip, subsample, and select bands
  * using the parameters specified in the <code>ImageWriteParam</code>.
  *
- * @see com.sun.media.imageio.plugins.J2KImageWriteParam
+ * @see com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam
  */
 public class J2KImageWriter extends ImageWriter {
     /** Wrapper for the protected method <code>processImageProgress</code>

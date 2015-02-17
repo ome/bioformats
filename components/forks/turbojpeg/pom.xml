@@ -26,13 +26,13 @@
 
   <licenses>
     <license>
-      <name>BSD License</name>
+      <name>Simplified BSD License</name>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
   <properties>
-    <project.rootdir>${basedir}/../..</project.rootdir>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
   </properties>
 
   <build>

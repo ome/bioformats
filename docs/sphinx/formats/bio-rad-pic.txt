@@ -4,7 +4,7 @@
 Bio-Rad PIC
 ===============================================================================
 
-Extensions: .pic, .raw, .xml 
+Extensions: .pic, .raw, .xml
 
 Developer: Bio-Rad
 

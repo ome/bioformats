@@ -4,7 +4,7 @@
 Woolz
 ===============================================================================
 
-Extensions: .wlz 
+Extensions: .wlz
 
 Developer: `MRC Human Genetics Unit <http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html>`_
 

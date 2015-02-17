@@ -2,7 +2,7 @@
  * #%L
  * OME-XERCES C++ library for working with Xerces C++.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -42,12 +42,11 @@
 #include <ome/compat/config.h>
 
 #include <cassert>
-#include <string>
-#include <ostream>
+
+#include <ome/xerces/dom/Base.h>
+#include <ome/xerces/dom/Wrapper.h>
 
 #include <xercesc/dom/DOMNodeList.hpp>
-
-#include <ome/xerces/dom/Node.h>
 
 namespace ome
 {
@@ -56,6 +55,8 @@ namespace ome
     namespace dom
     {
 
+      class Node;
+
       /**
        * DOM NodeList wrapper.  The wrapper behaves as though is the
        * wrapped DOMNodeList; it can be dereferenced using the "*" or
@@ -63,7 +64,7 @@ namespace ome
        * wrapped object.  It can also be cast to a pointer to the
        * wrapped object, so can substitute for it directly.
        */
-      class NodeList
+      class NodeList : public Wrapper<xercesc::DOMNodeList, Base<xercesc::DOMNodeList> >
       {
       public:
         /// The NodeList size type.
@@ -79,11 +80,7 @@ namespace ome
            * Construct a null iterator.  This is used to refer to
            * invalid positions such as past-the-end.
            */
-          iterator ():
-            index(0),
-            xmlnodelist(0),
-            xmlnode(static_cast<xercesc::DOMNode *>(0))
-          {}
+          iterator();
 
           /**
            * Construct an iterator at the specified position for the
@@ -92,12 +89,8 @@ namespace ome
            * @param xmlnodelist the NodeList to iterate over.
            * @param index the index into the NodeList.
            */
-          iterator (xercesc::DOMNodeList *xmlnodelist,
-                    size_type             index):
-            index(index),
-            xmlnodelist(xmlnodelist),
-            xmlnode(xmlnodelist->item(index))
-          {}
+          iterator(xercesc::DOMNodeList *xmlnodelist,
+                   size_type             index);
 
         public:
           /**
@@ -105,15 +98,10 @@ namespace ome
            *
            * @param rhs the iterator to copy.
            */
-          iterator (const iterator& rhs):
-            index(rhs.index),
-            xmlnodelist(rhs.xmlnodelist),
-            xmlnode(rhs.xmlnode)
-          {}
+          iterator(const iterator& rhs);
 
           /// Destructor.
-          ~iterator ()
-          {}
+          ~iterator();
 
           /**
            * Dereference the iterator.
@@ -121,11 +109,7 @@ namespace ome
            * @return a reference to the Node at this position.
            */
           Node&
-          operator* () noexcept
-          {
-            assert(xmlnode);
-            return xmlnode;
-          }
+          operator* () noexcept;
 
           /**
            * Dereference the iterator.
@@ -133,11 +117,7 @@ namespace ome
            * @return a pointer to the Node at this position.
            */
           Node *
-          operator-> () noexcept
-          {
-            assert(xmlnode);
-            return &xmlnode;
-          }
+          operator-> () noexcept;
 
           /**
            * Move the iterator backward one element.
@@ -145,20 +125,7 @@ namespace ome
            * @returns the iterator at the new position.
            */
           iterator&
-          operator-- ()
-          {
-            if (xmlnode)
-              {
-                if (index != 0)
-                  {
-                    --index;
-                    xmlnode = xmlnodelist->item(index);
-                  }
-                else
-                  xmlnode = 0;
-              }
-            return *this;
-          }
+          operator-- ();
 
           /**
            * Move the iterator forward one element.
@@ -166,15 +133,7 @@ namespace ome
            * @returns the iterator at the new position.
            */
           iterator&
-          operator++ ()
-          {
-            if (xmlnode)
-              {
-                ++index;
-                xmlnode = xmlnodelist->item(index);
-              }
-            return *this;
-          }
+          operator++ ();
 
           /**
            * Check the equality of two iterators.
@@ -183,14 +142,7 @@ namespace ome
            * @returns true if equal, otherwise false.
            */
           bool
-          operator == (const iterator& rhs) const noexcept
-          {
-            if (!xmlnode && !rhs.xmlnode)
-              return true;
-            if (xmlnode || rhs.xmlnode)
-              return false;
-            return index == rhs.index;
-          }
+          operator == (const iterator& rhs) const noexcept;
 
           /**
            * Check the non-equality of two iterators.
@@ -201,7 +153,7 @@ namespace ome
           bool
           operator != (const iterator& rhs) const noexcept
           {
-            return *this != rhs;
+            return !(*this == rhs);
           }
 
           friend class NodeList;
@@ -212,14 +164,14 @@ namespace ome
           /// List being iterated over.
           xercesc::DOMNodeList *xmlnodelist;
           /// Node at current position.
-          Node xmlnode;
+          std::shared_ptr<Node> xmlnode;
         };
 
         /**
          * Construct a NULL NodeList.
          */
         NodeList ():
-          xmlnodelist()
+          Wrapper<xercesc::DOMNodeList, Base<xercesc::DOMNodeList> >()
         {
         }
 
@@ -229,107 +181,23 @@ namespace ome
          * @param nodelist the NodeList to copy.
          */
         NodeList (const NodeList& nodelist):
-          xmlnodelist(nodelist.xmlnodelist)
+          Wrapper<xercesc::DOMNodeList, Base<xercesc::DOMNodeList> >(nodelist)
         {
         }
 
         /**
-         * Construct a NodeList from a xercesc::DOMNodeList *.
+         * Construct a NodeList from a xercesc::DOMNodeList * (unmanaged).
          *
          * @param nodelist the NodeList to wrap.
          */
         NodeList (xercesc::DOMNodeList *nodelist):
-          xmlnodelist(nodelist)
+          Wrapper<xercesc::DOMNodeList, Base<xercesc::DOMNodeList> >(static_cast<base_element_type *>(nodelist))
         {
         }
 
         /// Destructor.
         ~NodeList ()
         {
-        }
-
-        /**
-         * Assign a NodeList.
-         *
-         * @param nodelist the NodeList to assign.
-         * @returns the NodeList.
-         */
-        NodeList&
-        operator= (NodeList& nodelist)
-        {
-          this->xmlnodelist = nodelist.xmlnodelist;
-          return *this;
-        }
-
-        /**
-         * Assign a xercesc::DOMNodeList *.
-         *
-         * @param nodelist the NodeList to assign.
-         * @returns the NodeList.
-         */
-        NodeList&
-        operator= (xercesc::DOMNodeList *nodelist)
-        {
-          this->xmlnodelist = nodelist;
-          return *this;
-        }
-
-        /**
-         * Dereference to xercesc::DOMNodeList.
-         *
-         * @returns the wrapped xercesc::DOMNodeList.
-         */
-        xercesc::DOMNodeList&
-        operator* () noexcept
-        {
-          assert(xmlnodelist != 0);
-          return *xmlnodelist;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMNodeList.
-         *
-         * @returns the wrapped xercesc::DOMNodeList.
-         */
-        const xercesc::DOMNodeList&
-        operator* () const noexcept
-        {
-          assert(xmlnodelist != 0);
-          return *xmlnodelist;
-        }
-
-        /**
-         * Dereference to xercesc::DOMNodeList.
-         *
-         * @returns the wrapped xercesc::DOMNodeList.
-         */
-        xercesc::DOMNodeList *
-        operator-> () noexcept
-        {
-          assert(xmlnodelist != 0);
-          return xmlnodelist;
-        }
-
-        /**
-         * Dereference to const xercesc::DOMNodeList.
-         *
-         * @returns the wrapped xercesc::DOMNodeList.
-         */
-        const xercesc::DOMNodeList *
-        operator-> () const noexcept
-        {
-          assert(xmlnodelist != 0);
-          return xmlnodelist;
-        }
-
-        /**
-         * Check if the wrapped NodeList is NULL.
-         *
-         * @returns true if valid, false if NULL.
-         */
-        operator bool () const
-        {
-          return xmlnodelist != 0;
         }
 
         /**
@@ -342,10 +210,21 @@ namespace ome
         {
           size_type ret = 0;
 
-          if (xmlnodelist)
-            ret = xmlnodelist->getLength();
+          if (this->get())
+            return (*this)->getLength();
 
           return ret;
+        }
+
+        /**
+         * Check if the NodeList is empty.
+         *
+         * @returns @c true if empty, @c false if not empty.
+         */
+        bool
+        empty() const
+        {
+          return size() == 0;
         }
 
         /**
@@ -356,7 +235,7 @@ namespace ome
         iterator
         begin()
         {
-          return iterator(xmlnodelist, 0);
+          return iterator(this->get(), 0);
         }
 
         /**
@@ -370,9 +249,14 @@ namespace ome
           return iterator();
         }
 
-      private:
-        /// The wrapped xercesc::DOMNodeList.
-        xercesc::DOMNodeList *xmlnodelist;
+        /**
+         * Get the element at a particular index.
+         *
+         * @param index the index of the element.
+         * @returns the Node at the specified index.
+         */
+        Node
+        at(size_type index);
       };
 
     }

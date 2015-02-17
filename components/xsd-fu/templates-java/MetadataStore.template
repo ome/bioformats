@@ -10,12 +10,21 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+{% if debug %}\
+	// MARKER [A-GET]
+{% end debug %}\
 	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
+{% if debug %}\
+	// MARKER [B-GET]
+{% end debug %}\
 	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
+{% if debug %}\
+	// MARKER [C-GET]
+{% end debug %}\
 	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});\
 {% end %}\
 {% end %}\
@@ -38,7 +47,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -79,11 +88,23 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.meta;
+package ${lang.metadata_package};
 
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import ${lang.omexml_model_package}.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
+
+import java.util.Map;
 
 /**
  * A proxy whose responsibility it is to marshal biological image data into a
@@ -103,7 +124,7 @@ import ome.xml.model.primitives.*;
  * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
  * reduces the need to cast between object types.
  *
- * <p>See {@link ome.xml.meta.OMEXMLMetadata} for an example
+ * <p>See {@link ${lang.omexml_metadata_package}.OMEXMLMetadata} for an example
  * implementation.
  *
  * <p><b>Important note:</b> It is strongly recommended that applications
@@ -116,7 +137,7 @@ import ome.xml.model.primitives.*;
  * <code>imageIndex</code>, an inner loop should iterate across
  * <code>pixelsIndex</code>, and an innermost loop should handle
  * <code>planeIndex</code>. For an illustration of the ideal traversal order,
- * see {@link ome.xml.meta.MetadataConverter#convertMetadata}.</p>
+ * see {@link loci.formats.meta.MetadataConverter#convertMetadata}.</p>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -129,14 +150,17 @@ public interface MetadataStore extends BaseMetadata
 
 	void setRoot(MetadataRoot root);
 
-	@Deprecated
-	void setRoot(Object root);
-
 	// -- Entity storage (manual definitions) --
 
 	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
 
 	void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
+
+	void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex);
+
+	void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex);
+
+	void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex);
 
 	// -- Entity storage (code generated definitions) --
 
@@ -152,6 +176,9 @@ public interface MetadataStore extends BaseMetadata
 
 {% end %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if debug %}\
+	// MARKER [EEE]
+{% end debug %}\
 	//
 	// ${o.name} property storage
 	//
@@ -177,12 +204,21 @@ public interface MetadataStore extends BaseMetadata
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
+	// MARKER [CCC]
+{% end debug %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if debug %}\
+	// MARKER [DDD]
+{% end debug %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
+{% end debug %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}
 
@@ -206,8 +242,19 @@ ${setter(k, o, prop, v)}
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [FFF]
+{% end debug %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
+{% if debug %}\
+	// MARKER [BBB]
+{% end debug %}\
 ${setter(k, o, prop, v)}
 
 {% end %}\

@@ -113,7 +113,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -183,7 +183,7 @@ namespace ome
        * characters from metadata values before storing them in a delegate
        * MetadataStore.
        */
-      class FilterMetadata : public MetadataStore
+      class FilterMetadata : virtual public MetadataStore
       {
       private:
         /// The wrapped metadata store.
@@ -213,6 +213,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /// Destructor.
+        virtual
         ~FilterMetadata();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -291,23 +292,6 @@ namespace ome
                                                 index_type binDataIndex)
       {
         store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-	void
-        setMaskBinData(const byte_array& binData,
-                       index_type ROIIndex,
-                       index_type shapeIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setMaskBinData(const byte_array& binData,
-                                     index_type ROIIndex,
-                                     index_type shapeIndex)
-      {
-        store->setMaskBinData(binData, ROIIndex, shapeIndex);
       }
 {% end source %}\
 

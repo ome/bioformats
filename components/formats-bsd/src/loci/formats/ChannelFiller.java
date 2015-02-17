@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -47,10 +43,6 @@ import loci.formats.meta.MetadataStore;
  *
  * For all other data (either non-indexed, or indexed with
  * "false color" tables), does nothing.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ChannelFiller.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ChannelFiller.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ChannelFiller extends ReaderWrapper {
 
@@ -130,39 +122,6 @@ public class ChannelFiller extends ReaderWrapper {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     if (!isFilled()) return reader.get16BitLookupTable();
     return null;
-  }
-
-  /* @see IFormatReader#getChannelDimLengths() */
-  @Override
-  public int[] getChannelDimLengths() {
-    int[] cLengths = reader.getChannelDimLengths();
-    if (!isFilled()) return cLengths;
-
-    // in the case of a single channel, replace rather than append
-    if (cLengths.length == 1 && cLengths[0] == 1) cLengths = new int[0];
-
-    // append filled dimension to channel dim lengths
-    int[] newLengths = new int[1 + cLengths.length];
-    newLengths[0] = lutLength;
-    System.arraycopy(cLengths, 0, newLengths, 1, cLengths.length);
-    return newLengths;
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  @Override
-  public String[] getChannelDimTypes() {
-    String[] cTypes = reader.getChannelDimTypes();
-    if (!isFilled()) return cTypes;
-
-    // in the case of a single channel, leave type unchanged
-    int[] cLengths = reader.getChannelDimLengths();
-    if (cLengths.length == 1 && cLengths[0] == 1) return cTypes;
-
-    // append filled dimension to channel dim types
-    String[] newTypes = new String[1 + cTypes.length];
-    newTypes[0] = FormatTools.CHANNEL;
-    System.arraycopy(cTypes, 0, newTypes, 1, cTypes.length);
-    return newTypes;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -253,6 +212,7 @@ public class ChannelFiller extends ReaderWrapper {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return byte[].class;
   }

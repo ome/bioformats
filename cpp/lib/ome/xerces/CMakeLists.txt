@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,21 +34,30 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${XercesC_INCLUDE_DIRS})
 
 set(ome_xerces_sources
-    ErrorReporter.cpp)
+    EntityResolver.cpp
+    ErrorReporter.cpp
+    dom/Document.cpp
+    dom/NamedNodeMap.cpp
+    dom/NodeList.cpp)
 
 set(ome_xerces_base_headers
+    EntityResolver.h
     ErrorReporter.h
     Platform.h
     String.h)
 
 set(ome_xerces_dom_headers
+    dom/Base.h
     dom/Document.h
     dom/Element.h
+    dom/NamedNodeMap.h
     dom/Node.h
-    dom/NodeList.h)
+    dom/NodeList.h
+    dom/Wrapper.h)
 
 set(ome_xerces_static_headers
     ${ome_xerces_base_headers}
@@ -61,7 +70,7 @@ set(ome_xerces_headers
     ${ome_xerces_generated_headers})
 
 add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
-target_link_libraries(ome-xerces ome-compat ${XERCES_LIBRARY})
+target_link_libraries(ome-xerces ome-compat ${XercesC_LIBRARIES})
 set_target_properties(ome-xerces PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 set(ome_xerces_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xerces")

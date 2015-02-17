@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -41,6 +41,8 @@
 #include <string>
 #include <ostream>
 
+#include <ome/compat/filesystem.h>
+
 namespace ome
 {
   namespace bioformats
@@ -52,7 +54,7 @@ namespace ome
     struct FileInfo
     {
       /// Absolute path to this file.
-      std::string filename;
+      boost::filesystem::path filename;
 
       /**
        * FormatReader implementation used to read this file.

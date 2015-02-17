@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -29,10 +29,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -43,12 +39,8 @@ package ome.xml.model.primitives;
  * and a further non-negative restriction.
  *
  * @author callan
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NonNegativeLong.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NonNegativeLong.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class NonNegativeLong extends PrimitiveType<Long> {
+public class NonNegativeLong extends PrimitiveType<Long> implements PrimitiveNumber {
 
   public NonNegativeLong(Long value) {
     super(value);
@@ -56,6 +48,10 @@ public class NonNegativeLong extends PrimitiveType<Long> {
       throw new IllegalArgumentException(
           value + " must not be null or non-negative.");
     }
+  }
+
+  public Number getNumberValue() {
+    return value;
   }
 
   /**

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -49,10 +45,6 @@ import loci.formats.UnsupportedCompressionException;
  *
  * Decompression logic is adapted from the jrawio project,
  * http://jrawio.dev.java.net
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/NikonCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/NikonCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -142,6 +134,7 @@ public class NikonCodec extends BaseCodec {
   };
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -153,7 +146,7 @@ public class NikonCodec extends BaseCodec {
   /**
    * The CodecOptions parameter must be an instance of
    * {@link NikonCodecOptions}, and should have the following fields set:
-   *  {@link NikonCodecOptions#lossy lossy}
+   *  {@link CodecOptions#lossless lossless}
    *  {@link NikonCodecOptions#vPredictor vPredictor}
    *  {@link NikonCodecOptions#curve curve}
    *  {@link NikonCodecOptions#split split}
@@ -164,6 +157,7 @@ public class NikonCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
@@ -197,10 +191,6 @@ public class NikonCodec extends BaseCodec {
 
     HuffmanCodec huffmanCodec = new HuffmanCodec();
 
-    byte[] pix = new byte[nikon.maxBytes];
-    in.read(pix);
-
-    BitBuffer bb = new BitBuffer(pix);
     BitWriter out = new BitWriter();
 
     int[] hPredictor = new int[2];
@@ -219,7 +209,7 @@ public class NikonCodec extends BaseCodec {
       }
       for (int col=0; col<nikon.width; col++) {
         int cfaIndex = (2 * (row & 1)) + (col & 1);
-        int diff = huffmanCodec.getSample(bb, huffman);
+        int diff = huffmanCodec.getSample(in, huffman);
 
         if (col < 2) {
           nikon.vPredictor[cfaIndex] += diff;

@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -37,11 +37,12 @@
  */
 
 /**
- * @file cstdint.h Standard integer types.  This header substitutes
- * C++ cstdint types for the same types in the C99 stdint.h header
- * when not using a conforming C++11 compiler.  This permits all code
- * to use the C++11 standard types irrespective of the compiler being
- * used.
+ * @file ome/compat/cstdint.h Standard integer types.
+ *
+ * This header substitutes C++ cstdint types for the same types in the
+ * C99 stdint.h header when not using a conforming C++11 compiler.
+ * This permits all code to use the C++11 standard types irrespective
+ * of the compiler being used.
  */
 
 #ifndef OME_COMPAT_CSTDINT_H

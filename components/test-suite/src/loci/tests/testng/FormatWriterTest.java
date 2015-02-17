@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,9 +27,9 @@ package loci.tests.testng;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.services.ServiceFactory;
@@ -58,10 +58,6 @@ import org.testng.annotations.Test;
  *
  * To run tests:
  * ant -Dtestng.directory="/path" -Dtestng.multiplier="1.0" test-all
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/FormatWriterTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/FormatWriterTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FormatWriterTest {
 
@@ -109,7 +105,7 @@ public class FormatWriterTest {
   @DataProvider(name = "getWriterList")
   public Object[][] getWriterList() {
     IFormatWriter[] writers = new ImageWriter().getWriters();
-    Vector tmp = new Vector();
+    List tmp = new ArrayList();
     for (int i=0; i<writers.length; i++) {
       String[] compressionTypes = writers[i].getCompressionTypes();
       if (compressionTypes == null) {

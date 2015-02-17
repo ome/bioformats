@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats command line tools.
+ * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -40,6 +36,7 @@ import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import loci.common.Constants;
@@ -86,10 +83,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * ImageConverter is a utility class for converting a file between formats.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/ImageConverter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/ImageConverter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class ImageConverter {
 
@@ -353,6 +346,19 @@ public final class ImageConverter {
       dimensionsSet = false;
     }
 
+    if (channel >= reader.getEffectiveSizeC()) {
+      throw new FormatException("Invalid channel '" + channel + "' (" +
+        reader.getEffectiveSizeC() + " channels in source file)");
+    }
+    if (timepoint >= reader.getSizeT()) {
+      throw new FormatException("Invalid timepoint '" + timepoint + "' (" +
+        reader.getSizeT() + " timepoints in source file)");
+    }
+    if (zSection >= reader.getSizeZ()) {
+      throw new FormatException("Invalid Z section '" + zSection + "' (" +
+        reader.getSizeZ() + " Z sections in source file)");
+    }
+
     if (store instanceof MetadataRetrieve) {
       if (series >= 0) {
         try {
@@ -471,6 +477,7 @@ public final class ImageConverter {
       total += numImages;
 
       int count = 0;
+      HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
       for (int i=startPlane; i<endPlane; i++) {
         int[] coords = reader.getZCTCoords(i);
 
@@ -480,14 +487,22 @@ public final class ImageConverter {
           continue;
         }
 
-        writer.setId(FormatTools.getFilename(q, i, reader, out));
+        String outputName = FormatTools.getFilename(q, i, reader, out);
+        writer.setId(outputName);
         if (compression != null) writer.setCompression(compression);
 
+        int outputIndex = 0;
+        if (nextOutputIndex.containsKey(outputName)) {
+          outputIndex = nextOutputIndex.get(outputName);
+        }
+
         long s = System.currentTimeMillis();
-        long m = convertPlane(writer, i, startPlane);
+        long m = convertPlane(writer, i, outputIndex);
         long e = System.currentTimeMillis();
         read += m - s;
         write += e - m;
+
+        nextOutputIndex.put(outputName, outputIndex + 1);
 
         // log number of planes processed every second or so
         if (count == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
@@ -526,7 +541,7 @@ public final class ImageConverter {
 
   // -- Helper methods --
 
-  private long convertPlane(IFormatWriter writer, int index, int startPlane)
+  private long convertPlane(IFormatWriter writer, int index, int outputIndex)
     throws FormatException, IOException
   {
     if (DataTools.safeMultiply64(width, height) >=
@@ -538,7 +553,7 @@ public final class ImageConverter {
       if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
         (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
       {
-        return convertTilePlane(writer, index, startPlane);
+        return convertTilePlane(writer, index, outputIndex);
       }
     }
 
@@ -548,11 +563,11 @@ public final class ImageConverter {
     autoscalePlane(buf, index);
     applyLUT(writer);
     long m = System.currentTimeMillis();
-    writer.saveBytes(index - startPlane, buf);
+    writer.saveBytes(outputIndex, buf);
     return m;
   }
 
-  private long convertTilePlane(IFormatWriter writer, int index, int startPlane)
+  private long convertTilePlane(IFormatWriter writer, int index, int outputIndex)
     throws FormatException, IOException
   {
     int w = reader.getOptimalTileWidth();
@@ -588,13 +603,13 @@ public final class ImageConverter {
         }
 
         if (writer instanceof TiffWriter) {
-          ((TiffWriter) writer).saveBytes(index - startPlane, buf,
+          ((TiffWriter) writer).saveBytes(outputIndex, buf,
             ifd, tileX, tileY, tileWidth, tileHeight);
         }
         else if (writer instanceof ImageWriter) {
           IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
           if (baseWriter instanceof TiffWriter) {
-            ((TiffWriter) baseWriter).saveBytes(index - startPlane, buf, ifd,
+            ((TiffWriter) baseWriter).saveBytes(outputIndex, buf, ifd,
               tileX, tileY, tileWidth, tileHeight);
           }
         }

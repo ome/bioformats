@@ -38,7 +38,7 @@
 
 #include <ome/compat/regex.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 TEST(Regex, Construct)
 {

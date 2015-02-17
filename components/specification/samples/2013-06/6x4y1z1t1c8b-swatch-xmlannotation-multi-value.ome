@@ -21,7 +21,7 @@
 		<SA:XMLAnnotation ID="Annotation:1" Namespace="openmicroscopy.org/sample/body/multivalue">
 			<SA:Value>
 				<valueA>A</valueA>
-				<valueB>B</valueB>
+				<valueB xmlns="http://example.com/xmlschema/">B<nestedA><nestedB/></nestedA></valueB>
 			</SA:Value>
 		</SA:XMLAnnotation>
 	</SA:StructuredAnnotations>

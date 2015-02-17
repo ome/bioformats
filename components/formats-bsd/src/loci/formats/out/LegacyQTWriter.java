@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -56,10 +52,6 @@ import loci.formats.meta.MetadataRetrieve;
  *
  * Much of this code was based on the QuickTime Movie Writer for ImageJ
  * (available at http://rsb.info.nih.gov/ij/plugins/movie-writer.html).
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/LegacyQTWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/LegacyQTWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class LegacyQTWriter extends FormatWriter {
 
@@ -131,6 +123,7 @@ public class LegacyQTWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -144,6 +137,7 @@ public class LegacyQTWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#savePlane(int, Object, int, int, int, int)
    */
+  @Override
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -310,16 +304,19 @@ public class LegacyQTWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return true; }
 
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return Image.class;
   }
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     super.close();
     r = null;

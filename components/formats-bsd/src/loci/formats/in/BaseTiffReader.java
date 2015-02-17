@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -55,13 +51,13 @@ import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
  * or derived from the TIFF 6.0 file format.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BaseTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/BaseTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -466,8 +462,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixY);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixY);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -481,7 +477,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         if (exif.containsKey(IFD.EXPOSURE_TIME)) {
           Object exp = exif.get(IFD.EXPOSURE_TIME);
           if (exp instanceof TiffRational) {
-            Double exposure = ((TiffRational) exp).doubleValue();
+            Time exposure = new Time(((TiffRational) exp).doubleValue(), UNITS.S);
             for (int i=0; i<getImageCount(); i++) {
               store.setPlaneExposureTime(exposure, 0, i);
             }
@@ -540,6 +536,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     initMetadata();

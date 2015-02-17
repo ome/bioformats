@@ -4,7 +4,7 @@
 WA-TOP
 ===============================================================================
 
-Extensions: .wat 
+Extensions: .wat
 
 Developer: WA Technology
 

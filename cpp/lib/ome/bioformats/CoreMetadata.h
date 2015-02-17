@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -46,6 +46,7 @@
 
 #include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/Modulo.h>
+#include <ome/bioformats/Types.h>
 
 #include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/enums/DimensionOrder.h>
@@ -59,23 +60,23 @@ namespace ome
     /**
      * Core metadata values.
      *
+     * @note The Java implementation had a constructor to construct by
+     * copying the core metadata from a series of an existing reader.
+     * This is not duplicated here.  Use this instead:
+     *
+     * `CoreMetadata copy(reader.getCoreMetadataList().at(index));`
+     *
+     * Where @c reader is a FormatReader and @c index is the core index.
+     *
      * @todo We may want to consider refactoring the FormatReader
      * getter methods that fill in missing CoreMetadata fields on the
-     * fly (getChannelDimLengths, getChannelDimTypes, getThumbSizeX,
-     * getThumbSizeY) to avoid doing so -- one alternate approach
-     * would be to have this class use getter methods instead of
-     * public fields.
+     * fly (getThumbSizeX, getThumbSizeY) to avoid doing so -- one
+     * alternate approach would be to have this class use getter
+     * methods instead of public fields.
      */
     class CoreMetadata
     {
     public:
-      /// Size type for image dimensions.
-      typedef uint32_t dimension_size_type;
-      /// Size type for image counts.
-      typedef uint32_t image_size_type;
-      /// Size type for pixel bit depths.
-      typedef uint8_t pixel_size_type;
-
       /// Width (in pixels) of images in this series.
       dimension_size_type sizeX;
 
@@ -94,7 +95,7 @@ namespace ome
       /// Width (in pixels) of thumbnail images in this series.
       dimension_size_type thumbSizeX;
 
-      /// Height (in pixels) of thumbnail images in this series. */
+      /// Height (in pixels) of thumbnail images in this series.
       dimension_size_type thumbSizeY;
 
       /// Number of bytes per pixel.
@@ -104,7 +105,7 @@ namespace ome
       pixel_size_type bitsPerPixel;
 
       /// Total number of images.
-      image_size_type imageCount;
+      dimension_size_type imageCount;
 
       /// Modulo Z dimension.
       Modulo moduloZ;
@@ -136,7 +137,7 @@ namespace ome
       /// Are images are stored as indexed color?
       bool indexed;
 
-      /// Can the color map (if present) be ignored? */
+      /// Can the color map (if present) be ignored?
       bool falseColor;
 
       /// Is all of the metadata stored within the file parsed correctly?
@@ -154,39 +155,10 @@ namespace ome
        *  image.  The count includes this image, so an image with two
        *  following sub-resolution images will have a count of @c 3 .
        */
-      image_size_type resolutionCount;
+      dimension_size_type resolutionCount;
 
       /// Constructor.
       CoreMetadata();
-
-      /* CoreMetadata(IFormatReader r, int coreIndex) { */
-      /*   int currentIndex = r.getCoreIndex(); */
-      /*   r.setCoreIndex(coreIndex); */
-
-      /*   sizeX = r.getSizeX(); */
-      /*   sizeY = r.getSizeY(); */
-      /*   sizeZ = r.getSizeZ(); */
-      /*   sizeC = r.getSizeC(); */
-      /*   sizeT = r.getSizeT(); */
-      /*   thumbSizeX = r.getThumbSizeX(); */
-      /*   thumbSizeY = r.getThumbSizeY(); */
-      /*   pixelType = r.getPixelType(); */
-      /*   bitsPerPixel = r.getBitsPerPixel(); */
-      /*   imageCount = r.getImageCount(); */
-      /*   dimensionOrder = r.getDimensionOrder(); */
-      /*   orderCertain = r.isOrderCertain(); */
-      /*   rgb = r.isRGB(); */
-      /*   littleEndian = r.isLittleEndian(); */
-      /*   interleaved = r.isInterleaved(); */
-      /*   indexed = r.isIndexed(); */
-      /*   falseColor = r.isFalseColor(); */
-      /*   metadataComplete = r.isMetadataComplete(); */
-      /*   seriesMetadata = r.getSeriesMetadata(); */
-      /*   thumbnail = r.isThumbnailSeries(); */
-      /*   resolutionCount = r.getResolutionCount(); */
-
-      /*   r.setCoreIndex(currentIndex); */
-      /* } */
 
       /**
        * Copy constructor.
@@ -194,6 +166,10 @@ namespace ome
        * @param copy the CoreMetadata to copy.
        */
       CoreMetadata(const CoreMetadata& copy);
+
+      /// Destructor.
+      virtual
+      ~CoreMetadata();
     };
 
     /**
@@ -204,9 +180,36 @@ namespace ome
      * @returns the output stream.
      */
     template<class charT, class traits>
-      inline std::basic_ostream<charT,traits>&
-      operator<< (std::basic_ostream<charT,traits>& os,
-                  const CoreMetadata& core);
+    inline std::basic_ostream<charT,traits>&
+    operator<< (std::basic_ostream<charT,traits>& os,
+                const CoreMetadata& core)
+    {
+      os << "sizeX = " << core.sizeX << '\n'
+         << "sizeY = " << core.sizeY << '\n'
+         << "sizeZ = " << core.sizeZ << '\n'
+         << "sizeC = " << core.sizeC << '\n'
+         << "sizeT = " << core.sizeT << '\n'
+         << "thumbSizeX = " << core.thumbSizeX << '\n'
+         << "thumbSizeY = " << core.thumbSizeY << '\n'
+         << "pixelType = " << core.pixelType << '\n'
+         << "bitsPerPixel = " << core.bitsPerPixel << '\n'
+         << "imageCount = " << core.imageCount << '\n'
+         << "moduloZ = {\n" << core.moduloZ
+         << "}\nmoduloT = {\n" << core.moduloT
+         << "}\nmoduloC = {\n" << core.moduloC
+         << "}\ndimensionOrder = " << core.dimensionOrder << '\n'
+         << "orderCertain = " << core.orderCertain << '\n'
+         << "rgb = " << core.rgb << '\n'
+         << "littleEndian = " << core.littleEndian << '\n'
+         << "interleaved = " << core.interleaved << '\n'
+         << "indexed = " << core.indexed << '\n'
+         << "falseColor = " << core.falseColor << '\n'
+         << "metadataComplete = " << core.metadataComplete << '\n'
+         << "seriesMetadata = " << core.seriesMetadata.size() << " keys" << '\n'
+         << "thumbnail = " << core.thumbnail << '\n'
+         << "resolutionCount = " << core.resolutionCount << '\n';
+      return os;
+    }
 
   }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -43,7 +39,6 @@
  * Class:                   StdEntropyDecoder
  *
  * Description:             Entropy decoding engine of stripes in code-blocks
- *
  *
  *
  * COPYRIGHT:
@@ -636,9 +631,7 @@ public class StdEntropyDecoder extends EntropyDecoder
      *
      * @param src The source of data
      *
-     * @param opt The options to use for this encoder. It is a mix of the
-     * 'OPT_TERM_PASS', 'OPT_RESET_MQ', 'OPT_VERT_STR_CAUSAL', 'OPT_BYPASS' and
-     * 'OPT_SEG_SYMBOLS' option flags.
+     * @param decSpec The decoder specifications
      *
      * @param doer If true error detection will be performed, if any error
      * detection features have been enabled.
@@ -2057,6 +2050,7 @@ public class StdEntropyDecoder extends EntropyDecoder
                 // Start column
                 j = sj;
                 csj = state[j];
+                boolean broken = false;
             top_half:
                 {
                     // Check for RLC: if all samples are not significant, not
@@ -2143,7 +2137,7 @@ public class StdEntropyDecoder extends EntropyDecoder
                                 // Sample that became significant is in
                                 // bottom half of column => jump to bottom
                                 // half
-                                break top_half;
+                                broken = true;
                             }
                             // Otherwise sample that became significant is in
                             // top half of column => continue on top half
@@ -2201,9 +2195,11 @@ public class StdEntropyDecoder extends EntropyDecoder
                             // column
                             j += sscanw;
                             csj = state[j];
-                            break top_half;
+                            broken = true;
                         }
                     }
+                }
+                if (!broken) {
                     // Do half top of column
                     // If any of the two samples is not significant and has
                     // not been visited in the current bit-plane we can not

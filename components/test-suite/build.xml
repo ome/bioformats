@@ -15,9 +15,7 @@ Type "ant -p" for a list of targets.
   <!-- overrides 'clean' target in common.xml -->
   <target name="clean" >
     <delete dir="${build.dir}"/>
-    <delete>
-      <fileset dir="." includes="*.log"/>
-    </delete>
+    <delete dir="target"/>
   </target>
 
   <target name="test-file-handles" depends="compile"
@@ -87,6 +85,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -114,6 +114,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -140,6 +142,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -175,6 +179,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -202,6 +208,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -229,6 +237,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -256,6 +266,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -283,6 +295,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -309,6 +323,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,7 +27,8 @@ package loci.tests.testng;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.formats.FileStitcher;
@@ -46,10 +47,6 @@ import org.testng.annotations.Factory;
  * href="http://code.google.com/p/testng/issues/detail?id=19#c6">this
  * issue</a>.
  * </p>
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/FormatReaderTestFactory.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/FormatReaderTestFactory.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FormatReaderTestFactory {
 
@@ -62,10 +59,7 @@ public class FormatReaderTestFactory {
 
   @Factory
   public Object[] createInstances() {
-    Vector files = new Vector();
-
-    // create log file
-    TestTools.createLogFile();
+    List files = new ArrayList();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
@@ -149,6 +143,10 @@ public class FormatReaderTestFactory {
     if (configSuffix == null) {
       configSuffix = "";
     }
+
+    // display local information
+    LOGGER.info("user.language = {}", System.getProperty("user.language"));
+    LOGGER.info("user.country = {}", System.getProperty("user.country"));
 
     // detect maximum heap size
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;

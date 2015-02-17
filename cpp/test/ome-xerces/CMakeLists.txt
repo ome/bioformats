@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,15 +34,18 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${XercesC_INCLUDE_DIRS})
 
 if(BUILD_TESTS)
   add_executable(xerces xerces.cpp)
-  target_link_libraries(xerces ome-xml)
+  target_link_libraries(xerces ome-xml ome-test)
 
-  add_test(ome-xerces/xerces xerces "${PROJECT_SOURCE_DIR}/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome")
+  bf_add_test(ome-xerces/xerces xerces)
 
-  header_test_from_file(ome-xerces ome-xerces ome/xerces)
-  target_link_libraries(ome-xerces-headers ome-xerces)
-  add_test(ome-xerces/headers ome-xerces-headers)
+  if(extended-tests)
+    header_test_from_file(ome-xerces ome-xerces ome/xerces)
+    target_link_libraries(ome-xerces-headers ome-xerces)
+    bf_add_test(ome-xerces/headers ome-xerces-headers)
+   endif(extended-tests)
 endif(BUILD_TESTS)

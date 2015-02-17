@@ -1,4 +1,28 @@
 /*
+ * #%L
+ * The OME Data Model specification
+ * %%
+ * Copyright (C) 2003 - 2014 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
+/*
  * $Id$
  *
  *   Copyright 2006-2013 University of Dundee. All rights reserved.
@@ -101,7 +125,8 @@ public class SchemaResolver implements LSResourceResolver
      * @param baseURI Not used by function.
      * @return The requested resource.
      */
-     public LSInput  resolveResource(
+    @Override
+    public LSInput  resolveResource(
         String type, String namespaceURI, String publicId,
         String systemId, String baseURI)
     {
@@ -110,7 +135,7 @@ public class SchemaResolver implements LSResourceResolver
         // Match the requested schema locations and create the appropriate LSInput object
         if (systemId.equals("http://www.w3.org/2001/xml.xsd"))
         {
-            theResult = makeSubstutionStream("/released-schema/additions/jar/xml.xsd", systemId);
+            theResult = makeSubstutionStream("/released-schema/external/xml.xsd", systemId);
         }
         else if (systemId.startsWith(GIT_MASTER_PATH))
         {
