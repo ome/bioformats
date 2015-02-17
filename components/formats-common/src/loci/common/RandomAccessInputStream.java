@@ -529,21 +529,21 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    * @throws IOException Thrown if an error occurred while reading the data.
    */
   public String readByteToString(int n) throws IOException {
-      n = (int) Math.min(available(), n);
-      byte[] bytes = new byte[n];
-      readFully(bytes);
-      StringBuffer newString = new StringBuffer();
-      for (byte b : bytes) {
-          int v = b & 0xff;
-          if (v > 0x7f) {
-              newString.append(Character.toChars(v));
-          }
-          else {
-              newString.append((char) b);
-          }
-      }
-      String s = newString.toString();
-      return new String(s.getBytes(encoding), encoding);
+    n = (int) Math.min(available(), n);
+    byte[] bytes = new byte[n];
+    readFully(bytes);
+    StringBuffer newString = new StringBuffer();
+    for (byte b : bytes) {
+        int v = b & 0xff;
+        if (v > 0x7f) {
+            newString.append(Character.toChars(v));
+        }
+        else {
+            newString.append((char) b);
+        }
+    }
+    String s = newString.toString();
+    return new String(s.getBytes(encoding), encoding);
   }
 
   /** Read a string of up to length n. */
