@@ -69,9 +69,8 @@ public class JPEG2000Reader extends FormatReader {
   private int[][] lut;
 
   private long pixelsOffset;
-
+  private byte[] fileBuffer;
   private int lastSeries = -1;
-  private byte[] lastSeriesPlane;
 
   // -- Constructor --
 
@@ -103,6 +102,16 @@ public class JPEG2000Reader extends FormatReader {
     stream.seek(stream.length() - 2);
     boolean validEnd = (stream.readShort() & 0xffff) == 0xffd9;
     return validStart && validEnd;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    return 1024;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    return 1024;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -147,8 +156,8 @@ public class JPEG2000Reader extends FormatReader {
       resolutionLevels = null;
       lut = null;
       pixelsOffset = 0;
+      fileBuffer = null;
       lastSeries = -1;
-      lastSeriesPlane = null;
     }
   }
 
@@ -161,16 +170,13 @@ public class JPEG2000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (lastSeries == getCoreIndex() && lastSeriesPlane != null) {
-      RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
-      return buf;
-    }
-
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
+    options.tileGridXOffset = x;
+    options.tileGridYOffset = y;
+    options.tileWidth = w;
+    options.tileHeight = h;
     if (resolutionLevels != null) {
       options.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     }
@@ -178,12 +184,15 @@ public class JPEG2000Reader extends FormatReader {
       options.resolution = getCoreIndex();
     }
 
-    in.seek(pixelsOffset);
-    lastSeriesPlane = new JPEG2000Codec().decompress(in, options);
-    RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
-    lastSeries = getCoreIndex();
+    // buffer the file in advance, instead of allowing JPEG2000Codec to do it
+    // this reduces the memory required to read tiles from large images
+    if (fileBuffer == null || lastSeries != getCoreIndex()) {
+      in.seek(pixelsOffset);
+      fileBuffer = new byte[(int) (in.length() - pixelsOffset)];
+      in.readFully(fileBuffer);
+      lastSeries = getCoreIndex();
+    }
+    buf = new JPEG2000Codec().decompress(fileBuffer, options);
     return buf;
   }
 

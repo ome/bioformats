@@ -32,6 +32,7 @@
 
 package loci.formats.services;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.IOException;
@@ -143,12 +144,21 @@ public class JAIIIOServiceImpl extends AbstractService
   {
     J2KImageReader reader = getReader();
     MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
-    reader.setInput(mciis, false, true);
-    J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
-    if (options.resolution != null) {
-      param.setResolution(options.resolution.intValue());
+    try {
+      reader.setInput(mciis, false, true);
+      J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
+      if (options.resolution != null) {
+        param.setResolution(options.resolution.intValue());
+      }
+      if (options.tileWidth > 0 && options.tileHeight > 0) {
+        param.setSourceRegion(new Rectangle(options.tileGridXOffset,
+          options.tileGridYOffset, options.tileWidth, options.tileHeight));
+      }
+      return reader.read(0, param);
     }
-    return reader.read(0, param);
+    finally {
+      mciis.close();
+    }
   }
 
   /* @see JAIIIOService#readImage(InputStream) */
@@ -166,12 +176,21 @@ public class JAIIIOServiceImpl extends AbstractService
   {
     J2KImageReader reader = getReader();
     MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
-    reader.setInput(mciis, false, true);
-    J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
-    if (options.resolution != null) {
-      param.setResolution(options.resolution.intValue());
+    try {
+      reader.setInput(mciis, false, true);
+      J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
+      if (options.resolution != null) {
+        param.setResolution(options.resolution.intValue());
+      }
+      if (options.tileWidth > 0 && options.tileHeight > 0) {
+        param.setSourceRegion(new Rectangle(options.tileGridXOffset,
+          options.tileGridYOffset, options.tileWidth, options.tileHeight));
+      }
+      return reader.readRaster(0, param);
     }
-    return reader.readRaster(0, param);
+    finally {
+      mciis.close();
+    }
   }
 
   /* @see JAIIIOService#readRaster(InputStream) */
