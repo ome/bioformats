@@ -1152,9 +1152,8 @@ public class LeicaReader extends FormatReader {
     addSeriesMeta("Number of time-stamps", numStamps);
     timestamps[seriesIndex] = new String[numStamps];
     for (int j=0; j<numStamps; j++) {
-      timestamps[seriesIndex][j] = getString(64);
       timestamps[seriesIndex][j] = DateTools.convertDate(
-        getTime(timestamps[seriesIndex][j]), DateTools.UNIX, DATE_FORMAT + ":SSS");
+        getTime(getString(64)), DateTools.UNIX, DATE_FORMAT + ":SSS");
       addSeriesMetaList("Timestamp", timestamps[seriesIndex][j]);
     }
 
