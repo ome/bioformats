@@ -1053,6 +1053,7 @@ Type "ant -p" for a list of targets.
       <entry key="release.version" value="${release.version}"/>
       <entry key="vcs.date" value="${vcs.date}"/>
       <entry key="vcs.revision" value="${vcs.revision}"/>
+      <entry key="vcs.date_unix" value="${vcs.date_unix}"/>
     </propertyfile>
   </target>
 
