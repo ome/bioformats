@@ -110,7 +110,7 @@ public class InveonReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int planeSize = FormatTools.getPlaneSize(this);
+    long planeSize = (long) FormatTools.getPlaneSize(this);
     int index = getCoreIndex();
 
     RandomAccessInputStream dat = new RandomAccessInputStream(datFile);
