@@ -59,6 +59,8 @@ public class VeecoReader extends FormatReader {
   private NetCDFService netcdf;
   private Object image;
 
+  private boolean unpackEndian = true;
+
   // -- Constructor --
 
   /** Constructs a new Veeco reader. */
@@ -86,10 +88,11 @@ public class VeecoReader extends FormatReader {
     else if (image instanceof short[][]) {
       short[][] shortImage = (short[][]) image;
       int output = 0;
+
       for (int row=h+y-1; row>=y; row--) {
         for (int col=x; col<x+w; col++) {
           DataTools.unpackBytes(
-            shortImage[row][col], buf, output, 2, !isLittleEndian());
+            shortImage[row][col], buf, output, 2, unpackEndian);
           output += 2;
         }
       }
@@ -104,6 +107,7 @@ public class VeecoReader extends FormatReader {
     if (!fileOnly) {
       if (netcdf != null) netcdf.close();
       image = null;
+      unpackEndian = true;
     }
   }
 
@@ -158,6 +162,33 @@ public class VeecoReader extends FormatReader {
       m.sizeX = shortImage[0].length;
       m.sizeY = shortImage.length;
       m.pixelType = FormatTools.INT16;
+
+      // set the endianness to use when unpacking pixels
+      // NetCDF may not return the pixels with a constant endianness,
+      // so this ensures that the reader corrects accordingly (see ticket 12085)
+
+      short nativeMin = 0;
+      short nativeMax = 0;
+      short swappedMin = 0;
+      short swappedMax = 0;
+      for (int y=0; y<shortImage.length; y++) {
+        for (int x=0; x<shortImage[y].length; x++) {
+          if (shortImage[y][x] < nativeMin) {
+            nativeMin = shortImage[y][x];
+          }
+          if (shortImage[y][x] > nativeMax) {
+            nativeMax = shortImage[y][x];
+          }
+          short swapped = DataTools.swap(shortImage[y][x]);
+          if (swapped < swappedMin) {
+            swappedMin = swapped;
+          }
+          if (swapped > swappedMax) {
+            swappedMax = swapped;
+          }
+        }
+      }
+      unpackEndian = nativeMin <= swappedMin && nativeMax >= swappedMax;
     }
 
     m.sizeZ = 1;
