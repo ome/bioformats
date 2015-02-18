@@ -515,9 +515,11 @@ public class FV1000Reader extends FormatReader {
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
         channel.emissionFilter = guiChannel.get("EmissionDM Name");
-        channel.emWave = new Double(guiChannel.get("EmissionWavelength"));
+        String emWave = guiChannel.get("EmissionWavelength");
+        if (emWave != null) channel.emWave = new Double(emWave);
         channel.excitationFilter = guiChannel.get("ExcitationDM Name");
-        channel.exWave = new Double(guiChannel.get("ExcitationWavelength"));
+        String exWave = guiChannel.get("ExcitationWavelength");
+        if (emWave != null) channel.exWave = new Double(exWave);
         channels.add(channel);
         index++;
         guiChannel = f.getTable("GUI Channel " + index + " Parameters");
