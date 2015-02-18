@@ -2134,7 +2134,7 @@ public class ZeissLSMReader extends FormatReader {
       case TYPE_RATIONAL:
         return new Double(in.readDouble());
       case TYPE_ASCII:
-        String s = in.readString(dataSize).trim();
+        String s = in.readByteToString(dataSize).trim();
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<s.length(); i++) {
           if (s.charAt(i) >= 10) sb.append(s.charAt(i));
