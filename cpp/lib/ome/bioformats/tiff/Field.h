@@ -66,8 +66,8 @@ namespace ome
          * @param ifd the directory the field belongs to.
          * @param tag the tag identifying this field.
          */
-        FieldBase(std::shared_ptr<IFD> ifd,
-                  tag_type             tag);
+        FieldBase(ome::compat::shared_ptr<IFD> ifd,
+                  tag_type                     tag);
 
       public:
         /// Destructor.
@@ -141,13 +141,13 @@ namespace ome
          *
          * @returns the directory.
          */
-        std::shared_ptr<IFD>
+        ome::compat::shared_ptr<IFD>
         getIFD() const;
 
       protected:
         class Impl;
         /// Private implementation details.
-        std::shared_ptr<Impl> impl;
+        ome::compat::shared_ptr<Impl> impl;
       };
 
       /**
@@ -171,8 +171,8 @@ namespace ome
          * @param ifd the directory the field belongs to.
          * @param tag the tag identifying this field.
          */
-        Field(std::shared_ptr<IFD> ifd,
-              tag_category         tag):
+        Field(ome::compat::shared_ptr<IFD> ifd,
+              tag_category                 tag):
           FieldBase(ifd, getWrappedTag(tag)),
           tag(tag)
         {}

@@ -71,7 +71,7 @@ namespace ome
         typedef std::map<std::string, boost::filesystem::path> file_map;
 
         /// Map filename to open TIFF handle.
-        typedef std::map<boost::filesystem::path, std::shared_ptr<ome::bioformats::tiff::TIFF> > tiff_map;
+        typedef std::map<boost::filesystem::path, ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> > tiff_map;
 
         /// UUID to filename mapping.
         file_map files;
@@ -132,7 +132,7 @@ namespace ome
          * @returns the IFD index.
          * @throws FormatException if out of range.
          */
-        const std::shared_ptr<const tiff::IFD>
+        const ome::compat::shared_ptr<const tiff::IFD>
         ifdAtIndex(dimension_size_type no) const;
 
         /**
@@ -154,7 +154,7 @@ namespace ome
          * @returns the open TIFF.
          * @throws FormatException if invalid.
          */
-        const std::shared_ptr<const ome::bioformats::tiff::TIFF>
+        const ome::compat::shared_ptr<const ome::bioformats::tiff::TIFF>
         getTIFF(const boost::filesystem::path& tiff) const;
 
         /**
@@ -327,7 +327,7 @@ namespace ome
          *
          * @returns the metadata store.
          */
-        std::shared_ptr< ome::xml::meta::MetadataStore>
+        ome::compat::shared_ptr< ome::xml::meta::MetadataStore>
         getMetadataStoreForConversion();
 
         /**
@@ -339,7 +339,7 @@ namespace ome
          *
          * @returns the metadata store.
          */
-        std::shared_ptr< ome::xml::meta::MetadataStore>
+        ome::compat::shared_ptr< ome::xml::meta::MetadataStore>
         getMetadataStoreForDisplay();
       };
 

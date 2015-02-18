@@ -63,7 +63,7 @@ namespace ome
       {
       public:
         /// Weak reference to the parent IFD.
-        std::weak_ptr<IFD>  ifd;
+        ome::compat::weak_ptr<IFD>  ifd;
         /// Whether the image is chunky or planar.
         TileType type;
         /// Width of a tile.
@@ -90,7 +90,7 @@ namespace ome
          *
          * @param ifd the directory the tile belongs to.
          */
-        Impl(std::shared_ptr<IFD>& ifd):
+        Impl(ome::compat::shared_ptr<IFD>& ifd):
           ifd(ifd),
           tilewidth(),
           tileheight(),
@@ -147,10 +147,10 @@ namespace ome
          *
          * @returns the directory.
          */
-        std::shared_ptr<IFD>
+        ome::compat::shared_ptr<IFD>
         getIFD() const
         {
-          std::shared_ptr<IFD> sifd = std::shared_ptr<IFD>(ifd);
+          ome::compat::shared_ptr<IFD> sifd = ome::compat::shared_ptr<IFD>(ifd);
           if (!sifd)
             throw Exception("TileInfo reference to IFD no longer valid");
 
@@ -173,8 +173,8 @@ namespace ome
         }
       };
 
-      TileInfo::TileInfo(std::shared_ptr<IFD> ifd):
-        impl(std::shared_ptr<Impl>(new Impl(ifd)))
+      TileInfo::TileInfo(ome::compat::shared_ptr<IFD> ifd):
+        impl(ome::compat::shared_ptr<Impl>(new Impl(ifd)))
       {
       }
 

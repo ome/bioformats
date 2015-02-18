@@ -113,7 +113,7 @@ namespace ome
         return static_cast<bool>(TIFF::open(name, "r"));
       }
 
-      const std::shared_ptr<const tiff::IFD>
+      const ome::compat::shared_ptr<const tiff::IFD>
       MinimalTIFFReader::ifdAtIndex(dimension_size_type no) const
       {
         dimension_size_type series = getSeries();
@@ -142,7 +142,7 @@ namespace ome
             throw FormatException(fmt.str());
           }
 
-        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
+        const ome::compat::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
         return ifd;
       }
 
@@ -198,8 +198,8 @@ namespace ome
       {
         core.clear();
 
-        std::shared_ptr<const tiff::IFD> prev_ifd;
-        std::shared_ptr<CoreMetadata> prev_core;
+        ome::compat::shared_ptr<const tiff::IFD> prev_ifd;
+        ome::compat::shared_ptr<CoreMetadata> prev_core;
 
         dimension_size_type current_ifd = 0U;
 
@@ -234,7 +234,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         try
           {
@@ -258,7 +258,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         if (isRGB())
           {
@@ -274,13 +274,13 @@ namespace ome
           ifd->readImage(buf, x, y, w, h);
       }
 
-      std::shared_ptr<ome::bioformats::tiff::TIFF>
+      ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF()
       {
         return tiff;
       }
 
-      const std::shared_ptr<ome::bioformats::tiff::TIFF>
+      const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF() const
       {
         return tiff;

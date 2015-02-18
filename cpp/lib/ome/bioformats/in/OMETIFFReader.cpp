@@ -120,7 +120,7 @@ namespace ome
         {
           try
             {
-              std::shared_ptr<tiff::IFD> ifd (tiff.getDirectoryByIndex(0));
+              ome::compat::shared_ptr<tiff::IFD> ifd (tiff.getDirectoryByIndex(0));
               if (ifd)
                 ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION).get(omexml);
               else
@@ -239,7 +239,7 @@ namespace ome
         if (checkSuffix(id, companion_suffixes))
           return false;
 
-        std::shared_ptr<tiff::TIFF> tiff = TIFF::open(id, "r");
+        ome::compat::shared_ptr<tiff::TIFF> tiff = TIFF::open(id, "r");
 
         if (!tiff)
           {
@@ -251,7 +251,7 @@ namespace ome
         std::string omexml;
         getComment(*tiff, omexml);
 
-        std::shared_ptr< ::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
+        ome::compat::shared_ptr< ::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
 
         dimension_size_type nImages = 0U;
         for (dimension_size_type i = 0U;
@@ -285,7 +285,7 @@ namespace ome
       bool
       OMETIFFReader::isFilenameThisTypeImpl(const boost::filesystem::path& name) const
       {
-        std::shared_ptr<tiff::TIFF> tiff = TIFF::open(name, "r");
+        ome::compat::shared_ptr<tiff::TIFF> tiff = TIFF::open(name, "r");
 
         if (!tiff)
           {
@@ -303,7 +303,7 @@ namespace ome
 
         try
           {
-            std::shared_ptr< ::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
+            ome::compat::shared_ptr< ::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
 
             std::string metadataFile = meta->getBinaryOnlyMetadataFile();
             if (!metadataFile.empty())
@@ -323,19 +323,19 @@ namespace ome
           }
       }
 
-      const std::shared_ptr<const tiff::IFD>
+      const ome::compat::shared_ptr<const tiff::IFD>
       OMETIFFReader::ifdAtIndex(dimension_size_type no) const
       {
-        std::shared_ptr<const IFD> ifd;
+        ome::compat::shared_ptr<const IFD> ifd;
 
         const OMETIFFMetadata& ometa(dynamic_cast<const OMETIFFMetadata&>(getCoreMetadata(getCoreIndex())));
 
         if (no < ometa.tiffPlanes.size())
           {
             const OMETIFFPlane& plane(ometa.tiffPlanes.at(no));
-            const std::shared_ptr<const TIFF> tiff(getTIFF(plane.id));
+            const ome::compat::shared_ptr<const TIFF> tiff(getTIFF(plane.id));
             if (tiff)
-              ifd = std::shared_ptr<const IFD>(tiff->getDirectoryByIndex(plane.ifd));
+              ifd = ome::compat::shared_ptr<const IFD>(tiff->getDirectoryByIndex(plane.ifd));
           }
 
         if (!ifd)
@@ -429,7 +429,7 @@ namespace ome
             // This is a companion file.  Read the metadata, get the
             // TIFF for the TiffData for the first image, and then
             // recurse with this file as the id.
-            std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(id));
+            ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(id));
             path firstTIFF(path(meta->getUUIDFileName(0, 0)));
             initFile(canonical(firstTIFF, dir));
             return;
@@ -437,13 +437,13 @@ namespace ome
 
         // Cache and use this TIFF.
         addTIFF(id);
-        const std::shared_ptr<const TIFF> tiff(getTIFF(id));
+        const ome::compat::shared_ptr<const TIFF> tiff(getTIFF(id));
 
         // Get the OME-XML from the first TIFF, and create OME-XML
         // metadata from it.
         std::string omexml;
         getComment(*tiff, omexml);
-        std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(omexml));
+        ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(omexml));
 
         // Is there an associated binary-only metadata file?
         try
@@ -499,7 +499,7 @@ namespace ome
         core.clear();
         core.reserve(seriesCount);
         for (index_type i = 0; i < seriesCount; ++i)
-          core.push_back(std::make_shared<OMETIFFMetadata>());
+          core.push_back(ome::compat::make_shared<OMETIFFMetadata>());
 
         // UUID → file mapping and used files.
         findUsedFiles(*meta, id, dir, currentUUID);
@@ -507,7 +507,7 @@ namespace ome
         // Process TiffData elements.
         for (index_type series = 0; series < seriesCount; ++series)
           {
-            std::shared_ptr<OMETIFFMetadata> coreMeta(std::dynamic_pointer_cast<OMETIFFMetadata>(core.at(series)));
+            ome::compat::shared_ptr<OMETIFFMetadata> coreMeta(ome::compat::dynamic_pointer_cast<OMETIFFMetadata>(core.at(series)));
             assert(coreMeta); // Should never be null.
             std::clog << "Image[" << series << "] {\n  id = " << meta->getImageID(series) << '\n';
 
@@ -759,8 +759,8 @@ namespace ome
                   }
 
                 const OMETIFFPlane& plane(coreMeta->tiffPlanes.at(0));
-                const std::shared_ptr<const tiff::TIFF> ptiff(getTIFF(plane.id));
-                const std::shared_ptr<const tiff::IFD> pifd(ptiff->getDirectoryByIndex(plane.ifd));
+                const ome::compat::shared_ptr<const tiff::TIFF> ptiff(getTIFF(plane.id));
+                const ome::compat::shared_ptr<const tiff::IFD> pifd(ptiff->getDirectoryByIndex(plane.ifd));
                 const tiff::TileInfo tinfo(pifd->getTileInfo());
 
                 uint32_t tiffWidth = pifd->getImageWidth();
@@ -889,11 +889,11 @@ namespace ome
           }
 
         // Remove null CoreMetadata entries.
-        std::remove(core.begin(), core.end(), std::shared_ptr<OMETIFFMetadata>());
+        std::remove(core.begin(), core.end(), ome::compat::shared_ptr<OMETIFFMetadata>());
 
         if (getImageCount() == 1U)
           {
-            std::shared_ptr<CoreMetadata>& ms0 = core.at(0);
+            ome::compat::shared_ptr<CoreMetadata>& ms0 = core.at(0);
             ms0->sizeZ = 1U;
             if (!ms0->rgb)
               ms0->sizeC = 1U;
@@ -1077,8 +1077,8 @@ namespace ome
         else
           filename = *currentId;
 
-        const std::shared_ptr<const tiff::TIFF> tiff(getTIFF(filename));
-        const std::shared_ptr<const tiff::IFD> ifd(tiff->getDirectoryByIndex(*ifdIndex));
+        const ome::compat::shared_ptr<const tiff::TIFF> tiff(getTIFF(filename));
+        const ome::compat::shared_ptr<const tiff::IFD> ifd(tiff->getDirectoryByIndex(*ifdIndex));
 
         return ifd->getSamplesPerPixel();
       }
@@ -1167,7 +1167,7 @@ namespace ome
 
         if (numPlanes == 0)
           {
-            core.at(series) = std::shared_ptr<OMETIFFMetadata>();
+            core.at(series) = ome::compat::shared_ptr<OMETIFFMetadata>();
             valid = false;
           }
 
@@ -1223,7 +1223,7 @@ namespace ome
                 {
                   // Will throw if null.
                   std::string channelName(meta.getChannelName(series, 0));
-                  std::shared_ptr<CoreMetadata> coreMeta(core.at(series));
+                  ome::compat::shared_ptr<CoreMetadata> coreMeta(core.at(series));
                   if (meta.getTiffDataCount(series) > 0 &&
                       files.find("__omero_export") == files.end() &&
                       coreMeta)
@@ -1239,7 +1239,7 @@ namespace ome
       void
       OMETIFFReader::fixDimensions(ome::xml::meta::BaseMetadata::index_type series)
       {
-        std::shared_ptr<CoreMetadata> coreMeta(core.at(series));
+        ome::compat::shared_ptr<CoreMetadata> coreMeta(core.at(series));
         if (coreMeta)
           {
 
@@ -1277,7 +1277,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         try
           {
@@ -1301,7 +1301,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         if (isRGB())
           {
@@ -1320,10 +1320,10 @@ namespace ome
       void
       OMETIFFReader::addTIFF(const boost::filesystem::path& tiff)
       {
-        tiffs.insert(std::make_pair(tiff, std::shared_ptr<tiff::TIFF>()));
+        tiffs.insert(std::make_pair(tiff, ome::compat::shared_ptr<tiff::TIFF>()));
       }
 
-      const std::shared_ptr<const ome::bioformats::tiff::TIFF>
+      const ome::compat::shared_ptr<const ome::bioformats::tiff::TIFF>
       OMETIFFReader::getTIFF(const boost::filesystem::path& tiff) const
       {
         tiff_map::iterator i = tiffs.find(tiff);
@@ -1347,16 +1347,16 @@ namespace ome
         if (i->second)
           {
             i->second->close();
-            i->second = std::shared_ptr<ome::bioformats::tiff::TIFF>();
+            i->second = ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>();
           }
       }
 
-      std::shared_ptr<ome::xml::meta::MetadataStore>
+      ome::compat::shared_ptr<ome::xml::meta::MetadataStore>
       OMETIFFReader::getMetadataStoreForConversion()
       {
         SaveSeries sentry(*this);
 
-        std::shared_ptr<ome::xml::meta::MetadataStore> store = getMetadataStore();
+        ome::compat::shared_ptr<ome::xml::meta::MetadataStore> store = getMetadataStore();
 
         if (store)
           {
@@ -1370,15 +1370,15 @@ namespace ome
         return store;
       }
 
-      std::shared_ptr<ome::xml::meta::MetadataStore>
+      ome::compat::shared_ptr<ome::xml::meta::MetadataStore>
       OMETIFFReader::getMetadataStoreForDisplay()
       {
-        std::shared_ptr<ome::xml::meta::OMEXMLMetadata> omexml;
-        std::shared_ptr<ome::xml::meta::MetadataStore> store = getMetadataStore();
+        ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadata> omexml;
+        ome::compat::shared_ptr<ome::xml::meta::MetadataStore> store = getMetadataStore();
 
         if (store)
           {
-            omexml = std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(store);
+            omexml = ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(store);
             if (omexml)
               {
                 removeBinData(*omexml);

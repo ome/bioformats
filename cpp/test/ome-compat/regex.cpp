@@ -42,41 +42,41 @@
 
 TEST(Regex, Construct)
 {
-  std::regex foo("^foo[bar]$");
-  std::regex bar("^foo[bar]$", std::regex::extended);
-  std::regex chk("^[^:/,.][^:/,]*$", std::regex::extended);
+  ome::compat::regex foo("^foo[bar]$");
+  ome::compat::regex bar("^foo[bar]$", ome::compat::regex::extended);
+  ome::compat::regex chk("^[^:/,.][^:/,]*$", ome::compat::regex::extended);
 }
 
 TEST(Regex, Search)
 {
-  std::regex foo("^foo[bar]$");
-  std::regex bar("^foo[bar]$", std::regex::extended);
-  std::regex chk("^[^:/,.][^:/,]*$", std::regex::extended);
+  ome::compat::regex foo("^foo[bar]$");
+  ome::compat::regex bar("^foo[bar]$", ome::compat::regex::extended);
+  ome::compat::regex chk("^[^:/,.][^:/,]*$", ome::compat::regex::extended);
 
   std::string test("foob");
   std::string fail("fail:");
 
-  ASSERT_TRUE(std::regex_search(test, foo));
-  ASSERT_TRUE(std::regex_search(test, bar));
-  ASSERT_TRUE(std::regex_search(test, chk));
-  ASSERT_FALSE(std::regex_search(fail, foo));
-  ASSERT_FALSE(std::regex_search(fail, bar));
-  ASSERT_FALSE(std::regex_search(fail, chk));
+  ASSERT_TRUE(ome::compat::regex_search(test, foo));
+  ASSERT_TRUE(ome::compat::regex_search(test, bar));
+  ASSERT_TRUE(ome::compat::regex_search(test, chk));
+  ASSERT_FALSE(ome::compat::regex_search(fail, foo));
+  ASSERT_FALSE(ome::compat::regex_search(fail, bar));
+  ASSERT_FALSE(ome::compat::regex_search(fail, chk));
 }
 
 TEST(Regex, Match)
 {
-  std::regex foo("^foo[bar]$");
-  std::regex bar("^foo[bar]$", std::regex::extended);
-  std::regex chk("^[^:/,.][^:/,]*$", std::regex::extended);
+  ome::compat::regex foo("^foo[bar]$");
+  ome::compat::regex bar("^foo[bar]$", ome::compat::regex::extended);
+  ome::compat::regex chk("^[^:/,.][^:/,]*$", ome::compat::regex::extended);
 
   std::string test("foob");
   std::string fail("fail:");
 
-  ASSERT_TRUE(std::regex_match(test, foo));
-  ASSERT_TRUE(std::regex_match(test, bar));
-  ASSERT_TRUE(std::regex_match(test, chk));
-  ASSERT_FALSE(std::regex_match(fail, foo));
-  ASSERT_FALSE(std::regex_match(fail, bar));
-  ASSERT_FALSE(std::regex_match(fail, chk));
+  ASSERT_TRUE(ome::compat::regex_match(test, foo));
+  ASSERT_TRUE(ome::compat::regex_match(test, bar));
+  ASSERT_TRUE(ome::compat::regex_match(test, chk));
+  ASSERT_FALSE(ome::compat::regex_match(fail, foo));
+  ASSERT_FALSE(ome::compat::regex_match(fail, bar));
+  ASSERT_FALSE(ome::compat::regex_match(fail, chk));
 }

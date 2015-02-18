@@ -161,20 +161,20 @@ namespace ome
       return fmt.str();
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(ome::xerces::dom::Document& document)
     {
       ome::xerces::dom::Element docroot(document.getDocumentElement());
 
-      std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+      ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(ome::compat::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
       ome::xml::model::detail::OMEModel model;
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta->getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta->getRoot()));
       root->update(docroot, model);
 
       return meta;
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const boost::filesystem::path& file)
     {
       // Parse OME-XML into DOM Document.
@@ -194,7 +194,7 @@ namespace ome
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const std::string& text)
     {
       // Parse OME-XML into DOM Document.
@@ -215,7 +215,7 @@ namespace ome
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(std::istream& stream)
     {
       // Parse OME-XML into DOM Document.
@@ -236,41 +236,41 @@ namespace ome
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane,
                          bool                doImageName)
     {
-      std::shared_ptr<OMEXMLMetadata> metadata(std::make_shared<OMEXMLMetadata>());
-      std::shared_ptr<MetadataStore> store(std::static_pointer_cast<MetadataStore>(metadata));
+      ome::compat::shared_ptr<OMEXMLMetadata> metadata(ome::compat::make_shared<OMEXMLMetadata>());
+      ome::compat::shared_ptr<MetadataStore> store(ome::compat::static_pointer_cast<MetadataStore>(metadata));
       fillMetadata(*store, reader, doPlane, doImageName);
       return metadata;
     }
 
-    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    ome::compat::shared_ptr< ::ome::xml::meta::MetadataRoot>
     createOMEXMLRoot(const std::string& document)
     {
       /// @todo Implement model transforms.
 
-      std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(createOMEXMLMetadata(document)));
-      return meta ? meta->getRoot() : std::shared_ptr< ::ome::xml::meta::MetadataRoot>();
+      ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(ome::compat::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(createOMEXMLMetadata(document)));
+      return meta ? meta->getRoot() : ome::compat::shared_ptr< ::ome::xml::meta::MetadataRoot>();
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
-    getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    getOMEXMLMetadata(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
     {
-      std::shared_ptr<OMEXMLMetadata> ret;
+      ome::compat::shared_ptr<OMEXMLMetadata> ret;
 
       if (retrieve)
         {
-          std::shared_ptr<OMEXMLMetadata> omexml(std::dynamic_pointer_cast<OMEXMLMetadata>(retrieve));
+          ome::compat::shared_ptr<OMEXMLMetadata> omexml(ome::compat::dynamic_pointer_cast<OMEXMLMetadata>(retrieve));
           if (omexml)
             {
               ret = omexml;
             }
           else
             {
-              ret = std::shared_ptr<OMEXMLMetadata>(std::make_shared<OMEXMLMetadata>());
+              ret = ome::compat::shared_ptr<OMEXMLMetadata>(ome::compat::make_shared<OMEXMLMetadata>());
               ome::xml::meta::convert(*retrieve, *ret);
             }
         }
@@ -405,17 +405,17 @@ namespace ome
     {
       if (resolve)
         omexml.resolveReferences();
-      std::shared_ptr<MetadataRoot> root(omexml.getRoot());
-      std::shared_ptr<OMEXMLMetadataRoot> omexmlroot(std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root));
+      ome::compat::shared_ptr<MetadataRoot> root(omexml.getRoot());
+      ome::compat::shared_ptr<OMEXMLMetadataRoot> omexmlroot(ome::compat::dynamic_pointer_cast<OMEXMLMetadataRoot>(root));
       if (omexmlroot)
         {
-          std::shared_ptr<Image> image = omexmlroot->getImage(series);
+          ome::compat::shared_ptr<Image> image = omexmlroot->getImage(series);
           if (image)
             {
-              std::shared_ptr<Pixels> pixels = image->getPixels();
+              ome::compat::shared_ptr<Pixels> pixels = image->getPixels();
               if (pixels)
                 {
-                  std::shared_ptr<MetadataOnly> meta(std::make_shared<MetadataOnly>());
+                  ome::compat::shared_ptr<MetadataOnly> meta(ome::compat::make_shared<MetadataOnly>());
                   pixels->setMetadataOnly(meta);
                 }
             }
@@ -451,12 +451,12 @@ namespace ome
       // @todo Implement Modulo retrieval.
       ::ome::xml::meta::OMEXMLMetadata& momexml(const_cast< ::ome::xml::meta::OMEXMLMetadata&>(omexml));
 
-      std::shared_ptr<OMEXMLMetadataRoot> root =
-        std::dynamic_pointer_cast<OMEXMLMetadataRoot>(momexml.getRoot());
+      ome::compat::shared_ptr<OMEXMLMetadataRoot> root =
+        ome::compat::dynamic_pointer_cast<OMEXMLMetadataRoot>(momexml.getRoot());
       if (!root) // Should never occur
         throw std::logic_error("OMEXMLMetadata does not have an OMEXMLMetadataRoot");
 
-      std::shared_ptr< ::ome::xml::model::Image> mimage(root->getImage(image));
+      ome::compat::shared_ptr< ::ome::xml::model::Image> mimage(root->getImage(image));
       if (!mimage)
         throw std::runtime_error("Image does not exist in OMEXMLMetadata");
 
@@ -464,8 +464,8 @@ namespace ome
            i < mimage->sizeOfLinkedAnnotationList();
            ++i)
         {
-          std::shared_ptr< ::ome::xml::model::Annotation> annotation(mimage->getLinkedAnnotation(i));
-          std::shared_ptr< ::ome::xml::model::XMLAnnotation> xmlannotation(std::dynamic_pointer_cast< ::ome::xml::model::XMLAnnotation>(annotation));
+          ome::compat::shared_ptr< ::ome::xml::model::Annotation> annotation(mimage->getLinkedAnnotation(i));
+          ome::compat::shared_ptr< ::ome::xml::model::XMLAnnotation> xmlannotation(ome::compat::dynamic_pointer_cast< ::ome::xml::model::XMLAnnotation>(annotation));
           if (xmlannotation)
             {
               try
@@ -570,27 +570,27 @@ namespace ome
     removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml)
     {
       omexml.resolveReferences();
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::vector<std::shared_ptr<ome::xml::model::Image> >& images(root->getImageList());
-          for(std::vector<std::shared_ptr<ome::xml::model::Image> >::const_iterator image = images.begin();
+          std::vector<ome::compat::shared_ptr<ome::xml::model::Image> >& images(root->getImageList());
+          for(std::vector<ome::compat::shared_ptr<ome::xml::model::Image> >::const_iterator image = images.begin();
               image != images.end();
               ++image)
             {
-              std::shared_ptr<ome::xml::model::Pixels> pixels((*image)->getPixels());
+              ome::compat::shared_ptr<ome::xml::model::Pixels> pixels((*image)->getPixels());
               if (pixels)
                 {
                   // Note a copy not a reference to avoid iterator
                   // invalidation during removal.
-                  std::vector<std::shared_ptr<ome::xml::model::BinData> > binData(pixels->getBinDataList());
-                  for (std::vector<std::shared_ptr<ome::xml::model::BinData> >::iterator bin = binData.begin();
+                  std::vector<ome::compat::shared_ptr<ome::xml::model::BinData> > binData(pixels->getBinDataList());
+                  for (std::vector<ome::compat::shared_ptr<ome::xml::model::BinData> >::iterator bin = binData.begin();
                    bin != binData.end();
                        ++bin)
                     {
                       pixels->removeBinData(*bin);
                     }
-                  std::shared_ptr<ome::xml::model::MetadataOnly> metadataOnly;
+                  ome::compat::shared_ptr<ome::xml::model::MetadataOnly> metadataOnly;
                   pixels->setMetadataOnly(metadataOnly);
                 }
             }
@@ -603,19 +603,19 @@ namespace ome
                    dimension_size_type               sizeC)
     {
       omexml.resolveReferences();
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::shared_ptr<ome::xml::model::Image>& imageref(root->getImage(image));
+          ome::compat::shared_ptr<ome::xml::model::Image>& imageref(root->getImage(image));
           if (image)
             {
-              std::shared_ptr<ome::xml::model::Pixels> pixels(imageref->getPixels());
+              ome::compat::shared_ptr<ome::xml::model::Pixels> pixels(imageref->getPixels());
               if (pixels)
                 {
-                  std::vector<std::shared_ptr<ome::xml::model::Channel> > channels(pixels->getChannelList());
+                  std::vector<ome::compat::shared_ptr<ome::xml::model::Channel> > channels(pixels->getChannelList());
                   for (Metadata::index_type c = 0U; c < channels.size(); ++c)
                     {
-                      std::shared_ptr<ome::xml::model::Channel> channel(channels.at(c));
+                      ome::compat::shared_ptr<ome::xml::model::Channel> channel(channels.at(c));
                       if (channel->getID().empty() || c >= sizeC)
                         pixels->removeChannel(channel);
                     }
@@ -629,17 +629,17 @@ namespace ome
     {
       MetadataMap map;
 
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
+          ome::compat::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
           if (sa)
             {
               for (OMEXMLMetadata::index_type i = 0; i < sa->sizeOfXMLAnnotationList(); ++i)
                 {
                   // Check if this is an OriginalMetadataAnnotation object.
-                  std::shared_ptr<XMLAnnotation> annotation(sa->getXMLAnnotation(i));
-                  std::shared_ptr<OriginalMetadataAnnotation> original(std::dynamic_pointer_cast<OriginalMetadataAnnotation>(annotation));
+                  ome::compat::shared_ptr<XMLAnnotation> annotation(sa->getXMLAnnotation(i));
+                  ome::compat::shared_ptr<OriginalMetadataAnnotation> original(ome::compat::dynamic_pointer_cast<OriginalMetadataAnnotation>(annotation));
                   if (original)
                     {
                       const OriginalMetadataAnnotation::metadata_type kv(original->getMetadata());
@@ -717,12 +717,12 @@ namespace ome
 
       MetadataMap flat(metadata.flatten());
 
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
+          ome::compat::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
           if (!sa)
-            sa = std::make_shared<StructuredAnnotations>();
+            sa = ome::compat::make_shared<StructuredAnnotations>();
           OMEXMLMetadata::index_type annotationIndex = sa->sizeOfXMLAnnotationList();
           OMEXMLMetadata::index_type idIndex = sa->sizeOfXMLAnnotationList();
 
@@ -748,10 +748,10 @@ namespace ome
               std::ostringstream value;
               boost::apply_visitor(::ome::bioformats::detail::MetadataMapValueTypeOStreamVisitor(value), i->second);
 
-              std::shared_ptr<OriginalMetadataAnnotation> orig(std::make_shared<OriginalMetadataAnnotation>());
+              ome::compat::shared_ptr<OriginalMetadataAnnotation> orig(ome::compat::make_shared<OriginalMetadataAnnotation>());
               orig->setID(id);
               orig->setMetadata(OriginalMetadataAnnotation::metadata_type(i->first, value.str()));
-              std::shared_ptr<XMLAnnotation> xmlorig(std::static_pointer_cast<XMLAnnotation>(orig));
+              ome::compat::shared_ptr<XMLAnnotation> xmlorig(ome::compat::static_pointer_cast<XMLAnnotation>(orig));
               sa->addXMLAnnotation(xmlorig);
             }
 
