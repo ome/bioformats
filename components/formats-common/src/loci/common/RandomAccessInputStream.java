@@ -534,13 +534,12 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     readFully(bytes);
     StringBuffer newString = new StringBuffer();
     for (byte b : bytes) {
-        int v = b & 0xff;
-        if (v > 0x7f) {
-            newString.append(Character.toChars(v));
-        }
-        else {
-            newString.append((char) b);
-        }
+      int v = b & 0xff;
+      if (v > 0x7f) {
+          newString.append(Character.toChars(v));
+      } else {
+          newString.append((char) b);
+      }
     }
     String s = newString.toString();
     return new String(s.getBytes(encoding), encoding);
