@@ -1046,9 +1046,20 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
+  <target name="store-version" description="store version information in a property file" depends="release-version">
+    <delete file="${artifact.dir}/bioformats.properties"/>
+    <propertyfile file="${artifact.dir}/bioformats.properties">
+      <entry key="release.shortversion" value="${release.shortversion}"/>
+      <entry key="release.version" value="${release.version}"/>
+      <entry key="vcs.date" value="${vcs.date}"/>
+      <entry key="vcs.revision" value="${vcs.revision}"/>
+      <entry key="vcs.date_unix" value="${vcs.date_unix}"/>
+    </propertyfile>
+  </target>
+
   <target name="version" description="print version information" depends="release-version">
     <echo>VERSION=${release.version}
-SHORTVERSION=${release.version}
+SHORTVERSION=${release.shortversion}
 VCS_DATE=${vcs.date}
 VCS_REVISION=${vcs.revision}
 </echo>
