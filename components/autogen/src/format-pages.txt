@@ -2376,7 +2376,7 @@ extensions = `.czi <http://www.zeiss.com/czi>`_
 developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 bsd = no
 export = no
-software = `Zeiss ZEN 2012 <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-2012.html>`_
+software = `Zeiss ZEN  <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen.html>`_
 weHave = * many example datasets \n
 * official specification documents
 pixelsRating = Outstanding
