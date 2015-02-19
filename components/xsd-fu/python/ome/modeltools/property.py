@@ -481,8 +481,10 @@ class OMEModelProperty(OMEModelEntity):
                 itype = {' const': self.langTypeNS}
             elif self.isEnumeration:
                 if self.minOccurs == 0:
-                    itype = {' const': "const ome::compat::shared_ptr<%s>" % ns_sep,
-                             '':       "ome::compat::shared_ptr<%s>" % ns_sep}
+                    itype = {' const': "const ome::compat::shared_ptr<%s>"
+                             % ns_sep,
+                             '':       "ome::compat::shared_ptr<%s>"
+                             % ns_sep}
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS,
                              '':       "%s&" % self.langTypeNS}
@@ -496,14 +498,20 @@ class OMEModelProperty(OMEModelEntity):
                 if self.minOccurs == 0 or (
                         not self.model.opts.lang.hasPrimitiveType(
                             self.langType) and not self.isEnumeration):
-                    itype = {' const': "const ome::compat::shared_ptr<%s>" % ns_sep,
-                             '':       "ome::compat::shared_ptr<%s>" % ns_sep}
+                    itype = {' const':
+                             "const ome::compat::shared_ptr<%s>"
+                             % ns_sep,
+                             '':
+                             "ome::compat::shared_ptr<%s>"
+                             % ns_sep}
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS}
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                itype = {' const': "const std::vector<ome::compat::shared_ptr<%s> >"
+                itype = {' const':
+                         "const std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep,
-                         '':      "std::vector<ome::compat::shared_ptr<%s> >"
+                         '':
+                         "std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep}
 
         return itype
@@ -568,8 +576,10 @@ class OMEModelProperty(OMEModelEntity):
                 itype = self.argType()
             elif (self.maxOccurs > 1 and
                   not self.parent.isAbstractProprietary):
-                itype = {' const': "const ome::compat::shared_ptr<%s>&" % ns_sep,
-                         '':      "ome::compat::shared_ptr<%s>&" % ns_sep}
+                itype = {' const': "const ome::compat::shared_ptr<%s>&"
+                         % ns_sep,
+                         '':       "ome::compat::shared_ptr<%s>&"
+                         % ns_sep}
 
         return itype
     elementRetType = property(
@@ -600,14 +610,20 @@ class OMEModelProperty(OMEModelEntity):
                 itype = {' const': self.langTypeNS}
             elif self.isEnumeration:
                 if self.minOccurs == 0:
-                    itype = {' const': "ome::compat::shared_ptr<const %s>" % ns_sep,
-                             '':       "ome::compat::shared_ptr<%s>" % ns_sep}
+                    itype = {' const':
+                             "ome::compat::shared_ptr<const %s>" %
+                             ns_sep,
+                             '':
+                             "ome::compat::shared_ptr<%s>" %
+                             ns_sep}
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS,
                              '':       "%s&" % self.langTypeNS}
             elif self.isReference or self.isBackReference:
-                itype = {' const': "ome::compat::shared_ptr<const %s>" % ns_sep,
-                         '':       "ome::compat::shared_ptr<%s>" % ns_sep}
+                itype = {' const': "ome::compat::shared_ptr<const %s>"
+                         % ns_sep,
+                         '':       "ome::compat::shared_ptr<%s>"
+                         % ns_sep}
             elif self.maxOccurs == 1 and (
                     not self.parent.isAbstractProprietary or
                     self.isAttribute or not self.isComplex() or
@@ -615,16 +631,20 @@ class OMEModelProperty(OMEModelEntity):
                 if self.minOccurs == 0 or (
                         not self.model.opts.lang.hasPrimitiveType(
                             self.langType) and not self.isEnumeration):
-                    itype = {' const': "ome::compat::shared_ptr<const %s>" % ns_sep,
-                             '':       "ome::compat::shared_ptr<%s>" % ns_sep}
+                    itype = {' const': "ome::compat::shared_ptr<const %s>"
+                             % ns_sep,
+                             '': "ome::compat::shared_ptr<%s>"
+                             % ns_sep}
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS,
                              '':       "%s&" % self.langTypeNS}
             elif (self.maxOccurs > 1 and
                     not self.parent.isAbstractProprietary):
-                itype = {' const': "const std::vector<ome::compat::shared_ptr<%s> >"
+                itype = {' const':
+                         "const std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep,
-                         '':      "std::vector<ome::compat::shared_ptr<%s> >"
+                         '':
+                         "std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep}
 
         return itype
