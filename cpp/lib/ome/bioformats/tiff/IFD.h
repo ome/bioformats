@@ -68,20 +68,20 @@ namespace ome
        *
        * An IFD represents a subfile within a TIFF.
        */
-      class IFD : public std::enable_shared_from_this<IFD>
+      class IFD : public ome::compat::enable_shared_from_this<IFD>
       {
       private:
         class Impl;
         /// Private implementation details.
-        std::shared_ptr<Impl> impl;
+        ome::compat::shared_ptr<Impl> impl;
 
       protected:
         /// Constructor (not public).
-        IFD(std::shared_ptr<TIFF>& tiff,
-            offset_type            offset);
+        IFD(ome::compat::shared_ptr<TIFF>& tiff,
+            offset_type                    offset);
 
         /// Constructor (not public).
-        IFD(std::shared_ptr<TIFF>& tiff);
+        IFD(ome::compat::shared_ptr<TIFF>& tiff);
 
       private:
         /// Copy constructor (deleted).
@@ -102,9 +102,9 @@ namespace ome
          * @param index the directory index.
          * @returns the open IFD.
          */
-        static std::shared_ptr<IFD>
-        openIndex(std::shared_ptr<TIFF>& tiff,
-                  directory_index_type   index);
+        static ome::compat::shared_ptr<IFD>
+        openIndex(ome::compat::shared_ptr<TIFF>& tiff,
+                  directory_index_type           index);
 
         /**
          * Open an IFD.
@@ -113,9 +113,9 @@ namespace ome
          * @param offset the directory offset.
          * @returns the open IFD.
          */
-        static std::shared_ptr<IFD>
-        openOffset(std::shared_ptr<TIFF>& tiff,
-                   offset_type            offset);
+        static ome::compat::shared_ptr<IFD>
+        openOffset(ome::compat::shared_ptr<TIFF>& tiff,
+                   offset_type                    offset);
 
         /**
          * Get the current IFD.
@@ -123,15 +123,15 @@ namespace ome
          * @param tiff the source TIFF.
          * @returns the open IFD.
          */
-        static std::shared_ptr<IFD>
-        current(std::shared_ptr<TIFF>& tiff);
+        static ome::compat::shared_ptr<IFD>
+        current(ome::compat::shared_ptr<TIFF>& tiff);
 
         /**
          * Get the source TIFF this descriptor belongs to.
          *
          * @returns the source TIFF.
          */
-        std::shared_ptr<TIFF>&
+        ome::compat::shared_ptr<TIFF>&
         getTIFF() const;
 
         /**
@@ -487,7 +487,7 @@ namespace ome
          *
          * @returns the next directory, or null if this is the last directory.
          */
-        std::shared_ptr<IFD>
+        ome::compat::shared_ptr<IFD>
         next() const;
 
         /**
@@ -505,7 +505,7 @@ namespace ome
        * @param ifd the IFD to use.
        * @returns the CoreMetadata.
        */
-      std::shared_ptr<CoreMetadata>
+      ome::compat::shared_ptr<CoreMetadata>
       makeCoreMetadata(const IFD& ifd);
 
     }

@@ -164,7 +164,7 @@ namespace ome
           /// List being iterated over.
           xercesc::DOMNodeList *xmlnodelist;
           /// Node at current position.
-          std::shared_ptr<Node> xmlnode;
+          ome::compat::shared_ptr<Node> xmlnode;
         };
 
         /**

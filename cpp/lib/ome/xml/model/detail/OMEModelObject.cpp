@@ -85,8 +85,8 @@ namespace ome
         }
 
         bool
-        OMEModelObject::link (std::shared_ptr<Reference>&                          /* reference */,
-                              std::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
+        OMEModelObject::link (ome::compat::shared_ptr<Reference>&                          /* reference */,
+                              ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
         {
           return false;
         }

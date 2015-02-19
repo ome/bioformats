@@ -104,7 +104,10 @@ namespace boost
 
 } // namespace boost
 # endif
-namespace std {
+namespace ome
+{
+  namespace compat
+  {
     using boost::shared_ptr;
     using boost::weak_ptr;
     using boost::static_pointer_cast;
@@ -113,6 +116,7 @@ namespace std {
     using boost::enable_shared_from_this;
     using boost::make_shared;
     using boost::owner_less;
+  }
 }
 # else
 #  error A shared_ptr implementation is not available

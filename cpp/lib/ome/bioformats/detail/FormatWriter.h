@@ -116,7 +116,7 @@ namespace ome
         boost::optional<boost::filesystem::path> currentId;
 
         /// Current output.
-        std::shared_ptr<std::ostream> out;
+        ome::compat::shared_ptr<std::ostream> out;
 
         /// Current series.
         mutable dimension_size_type series;
@@ -134,7 +134,7 @@ namespace ome
          * Current metadata store. Should never be accessed directly as the
          * semantics of getMetadataRetrieve() prevent "null" access.
          */
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
 
       protected:
         /// Constructor.
@@ -190,14 +190,14 @@ namespace ome
 
         // Documented in superclass.
         void
-        setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+        setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
 
         // Documented in superclass.
-        const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve() const;
 
         // Documented in superclass.
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve();
 
         // Documented in superclass.

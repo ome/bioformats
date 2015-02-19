@@ -52,25 +52,45 @@
 
 # ifdef OME_HAVE_REGEX
 #  include <regex>
+namespace ome
+{
+  namespace compat
+  {
+    using std::regex;
+    using std::regex_error;
+    using std::regex_match;
+    using std::regex_search;
+    using std::cmatch;
+    using std::smatch;
+  }
+}
 # elif OME_HAVE_TR1_REGEX
 #  include <tr1/regex.hpp>
-namespace std {
-  using std::tr1::regex;
-  using std::tr1::regex_error;
-  using std::tr1::regex_match;
-  using std::tr1::regex_search;
-  using std::tr1::cmatch;
-  using std::tr1::smatch;
+namespace ome
+{
+  namespace compat
+  {
+    using std::tr1::regex;
+    using std::tr1::regex_error;
+    using std::tr1::regex_match;
+    using std::tr1::regex_search;
+    using std::tr1::cmatch;
+    using std::tr1::smatch;
+  }
 }
 # elif OME_HAVE_BOOST_REGEX
 #  include <boost/regex.hpp>
-namespace std {
-  using boost::regex;
-  using boost::regex_error;
-  using boost::regex_match;
-  using boost::regex_search;
-  using boost::cmatch;
-  using boost::smatch;
+namespace ome
+{
+  namespace compat
+  {
+    using boost::regex;
+    using boost::regex_error;
+    using boost::regex_match;
+    using boost::regex_search;
+    using boost::cmatch;
+    using boost::smatch;
+  }
 }
 # else
 #  error An regex implementation is not available

@@ -614,11 +614,13 @@ for further details of all configurable options, and run ``cmake
 C++11
 ^^^^^
 
-C++11 features such as :cpp:type:`std::shared_ptr` are used when using
-a C++11 compiler.  When using an older compiler, the Boost equivalents
-will be used as fallbacks to provide the same functionality.
-:program:`cmake` will automatically detect and use C++11 features when
-available.
+C++11 features such as :cpp:class:`std::shared_ptr` are used when
+using a C++11 compiler.  When using an older compiler, the Boost
+equivalents will be used as fallbacks to provide the same
+functionality.  :program:`cmake` will automatically detect and use
+C++11 features when available.  These types are imported into the
+:cpp:class:`ome::compat` namespace, for example as
+:cpp:class:`ome::compat::shared_ptr`.
 
 
 Linux and MacOS X

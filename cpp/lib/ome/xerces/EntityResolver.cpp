@@ -211,7 +211,7 @@ namespace ome
                               if (e.hasAttribute("uri") && e.hasAttribute("name"))
                                 {
                                   boost::filesystem::path newid(currentdir / static_cast<std::string>(e.getAttribute("uri")));
-                                  registration.push_back(std::shared_ptr<AutoRegisterEntity>(new AutoRegisterEntity(static_cast<std::string>(e.getAttribute("name")),
+                                  registration.push_back(ome::compat::shared_ptr<AutoRegisterEntity>(new AutoRegisterEntity(static_cast<std::string>(e.getAttribute("name")),
                                                                                                                     ome::compat::canonical(newid))));
                                 }
                             }

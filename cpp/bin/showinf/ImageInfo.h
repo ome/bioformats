@@ -67,7 +67,7 @@ namespace showinf
     virtual ~ImageInfo ();
 
     void
-    setReader(std::shared_ptr<ome::bioformats::FormatReader>& reader);
+    setReader(ome::compat::shared_ptr<ome::bioformats::FormatReader>& reader);
 
     void
     testRead(std::ostream& stream);
@@ -115,7 +115,7 @@ namespace showinf
     /// Command-line options.
     options opts;
     /// FormatReader instance.
-    std::shared_ptr<ome::bioformats::FormatReader> reader;
+    ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
   };
 
 }

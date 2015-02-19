@@ -147,7 +147,7 @@ namespace ome
     protected:
       class Impl;
       /// Private implementation details.
-      std::shared_ptr<Impl> impl;
+      ome::compat::shared_ptr<Impl> impl;
     };
 
   }
