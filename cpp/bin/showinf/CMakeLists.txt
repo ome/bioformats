@@ -46,7 +46,7 @@ set(showinf_SOURCES
     showinf.cpp)
 
 add_executable(showinf ${showinf_SOURCES})
-target_link_libraries(showinf ome-bioformats ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
+target_link_libraries(showinf ome-bioformats ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} ${CMAKE_THREAD_LIBS_INIT})
 
 install(TARGETS showinf RUNTIME
         DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
