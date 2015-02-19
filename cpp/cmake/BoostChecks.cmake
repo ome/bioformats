@@ -34,9 +34,9 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-find_package(Boost REQUIRED
+find_package(Boost 1.46 REQUIRED
              COMPONENTS date_time filesystem system iostreams
-                        program_options regex thread)
+                        log program_options regex thread)
 
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
