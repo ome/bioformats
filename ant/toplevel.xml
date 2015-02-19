@@ -964,11 +964,6 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-xml" target="generate-source"/>
   </target>
 
-  <target name="metadata-src"
-    description="generate sources using xsd-fu">
-    <ant dir="components/formats-bsd" target="generate-source"/>
-  </target>
-
   <!-- Specification -->
   <target name="jar-specification"
     description="generate JAR file for OME-XML specification"
