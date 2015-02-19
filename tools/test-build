@@ -53,11 +53,16 @@ cppwrap()
     )
 }
 
+# Check python sources with flake8
+flake()
+{
+    flake8 -v components cpp docs
+}
+
 # Test sphinx docs build
 sphinx()
 {
     (
-        flake8 -v .
         export SPHINXOPTS="-W"
         ant -Dsphinx.opts=$SPHINXOPTS clean-docs-sphinx
         ant -Dsphinx.opts=$SPHINXOPTS docs-sphinx
@@ -100,6 +105,8 @@ do
             cpp ;;
         cppwrap)
             cppwrap ;;
+        flake8)
+            flake ;;
         sphinx)
             sphinx ;;
         ant)
