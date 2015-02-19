@@ -85,12 +85,12 @@ public class Colorizer extends BytesWrapper {
 
   @Override
   public boolean isIndexed() {
-    return lutSource == null ? super.isIndexed() : true;
+    return lutSource == null ? super.isIndexed() : false;
   }
 
   @Override
   public boolean isFalseColor() {
-    return lutSource == null ? super.isFalseColor() : false;
+    return lutSource == null ? super.isFalseColor() : false; // TODO
   }
 
   @Override
@@ -105,8 +105,7 @@ public class Colorizer extends BytesWrapper {
 
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    return lutSource == null ? super.get8BitLookupTable() :
-        lutSource.get8BitLookupTable();
+    return lutSource == null ? super.get8BitLookupTable() : null;
   }
 
   @Override
@@ -119,5 +118,10 @@ public class Colorizer extends BytesWrapper {
     return lutSource == null ? super.getBitsPerPixel() : 8;
   }
 
+  @Override
+  public int getSizeC() {
+    int sizeC = super.getSizeC();
+    return lutSource == null ? sizeC : sizeC * 3;
+  }
 
 }
