@@ -569,7 +569,7 @@ public class SlidebookReader extends FormatReader {
             // this block should contain an image name
             in.skipBytes(10);
             if (nextName < imageNames.length) {
-              String name = in.readCString().trim();
+              String name = readCString().trim();
               if (name.length() > 0) {
                 imageNames[nextName++] = name;
               }
@@ -654,7 +654,7 @@ public class SlidebookReader extends FormatReader {
           if (in.getFilePointer() > pixelOffsets.get(0).longValue() || isSpool)
           {
             in.skipBytes(14);
-            String name = in.readCString().trim();
+            String name = readCString().trim();
             if (name.length() > 1) {
               channelNames.add(name);
             }
@@ -670,7 +670,7 @@ public class SlidebookReader extends FormatReader {
           if (nSkipped < 8) {
             in.skipBytes((int) (8 - nSkipped));
           }
-          String objective = in.readCString().trim();
+          String objective = readCString().trim();
           in.seek(fp + 144);
           float pixSize = in.readFloat();
           int magnification = in.readShort();
@@ -698,7 +698,7 @@ public class SlidebookReader extends FormatReader {
         else if (n == 'k') {
           in.skipBytes(14);
           if (nextName > 0) setSeries(nextName - 1);
-          addSeriesMeta("Mag. changer", in.readCString());
+          addSeriesMeta("Mag. changer", readCString());
         }
         else if (n == 'n') {
           long fp1 = in.getFilePointer();
@@ -722,7 +722,7 @@ public class SlidebookReader extends FormatReader {
           if (len > 0 && fp1 - fp2 != 2) {
             if (fp2 < fp1) {
               in.seek(in.getFilePointer() - 1);
-              String descr = in.readCString();
+              String descr = readCString();
               descr = descr.substring(0, descr.length() - 2);
               if (!descr.endsWith("Annotatio")) {
                 imageDescriptions.put(currentSeries, descr.trim());
@@ -1366,6 +1366,10 @@ public class SlidebookReader extends FormatReader {
    */
   private boolean isGreaterThanEpsilon(double v) {
     return v - Constants.EPSILON > 0;
+  }
+
+  private String readCString() throws IOException {
+    return in.findString(true, 256, "\0");
   }
 
 }
