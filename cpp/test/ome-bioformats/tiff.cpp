@@ -115,7 +115,7 @@ namespace
             static ome::compat::regex tile_match(".*/data-layout-([[:digit:]]+)x([[:digit:]]+)-([[:alpha:]]+)-tiles-([[:digit:]]+)x([[:digit:]]+)\\.tiff");
             static ome::compat::regex strip_match(".*/data-layout-([[:digit:]]+)x([[:digit:]]+)-([[:alpha:]]+)-strips-([[:digit:]]+)\\.tiff");
 
-            std::smatch found;
+            ome::compat::smatch found;
             std::string file(i->path().string());
             path wpath(i->path().parent_path());
             wpath /= std::string("w-") + i->path().filename().string();
