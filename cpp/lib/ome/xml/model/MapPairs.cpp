@@ -36,8 +36,6 @@
  * #L%
  */
 
-#include <iostream>
-
 #include <ome/internal/version.h>
 
 #include <ome/xml/model/OME.h>
@@ -55,6 +53,8 @@ namespace ome
         const std::string MAP_NAMESPACE("http://www.openmicroscopy.org/Schemas/SA/" OME_MODEL_VERSION);
         const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_MODEL_VERSION);
       }
+
+      ome::compat::Logger MapPairs::logger = ome::compat::createLogger("MapPairs");
 
       MapPairs::MapPairs ():
         ::ome::xml::model::OMEModelObject(),
@@ -113,7 +113,8 @@ namespace ome
         //+        if (!("Map".equals(tagName) || "Value".equals(tagName))) {
         if (tagName != "Map" && tagName != "Value")
           {
-            std::clog << "Expecting node name of Map or Value, got " << tagName << std::endl;
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+              << "Expecting node name of Map or Value, got " << tagName;
           }
 
         std::vector<xerces::dom::Element> M_nodeList(getChildrenByTagName(element, "M"));
@@ -129,7 +130,8 @@ namespace ome
               }
             else
               {
-                std::clog << "MapPairs entry M does not contain key attribute K";
+                BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                  << "MapPairs entry M does not contain key attribute K";
               }
           }
       }
@@ -142,7 +144,9 @@ namespace ome
           {
             return true;
           }
-        std::clog << "Unable to handle reference of type: " << typeid(reference).name() << std::endl;
+        BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+          << "Unable to handle reference of type: "
+          << typeid(reference).name();
         return false;
       }
 

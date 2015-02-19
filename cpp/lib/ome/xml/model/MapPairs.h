@@ -44,6 +44,7 @@
 #include <string>
 #include <vector>
 
+#include <ome/compat/log.h>
 #include <ome/compat/memory.h>
 
 #include <ome/xerces/dom/Document.h>
@@ -73,6 +74,8 @@ namespace ome
         typedef std::map<std::string, std::string> map_type;
 
       private:
+        /// Message logger.
+        static ome::compat::Logger logger;
         /// Key-value pair mappings.
         map_type map;
 

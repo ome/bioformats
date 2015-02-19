@@ -48,11 +48,12 @@
 #define ${fu.GUARD}
 
 #include <algorithm>
-#include <iostream>
 #include <list>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#include <ome/compat/log.h>
 
 #include <ome/xerces/dom/Document.h>
 #include <ome/xerces/dom/Element.h>
@@ -153,10 +154,15 @@ namespace ome
 {% end has instance type %}\
 {% end for %}\
 
+      ome::compat::Logger ${klass.name}::logger = ome::compat::createLogger("${klass.name}");
+
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-{% if len(klass.instanceVariables) > 0 %}\
       private:
+        /// Message logger.
+        static ome::compat::Logger logger;
+
+{% if len(klass.instanceVariables) > 0 %}\
 {% for prop in klass.instanceVariables %}\
 {% if prop[3] is not None %}\
         /// ${prop[3]}
@@ -377,7 +383,8 @@ ${customContent}\
         const std::string tagName(stripNamespacePrefix(element.getTagName()));
         if (!validElementName(tagName))
           {
-            std::clog << tagName << " is an invalid element name for ${klass.name}" << std::endl;
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+              << tagName << " is an invalid element name for ${klass.name}";
           }
 {% for prop in klass.properties.values() %}\
 {% choose %}\
@@ -628,7 +635,9 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% end %}\
-        std::clog << "Unable to handle reference of type: " << typeid(reference).name() << std::endl;
+        BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+          << "Unable to handle reference of type: "
+          << typeid(reference).name();
         return false;
       }
 {% end source %}\

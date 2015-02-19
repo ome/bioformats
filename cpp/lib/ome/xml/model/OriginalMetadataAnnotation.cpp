@@ -65,6 +65,8 @@ namespace ome
         const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_MODEL_VERSION);
       }
 
+      ome::compat::Logger OriginalMetadataAnnotation::logger = ome::compat::createLogger("MapPairs");
+
       OriginalMetadataAnnotation::OriginalMetadataAnnotation ():
         ::ome::xml::model::OMEModelObject(),
         XMLAnnotation(),
@@ -172,7 +174,9 @@ namespace ome
           {
             return true;
           }
-        std::clog << "Unable to handle reference of type: " << typeid(reference).name() << std::endl;
+        BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+          << "Unable to handle reference of type: "
+          << typeid(reference).name();
         return false;
       }
 
