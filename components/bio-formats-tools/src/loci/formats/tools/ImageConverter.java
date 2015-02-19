@@ -305,15 +305,10 @@ public final class ImageConverter {
       }
       if (pat != null) in = pat;
     }
+    if (colorize != null) reader = new Colorizer(reader, new ImageJLutSource(colorize));
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
-    if (colorize != null) {
-        Colorizer colorizer = new Colorizer(reader);
-        ImageJLutSource source = new ImageJLutSource(colorize);
-        colorizer.setLutSource(source);
-        reader = colorizer;
-    }
     minMax = null;
     if (autoscale) {
       reader = new MinMaxCalculator(reader);

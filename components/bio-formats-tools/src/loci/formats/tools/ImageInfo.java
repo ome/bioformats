@@ -425,10 +425,10 @@ public class ImageInfo {
       }
       if (pat != null) id = pat;
     }
+    if (colorize != null) reader = new Colorizer(reader, new ImageJLutSource(colorize));
     if (expand) reader = new ChannelFiller(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
-    if (colorize != null) reader = new Colorizer(reader, new ImageJLutSource(colorize));
     minMaxCalc = null;
     if (minmax || autoscale) reader = minMaxCalc = new MinMaxCalculator(reader);
     dimSwapper = null;
