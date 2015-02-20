@@ -468,6 +468,9 @@ public class FV1000Reader extends FormatReader {
         catch (FormatException e) {
           LOGGER.debug("Preview file not found", e);
         }
+        catch (IOException e) {
+          LOGGER.debug("Preview file not found", e);
+        }
       }
     }
 
