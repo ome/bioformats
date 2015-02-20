@@ -108,6 +108,7 @@ public final class ImageConverter {
   private int lastPlane = Integer.MAX_VALUE;
   private int channel = -1, zSection = -1, timepoint = -1;
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
+  private int saveTileWidth = 0, saveTileHeight = 0;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -172,6 +173,18 @@ public final class ImageConverter {
             yCoordinate = Integer.parseInt(tokens[1]);
             width = Integer.parseInt(tokens[2]);
             height = Integer.parseInt(tokens[3]);
+          }
+          else if (args[i].equals("-tilex")) {
+            try {
+              saveTileWidth = Integer.parseInt(args[++i]);
+            }
+            catch (NumberFormatException e) { }
+          }
+          else if (args[i].equals("-tiley")) {
+            try {
+              saveTileHeight = Integer.parseInt(args[++i]);
+            }
+            catch (NumberFormatException e) { }
           }
           else if (!args[i].equals(NO_UPGRADE_CHECK)) {
             LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
@@ -545,10 +558,11 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     if (DataTools.safeMultiply64(width, height) >=
-      DataTools.safeMultiply64(4096, 4096))
+      DataTools.safeMultiply64(4096, 4096) ||
+      saveTileWidth > 0 || saveTileHeight > 0)
     {
-      // this is a "big image", so we will attempt to convert it one tile
-      // at a time
+      // this is a "big image" or an output tile size was set, so we will attempt
+      // to convert it one tile at a time
 
       if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
         (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
@@ -572,6 +586,12 @@ public final class ImageConverter {
   {
     int w = reader.getOptimalTileWidth();
     int h = reader.getOptimalTileHeight();
+    if (saveTileWidth > 0 && saveTileWidth <= width) {
+      w = saveTileWidth;
+    }
+    if (saveTileHeight > 0 && saveTileHeight <= height) {
+      h = saveTileHeight;
+    }
     int nXTiles = width / w;
     int nYTiles = height / h;
 
