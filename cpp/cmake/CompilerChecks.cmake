@@ -233,11 +233,11 @@ int main() { uint16_t test(134); }
 
 check_cxx_source_compiles("
 #include <memory>
-struct foo : public std::enable_shared_from_this<foo>
+struct foo : public ome::compat::enable_shared_from_this<foo>
 {
         foo() {}
 };
-int main() { std::shared_ptr<foo> f(new foo()); }
+int main() { ome::compat::shared_ptr<foo> f(new foo()); }
 " OME_HAVE_MEMORY)
 
 check_cxx_source_compiles("

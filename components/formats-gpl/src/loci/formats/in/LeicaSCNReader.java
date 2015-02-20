@@ -111,6 +111,7 @@ public class LeicaSCNReader extends BaseTiffReader {
             return true;
           }
           catch (Exception se) {
+            LOGGER.debug("XML parsing failed", se);
           }
         }
       }
@@ -138,7 +139,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     int[] dims = getZCTCoords(no);
     int dz = dims[0];
     int dc = dims[1];
-    int dr = s - i.imageNumStart;
+    int dr = s - getParent(s);
 
     return i.pixels.lookupDimension(dz, dc, dr).ifd;
   }
@@ -165,8 +166,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     int originalIndex = getCoreIndex();
     Image i = handler.imageMap.get(getCoreIndex());
 
-    int thumbseries = i.imageNumStart + i.imageThumbnail;
-    setCoreIndex(thumbseries);
+    setCoreIndex(getParent(originalIndex) + i.imageThumbnail);
     byte[] thumb = FormatTools.openThumbBytes(this, no);
     setCoreIndex(originalIndex);
 
@@ -178,8 +178,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     int originalIndex = getCoreIndex();
     Image i = handler.imageMap.get(getCoreIndex());
 
-    int thumbseries = i.imageNumStart + i.imageThumbnail;
-    setCoreIndex(thumbseries);
+    setCoreIndex(getParent(originalIndex) + i.imageThumbnail);
     int size = super.getThumbSizeX();
     setCoreIndex(originalIndex);
 
@@ -191,8 +190,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     int originalIndex = getCoreIndex();
     Image i = handler.imageMap.get(getCoreIndex());
 
-    int thumbseries = i.imageNumStart + i.imageThumbnail;
-    setCoreIndex(thumbseries);
+    setCoreIndex(getParent(originalIndex) + i.imageThumbnail);
     int size = super.getThumbSizeY();
     setCoreIndex(originalIndex);
 
@@ -236,27 +234,26 @@ public class LeicaSCNReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  protected void initCoreMetadata(int s) throws FormatException, IOException {
-    ImageCollection c = handler.collectionMap.get(s);
+  protected void initCoreMetadata(int s, int resolution) throws FormatException, IOException {
+    ImageCollection c = handler.collection;
     Image i = handler.imageMap.get(s);
 
-    if (c == null || i == null || !(i.imageNumStart <= s && i.imageNumEnd >= s)) {
+    if (c == null || i == null) {
       throw new FormatException("Error setting core metadata for image number " + s);
     }
 
-    // repopulate core metadata
-    int subresolution = s - i.imageNumStart;
-
     CoreMetadata ms = core.get(s);
 
-    if (s == i.imageNumStart) {
+    // repopulate core metadata
+
+    if (resolution == 0) {
       ms.resolutionCount = i.pixels.sizeR;
     }
 
-    Dimension dimension = i.pixels.lookupDimension(0, 0, subresolution);
+    Dimension dimension = i.pixels.lookupDimension(0, 0, resolution);
     if (dimension == null) {
       throw new FormatException(
-        "No dimension information for subresolution=" + subresolution);
+        "No dimension information for subresolution=" + resolution);
     }
 
     IFD ifd = ifds.get(dimension.ifd);
@@ -287,7 +284,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     ms.interleaved = false;
     ms.falseColor = false;
     ms.dimensionOrder = "XYCZT";
-    ms.thumbnail = i.imageThumbnail == subresolution;
+    ms.thumbnail = i.imageThumbnail == resolution;
   }
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
@@ -314,11 +311,20 @@ public class LeicaSCNReader extends BaseTiffReader {
     ifds = tiffParser.getIFDs();
 
     core.clear();
+    int resolution = 0;
+    int parent = 0;
     for (int i=0; i<count; i++) {
+      if (resolution == 0) {
+        parent = i;
+      }
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
       tiffParser.fillInIFD(ifds.get(handler.IFDMap.get(i)));
-      initCoreMetadata(i);
+      initCoreMetadata(i, resolution);
+      resolution++;
+      if (resolution == core.get(parent).resolutionCount) {
+        resolution = 0;
+      }
     }
   }
 
@@ -335,11 +341,23 @@ public class LeicaSCNReader extends BaseTiffReader {
     HashMap<String,String> objectives = new HashMap<String,String>();
     int objectiveidno = 0;
 
+    int parent = 0;
     for (int s=0; s<getSeriesCount(); s++) {
       int coreIndex = seriesToCoreIndex(s);
-      ImageCollection c = handler.collectionMap.get(coreIndex);
+      ImageCollection c = handler.collection;
       Image i = handler.imageMap.get(coreIndex);
-      int subresolution = coreIndex - i.imageNumStart;
+
+      int subresolution = coreIndex - parent;
+      if (!hasFlattenedResolutions()) {
+        subresolution = 0;
+      }
+
+      if (core.get(s).resolutionCount > 1) {
+        parent = s;
+      }
+      else if (core.get(parent).resolutionCount -1 == subresolution) {
+        parent = s + 1;
+      }
 
       Dimension dimension = i.pixels.lookupDimension(0, 0, subresolution);
       if (dimension == null) {
@@ -424,6 +442,17 @@ public class LeicaSCNReader extends BaseTiffReader {
     }
   }
 
+  private int getParent(int coreIndex) {
+    for (int parent=0; parent<core.size(); ) {
+      int resCount = core.get(parent).resolutionCount;
+      if (parent + resCount > coreIndex) {
+        return parent;
+      }
+      parent += resCount;
+    }
+    return -1;
+  }
+
   /**
    * SAX handler for parsing XML in Leica SCN files.
    *
@@ -434,12 +463,10 @@ public class LeicaSCNReader extends BaseTiffReader {
     // -- Fields --
     boolean valid = false;
 
-    public ArrayList<ImageCollection> collections;
-    public ImageCollection currentCollection;
+    public ImageCollection collection;
     public Image currentImage;
     public int seriesIndex;
     public ArrayList<Integer> IFDMap = new ArrayList<Integer>();
-    public ArrayList<ImageCollection> collectionMap = new ArrayList<ImageCollection>();
     public ArrayList<Image> imageMap = new ArrayList<Image>();
 
     // Stack of XML elements to keep track of placement in the tree.
@@ -449,6 +476,8 @@ public class LeicaSCNReader extends BaseTiffReader {
     // not supported.
     public String cdata;
 
+    public int resolutionCount = 0;
+
     // -- DefaultHandler API methods --
 
     @Override
@@ -457,13 +486,12 @@ public class LeicaSCNReader extends BaseTiffReader {
         nameStack.pop();
       }
 
-      if (qName.equals("collection")) {
-        currentCollection = null;
-      }
-      else if (qName.equals("image")) {
+      if (qName.equals("image")) {
         currentImage.imageNumStart = seriesIndex;
-        seriesIndex += currentImage.pixels.sizeR;
+        seriesIndex += currentImage.pixels.sizeR *
+          currentImage.pixels.sizeC * currentImage.pixels.sizeZ;
         currentImage.imageNumEnd = seriesIndex - 1;
+        resolutionCount += currentImage.pixels.sizeR;
         currentImage = null;
       }
       else if (qName.equals("creationDate")) {
@@ -505,11 +533,10 @@ public class LeicaSCNReader extends BaseTiffReader {
 
         // Dimension ordering indirection (R=image, then Z, then C)
         for (int cr = 0; cr < sizeR; cr++) {
+          imageMap.add(currentImage);
           for (int cc = 0; cc < sizeC; cc++) {
             for (int cz = 0; cz < sizeZ; cz++) {
               IFDMap.add(p.lookupDimension(cz, cc, cr).ifd);
-              collectionMap.add(currentCollection);
-              imageMap.add(currentImage);
             }
           }
         }
@@ -553,7 +580,6 @@ public class LeicaSCNReader extends BaseTiffReader {
         }
 
         valid = true;
-        collections = new ArrayList<ImageCollection>();
         seriesIndex = 0;
       }
 
@@ -562,15 +588,11 @@ public class LeicaSCNReader extends BaseTiffReader {
       }
 
       if (qName.equals("collection")) {
-        currentCollection = new ImageCollection(attributes);
-        collections.add(currentCollection);
-        if (collections.size() != 1) {
-          throw new SAXException("Invalid Leica SCN XML: Only a single collection is permitted");
-        }
+        collection = new ImageCollection(attributes);
       }
       else if (qName.equals("image")) {
         currentImage = new Image(attributes);
-        currentCollection.images.add(currentImage);
+        collection.images.add(currentImage);
       }
       else if (qName.equals("device")) {
         currentImage.devModel = attributes.getValue("model");
@@ -595,7 +617,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     }
 
     int count() {
-      return seriesIndex;
+      return resolutionCount;
     }
   }
 

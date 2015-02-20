@@ -52,17 +52,33 @@
 
 # ifdef OME_HAVE_TUPLE
 #  include <tuple>
+namespace ome
+{
+  namespace compat
+  {
+    using std::tuple;
+    using std::get;
+  }
+}
 # elif OME_HAVE_TR1_TUPLE
 #  include <tr1/tuple>
-namespace std {
-  using tr1::tuple;
-  using tr1::get;
+namespace ome
+{
+  namespace compat
+  {
+    using std::tr1::tuple;
+    using std::tr1::get;
+  }
 }
 # elif OME_HAVE_BOOST_TUPLE
 #  include <boost/tuple/tuple.hpp>
-namespace std {
-  using boost::tuple;
-  using boost::get;
+namespace ome
+{
+  namespace compat
+  {
+    using boost::tuple;
+    using boost::get;
+  }
 }
 # else
 #  error A tuple implementation is not available

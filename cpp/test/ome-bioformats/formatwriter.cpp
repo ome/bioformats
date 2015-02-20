@@ -38,6 +38,8 @@
 
 #include <stdexcept>
 
+#include <boost/range/size.hpp>
+
 #include <ome/bioformats/FormatWriter.h>
 #include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
@@ -157,10 +159,10 @@ namespace
     };
 
   std::set<ome::xml::model::enums::PixelType> default_pixel_types(init_pt,
-                                                                  init_pt + (sizeof(init_pt) / sizeof(init_pt[0])));
+                                                                  init_pt + boost::size(init_pt));
 
   std::set<ome::xml::model::enums::PixelType> advanced_pixel_types(init_adv_pt,
-                                                                   init_adv_pt + (sizeof(init_adv_pt) / sizeof(init_adv_pt[0])));
+                                                                   init_adv_pt + boost::size(init_adv_pt));
 
   WriterProperties
   test_properties()
@@ -228,9 +230,9 @@ public:
 
 private:
   void
-  makeMetadata(std::shared_ptr< ::ome::xml::meta::MetadataStore> store,
-               dimension_size_type                               series,
-               std::shared_ptr<CoreMetadata>                     core)
+  makeMetadata(ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore> store,
+               dimension_size_type                                       series,
+               ome::compat::shared_ptr<CoreMetadata>                     core)
   {
     store->setImageID(createID("Image", series), series);
     store->setImageAcquisitionDate
@@ -256,10 +258,10 @@ private:
       }
   }
 
-  std::shared_ptr<CoreMetadata>
+  ome::compat::shared_ptr<CoreMetadata>
   makeCore()
   {
-    std::shared_ptr<CoreMetadata> c(std::make_shared<CoreMetadata>());
+    ome::compat::shared_ptr<CoreMetadata> c(ome::compat::make_shared<CoreMetadata>());
 
     c->sizeX = 512;
     c->sizeY = 1024;
@@ -287,7 +289,7 @@ public:
   {
     if (!currentId)
       {
-        std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+        ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(ome::compat::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
 
         if (id == "output.test")
           {
@@ -298,7 +300,7 @@ public:
             makeMetadata(m, 3, makeCore());
           }
 
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(ome::compat::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
         setMetadataRetrieve(mr);
 
         FormatWriter::setId(id);
@@ -606,8 +608,8 @@ TEST_P(FormatWriterTest, SupportedPixelTypeByCodec)
 
 TEST_P(FormatWriterTest, DefaultMetadataRetrieve)
 {
-  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
-  std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
+  ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m(ome::compat::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+  ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr(ome::compat::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m));
 
   EXPECT_NO_THROW(w.getMetadataRetrieve());
   EXPECT_NO_THROW(w.setMetadataRetrieve(mr));
@@ -618,9 +620,9 @@ TEST_P(FormatWriterTest, DefaultMetadataRetrieve)
 
 TEST_P(FormatWriterTest, OutputMetadataRetrieve)
 {
-  std::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr;
-  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m2(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
-  std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr2(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m2));
+  ome::compat::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr;
+  ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> m2(ome::compat::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+  ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> mr2(ome::compat::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(m2));
 
   w.setId("output.test");
 

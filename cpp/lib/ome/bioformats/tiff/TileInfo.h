@@ -68,7 +68,7 @@ namespace ome
          *
          * @param ifd the directory the tile belongs to.
          */
-        TileInfo(std::shared_ptr<IFD> ifd);
+        TileInfo(ome::compat::shared_ptr<IFD> ifd);
 
       public:
         /// Destructor.
@@ -227,7 +227,7 @@ namespace ome
       protected:
         class Impl;
         /// Private implementation details.
-        std::shared_ptr<Impl> impl;
+        ome::compat::shared_ptr<Impl> impl;
       };
 
     }

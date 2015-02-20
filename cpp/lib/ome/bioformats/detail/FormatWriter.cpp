@@ -83,7 +83,7 @@ namespace ome
         compression(boost::none),
         sequential(false),
         framesPerSecond(0),
-        metadataRetrieve(std::make_shared<DummyMetadata>())
+        metadataRetrieve(ome::compat::make_shared<DummyMetadata>())
       {
         assertId(currentId, false);
       }
@@ -98,11 +98,11 @@ namespace ome
         if (!currentId || id != currentId.get())
           {
             if (out)
-              out = std::shared_ptr<std::ostream>();
+              out = ome::compat::shared_ptr<std::ostream>();
 
             SaveSeries sentry(*this);
 
-            std::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
+            ome::compat::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
 
             for (dimension_size_type  s = 0;
                  s < mr->getImageCount();
@@ -124,7 +124,7 @@ namespace ome
       FormatWriter::close(bool fileOnly)
       {
         if (out)
-          out = std::shared_ptr<std::ostream>(); // set to null.
+          out = ome::compat::shared_ptr<std::ostream>(); // set to null.
         if (!fileOnly)
           {
             currentId = boost::none;
@@ -261,7 +261,7 @@ namespace ome
       }
 
       void
-      FormatWriter::setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
+      FormatWriter::setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
       {
         assertId(currentId, false);
 
@@ -271,13 +271,13 @@ namespace ome
         metadataRetrieve = retrieve;
       }
 
-      const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve() const
       {
         return metadataRetrieve;
       }
 
-      std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve()
       {
         return metadataRetrieve;

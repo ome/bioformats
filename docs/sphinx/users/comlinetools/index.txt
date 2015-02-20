@@ -31,7 +31,7 @@ Currently available tools include:
 
     ijview
         Displays the given image file in ImageJ using the Bio-Formats Importer
-        plugin.
+        plugin.  See :doc:`ijview` for details.
 
     bfconvert
         Converts an image file from one format to another. Bio-Formats must
@@ -40,11 +40,12 @@ Currently available tools include:
 
     formatlist
         Displays a list of supported file formats in HTML, plaintext or XML.
+        See :doc:`formatlist` for details.
 
     xmlindent
-        A simple XML prettifier similar to ``xmllint --format`` but more
+        A simple XML prettifier similar to :command:`xmllint --format` but more
         robust in that it attempts to produce output regardless of syntax
-        errors in the XML.
+        errors in the XML.  See :doc:`xmlindent` for details.
 
     xmlvalid
         A command-line XML validation tool, useful for checking an OME-XML
@@ -55,13 +56,23 @@ Currently available tools include:
         for examining the OME-XML block in an OME-TIFF file (also see
         :doc:`edit`).
 
+    domainlist
+        Displays a list of imaging domains and the supported formats
+        associated with each domain.  See :doc:`domainlist` for more
+        information.
+
+    mkfake
+        Creates a "fake" high-content screen with configurable dimensions.
+        This is useful for testing how HCS metadata is handled, without
+        requiring real image data from an acquired screen.  See :doc:`mkfake`
+        for more information.
 
 Some of these tools also work in combination, for example
-:doc:`xml-validation` uses both ``tiffcomment`` and ``xmlvalid``.
+:doc:`xml-validation` uses both :command:`tiffcomment` and :command:`xmlvalid`.
 
 Running any of these commands without any arguments will print usage
-information to help you. When run with the ``-version`` argument, ``showinf``
-and ``bfconvert`` will display the version of Bio-Formats that is being used
+information to help you. When run with the ``-version`` argument, :command:`showinf`
+and :command:`bfconvert` will display the version of Bio-Formats that is being used
 (version number, build date, and Git commit reference).
 
 Using the tools directly from source

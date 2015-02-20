@@ -39,6 +39,7 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/bioformats/FormatTools.h>
 
@@ -267,7 +268,7 @@ namespace ome
               };
             static const std::vector<std::string> non_graphics_domains
               (domain_strings(non_graphics_enums,
-                              non_graphics_enums + (sizeof(non_graphics_enums) / sizeof(non_graphics_enums[0]))));
+                              non_graphics_enums + boost::size(non_graphics_enums)));
             return non_graphics_domains;
           }
           break;
@@ -288,7 +289,7 @@ namespace ome
               };
             static const std::vector<std::string> non_hcs_domains
               (domain_strings(non_hcs_enums,
-                              non_hcs_enums + (sizeof(non_hcs_enums) / sizeof(non_hcs_enums[0]))));
+                              non_hcs_enums + boost::size(non_hcs_enums)));
             return non_hcs_domains;
           }
           break;
@@ -309,7 +310,7 @@ namespace ome
               };
             static const std::vector<std::string> non_special_domains
               (domain_strings(non_special_enums,
-                              non_special_enums + (sizeof(non_special_enums) / sizeof(non_special_enums[0]))));
+                              non_special_enums + boost::size(non_special_enums)));
             return non_special_domains;
           }
           break;
@@ -332,8 +333,20 @@ namespace ome
               };
             static const std::vector<std::string> all_domains
               (domain_strings(all_enums,
-                              all_enums + (sizeof(all_enums) / sizeof(all_enums[0]))));
+                              all_enums + boost::size(all_enums)));
             return all_domains;
+          }
+          break;
+        case HCS_ONLY_DOMAINS:
+          {
+            const Domain hcs_only_enums[] =
+              {
+                HCS_DOMAIN
+              };
+            static const std::vector<std::string> hcs_only_domains
+              (domain_strings(hcs_only_enums,
+                              hcs_only_enums + boost::size(hcs_only_enums)));
+            return hcs_only_domains;
           }
           break;
         }

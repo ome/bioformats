@@ -123,7 +123,7 @@ loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
 loci.formats.in.PCIReader             # cxd [POI]
 loci.formats.in.ImarisHDFReader       # ims [NetCDF]
 loci.formats.in.WlzReader	      # wlz [JWlz]
-
+loci.formats.in.VeecoReader           # hdf [NetCDF]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]

@@ -49,6 +49,7 @@
 #include <ome/test/config.h>
 
 #include <boost/filesystem/operations.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/test/test.h>
 
@@ -140,10 +141,10 @@ protected:
     return in == "Valid file content";
   }
 
-  std::shared_ptr<CoreMetadata>
+  ome::compat::shared_ptr<CoreMetadata>
   makeCore()
   {
-    std::shared_ptr<CoreMetadata> c(std::make_shared<CoreMetadata>());
+    ome::compat::shared_ptr<CoreMetadata> c(ome::compat::make_shared<CoreMetadata>());
 
     c->sizeX = 512;
     c->sizeY = 1024;
@@ -203,7 +204,7 @@ protected:
         // 5 series, 3 with subresolutions
         core.clear();
         {
-          std::shared_ptr<CoreMetadata> c(makeCore());
+          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 3;
           core.push_back(c);
           core.push_back(makeCore());
@@ -211,7 +212,7 @@ protected:
         }
 
         {
-          std::shared_ptr<CoreMetadata> c(makeCore());
+          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 2;
           core.push_back(c);
           core.push_back(makeCore());
@@ -221,7 +222,7 @@ protected:
         core.push_back(makeCore());
 
         {
-          std::shared_ptr<CoreMetadata> c(makeCore());
+          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 2;
           core.push_back(c);
           core.push_back(makeCore());
@@ -634,7 +635,7 @@ TEST_P(FormatReaderTest, FlatSeries)
     { 0, 1, 20, 80, 21, 81, 100, 101, 123, 72, 128, 159 };
 
   for (unsigned int i = 0;
-       i < sizeof(coords)/sizeof(coords[0]);
+       i < boost::size(coords);
        ++i)
     {
       const dim coord(static_cast<dim>(coords[i]));
@@ -648,7 +649,7 @@ TEST_P(FormatReaderTest, FlatSeries)
     }
 
   for (unsigned int i = 0;
-       i < sizeof(modcoords)/sizeof(modcoords[0]);
+       i < boost::size(modcoords);
        ++i)
     {
       const moddim coord(static_cast<moddim>(modcoords[i]));
@@ -913,17 +914,17 @@ TEST_P(FormatReaderTest, FlatMetadata)
 
 TEST_P(FormatReaderTest, DefaultMetadataStore)
 {
-  std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
+  ome::compat::shared_ptr<MetadataStore> store(ome::compat::make_shared<OMEXMLMetadata>());
 
   EXPECT_NO_THROW(r.setMetadataStore(store));
-  EXPECT_EQ(store, std::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
+  EXPECT_EQ(store, ome::compat::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
 }
 
 TEST_P(FormatReaderTest, FlatMetadataStore)
 {
   r.setId("flat");
 
-  std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
+  ome::compat::shared_ptr<MetadataStore> store(ome::compat::make_shared<OMEXMLMetadata>());
 
   EXPECT_THROW(r.setMetadataStore(store), std::logic_error);
 }

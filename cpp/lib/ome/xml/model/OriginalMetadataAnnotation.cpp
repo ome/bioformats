@@ -165,8 +165,8 @@ namespace ome
     }
 
       bool
-      OriginalMetadataAnnotation::link (std::shared_ptr<Reference>&                          reference,
-                      std::shared_ptr< ::ome::xml::model::OMEModelObject>& object)
+      OriginalMetadataAnnotation::link (ome::compat::shared_ptr<Reference>&                          reference,
+                                        ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& object)
       {
         if (XMLAnnotation::link(reference, object))
           {
@@ -185,7 +185,7 @@ namespace ome
 
       xerces::dom::Element
       OriginalMetadataAnnotation::asXMLElementInternal (xerces::dom::Document& document,
-                                      xerces::dom::Element&  element) const
+                                                        xerces::dom::Element&  element) const
       {
 
         return XMLAnnotation::asXMLElementInternal(document, element);

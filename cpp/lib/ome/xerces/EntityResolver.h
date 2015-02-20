@@ -181,7 +181,7 @@ namespace ome
         operator= (const AutoRegisterCatalog&);
 
         /// Registered entities from this catalog.
-        std::vector<std::shared_ptr<AutoRegisterEntity> > registration;
+        std::vector<ome::compat::shared_ptr<AutoRegisterEntity> > registration;
       };
 
     public:
@@ -214,7 +214,7 @@ namespace ome
 
       private:
         /// Automatic registration.
-        std::shared_ptr<AutoRegisterEntity> registration;
+        ome::compat::shared_ptr<AutoRegisterEntity> registration;
       };
 
       /**
@@ -239,7 +239,7 @@ namespace ome
 
       private:
         /// Automatic registration.
-        std::shared_ptr<AutoRegisterCatalog> registration;
+        ome::compat::shared_ptr<AutoRegisterCatalog> registration;
       };
 
       friend class RegisterEntity;

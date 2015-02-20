@@ -38,6 +38,7 @@
 #include <cassert>
 
 #include <boost/format.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
@@ -71,7 +72,7 @@ namespace ome
                              "Baseline Tagged Image File Format");
 
           p.suffixes = std::vector<boost::filesystem::path>(suffixes,
-                                                            suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
+                                                            suffixes + boost::size(suffixes));
           p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
           p.metadata_levels.insert(MetadataOptions::METADATA_NO_OVERLAYS);
           p.metadata_levels.insert(MetadataOptions::METADATA_ALL);
@@ -82,7 +83,7 @@ namespace ome
         const ReaderProperties props(tiff_properties());
 
         std::vector<std::string> companion_suffixes(companion_suffixes_array,
-                                                    companion_suffixes_array + (sizeof(companion_suffixes_array) / sizeof(companion_suffixes_array[0])));
+                                                    companion_suffixes_array + boost::size(companion_suffixes_array));
 
       }
 
@@ -112,7 +113,7 @@ namespace ome
         return static_cast<bool>(TIFF::open(name, "r"));
       }
 
-      const std::shared_ptr<const tiff::IFD>
+      const ome::compat::shared_ptr<const tiff::IFD>
       MinimalTIFFReader::ifdAtIndex(dimension_size_type no) const
       {
         dimension_size_type series = getSeries();
@@ -141,7 +142,7 @@ namespace ome
             throw FormatException(fmt.str());
           }
 
-        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
+        const ome::compat::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
         return ifd;
       }
 
@@ -197,8 +198,8 @@ namespace ome
       {
         core.clear();
 
-        std::shared_ptr<const tiff::IFD> prev_ifd;
-        std::shared_ptr<CoreMetadata> prev_core;
+        ome::compat::shared_ptr<const tiff::IFD> prev_ifd;
+        ome::compat::shared_ptr<CoreMetadata> prev_core;
 
         dimension_size_type current_ifd = 0U;
 
@@ -233,7 +234,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         try
           {
@@ -257,7 +258,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         if (isRGB())
           {
@@ -273,13 +274,13 @@ namespace ome
           ifd->readImage(buf, x, y, w, h);
       }
 
-      std::shared_ptr<ome::bioformats::tiff::TIFF>
+      ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF()
       {
         return tiff;
       }
 
-      const std::shared_ptr<ome::bioformats::tiff::TIFF>
+      const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF() const
       {
         return tiff;

@@ -175,8 +175,8 @@ class OMEModel(object):
             if e_name not in self.parents:
                 self.parents[e_name] = list()
             self.parents[e_name].append(parent.getName())
-        if (not e.isExplicitDefine()
-            and (e_name not in config.EXPLICIT_DEFINE_OVERRIDE and
+        if (not e.isExplicitDefine() and
+                (e_name not in config.EXPLICIT_DEFINE_OVERRIDE and
                  not e.topLevel)):
             logging.info(
                 "Element %s.%s not an explicit define, skipping."
@@ -242,8 +242,8 @@ class OMEModel(object):
         for o in self.objects.values():
             for prop in o.properties.values():
                 if not prop.isReference and (
-                        prop.isAttribute or prop.maxOccurs == 1
-                        or o.name == 'OME' or o.isAbstractProprietary):
+                        prop.isAttribute or prop.maxOccurs == 1 or
+                        o.name == 'OME' or o.isAbstractProprietary):
                     continue
                 shortName = config.REF_REGEX.sub('', prop.type)
                 try:

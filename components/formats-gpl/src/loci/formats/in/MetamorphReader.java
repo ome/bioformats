@@ -1155,18 +1155,18 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         }
 
-        int colon = line.indexOf(": ");
-
-        String descrValue = null;
+        int colon = line.indexOf(":");
 
         if (colon < 0) {
           // normal line (not a key/value pair)
           if (line.length() > 0) {
             // not a blank line
-            descrValue = line;
+            sb.append(line);
+            sb.append("  ");
           }
         }
         else {
+          String descrValue = null;
           if (i == 0) {
             // first line could be mangled; make a reasonable guess
             int dot = line.lastIndexOf(".", colon);
@@ -1186,7 +1186,7 @@ public class MetamorphReader extends BaseTiffReader {
 
           // add key/value pair embedded in comment as separate metadata
           String key = line.substring(0, colon);
-          String value = line.substring(colon + 2);
+          String value = line.substring(colon + 1).trim();
           addSeriesMeta(key, value);
           if (key.equals("Exposure")) {
             if (value.indexOf("=") != -1) {
