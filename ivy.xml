@@ -38,6 +38,7 @@
     <dependency org="bf-deps" name="JWlz" rev="1.4.0"/>
     <dependency org="bf-deps" name="metadata-extractor" rev="2.6.2"/>
     <dependency org="bf-deps" name="xmpcore" rev="5.1.2"/>
+    <dependency org="bf-deps" name="xercesImpl" rev="2.8.1"/>
     <dependency org="bf-deps" name="guava" rev="${versions.guava}"/>
   </dependencies>
 </ivy-module>
