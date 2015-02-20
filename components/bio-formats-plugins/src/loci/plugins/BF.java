@@ -96,14 +96,13 @@ public final class BF {
     if (!process.execute()) return null;
     DisplayHandler displayHandler = new DisplayHandler(process);
     if (options != null && options.isShowOMEXML()) {
-         displayHandler.displayOMEXML();
+      displayHandler.displayOMEXML();
     }
     ImagePlusReader reader = new ImagePlusReader(process);
     ImagePlus[] imps = reader.openImagePlus();
     if (options != null && options.showROIs()) {
-        displayHandler.displayROIs(imps);
-   }
-    displayHandler.displayROIs(imps);
+      displayHandler.displayROIs(imps);
+    }
     if (!options.isVirtual()) {
       process.getReader().close();
     }
