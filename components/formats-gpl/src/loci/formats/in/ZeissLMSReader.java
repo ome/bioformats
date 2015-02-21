@@ -139,7 +139,7 @@ public class ZeissLMSReader extends FormatReader {
 
     m.sizeX = 1280;
     m.sizeY = 1024;
-    m.pixelType = FormatTools.UINT8;
+    m.pixelType = FormatTools.UINT16;
     m.sizeC = 1;
     m.rgb = false;
     m.dimensionOrder = "XYCZT";
@@ -171,7 +171,10 @@ public class ZeissLMSReader extends FormatReader {
     thumb.sizeT = 1;
     thumb.imageCount = thumb.sizeZ * thumb.sizeT;
 
-    m.sizeZ = (int) ((in.length() - offsets.get(1)) / (m.sizeX * m.sizeY));
+    long availableBytes = in.length() - offsets.get(1);
+    int planeSize =
+      m.sizeX * m.sizeY * FormatTools.getBytesPerPixel(m.pixelType);
+    m.sizeZ = (int) (availableBytes / planeSize);
     m.sizeT = 1;
     m.imageCount = m.sizeZ * m.sizeT;
 
