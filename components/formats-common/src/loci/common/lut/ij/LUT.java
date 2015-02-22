@@ -97,7 +97,7 @@ import java.awt.image.IndexColorModel;
 	public  String toString() {
 		return "rgb[0]="+colorToString(new Color(getRGB(0)))+", rgb[255]="
 			+colorToString(new Color(getRGB(255)))+", min="+String.format("%.4f", min)+
-      ", max="+String.format("%.4", max);
+      ", max="+String.format("%.4f", max);
 	}
 
 	// Copied from ij.plugins.Colors
