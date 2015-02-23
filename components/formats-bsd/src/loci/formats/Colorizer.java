@@ -63,7 +63,7 @@ public class Colorizer extends BytesWrapper {
   }
 
   /**
-   * Passes through the {@link byte[]} returned from the delegate's openBytes
+   * Passes through the {@link byte array} returned from the delegate's openBytes
    * method to the configured {@link LutSource}.
    */
   @Override

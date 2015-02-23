@@ -43,12 +43,13 @@ package loci.common.lut;
 public interface LutSource {
 
     /**
-     * Takes a {@link byte[]} which has been loaded elsewhere (e.g. from a
+     * Takes a {@link byte array} which has been loaded elsewhere (e.g. from a
      * call to {@link loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)})
      * and converts each byte based on the associated lookup table in this source.
      *
      * @param buf
-     * @return
+     * @return result of the re-mapping, most likely the same buffer instance
+     *      that was passed in.
      */
     byte[] applyLut(byte[] buf);
 

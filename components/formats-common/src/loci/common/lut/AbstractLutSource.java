@@ -40,7 +40,7 @@ package loci.common.lut;
 public abstract class AbstractLutSource implements LutSource {
 
     /**
-     * Takes a {@link byte[]} which has been loaded elsewhere (e.g. from a
+     * Takes a {@link byte array} which has been loaded elsewhere (e.g. from a
      * call to {@link loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)})
      * and converts each byte based on the associated lookup table in this source.
      *

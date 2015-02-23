@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link LutSource} which makes use of the {@link loci.commons.lut.ij.LutLoader}
+ * {@link LutSource} which makes use of the {@link LutLoader}
  * class to parse a string input into individual colors.
  *
  * @author Josh Moore, josh at glencoesoftware.com
