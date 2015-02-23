@@ -87,6 +87,7 @@ loci.formats.in.FakeReader            # fake
 loci.formats.in.AFIReader             # afi
 loci.formats.in.ImspectorReader       # msr
 loci.formats.in.BioRadSCNReader       # scn
+loci.formats.in.ZeissLMSReader        # lms
 loci.formats.in.PQBinReader           # bin
 loci.formats.in.FlowSightReader       # cif
 loci.formats.in.IM3Reader             # im3
