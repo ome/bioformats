@@ -77,6 +77,7 @@ set(ome_compat_headers
     ${ome_compat_generated_headers})
 
 set(ome_compat_sources
+    log.cpp
     module.cpp)
 
 add_library(ome-compat SHARED ${ome_compat_sources} ${ome_compat_headers})

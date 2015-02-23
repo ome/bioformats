@@ -125,10 +125,7 @@ main(int argc, char *argv[])
           break;
         }
 
-      ome::logging::core::get()->set_filter
-        (
-         ome::logging::trivial::severity >= logLevel
-         );
+      ome::compat::setLogLevel(logLevel);
 
       switch (opts.action)
         {
