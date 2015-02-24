@@ -34,11 +34,11 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
-
-import ome.xml.model.primitives.PositiveInteger;
+import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -47,6 +47,13 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.model.primitives.PositiveInteger;
+
+import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Lee Kamentsky
@@ -138,7 +145,7 @@ public class FlowSightReader extends FormatReader {
      */
     final IFD ifd0 = tiffParser.getFirstIFD();
     tiffParser.fillInIFD(ifd0);
-    final int channelCount = ifd0.getIFDIntValue(CHANNEL_COUNT_TAG, 1);
+    int channelCount = ifd0.getIFDIntValue(CHANNEL_COUNT_TAG, 1);
     final String channelNamesString = ifd0.getIFDStringValue(CHANNEL_NAMES_TAG);
     if (channelNamesString != null) {
       channelNames = channelNamesString.split("\\|");
@@ -159,6 +166,40 @@ public class FlowSightReader extends FormatReader {
             channelCount, channelDescs.length, channelDescsString));
       }
     }
+
+    String xml = ifd0.getIFDTextValue(METADATA_XML_TAG);
+    xml = XMLTools.sanitizeXML(xml);
+
+    try {
+      Element xmlRoot = XMLTools.parseDOM(xml).getDocumentElement();
+
+      NodeList imagingNodes = xmlRoot.getElementsByTagName("Imaging");
+      if (imagingNodes.getLength() > 0) {
+        Element imagingNode = (Element) imagingNodes.item(0);
+        NodeList children = imagingNode.getChildNodes();
+        for (int child=0; child<children.getLength(); child++) {
+          Node childNode = children.item(child);
+          String name = childNode.getNodeName();
+          if (name.startsWith("ChannelInUseIndicators")) {
+            channelCount = 0;
+            String text = childNode.getTextContent();
+            String[] tokens = text.split(" ");
+            for (String token : tokens) {
+              if (token.equals("1")) {
+                channelCount++;
+              }
+            }
+          }
+        }
+      }
+    }
+    catch (ParserConfigurationException e) {
+      LOGGER.debug("Could not parse XML", e);
+    }
+    catch (SAXException e) {
+      LOGGER.debug("Could not parse XML", e);
+    }
+
     /*
      * Scan the remaining IFDs
      * 
