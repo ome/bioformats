@@ -46,7 +46,6 @@
 #ifndef OME_COMPAT_LOG_H
 #define OME_COMPAT_LOG_H
 
-#include <cstdlib>
 #include <ostream>
 #include <string>
 
@@ -188,9 +187,6 @@ namespace ome
         catch (...)
           {
           }
-
-        if (severity == logging::trivial::fatal)
-          std::exit(1);
       }
 
       std::ostream&
