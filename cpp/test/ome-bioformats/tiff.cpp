@@ -43,6 +43,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/type_traits.hpp>
 
+#include <ome/bioformats/tiff/Codec.h>
 #include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/IFD.h>
@@ -65,6 +66,7 @@ using ome::bioformats::tiff::directory_index_type;
 using ome::bioformats::tiff::TileInfo;
 using ome::bioformats::tiff::TIFF;
 using ome::bioformats::tiff::IFD;
+using ome::bioformats::tiff::Codec;
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::VariantPixelBuffer;
 using ome::bioformats::PixelBuffer;
@@ -897,6 +899,21 @@ TEST(TIFFTest, PixelType)
   ASSERT_TRUE(static_cast<bool>(ifd));
 
   ASSERT_EQ(PT::UINT8, ifd->getPixelType());
+}
+
+TEST(TIFFCodec, ListCodecs)
+{
+  // Note this list depends upon the codecs provided by libtiff, which
+  // can vary, so we don't attempt to validate specific codecs are
+  // present here.
+
+  std::vector<Codec> codecs = ome::bioformats::tiff::getConfiguredCodecs();
+  for (std::vector<Codec>::const_iterator c = codecs.begin();
+       c != codecs.end();
+       ++c)
+    {
+      // std::cout << "C: " << c->name << " = " << c->scheme << '\n';
+    }
 }
 
 class TIFFTileTest : public ::testing::TestWithParam<TileTestParameters>

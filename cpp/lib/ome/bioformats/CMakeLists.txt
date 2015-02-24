@@ -101,6 +101,7 @@ set(OME_BIOFORMATS_IN_HEADERS
     in/TIFFReader.h)
 
 set(OME_BIOFORMATS_TIFF_SOURCES
+    tiff/Codec.cpp
     tiff/Exception.cpp
     tiff/Field.cpp
     tiff/IFD.cpp
@@ -111,6 +112,7 @@ set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/TileInfo.cpp)
 
 set(OME_BIOFORMATS_TIFF_HEADERS
+    tiff/Codec.h
     tiff/Exception.h
     tiff/Field.h
     tiff/IFD.h
