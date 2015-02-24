@@ -103,6 +103,24 @@ public class Exporter {
 
     private LociExporter plugin;
 
+    /**
+     * Removes the extension of the specified name.
+     *
+     * @param name The name to handle.
+     * @return See above.
+     */
+    private String removeExtension(String name)
+    {
+        int index = name.lastIndexOf(".");
+        //check if separator
+        int unixPos = name.lastIndexOf('/');
+        int windowsPos = name.lastIndexOf('\\');
+        int max = Math.max(unixPos, windowsPos);
+        if (max < index) {
+            return name.substring(0, index);
+        }
+        return name;
+    }
     // -- Constructor --
 
     public Exporter(LociExporter plugin, ImagePlus imp) {
@@ -122,6 +140,7 @@ public class Exporter {
         String compression = null;
 
         Boolean windowless = Boolean.FALSE;
+        IJ.log(plugin.arg);
         if (plugin.arg != null) {
             outfile = Macro.getValue(plugin.arg, "outfile", null);
 
@@ -150,7 +169,6 @@ public class Exporter {
             }
             plugin.arg = null;
         }
-
         if (outfile == null) {
             String options = Macro.getOptions();
             if (options != null) {
@@ -158,7 +176,32 @@ public class Exporter {
                 if (save != null) outfile = save;
             }
         }
-        //TODO: create a temporary file if window less
+        //create a temporary file if window less
+        if (windowless && (outfile == null || outfile.length() == 0)) {
+            try {
+                String name = removeExtension(imp.getTitle());
+                String n = name+ ".ome.tif";
+                File tmp = File.createTempFile(name, ".ome.tif");
+                File p = tmp.getParentFile();
+                File[] list = p.listFiles();
+                //make sure we delete a previous tmp file with same name if any
+                if (list != null) {
+                    File toDelete = null;
+                    for (int i = 0; i < list.length; i++) {
+                        if (list[i].getName().equals(n)) {
+                            toDelete = list[i];
+                            break;
+                        }
+                    }
+                    if (toDelete != null) {
+                        toDelete.delete();
+                    }
+                }
+                outfile = new File(p, n).getAbsolutePath();
+            } catch (Exception e) {
+                //fall back to window mode.
+            }
+        }
         File f = null;
         if (outfile == null || outfile.length() == 0) {
             // open a dialog prompting for the filename to save
@@ -245,7 +288,12 @@ public class Exporter {
             if (outfile == null) return;
         }
 
-        if (!windowless && (splitZ == null || splitC == null || splitT == null)) {
+        if (windowless) {
+            if (splitZ == null) splitZ = Boolean.FALSE;
+            if (splitC == null) splitC = Boolean.FALSE;
+            if (splitT == null) splitT = Boolean.FALSE;
+        }
+        if (splitZ == null || splitC == null || splitT == null) {
             // ask if we want to export multiple files
 
             GenericDialog multiFile =
@@ -582,7 +630,7 @@ public class Exporter {
                 w.setCompression(compression);
             }
             //Save ROI's
-            if (saveRoi.booleanValue()) {
+            if (saveRoi != null && saveRoi.booleanValue()) {
                 ROIHandler.saveROIs(store);
             }
             w.setMetadataRetrieve(store);
