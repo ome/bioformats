@@ -117,26 +117,26 @@
 			<xsl:when test="$theCurrentUnit = 'YV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 48))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -153,26 +153,26 @@
 			<xsl:when test="$theCurrentUnit = 'ZV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -189,26 +189,26 @@
 			<xsl:when test="$theCurrentUnit = 'EV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -225,26 +225,26 @@
 			<xsl:when test="$theCurrentUnit = 'PV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -261,26 +261,26 @@
 			<xsl:when test="$theCurrentUnit = 'TV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -297,26 +297,26 @@
 			<xsl:when test="$theCurrentUnit = 'GV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -333,26 +333,26 @@
 			<xsl:when test="$theCurrentUnit = 'MV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -369,26 +369,26 @@
 			<xsl:when test="$theCurrentUnit = 'kV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -405,26 +405,26 @@
 			<xsl:when test="$theCurrentUnit = 'hV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -441,26 +441,26 @@
 			<xsl:when test="$theCurrentUnit = 'daV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -477,26 +477,26 @@
 			<xsl:when test="$theCurrentUnit = 'V'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -513,26 +513,26 @@
 			<xsl:when test="$theCurrentUnit = 'dV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -549,26 +549,26 @@
 			<xsl:when test="$theCurrentUnit = 'cV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -585,26 +585,26 @@
 			<xsl:when test="$theCurrentUnit = 'mV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -621,26 +621,26 @@
 			<xsl:when test="$theCurrentUnit = 'µV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -657,26 +657,26 @@
 			<xsl:when test="$theCurrentUnit = 'nV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -693,26 +693,26 @@
 			<xsl:when test="$theCurrentUnit = 'pV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -729,26 +729,26 @@
 			<xsl:when test="$theCurrentUnit = 'fV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -765,26 +765,26 @@
 			<xsl:when test="$theCurrentUnit = 'aV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -801,26 +801,26 @@
 			<xsl:when test="$theCurrentUnit = 'zV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yV'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -837,26 +837,26 @@
 			<xsl:when test="$theCurrentUnit = 'yV'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(1000000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YV'"><xsl:value-of select="(math:power(10, 48)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZV'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EV'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PV'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TV'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GV'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MV'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kV'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hV'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daV'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'V'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dV'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cV'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mV'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µV'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nV'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pV'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fV'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aV'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zV'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -873,26 +873,26 @@
 			<xsl:when test="$theCurrentUnit = 'YHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 48))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -909,26 +909,26 @@
 			<xsl:when test="$theCurrentUnit = 'ZHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -945,26 +945,26 @@
 			<xsl:when test="$theCurrentUnit = 'EHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -981,26 +981,26 @@
 			<xsl:when test="$theCurrentUnit = 'PHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1017,26 +1017,26 @@
 			<xsl:when test="$theCurrentUnit = 'THz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1053,26 +1053,26 @@
 			<xsl:when test="$theCurrentUnit = 'GHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1089,26 +1089,26 @@
 			<xsl:when test="$theCurrentUnit = 'MHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1125,26 +1125,26 @@
 			<xsl:when test="$theCurrentUnit = 'kHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1161,26 +1161,26 @@
 			<xsl:when test="$theCurrentUnit = 'hHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1197,26 +1197,26 @@
 			<xsl:when test="$theCurrentUnit = 'daHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1233,26 +1233,26 @@
 			<xsl:when test="$theCurrentUnit = 'Hz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1269,26 +1269,26 @@
 			<xsl:when test="$theCurrentUnit = 'dHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1305,26 +1305,26 @@
 			<xsl:when test="$theCurrentUnit = 'cHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1341,26 +1341,26 @@
 			<xsl:when test="$theCurrentUnit = 'mHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1377,26 +1377,26 @@
 			<xsl:when test="$theCurrentUnit = 'µHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1413,26 +1413,26 @@
 			<xsl:when test="$theCurrentUnit = 'nHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1449,26 +1449,26 @@
 			<xsl:when test="$theCurrentUnit = 'pHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1485,26 +1485,26 @@
 			<xsl:when test="$theCurrentUnit = 'fHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1521,26 +1521,26 @@
 			<xsl:when test="$theCurrentUnit = 'aHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1557,26 +1557,26 @@
 			<xsl:when test="$theCurrentUnit = 'zHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yHz'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1593,26 +1593,26 @@
 			<xsl:when test="$theCurrentUnit = 'yHz'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(1000000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YHz'"><xsl:value-of select="(math:power(10, 48)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZHz'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EHz'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PHz'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'THz'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GHz'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MHz'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kHz'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hHz'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daHz'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Hz'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dHz'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cHz'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mHz'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µHz'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nHz'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pHz'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fHz'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aHz'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zHz'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1629,36 +1629,36 @@
 			<xsl:when test="$theCurrentUnit = 'Ym'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5912956545363 / 625000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((3857097 / 125000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((12573 / 7812500000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 48))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 34))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / (625*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 30)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 28)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 27)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 25)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 25)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / (78125*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 28)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1675,36 +1675,36 @@
 			<xsl:when test="$theCurrentUnit = 'Zm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5912956545363 / 625000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((3857097 / 125000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((12573 / 7812500000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 31))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / (625*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 27)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 25)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 24)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 22)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 22)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / (78125*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 25)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1721,36 +1721,36 @@
 			<xsl:when test="$theCurrentUnit = 'Em'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5912956545363 / 625000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((3857097 / 125000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((12573 / 7812500000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 28))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / (625*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 24)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 22)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 21)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / (78125*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 22)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1767,36 +1767,36 @@
 			<xsl:when test="$theCurrentUnit = 'Pm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5912956545363 / 625000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((3857097 / 125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((12573 / 7812500000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / (625*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 21)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / (78125*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 19)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1813,36 +1813,36 @@
 			<xsl:when test="$theCurrentUnit = 'Tm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5912956545363 / 625000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((3857097 / 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((12573 / 7812500000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / (625*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / (78125*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 16)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1859,36 +1859,36 @@
 			<xsl:when test="$theCurrentUnit = 'Gm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5912956545363 / 625000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((12573 / 7812500000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / (78125*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 13)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1905,36 +1905,36 @@
 			<xsl:when test="$theCurrentUnit = 'Mm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5912956545363 / 625)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((12573 / 7812500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 10)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1951,36 +1951,36 @@
 			<xsl:when test="$theCurrentUnit = 'km'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((47303652362904 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((25146 / 15625)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (125*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 7)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1997,36 +1997,36 @@
 			<xsl:when test="$theCurrentUnit = 'hm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(94607304725808*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(308567760000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 500000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 6000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 500000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((50292 / 3125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 36000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 6)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2043,36 +2043,36 @@
 			<xsl:when test="$theCurrentUnit = 'dam'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(946073047258080*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(3085677600000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 50000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 600000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 50000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 12500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 12500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((100584 / 625)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 3600000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 5)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2089,36 +2089,36 @@
 			<xsl:when test="$theCurrentUnit = 'm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 1250)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 1250)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((201168 / 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 4)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2135,36 +2135,36 @@
 			<xsl:when test="$theCurrentUnit = 'dm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(94607304725808000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(308567760000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 500000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 6000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((381 / 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1143 / 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((402336 / 25)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 36000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2181,36 +2181,36 @@
 			<xsl:when test="$theCurrentUnit = 'cm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(946073047258080000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(3085677600000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 50000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 600)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 50)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((762 / 25)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((2286 / 25)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((804672 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 3600)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2227,36 +2227,36 @@
 			<xsl:when test="$theCurrentUnit = 'mm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 60)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1524 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((4572 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 360)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2273,36 +2273,36 @@
 			<xsl:when test="$theCurrentUnit = 'µm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6350 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(25400*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(304800*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(914400*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3175 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2319,36 +2319,36 @@
 			<xsl:when test="$theCurrentUnit = 'nm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(25400*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6350000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(25400000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(304800000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(914400000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3175000 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((635*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((254*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((3048*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9144*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1609344*math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2365,36 +2365,36 @@
 			<xsl:when test="$theCurrentUnit = 'pm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(25400000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6350000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(25400000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(304800000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(914400000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3175000000 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((254*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((635*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((254*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((3048*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9144*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1609344*math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((3175*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2411,36 +2411,36 @@
 			<xsl:when test="$theCurrentUnit = 'fm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(25400000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6350000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(25400000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(304800000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(914400000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3175000000000 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((254*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((635*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((254*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((3048*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9144*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1609344*math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((3175*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2457,36 +2457,36 @@
 			<xsl:when test="$theCurrentUnit = 'am'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(25400000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6350000000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(25400000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(304800000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(914400000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3175000000000000 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((254*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((635*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((254*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((3048*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9144*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1609344*math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((3175*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2503,36 +2503,36 @@
 			<xsl:when test="$theCurrentUnit = 'zm'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(25400000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6350000000000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(25400000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(304800000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(914400000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3175000000000000000 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((254*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((635*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((254*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((3048*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9144*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1609344*math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((3175*math:power(10, 15)) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2549,36 +2549,36 @@
 			<xsl:when test="$theCurrentUnit = 'ym'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(1000000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(9460730472580800000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(30856776000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(25400000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6350000000000000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(25400000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(304800000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(914400000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1609344000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3175000000000000000000 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 48)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((254*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((635*math:power(10, 19)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((254*math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((3048*math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9144*math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1609344*math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((3175*math:power(10, 18)) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2595,36 +2595,36 @@
 			<xsl:when test="$theCurrentUnit = 'Å'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(10000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(10000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(10000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(94607304725808000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(308567760000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(254000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((63500000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(254000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(3048000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(9144000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(16093440000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((31750000 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(math:power(10, 34)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(math:power(10, 31)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(math:power(10, 28)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((94607304725808*math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((30856776*math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((635*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((254*math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((3048*math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9144*math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1609344*math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((3175*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2657,36 +2657,36 @@
 			<xsl:when test="$theCurrentUnit = 'ly'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((625000000000000000000 / 5912956545363)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((625000000000000000 / 5912956545363)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((625000000000000 / 5912956545363)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((625000000000 / 5912956545363)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((625000000 / 5912956545363)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((625000 / 5912956545363)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((625 / 5912956545363)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((5 / 47303652362904)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 94607304725808)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 946073047258080)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 9460730472580800)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 94607304725808000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 946073047258080000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 9460730472580800000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 9460730472580800000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 9460730472580800000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 9460730472580800000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 9460730472580800000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 9460730472580800000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 9460730472580800000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 9460730472580800000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 94607304725808000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((6428495000000 / 1970985515121)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 47303652362904000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 567643828354848000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 47303652362904000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((127 / 3941971030242000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((127 / 1313990343414000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1397 / 8212439646337500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 3405862970129088000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((625*math:power(10, 18)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((625*math:power(10, 15)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((625*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((625*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((625*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 23)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 26)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (94607304725808*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((6428495*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (47303652362904*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (567643828354848*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (47303652362904*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (3941971030242*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (1313990343414*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (3405862970129088*math:power(10, 6)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2703,36 +2703,36 @@
 			<xsl:when test="$theCurrentUnit = 'pc'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((125000000000000 / 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((125000000000 / 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((125000000 / 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((125000 / 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((125 / 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 / 30856776)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 / 30856776000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1 / 30856776000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1 / 308567760000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1 / 3085677600000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1 / 30856776000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1 / 308567760000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((1 / 3085677600000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 30856776000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 30856776000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 30856776000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 30856776000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 30856776000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 30856776000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 30856776000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 30856776000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 308567760000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1970985515121 / 6428495000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((127 / 154283880000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((127 / 1851406560000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((127 / 154283880000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((127 / 12856990000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((381 / 12856990000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((4191 / 80356187500000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((127 / 11108439360000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((125*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((125*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((125*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 21)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 24)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 27)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 30)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 33)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (30856776*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / (6428495*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (15428388*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / (185140656*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / (15428388*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / (1285699*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / (1285699*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((math:power(10, None) / (803561875*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / (1110843936*math:power(10, 13)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2749,36 +2749,36 @@
 			<xsl:when test="$theCurrentUnit = 'thou'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((5000000000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((5000000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((5000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((5000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((5000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((5000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((5000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((5000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((500000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((50000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((5000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((500000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((50000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((5000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((5 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 25400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 25400000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 25400000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 25400000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 25400000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 25400000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 254000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((47303652362904000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((154283880000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((250 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(12000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(36000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(63360000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((125 / 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((5*math:power(10, 30)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((5*math:power(10, 27)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((5*math:power(10, 24)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((5*math:power(10, 21)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((5*math:power(10, 18)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(((5*math:power(10, 15)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(((5*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(((5*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(((5*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(((5*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(((5*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(((5*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(((5*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((47303652362904*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((15428388*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((6336*math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2795,36 +2795,36 @@
 			<xsl:when test="$theCurrentUnit = 'li'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((60000000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((60000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((60000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((60000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((60000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((60000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((60000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((60000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((6000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((600000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((60000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((6000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((600 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((60 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((3 / 6350)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((3 / 6350000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((3 / 6350000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((3 / 6350000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((3 / 6350000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((3 / 6350000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((3 / 6350000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((3 / 63500000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((567643828354848000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1851406560000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((3 / 250)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(12*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(144*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(432*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(760320*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((1 / 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((6*math:power(10, 28)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((6*math:power(10, 25)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((6*math:power(10, 22)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((6*math:power(10, 19)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((6*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(((6*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(((6*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(((6*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(((6*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(((6*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(((6*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / (635*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (635*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (635*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (635*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (635*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (635*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (635*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((567643828354848*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((185140656*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2841,36 +2841,36 @@
 			<xsl:when test="$theCurrentUnit = 'in'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((5000000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((5000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((5000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((5000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((5000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((5000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((5000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((5000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((500000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((50000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((5000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((500 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((50 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((5 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 25400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 25400000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 25400000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 25400000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 25400000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 25400000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 25400000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 254000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((47303652362904000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((154283880000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1 / 12)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(12*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(36*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(63360*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((1 / 72)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((5*math:power(10, 27)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((5*math:power(10, 24)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((5*math:power(10, 21)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((5*math:power(10, 18)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((5*math:power(10, 15)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(((5*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(((5*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(((5*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(((5*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(((5*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (254*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((47303652362904*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((15428388*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2887,36 +2887,36 @@
 			<xsl:when test="$theCurrentUnit = 'ft'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((1250000000000000000000000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1250000000000000000000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1250000000000000000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1250000000000000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1250000000000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1250000000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1250000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1250000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((125000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((12500 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1250 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((125 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((25 / 762)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((5 / 1524)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 304800)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 304800000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 304800000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 304800000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 304800000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 304800000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 304800000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 3048000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((3941971030242000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((12856990000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 / 12000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1 / 144)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 / 12)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(3*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(5280*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((1 / 864)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((125*math:power(10, 25)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((125*math:power(10, 22)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((125*math:power(10, 19)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((125*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((125*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(((125*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(((125*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(((125*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / (3048*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (3048*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (3048*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (3048*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (3048*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (3048*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (3048*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((3941971030242*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((1285699*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2933,36 +2933,36 @@
 			<xsl:when test="$theCurrentUnit = 'yd'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((1250000000000000000000000000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1250000000000000000000000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1250000000000000000000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1250000000000000000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1250000000000000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1250000000000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1250000000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1250000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((125000 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((12500 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1250 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((125 / 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((25 / 2286)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((5 / 4572)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 914400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 914400000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 914400000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 914400000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 914400000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 914400000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 914400000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 9144000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1313990343414000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((12856990000000000000 / 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 / 36000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1 / 432)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 / 36)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(1760*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((1 / 2592)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((125*math:power(10, 25)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((125*math:power(10, 22)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((125*math:power(10, 19)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((125*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((125*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(((125*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(((125*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(((125*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / (9144*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (9144*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (9144*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (9144*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (9144*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (9144*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (9144*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((1313990343414*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((1285699*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2979,36 +2979,36 @@
 			<xsl:when test="$theCurrentUnit = 'mi'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((7812500000000000000000000 / 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((7812500000000000000000 / 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((7812500000000000000 / 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((7812500000000000 / 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((7812500000000 / 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((7812500000 / 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((7812500 / 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((15625 / 25146)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((3125 / 50292)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((625 / 100584)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((125 / 201168)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((25 / 402336)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((5 / 804672)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1 / 1609344)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((1 / 1609344000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1 / 1609344000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1 / 1609344000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1 / 1609344000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1 / 1609344000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1 / 1609344000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1 / 1609344000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1 / 16093440000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((8212439646337500 / 1397)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((80356187500000000 / 4191)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 / 63360000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1 / 760320)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 / 63360)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 / 5280)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 / 1760)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((1 / 4561920)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((78125*math:power(10, 20)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((78125*math:power(10, 17)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((78125*math:power(10, 14)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((78125*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((78125*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(((78125*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / (1609344*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (1609344*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (1609344*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (1609344*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (1609344*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (1609344*math:power(10, 21)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (1609344*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((803561875*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / (6336*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3025,36 +3025,36 @@
 			<xsl:when test="$theCurrentUnit = 'pt'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((360000000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((360000000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((360000000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((360000000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((360000000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((360000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((360000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((360000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((36000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((3600000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((360000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((36000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((3600 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((360 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((9 / 3175)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((9 / 3175000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((9 / 3175000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((9 / 3175000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((9 / 3175000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((9 / 3175000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((9 / 3175000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((9 / 31750000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((3405862970129088000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((11108439360000000000000 / 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((9 / 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(6*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(72*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(864*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(2592*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(4561920*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="(((36*math:power(10, 28)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="(((36*math:power(10, 25)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="(((36*math:power(10, 22)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="(((36*math:power(10, 19)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="(((36*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="(((36*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="(((36*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="(((36*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="(((36*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(((36*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(((36*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, None) / (3175*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, None) / (3175*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, None) / (3175*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, None) / (3175*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, None) / (3175*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, None) / (3175*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((3405862970129088*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((1110843936*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3103,26 +3103,26 @@
 			<xsl:when test="$theCurrentUnit = 'YW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 48))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3139,26 +3139,26 @@
 			<xsl:when test="$theCurrentUnit = 'ZW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3175,26 +3175,26 @@
 			<xsl:when test="$theCurrentUnit = 'EW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3211,26 +3211,26 @@
 			<xsl:when test="$theCurrentUnit = 'PW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3247,26 +3247,26 @@
 			<xsl:when test="$theCurrentUnit = 'TW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3283,26 +3283,26 @@
 			<xsl:when test="$theCurrentUnit = 'GW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3319,26 +3319,26 @@
 			<xsl:when test="$theCurrentUnit = 'MW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3355,26 +3355,26 @@
 			<xsl:when test="$theCurrentUnit = 'kW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3391,26 +3391,26 @@
 			<xsl:when test="$theCurrentUnit = 'hW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3427,26 +3427,26 @@
 			<xsl:when test="$theCurrentUnit = 'daW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3463,26 +3463,26 @@
 			<xsl:when test="$theCurrentUnit = 'W'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3499,26 +3499,26 @@
 			<xsl:when test="$theCurrentUnit = 'dW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3535,26 +3535,26 @@
 			<xsl:when test="$theCurrentUnit = 'cW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3571,26 +3571,26 @@
 			<xsl:when test="$theCurrentUnit = 'mW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3607,26 +3607,26 @@
 			<xsl:when test="$theCurrentUnit = 'µW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3643,26 +3643,26 @@
 			<xsl:when test="$theCurrentUnit = 'nW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3679,26 +3679,26 @@
 			<xsl:when test="$theCurrentUnit = 'pW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3715,26 +3715,26 @@
 			<xsl:when test="$theCurrentUnit = 'fW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3751,26 +3751,26 @@
 			<xsl:when test="$theCurrentUnit = 'aW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3787,26 +3787,26 @@
 			<xsl:when test="$theCurrentUnit = 'zW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yW'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3823,26 +3823,26 @@
 			<xsl:when test="$theCurrentUnit = 'yW'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(1000000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YW'"><xsl:value-of select="(math:power(10, 48)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZW'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EW'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PW'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TW'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GW'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MW'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kW'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hW'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daW'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'W'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dW'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cW'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mW'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µW'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nW'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pW'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fW'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aW'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zW'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3859,35 +3859,35 @@
 			<xsl:when test="$theCurrentUnit = 'YPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 48))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 33)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 23)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 26)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 32)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3904,35 +3904,35 @@
 			<xsl:when test="$theCurrentUnit = 'ZPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 30)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 23)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 29)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3949,35 +3949,35 @@
 			<xsl:when test="$theCurrentUnit = 'EPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 27)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 26)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -3994,35 +3994,35 @@
 			<xsl:when test="$theCurrentUnit = 'PPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 24)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 23)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4039,35 +4039,35 @@
 			<xsl:when test="$theCurrentUnit = 'TPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 21)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 20)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4084,35 +4084,35 @@
 			<xsl:when test="$theCurrentUnit = 'GPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 17)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4129,35 +4129,35 @@
 			<xsl:when test="$theCurrentUnit = 'MPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 14)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4174,35 +4174,35 @@
 			<xsl:when test="$theCurrentUnit = 'kPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="$theValue"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 11)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4219,35 +4219,35 @@
 			<xsl:when test="$theCurrentUnit = 'hPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="$theValue"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 2500000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 3040)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 3040000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 20000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 10)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4264,35 +4264,35 @@
 			<xsl:when test="$theCurrentUnit = 'daPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 250000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 304)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 304000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 2000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4325,35 +4325,35 @@
 			<xsl:when test="$theCurrentUnit = 'dPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 2500000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((101325 / 76)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 3040)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 20000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 7)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4370,35 +4370,35 @@
 			<xsl:when test="$theCurrentUnit = 'cPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 250000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((506625 / 38)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 304)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 2000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 6)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4415,35 +4415,35 @@
 			<xsl:when test="$theCurrentUnit = 'mPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((20265 / 152)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 5)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4460,35 +4460,35 @@
 			<xsl:when test="$theCurrentUnit = 'µPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((2533125 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4505,35 +4505,35 @@
 			<xsl:when test="$theCurrentUnit = 'nPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((2533125000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(133322387415*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((2533125*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4550,35 +4550,35 @@
 			<xsl:when test="$theCurrentUnit = 'pPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(6894757293168360*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((2533125000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(133322387415000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((2533125*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((2533125*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4595,35 +4595,35 @@
 			<xsl:when test="$theCurrentUnit = 'fPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(6894757293168360000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125000000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((2533125000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(133322387415000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((689475729316836*math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((2533125*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((2533125*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((133322387415*math:power(10, 6))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4640,35 +4640,35 @@
 			<xsl:when test="$theCurrentUnit = 'aPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(6894757293168360000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125000000000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((2533125000000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(133322387415000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 29)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((689475729316836*math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((2533125*math:power(10, 15)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((2533125*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((133322387415*math:power(10, 9))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4685,35 +4685,35 @@
 			<xsl:when test="$theCurrentUnit = 'zPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(6894757293168360000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125000000000000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((2533125000000000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(133322387415000000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 32)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 29)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((689475729316836*math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((2533125*math:power(10, 18)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((2533125*math:power(10, 15)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((133322387415*math:power(10, 12))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4730,35 +4730,35 @@
 			<xsl:when test="$theCurrentUnit = 'yPa'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(6894757293168360000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((2533125000000000000000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((2533125000000000000000000 / 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(133322387415000000000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 48)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, 29)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 35)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 32)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, 28)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((689475729316836*math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((2533125*math:power(10, 21)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((2533125*math:power(10, 18)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((133322387415*math:power(10, 15))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4775,35 +4775,35 @@
 			<xsl:when test="$theCurrentUnit = 'bar'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 100000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 2500000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 3040000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 3040000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 20000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 29))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 13)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4820,35 +4820,35 @@
 			<xsl:when test="$theCurrentUnit = 'Mbar'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 100000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 100000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 100000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 2500000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 3040000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 3040000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 20000000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 29))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 32))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 35))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 19)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4865,35 +4865,35 @@
 			<xsl:when test="$theCurrentUnit = 'kbar'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 100000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 100000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 2500000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 3040000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 3040000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 20000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 29))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 32))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 16)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4910,35 +4910,35 @@
 			<xsl:when test="$theCurrentUnit = 'dbar'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 10000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 250000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 304000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 304000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 2000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 28))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 12)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -4955,35 +4955,35 @@
 			<xsl:when test="$theCurrentUnit = 'cbar'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="$theValue"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 25000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 30400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 30400000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 200000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 11)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5000,35 +5000,35 @@
 			<xsl:when test="$theCurrentUnit = 'mbar'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="$theValue"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((172368932329209 / 2500000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((4053 / 3040)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((4053 / 3040000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((26664477483 / 20000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / (304*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (2*math:power(10, 10)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5061,35 +5061,35 @@
 			<xsl:when test="$theCurrentUnit = 'psi'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="((25000000000000000000000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((25000000000000000000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((25000000000000000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((25000000000000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((25000000000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((25000000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((25000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((25000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((2500000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((250000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((2500000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((250000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((25000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((25000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((25 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 6894757293168360)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 6894757293168360000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 6894757293168360000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 6894757293168360000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 6894757293168360000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((2500000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((2500000000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((2500000000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((250000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((25000000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((2500000000000 / 172368932329209)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((3015625000000 / 155952843535951)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((3015625000 / 155952843535951)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((158717127875 / 8208044396629)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(((25*math:power(10, 33)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(((25*math:power(10, 30)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(((25*math:power(10, 27)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(((25*math:power(10, 24)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(((25*math:power(10, 21)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(((25*math:power(10, 18)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(((25*math:power(10, 15)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(((25*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(((25*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(((25*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(((25*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(((25*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(((25*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / (689475729316836*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / (689475729316836*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / (689475729316836*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / (689475729316836*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(((25*math:power(10, 14)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(((25*math:power(10, 20)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(((25*math:power(10, 17)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(((25*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(((25*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(((25*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((3015625*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5106,35 +5106,35 @@
 			<xsl:when test="$theCurrentUnit = 'Torr'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="((30400000000000000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((30400000000000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((30400000000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((30400000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((30400000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((30400000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((30400000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((30400 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((3040 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((304 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((76 / 101325)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((38 / 506625)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((19 / 2533125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((19 / 2533125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((19 / 2533125000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((19 / 2533125000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((19 / 2533125000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((19 / 2533125000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((19 / 2533125000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((19 / 2533125000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((3040000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((3040000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((3040000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((304000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((30400 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((3040 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((155952843535951 / 3015625000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((24125003437 / 24125000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(((304*math:power(10, 23)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(((304*math:power(10, 20)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(((304*math:power(10, 17)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(((304*math:power(10, 14)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(((304*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(((304*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(((304*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 21)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(((304*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(((304*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(((304*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / (3015625*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / (24125*math:power(10, 6)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5151,35 +5151,35 @@
 			<xsl:when test="$theCurrentUnit = 'mTorr'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="((30400000000000000000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((30400000000000000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((30400000000000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((30400000000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((30400000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((30400000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((30400000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((30400000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((3040000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((304000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((3040 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((304 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((152 / 20265)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((19 / 2533125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((19 / 2533125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((19 / 2533125000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((19 / 2533125000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((19 / 2533125000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((19 / 2533125000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((19 / 2533125000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((3040000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((3040000000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((3040000000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((304000000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((30400000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((3040000 / 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((155952843535951 / 3015625000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((24125003437 / 24125000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(((304*math:power(10, 26)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(((304*math:power(10, 23)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(((304*math:power(10, 20)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(((304*math:power(10, 17)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(((304*math:power(10, 14)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(((304*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(((304*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(((304*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(((304*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / (2533125*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(((304*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(((304*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(((304*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(((304*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(((304*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(((304*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5196,35 +5196,35 @@
 			<xsl:when test="$theCurrentUnit = 'mm Hg'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="((200000000000000000000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((200000000000000000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((200000000000000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((200000000000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((200000000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((200000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((200000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((200000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((20000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((2000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((20000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((2000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((200000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((200 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((1 / 133322387415)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((1 / 133322387415000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((1 / 133322387415000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((1 / 133322387415000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((1 / 133322387415000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((1 / 133322387415000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((20000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((20000000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((20000000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((2000000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((200000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((20000000000 / 26664477483)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((8208044396629 / 158717127875)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((24125000000 / 24125003437)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((24125000 / 24125003437)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="(((2*math:power(10, 32)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="(((2*math:power(10, 29)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="(((2*math:power(10, 26)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="(((2*math:power(10, 23)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="(((2*math:power(10, 20)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="(((2*math:power(10, 17)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="(((2*math:power(10, 14)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="(((2*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="(((2*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="(((2*math:power(10, 9)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="(((2*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="(((2*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="(((2*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="((math:power(10, None) / (133322387415*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="((math:power(10, None) / (133322387415*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="((math:power(10, None) / (133322387415*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="((math:power(10, None) / (133322387415*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="(((2*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="(((2*math:power(10, 19)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="(((2*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="(((2*math:power(10, 12)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="(((2*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="(((2*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((24125*math:power(10, 6)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5241,9 +5241,9 @@
 			<xsl:when test="$theCurrentUnit = 'K'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="($theValue+(-5463 / 20))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((9 / 5)*$theValue)+(-45967 / 100))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="((9 / 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="($theValue+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((math:power(10, None) / math:power(10, None))*$theValue)+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5260,9 +5260,9 @@
 			<xsl:when test="$theCurrentUnit = '°C'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="($theValue+(5463 / 20))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((9 / 5)*$theValue)+32)"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="(((9 / 5)*$theValue)+(49167 / 100))"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="($theValue+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((math:power(10, None) / math:power(10, None))*$theValue)+math:power(10, None))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="(((math:power(10, None) / math:power(10, None))*$theValue)+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5279,9 +5279,9 @@
 			<xsl:when test="$theCurrentUnit = '°F'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="(((5 / 9)*$theValue)+(45967 / 180))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((5 / 9)*$theValue)+(-160 / 9))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="($theValue+(45967 / 100))"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="(((math:power(10, None) / math:power(10, None))*$theValue)+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((math:power(10, None) / math:power(10, None))*$theValue)+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="($theValue+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5298,9 +5298,9 @@
 			<xsl:when test="$theCurrentUnit = '°R'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="((5 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((5 / 9)*$theValue)+(-5463 / 20))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="($theValue+(-45967 / 100))"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((math:power(10, None) / math:power(10, None))*$theValue)+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="($theValue+(math:power(10, None) / math:power(10, None)))"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5317,28 +5317,28 @@
 			<xsl:when test="$theCurrentUnit = 'Ys'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((9 / 2500000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((27 / 312500000000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 48))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 22)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / (3125*math:power(10, 17)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5355,28 +5355,28 @@
 			<xsl:when test="$theCurrentUnit = 'Zs'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((9 / 2500000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((27 / 312500000000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 45))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / (3125*math:power(10, 14)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5393,28 +5393,28 @@
 			<xsl:when test="$theCurrentUnit = 'Es'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((9 / 2500000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((27 / 312500000000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 42))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / (3125*math:power(10, 11)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5431,28 +5431,28 @@
 			<xsl:when test="$theCurrentUnit = 'Ps'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((9 / 2500000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((27 / 312500000000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 39))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / (3125*math:power(10, 8)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5469,28 +5469,28 @@
 			<xsl:when test="$theCurrentUnit = 'Ts'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((9 / 2500000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((27 / 312500000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 36))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / (3125*math:power(10, 5)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5507,28 +5507,28 @@
 			<xsl:when test="$theCurrentUnit = 'Gs'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((9 / 2500000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((27 / 312500)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 33))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / (25*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5545,28 +5545,28 @@
 			<xsl:when test="$theCurrentUnit = 'Ms'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((9 / 2500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((54 / 625)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 30))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / (5*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5583,28 +5583,28 @@
 			<xsl:when test="$theCurrentUnit = 'ks'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 50)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((18 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((432 / 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 27))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5621,28 +5621,28 @@
 			<xsl:when test="$theCurrentUnit = 'hs'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 100000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 100000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((3 / 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(36*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(864*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5659,28 +5659,28 @@
 			<xsl:when test="$theCurrentUnit = 'das'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 10000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 10000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(6*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(360*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(8640*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5697,28 +5697,28 @@
 			<xsl:when test="$theCurrentUnit = 's'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 24))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5735,28 +5735,28 @@
 			<xsl:when test="$theCurrentUnit = 'ds'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 100)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 100000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 100000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 100000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 100000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 100000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 100000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(600*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(36000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(864000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5773,28 +5773,28 @@
 			<xsl:when test="$theCurrentUnit = 'cs'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 10)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 10000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 10000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 10000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 10000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 10000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 10000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(6000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(360000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(8640000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 4))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5811,28 +5811,28 @@
 			<xsl:when test="$theCurrentUnit = 'ms'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(100*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(10*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 21))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((6*math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 5))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5849,28 +5849,28 @@
 			<xsl:when test="$theCurrentUnit = 'µs'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(100000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(10000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(math:power(10, 4)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 18))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((6*math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 8))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5887,28 +5887,28 @@
 			<xsl:when test="$theCurrentUnit = 'ns'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(100000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(10000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, 8)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(math:power(10, 7)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 15))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((6*math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 11))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5925,28 +5925,28 @@
 			<xsl:when test="$theCurrentUnit = 'ps'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(100000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(10000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400000000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, 11)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(math:power(10, 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 12))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((6*math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 14))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5963,28 +5963,28 @@
 			<xsl:when test="$theCurrentUnit = 'fs'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(100000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(10000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 1000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400000000000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 17)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, 16)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, 14)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(math:power(10, 13)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((6*math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 17))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -6017,28 +6017,28 @@
 			<xsl:when test="$theCurrentUnit = 'zs'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(100000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(10000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="(1000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400000000000000000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, 20)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(math:power(10, 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="(math:power(10, 6)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((6*math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 23))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 23))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -6055,28 +6055,28 @@
 			<xsl:when test="$theCurrentUnit = 'ys'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(1000000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(1000000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(1000000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(1000000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(1000000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(1000000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(1000000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(1000000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(100000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(10000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(1000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(100000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(10000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(1000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(1000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(1000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="(1000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="(1000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="(60000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(3600000000000000000000000000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(86400000000000000000000000000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(math:power(10, 48)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(math:power(10, 45)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(math:power(10, 42)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(math:power(10, 39)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(math:power(10, 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(math:power(10, 33)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(math:power(10, 30)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="(math:power(10, 27)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="(math:power(10, 26)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="(math:power(10, 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="(math:power(10, 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="(math:power(10, 23)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="(math:power(10, 22)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="(math:power(10, 21)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="(math:power(10, 18)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="(math:power(10, 15)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="(math:power(10, 12)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="(math:power(10, 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((6*math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((36*math:power(10, 26))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="((864*math:power(10, 26))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -6093,28 +6093,28 @@
 			<xsl:when test="$theCurrentUnit = 'min'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="((50000000000000000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="((50000000000000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="((50000000000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((50000000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((50000000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((50000000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((50000 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((50 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((5 / 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 6)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 60)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 600)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 6000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 60000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 60000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 60000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 60000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 60000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 60000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 60000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(60*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(1440*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(((5*math:power(10, 22)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(((5*math:power(10, 19)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(((5*math:power(10, 16)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(((5*math:power(10, 13)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(((5*math:power(10, 10)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(((5*math:power(10, 7)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="(((5*math:power(10, 4)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 22)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / (6*math:power(10, 25)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -6131,28 +6131,28 @@
 			<xsl:when test="$theCurrentUnit = 'h'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="((2500000000000000000000 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="((2500000000000000000 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="((2500000000000000 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((2500000000000 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((2500000000 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((2500000 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((2500 / 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((5 / 18)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 36)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 360)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 3600)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 36000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 360000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 3600000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 3600000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 3600000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 3600000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 3600000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 3600000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 3600000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((1 / 60)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(24*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(((25*math:power(10, 20)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(((25*math:power(10, 17)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(((25*math:power(10, 14)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(((25*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(((25*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="(((25*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 23)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / (36*math:power(10, 26)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'd'"><xsl:value-of select="(math:power(10, None)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -6169,28 +6169,28 @@
 			<xsl:when test="$theCurrentUnit = 'd'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="((312500000000000000000 / 27)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="((312500000000000000 / 27)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="((312500000000000 / 27)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="((312500000000 / 27)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="((312500000 / 27)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((312500 / 27)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((625 / 54)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((5 / 432)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((1 / 864)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((1 / 8640)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((1 / 86400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((1 / 864000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((1 / 8640000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((1 / 86400000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((1 / 86400000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((1 / 86400000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((1 / 86400000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((1 / 86400000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((1 / 86400000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((1 / 86400000000000000000000000000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((1 / 1440)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((1 / 24)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ys'"><xsl:value-of select="(((3125*math:power(10, 17)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zs'"><xsl:value-of select="(((3125*math:power(10, 14)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Es'"><xsl:value-of select="(((3125*math:power(10, 11)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ps'"><xsl:value-of select="(((3125*math:power(10, 8)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ts'"><xsl:value-of select="(((3125*math:power(10, 5)) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ms'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ks'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hs'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'das'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 's'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ds'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cs'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ms'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µs'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ns'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ps'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fs'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zs'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 23)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ys'"><xsl:value-of select="((math:power(10, None) / (864*math:power(10, 26)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'min'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'h'"><xsl:value-of select="((math:power(10, None) / math:power(10, None))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
