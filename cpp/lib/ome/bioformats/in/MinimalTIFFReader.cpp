@@ -62,6 +62,9 @@ namespace ome
       namespace
       {
 
+        // Note that tf2, tf8 and btf are all extensions for "bigTIFF"
+        // (2nd generation TIFF, TIFF with 8-byte offsets and big TIFF
+        // respectively).
         const char *suffixes[] = {"tif", "tiff", "tf2", "tf8", "btf"};
         const char *companion_suffixes_array[] = {"txt", "xml"};
 
