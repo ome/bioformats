@@ -58,7 +58,7 @@ if (NOT Boost_LOG_LIBRARY_RELEASE)
 endif()
 if (NOT Boost_LOG_LIBRARY_RELEASE)
   message(WARNING "Boost.Log (setup) not found.  This might be an error, but is more likely to be harmless (no library available)")
-  set(Boost_LOG_LIBRARY_RELEASE "" CACHE FILEPATH "Logging is probably missing for this Boost version" FORCE)
+  set(Boost_LOG_SETUP_LIBRARY_RELEASE "" CACHE FILEPATH "Logging (setup) is probably missing for this Boost version" FORCE)
 endif()
 
 find_package(Boost 1.46 REQUIRED
