@@ -213,6 +213,7 @@ namespace ome
 {% end has instance type %}\
 {% end for %}\
       {
+        logger.add_attribute("ClassName", logging::attributes::constant<std::string>("${klass.name}"));
       }
 {% end source %}\
 

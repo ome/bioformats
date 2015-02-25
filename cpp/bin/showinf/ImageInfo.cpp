@@ -62,10 +62,9 @@ namespace
 namespace showinf
 {
 
-  ome::compat::Logger ImageInfo::logger = ome::compat::createLogger("ImageInfo");
-
   ImageInfo::ImageInfo (const std::string &file,
                         const options&     opts):
+    logger(ome::compat::createLogger("ImageInfo")),
     file(file),
     opts(opts),
     reader()

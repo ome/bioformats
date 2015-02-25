@@ -60,7 +60,7 @@ namespace ome
         {
         private:
           /// Message logger.
-          static ome::compat::Logger logger;
+          ome::compat::Logger logger;
           /// Mapping of id to model object.
           object_map_type modelObjects;
           /// Mapping of model object to reference.

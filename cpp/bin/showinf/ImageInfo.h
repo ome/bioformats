@@ -112,7 +112,7 @@ namespace showinf
                    const ome::bioformats::Modulo&       modulo);
 
     /// Message logger.
-    static ome::compat::Logger logger;
+    ome::compat::Logger logger;
     /// File to open with FormatReader::setId.
     std::string file;
     /// Command-line options.

@@ -197,9 +197,8 @@ namespace ome
 
       }
 
-      ome::compat::Logger OMETIFFReader::logger = ome::compat::createLogger("OMETIFFReader");
-
       OMETIFFReader::OMETIFFReader():
+        logger(ome::compat::createLogger("OMETIFFReader")),
         detail::FormatReader(props),
         files(),
         tiffs(),

@@ -53,10 +53,9 @@ namespace ome
       namespace detail
       {
 
-        ome::compat::Logger OMEModel::logger = ome::compat::createLogger("OMEModel");
-
         OMEModel::OMEModel ():
           ::ome::xml::model::OMEModel(),
+          logger(ome::compat::createLogger("OMEModel")),
           modelObjects(),
           references()
         {
