@@ -59,6 +59,9 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/severity_feature.hpp>
 #include <boost/log/attributes/constant.hpp>
+#else // ! OME_HAVE_BOOST_LOG
+// For std::clog
+#include <iostream>
 #endif // OME_HAVE_BOOST_LOG
 
 namespace ome
