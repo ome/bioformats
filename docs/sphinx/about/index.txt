@@ -14,12 +14,9 @@ model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
 :model_doc:`OME-TIFF <ome-tiff>` file format.
 
 We believe the standardization of microscopy metadata to a common
-structure is of vital importance to the community. A brief `article on the
-benefits of
-standardization <http://www.thinkstandards.net/benefits.html>`_ from
-`thinkstandards.net <http://www.thinkstandards.net/>`_ provides an
-excellent summary. See also LOCI's article on `open source software in
-science <http://loci.wisc.edu/software/oss>`_.
+structure is of vital importance to the community. You may find LOCI's article
+on `open source software in
+science <http://loci.wisc.edu/software/oss>`_ of interest.
 
 Why Java?
 ---------
