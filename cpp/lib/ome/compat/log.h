@@ -116,7 +116,7 @@ namespace ome
     {
     private:
       /// Class name.
-      const std::string klass;
+      std::string klass;
 
     public:
       /**
@@ -127,6 +127,12 @@ namespace ome
       Logger(const std::string& className):
         klass(className)
       {}
+
+      void
+      className(const std::string& className)
+      {
+        this->klass = className;
+      }
 
       const std::string&
       className() const
