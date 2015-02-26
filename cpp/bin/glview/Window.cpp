@@ -272,7 +272,7 @@ namespace glview
       }
     else
       {
-        navigation->setReader(0, 0, 0);
+        navigation->setReader(std::shared_ptr<ome::bioformats::FormatReader>(), 0, 0);
       }
 
     bool enable(newGlView != 0);
