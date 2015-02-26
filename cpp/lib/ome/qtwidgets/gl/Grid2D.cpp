@@ -106,9 +106,9 @@ namespace ome
     namespace gl
     {
 
-      Grid2D::Grid2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                     ome::bioformats::dimension_size_type            series,
-                     QObject                                        *parent):
+      Grid2D::Grid2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+                     ome::bioformats::dimension_size_type                    series,
+                     QObject                                                *parent):
         QObject(parent),
         grid_vertices(QOpenGLBuffer::VertexBuffer),
         grid_elements(QOpenGLBuffer::IndexBuffer),

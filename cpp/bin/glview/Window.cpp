@@ -44,6 +44,7 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/in/OMETIFFReader.h>
 
+#include <ome/compat/memory.h>
 #include <ome/compat/module.h>
 
 using namespace ome::qtwidgets;
@@ -224,7 +225,7 @@ namespace glview
     QFileInfo info(file);
     if (info.exists())
       {
-        std::shared_ptr<ome::bioformats::FormatReader> reader(std::make_shared<ome::bioformats::in::OMETIFFReader>());
+        ome::compat::shared_ptr<ome::bioformats::FormatReader> reader(ome::compat::make_shared<ome::bioformats::in::OMETIFFReader>());
         reader->setId(file.toStdString());
         GLView2D *newGlView = new GLView2D(reader, 0, this);
         QWidget *glContainer = new GLContainer(this, newGlView);
@@ -272,7 +273,7 @@ namespace glview
       }
     else
       {
-        navigation->setReader(std::shared_ptr<ome::bioformats::FormatReader>(), 0, 0);
+        navigation->setReader(ome::compat::shared_ptr<ome::bioformats::FormatReader>(), 0, 0);
       }
 
     bool enable(newGlView != 0);

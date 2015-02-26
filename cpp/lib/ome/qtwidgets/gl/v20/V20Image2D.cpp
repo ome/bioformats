@@ -50,9 +50,9 @@ namespace ome
       namespace v20
       {
 
-        Image2D::Image2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                         ome::bioformats::dimension_size_type            series,
-                         QObject                                        *parent):
+        Image2D::Image2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+                         ome::bioformats::dimension_size_type                    series,
+                         QObject                                                *parent):
           gl::Image2D(reader, series, parent),
           image_shader(new glsl::v110::GLImageShader2D(this))
         {

@@ -49,6 +49,8 @@
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/FormatReader.h>
 
+#include <ome/compat/memory.h>
+
 namespace ome
 {
   namespace qtwidgets
@@ -76,9 +78,9 @@ namespace ome
          * @param series the image series.
          * @param parent the parent of this object.
          */
-        explicit Grid2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                        ome::bioformats::dimension_size_type            series,
-                        QObject                                        *parent = 0);
+        explicit Grid2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+                        ome::bioformats::dimension_size_type                    series,
+                        QObject                                                *parent = 0);
 
         /// Destructor.
         virtual
@@ -125,7 +127,7 @@ namespace ome
         /// The elements for the grid.
         QOpenGLBuffer grid_elements;
         /// The image reader.
-        std::shared_ptr<ome::bioformats::FormatReader> reader;
+        ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
         /// The image series.
         ome::bioformats::dimension_size_type series;
       };

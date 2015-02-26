@@ -63,9 +63,9 @@ namespace ome
   namespace qtwidgets
   {
 
-    GLView2D::GLView2D(std::shared_ptr<ome::bioformats::FormatReader> reader,
-                       ome::bioformats::dimension_size_type series,
-                       QWidget * /* parent */):
+    GLView2D::GLView2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+                       ome::bioformats::dimension_size_type                    series,
+                       QWidget                                                * /* parent */):
       GLWindow(),
       camera(),
       mouseMode(MODE_ZOOM),
@@ -106,7 +106,7 @@ namespace ome
         angle -= 360 * 16;
     }
 
-    std::shared_ptr<ome::bioformats::FormatReader>
+    ome::compat::shared_ptr<ome::bioformats::FormatReader>
     GLView2D::getReader()
     {
       return reader;

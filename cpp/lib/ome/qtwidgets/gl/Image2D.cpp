@@ -257,7 +257,7 @@ namespace
     typename boost::enable_if_c<
       boost::is_complex<T>::value, void
       >::type
-    operator() (const std::shared_ptr<PixelBuffer<T> >& v)
+    operator() (const ome::compat::shared_ptr<PixelBuffer<T> >& v)
     {
       /// @todo Conversion from complex.
     }
@@ -273,9 +273,9 @@ namespace ome
     namespace gl
     {
 
-      Image2D::Image2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                       ome::bioformats::dimension_size_type            series,
-                       QObject                                        *parent):
+      Image2D::Image2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+                       ome::bioformats::dimension_size_type                    series,
+                       QObject                                                *parent):
         QObject(parent),
         image_vertices(QOpenGLBuffer::VertexBuffer),
         image_texcoords(QOpenGLBuffer::VertexBuffer),

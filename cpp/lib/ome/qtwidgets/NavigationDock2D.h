@@ -41,6 +41,8 @@
 
 #include <ome/bioformats/FormatReader.h>
 
+#include <ome/compat/memory.h>
+
 #include <ome/qtwidgets/GLWindow.h>
 #include <ome/qtwidgets/gl/Image2D.h>
 #include <ome/qtwidgets/gl/Grid2D.h>
@@ -90,9 +92,9 @@ namespace ome
        * @param plane the image plane.
        */
       void
-      setReader(std::shared_ptr<ome::bioformats::FormatReader> reader,
-                ome::bioformats::dimension_size_type           series = 0,
-                ome::bioformats::dimension_size_type           plane = 0);
+      setReader(ome::compat::shared_ptr<ome::bioformats::FormatReader> reader,
+                ome::bioformats::dimension_size_type                   series = 0,
+                ome::bioformats::dimension_size_type                   plane = 0);
 
       /**
        * Get the current plane for the series.
@@ -155,7 +157,7 @@ namespace ome
 
     private:
       /// The image reader.
-      std::shared_ptr<ome::bioformats::FormatReader> reader;
+      ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
       /// The image series.
       ome::bioformats::dimension_size_type series;
       /// The image plane.

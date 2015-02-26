@@ -50,9 +50,9 @@ namespace ome
       namespace v20
       {
 
-        Axis2D::Axis2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                       ome::bioformats::dimension_size_type            series,
-                       QObject                                        *parent):
+        Axis2D::Axis2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+                       ome::bioformats::dimension_size_type                    series,
+                       QObject                                                *parent):
           gl::Axis2D(reader, series, parent),
           axis_shader(new glsl::v110::GLFlatShader2D(this))
         {

@@ -41,6 +41,8 @@
 
 #include <ome/bioformats/FormatReader.h>
 
+#include <ome/compat/memory.h>
+
 #include <ome/qtwidgets/GLWindow.h>
 #include <ome/qtwidgets/gl/Image2D.h>
 #include <ome/qtwidgets/gl/Grid2D.h>
@@ -80,9 +82,9 @@ namespace ome
        * @param series the image series.
        * @param parent the parent of this object.
        */
-      GLView2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-               ome::bioformats::dimension_size_type            series,
-               QWidget                                        *parent = 0);
+      GLView2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+               ome::bioformats::dimension_size_type                    series,
+               QWidget                                                *parent = 0);
 
       /// Destructor.
       ~GLView2D();
@@ -172,7 +174,7 @@ namespace ome
        *
        * @returns the reader.
        */
-      std::shared_ptr<ome::bioformats::FormatReader>
+      ome::compat::shared_ptr<ome::bioformats::FormatReader>
       getReader();
 
       /**
@@ -451,7 +453,7 @@ namespace ome
       /// Grid to render.
       gl::Grid2D *grid;
       /// The image reader.
-      std::shared_ptr<ome::bioformats::FormatReader> reader;
+      ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
       /// The image series.
       ome::bioformats::dimension_size_type series;
     };
