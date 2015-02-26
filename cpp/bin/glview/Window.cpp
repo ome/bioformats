@@ -42,7 +42,7 @@
 #include <ome/qtwidgets/GLContainer.h>
 
 #include <ome/bioformats/FormatReader.h>
-#include <ome/bioformats/in/TIFFReader.h>
+#include <ome/bioformats/in/OMETIFFReader.h>
 
 #include <ome/compat/module.h>
 
@@ -224,7 +224,7 @@ namespace glview
     QFileInfo info(file);
     if (info.exists())
       {
-        std::shared_ptr<ome::bioformats::FormatReader> reader(std::make_shared<ome::bioformats::in::TIFFReader>());
+        std::shared_ptr<ome::bioformats::FormatReader> reader(std::make_shared<ome::bioformats::in::OMETIFFReader>());
         reader->setId(file.toStdString());
         GLView2D *newGlView = new GLView2D(reader, 0, this);
         QWidget *glContainer = new GLContainer(this, newGlView);
