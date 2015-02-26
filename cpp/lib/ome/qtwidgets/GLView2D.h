@@ -311,6 +311,8 @@ namespace ome
       void
       initialize();
 
+      using GLWindow::render;
+
       /// Render the scene with the current view settings.
       void
       render();
