@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.plugins.in.ImagePlusReader;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LibraryChecker;
@@ -161,6 +162,8 @@ public class Slicer implements PlugInFilter {
         p = new ImagePlus(title, newStacks[i]);
       }
 
+      p.setProperty(ImagePlusReader.PROP_SERIES,
+              imp.getProperty(ImagePlusReader.PROP_SERIES));
       p.setProperty("Info", imp.getProperty("Info"));
       p.setDimensions(realSizeC, realSizeZ, realSizeT);
       p.setCalibration(calibration);
