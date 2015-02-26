@@ -65,13 +65,16 @@ namespace ome
         const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_MODEL_VERSION);
       }
 
-      ome::compat::Logger OriginalMetadataAnnotation::logger = ome::compat::createLogger("MapPairs");
-
       OriginalMetadataAnnotation::OriginalMetadataAnnotation ():
         ::ome::xml::model::OMEModelObject(),
         XMLAnnotation(),
         metadata()
       {
+#ifdef OME_HAVE_BOOST_LOG
+        logger.add_attribute("ClassName", logging::attributes::constant<std::string>("OriginalMetadataAnnotation"));
+#else // ! OME_HAVE_BOOST_LOG
+        logger.className("OriginalMetadataAnnotation");
+#endif // OME_HAVE_BOOST_LOG
       }
 
       OriginalMetadataAnnotation::OriginalMetadataAnnotation (const OriginalMetadataAnnotation& copy):

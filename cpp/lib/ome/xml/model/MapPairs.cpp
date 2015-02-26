@@ -61,6 +61,11 @@ namespace ome
         detail::OMEModelObject(),
         map()
       {
+#ifdef OME_HAVE_BOOST_LOG
+        logger.add_attribute("ClassName", logging::attributes::constant<std::string>("MapPairs"));
+#else // ! OME_HAVE_BOOST_LOG
+        logger.className("MapPairs");
+#endif // OME_HAVE_BOOST_LOG
       }
 
       MapPairs::MapPairs (const MapPairs& copy):

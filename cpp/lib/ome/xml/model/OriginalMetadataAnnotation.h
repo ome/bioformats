@@ -73,7 +73,7 @@ namespace ome
 
       private:
         /// Message logger.
-        static ome::compat::Logger logger;
+        ome::compat::Logger logger;
         /// Original metadata key-value pair.
         metadata_type metadata;
 

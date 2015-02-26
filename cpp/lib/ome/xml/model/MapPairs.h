@@ -75,7 +75,7 @@ namespace ome
 
       private:
         /// Message logger.
-        static ome::compat::Logger logger;
+        ome::compat::Logger logger;
         /// Key-value pair mappings.
         map_type map;
 

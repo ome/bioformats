@@ -154,13 +154,11 @@ namespace ome
 {% end has instance type %}\
 {% end for %}\
 
-      ome::compat::Logger ${klass.name}::logger = ome::compat::createLogger("${klass.name}");
-
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
       private:
         /// Message logger.
-        static ome::compat::Logger logger;
+        ome::compat::Logger logger;
 
 {% if len(klass.instanceVariables) > 0 %}\
 {% for prop in klass.instanceVariables %}\
