@@ -356,7 +356,8 @@ latex_show_urls = 'footnote'
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'OMERO', title, author, 1)
+    ('developers/cpp', 'bf-cpp-overview', 'C++ implementation overview', author, 7),
+    ('developers/cpp-conversion', 'bf-cpp-conversion', 'C++ conventions for Java programmers switching to the C++ implementation', author, 7)
 ]
 
 # If true, show URL addresses after external links.
