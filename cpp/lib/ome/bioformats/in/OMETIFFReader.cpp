@@ -1225,7 +1225,7 @@ namespace ome
                   std::string channelName(meta.getChannelName(series, 0));
                   ome::compat::shared_ptr<CoreMetadata> coreMeta(core.at(series));
                   if (meta.getTiffDataCount(series) > 0 &&
-                      files.find("__omero_export") == files.end() &&
+                      files.find("__omero_export") != files.end() &&
                       coreMeta)
                     coreMeta->dimensionOrder = ome::xml::model::enums::DimensionOrder("XYZCT");
                 }
