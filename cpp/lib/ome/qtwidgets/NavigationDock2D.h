@@ -59,7 +59,10 @@ namespace ome
   {
 
     /**
-     * 2D GL view of an image with axes and gridlines.
+     * 2D dock widget for plane nagivation.
+     *
+     * Sliders will be created for each usable dimension, including
+     * for Modulo annotations.
      */
     class NavigationDock2D : public QDockWidget
     {
@@ -79,36 +82,90 @@ namespace ome
       /// Destructor.
       ~NavigationDock2D();
 
+      /**
+       * Set reader, including current series and plane position.
+       *
+       * @param reader the image reader.
+       * @param series the image series.
+       * @param plane the image plane.
+       */
       void
       setReader(std::shared_ptr<ome::bioformats::FormatReader> reader,
                 ome::bioformats::dimension_size_type           series = 0,
                 ome::bioformats::dimension_size_type           plane = 0);
 
+      /**
+       * Get the current plane for the series.
+       *
+       * @returns the current plane.
+       */
       ome::bioformats::dimension_size_type
       plane() const;
 
     public slots:
-      void setPlane(ome::bioformats::dimension_size_type plane);
+      /**
+       * Set the current plane for the series.
+       *
+       * @param plane the image plane.
+       */
+      void
+      setPlane(ome::bioformats::dimension_size_type plane);
 
     signals:
-      void planeChanged(ome::bioformats::dimension_size_type plane);
+      /**
+       * Signal change of plane.
+       *
+       * @param plane the new image plane.
+       */
+      void
+      planeChanged(ome::bioformats::dimension_size_type plane);
 
     private slots:
-      void sliderChangedPlane(int plane);
+      /**
+       * Update the current plane number (from slider).
+       *
+       * @param plane the new image plane.
+       */
+      void
+      sliderChangedPlane(int plane);
 
-      void spinBoxChangedPlane(int plane);
+      /**
+       * Update the current plane number (from spinbox).
+       *
+       * @param plane the new image plane.
+       */
+      void
+      spinBoxChangedPlane(int plane);
 
-      void sliderChangedDimension(int dim);
+      /**
+       * Update the current plane number (from dimension slider).
+       *
+       * @param dim the index of the dimension slider.
+       */
+      void
+      sliderChangedDimension(int dim);
 
-      void spinBoxChangedDimension(int dim);
+      /**
+       * Update the current plane number (from dimension spinbox).
+       *
+       * @param dim the index of the dimension spinbox.
+       */
+      void
+      spinBoxChangedDimension(int dim);
 
     private:
+      /// The image reader.
       std::shared_ptr<ome::bioformats::FormatReader> reader;
+      /// The image series.
       ome::bioformats::dimension_size_type series;
+      /// The image plane.
       ome::bioformats::dimension_size_type currentPlane;
 
+      /// Slider labels [NZTCmZmTmC].
       QLabel *labels[7];
+      /// Sliders [NZTCmZmTmC].
       QSlider *sliders[7];
+      /// Numeric entries [NZTCmZmTmC].
       QSpinBox *spinboxes[7];
     };
 

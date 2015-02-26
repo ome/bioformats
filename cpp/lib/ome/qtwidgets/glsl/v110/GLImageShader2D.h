@@ -183,7 +183,7 @@ namespace ome
            * integer types where the bits per sample is the same as
            * the storage size, set to 1.0.
            *
-           * @param max the RGB channel correction multipliers.
+           * @param corr the RGB channel correction multipliers.
            */
           void
           setCorrection(const glm::vec3& corr);

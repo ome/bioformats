@@ -110,7 +110,7 @@ namespace ome
          *
          * @param xlim the x axis limits (range).
          * @param ylim the y axis limits (range).
-         * @param axis shaft offset (x and y offsets from midline).
+         * @param soff shaft offset (x and y offsets from midline).
          * @param slim the axis shaft width (min and max from midline).
          */
         virtual

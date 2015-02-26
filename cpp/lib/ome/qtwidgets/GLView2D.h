@@ -388,19 +388,39 @@ namespace ome
         /// Current projection.
         glm::mat4 projection;
 
-        // Convert linear signed zoom value to a factor.
+        /**
+         * Get zoom factor.
+         *
+         * Convert linear signed zoom value to a factor (to the 10th
+         * power of the zoom value).
+         *
+         * @returns the zoom factor.
+         */
         float
         zoomfactor() const
         {
           return std::pow(10.0f, static_cast<float>(zoom)/1024.0); /// @todo remove fixed size.
         }
 
+        /**
+         * Get rotation factor.
+         *
+         * @returns the rotation factor (in radians).
+         */
         float
         rotation() const
         {
           return glm::radians(-static_cast<float>(zRot)/16.0f);
         }
 
+        /**
+         * Get modelview projection matrix.
+         *
+         * The separate model, view and projection matrices are
+         * combined to form a single matrix.
+         *
+         * @returns the modelview projection matrix.
+         */
         glm::mat4
         mvp() const
         {
