@@ -90,7 +90,7 @@ rst_prolog = """
     It is provided for the benefit of developers and should be considered a work in
     progress until the public release.** Please refer to the documentation for the
     `latest Bio-Formats 5.0.x version
-    <http://www.openmicroscopy.org/site/support/bio-formats5/>`_ or the
+    <http://www.openmicroscopy.org/site/support/bio-formats5.0/>`_ or the
     :legacy_plone:`previous versions <>` page to find documentation for the
     version you are using.
 """
@@ -162,7 +162,7 @@ downloads_root = 'http://downloads.openmicroscopy.org'
 if "OMERODOC_URI" in os.environ and len(os.environ.get('OMERODOC_URI')) > 0:
     omerodoc_uri = os.environ.get('OMERODOC_URI')
 else:
-    omerodoc_uri = oo_site_root + '/support/omero5'
+    omerodoc_uri = oo_site_root + '/support/omero5.1'
 
 extlinks = {
     # Trac links
