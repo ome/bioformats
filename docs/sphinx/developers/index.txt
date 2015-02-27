@@ -41,21 +41,29 @@ Using Bio-Formats as a Java library
     matlab-dev
     python-dev
 
-Interfacing from non-Java code
-==============================
+Interfacing with the Java library from non-Java code
+====================================================
 
 .. toctree::
     :maxdepth: 1
     :titlesonly:
 
     non-java-code
-    c-bindings
-    buildBF-CPP
-    BF-CPP-windows
-    BF-CPP-macosx
-    BF-CPP-linux
-    cpp
-    cpp-conversion
+    jace/overview
+    jace/build
+    jace/build-windows
+    jace/build-macosx
+    jace/build-linux
+
+Using Bio-Formats as a native C++ library
+=========================================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    cpp/overview
+    cpp/conversion
 
 .. _bfapplications:
 
