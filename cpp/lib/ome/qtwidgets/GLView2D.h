@@ -403,7 +403,7 @@ namespace ome
         float
         zoomfactor() const
         {
-          return std::pow(10.0f, static_cast<float>(zoom)/1024.0); /// @todo remove fixed size.
+          return std::pow(10.0f, static_cast<float>(zoom)/1024.0f); /// @todo remove fixed size.
         }
 
         /**

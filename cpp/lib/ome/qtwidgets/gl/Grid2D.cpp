@@ -168,8 +168,8 @@ namespace ome
         // Grid lines at increasing level of detail
         for (int i = 0; i < 3; ++i)
           {
-            float gmajor = std::pow(10, static_cast<float>(lmajor-i));
-            uint32_t mf = static_cast<uint32_t>(std::pow(10, static_cast<float>(i-1)));
+            float gmajor = std::pow(10.0f, static_cast<float>(lmajor-i));
+            uint32_t mf = static_cast<uint32_t>(std::pow(10.0f, static_cast<float>(i-1)));
             for (uint32_t j = 0; j < static_cast<uint32_t>((xmax-xmin)/gmajor)+1; ++j)
               {
                 if (mf <= 1 || j % mf)
