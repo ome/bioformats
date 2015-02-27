@@ -12,6 +12,7 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/global.xml"/>
 
   <property name="sphinx.build" value="sphinx-build"/>
+  <property name="sphinx.warnopts" value=""/>
   <property name="sphinx.opts" value=""/>
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
@@ -34,6 +35,7 @@ Type "ant -p" for a list of targets.
       <arg value="-b"/>
       <arg value="html"/>
       <arg line="${sphinx.opts}"/>
+      <arg line="${sphinx.warnopts}"/>
       <arg value="."/>
       <arg value="${sphinx.builddir}/html"/>
     </exec>
@@ -106,6 +108,7 @@ Type "ant -p" for a list of targets.
       <arg value="-b"/>
       <arg value="latex"/>
       <arg line="${sphinx.opts}"/>
+      <arg line="${sphinx.warnopts}"/>
       <arg value="."/>
       <arg value="${sphinx.builddir}/latex"/>
     </exec>
@@ -133,6 +136,7 @@ Type "ant -p" for a list of targets.
       <arg value="-b"/>
       <arg value="linkcheck"/>
       <arg line="${sphinx.opts}"/>
+      <arg line="${sphinx.warnopts}"/>
       <arg value="."/>
       <arg value="${sphinx.builddir}/linkcheck"/>
     </exec>
