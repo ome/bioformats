@@ -42,7 +42,6 @@
 #include <string>
 #include <utility>
 
-#include <ome/compat/log.h>
 #include <ome/compat/memory.h>
 
 #include <ome/xerces/dom/Document.h>
@@ -72,8 +71,6 @@ namespace ome
         typedef std::pair<std::string, std::string> metadata_type;
 
       private:
-        /// Message logger.
-        ome::compat::Logger logger;
         /// Original metadata key-value pair.
         metadata_type metadata;
 

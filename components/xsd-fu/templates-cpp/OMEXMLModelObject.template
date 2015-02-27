@@ -157,9 +157,6 @@ namespace ome
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
       private:
-        /// Message logger.
-        ome::compat::Logger logger;
-
 {% if len(klass.instanceVariables) > 0 %}\
 {% for prop in klass.instanceVariables %}\
 {% if prop[3] is not None %}\
