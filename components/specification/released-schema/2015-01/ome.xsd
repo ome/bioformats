@@ -33,7 +33,7 @@
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	version="1"
+	version="2"
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01/BinaryFile.xsd"/>
@@ -1687,7 +1687,7 @@
 			<xsd:enumeration value =  "aPa"><xsd:annotation><xsd:documentation>The pressure unit is  atto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "zPa"><xsd:annotation><xsd:documentation>The pressure unit is zepto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "yPa"><xsd:annotation><xsd:documentation>The pressure unit is yocto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-<!-- Add bar? -->
+			<xsd:enumeration value =   "bar"><xsd:annotation><xsd:documentation>The pressure unit is       bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Mbar"><xsd:annotation><xsd:documentation>The pressure unit is  mega bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "kbar"><xsd:annotation><xsd:documentation>The pressure unit is  kilo bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "dbar"><xsd:annotation><xsd:documentation>The pressure unit is  deci bar.</xsd:documentation></xsd:annotation></xsd:enumeration>

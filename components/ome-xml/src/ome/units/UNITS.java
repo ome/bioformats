@@ -69,7 +69,6 @@ public final class UNITS
   public static final ome.units.unit.Unit<Length>            INCH    = METRE.multiply(0.0254).setSymbol("in");
   public static final ome.units.unit.Unit<Power>             WATT    = ome.units.unit.Unit.<Power>CreateBaseUnit("SI.WATT", "W");
   public static final ome.units.unit.Unit<Pressure>          PASCAL  = ome.units.unit.Unit.<Pressure>CreateBaseUnit("SI.PASCAL", "Pa");
-  public static final ome.units.unit.Unit<Pressure>          BAR     = PASCAL.multiply(100000).setSymbol("bar");
   public static final ome.units.unit.Unit<Temperature>       KELVIN  = ome.units.unit.Unit.<Temperature>CreateBaseUnit("SI.KELVIN", "K");
   public static final ome.units.unit.Unit<Time>              SECOND  = ome.units.unit.Unit.<Time>CreateBaseUnit("SI.SECOND", "s");
 
@@ -200,6 +199,7 @@ public final class UNITS
   public static final ome.units.unit.Unit<Pressure> APA =     ATTO(PASCAL);
   public static final ome.units.unit.Unit<Pressure> ZPA =     ZEPTO(PASCAL);
   public static final ome.units.unit.Unit<Pressure> YPA =     YOCTO(PASCAL);
+  public static final ome.units.unit.Unit<Pressure> BAR     = PASCAL.multiply(100000).setSymbol("bar");
   public static final ome.units.unit.Unit<Pressure> MEGABAR = MEGA(BAR);
   public static final ome.units.unit.Unit<Pressure> KBAR =    KILO(BAR);
   public static final ome.units.unit.Unit<Pressure> DBAR =    DECI(BAR);
