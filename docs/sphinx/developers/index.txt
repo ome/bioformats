@@ -64,6 +64,7 @@ Using Bio-Formats as a native C++ library
 
     cpp/overview
     cpp/conversion
+    cpp/showinf
 
 .. _bfapplications:
 

@@ -1,0 +1,104 @@
+showinf
+=======
+
+Synopsis
+--------
+
+**showinf** [*options*] *file*
+
+Description
+-----------
+
+:program:`showinf` will display the metadata for an image file,
+including the :emphasis:`core` and :emphasis:`original` metadata, and
+can optionally display and validate the :emphasis:`OME-XML` metadata.
+
+.. option:: -h, --help
+
+  Show help options.
+
+.. option:: -V, --version
+
+  Print version information.
+
+.. option:: --debug
+
+  Show debug output.
+
+.. option:: -q, --quiet
+
+  Show less output.
+
+.. option:: -v, --verbose
+
+  Show more output.
+
+.. option:: --format=reader
+
+  Use the specified format reader (UNIMPLEMENTED).
+
+.. option:: --flat=0|1
+
+  Flatten subresolutions (off|on).
+
+.. option:: --merge=0|1
+
+  Combine separate channels into an RGB image (off|on) (UNIMPLEMENTED).
+
+.. option:: --group=0|1
+
+  Treat files in multi-file datasets as a single dataset (off|on).
+
+.. option:: --stitch=0|1
+
+  Group files with similar names (off|on) (UNIMPLEMENTED).
+
+.. option:: --separate=0|1
+
+  Separate an RGB image into separate channels (off|on) (UNIMPLEMENTED).
+
+.. option:: series=n
+
+  Use the specified series (UNIMPLEMENTED).
+
+.. option:: resolution=n
+
+  Use the specified sub-resolution (only if not flattened with --flat)
+  (UNIMPLEMENTED).
+
+.. option:: --swapin=0|1
+
+  Swap the dimension input order (off|on) (UNIMPLEMENTED).
+
+.. option:: --swapout=0|1
+
+  Swap the dimension output order (off|on) (UNIMPLEMENTED).
+
+.. option:: --core=0|1
+
+  Display core metadata (off|on).
+
+.. option:: --format=0|1
+
+  Display format-specific global and series metadata (off|on) (note
+  clash with other --format option).
+
+.. option:: --filter=0|1
+
+  Filter format-specific global and series metadata (off|on).
+
+.. option:: --omexml=0|1
+
+  Display OME-XML metadata (off|on).
+
+.. option:: --validate=0|1
+
+  Validate OME-XML metadata (off|on).
+
+.. option:: --sa=0|1
+
+  Display structured annotations (off|on) (UNIMPLEMENTED).
+
+.. option:: --used=0|1
+
+  Display used files (off|on).
