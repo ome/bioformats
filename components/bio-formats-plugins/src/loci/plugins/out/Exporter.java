@@ -200,7 +200,6 @@ public class Exporter {
                 outfile = new File(p, n).getAbsolutePath();
                 if (Recorder.record) Recorder.recordPath("outputfile", outfile);
                 IJ.log("exporter outputfile "+outfile);
-                
             } catch (Exception e) {
                 //fall back to window mode.
             } finally {
