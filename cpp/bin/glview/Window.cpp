@@ -172,13 +172,21 @@ namespace glview
 
     QDockWidget *dock = new QDockWidget(tr("Rendering"), this);
     dock->setAllowedAreas(Qt::AllDockWidgetAreas);
-    QLayout *mainLayout = new QVBoxLayout;
+
+    QGridLayout *layout = new QGridLayout;
+
+    QLabel *minLabel = new QLabel(tr("Min"));
+    QLabel *maxLabel = new QLabel(tr("Max"));
     minSlider=createRangeSlider();
     maxSlider=createRangeSlider();
-    mainLayout->addWidget(minSlider);
-    mainLayout->addWidget(maxSlider);
+
+    layout->addWidget(minLabel, 0, 0);
+    layout->addWidget(minSlider, 0, 1);
+    layout->addWidget(maxLabel, 1, 0);
+    layout->addWidget(maxSlider, 1, 1);
+
     QWidget *mainWidget = new QWidget(this);
-    mainWidget->setLayout(mainLayout);
+    mainWidget->setLayout(layout);
     dock->setWidget(mainWidget);
     addDockWidget(Qt::BottomDockWidgetArea, dock);
 
