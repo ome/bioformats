@@ -140,7 +140,6 @@ public class Exporter {
         String compression = null;
 
         Boolean windowless = Boolean.FALSE;
-        IJ.log(plugin.arg);
         if (plugin.arg != null) {
             outfile = Macro.getValue(plugin.arg, "outfile", null);
 
@@ -178,10 +177,11 @@ public class Exporter {
         }
         //create a temporary file if window less
         if (windowless && (outfile == null || outfile.length() == 0)) {
+            File tmp = null;
             try {
                 String name = removeExtension(imp.getTitle());
                 String n = name+ ".ome.tif";
-                File tmp = File.createTempFile(name, ".ome.tif");
+                tmp = File.createTempFile(name, ".ome.tif");
                 File p = tmp.getParentFile();
                 File[] list = p.listFiles();
                 //make sure we delete a previous tmp file with same name if any
@@ -199,8 +199,12 @@ public class Exporter {
                 }
                 outfile = new File(p, n).getAbsolutePath();
                 if (Recorder.record) Recorder.recordPath("outputfile", outfile);
+                IJ.log("exporter outputfile "+outfile);
+                
             } catch (Exception e) {
                 //fall back to window mode.
+            } finally {
+                if (tmp != null) tmp.delete();
             }
         }
         File f = null;
