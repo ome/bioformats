@@ -39,7 +39,7 @@
 #include <ome/qtwidgets/gl/Grid2D.h>
 #include <ome/qtwidgets/gl/Util.h>
 
-#include <array>
+#include <ome/compat/array.h>
 #include <cmath>
 #include <iostream>
 
