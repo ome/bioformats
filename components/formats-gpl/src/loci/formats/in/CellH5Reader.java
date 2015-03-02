@@ -27,7 +27,7 @@ package loci.formats.in;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
@@ -96,7 +96,7 @@ public class CellH5Reader extends FormatReader {
           this.pathToImageData = pathToPosition + CellH5Constants.IMAGE_PATH;
           this.pathToSegmentationData = pathToPosition + CellH5Constants.SEGMENTATION_PATH;
 
-          System.out.println(pathToImageData);
+          LOGGER.trace(pathToImageData);
       }
 
       public String toString() {
@@ -109,14 +109,14 @@ public class CellH5Reader extends FormatReader {
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private double minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
-  private JHDFService jhdf;
+  private transient JHDFService jhdf;
 
   private MetadataStore store;
   private int lastChannel = 0;
 
-  private List<CellH5Coordinate> CellH5PositionList = new LinkedList<CellH5Coordinate>();
-  private List<String> CellH5PathsToImageData = new LinkedList<String>();
-  private List<String> cellObjectNames = new LinkedList<String>();
+  private List<CellH5Coordinate> CellH5PositionList = new ArrayList<CellH5Coordinate>();
+  private List<String> CellH5PathsToImageData = new ArrayList<String>();
+  private List<String> cellObjectNames = new ArrayList<String>();
 
   // Default colors for bounding box colors if no classification present
   private final int[][] COLORS = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255},
@@ -300,6 +300,33 @@ public class CellH5Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    initializeJHDFService(id);
+
+    parseStructure();
+    // The ImageJ RoiManager can not distinguish ROIs from different
+    // Series. This is why they only will be loaded if the CellH5 contains two
+    // image / series assuming that the first is the image and 2nd the labels
+    if (seriesCount <= 2 &&
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+    {
+        parseROIs(0);
+    }
+  }
+
+  /* @see loci.formats.FormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    try {
+      initializeJHDFService(currentId);
+    }
+    catch (MissingLibraryException e) {
+      throw new IOException(e);
+    }
+  }
+
+  // -- Helper methods --
+
+  private void initializeJHDFService(String id) throws IOException, MissingLibraryException {
     try {
       ServiceFactory factory = new ServiceFactory();
       jhdf = factory.getInstance(JHDFService.class);
@@ -307,17 +334,7 @@ public class CellH5Reader extends FormatReader {
     } catch (DependencyException e) {
       throw new MissingLibraryException(JHDFServiceImpl.NO_JHDF_MSG, e);
     }
-
-    parseStructure();
-    // The ImageJ RoiManager can not distinguish ROIs from different
-    // Series. This is why they only will be loaded if the CellH5 contains two
-    // image / series assuming that the first is the image and 2nd the labels
-    if (seriesCount <= 2) {
-        parseROIs(0);
-    }
   }
-
-  // -- Helper methods --
 
   private Object getImageData(int no, int y, int height) throws FormatException
   {
@@ -391,73 +408,69 @@ public class CellH5Reader extends FormatReader {
       throw new FormatException("No series found in file...");
     }
 
-    List<String> seriesNames = new LinkedList<String>();
+    List<String> seriesNames = new ArrayList<String>();
 
-    int s = 0;
     for (CellH5Coordinate coord : CellH5PositionList) {
       if (jhdf.exists(coord.pathToImageData)) {
-        CoreMetadata core_s = new CoreMetadata();
-        core.add(core_s);
-        setSeries(s);
+        CoreMetadata m = new CoreMetadata();
+        core.add(m);
+        setSeries(seriesCount);
 
         LOGGER.debug(coord.pathToImageData);
         int[] ctzyx = jhdf.getShape(coord.pathToImageData);
-        core.get(s).sizeC = ctzyx[0];
-        core.get(s).sizeT = ctzyx[1];
-        core.get(s).sizeZ = ctzyx[2];
-        core.get(s).sizeY = ctzyx[3];
-        core.get(s).sizeX = ctzyx[4];
-        core.get(s).resolutionCount = 1;
-        core.get(s).thumbnail = false;
-        core.get(s).imageCount = getSizeC() * getSizeT() * getSizeZ();
-        core.get(s).dimensionOrder = "XYZTC";
-        core.get(s).rgb = false;
-        core.get(s).thumbSizeX = 128;
-        core.get(s).thumbSizeY = 128;
-        core.get(s).orderCertain = false;
-        core.get(s).littleEndian = true;
-        core.get(s).interleaved = false;
-        core.get(s).indexed = true;
-        core.get(s).pixelType = FormatTools.UINT8;
+        m.sizeC = ctzyx[0];
+        m.sizeT = ctzyx[1];
+        m.sizeZ = ctzyx[2];
+        m.sizeY = ctzyx[3];
+        m.sizeX = ctzyx[4];
+        m.resolutionCount = 1;
+        m.thumbnail = false;
+        m.imageCount = getSizeC() * getSizeT() * getSizeZ();
+        m.dimensionOrder = "XYZTC";
+        m.rgb = false;
+        m.thumbSizeX = 128;
+        m.thumbSizeY = 128;
+        m.orderCertain = false;
+        m.littleEndian = true;
+        m.interleaved = false;
+        m.indexed = true;
+        m.pixelType = FormatTools.UINT8;
 
         seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
         CellH5PathsToImageData.add(coord.pathToImageData);
-        s++;
         seriesCount++;
       }
     }
 
-    s = seriesCount;
     for (CellH5Coordinate coord : CellH5PositionList) {
       if (jhdf.exists(coord.pathToSegmentationData)) {
-        CoreMetadata core_s = new CoreMetadata();
-        core.add(core_s);
-        setSeries(s);
+        CoreMetadata m = new CoreMetadata();
+        core.add(m);
+        setSeries(seriesCount);
 
         LOGGER.debug(coord.pathToSegmentationData);
         int[] ctzyx = jhdf.getShape(coord.pathToSegmentationData);
-        core.get(s).sizeC = ctzyx[0];
-        core.get(s).sizeT = ctzyx[1];
-        core.get(s).sizeZ = ctzyx[2];
-        core.get(s).sizeY = ctzyx[3];
-        core.get(s).sizeX = ctzyx[4];
-        core.get(s).resolutionCount = 1;
-        core.get(s).thumbnail = false;
-        core.get(s).imageCount = getSizeC() * getSizeT() * getSizeZ();
-        core.get(s).dimensionOrder = "XYZTC";
-        core.get(s).rgb = false;
-        core.get(s).thumbSizeX = 128;
-        core.get(s).thumbSizeY = 128;
-        core.get(s).orderCertain = false;
-        core.get(s).littleEndian = true;
-        core.get(s).interleaved = false;
-        core.get(s).indexed = true;
-        core.get(s).pixelType = FormatTools.UINT16;
+        m.sizeC = ctzyx[0];
+        m.sizeT = ctzyx[1];
+        m.sizeZ = ctzyx[2];
+        m.sizeY = ctzyx[3];
+        m.sizeX = ctzyx[4];
+        m.resolutionCount = 1;
+        m.thumbnail = false;
+        m.imageCount = getSizeC() * getSizeT() * getSizeZ();
+        m.dimensionOrder = "XYZTC";
+        m.rgb = false;
+        m.thumbSizeX = 128;
+        m.thumbSizeY = 128;
+        m.orderCertain = false;
+        m.littleEndian = true;
+        m.interleaved = false;
+        m.indexed = true;
+        m.pixelType = FormatTools.UINT16;
 
         seriesNames.add(String.format("P_%s, W_%s_%s label image",
           coord.plate, coord.well, coord.site));
         CellH5PathsToImageData.add(coord.pathToSegmentationData);
-        s++;
         seriesCount++;
       }
     }
@@ -469,10 +482,8 @@ public class CellH5Reader extends FormatReader {
     store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    s = 0;
-    for (String name : seriesNames) {
-      store.setImageName(name, s);
-      s++;
+    for (int s=0; s<seriesNames.size(); s++) {
+      store.setImageName(seriesNames.get(s), s);
     }
     setSeries(0);
     parseCellObjects();
@@ -486,13 +497,15 @@ public class CellH5Reader extends FormatReader {
         rootObject + objectName)[0].get("type");
       if (objectType.equals("region")) {
         cellObjectNames.add(objectName);
-        LOGGER.debug(String.format("CellH5Reader: Found cell object %s", objectName));
+        LOGGER.debug("CellH5Reader: Found cell object {}", objectName);
       }
     }
   }
 
   private int getChannelIndexOfCellObjectName(String cellObjectName) {
-    HDF5CompoundDataMap[] allImageRegions = jhdf.readCompoundArrayDataMap(CellH5Constants.DEFINITION + CellH5Constants.SEGMENTATION_PATH);
+    HDF5CompoundDataMap[] allImageRegions =
+      jhdf.readCompoundArrayDataMap(
+      CellH5Constants.DEFINITION + CellH5Constants.SEGMENTATION_PATH);
     for (int regionIdx = 0; regionIdx < allImageRegions.length; regionIdx++) {
       String regionName = (String) allImageRegions[regionIdx].get("region_name");
       Integer channelIdx = (Integer) allImageRegions[regionIdx].get("channel_idx");
@@ -503,24 +516,23 @@ public class CellH5Reader extends FormatReader {
     return -1;
   }
 
-  private static int[] hex2Rgb(String colorStr) {
-    return new int[]{
-      Integer.valueOf(colorStr.substring(1, 3), 16),
-      Integer.valueOf(colorStr.substring(3, 5), 16),
-      Integer.valueOf(colorStr.substring(5, 7), 16)};
+  private static Color hex2Rgb(String colorStr) {
+    int red = Integer.parseInt(colorStr.substring(1, 3), 16);
+    int green = Integer.parseInt(colorStr.substring(3, 5), 16);
+    int blue = Integer.parseInt(colorStr.substring(5, 7), 16);
+    return new Color(red, green, blue, 0xff);
   }
 
   private void parseROIs(int s) {
     int objectIdx = 0;
-    List<int[]> classColors = new LinkedList<int[]>();
+    List<Color> classColors = new ArrayList<Color>();
     int roiIndexOffset = 0;
 
     CellH5Coordinate coord = CellH5PositionList.get(0);
 
     for (String cellObjectName : cellObjectNames) {
-      LOGGER.info(
-        String.format("Parse segmentation ROIs for cell object %s : %d",
-        cellObjectName, objectIdx));
+      LOGGER.info("Parse segmentation ROIs for cell object {} : {}",
+        cellObjectName, objectIdx);
       String featureName = CellH5Constants.FEATURE + cellObjectName + "/";
       String pathToBoundingBox = coord.pathToPosition +
         featureName + CellH5Constants.BBOX;
@@ -546,7 +558,7 @@ public class CellH5Reader extends FormatReader {
         times = jhdf.readCompoundArrayDataMap(
           coord.pathToPosition + CellH5Constants.OBJECT + cellObjectName);
         int roiChannel = getChannelIndexOfCellObjectName(cellObjectName);
-        int roiZSlice = (Integer) 0;
+        int roiZSlice = 0;
 
         for (int roiIndex = 0; roiIndex < bbox.length; roiIndex++) {
           int roiManagerRoiIndex = roiIndex + roiIndexOffset;
@@ -564,28 +576,29 @@ public class CellH5Reader extends FormatReader {
           store.setROIID(roiID, roiManagerRoiIndex);
           store.setImageROIRef(roiID, s, roiManagerRoiIndex);
 
-          store.setRectangleX((double) left , roiManagerRoiIndex, 0);
-          store.setRectangleY((double) top , roiManagerRoiIndex, 0);
-          store.setRectangleWidth((double) width , roiManagerRoiIndex, 0);
-          store.setRectangleHeight((double) height , roiManagerRoiIndex, 0);
+          store.setROIName(
+            cellObjectName + " " + objectLabelId, roiManagerRoiIndex);
+
+          String shapeID =
+            MetadataTools.createLSID("Shape", roiManagerRoiIndex, 0);
+          store.setRectangleID(shapeID, roiManagerRoiIndex, 0);
+
+          store.setRectangleX((double) left, roiManagerRoiIndex, 0);
+          store.setRectangleY((double) top, roiManagerRoiIndex, 0);
+          store.setRectangleWidth((double) width, roiManagerRoiIndex, 0);
+          store.setRectangleHeight((double) height, roiManagerRoiIndex, 0);
 
           store.setRectangleTheT(
-            new NonNegativeInteger(roiTime + 1), roiManagerRoiIndex, 0);
+            new NonNegativeInteger(roiTime), roiManagerRoiIndex, 0);
           store.setRectangleTheC(
-            new NonNegativeInteger(roiChannel + 1), roiManagerRoiIndex, 0);
+            new NonNegativeInteger(roiChannel), roiManagerRoiIndex, 0);
           store.setRectangleTheZ(
-            new NonNegativeInteger(roiZSlice + 1), roiManagerRoiIndex, 0);
-          store.setROIName(cellObjectName + " " + String.valueOf(objectLabelId),
-            roiManagerRoiIndex);
-          store.setRectangleID(
-            cellObjectName + "::" + String.valueOf(objectLabelId),
-            roiManagerRoiIndex, 0);
+            new NonNegativeInteger(roiZSlice), roiManagerRoiIndex, 0);
 
           Color strokeColor;
           if (hasClassification) {
             int classLabelIDx = (Integer) classes[roiIndex].get("label_idx");
-            int[] rgb = classColors.get(classLabelIDx);
-            strokeColor = new Color(rgb[0], rgb[1], rgb[2], 0xff);
+            strokeColor = classColors.get(classLabelIDx);
           } else {
             strokeColor = new Color(COLORS[objectIdx][0],
               COLORS[objectIdx][1], COLORS[objectIdx][2], 0xff);
