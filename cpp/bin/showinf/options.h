@@ -47,22 +47,10 @@
 
 #include <ome/bioformats/Types.h>
 
+#include <ome/xml/model/enums/DimensionOrder.h>
+
 namespace showinf
 {
-
-  /*      -nocore: do not output core metadata */
-  /*      -nometa: do not parse format-specific metadata table */
-  /*    -nofilter: do not filter metadata fields */
-  /*     -nogroup: force multi-file datasets to be read as individual files */
-  /*      -stitch: stitch files with similar names */
-  /*      -omexml: populate OME-XML metadata */
-  /*      -noflat: do not flatten subresolutions */
-  /*        -swap: override the default input dimension order */
-  /*     -shuffle: override the default output dimension order */
-  /*         -map: specify file on disk to which name should be mapped */
-  /*     -novalid: do not perform validation of OME-XML */
-  /* -omexml-only: only output the generated OME-XML */
-  /*      -no-sas: do not output OME-XML StructuredAnnotation elements */
 
   /**
    * showinf command-line options.
@@ -108,7 +96,7 @@ namespace showinf
     messageVerbosity verbosity;
 
     bool showcore;
-    bool showformat;
+    bool showorig;
     bool filter;
     bool showomexml;
     bool validate;
@@ -124,8 +112,10 @@ namespace showinf
 
     std::string format;
     std::vector<std::string> files;
-    std::string swapin;
-    std::string swapout;
+    std::string inputOrderString;
+    std::string outputOrderString;
+    boost::optional<ome::xml::model::enums::DimensionOrder> inputOrder;
+    boost::optional<ome::xml::model::enums::DimensionOrder> outputOrder;
 
     /**
      * Get the visible options group.  This options group contains

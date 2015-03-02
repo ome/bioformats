@@ -37,25 +37,45 @@ can optionally display and validate the :emphasis:`OME-XML` metadata.
 
   Use the specified format reader (UNIMPLEMENTED).
 
-.. option:: --flat=0|1
+.. option:: --flat
 
-  Flatten subresolutions (off|on).
+  Flatten subresolutions.
 
-.. option:: --merge=0|1
+.. option:: --no-flat (default)
 
-  Combine separate channels into an RGB image (off|on) (UNIMPLEMENTED).
+  Do not flatten subresolutions.
 
-.. option:: --group=0|1
+.. option:: --merge
 
-  Treat files in multi-file datasets as a single dataset (off|on).
+  Combine separate channels into an RGB image (UNIMPLEMENTED).
 
-.. option:: --stitch=0|1
+.. option:: --no-merge
 
-  Group files with similar names (off|on) (UNIMPLEMENTED).
+  Do not combine separate channels into an RGB image (UNIMPLEMENTED) (default).
 
-.. option:: --separate=0|1
+.. option:: --group
 
-  Separate an RGB image into separate channels (off|on) (UNIMPLEMENTED).
+  Group files in multi-file datasets into a single dataset.
+
+.. option:: --no-group
+
+  files in multi-file datasets are not into a single dataset (default).
+
+.. option:: --stitch
+
+  Group files with similar names (UNIMPLEMENTED).
+
+.. option:: --no-stitch
+
+  Do not group files with similar names (UNIMPLEMENTED) (default).
+
+.. option:: --separate
+
+  Separate an RGB image into separate channels (UNIMPLEMENTED).
+
+.. option:: --no-separate
+
+  Do not separate an RGB image into separate channels (UNIMPLEMENTED) (default).
 
 .. option:: series=n
 
@@ -66,39 +86,67 @@ can optionally display and validate the :emphasis:`OME-XML` metadata.
   Use the specified sub-resolution (only if not flattened with --flat)
   (UNIMPLEMENTED).
 
-.. option:: --swapin=0|1
+.. option:: --input-order=XY[ZTC]
 
-  Swap the dimension input order (off|on) (UNIMPLEMENTED).
+  Override the dimension input order (UNIMPLEMENTED).
 
-.. option:: --swapout=0|1
+.. option:: --output-order=XY[ZTC]
 
-  Swap the dimension output order (off|on) (UNIMPLEMENTED).
+  Override dimension output order (UNIMPLEMENTED).
 
-.. option:: --core=0|1
+.. option:: --core
 
-  Display core metadata (off|on).
+  Display core metadata (default).
 
-.. option:: --format=0|1
+.. option:: --no-core
 
-  Display format-specific global and series metadata (off|on) (note
-  clash with other --format option).
+  Do not display core metadata.
 
-.. option:: --filter=0|1
+.. option:: --orig
 
-  Filter format-specific global and series metadata (off|on).
+  Display original format-specific global and series metadata (default).
 
-.. option:: --omexml=0|1
+.. option:: --no-orig
 
-  Display OME-XML metadata (off|on).
+  Do not display original format-specific global and series metadata.
 
-.. option:: --validate=0|1
+.. option:: --filter
 
-  Validate OME-XML metadata (off|on).
+  Filter original format-specific global and series metadata.
 
-.. option:: --sa=0|1
+.. option:: --no-filter
 
-  Display structured annotations (off|on) (UNIMPLEMENTED).
+  Do not filter original format-specific global and series metadata (default).
 
-.. option:: --used=0|1
+.. option:: --omexml
 
-  Display used files (off|on).
+  Display OME-XML metadata.
+
+.. option:: --no-omexml
+
+  Do not display OME-XML metadata (default).
+
+.. option:: --validate
+
+  Validate OME-XML metadata (default).  Note this will only have an
+  effect if :option:`--omexml` is used.
+
+.. option:: --validate
+
+  Do not validate OME-XML metadata.
+
+.. option:: --sa
+
+  Display structured annotations (default) (UNIMPLEMENTED).
+
+.. option:: --no-sa
+
+  Do not display structured annotations.
+
+.. option:: --used
+
+  Display used files (default).
+
+.. option:: --no-used
+
+  Do not display used files.
