@@ -114,6 +114,7 @@ public final class ImageConverter {
   private MinMaxCalculator minMax;
 
   private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
+  private boolean firstTile = true;
 
   // -- Constructor --
 
@@ -278,6 +279,7 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     nextOutputIndex.clear();
+    firstTile = true;
     DebugTools.enableLogging("INFO");
     boolean success = parseArgs(args);
     if (!success) {
@@ -475,6 +477,7 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
+      firstTile = true;
 
       if (!dimensionsSet) {
         width = reader.getSizeX();
@@ -618,6 +621,11 @@ public final class ImageConverter {
     }
     if (saveTileHeight > 0 && saveTileHeight <= height) {
       h = saveTileHeight;
+    }
+
+    if (firstTile) {
+      LOGGER.info("Tile size = {} x {}", w, h);
+      firstTile = false;
     }
 
     int nXTiles = width / w;
