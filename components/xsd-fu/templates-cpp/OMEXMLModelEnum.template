@@ -53,6 +53,8 @@
 
 #include <ome/compat/log.h>
 
+#include <ome/xml/model/enums/EnumerationException.h>
+
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <algorithm>
@@ -63,7 +65,6 @@
 #include <boost/format.hpp>
 
 #include <ome/xml/model/enums/${klass.langType}.h>
-#include <ome/xml/model/enums/EnumerationException.h>
 
 using boost::trim;
 using boost::format;
@@ -498,6 +499,35 @@ namespace ome
                     const ${klass.langType}& enumeration)
         {
           return os << static_cast<const std::string&>(enumeration);
+        }
+
+        /**
+         * Set ${klass.langType} from input stream.
+         *
+         * @param is the input stream.
+         * @param enumeration the ${klass.langType} to input.
+         * @returns the input stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_istream<charT,traits>&
+        operator>> (std::basic_istream<charT,traits>& is,
+                    ${klass.langType}& enumeration)
+        {
+          std::string value;
+          is >> value;
+          if (is)
+            {
+              try
+                {
+                  enumeration = ${klass.langType}(value, false);
+                }
+              catch (const EnumerationException& e)
+                {
+                  is.setstate(std::ios::failbit);
+                }
+            }
+
+          return is;
         }
 {% end %}\
 

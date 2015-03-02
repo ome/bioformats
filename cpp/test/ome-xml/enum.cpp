@@ -315,6 +315,30 @@ TEST_P(LaserTypeValue, StreamOutput)
   ASSERT_NE(os.str(), params.nameneg);
 }
 
+TEST_P(LaserTypeValue, StreamInput)
+{
+  const param_type& params = GetParam();
+
+  std::istringstream is(params.namepos);
+  enum_type e(0);
+  is >> e;
+  ASSERT_TRUE(is);
+  ASSERT_EQ(e, params.namepos);
+  ASSERT_NE(e, params.nameneg);
+}
+
+TEST_P(LaserTypeValue, StreamInputFail)
+{
+  const param_type& params = GetParam();
+
+  std::istringstream is("INVALID_ENUM_VALUE__");
+  enum_type e(0);
+  is >> e;
+  ASSERT_FALSE(is);
+  ASSERT_NE(e, params.namepos);
+  ASSERT_NE(e, params.nameneg);
+}
+
 typedef EnumValueParameters<LaserType> lts_param;
 lts_param lt_value_params[] =
   {
