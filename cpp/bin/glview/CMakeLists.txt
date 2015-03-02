@@ -34,10 +34,37 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-add_subdirectory(ome/compat)
-add_subdirectory(ome/internal)
-add_subdirectory(ome/xerces)
-add_subdirectory(ome/xml)
-add_subdirectory(ome/bioformats)
-add_subdirectory(ome/qtwidgets)
-add_subdirectory(ome/test)
+if (OME_QTOPENGL)
+
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+  include_directories(${OME_TOPLEVEL_INCLUDES}
+                      ${OPENGL_INCLUDE_DIR}
+                      ${TIFF_INCLUDE_DIR}
+                      ${GLM_INCLUDE_DIR}
+                      ${Qt5_INCLUDE_DIRS})
+
+  set(glview_SOURCES
+      glview.cpp
+      Window.cpp)
+
+  set(glview_HEADERS
+      Window.h)
+
+  add_executable(glview
+                 ${glview_SOURCES}
+                 ${glview_HEADERS}
+                 ${glview_HEADERS_MOC}
+                 ${glview_RESOURCES})
+  qt5_use_modules(glview Core Gui Widgets Svg)
+  target_link_libraries(glview ome-bioformats ome-qtwidgets)
+
+
+  install(TARGETS glview RUNTIME
+          DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+          PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                      GROUP_READ GROUP_EXECUTE
+                      WORLD_READ WORLD_EXECUTE)
+
+endif()

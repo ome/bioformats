@@ -34,10 +34,10 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-add_subdirectory(ome/compat)
-add_subdirectory(ome/internal)
-add_subdirectory(ome/xerces)
-add_subdirectory(ome/xml)
-add_subdirectory(ome/bioformats)
-add_subdirectory(ome/qtwidgets)
-add_subdirectory(ome/test)
+# Find and install all icons
+file(GLOB_RECURSE OME_ICONS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ome-*.svg")
+foreach(icon ${OME_ICONS})
+  get_filename_component(ICON_PATH ${icon} PATH)
+  install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${icon}"
+          DESTINATION "${OME_BIOFORMATS_INSTALL_FULL_ICONDIR}/${ICON_PATH}")
+endforeach(icon)

@@ -34,10 +34,12 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-add_subdirectory(ome/compat)
-add_subdirectory(ome/internal)
-add_subdirectory(ome/xerces)
-add_subdirectory(ome/xml)
-add_subdirectory(ome/bioformats)
-add_subdirectory(ome/qtwidgets)
-add_subdirectory(ome/test)
+find_package(Qt5 5.2.0 COMPONENTS Core Gui Widgets Svg)
+
+find_package(OpenGL)
+find_package(GLM)
+
+set(OME_QTOPENGL OFF)
+if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5Widgets_FOUND AND Qt5Svg_FOUND AND OPENGL_FOUND AND GLM_FOUND)
+  set(OME_QTOPENGL ON)
+endif()

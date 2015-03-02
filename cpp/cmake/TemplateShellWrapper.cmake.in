@@ -2,6 +2,7 @@
 
 set -e
 
+export BIOFORMATS_ICONDIR="@PROJECT_SOURCE_DIR@/cpp/share/icons"
 export BIOFORMATS_SCHEMADIR="@PROJECT_SOURCE_DIR@/components/specification/released-schema"
 
 exec "$@"
