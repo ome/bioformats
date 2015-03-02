@@ -103,6 +103,7 @@ include(QtGLChecks)
 include(XsdFu)
 include(GTest)
 include(Doxygen)
+include(Sphinx)
 include(HeaderTest)
 
 add_subdirectory(docs/doxygen)
