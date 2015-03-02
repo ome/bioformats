@@ -39,6 +39,8 @@
 #ifndef OME_XML_MODEL_DETAIL_OMEMODELOBJECT_H
 #define OME_XML_MODEL_DETAIL_OMEMODELOBJECT_H
 
+#include <ome/compat/log.h>
+
 #include <ome/xml/model/OMEModelObject.h>
 
 namespace ome
@@ -61,14 +63,16 @@ namespace ome
          */
         class OMEModelObject : virtual public ::ome::xml::model::OMEModelObject
         {
-        public:
+        protected:
           /// Constructor.
-          OMEModelObject ();
+          OMEModelObject (const std::string& objectType = "OMEModelObject");
 
+        public:
           /// Destructor.
           virtual
           ~OMEModelObject ();
 
+        protected:
           /**
            * Copy constructor.
            *
@@ -76,6 +80,7 @@ namespace ome
            */
           OMEModelObject (const OMEModelObject& copy);
 
+        public:
           /// @copydoc ome::xml::model::OMEModelObject::validElementName
           bool
           validElementName(const std::string& name) const = 0;
@@ -228,6 +233,8 @@ namespace ome
                                  compare_element<T>(element)) != container.end());
           }
 
+          /// Message logger.
+          ome::compat::Logger logger;
         };
 
       }

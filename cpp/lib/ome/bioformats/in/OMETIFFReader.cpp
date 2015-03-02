@@ -198,6 +198,7 @@ namespace ome
       }
 
       OMETIFFReader::OMETIFFReader():
+        logger(ome::compat::createLogger("OMETIFFReader")),
         detail::FormatReader(props),
         files(),
         tiffs(),
@@ -352,7 +353,7 @@ namespace ome
       OMETIFFReader::getDomains() const
       {
         assertId(currentId, true);
-        return getDomainCollection(hasSPW ? HCS_ONLY_DOMAINS : NON_GRAPHICS_DOMAINS); 
+        return getDomainCollection(hasSPW ? HCS_ONLY_DOMAINS : NON_GRAPHICS_DOMAINS);
       }
 
       const std::vector<boost::filesystem::path>
@@ -509,7 +510,11 @@ namespace ome
           {
             ome::compat::shared_ptr<OMETIFFMetadata> coreMeta(ome::compat::dynamic_pointer_cast<OMETIFFMetadata>(core.at(series)));
             assert(coreMeta); // Should never be null.
-            std::clog << "Image[" << series << "] {\n  id = " << meta->getImageID(series) << '\n';
+
+            BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+              << "Image[" << series << "] {";
+            BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+              << "  id = " << meta->getImageID(series);
 
             DimensionOrder order(meta->getPixelsDimensionOrder(series));
 
@@ -532,7 +537,7 @@ namespace ome
               {
                 boost::format fmt("SamplesPerPixel mismatch: OME=%1%, TIFF=%2%");
                 fmt % (samples ? *samples : 0) % tiffSamples;
-                std::clog << fmt.str() << '\n';
+                BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
 
                 samples = tiffSamples;
                 adjustedSamples = true;
@@ -560,7 +565,8 @@ namespace ome
 
             for (index_type td = 0; td < tiffDataCount; ++td)
               {
-                std::clog << "  TiffData[" << td << "] {\n";
+                BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+                  << "  TiffData[" << td << "] {";
 
                 boost::optional<NonNegativeInteger> tdIFD;
                 NonNegativeInteger numPlanes = 0;
@@ -588,7 +594,8 @@ namespace ome
                   {
                     boost::format fmt("Found invalid TiffData: Z=%1%, C=%2%, T=%3%");
                     fmt % firstZ % firstC % firstT;
-                    std::clog << fmt.str() << '\n';
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+
                     break;
                   }
 
@@ -606,7 +613,8 @@ namespace ome
                   }
                 catch (const std::exception& e)
                   {
-                    std::clog << "Ignoring null UUID object when retrieving filename.\n";
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                      << "Ignoring null UUID object when retrieving filename";
                   }
                 try
                   {
@@ -614,7 +622,8 @@ namespace ome
                   }
                 catch (const std::exception& e)
                   {
-                    std::clog << "Ignoring null UUID object when retrieving value.\n";
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                      << "Ignoring null UUID object when retrieving value";
                   }
 
                 if (!filename)
@@ -670,9 +679,10 @@ namespace ome
                     plane.certain = true;
                     plane.status = exists ? OMETIFFPlane::PRESENT : OMETIFFPlane::ABSENT;
 
-                    std::clog << "    Plane[" << no
-                              << "]: file=" << plane.id.native()
-                              << ", IFD=" << plane.ifd << '\n';
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+                      << "    Plane[" << no
+                      << "]: file=" << plane.id.native()
+                      << ", IFD=" << plane.ifd;
                   }
                 if (numPlanes == 0)
                   {
@@ -689,11 +699,13 @@ namespace ome
                         plane.ifd = previousPlane.ifd + 1;
                         plane.status = exists ? OMETIFFPlane::PRESENT : OMETIFFPlane::ABSENT;
 
-                        std::clog << "    Plane[" << no
-                                  << "]: FILLED\n";
+                        BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+                          << "    Plane[" << no
+                          << "]: FILLED";
                       }
                   }
-                std::clog << "  }\n";
+                BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+                  << "  }";
               }
 
             // Clear any unset planes.
@@ -706,8 +718,9 @@ namespace ome
                 plane->id.clear();
                 plane->ifd = 0;
 
-                std::clog << "    Plane[" << plane - coreMeta->tiffPlanes.begin()
-                          << "]: CLEARED\n";
+                BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+                  << "    Plane[" << plane - coreMeta->tiffPlanes.begin()
+                  << "]: CLEARED";
               }
 
             if (!core.at(series))
@@ -720,14 +733,16 @@ namespace ome
               {
                 OMETIFFPlane& plane(coreMeta->tiffPlanes.at(no));
 
-                std::clog << "  Verify Plane[" << no
-                          << "]: file=" << plane.id.native()
-                          << ", IFD=" << plane.ifd << '\n';
+                BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+                  << "  Verify Plane[" << no
+                  << "]: file=" << plane.id.native()
+                  << ", IFD=" << plane.ifd;
 
                 if (plane.id.empty())
                   {
-                    std::clog << "Image ID: " << meta->getImageID(series)
-                              << " missing plane #" << no << '\n';
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                      << "Image ID: " << meta->getImageID(series)
+                      << " missing plane #" << no;
 
                     // Fallback if broken.
                     dimension_size_type nIFD = tiff->directoryCount();
@@ -744,7 +759,8 @@ namespace ome
                   }
               }
 
-            std::clog << "}\n";
+            BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+              << "}";
 
             // Fill CoreMetadata.
             try
@@ -813,7 +829,8 @@ namespace ome
                       {
                         boost::format fmt("BitsPerPixel out of range: OME=%1%, MAX=%2%");
                         fmt % bpp % coreMeta->bitsPerPixel;
-                        std::clog << fmt.str() << '\n';
+
+                        BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                       }
                   }
                 catch (const std::exception&)
@@ -831,23 +848,27 @@ namespace ome
                   {
                     boost::format fmt("SizeX mismatch: OME=%1%, TIFF=%2%");
                     fmt % coreMeta->sizeX % tiffWidth;
-                    std::clog << fmt.str() << '\n';
+
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                   }
                 if (coreMeta->sizeY != tiffHeight)
                   {
                     boost::format fmt("SizeY mismatch: OME=%1%, TIFF=%2%");
                     fmt % coreMeta->sizeY % tiffHeight;
-                    std::clog << fmt.str() << '\n';
+
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                   }
                 if (coreMeta->pixelType != tiffPixelType)
                   {
                     boost::format fmt("PixelType mismatch: OME=%1%, TIFF=%2%");
                     fmt % coreMeta->pixelType % tiffPixelType;
-                    std::clog << fmt.str() << '\n';
+
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                   }
                 if (meta->getPixelsBinDataCount(series) > 1U)
                   {
-                    std::clog << "Ignoring invalid BinData elements in OME-TIFF Pixels element\n";
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                      << "Ignoring invalid BinData elements in OME-TIFF Pixels element";
                   }
 
                 fixOMEROMetadata(*meta, series);
@@ -917,7 +938,8 @@ namespace ome
                   {
                     boost::format fmt("Failed to set Image AcquisitionDate for series %1%: %2%");
                     fmt % series % e.what();
-                    std::clog << fmt.str();
+
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                   }
               }
           }
@@ -1395,7 +1417,8 @@ namespace ome
                       {
                         boost::format fmt("Failed to add MetadataOnly for series %1%: %2%");
                         fmt % i % e.what();
-                        std::clog << fmt.str();
+
+                        BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                       }
                   }
               }

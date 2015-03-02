@@ -64,6 +64,7 @@ namespace showinf
 
   ImageInfo::ImageInfo (const std::string &file,
                         const options&     opts):
+    logger(ome::compat::createLogger("ImageInfo")),
     file(file),
     opts(opts),
     reader()

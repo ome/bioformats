@@ -41,6 +41,8 @@
 #include <ome/bioformats/in/MinimalTIFFReader.h>
 #include <ome/bioformats/tiff/ImageJMetadata.h>
 
+#include <ome/compat/log.h>
+
 #include <ome/xml/meta/BaseMetadata.h>
 
 namespace ome
@@ -67,6 +69,9 @@ namespace ome
         using detail::FormatReader::isThisType;
 
       protected:
+        /// Message logger.
+        ome::compat::Logger logger;
+
         /// Map UUID to filename.
         typedef std::map<std::string, boost::filesystem::path> file_map;
 

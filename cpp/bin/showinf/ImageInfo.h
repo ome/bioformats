@@ -43,6 +43,7 @@
 
 #include <boost/program_options.hpp>
 
+#include <ome/compat/log.h>
 #include <ome/compat/memory.h>
 
 #include <ome/bioformats/FormatReader.h>
@@ -110,6 +111,8 @@ namespace showinf
                    ome::bioformats::dimension_size_type effectiveSize,
                    const ome::bioformats::Modulo&       modulo);
 
+    /// Message logger.
+    ome::compat::Logger logger;
     /// File to open with FormatReader::setId.
     std::string file;
     /// Command-line options.

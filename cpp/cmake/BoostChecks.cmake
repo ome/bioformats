@@ -34,7 +34,34 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-find_package(Boost REQUIRED
+# Log is header only for some Boost versions, so check is optional.
+#if (Boost_LOG_LIBRARY_RELEASE STREQUAL "")
+#  set(Boost_LOG_LIBRARY_RELEASE "Boost_LOG_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging is probably header-only for this Boost version; reset for FindBoost" FORCE)
+#endif()
+#find_package(Boost COMPONENTS log)
+#if (NOT Boost_LOG_LIBRARY_RELEASE)
+#  message(WARNING "Boost.Log not found.  This might be an error, but is more likely to be harmless (header-only, no library available)")
+#  set(Boost_LOG_LIBRARY_RELEASE "" CACHE FILEPATH "Logging is probably header-only for this Boost version" FORCE)
+#endif()
+
+# Log is missing for some Boost versions, so check is optional.
+if (Boost_LOG_LIBRARY_RELEASE STREQUAL "")
+  set(Boost_LOG_LIBRARY_RELEASE "Boost_LOG_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging is missing for this Boost version; reset for FindBoost" FORCE)
+endif()
+if (Boost_LOG_SETUP_LIBRARY_RELEASE STREQUAL "")
+  set(Boost_LOG_SETUP_LIBRARY_RELEASE "Boost_LOG_SETUP_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging setup is missing for this Boost version; reset for FindBoost" FORCE)
+endif()
+find_package(Boost COMPONENTS log log_setup)
+if (NOT Boost_LOG_LIBRARY_RELEASE)
+  message(WARNING "Boost.Log not found.  This might be an error, but is more likely to be harmless (no library available)")
+  set(Boost_LOG_LIBRARY_RELEASE "" CACHE FILEPATH "Logging is probably missing for this Boost version" FORCE)
+endif()
+if (NOT Boost_LOG_LIBRARY_RELEASE)
+  message(WARNING "Boost.Log (setup) not found.  This might be an error, but is more likely to be harmless (no library available)")
+  set(Boost_LOG_SETUP_LIBRARY_RELEASE "" CACHE FILEPATH "Logging (setup) is probably missing for this Boost version" FORCE)
+endif()
+
+find_package(Boost 1.46 REQUIRED
              COMPONENTS date_time filesystem system iostreams
                         program_options regex thread)
 
@@ -46,6 +73,7 @@ set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
 
 check_include_file_cxx(boost/array.hpp OME_HAVE_BOOST_ARRAY)
 check_include_file_cxx(boost/format.hpp OME_HAVE_BOOST_FORMAT)
+check_include_file_cxx(boost/log/core.hpp OME_HAVE_BOOST_LOG)
 check_include_file_cxx(boost/shared_ptr.hpp OME_HAVE_BOOST_SHARED_PTR)
 check_include_file_cxx(boost/smart_ptr/owner_less.hpp OME_HAVE_BOOST_OWNER_LESS)
 check_include_file_cxx(boost/tuple/tuple.hpp OME_HAVE_BOOST_TUPLE)

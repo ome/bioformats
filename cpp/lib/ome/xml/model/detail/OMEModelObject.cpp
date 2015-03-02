@@ -50,8 +50,9 @@ namespace ome
       namespace detail
       {
 
-        OMEModelObject::OMEModelObject ():
-          ::ome::xml::model::OMEModelObject()
+        OMEModelObject::OMEModelObject (const std::string& objectType):
+          ::ome::xml::model::OMEModelObject(),
+          logger(ome::compat::createLogger(objectType))
         {
         }
 
@@ -59,8 +60,9 @@ namespace ome
         {
         }
 
-        OMEModelObject::OMEModelObject (const OMEModelObject& /* copy */):
-          ::ome::xml::model::OMEModelObject()
+        OMEModelObject::OMEModelObject (const OMEModelObject& copy):
+          ::ome::xml::model::OMEModelObject(),
+          logger(copy.logger)
         {
           // Nothing to copy.
         }

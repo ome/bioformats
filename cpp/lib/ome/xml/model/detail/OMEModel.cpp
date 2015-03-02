@@ -55,6 +55,7 @@ namespace ome
 
         OMEModel::OMEModel ():
           ::ome::xml::model::OMEModel(),
+          logger(ome::compat::createLogger("OMEModel")),
           modelObjects(),
           references()
         {
@@ -152,10 +153,16 @@ namespace ome
                   const reference_list_type& references(i->second);
 
                   if (references.empty())
-                    std::clog << "No references to null object, continuing." << std::endl;
+                    {
+                      BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                        << "No references to null object; continuing";
+                    }
                   else
-                    std::clog << "Null reference to " << references.size()
-                              << " objects, continuing." << std::endl;
+                    {
+                      BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                        << "Null reference to " << references.size()
+                        << " objects; continuing";
+                    }
                   unhandledReferences += references.size();
                 }
               else
@@ -167,8 +174,11 @@ namespace ome
                        ++ref)
                     {
                       if (!(*ref))
-                        std::clog << typeid(*a).name() << "@" << a
-                                  << " reference to null object, continuing." << std::endl;
+                        {
+                          BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                            << typeid(*a).name() << "@" << a
+                            << " reference to null object; continuing";
+                        }
                       else
                         {
                           const std::string& referenceID = (*ref)->getID();
@@ -176,9 +186,10 @@ namespace ome
                           ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject> b = getModelObject(referenceID);
                           if (!b)
                             {
-                              std::clog << typeid(*a).name() << "@" << a
-                                        << " reference to " << referenceID
-                                        << " missing from object hierarchy." << std::endl;
+                              BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                                << typeid(*a).name() << "@" << a
+                                << " reference to " << referenceID
+                                << " missing from object hierarchy";
                               unhandledReferences++;
                             }
                           else

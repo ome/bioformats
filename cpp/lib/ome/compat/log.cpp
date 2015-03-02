@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,35 +36,37 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/compat/log.h>
 
-// Configured features
+namespace
+{
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_BOOST_OWNER_LESS 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_LOG 1
-#cmakedefine OME_HAVE_BOOST_THREAD 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE 1
-#cmakedefine OME_HAVE_BOOST_FILESYSTEM_CANONICAL 1
-#cmakedefine OME_HAVE_BOOST_TYPE_TRAITS_HPP 1
-#cmakedefine OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+  ome::logging::trivial::severity_level globalSeverity = ome::logging::trivial::warning;
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+}
 
-#endif // OME_COMPAT_CONFIG_H
+namespace ome
+{
+  namespace compat
+  {
+
+    void
+    setLogLevel(logging::trivial::severity_level severity)
+    {
+      globalSeverity = severity;
+#ifdef OME_HAVE_BOOST_LOG
+      ome::logging::core::get()->set_filter
+        (
+         ome::logging::trivial::severity >= severity
+         );
+#endif // OME_HAVE_BOOST_LOG
+    }
+
+    logging::trivial::severity_level
+    getLogLevel()
+    {
+      return globalSeverity;
+    }
+
+  }
+}

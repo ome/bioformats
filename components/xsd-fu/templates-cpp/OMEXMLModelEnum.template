@@ -47,10 +47,11 @@
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
-#include <iostream>
 #include <ostream>
 #include <map>
 #include <string>
+
+#include <ome/compat/log.h>
 
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -302,16 +303,18 @@ namespace ome
 {% if 'Other' in klass.possibleValues %}\
               if (i == lowercase_string_map.end())
                 {
+                  ome::compat::Logger logger = ome::compat::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “Other”");
                   fmt % "${klass.langType}" % name;
-                  std::clog << fmt << std::endl;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
                   i = string_map.find("Other");
                 }
               else
                 {
+                  ome::compat::Logger logger = ome::compat::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “%3%”");
                   fmt % "${klass.langType}" % name % ${klass.langType}(i->second);
-                  std::clog << fmt << std::endl;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
                 }
 {% end %}\
             }

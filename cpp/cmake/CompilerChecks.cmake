@@ -34,6 +34,14 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+# Use new variable expansion policy.
+if (POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW)
+endif(POLICY CMP0053)
+if (POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif(POLICY CMP0054)
+
 function(cxx_std_check flag var)
   check_cxx_compiler_flag("${flag}" ${var})
   set(CMAKE_CXX_FLAGS_SAVE "${CMAKE_CXX_FLAGS}")
