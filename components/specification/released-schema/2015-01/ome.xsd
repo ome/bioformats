@@ -760,7 +760,14 @@
 			<xsd:attribute name="NDFilter" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The NDfilter attribute is used to specify the combined effect of any neutral density filters used. [units optical density expressed as a PercentFraction]
+						The NDfilter attribute is used to specify the combined effect of any neutral density filters used.
+						The amount of light the filter transmits at a maximum [units:none]
+						A fraction, as a value from 0.0 to 1.0.
+
+						NOTE: This was formerly described as "units optical density expressed as a PercentFraction".
+						      This was how the field had been described in the schema from the beginning but all
+						      the use of it has been in the opposite direction, i.e. as a amount transmitted,
+						      not the amount blocked. This change has been made to make the model reflect this usage.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
