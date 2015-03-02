@@ -137,7 +137,7 @@ public class CellH5Reader extends FormatReader {
   public CellH5Reader() {
     super("CellH5 (HDF)", "ch5");
     suffixSufficient = true;
-    domains = new String[]{FormatTools.HCS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
