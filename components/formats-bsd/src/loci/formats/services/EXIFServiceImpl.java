@@ -74,9 +74,6 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
       Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
       directory = metadata.getDirectory(ExifSubIFDDirectory.class);
     }
-    catch (IOException e) {
-      throw e;
-    }
     catch (Throwable e) {
       throw new ServiceException("Could not read EXIF data", e);
     }
