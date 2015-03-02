@@ -172,6 +172,7 @@ public class Colorizer {
             toClose.close();
           }
         };
+        compImage.setProperty(ImagePlusReader.PROP_SERIES, series);
         if (luts != null) compImage.setLuts(luts);
         imps.set(i, compImage);
         imp = compImage;
