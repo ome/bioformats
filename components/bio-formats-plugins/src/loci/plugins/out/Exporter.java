@@ -80,6 +80,7 @@ import loci.plugins.util.WindowTools;
 import ome.units.UNITS;
 import ome.units.quantity.Time;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.ROI;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
@@ -304,7 +305,10 @@ public class Exporter {
             if (store == null) IJ.error("OME-XML Java library not found.");
 
             if (root.sizeOfROIList()>0){
-                store.createRoot();
+                for (int roiIndex=0; roiIndex<root.sizeOfROIList(); roiIndex++) {
+                    ROI roi = root.getROI(roiIndex);
+                    root.removeROI(roi);
+                }
             }
             if (xml == null) {
                 store.createRoot();
