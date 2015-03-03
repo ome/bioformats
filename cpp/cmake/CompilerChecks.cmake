@@ -106,7 +106,7 @@ endfunction(cxx_std_check)
 # Try to put the compiler into the most recent standard mode.  This
 # will generally have the most features, and will remove the need for
 # Boost fallbacks if native implementations are available.
-option(cxxstd-autodetect "Enable C++14 features if possible, otherwise fall back to C++11, C++03 or C++98" ON)
+option(cxxstd-autodetect "Enable C++14 features if possible, otherwise fall back to C++11, C++03 or C++98" OFF)
 if (cxxstd-autodetect)
   if (NOT MSVC)
     cxx_std_check(-std=c++14 CXX_FLAG_CXX14)
