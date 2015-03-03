@@ -131,7 +131,7 @@ can optionally display and validate the :emphasis:`OME-XML` metadata.
   Validate OME-XML metadata (default).  Note this will only have an
   effect if :option:`--omexml` is used.
 
-.. option:: --validate
+.. option:: --no-validate
 
   Do not validate OME-XML metadata.
 
