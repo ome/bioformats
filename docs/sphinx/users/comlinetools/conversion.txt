@@ -46,6 +46,24 @@ To convert images between certain indices (inclusive):
 
   bfconvert -range 0 2 /path/to/input output-first-3-images.tiff
 
+All images larger than 4096x4096 will be saved as a set of tiles if the output
+format supports doing so.  The default tile size is determined by the input
+format, and can be overridden like this:
+
+::
+
+  bfconvert -tilex 512 -tiley 512 /path/to/input output-512x512-tiles.tiff
+
+``-tilex`` is the width in pixel of each tile; ``-tiley`` is the height in
+pixels of each tile.  The last row and column of tiles may be slightly smaller
+if the image width and height are not multiples of the specified tile width
+and height.  Note that specifying ``-tilex`` and ``-tiley`` will cause tiles
+to be written even if the image is smaller than 4096x4096.
+
+Also note that the specified tile size will affect performance.  If large
+amounts of data are being processed, it is a good idea to try converting a
+single tile with a few different tile sizes using the ``-crop`` option.
+This gives an idea of what the most performant size will be.
 
 Images can also be written to multiple files by specifying a pattern string
 in the output file.  For example, to write one series, timepoint, channel, and
@@ -57,6 +75,19 @@ Z section per file:
 
 ``%s`` is the series index, ``%z`` is the Z section index, ``%c`` is the
 channel index, and ``%t`` is the timepoint index (all indices begin at 0).
+
+For large images in particular, it can also be useful to write each tile to
+a separate file:
+
+::
+
+  bfconvert -tilex 512 -tiley 512 /path/to/input output_tile_%x_%y_%m.jpg
+
+``%x`` is the row index of the tile, ``%y`` is the column
+index of the tile, and ``%m`` is the overall tile index.  As above, all
+indices begin at 0.  Note that if ``%x`` or ``%y`` is included in the file
+name pattern, then the other must be included too.  The only exception is if
+``%m`` was also included in the pattern.
 
 By default, all images will be written uncompressed.  Supported compression
 modes vary based upon the output format, but when multiple modes are available

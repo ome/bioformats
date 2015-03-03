@@ -186,6 +186,9 @@ public final class FormatTools {
   public static final String Z_NUM = "%z";
   public static final String T_NUM = "%t";
   public static final String TIMESTAMP = "%A";
+  public static final String TILE_X = "%x";
+  public static final String TILE_Y = "%y";
+  public static final String TILE_NUM = "%m";
 
   // -- Constants - versioning --
 
@@ -987,6 +990,16 @@ public final class FormatTools {
   }
 
   // -- Utility methods -- export
+
+  public static String getTileFilename(int tileX, int tileY,
+    int tileIndex, String pattern)
+  {
+    String filename = pattern;
+    filename = filename.replaceAll(TILE_X, String.valueOf(tileX));
+    filename = filename.replaceAll(TILE_Y, String.valueOf(tileY));
+    filename = filename.replaceAll(TILE_NUM, String.valueOf(tileIndex));
+    return filename;
+  }
 
   /**
    * @throws FormatException Never actually thrown.
