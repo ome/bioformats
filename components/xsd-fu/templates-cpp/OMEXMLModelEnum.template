@@ -279,7 +279,7 @@ namespace ome
         ${klass.langType}::${klass.langType} (enum_value value):
           value(value)
         {
-          std::map<enum_value,std::string>::const_iterator i = value_map.find(value);
+          value_map_type::const_iterator i = value_map.find(value);
           if (i == value_map.end())
             {
               format fmt("‘%1%’ not a supported value of %2%");
@@ -291,7 +291,7 @@ namespace ome
 
         ${klass.langType}::${klass.langType} (const std::string& name, bool strict)
         {
-          std::map<std::string,enum_value>::const_iterator i = string_map.find(name);
+          string_map_type::const_iterator i = string_map.find(name);
           if (strict == false && i == string_map.end())
             {
               // Trim leading and trailing whitespace and lowercase.
@@ -319,7 +319,7 @@ namespace ome
                 }
 {% end %}\
             }
-          if (i == string_map.end())
+          if (i == string_map.end() || i == lowercase_string_map.end())
             {
               format fmt("‘%1%’ not a supported value of %2%");
               fmt % name % "${klass.langType}";
@@ -327,7 +327,7 @@ namespace ome
             }
           this->value = i->second;
 
-          std::map<enum_value,std::string>::const_iterator i2 = value_map.find(value);
+          value_map_type::const_iterator i2 = value_map.find(value);
           if (i2 == value_map.end())
             {
               format fmt("‘%1%’ not a supported value of %2%");
