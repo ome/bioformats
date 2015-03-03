@@ -44,10 +44,11 @@ endif(POLICY CMP0054)
 
 function(cxx_std_check flag var)
   check_cxx_compiler_flag("${flag}" ${var})
-  set(CMAKE_CXX_FLAGS_SAVE "${CMAKE_CXX_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+  if (${var})
+    set(CMAKE_CXX_FLAGS_SAVE "${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
 
-  check_cxx_source_compiles("#include <cstdarg>
+    check_cxx_source_compiles("#include <cstdarg>
 
 void format(const char *fmt, va_list ap)
 {
@@ -59,7 +60,7 @@ int main() {
 }"
 "${var}_CSTDARG")
 
-  check_cxx_source_compiles("#include <stdarg.h>
+    check_cxx_source_compiles("#include <stdarg.h>
 
 void format(const char *fmt, va_list ap)
 {
@@ -71,8 +72,8 @@ int main() {
 }"
 "${var}_STDARG")
 
-  if("${var}" STREQUAL "CXX_FLAG_CXX11")
-    check_cxx_source_compiles("#include <type_traits>
+    if("${var}" STREQUAL "CXX_FLAG_CXX11")
+      check_cxx_source_compiles("#include <type_traits>
 
 // overloads are enabled via the return type
 template<class T>
@@ -87,17 +88,24 @@ int main()
   test(2.4);
 }"
 "${var}_ENABLE_IF")
-  endif("${var}" STREQUAL "CXX_FLAG_CXX11")
+    endif("${var}" STREQUAL "CXX_FLAG_CXX11")
+  else(${var})
+    set("${var}_CSTDARG" OFF)
+    set("${var}_STDARG" OFF)
+    set("${var}_ENABLE_IF" OFF)
+  endif(${var})
 
-  if("${var}_CSTDARG" OR "${var}_STDARG")
+  if(${${var}_CSTDARG} OR ${${var}_STDARG})
     set(${var} ${${var}} PARENT_SCOPE)
-  else("${var}_CSTDARG" OR "${var}_STDARG")
+  else()
     set(${var} FALSE PARENT_SCOPE)
-  endif("${var}_CSTDARG" OR "${var}_STDARG")
+  endif()
 
-  if(${var} AND NOT "${var}_ENABLE_IF")
-    set(${var} FALSE PARENT_SCOPE)
-  endif(${var} AND NOT "${var}_ENABLE_IF")
+  if("${var}" STREQUAL "CXX_FLAG_CXX11")
+    if(${var} AND NOT ${${var}_ENABLE_IF})
+      set(${var} FALSE PARENT_SCOPE)
+    endif()
+  endif()
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
@@ -112,19 +120,19 @@ if (cxxstd-autodetect)
     cxx_std_check(-std=c++14 CXX_FLAG_CXX14)
     if (CXX_FLAG_CXX14)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-    else(CXX_FLAG_CXX14)
+    else()
       cxx_std_check(-std=c++11 CXX_FLAG_CXX11)
       if (CXX_FLAG_CXX11)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-      else(CXX_FLAG_CXX11)
+      else()
         cxx_std_check(-std=c++03 CXX_FLAG_CXX03)
         if (CXX_FLAG_CXX03)
           set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
-        else(CXX_FLAG_CXX03)
+        else()
           cxx_std_check(-std=c++98 CXX_FLAG_CXX98)
           if (CXX_FLAG_CXX98)
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-          else(CXX_FLAG_CXX98)
+          else()
             cxx_std_check("" CXX_FLAG_NONE)
             if (NOT CXX_FLAG_NONE)
               message(WARNING "Could not determine compiler options for enabling the most recent C++ standard; this might be expected for your compiler")
