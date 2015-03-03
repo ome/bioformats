@@ -50,13 +50,11 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
-
 import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
-
 import ome.units.unit.Unit;
 import ome.units.quantity.Angle;
 import ome.units.quantity.ElectricPotential;
@@ -105,11 +103,14 @@ public final class FormatTools {
   /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
   public static final int DOUBLE = 7;
 
+  /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
+  public static final int BIT = 8;
+
   /** Human readable pixel type. */
   private static final String[] pixelTypes = makePixelTypes();
 
   static String[] makePixelTypes() {
-    String[] pixelTypes = new String[8];
+    String[] pixelTypes = new String[9];
     pixelTypes[INT8] = "int8";
     pixelTypes[UINT8] = "uint8";
     pixelTypes[INT16] = "int16";
@@ -118,6 +119,7 @@ public final class FormatTools {
     pixelTypes[UINT32] = "uint32";
     pixelTypes[FLOAT] = "float";
     pixelTypes[DOUBLE] = "double";
+    pixelTypes[BIT] = "bit";
     return pixelTypes;
   }
 
@@ -754,6 +756,7 @@ public final class FormatTools {
     switch (pixelType) {
       case INT8:
       case UINT8:
+      case BIT:
         return 1;
       case INT16:
       case UINT16:
@@ -813,6 +816,7 @@ public final class FormatTools {
       case UINT16:
       case INT32:
       case UINT32:
+      case BIT:
         return false;
       case FLOAT:
       case DOUBLE:
@@ -839,6 +843,7 @@ public final class FormatTools {
       case UINT8:
       case UINT16:
       case UINT32:
+      case BIT:
         return false;
     }
     throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
@@ -1323,7 +1328,7 @@ public final class FormatTools {
    */
   public static long[] defaultMinMax(int pixelType) {
     long min = 0 , max = 0;
-
+    
     switch (pixelType) {
     case INT8:
       min = Byte.MIN_VALUE;
@@ -1340,16 +1345,16 @@ public final class FormatTools {
       max = Integer.MAX_VALUE;
       break;
     case UINT8:
-      min = 0;
       max=(long) Math.pow(2, 8)-1;
       break;
     case UINT16:
-      min = 0;
       max=(long) Math.pow(2, 16)-1;
       break;
     case UINT32:
-      min = 0;
       max=(long) Math.pow(2, 32)-1;
+      break;
+    case BIT:
+      max = 1;
       break;
     default:
       throw new IllegalArgumentException("Invalid pixel type");
