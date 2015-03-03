@@ -41,18 +41,16 @@ import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.DelegateReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.services.EXIFService;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Tag;
-import com.drew.imaging.ImageProcessingException;
-import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import org.joda.time.DateTime;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
@@ -189,36 +187,36 @@ public class JPEGReader extends DelegateReader {
 
     /* @see loci.formats.FormatReader#initFile(String) */
     protected void initFile(String id) throws FormatException, IOException {
-        super.initFile(id);
+      super.initFile(id);
 
-        MetadataStore store = makeFilterMetadata();
-        LOGGER.info("Parsing JPEG EXIF data");
+      MetadataStore store = makeFilterMetadata();
+      LOGGER.info("Parsing JPEG EXIF data");
 
-        try {
-            File jpegFile = new File(id);
-            Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
-
-            // obtain the Exif directory
-            ExifSubIFDDirectory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
-
-            if ( directory != null ) {
-
-                // Set the acquisition date
-                Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-                Timestamp timestamp = new Timestamp( new DateTime(date) );
-                store.setImageAcquisitionDate(timestamp, 0);
-
-                for (Tag tag : directory.getTags()) {
-                    addGlobalMeta(tag.getTagName(), tag.getDescription());
-                }
-            }
-
-        } catch ( ImageProcessingException e ) {
-            LOGGER.info("Error parsing JPEG EXIF data");
+      try {
+        EXIFService exif = new ServiceFactory().getInstance(EXIFService.class);
+        if (exif == null) {
+          return;
         }
-        catch (IOException e) {
-          LOGGER.info("Error parsing JPEG EXIF data");
+        exif.initialize(id);
+
+        // Set the acquisition date
+        Date date = exif.getCreationDate();
+        if (date != null) {
+          Timestamp timestamp = new Timestamp(new DateTime(date));
+          store.setImageAcquisitionDate(timestamp, 0);
         }
+
+        HashMap<String, String> tags = exif.getTags();
+        for (String tagName : tags.keySet()) {
+          addGlobalMeta(tagName, tags.get(tagName));
+        }
+      }
+      catch (ServiceException e) {
+        LOGGER.debug("Could not parse EXIF data", e);
+      }
+      catch (DependencyException e) {
+        LOGGER.debug("Could not parse EXIF data", e);
+      }
     }
 
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
