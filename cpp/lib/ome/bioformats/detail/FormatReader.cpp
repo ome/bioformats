@@ -357,7 +357,7 @@ namespace ome
       {
         // Get reader and buffer size, order and type.
         const dimension_size_type c(getRGBChannelCount());
-        std::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
+        ome::compat::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
         shape[DIM_SUBCHANNEL] = c;
@@ -634,12 +634,12 @@ namespace ome
         return getCoreMetadata(getCoreIndex()).moduloC;
       }
 
-      std::array<dimension_size_type, 2>
+      ome::compat::array<dimension_size_type, 2>
       FormatReader::getThumbSize() const
       {
         assertId(currentId, true);
 
-        std::array<dimension_size_type, 2> ret;
+        ome::compat::array<dimension_size_type, 2> ret;
         ret[0] = getCoreMetadata(getCoreIndex()).thumbSizeX;
         ret[1] = getCoreMetadata(getCoreIndex()).thumbSizeY;
 
@@ -978,7 +978,7 @@ namespace ome
                                          moduloZ, moduloC, moduloT);
       }
 
-      std::array<dimension_size_type, 3>
+      ome::compat::array<dimension_size_type, 3>
       FormatReader::getZCTCoords(dimension_size_type index) const
       {
         assertId(currentId, true);
@@ -990,7 +990,7 @@ namespace ome
                                              index);
       }
 
-      std::array<dimension_size_type, 6>
+      ome::compat::array<dimension_size_type, 6>
       FormatReader::getZCTModuloCoords(dimension_size_type index) const
       {
         assertId(currentId, true);

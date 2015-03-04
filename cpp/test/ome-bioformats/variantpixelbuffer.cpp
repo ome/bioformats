@@ -233,7 +233,7 @@ struct ConstructExtentRefTestVisitor : public boost::static_visitor<>
   {
     typedef typename T::element_type::value_type value_type;
 
-    std::array<typename PixelBuffer<value_type>::size_type, 9> extents;
+    ome::compat::array<typename PixelBuffer<value_type>::size_type, 9> extents;
     extents[0] = 5;
     extents[1] = 2;
     extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
@@ -579,7 +579,7 @@ TEST_P(VariantPixelBufferTest, ConstructExtent)
 {
   const VariantPixelBufferTestParameters& params = GetParam();
 
-  std::array<VariantPixelBuffer::size_type, 9> extents;
+  ome::compat::array<VariantPixelBuffer::size_type, 9> extents;
   extents[0] = 5;
   extents[1] = 2;
   extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;

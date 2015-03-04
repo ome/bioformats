@@ -50,8 +50,8 @@ using ome::bioformats::getIndex;
 using ome::bioformats::getZCTCoords;
 using ome::xml::model::enums::DimensionOrder;
 
-typedef std::array<dimension_size_type, 3> dims;
-typedef std::array<dimension_size_type, 6> moddims;
+typedef ome::compat::array<dimension_size_type, 3> dims;
+typedef ome::compat::array<dimension_size_type, 6> moddims;
 
 namespace std
 {

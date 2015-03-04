@@ -1182,7 +1182,7 @@ namespace ome
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
 
-        std::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
+        ome::compat::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
         shape[DIM_SUBCHANNEL] = subC;
@@ -1212,10 +1212,10 @@ namespace ome
       void
       IFD::readLookupTable(VariantPixelBuffer& buf) const
       {
-        std::array<std::vector<uint16_t>, 3> cmap;
+        ome::compat::array<std::vector<uint16_t>, 3> cmap;
         getField(tiff::COLORMAP).get(cmap);
 
-        std::array<VariantPixelBuffer::size_type, 9> shape;
+        ome::compat::array<VariantPixelBuffer::size_type, 9> shape;
         shape[DIM_SPATIAL_X] = cmap.at(0).size();
         shape[DIM_SPATIAL_Y] = 1;
         shape[DIM_SUBCHANNEL] = cmap.size();
@@ -1269,7 +1269,7 @@ namespace ome
         uint16_t subC;
         getField(SAMPLESPERPIXEL).get(subC);
 
-        std::array<VariantPixelBuffer::size_type, 9> shape, source_shape;
+        ome::compat::array<VariantPixelBuffer::size_type, 9> shape, source_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
         shape[DIM_SUBCHANNEL] = subC;
@@ -1456,7 +1456,7 @@ namespace ome
           {
             try
               {
-                std::array<std::vector<uint16_t>, 3> cmap;
+                ome::compat::array<std::vector<uint16_t>, 3> cmap;
                 ifd.getField(tiff::COLORMAP).get(cmap);
                 m->indexed = true;
                 m->rgb = false;

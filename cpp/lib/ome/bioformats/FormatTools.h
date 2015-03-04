@@ -179,7 +179,7 @@ namespace ome
      * @param index 1D (rasterized) index to convert to ZCT coordinates.
      * @returns an array containing the ZCT coordinates (real sizes, in that order).
      */
-    std::array<dimension_size_type, 3>
+    ome::compat::array<dimension_size_type, 3>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,
@@ -215,7 +215,7 @@ namespace ome
      * @returns an array containing the ZCTmZmCmT coordinates (effective sizes, in that
      * order).
      */
-    std::array<dimension_size_type, 6>
+    ome::compat::array<dimension_size_type, 6>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,

@@ -89,7 +89,7 @@ TYPED_TEST_P(PixelBufferType, ConstructExtent)
   for (uint32_t i = 0; i < 10; ++i)
     source.push_back(pixel_value<TypeParam>(i));
 
-  std::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
+  ome::compat::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
   extents[0] = 5;
   extents[1] = 2;
   extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
@@ -107,11 +107,11 @@ TYPED_TEST_P(PixelBufferType, ConstructExtent)
 
 TYPED_TEST_P(PixelBufferType, ConstructExtentRef)
 {
-  std::array<TypeParam, 10> source;
+  ome::compat::array<TypeParam, 10> source;
   for (uint32_t i = 0; i < 10; ++i)
     source[i] = pixel_value<TypeParam>(i);
 
-  std::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
+  ome::compat::array<typename PixelBuffer<TypeParam>::size_type, 9> extents;
   extents[0] = 5;
   extents[1] = 2;
   extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
@@ -146,7 +146,7 @@ TYPED_TEST_P(PixelBufferType, ConstructRange)
 
 TYPED_TEST_P(PixelBufferType, ConstructRangeRef)
 {
-  std::array<TypeParam, 10> source;
+  ome::compat::array<TypeParam, 10> source;
   for (uint32_t i = 0; i < 10; ++i)
     source[i] = pixel_value<TypeParam>(i);
 

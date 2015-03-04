@@ -511,7 +511,7 @@ namespace ome
          * @returns an array containing the X and Y dimension
          * thumbnail size (in that order).
          */
-        std::array<dimension_size_type, 2>
+        ome::compat::array<dimension_size_type, 2>
         getThumbSize() const;
 
       public:
@@ -664,11 +664,11 @@ namespace ome
                  dimension_size_type moduloT) const;
 
         // Documented in superclass.
-        std::array<dimension_size_type, 3>
+        ome::compat::array<dimension_size_type, 3>
         getZCTCoords(dimension_size_type index) const;
 
         // Documented in superclass.
-        std::array<dimension_size_type, 6>
+        ome::compat::array<dimension_size_type, 6>
         getZCTModuloCoords(dimension_size_type index) const;
 
         // Documented in superclass.
