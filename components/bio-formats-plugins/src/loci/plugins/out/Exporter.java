@@ -306,10 +306,11 @@ public class Exporter {
 
             OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
             if (root.sizeOfROIList()>0){
-                for (int roiIndex=0; roiIndex<root.sizeOfROIList(); roiIndex++) {
-                    ROI roi = root.getROI(roiIndex);
+                while (root.sizeOfROIList() > 0) {
+                    ROI roi = root.getROI(0);
                     root.removeROI(roi);
                 }
+                store.setRoot(root);
             }
             if (xml == null) {
                 store.createRoot();
