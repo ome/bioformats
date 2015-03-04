@@ -42,6 +42,7 @@ import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -50,11 +51,12 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
+
 import ome.xml.model.primitives.PrimitiveNumber;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+
 import ome.units.unit.Unit;
 import ome.units.quantity.Angle;
 import ome.units.quantity.ElectricPotential;
@@ -103,7 +105,7 @@ public final class FormatTools {
   /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
   public static final int DOUBLE = 7;
 
-  /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
+  /** Identifies the <i>BIT</i> data type used to store pixel values. */
   public static final int BIT = 8;
 
   /** Human readable pixel type. */
@@ -1328,7 +1330,7 @@ public final class FormatTools {
    */
   public static long[] defaultMinMax(int pixelType) {
     long min = 0 , max = 0;
-    
+
     switch (pixelType) {
     case INT8:
       min = Byte.MIN_VALUE;
