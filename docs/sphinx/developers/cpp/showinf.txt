@@ -92,7 +92,7 @@ can optionally display and validate the :emphasis:`OME-XML` metadata.
 
 .. option:: --output-order=XY[ZTC]
 
-  Override dimension output order (UNIMPLEMENTED).
+  Override the dimension output order (UNIMPLEMENTED).
 
 .. option:: --core
 
