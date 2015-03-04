@@ -127,6 +127,7 @@ public class OMEXMLReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (binDataOffsets.size() == 0) return buf;
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int index = no;
@@ -251,10 +252,6 @@ public class OMEXMLReader extends FormatReader {
         lineNumber++;
       }
       binDataOffsets.add(in.getFilePointer() + col - 1);
-    }
-
-    if (binDataOffsets.size() == 0) {
-      throw new FormatException("Pixel data not found");
     }
 
     LOGGER.info("Populating metadata");
