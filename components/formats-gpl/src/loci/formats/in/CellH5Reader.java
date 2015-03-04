@@ -153,10 +153,7 @@ public class CellH5Reader extends FormatReader {
   @Override
   public boolean isThisType(String name, boolean open) {
     String[] tokens = name.split("\\.(?=[^\\.]+$)");
-    if (tokens[1].equals("ch5")) {
-        return true;
-    }
-    return false;
+    return tokens.length > 1 && tokens[1].equals("ch5");
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
