@@ -811,8 +811,7 @@ public class TiffParser {
 
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
-    if ((x % tileWidth) == 0 && (y % tileLength) == 0 && samplesPerPixel == 1 &&
-      (ifd.getBitsPerSample()[0] % 8) == 0 &&
+    if (effectiveChannels == 1 && (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
@@ -827,6 +826,9 @@ public class TiffParser {
         int lastTile =
           (int) (((y + height) / tileLength) * numTileCols + column);
         lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
+        if (planarConfig == 2) {
+          lastTile = stripOffsets.length - 1;
+        }
 
         int offset = 0;
         for (int tile=firstTile; tile<=lastTile; tile++) {
