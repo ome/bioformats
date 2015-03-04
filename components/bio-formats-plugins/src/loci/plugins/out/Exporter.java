@@ -300,10 +300,11 @@ public class Exporter {
             catch (DependencyException de) { }
             catch (ServiceException se) { }
 
-            OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
+
 
             if (store == null) IJ.error("OME-XML Java library not found.");
 
+            OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
             if (root.sizeOfROIList()>0){
                 for (int roiIndex=0; roiIndex<root.sizeOfROIList(); roiIndex++) {
                     ROI roi = root.getROI(roiIndex);
