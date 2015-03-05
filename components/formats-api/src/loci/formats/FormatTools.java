@@ -42,6 +42,7 @@ import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -52,7 +53,6 @@ import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.primitives.PrimitiveNumber;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -105,11 +105,14 @@ public final class FormatTools {
   /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
   public static final int DOUBLE = 7;
 
+  /** Identifies the <i>BIT</i> data type used to store pixel values. */
+  public static final int BIT = 8;
+
   /** Human readable pixel type. */
   private static final String[] pixelTypes = makePixelTypes();
 
   static String[] makePixelTypes() {
-    String[] pixelTypes = new String[8];
+    String[] pixelTypes = new String[9];
     pixelTypes[INT8] = "int8";
     pixelTypes[UINT8] = "uint8";
     pixelTypes[INT16] = "int16";
@@ -118,6 +121,7 @@ public final class FormatTools {
     pixelTypes[UINT32] = "uint32";
     pixelTypes[FLOAT] = "float";
     pixelTypes[DOUBLE] = "double";
+    pixelTypes[BIT] = "bit";
     return pixelTypes;
   }
 
@@ -186,6 +190,9 @@ public final class FormatTools {
   public static final String Z_NUM = "%z";
   public static final String T_NUM = "%t";
   public static final String TIMESTAMP = "%A";
+  public static final String TILE_X = "%x";
+  public static final String TILE_Y = "%y";
+  public static final String TILE_NUM = "%m";
 
   // -- Constants - versioning --
 
@@ -315,7 +322,7 @@ public final class FormatTools {
 
   /**
    * Gets the rasterized index corresponding
-   * to the given Z, C and T coordinates.
+   * to the given Z, C and T coordinates (real sizes).
    */
   public static int getIndex(IFormatReader reader, int z, int c, int t) {
     String order = reader.getDimensionOrder();
@@ -327,18 +334,44 @@ public final class FormatTools {
   }
 
   /**
+   * Gets the rasterized index corresponding to the given Z, C, T,
+   * ModuloZ, ModuloC and ModuloT coordinates (effective sizes).  Note
+   * that the Z, C and T coordinates take the modulo dimension sizes
+   * into account.  The effective size for each of these dimensions is
+   * limited to the total size of the dimension divided by the modulo
+   * size.
+   */
+  public static int getIndex(IFormatReader reader, int z, int c, int t,
+                             int moduloZ, int moduloC, int moduloT) {
+    String order = reader.getDimensionOrder();
+    int zSize = reader.getSizeZ();
+    int cSize = reader.getEffectiveSizeC();
+    int tSize = reader.getSizeT();
+    int moduloZSize = reader.getModuloZ().length();
+    int moduloCSize = reader.getModuloC().length();
+    int moduloTSize = reader.getModuloT().length();
+    int num = reader.getImageCount();
+    return getIndex(order,
+                    zSize, cSize, tSize,
+                    moduloZSize, moduloCSize, moduloTSize,
+                    num,
+                    z, c, t,
+                    moduloZ, moduloC, moduloT);
+  }
+
+  /**
    * Gets the rasterized index corresponding
-   * to the given Z, C and T coordinates.
+   * to the given Z, C and T coordinates (real sizes).
    *
    * @param order Dimension order.
-   * @param zSize Total number of focal planes.
-   * @param cSize Total number of channels.
-   * @param tSize Total number of time points.
+   * @param zSize Total number of focal planes (real size).
+   * @param cSize Total number of channels (real size).
+   * @param tSize Total number of time points (real size).
    * @param num Total number of image planes (zSize * cSize * tSize),
    *   specified as a consistency check.
-   * @param z Z coordinate of ZCT coordinate triple to convert to 1D index.
-   * @param c C coordinate of ZCT coordinate triple to convert to 1D index.
-   * @param t T coordinate of ZCT coordinate triple to convert to 1D index.
+   * @param z Z coordinate of ZCT coordinate triple to convert to 1D index (real size).
+   * @param c C coordinate of ZCT coordinate triple to convert to 1D index (real size).
+   * @param t T coordinate of ZCT coordinate triple to convert to 1D index (real size).
    */
   public static int getIndex(String order, int zSize, int cSize, int tSize,
     int num, int z, int c, int t)
@@ -405,8 +438,48 @@ public final class FormatTools {
   }
 
   /**
+   * Gets the rasterized index corresponding to the given Z, C, T,
+   * ModuloZ, ModuloC, ModuloT coordinates (effective sizes).  Note
+   * that the Z, C and T coordinates take the modulo dimension sizes
+   * into account.  The effective size for each of these dimensions is
+   * limited to the total size of the dimension divided by the modulo
+   * size.
+   *
+   * @param order Dimension order.
+   * @param zSize Total number of focal planes (real size).
+   * @param cSize Total number of channels (real size).
+   * @param tSize Total number of time points (real size).
+   * @param moduloZSize Total number of ModuloZ planes (real size).
+   * @param moduloCSize Total number of ModuloC planes (real size).
+   * @param moduloTSize Total number of ModuloT planes (real size).
+   * @param num Total number of image planes (zSize * cSize * tSize),
+   *   specified as a consistency check.
+   * @param z Z coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+   * @param c C coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+   * @param t T coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+   * @param moduloZ ModuloZ coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+   * @param moduloC ModuloC coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+   * @param moduloT ModuloT coordinate of ZCTmZmCmT coordinate sextuple to convert to 1D index (effective size).
+   */
+  public static int getIndex(String order,
+    int zSize, int cSize, int tSize,
+    int moduloZSize, int moduloCSize, int moduloTSize,
+    int num,
+    int z, int c, int t,
+    int moduloZ, int moduloC, int moduloT) {
+    return getIndex(order,
+                    zSize,
+                    cSize,
+                    tSize,
+                    num,
+                    (z * moduloZSize) + moduloZ,
+                    (c * moduloCSize) + moduloC,
+                    (t * moduloTSize) + moduloT);
+  }
+
+  /**
    * Gets the Z, C and T coordinates corresponding
-   * to the given rasterized index value.
+   * to the given rasterized index value (real sizes).
    */
   public static int[] getZCTCoords(IFormatReader reader, int index) {
     String order = reader.getDimensionOrder();
@@ -418,13 +491,34 @@ public final class FormatTools {
   }
 
   /**
+   * Gets the Z, C, T, ModuloZ, ModuloC and ModuloZ coordinates
+   * corresponding to the given rasterized index value (effective
+   * sizes).  Note that the Z, C and T coordinates are not the same as
+   * those returned by getZCTCoords(IFormatReader, int) because the
+   * size of the modulo dimensions is taken into account.  The
+   * effective size for each of these dimensions is limited to the
+   * total size of the dimension divided by the modulo size.
+   */
+  public static int[] getZCTModuloCoords(IFormatReader reader, int index) {
+    String order = reader.getDimensionOrder();
+    int zSize = reader.getSizeZ();
+    int cSize = reader.getEffectiveSizeC();
+    int tSize = reader.getSizeT();
+    int moduloZSize = reader.getModuloZ().length();
+    int moduloCSize = reader.getModuloC().length();
+    int moduloTSize = reader.getModuloT().length();
+    int num = reader.getImageCount();
+    return getZCTCoords(order, zSize, cSize, tSize, moduloZSize, moduloCSize, moduloTSize, num, index);
+  }
+
+  /**
    * Gets the Z, C and T coordinates corresponding to the given rasterized
-   * index value.
+   * index value (real sizes).
    *
    * @param order Dimension order.
-   * @param zSize Total number of focal planes.
-   * @param cSize Total number of channels.
-   * @param tSize Total number of time points.
+   * @param zSize Total number of focal planes (real size).
+   * @param cSize Total number of channels (real size).
+   * @param tSize Total number of time points (real size).
    * @param num Total number of image planes (zSize * cSize * tSize),
    *   specified as a consistency check.
    * @param index 1D (rasterized) index to convert to ZCT coordinate triple.
@@ -493,6 +587,42 @@ public final class FormatTools {
   }
 
   /**
+   * Gets the Z, C and T coordinates corresponding to the given
+   * rasterized index value.  Note that the Z, C and T coordinates are
+   * not the same as those returned by getZCTCoords(String, int, int,
+   * int, int, int) because the size of the modulo dimensions is taken
+   * into account.  The effective size for each of these dimensions is
+   * limited to the total size of the dimension divided by the modulo
+   * size.
+   *
+   * @param order Dimension order.
+   * @param zSize Total number of focal planes (real size).
+   * @param cSize Total number of channels (real size).
+   * @param tSize Total number of time points (real size).
+   * @param moduloZSize Total number of ModuloZ planes (real size).
+   * @param moduloCSize Total number of ModuloC planes (real size).
+   * @param moduloTSize Total number of ModuloT planes (real size).
+   * @param num Total number of image planes (zSize * cSize * tSize),
+   *   specified as a consistency check.
+   * @param index 1D (rasterized) index to convert to ZCT coordinate triple.
+   */
+  public static int[] getZCTCoords(String order,
+    int zSize, int cSize, int tSize,
+    int moduloZSize, int moduloCSize, int moduloTSize,
+    int num, int index) {
+    int[] coords = getZCTCoords(order, zSize, cSize, tSize, num, index);
+
+    return new int[] {
+        coords[0] / moduloZSize,
+        coords[1] / moduloCSize,
+        coords[2] / moduloTSize,
+        coords[0] % moduloZSize,
+        coords[1] % moduloCSize,
+        coords[2] % moduloTSize
+    };
+  }
+
+  /**
    * Converts index from the given dimension order to the reader's native one.
    * This method is useful for shuffling the planar order around
    * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
@@ -518,9 +648,9 @@ public final class FormatTools {
    *
    * @param origOrder Original dimension order.
    * @param newOrder New dimension order.
-   * @param zSize Total number of focal planes.
-   * @param cSize Total number of channels.
-   * @param tSize Total number of time points.
+   * @param zSize Total number of focal planes (real size).
+   * @param cSize Total number of channels (real size).
+   * @param tSize Total number of time points (real size).
    * @param num Total number of image planes (zSize * cSize * tSize),
    *   specified as a consistency check.
    * @param newIndex 1D (rasterized) index according to new dimension order.
@@ -631,6 +761,7 @@ public final class FormatTools {
     switch (pixelType) {
       case INT8:
       case UINT8:
+      case BIT:
         return 1;
       case INT16:
       case UINT16:
@@ -690,6 +821,7 @@ public final class FormatTools {
       case UINT16:
       case INT32:
       case UINT32:
+      case BIT:
         return false;
       case FLOAT:
       case DOUBLE:
@@ -716,6 +848,7 @@ public final class FormatTools {
       case UINT8:
       case UINT16:
       case UINT32:
+      case BIT:
         return false;
     }
     throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
@@ -864,6 +997,16 @@ public final class FormatTools {
   }
 
   // -- Utility methods -- export
+
+  public static String getTileFilename(int tileX, int tileY,
+    int tileIndex, String pattern)
+  {
+    String filename = pattern;
+    filename = filename.replaceAll(TILE_X, String.valueOf(tileX));
+    filename = filename.replaceAll(TILE_Y, String.valueOf(tileY));
+    filename = filename.replaceAll(TILE_NUM, String.valueOf(tileIndex));
+    return filename;
+  }
 
   /**
    * @throws FormatException Never actually thrown.
@@ -1217,16 +1360,16 @@ public final class FormatTools {
       max = Integer.MAX_VALUE;
       break;
     case UINT8:
-      min = 0;
       max=(long) Math.pow(2, 8)-1;
       break;
     case UINT16:
-      min = 0;
       max=(long) Math.pow(2, 16)-1;
       break;
     case UINT32:
-      min = 0;
       max=(long) Math.pow(2, 32)-1;
+      break;
+    case BIT:
+      max = 1;
       break;
     default:
       throw new IllegalArgumentException("Invalid pixel type");

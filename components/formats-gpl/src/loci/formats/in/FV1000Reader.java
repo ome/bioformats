@@ -464,7 +464,19 @@ public class FV1000Reader extends FormatReader {
         lutNames.add(path + value);
       }
       else if (isPreviewName(value)) {
-        previewNames.add(path + value.trim());
+        try {
+          RandomAccessInputStream s = getFile(path + value.trim());
+          if (s != null) {
+            s.close();
+            previewNames.add(path + value.trim());
+          }
+        }
+        catch (FormatException e) {
+          LOGGER.debug("Preview file not found", e);
+        }
+        catch (IOException e) {
+          LOGGER.debug("Preview file not found", e);
+        }
       }
     }
 
@@ -521,9 +533,11 @@ public class FV1000Reader extends FormatReader {
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
         channel.emissionFilter = guiChannel.get("EmissionDM Name");
-        channel.emWave = new Double(guiChannel.get("EmissionWavelength"));
+        String emWave = guiChannel.get("EmissionWavelength");
+        if (emWave != null) channel.emWave = new Double(emWave);
         channel.excitationFilter = guiChannel.get("ExcitationDM Name");
-        channel.exWave = new Double(guiChannel.get("ExcitationWavelength"));
+        String exWave = guiChannel.get("ExcitationWavelength");
+        if (emWave != null) channel.exWave = new Double(exWave);
         channels.add(channel);
         index++;
         guiChannel = f.getTable("GUI Channel " + index + " Parameters");
@@ -628,7 +642,7 @@ public class FV1000Reader extends FormatReader {
       if (!isOIB && !ptyFile.exists()) {
         LOGGER.warn("Could not find .pty file ({}); guessing at the " +
           "corresponding TIFF file.", file);
-        String tiff = replaceExtension(file, ".pty", ".tif");
+        String tiff = replaceExtension(file, "pty", "tif");
         Location tiffFile = new Location(tiff);
         if (tiffFile.exists()) {
           tiffs.add(ii, tiffFile.getAbsolutePath());
@@ -661,7 +675,7 @@ public class FV1000Reader extends FormatReader {
         if (isOIB) {
           file = tiffPath + File.separator + file;
         }
-        else file = new Location(tiffPath, file).getAbsolutePath();
+        file = replaceExtension(file, "pty", "tif");
         tiffs.add(ii, file);
       }
 
@@ -1386,13 +1400,19 @@ public class FV1000Reader extends FormatReader {
   }
 
   private void addPtyFiles() throws FormatException {
-    if (ptyStart != null && ptyEnd != null && ptyPattern != null) {
+    if (ptyStart != null && ptyEnd != null) {
       // FV1000 version 2 gives the first .pty file, the last .pty and
       // the file name pattern.  Version 1 lists each .pty file individually.
 
       // pattern is typically 's_C%03dT%03d.pty'
 
       // build list of block indexes
+
+      if (ptyPattern == null) {
+        String dir =
+          ptyStart.substring(0, ptyStart.indexOf(File.separator) + 1);
+        ptyPattern = dir + "s_C%03dT%03d.pty";
+      }
 
       String[] prefixes = ptyPattern.split("%03d");
 

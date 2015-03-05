@@ -126,6 +126,23 @@ namespace ome
       return ret;
     }
 
+    bool
+    validateXML(const std::string& s,
+                const std::string& /* loc */)
+    {
+      bool valid = true;
+
+      try
+        {
+          ome::xerces::dom::createDocument(s);
+        }
+      catch (const std::runtime_error& e)
+        {
+          valid = false;
+        }
+
+      return valid;
+    }
 
   }
 }

@@ -36,6 +36,8 @@
  * #L%
  */
 
+#include <boost/range/size.hpp>
+
 #include <ome/xml/model/primitives/PositiveFloat.h>
 
 #include "constrained-numeric.h"
@@ -98,7 +100,8 @@ struct CompareGreaterOrEqual<PositiveFloat>
 };
 
 
-// Floating point types don't implement modulo, so make it a no-op.
+// Floating point types don't implement modulo, increment or
+// decrement, so make them a no-op.
 template<>
 struct OperationModulo<PositiveFloat>
 {
@@ -108,6 +111,20 @@ struct OperationModulo<PositiveFloat>
 
 template<>
 struct OperationModuloAssign<PositiveFloat>
+{
+  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat /* rhs */) { return lhs; }
+  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationIncrement<PositiveFloat>
+{
+  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat /* rhs */) { return lhs; }
+  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationDecrement<PositiveFloat>
 {
   PositiveFloat eval(PositiveFloat lhs,             PositiveFloat /* rhs */) { return lhs; }
   PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type /* rhs */) { return lhs; }
@@ -198,12 +215,12 @@ namespace
 template<>
 const std::vector<NumericTest<PositiveFloat>::test_str>
 NumericTest<PositiveFloat>::strings(init_strings,
-                                    init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+                                    init_strings + boost::size(init_strings));
 
 template<>
 const std::vector<NumericTest<PositiveFloat>::test_op>
 NumericTest<PositiveFloat>::ops(init_ops,
-                                init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+                                init_ops + boost::size(init_ops));
 
 template<>
 const PositiveFloat::value_type NumericTest<PositiveFloat>::error(0.0005);

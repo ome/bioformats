@@ -92,7 +92,6 @@ namespace
       convertFileAnnotations();
       convertListAnnotations();
       convertLongAnnotations();
-      convertMapAnnotations();
       convertTagAnnotations();
       convertTermAnnotations();
       convertTimestampAnnotations();
@@ -110,6 +109,105 @@ namespace
       convertProjects();
 
       convertRootAttributes();
+    }
+
+    /**
+     * Safely get a count value (no arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @returns the count value, or zero if the getter threw an exception.
+     */
+    template<typename T>
+    T
+    count(T (MetadataRetrieve::* get)() const) const
+    {
+      T value = 0U;
+      try
+        {
+          value = (src.*get)();
+        }
+      catch (const std::runtime_error& /* e */)
+        {
+        }
+      return value;
+    }
+
+    /**
+     * Safely get a count value (one index argument).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param param getter parameter.
+     * @returns the count value, or zero if the getter threw an exception.
+     */
+    template<typename T, typename P>
+    T
+    count(T (MetadataRetrieve::* get)(P param) const,
+          P                      param) const
+    {
+      T value = 0U;
+      try
+        {
+          value = (src.*get)(param);
+        }
+      catch (const std::runtime_error& /* e */)
+        {
+        }
+      return value;
+    }
+
+    /**
+     * Safely get a count value (two index arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param param1 getter parameter 1.
+     * @param param2 getter parameter 2.
+     * @returns the count value, or zero if the getter threw an exception.
+     */
+    template<typename T, typename P>
+    T
+    count(T (MetadataRetrieve::* get)(P param1,
+                                      P param2) const,
+          P                      param1,
+          P                      param2) const
+    {
+      T value = 0U;
+      try
+        {
+          value = (src.*get)(param1, param2);
+        }
+      catch (const std::runtime_error& /* e */)
+        {
+        }
+      return value;
+    }
+
+    /**
+     * Safely get a count value (three index arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param param1 getter parameter 1.
+     * @param param2 getter parameter 2.
+     * @param param3 getter parameter 3.
+     * @returns the count value, or zero if the getter threw an exception.
+     */
+    template<typename T, typename P>
+    T
+    count(T (MetadataRetrieve::* get)(P param1,
+                                      P param2,
+                                      P param3) const,
+          P                      param1,
+          P                      param2,
+          P                      param3) const
+    {
+      T value = 0U;
+      try
+        {
+          value = (src.*get)(param1, param2, param3);
+        }
+      catch (const std::runtime_error& /* e */)
+        {
+        }
+      return value;
     }
 
     /**
@@ -142,6 +240,7 @@ namespace
      *
      * @param get a getter method from MetadataRetrieve.
      * @param set a setter method from MetadataStore.
+     * @param param getter and setter parameter.
      * @returns @c true if the transfer succeeded, @c false if an
      * exception was thrown.
      */
@@ -149,7 +248,7 @@ namespace
     bool
     transfer(T    (MetadataRetrieve::* get)(P param) const,
              void (MetadataStore::*    set)(T value, P param),
-             P                                param)
+             P                         param)
     {
       bool ok = true;
       try
@@ -169,6 +268,8 @@ namespace
      *
      * @param get a getter method from MetadataRetrieve.
      * @param set a setter method from MetadataStore.
+     * @param param1 getter and setter parameter 1.
+     * @param param2 getter and setter parameter 2.
      * @returns @c true if the transfer succeeded, @c false if an
      * exception was thrown.
      */
@@ -200,6 +301,9 @@ namespace
      *
      * @param get a getter method from MetadataRetrieve.
      * @param set a setter method from MetadataStore.
+     * @param param1 getter and setter parameter 1.
+     * @param param2 getter and setter parameter 2.
+     * @param param3 getter and setter parameter 3.
      * @returns @c true if the transfer succeeded, @c false if an
      * exception was thrown.
      */
@@ -229,11 +333,52 @@ namespace
       return ok;
     }
 
+    /**
+     * Transfer a single metadata value (four index arguments).
+     *
+     * @param get a getter method from MetadataRetrieve.
+     * @param set a setter method from MetadataStore.
+     * @param param1 getter and setter parameter 1.
+     * @param param2 getter and setter parameter 2.
+     * @param param3 getter and setter parameter 3.
+     * @param param4 getter and setter parameter 4.
+     * @returns @c true if the transfer succeeded, @c false if an
+     * exception was thrown.
+     */
+    template<typename T, typename P>
+    bool
+    transfer(T    (MetadataRetrieve::* get)(P param1,
+                                            P param2,
+                                            P param3,
+                                            P param4) const,
+             void (MetadataStore::*    set)(T value,
+                                            P param1,
+                                            P param2,
+                                            P param3,
+                                            P param4),
+             P                         param1,
+             P                         param2,
+             P                         param3,
+             P                         param4)
+    {
+      bool ok = true;
+      try
+        {
+          (dest.*set)((src.*get)(param1, param2, param3, param4),
+                      param1, param2, param3, param4);
+        }
+      catch (const std::runtime_error& /* e */)
+        {
+          ok = false;
+        }
+      return ok;
+    }
+
     /// Convert boolean annotations.
     void
     convertBooleanAnnotations()
     {
-      index_type booleanAnnotationCount(src.getBooleanAnnotationCount());
+      index_type booleanAnnotationCount(count(&MR::getBooleanAnnotationCount));
       for (index_type i = 0; i < booleanAnnotationCount; ++i)
         {
           if (transfer(&MR::getBooleanAnnotationID,          &MS::setBooleanAnnotationID,          i))
@@ -243,7 +388,7 @@ namespace
               transfer(&MR::getBooleanAnnotationValue,       &MS::setBooleanAnnotationValue,       i);
               transfer(&MR::getBooleanAnnotationAnnotator,   &MS::setBooleanAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getBooleanAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getBooleanAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getBooleanAnnotationAnnotationRef, &MS::setBooleanAnnotationAnnotationRef, i, a);
             }
@@ -254,7 +399,7 @@ namespace
     void
     convertCommentAnnotations()
     {
-      index_type commentAnnotationCount(src.getCommentAnnotationCount());
+      index_type commentAnnotationCount(count(&MR::getCommentAnnotationCount));
       for (index_type i = 0; i < commentAnnotationCount; ++i)
         {
           if (transfer(&MR::getCommentAnnotationID,          &MS::setCommentAnnotationID,          i))
@@ -264,7 +409,7 @@ namespace
               transfer(&MR::getCommentAnnotationValue,       &MS::setCommentAnnotationValue,       i);
               transfer(&MR::getCommentAnnotationAnnotator,   &MS::setCommentAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getCommentAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getCommentAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getCommentAnnotationAnnotationRef, &MS::setCommentAnnotationAnnotationRef, i, a);
             }
@@ -275,7 +420,7 @@ namespace
     void
     convertDatasets()
     {
-      index_type datasets(src.getDatasetCount());
+      index_type datasets(count(&MR::getDatasetCount));
       for (index_type i = 0; i < datasets; ++i)
         {
           if (transfer(&MR::getDatasetID,                   &MS::setDatasetID,                   i))
@@ -285,11 +430,11 @@ namespace
               transfer(&MR::getDatasetExperimenterRef,      &MS::setDatasetExperimenterRef,      i);
               transfer(&MR::getDatasetName,                 &MS::setDatasetName,                 i);
 
-              index_type imageRefCount(src.getDatasetImageRefCount(i));
+              index_type imageRefCount(count(&MR::getDatasetImageRefCount, i));
               for (index_type q = 0; q < imageRefCount; ++q)
                 transfer(&MR::getDatasetImageRef, &MS::setDatasetImageRef, i, q);
 
-              index_type annotationRefCount = src.getDatasetAnnotationRefCount(i);
+              index_type annotationRefCount = count(&MR::getDatasetAnnotationRefCount, i);
               for (index_type q = 0; q < annotationRefCount; ++q)
                 transfer(&MR::getDatasetAnnotationRef, &MS::setDatasetAnnotationRef, i, q);
             }
@@ -300,7 +445,7 @@ namespace
     void
     convertDoubleAnnotations()
     {
-      index_type doubleAnnotationCount(src.getDoubleAnnotationCount());
+      index_type doubleAnnotationCount(count(&MR::getDoubleAnnotationCount));
       for (index_type i = 0; i < doubleAnnotationCount; ++i)
         {
           if (transfer(&MR::getDoubleAnnotationID,          &MS::setDoubleAnnotationID,          i))
@@ -310,7 +455,7 @@ namespace
               transfer(&MR::getDoubleAnnotationValue,       &MS::setDoubleAnnotationValue,       i);
               transfer(&MR::getDoubleAnnotationAnnotator,   &MS::setDoubleAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getDoubleAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getDoubleAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getDoubleAnnotationAnnotationRef, &MS::setDoubleAnnotationAnnotationRef, i, a);
             }
@@ -321,7 +466,7 @@ namespace
     void
     convertExperiments()
     {
-      index_type experimentCount(src.getExperimentCount());
+      index_type experimentCount(count(&MR::getExperimentCount));
       for (index_type i = 0; i < experimentCount; ++i)
         {
           if (transfer(&MR::getExperimentID,              &MS::setExperimentID,              i))
@@ -331,7 +476,7 @@ namespace
               transfer(&MR::getExperimentExperimenterRef, &MS::setExperimentExperimenterRef, i);
               transfer(&MR::getExperimentType,            &MS::setExperimentType,            i);
 
-              index_type microbeamCount(src.getMicrobeamManipulationCount(i));
+              index_type microbeamCount(count(&MR::getMicrobeamManipulationCount, i));
               for (index_type q = 0; q < microbeamCount; ++q)
                 {
                   if (transfer(&MR::getMicrobeamManipulationID,              &MS::setMicrobeamManipulationID,              i, q))
@@ -340,7 +485,7 @@ namespace
                       transfer(&MR::getMicrobeamManipulationExperimenterRef, &MS::setMicrobeamManipulationExperimenterRef, i, q);
                       transfer(&MR::getMicrobeamManipulationType,            &MS::setMicrobeamManipulationType,            i, q);
 
-                      index_type lightSourceCount(src.getMicrobeamManipulationLightSourceSettingsCount(i, q));
+                      index_type lightSourceCount(count(&MR::getMicrobeamManipulationLightSourceSettingsCount, i, q));
                       for (index_type p = 0; p < lightSourceCount; ++p)
                         {
                           transfer(&MR::getMicrobeamManipulationLightSourceSettingsID,          &MS::setMicrobeamManipulationLightSourceSettingsID,          i, q, p);
@@ -348,7 +493,7 @@ namespace
                           transfer(&MR::getMicrobeamManipulationLightSourceSettingsWavelength,  &MS::setMicrobeamManipulationLightSourceSettingsWavelength,  i, q, p);
                         }
 
-                      index_type roiRefCount(src.getMicrobeamManipulationROIRefCount(i, q));
+                      index_type roiRefCount(count(&MR::getMicrobeamManipulationROIRefCount, i, q));
                       for (index_type p = 0; p < roiRefCount; ++p)
                         transfer(&MR::getMicrobeamManipulationROIRef, &MS::setMicrobeamManipulationROIRef, i, q, p);
                     }
@@ -361,7 +506,7 @@ namespace
     void
     convertExperimenters()
     {
-      index_type experimenterCount(src.getExperimenterCount());
+      index_type experimenterCount(count(&MR::getExperimenterCount));
       for (index_type i = 0; i < experimenterCount; ++i)
         {
           if (transfer(&MR::getExperimenterID,          &MS::setExperimenterID,          i))
@@ -373,7 +518,7 @@ namespace
               transfer(&MR::getExperimenterMiddleName,  &MS::setExperimenterMiddleName,  i);
               transfer(&MR::getExperimenterUserName,    &MS::setExperimenterUserName,    i);
 
-              index_type annotationRefCount(src.getExperimenterAnnotationRefCount(i));
+              index_type annotationRefCount(count(&MR::getExperimenterAnnotationRefCount, i));
               for (index_type q = 0; q < annotationRefCount; ++q)
                 transfer(&MR::getExperimenterAnnotationRef, &MS::setExperimenterAnnotationRef, i, q);
             }
@@ -384,7 +529,7 @@ namespace
     void
     convertExperimenterGroups()
     {
-      index_type experimenterGroupCount(src.getExperimenterGroupCount());
+      index_type experimenterGroupCount(count(&MR::getExperimenterGroupCount));
       for (index_type i = 0; i < experimenterGroupCount; ++i)
         {
           if (transfer(&MR::getExperimenterGroupID,          &MS::setExperimenterGroupID,          i))
@@ -392,15 +537,15 @@ namespace
               transfer(&MR::getExperimenterGroupDescription, &MS::setExperimenterGroupDescription, i);
               transfer(&MR::getExperimenterGroupName,        &MS::setExperimenterGroupName,        i);
 
-              index_type annotationRefCount(src.getExperimenterGroupAnnotationRefCount(i));
+              index_type annotationRefCount(count(&MR::getExperimenterGroupAnnotationRefCount, i));
               for (index_type q = 0; q < annotationRefCount; ++q)
                 transfer(&MR::getExperimenterGroupAnnotationRef, &MS::setExperimenterGroupAnnotationRef, i, q);
 
-              index_type experimenterRefCount(src.getExperimenterGroupExperimenterRefCount(i));
+              index_type experimenterRefCount(count(&MR::getExperimenterGroupExperimenterRefCount, i));
               for (index_type q = 0; q < experimenterRefCount; ++q)
                 transfer(&MR::getExperimenterGroupExperimenterRef, &MS::setExperimenterGroupExperimenterRef, i, q);
 
-              index_type leaderCount(src.getLeaderCount(i));
+              index_type leaderCount(count(&MR::getLeaderCount, i));
               for (index_type q = 0; q < leaderCount; ++q)
                 transfer(&MR::getExperimenterGroupLeader, &MS::setExperimenterGroupLeader, i, q);
             }
@@ -411,7 +556,7 @@ namespace
     void
     convertFileAnnotations()
     {
-      index_type fileAnnotationCount(src.getFileAnnotationCount());
+      index_type fileAnnotationCount(count(&MR::getFileAnnotationCount));
       for (index_type i = 0; i < fileAnnotationCount; ++i)
         {
           if (transfer(&MR::getFileAnnotationID,          &MS::setFileAnnotationID,          i))
@@ -423,7 +568,7 @@ namespace
               transfer(&MR::getBinaryFileMIMEType,        &MS::setBinaryFileMIMEType,        i);
               transfer(&MR::getBinaryFileSize,            &MS::setBinaryFileSize,            i);
 
-              index_type annotationRefCount(src.getFileAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getFileAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getFileAnnotationAnnotationRef, &MS::setFileAnnotationAnnotationRef, i, a);
             }
@@ -434,7 +579,7 @@ namespace
     void
     convertImages()
     {
-      index_type imageCount(src.getImageCount());
+      index_type imageCount(count(&MR::getImageCount));
       for (index_type i = 0; i < imageCount; ++i)
         {
           if (transfer(&MR::getImageID,                       &MS::setImageID,                       i))
@@ -449,7 +594,6 @@ namespace
               transfer(&MR::getImagingEnvironmentAirPressure, &MS::setImagingEnvironmentAirPressure, i);
               transfer(&MR::getImagingEnvironmentCO2Percent,  &MS::setImagingEnvironmentCO2Percent,  i);
               transfer(&MR::getImagingEnvironmentHumidity,    &MS::setImagingEnvironmentHumidity,    i);
-              transfer(&MR::getImagingEnvironmentMap,         &MS::setImagingEnvironmentMap,         i);
               transfer(&MR::getImagingEnvironmentTemperature, &MS::setImagingEnvironmentTemperature, i);
 
               if (transfer(&MR::getObjectiveSettingsID, &MS::setObjectiveSettingsID, i))
@@ -482,15 +626,19 @@ namespace
               transfer(&MR::getPixelsInterleaved,     &MS::setPixelsInterleaved,     i);
               transfer(&MR::getPixelsSignificantBits, &MS::setPixelsSignificantBits, i);
 
-              index_type binDataCount(src.getPixelsBinDataCount(i));
+              index_type binDataCount(count(&MR::getPixelsBinDataCount, i));
               for (index_type q = 0; q < binDataCount; ++q)
                 transfer(&MR::getPixelsBinDataBigEndian, &MS::setPixelsBinDataBigEndian, i, q);
 
-              index_type annotationRefCount(src.getImageAnnotationRefCount(i));
-              for (index_type q = 0; q < annotationRefCount; ++q)
+              index_type pixelsAnnotationRefCount(count(&MR::getPixelsAnnotationRefCount, i));
+              for (index_type q = 0; q < pixelsAnnotationRefCount; ++q)
+                transfer(&MR::getPixelsAnnotationRef, &MS::setPixelsAnnotationRef, i, q);
+
+              index_type imageAnnotationRefCount(count(&MR::getImageAnnotationRefCount, i));
+              for (index_type q = 0; q < imageAnnotationRefCount; ++q)
                 transfer(&MR::getImageAnnotationRef, &MS::setImageAnnotationRef, i, q);
 
-              index_type channelCount(src.getChannelCount(i));
+              index_type channelCount(count(&MR::getChannelCount, i));
               for (index_type c = 0; c < channelCount; ++c)
                 {
                   if (transfer(&MR::getChannelID,                   &MS::setChannelID,                   i, c))
@@ -528,25 +676,21 @@ namespace
                           transfer(&MR::getChannelLightSourceSettingsWavelength,  &MS::setChannelLightSourceSettingsWavelength,  i, c);
                         }
 
-                      index_type channelAnnotationRefCount(src.getChannelAnnotationRefCount(i, c));
+                      index_type channelAnnotationRefCount(count(&MR::getChannelAnnotationRefCount, i, c));
                       for (index_type q = 0; q < channelAnnotationRefCount; ++q)
                         transfer(&MR::getChannelAnnotationRef, &MS::setChannelAnnotationRef, i, c, q);
 
-                      index_type emFilterRefCount(src.getLightPathEmissionFilterRefCount(i, c));
+                      index_type emFilterRefCount(count(&MR::getLightPathEmissionFilterRefCount, i, c));
                       for (index_type q = 0; q < emFilterRefCount; ++q)
                         transfer(&MR::getLightPathEmissionFilterRef, &MS::setLightPathEmissionFilterRef, i, c, q);
 
-                      index_type exFilterRefCount(src.getLightPathExcitationFilterRefCount(i, c));
+                      index_type exFilterRefCount(count(&MR::getLightPathExcitationFilterRefCount, i, c));
                       for (index_type q = 0; q < exFilterRefCount; ++q)
                         transfer(&MR::getLightPathExcitationFilterRef, &MS::setLightPathExcitationFilterRef, i, c, q);
-
-                      index_type lightPathAnnotationRefCount(src.getLightPathAnnotationRefCount(i, c));
-                      for (index_type q = 0; q < lightPathAnnotationRefCount; ++q)
-                        transfer(&MR::getLightPathAnnotationRef, &MS::setLightPathAnnotationRef, i, c, q);
                     }
                 }
 
-              index_type planeCount(src.getPlaneCount(i));
+              index_type planeCount(count(&MR::getPlaneCount, i));
               for (index_type p = 0; p < planeCount; ++p)
                 {
                   transfer(&MR::getPlaneDeltaT,       &MS::setPlaneDeltaT,       i, p);
@@ -559,20 +703,20 @@ namespace
                   transfer(&MR::getPlaneTheT,         &MS::setPlaneTheT,         i, p);
                   transfer(&MR::getPlaneTheC,         &MS::setPlaneTheC,         i, p);
 
-                  index_type planeAnnotationRefCount(src.getPlaneAnnotationRefCount(i, p));
+                  index_type planeAnnotationRefCount(count(&MR::getPlaneAnnotationRefCount, i, p));
                   for (index_type q = 0; q < planeAnnotationRefCount; ++q)
                     transfer(&MR::getPlaneAnnotationRef, &MS::setPlaneAnnotationRef, i, p, q);
                 }
 
-              index_type microbeamCount(src.getMicrobeamManipulationRefCount(i));
+              index_type microbeamCount(count(&MR::getMicrobeamManipulationRefCount, i));
               for (index_type q = 0; q < microbeamCount; ++q)
                 transfer(&MR::getImageMicrobeamManipulationRef, &MS::setImageMicrobeamManipulationRef, i, q);
 
-              index_type roiRefCount(src.getImageROIRefCount(i));
+              index_type roiRefCount(count(&MR::getImageROIRefCount, i));
               for (index_type q = 0; q < roiRefCount; ++q)
                 transfer(&MR::getImageROIRef, &MS::setImageROIRef, i, q);
 
-              index_type tiffDataCount(src.getTiffDataCount(i));
+              index_type tiffDataCount(count(&MR::getTiffDataCount, i));
               for (index_type q = 0; q < tiffDataCount; ++q)
                 {
                   transfer(&MR::getUUIDValue,          &MS::setUUIDValue,          i, q);
@@ -595,7 +739,7 @@ namespace
     void
     convertLightSources(index_type instrumentIndex)
     {
-      index_type lightSourceCount(src.getLightSourceCount(instrumentIndex));
+      index_type lightSourceCount(count(&MR::getLightSourceCount, instrumentIndex));
 
       for (index_type lightSource = 0; lightSource < lightSourceCount; ++lightSource)
         {
@@ -610,10 +754,6 @@ namespace
                   transfer(&MR::getArcPower,        &MS::setArcPower,        instrumentIndex, lightSource);
                   transfer(&MR::getArcSerialNumber, &MS::setArcSerialNumber, instrumentIndex, lightSource);
                   transfer(&MR::getArcType,         &MS::setArcType,         instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getArcAnnotationRef, &MS::setArcAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
           else if (type == "Filament")
@@ -627,26 +767,6 @@ namespace
                   transfer(&MR::getFilamentPower,        &MS::setFilamentPower,        instrumentIndex, lightSource);
                   transfer(&MR::getFilamentSerialNumber, &MS::setFilamentSerialNumber, instrumentIndex, lightSource);
                   transfer(&MR::getFilamentType,         &MS::setFilamentType,         instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getFilamentAnnotationRef, &MS::setFilamentAnnotationRef, instrumentIndex, lightSource, r);
-                }
-            }
-          else if (type == "GenericExcitationSource")
-            {
-              if (transfer(&MR::getGenericExcitationSourceID, &MS::setGenericExcitationSourceID, instrumentIndex, lightSource))
-                {
-                  transfer(&MR::getGenericExcitationSourceMap,          &MS::setGenericExcitationSourceMap,          instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceLotNumber,    &MS::setGenericExcitationSourceLotNumber,    instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceManufacturer, &MS::setGenericExcitationSourceManufacturer, instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceModel,        &MS::setGenericExcitationSourceModel,        instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourcePower,        &MS::setGenericExcitationSourcePower,        instrumentIndex, lightSource);
-                  transfer(&MR::getGenericExcitationSourceSerialNumber, &MS::setGenericExcitationSourceSerialNumber, instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getGenericExcitationSourceAnnotationRef, &MS::setGenericExcitationSourceAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
           else if (type == "Laser")
@@ -668,10 +788,6 @@ namespace
                   transfer(&MR::getLaserRepetitionRate,          &MS::setLaserRepetitionRate,          instrumentIndex, lightSource);
                   transfer(&MR::getLaserTuneable,                &MS::setLaserTuneable,                instrumentIndex, lightSource);
                   transfer(&MR::getLaserWavelength,              &MS::setLaserWavelength,              instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getLaserAnnotationRef, &MS::setLaserAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
           else if (type == "LightEmittingDiode")
@@ -683,10 +799,6 @@ namespace
                   transfer(&MR::getLightEmittingDiodeModel,        &MS::setLightEmittingDiodeModel,        instrumentIndex, lightSource);
                   transfer(&MR::getLightEmittingDiodePower,        &MS::setLightEmittingDiodePower,        instrumentIndex, lightSource);
                   transfer(&MR::getLightEmittingDiodeSerialNumber, &MS::setLightEmittingDiodeSerialNumber, instrumentIndex, lightSource);
-
-                  index_type lightSourceAnnotationRefCount(src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource));
-                  for (index_type r = 0; r < lightSourceAnnotationRefCount; ++r)
-                    transfer(&MR::getLightEmittingDiodeAnnotationRef, &MS::setLightEmittingDiodeAnnotationRef, instrumentIndex, lightSource, r);
                 }
             }
         }
@@ -696,7 +808,7 @@ namespace
     void
     convertInstruments()
     {
-      index_type instrumentCount(src.getInstrumentCount());
+      index_type instrumentCount(count(&MR::getInstrumentCount));
       for (index_type i = 0; i < instrumentCount; ++i)
         {
           if (transfer(&MR::getInstrumentID,           &MS::setInstrumentID,           i))
@@ -707,7 +819,7 @@ namespace
               transfer(&MR::getMicroscopeSerialNumber, &MS::setMicroscopeSerialNumber, i);
               transfer(&MR::getMicroscopeType,         &MS::setMicroscopeType,         i);
 
-              index_type detectorCount(src.getDetectorCount(i));
+              index_type detectorCount(count(&MR::getDetectorCount, i));
               for (index_type q = 0; q < detectorCount; ++q)
                 {
                   if (transfer(&MR::getDetectorID,                &MS::setDetectorID,                i, q))
@@ -722,14 +834,10 @@ namespace
                       transfer(&MR::getDetectorType,              &MS::setDetectorType,              i, q);
                       transfer(&MR::getDetectorVoltage,           &MS::setDetectorVoltage,           i, q);
                       transfer(&MR::getDetectorZoom,              &MS::setDetectorZoom,              i, q);
-
-                      index_type detectorAnnotationRefCount(src.getDetectorAnnotationRefCount(i, q));
-                      for (index_type r = 0; r < detectorAnnotationRefCount; ++r)
-                        transfer(&MR::getDetectorAnnotationRef, &MS::setDetectorAnnotationRef, i, q, r);
                     }
                 }
 
-              index_type dichroicCount(src.getDichroicCount(i));
+              index_type dichroicCount(count(&MR::getDichroicCount, i));
               for (index_type q = 0; q < dichroicCount; ++q)
                 {
                   if (transfer(&MR::getDichroicID,           &MS::setDichroicID,           i, q))
@@ -738,14 +846,10 @@ namespace
                       transfer(&MR::getDichroicManufacturer, &MS::setDichroicManufacturer, i, q);
                       transfer(&MR::getDichroicModel,        &MS::setDichroicModel,        i, q);
                       transfer(&MR::getDichroicSerialNumber, &MS::setDichroicSerialNumber, i, q);
-
-                      index_type dichroicAnnotationRefCount(src.getDichroicAnnotationRefCount(i,q));
-                      for (index_type r = 0; r < dichroicAnnotationRefCount; ++r)
-                        transfer(&MR::getDichroicAnnotationRef, &MS::setDichroicAnnotationRef, i, q, r);
                     }
                 }
 
-              index_type filterCount(src.getFilterCount(i));
+              index_type filterCount(count(&MR::getFilterCount, i));
               for (index_type q = 0; q < filterCount; ++q)
                 {
                   if (transfer(&MR::getFilterID,                          &MS::setFilterID,                          i, q))
@@ -761,14 +865,10 @@ namespace
                       transfer(&MR::getTransmittanceRangeCutOut,          &MS::setTransmittanceRangeCutOut,          i, q);
                       transfer(&MR::getTransmittanceRangeCutOutTolerance, &MS::setTransmittanceRangeCutOutTolerance, i, q);
                       transfer(&MR::getTransmittanceRangeTransmittance,   &MS::setTransmittanceRangeTransmittance,   i, q);
-
-                      index_type filterAnnotationRefCount(src.getFilterAnnotationRefCount(i, q));
-                      for (index_type r = 0; r < filterAnnotationRefCount; ++r)
-                        transfer(&MR::getFilterAnnotationRef, &MS::setFilterAnnotationRef, i, q, r);
                     }
                 }
 
-              index_type objectiveCount(src.getObjectiveCount(i));
+              index_type objectiveCount(count(&MR::getObjectiveCount, i));
               for (index_type q = 0; q < objectiveCount; ++q)
                 {
                   if (transfer(&MR::getObjectiveID,                      &MS::setObjectiveID,                      i, q))
@@ -784,14 +884,10 @@ namespace
                       transfer(&MR::getObjectiveNominalMagnification,    &MS::setObjectiveNominalMagnification,    i, q);
                       transfer(&MR::getObjectiveSerialNumber,            &MS::setObjectiveSerialNumber,            i, q);
                       transfer(&MR::getObjectiveWorkingDistance,         &MS::setObjectiveWorkingDistance,         i, q);
-
-                      index_type objectiveAnnotationRefCount(src.getObjectiveAnnotationRefCount(i, q));
-                      for (index_type r = 0; r < objectiveAnnotationRefCount; ++r)
-                        transfer(&MR::getObjectiveAnnotationRef, &MS::setObjectiveAnnotationRef, i, q, r);
                     }
                 }
 
-              index_type filterSetCount(src.getFilterSetCount(i));
+              index_type filterSetCount(count(&MR::getFilterSetCount, i));
               for (index_type q = 0; q < filterSetCount; ++q)
                 {
                   if (transfer(&MR::getFilterSetID,           &MS::setFilterSetID,           i, q))
@@ -802,21 +898,17 @@ namespace
                       transfer(&MR::getFilterSetModel,        &MS::setFilterSetModel,        i, q);
                       transfer(&MR::getFilterSetSerialNumber, &MS::setFilterSetSerialNumber, i, q);
 
-                      index_type emFilterCount(src.getFilterSetEmissionFilterRefCount(i, q));
+                      index_type emFilterCount(count(&MR::getFilterSetEmissionFilterRefCount, i, q));
                       for (index_type f = 0; f < emFilterCount; ++f)
                         transfer(&MR::getFilterSetEmissionFilterRef, &MS::setFilterSetEmissionFilterRef, i, q, f);
 
-                      index_type exFilterCount(src.getFilterSetExcitationFilterRefCount(i, q));
+                      index_type exFilterCount(count(&MR::getFilterSetExcitationFilterRefCount, i, q));
                       for (index_type f = 0; f < exFilterCount; ++f)
                         transfer(&MR::getFilterSetExcitationFilterRef, &MS::setFilterSetExcitationFilterRef, i, q, f);
                     }
                 }
 
               convertLightSources(i);
-
-              index_type instrumentAnnotationRefCount(src.getInstrumentAnnotationRefCount(i));
-              for (index_type r = 0; r < instrumentAnnotationRefCount; ++r)
-                transfer(&MR::getInstrumentAnnotationRef, &MS::setInstrumentAnnotationRef, i, r);
             }
         }
     }
@@ -825,7 +917,7 @@ namespace
     void
     convertListAnnotations()
     {
-      index_type listAnnotationCount(src.getListAnnotationCount());
+      index_type listAnnotationCount(count(&MR::getListAnnotationCount));
       for (index_type i = 0; i < listAnnotationCount; ++i)
         {
           if (transfer(&MR::getListAnnotationID,          &MS::setListAnnotationID,          i))
@@ -834,7 +926,7 @@ namespace
               transfer(&MR::getListAnnotationNamespace,   &MS::setListAnnotationNamespace,   i);
               transfer(&MR::getListAnnotationAnnotator,   &MS::setListAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getListAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getListAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getListAnnotationAnnotationRef, &MS::setListAnnotationAnnotationRef, i, a);
             }
@@ -845,7 +937,7 @@ namespace
     void
     convertLongAnnotations()
     {
-      index_type longAnnotationCount(src.getLongAnnotationCount());
+      index_type longAnnotationCount(count(&MR::getLongAnnotationCount));
       for (index_type i = 0; i < longAnnotationCount; ++i)
         {
           if (transfer(&MR::getLongAnnotationID,          &MS::setLongAnnotationID,          i))
@@ -855,30 +947,9 @@ namespace
               transfer(&MR::getLongAnnotationValue,       &MS::setLongAnnotationValue,       i);
               transfer(&MR::getLongAnnotationAnnotator,   &MS::setLongAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getLongAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getLongAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getLongAnnotationAnnotationRef, &MS::setLongAnnotationAnnotationRef, i, a);
-            }
-        }
-    }
-
-    /// Convert map annotations.
-    void
-    convertMapAnnotations()
-    {
-      index_type mapAnnotationCount(src.getMapAnnotationCount());
-      for (index_type i = 0; i < mapAnnotationCount; ++i)
-        {
-          if (transfer(&MR::getMapAnnotationID,          &MS::setMapAnnotationID,          i))
-            {
-              transfer(&MR::getMapAnnotationDescription, &MS::setMapAnnotationDescription, i);
-              transfer(&MR::getMapAnnotationNamespace,   &MS::setMapAnnotationNamespace,   i);
-              transfer(&MR::getMapAnnotationValue,       &MS::setMapAnnotationValue,       i);
-              transfer(&MR::getMapAnnotationAnnotator,   &MS::setMapAnnotationAnnotator,   i);
-
-              index_type annotationRefCount(src.getMapAnnotationAnnotationCount(i));
-              for (index_type a = 0; a < annotationRefCount; ++a)
-                transfer(&MR::getMapAnnotationAnnotationRef, &MS::setMapAnnotationAnnotationRef, i, a);
             }
         }
     }
@@ -887,7 +958,7 @@ namespace
     void
     convertPlates()
     {
-      index_type plateCount(src.getPlateCount());
+      index_type plateCount(count(&MR::getPlateCount));
       for (index_type i = 0; i < plateCount; ++i)
         {
           if (transfer(&MR::getPlateID,                     &MS::setPlateID,                     i))
@@ -904,7 +975,7 @@ namespace
               transfer(&MR::getPlateWellOriginX,            &MS::setPlateWellOriginX,            i);
               transfer(&MR::getPlateWellOriginY,            &MS::setPlateWellOriginY,            i);
 
-              index_type wellCount(src.getWellCount(i));
+              index_type wellCount(count(&MR::getWellCount, i));
               for (index_type q = 0; q < wellCount; ++q)
                 {
                   if (transfer(&MR::getWellID,                  &MS::setWellID,                  i, q))
@@ -917,11 +988,11 @@ namespace
                       transfer(&MR::getWellRow,                 &MS::setWellRow,                 i, q);
                       transfer(&MR::getWellType,                &MS::setWellType,                i, q);
 
-                      index_type wellAnnotationRefCount(src.getWellAnnotationRefCount(i, q));
+                      index_type wellAnnotationRefCount(count(&MR::getWellAnnotationRefCount, i, q));
                       for (index_type a = 0; a < wellAnnotationRefCount; ++a)
                         transfer(&MR::getWellAnnotationRef, &MS::setWellAnnotationRef, i, q, a);
 
-                      index_type wellSampleCount(src.getWellSampleCount(i, q));
+                      index_type wellSampleCount(count(&MR::getWellSampleCount, i, q));
                       for (index_type w = 0; w < wellSampleCount; ++w)
                         {
                           if (transfer(&MR::getWellSampleID,        &MS::setWellSampleID,        i, q, w))
@@ -932,11 +1003,15 @@ namespace
                               transfer(&MR::getWellSamplePositionY, &MS::setWellSamplePositionY, i, q, w);
                               transfer(&MR::getWellSampleTimepoint, &MS::setWellSampleTimepoint, i, q, w);
                             }
+
+                          index_type wellSampleAnnotationRefCount(count(&MR::getWellSampleAnnotationRefCount, i, q, w));
+                          for (index_type s = 0; s < wellSampleAnnotationRefCount; ++s)
+                            transfer(&MR::getWellSampleAnnotationRef, &MS::setWellSampleAnnotationRef, i, q, w, s);
                         }
                     }
                 }
 
-              index_type plateAcquisitionCount(src.getPlateAcquisitionCount(i));
+              index_type plateAcquisitionCount(count(&MR::getPlateAcquisitionCount, i));
               for (index_type q = 0; q < plateAcquisitionCount; ++q)
                 {
                   if (transfer(&MR::getPlateAcquisitionID,                &MS::setPlateAcquisitionID,                i, q))
@@ -947,17 +1022,17 @@ namespace
                       transfer(&MR::getPlateAcquisitionName,              &MS::setPlateAcquisitionName,              i, q);
                       transfer(&MR::getPlateAcquisitionStartTime,         &MS::setPlateAcquisitionStartTime,         i, q);
 
-                      index_type plateAcquisitionAnnotationRefCount(src.getPlateAcquisitionAnnotationRefCount(i, q));
+                      index_type plateAcquisitionAnnotationRefCount(count(&MR::getPlateAcquisitionAnnotationRefCount, i, q));
                       for (index_type a = 0; a < plateAcquisitionAnnotationRefCount; ++a)
                         transfer(&MR::getPlateAcquisitionAnnotationRef, &MS::setPlateAcquisitionAnnotationRef, i, q, a);
 
-                      index_type wellSampleRefCount(src.getWellSampleRefCount(i, q));
+                      index_type wellSampleRefCount(count(&MR::getWellSampleRefCount, i, q));
                       for (index_type w = 0; w < wellSampleRefCount; ++w)
                         transfer(&MR::getPlateAcquisitionWellSampleRef, &MS::setPlateAcquisitionWellSampleRef, i, q, w);
                     }
                 }
 
-              index_type plateAnnotationRefCount(src.getPlateAnnotationRefCount(i));
+              index_type plateAnnotationRefCount(count(&MR::getPlateAnnotationRefCount, i));
               for (index_type q = 0; q < plateAnnotationRefCount; ++q)
                 transfer(&MR::getPlateAnnotationRef, &MS::setPlateAnnotationRef, i, q);
             }
@@ -968,7 +1043,7 @@ namespace
     void
     convertProjects()
     {
-      index_type projectCount(src.getProjectCount());
+      index_type projectCount(count(&MR::getProjectCount));
       for (index_type i = 0; i < projectCount; ++i)
         {
           if (transfer(&MR::getProjectID,                   &MS::setProjectID,                   i))
@@ -978,11 +1053,11 @@ namespace
               transfer(&MR::getProjectExperimenterRef,      &MS::setProjectExperimenterRef,      i);
               transfer(&MR::getProjectName,                 &MS::setProjectName,                 i);
 
-              index_type annotationRefCount(src.getProjectAnnotationRefCount(i));
+              index_type annotationRefCount(count(&MR::getProjectAnnotationRefCount, i));
               for (index_type q = 0; q < annotationRefCount; ++q)
                 transfer(&MR::getProjectAnnotationRef, &MS::setProjectAnnotationRef, i, q);
 
-              index_type datasetRefCount(src.getDatasetRefCount(i));
+              index_type datasetRefCount(count(&MR::getDatasetRefCount, i));
               for (index_type q = 0; q < datasetRefCount; ++q)
                 transfer(&MR::getProjectDatasetRef, &MS::setProjectDatasetRef, i, q);
             }
@@ -993,7 +1068,7 @@ namespace
     void
     convertROIs()
     {
-      index_type roiCount(src.getROICount());
+      index_type roiCount(count(&MR::getROICount));
       for (index_type i = 0; i < roiCount; ++i)
         {
           if (transfer(&MR::getROIID,          &MS::setROIID,          i))
@@ -1002,7 +1077,7 @@ namespace
               transfer(&MR::getROIDescription, &MS::setROIDescription, i);
               transfer(&MR::getROINamespace,   &MS::setROINamespace,   i);
 
-              index_type shapeCount(src.getShapeCount(i));
+              index_type shapeCount(count(&MR::getShapeCount, i));
               for (index_type q = 0; q < shapeCount; ++q)
                 {
                   std::string type = src.getShapeType(i, q);
@@ -1031,10 +1106,6 @@ namespace
                           transfer(&MR::getEllipseRadiusY,         &MS::setEllipseRadiusY,         i, q);
                           transfer(&MR::getEllipseX,               &MS::setEllipseX,               i, q);
                           transfer(&MR::getEllipseY,               &MS::setEllipseY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getEllipseAnnotationRef, &MS::setEllipseAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Label")
@@ -1059,10 +1130,6 @@ namespace
                           transfer(&MR::getLabelVisible,         &MS::setLabelVisible,         i, q);
                           transfer(&MR::getLabelX,               &MS::setLabelX,               i, q);
                           transfer(&MR::getLabelY,               &MS::setLabelY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getLabelAnnotationRef, &MS::setLabelAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Line")
@@ -1091,10 +1158,6 @@ namespace
                           transfer(&MR::getLineX2,              &MS::setLineX2,              i, q);
                           transfer(&MR::getLineY1,              &MS::setLineY1,              i, q);
                           transfer(&MR::getLineY2,              &MS::setLineY2,              i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getLineAnnotationRef, &MS::setLineAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Mask")
@@ -1121,10 +1184,6 @@ namespace
                           transfer(&MR::getMaskWidth,           &MS::setMaskWidth,           i, q);
                           transfer(&MR::getMaskX,               &MS::setMaskX,               i, q);
                           transfer(&MR::getMaskY,               &MS::setMaskY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getMaskAnnotationRef, &MS::setMaskAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Point")
@@ -1149,10 +1208,6 @@ namespace
                           transfer(&MR::getPointVisible,         &MS::setPointVisible,         i, q);
                           transfer(&MR::getPointX,               &MS::setPointX,               i, q);
                           transfer(&MR::getPointY,               &MS::setPointY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getPointAnnotationRef, &MS::setPointAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Polygon")
@@ -1176,10 +1231,6 @@ namespace
                           transfer(&MR::getPolygonTransform,       &MS::setPolygonTransform,       i, q);
                           transfer(&MR::getPolygonVisible,         &MS::setPolygonVisible,         i, q);
                           transfer(&MR::getPolygonPoints,          &MS::setPolygonPoints,          i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getPolygonAnnotationRef, &MS::setPolygonAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Polyline")
@@ -1205,10 +1256,6 @@ namespace
                           transfer(&MR::getPolylineMarkerEnd,       &MS::setPolylineMarkerEnd,       i, q);
                           transfer(&MR::getPolylineMarkerStart,     &MS::setPolylineMarkerStart,     i, q);
                           transfer(&MR::getPolylinePoints,          &MS::setPolylinePoints,          i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getPolylineAnnotationRef, &MS::setPolylineAnnotationRef, i, q, r);
                         }
                     }
                   else if (type == "Rectangle")
@@ -1235,15 +1282,11 @@ namespace
                           transfer(&MR::getRectangleWidth,           &MS::setRectangleWidth,           i, q);
                           transfer(&MR::getRectangleX,               &MS::setRectangleX,               i, q);
                           transfer(&MR::getRectangleY,               &MS::setRectangleY,               i, q);
-
-                          index_type shapeAnnotationRefCount(src.getShapeAnnotationRefCount(i, q));
-                          for (index_type r = 0; r < shapeAnnotationRefCount; ++r)
-                            transfer(&MR::getRectangleAnnotationRef, &MS::setRectangleAnnotationRef, i, q, r);
                         }
                     }
                 }
 
-              index_type annotationRefCount(src.getROIAnnotationRefCount(i));
+              index_type annotationRefCount(count(&MR::getROIAnnotationRefCount, i));
               for (index_type q = 0; q < annotationRefCount; ++q)
                 transfer(&MR::getROIAnnotationRef, &MS::setROIAnnotationRef, i, q);
             }
@@ -1254,7 +1297,7 @@ namespace
     void
     convertScreens()
     {
-      index_type screenCount(src.getScreenCount());
+      index_type screenCount(count(&MR::getScreenCount));
       for (index_type i = 0; i < screenCount; ++i)
         {
           if (transfer(&MR::getScreenID,                    &MS::setScreenID,                    i))
@@ -1267,15 +1310,15 @@ namespace
               transfer(&MR::getScreenReagentSetIdentifier,  &MS::setScreenReagentSetIdentifier,  i);
               transfer(&MR::getScreenType,                  &MS::setScreenType,                  i);
 
-              index_type plateRefCount(src.getPlateRefCount(i));
+              index_type plateRefCount(count(&MR::getPlateRefCount, i));
               for (index_type q = 0; q < plateRefCount; ++q)
                 transfer(&MR::getScreenPlateRef, &MS::setScreenPlateRef, i, q);
 
-              index_type annotationRefCount(src.getScreenAnnotationRefCount(i));
+              index_type annotationRefCount(count(&MR::getScreenAnnotationRefCount, i));
               for (index_type q = 0; q < annotationRefCount; ++q)
                 transfer(&MR::getScreenAnnotationRef, &MS::setScreenAnnotationRef, i, q);
 
-              index_type reagentCount(src.getReagentCount(i));
+              index_type reagentCount(count(&MR::getReagentCount, i));
               for (index_type q = 0; q < reagentCount; ++q)
                 {
                   if (transfer(&MR::getReagentID,                &MS::setReagentID,                i, q))
@@ -1284,7 +1327,7 @@ namespace
                       transfer(&MR::getReagentName,              &MS::setReagentName,              i, q);
                       transfer(&MR::getReagentReagentIdentifier, &MS::setReagentReagentIdentifier, i, q);
 
-                      index_type reagentAnnotationRefCount(src.getReagentAnnotationRefCount(i, q));
+                      index_type reagentAnnotationRefCount(count(&MR::getReagentAnnotationRefCount, i, q));
                       for (index_type r = 0; r < reagentAnnotationRefCount; ++r)
                         transfer(&MR::getReagentAnnotationRef, &MS::setReagentAnnotationRef, i, q, r);
                     }
@@ -1297,7 +1340,7 @@ namespace
     void
     convertTagAnnotations()
     {
-      index_type tagAnnotationCount(src.getTagAnnotationCount());
+      index_type tagAnnotationCount(count(&MR::getTagAnnotationCount));
       for (index_type i = 0; i < tagAnnotationCount; ++i)
         {
           if (transfer(&MR::getTagAnnotationID,          &MS::setTagAnnotationID,          i))
@@ -1307,7 +1350,7 @@ namespace
               transfer(&MR::getTagAnnotationValue,       &MS::setTagAnnotationValue,       i);
               transfer(&MR::getTagAnnotationAnnotator,   &MS::setTagAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getTagAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getTagAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getTagAnnotationAnnotationRef, &MS::setTagAnnotationAnnotationRef, i, a);
             }
@@ -1318,7 +1361,7 @@ namespace
     void
     convertTermAnnotations()
     {
-      index_type termAnnotationCount(src.getTermAnnotationCount());
+      index_type termAnnotationCount(count(&MR::getTermAnnotationCount));
       for (index_type i = 0; i < termAnnotationCount; ++i)
         {
           if (transfer(&MR::getTermAnnotationID,          &MS::setTermAnnotationID,          i))
@@ -1328,7 +1371,7 @@ namespace
               transfer(&MR::getTermAnnotationValue,       &MS::setTermAnnotationValue,       i);
               transfer(&MR::getTermAnnotationAnnotator,   &MS::setTermAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getTermAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getTermAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getTermAnnotationAnnotationRef, &MS::setTermAnnotationAnnotationRef, i, a);
             }
@@ -1339,7 +1382,7 @@ namespace
     void
     convertTimestampAnnotations()
     {
-      index_type timestampAnnotationCount(src.getTimestampAnnotationCount());
+      index_type timestampAnnotationCount(count(&MR::getTimestampAnnotationCount));
       for (index_type i = 0; i < timestampAnnotationCount; ++i)
         {
           if (transfer(&MR::getTimestampAnnotationID,          &MS::setTimestampAnnotationID,          i))
@@ -1349,7 +1392,7 @@ namespace
               transfer(&MR::getTimestampAnnotationValue,       &MS::setTimestampAnnotationValue,       i);
               transfer(&MR::getTimestampAnnotationAnnotator,   &MS::setTimestampAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getTimestampAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getTimestampAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getTimestampAnnotationAnnotationRef, &MS::setTimestampAnnotationAnnotationRef, i, a);
             }
@@ -1360,7 +1403,7 @@ namespace
     void
     convertXMLAnnotations()
     {
-      index_type xmlAnnotationCount(src.getXMLAnnotationCount());
+      index_type xmlAnnotationCount(count(&MR::getXMLAnnotationCount));
       for (index_type i = 0; i < xmlAnnotationCount; ++i)
         {
           if (transfer(&MR::getXMLAnnotationID,          &MS::setXMLAnnotationID,          i))
@@ -1370,7 +1413,7 @@ namespace
               transfer(&MR::getXMLAnnotationValue,       &MS::setXMLAnnotationValue,       i);
               transfer(&MR::getXMLAnnotationAnnotator,   &MS::setXMLAnnotationAnnotator,   i);
 
-              index_type annotationRefCount(src.getXMLAnnotationAnnotationCount(i));
+              index_type annotationRefCount(count(&MR::getXMLAnnotationAnnotationCount, i));
               for (index_type a = 0; a < annotationRefCount; ++a)
                 transfer(&MR::getXMLAnnotationAnnotationRef,&MS::setXMLAnnotationAnnotationRef, i, a);
             }
@@ -1402,8 +1445,24 @@ namespace ome
       convert(const MetadataRetrieve& src,
               MetadataStore&          dest)
       {
-        MetadataConverter convert(src, dest);
-        convert();
+        MetadataConverter converter(src, dest);
+        converter();
+      }
+
+      void
+      convert(MetadataRetrieve& src,
+              MetadataStore&    dest,
+              bool              skip)
+      {
+        MetadataStore *src_store(dynamic_cast<MetadataStore *>(&src));
+        if (typeid(src) == typeid(dest) && src_store && skip)
+          {
+            dest.setRoot(src_store->getRoot());
+          }
+        else
+          {
+            convert(src, dest);
+          }
       }
 
     }

@@ -47,6 +47,7 @@ set(ome_compat_static_headers
     cstdint.h
     filesystem.h
     endian.h
+    log.h
     memory.h
     module.h
     mstream.h
@@ -76,12 +77,15 @@ set(ome_compat_headers
     ${ome_compat_generated_headers})
 
 set(ome_compat_sources
+    log.cpp
     module.cpp)
 
 add_library(ome-compat SHARED ${ome_compat_sources} ${ome_compat_headers})
 target_link_libraries(ome-compat
                       ${REGEX_LIBRARY}
                       ${THREAD_LIBRARY}
+                      ${Boost_LOG_SETUP_LIBRARY_RELEASE}
+                      ${Boost_LOG_LIBRARY_RELEASE}
                       ${Boost_FILESYSTEM_LIBRARY_RELEASE}
                       ${Boost_SYSTEM_LIBRARY_RELEASE}
                       ${LibDl_LIBRARIES})

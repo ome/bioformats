@@ -71,6 +71,8 @@ namespace ome
                          virtual public MetadataConfigurable
     {
     public:
+      using FormatHandler::isThisType;
+
       /// File grouping options.
       enum FileGroupOption
         {
@@ -151,8 +153,8 @@ namespace ome
       // Documented in superclass.
       virtual
       bool
-      isThisType(const std::string& name,
-                 bool               open = true) const = 0;
+      isThisType(const boost::filesystem::path& name,
+                 bool                           open = true) const = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -343,20 +345,25 @@ namespace ome
       isFalseColor() const = 0;
 
       /**
-       * Get the color lookup table associated with the most recently
-       * opened image.
+       * Get the color lookup table associated with an image plane.
        *
        * If no image planes have been opened, or if isIndexed()
        * returns @c false, then this may throw an exception.
        *
-       * @param buf the destination pixel buffer.
+       * The VariantPixelBuffer will use the X dimension for the value
+       * index and the subchannel dimension for the color samples
+       * (order is RGB).  Depending upon the image type, the size of
+       * the X dimension may vary.  It will typically be 2^8 or 2^16,
+       * but other sizes are possible.
        *
-       * @todo use a more specific buffer type.
-       * @todo throw on failure.
+       * @param buf the destination pixel buffer.
+       * @param no the image index within the file.
+       * @throws FormatException if a lookup table could not be obtained.
        */
       virtual
       void
-      getLookupTable(VariantPixelBuffer& buf) const = 0;
+      getLookupTable(VariantPixelBuffer& buf,
+                     dimension_size_type no = 0U) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -708,7 +715,7 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       getUsedFiles(bool noPixels = false) const = 0;
 
       /**
@@ -719,7 +726,7 @@ namespace ome
        * @returns a list of filenames.
        */
       virtual
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       getSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
@@ -752,7 +759,7 @@ namespace ome
        * @returns the filename.
        */
       virtual
-      const boost::optional<std::string>&
+      const boost::optional<boost::filesystem::path>&
       getCurrentFile() const = 0;
 
       /**
@@ -769,9 +776,9 @@ namespace ome
        *
        * The index is computed using the DimensionOrder.
        *
-       * @param z the @c Z coordinate.
-       * @param c the @c C coordinate.
-       * @param t the @c T coordinate.
+       * @param z the @c Z coordinate (real size).
+       * @param c the @c C coordinate (real size).
+       * @param t the @c T coordinate (real size).
        * @returns the linear index.
        *
        * @todo unify with the pixel buffer dimension indexes.
@@ -785,16 +792,69 @@ namespace ome
                dimension_size_type t) const = 0;
 
       /**
+       * Get the linear index of a @c Z, @c C, @c T, @c ModuloZ, @c
+       * ModuloC and @c ModuloT coordinate.
+       *
+       * The index is computed using the DimensionOrder.
+       *
+       * @note The @c Z, @c C and @c T coordinates take the modulo
+       * dimension sizes into account.  The effective size for each of
+       * these dimensions is limited to the total size of the
+       * dimension divided by the modulo size.
+       *
+       * @param z the @c Z coordinate (effective size).
+       * @param c the @c C coordinate (effective size).
+       * @param t the @c T coordinate (effective size).
+       * @param moduloZ the @c ModuloZ coordinate (effective size).
+       * @param moduloC the @c ModuloC coordinate (effective size).
+       * @param moduloT the @c ModuloT coordinate (effective size).
+       * @returns the linear index.
+       *
+       * @todo unify with the pixel buffer dimension indexes.
+       * @todo Don't use separate values to match the return of
+       * getZCTModuloCoords.
+       */
+      virtual
+      dimension_size_type
+      getIndex(dimension_size_type z,
+               dimension_size_type c,
+               dimension_size_type t,
+               dimension_size_type moduloZ,
+               dimension_size_type moduloC,
+               dimension_size_type moduloT) const = 0;
+
+      /**
        * Get the @c Z, @c C and @c T coordinate of a linear index.
        *
        * @param index the linear index.
-       * @returns an array containing @c Z, @c C and @c T values.
+       * @returns an array containing @c Z, @c C and @c T values (real
+       * sizes).
        *
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
       std::array<dimension_size_type, 3>
       getZCTCoords(dimension_size_type index) const = 0;
+
+      /**
+       * Get the @c Z, @c C, @c T, @c ModuloZ, @c ModuloC and @c
+       * ModuloT coordinate of a linear index.
+       *
+       * @note The @c Z, @c C and @c T coordinates are not the same as
+       * those returned by getZCTCoords(dimension_size_type) because
+       * the size of the modulo dimensions is taken into account.  The
+       * effective size for each of these dimensions is limited to the
+       * total size of the dimension divided by the modulo size.
+       *
+       * @param index the linear index.
+       * @returns an array containing @c Z, @c C, @c T, @c ModuloZ, @c
+       * ModuloC and @c ModuloT values (effective sizes).
+       *
+       * @todo unify with the pixel buffer dimension indexes.
+       */
+      virtual
+      std::array<dimension_size_type, 6>
+      getZCTModuloCoords(dimension_size_type index) const = 0;
 
       /**
        * Get a global metadata value.
@@ -859,7 +919,7 @@ namespace ome
        * @returns a const reference to the core metadata.
        */
       virtual
-      const std::vector<std::shared_ptr<CoreMetadata> >&
+      const std::vector<ome::compat::shared_ptr<CoreMetadata> >&
       getCoreMetadataList() const = 0;
 
       /**
@@ -893,7 +953,7 @@ namespace ome
        */
       virtual
       void
-      setMetadataStore(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store) = 0;
+      setMetadataStore(ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>& store) = 0;
 
       /**
        * Get the current metadata store for this reader.
@@ -901,7 +961,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      const std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
       getMetadataStore() const = 0;
 
       /**
@@ -910,7 +970,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
       getMetadataStore() = 0;
 
       /**
@@ -922,7 +982,7 @@ namespace ome
        * @returns a list of readers.
        */
       virtual
-      std::vector<std::shared_ptr<FormatReader> >
+      std::vector<ome::compat::shared_ptr<FormatReader> >
       getUnderlyingReaders() const = 0;
 
       /**
@@ -937,7 +997,7 @@ namespace ome
        */
       virtual
       bool
-      isSingleFile(const std::string& id) const = 0;
+      isSingleFile(const boost::filesystem::path& id) const = 0;
 
       /**
        * Get required parent directories.

@@ -123,7 +123,6 @@
 
 #include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/AffineTransform.h>
-#include <ome/xml/model/MapPairs.h>
 
 {% for include in model.getEnumHeaders() %}\
 #include <${include}>
@@ -287,18 +286,6 @@ namespace ome
         getLongAnnotationAnnotationCount(index_type longAnnotationIndex) const = 0;
 
         /**
-         * Get the number of links to a MapAnnotation.
-         *
-         * This method returns the number of references to the
-         * specified MapAnnotation held by all model objects.
-         *
-         * @param mapAnnotationIndex the MapAnnotation index.
-         * @returns the number of MapAnnotation links.
-         */
-        virtual index_type
-        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const = 0;
-
-        /**
          * Get the number of links to a TagAnnotation.
          *
          * This method returns the number of references to the
@@ -437,35 +424,6 @@ namespace ome
         virtual bool
         getPixelsBinDataBigEndian(index_type imageIndex,
                                   index_type binDataIndex) const = 0;
-
-	/**
-         * Get the Map value of MapAnnotation.
-         *
-         * @param mapAnnotationIndex the MapAnnotation index.
-         * @returns the Map.
-         */
-        virtual const ::${lang.omexml_model_package}::MapPairs::map_type&
-        getMapAnnotationValue(index_type mapAnnotationIndex) const = 0;
-
-	/**
-         * Get the Map property of GenericExcitationSource.
-         *
-         * @param instrumentIndex the Instrument index.
-         * @param lightSourceIndex the LightSource index.
-         * @returns the Map.
-         */
-        virtual const ::${lang.omexml_model_package}::MapPairs::map_type&
-        getGenericExcitationSourceMap(index_type instrumentIndex,
-                                      index_type lightSourceIndex) const = 0;
-
-	/**
-         * Set the Map property of ImagingEnvironment.
-         *
-         * @param imageIndex the Image index.
-         * @returns the Map.
-         */
-        virtual const ::${lang.omexml_model_package}::MapPairs::map_type&
-        getImagingEnvironmentMap(index_type imageIndex) const = 0;
 
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --

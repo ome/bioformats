@@ -53,6 +53,7 @@
 #cmakedefine OME_HAVE_REGEX 1
 #cmakedefine OME_HAVE_TR1_REGEX 1
 #cmakedefine OME_HAVE_BOOST_REGEX 1
+#cmakedefine OME_HAVE_BOOST_LOG 1
 #cmakedefine OME_HAVE_BOOST_THREAD 1
 #cmakedefine OME_HAVE_BOOST_FORMAT 1
 #cmakedefine OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE 1

@@ -39,6 +39,8 @@
 #ifndef OME_XML_MODEL_DETAIL_OMEMODEL_H
 #define OME_XML_MODEL_DETAIL_OMEMODEL_H
 
+#include <ome/compat/log.h>
+
 #include <ome/xml/model/OMEModel.h>
 #include <ome/xml/model/OMEModelObject.h>
 
@@ -57,6 +59,8 @@ namespace ome
         class OMEModel : virtual public ::ome::xml::model::OMEModel
         {
         private:
+          /// Message logger.
+          ome::compat::Logger logger;
           /// Mapping of id to model object.
           object_map_type modelObjects;
           /// Mapping of model object to reference.
@@ -70,16 +74,16 @@ namespace ome
           ~OMEModel ();
 
           /// @copydoc ome::xml::model::OMEModel::addModelObject
-          std::shared_ptr< ::ome::xml::model::OMEModelObject>
+          ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>
           addModelObject (const std::string&                                   id,
-                          std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+                          ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
 
           // Documented in parent.
-          std::shared_ptr< ::ome::xml::model::OMEModelObject>
+          ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>
           removeModelObject (const std::string& id);
 
           // Documented in parent.
-          std::shared_ptr< ::ome::xml::model::OMEModelObject>
+          ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>
           getModelObject (const std::string& id) const;
 
           // Documented in parent.
@@ -88,8 +92,8 @@ namespace ome
 
           /// @copydoc ome::xml::model::OMEModel::addReference
           bool
-          addReference (std::shared_ptr< ::ome::xml::model::OMEModelObject>& a,
-                        std::shared_ptr<Reference>&                          b);
+          addReference (ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& a,
+                        ome::compat::shared_ptr<Reference>&                          b);
 
           // Documented in parent.
           const reference_map_type&

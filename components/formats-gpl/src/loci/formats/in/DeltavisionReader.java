@@ -2370,11 +2370,16 @@ public class DeltavisionReader extends FormatReader {
         in.skipBytes(4);
         expTime = in.readFloat();
 
-        ndFilter = in.readFloat() / 100;
+        ndFilter = in.readFloat();
         exWavelen = in.readFloat();
         emWavelen = in.readFloat();
         intenScaling = in.readFloat();
         energyConvFactor = in.readFloat();
+
+        // the stored value could be a percent fraction or a percentage
+        if (ndFilter >= 1) {
+          ndFilter /= 100;
+        }
       }
       catch (IOException e) {
         LOGGER.debug("Could not parse extended header", e);

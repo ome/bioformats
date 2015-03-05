@@ -768,6 +768,13 @@ public class FileStitcher extends ReaderWrapper {
     return FormatTools.getIndex(this, z, c, t);
   }
 
+  /* @see IFormatReader#getIndex(int, int, int, int, int, int) */
+  @Override
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return FormatTools.getIndex(this, z, c, t, moduloZ, moduloC, moduloT);
+  }
+
   /* @see IFormatReader#getZCTCoords(int) */
   @Override
   public int[] getZCTCoords(int index) {
@@ -775,6 +782,17 @@ public class FileStitcher extends ReaderWrapper {
     return noStitch ? reader.getZCTCoords(index) :
       FormatTools.getZCTCoords(core.get(getCoreIndex()).dimensionOrder,
       getSizeZ(), getEffectiveSizeC(), getSizeT(), getImageCount(), index);
+  }
+
+  /* @see IFormatReader#getZCTModuloCoords(int) */
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return noStitch ? reader.getZCTModuloCoords(index) :
+      FormatTools.getZCTCoords(core.get(getCoreIndex()).dimensionOrder,
+      getSizeZ(), getEffectiveSizeC(), getSizeT(),
+      getModuloZ().length(), getModuloC().length(), getModuloT().length(),
+      getImageCount(), index);
   }
 
   /* @see IFormatReader#getSeriesMetadata() */

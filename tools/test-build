@@ -53,14 +53,19 @@ cppwrap()
     )
 }
 
+# Check python sources with flake8
+flake()
+{
+    flake8 -v components cpp docs
+}
+
 # Test sphinx docs build
 sphinx()
 {
     (
-        flake8 -v .
         export SPHINXOPTS="-W"
-        ant -Dsphinx.opts=$SPHINXOPTS clean-docs-sphinx
-        ant -Dsphinx.opts=$SPHINXOPTS docs-sphinx
+        ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx
+        ant -Dsphinx.warnopts=$SPHINXOPTS docs-sphinx
     )
 }
 
@@ -75,6 +80,7 @@ antbuild()
       ant clean compile-formats-common
       ant clean compile-bio-formats-plugins
       ant clean compile-lwf-stubs
+      ant clean compile-mipav-stubs
       ant clean compile-mdbtools
       ant clean compile-metakit
       ant clean compile-ome-xml
@@ -99,6 +105,8 @@ do
             cpp ;;
         cppwrap)
             cppwrap ;;
+        flake8)
+            flake ;;
         sphinx)
             sphinx ;;
         ant)

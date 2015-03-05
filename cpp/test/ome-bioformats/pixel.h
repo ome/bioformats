@@ -119,12 +119,12 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
   typedef typename ::ome::bioformats::PixelProperties<P>::std_type src_type;
   typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
 
-  const std::shared_ptr< ::ome::bioformats::PixelBuffer<src_type> > *src;
+  const ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<src_type> > *src;
   ::ome::bioformats::VariantPixelBuffer& dest;
 
   PixelTypeConversionVisitor(const ::ome::bioformats::VariantPixelBuffer& src,
                              ::ome::bioformats::VariantPixelBuffer& dest):
-    src(boost::get<std::shared_ptr< ::ome::bioformats::PixelBuffer<src_type> > >(&src.vbuffer())),
+    src(boost::get<ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<src_type> > >(&src.vbuffer())),
     dest(dest)
   {
 
@@ -141,7 +141,7 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
   typename boost::enable_if_c<
     boost::is_integral<T>::value, void
     >::type
-  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
+  operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
   {
     const src_type *src_buf = (*src)->data();
     T *dest_buf = lhs->data();
@@ -167,7 +167,7 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
   typename boost::enable_if_c<
     boost::is_floating_point<T>::value, void
     >::type
-  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
+  operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
   {
     const src_type *src_buf = (*src)->data();
     T *dest_buf = lhs->data();
@@ -192,7 +192,7 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
   typename boost::enable_if_c<
     boost::is_complex<T>::value, void
     >::type
-  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
+  operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& lhs)
   {
     const src_type *src_buf = (*src)->data();
     T *dest_buf = lhs->data();
@@ -216,7 +216,7 @@ struct PixelTypeConversionVisitor : public boost::static_visitor<>
   // and the upper part being set to true for the destination boolean
   // pixel type.
   void
-  operator() (std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& lhs)
+  operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& lhs)
   {
     const src_type *src_buf = (*src)->data();
     bit_type *dest_buf = lhs->data();

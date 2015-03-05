@@ -42,7 +42,11 @@
 
 #include <ome/test/test.h>
 
+#include <ome/xml/model/enums/EnumerationException.h>
+
 using ome::bioformats::createID;
+using ome::bioformats::createDimensionOrder;
+using ome::xml::model::enums::DimensionOrder;
 
 TEST(MetadataToolsTest, CreateID1)
 {
@@ -95,4 +99,16 @@ TEST(MetadataToolsTest, CreateID4)
 TEST(MetadataToolsTest, ModelVersion)
 {
   ASSERT_EQ(std::string(OME_MODEL_VERSION), ome::bioformats::getModelVersion());
+}
+
+TEST(MetadataToolsTest, CreateDimensionOrder)
+{
+  EXPECT_EQ(DimensionOrder::XYZTC, createDimensionOrder(""));
+  EXPECT_EQ(DimensionOrder::XYZTC, createDimensionOrder("XYXYZTCZ"));
+  EXPECT_EQ(DimensionOrder::XYCZT, createDimensionOrder("XYC"));
+  EXPECT_EQ(DimensionOrder::XYTZC, createDimensionOrder("XYTZ"));
+
+  EXPECT_THROW(createDimensionOrder("CXY"), ome::xml::model::enums::EnumerationException);
+  EXPECT_THROW(createDimensionOrder("Y"), ome::xml::model::enums::EnumerationException);
+  EXPECT_THROW(createDimensionOrder("YC"), ome::xml::model::enums::EnumerationException);
 }

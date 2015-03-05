@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /usr/bin/env bash
 # Script for updating copyright headers across the code
 
 if $(sed --version 2>/dev/null | head -n1 | grep -q "GNU");

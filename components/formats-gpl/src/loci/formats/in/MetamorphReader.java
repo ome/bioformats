@@ -494,6 +494,9 @@ public class MetamorphReader extends BaseTiffReader {
       if (z != null) zc = Integer.parseInt(z);
       if (c != null) cc = Integer.parseInt(c);
       if (t != null) tc = Integer.parseInt(t);
+      else if (!doTimelapse) {
+        tc = 1;
+      }
 
       if (cc == 0) cc = 1;
       if (cc == 1 && bizarreMultichannelAcquisition) {
@@ -615,7 +618,7 @@ public class MetamorphReader extends BaseTiffReader {
       String file = locateFirstValidFile();
       if (file == null) {
         throw new FormatException(
-            "Unable to locate at lease one valid STK file!");
+            "Unable to locate at least one valid STK file!");
       }
 
       RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
@@ -1152,18 +1155,18 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         }
 
-        int colon = line.indexOf(": ");
-
-        String descrValue = null;
+        int colon = line.indexOf(":");
 
         if (colon < 0) {
           // normal line (not a key/value pair)
           if (line.length() > 0) {
             // not a blank line
-            descrValue = line;
+            sb.append(line);
+            sb.append("  ");
           }
         }
         else {
+          String descrValue = null;
           if (i == 0) {
             // first line could be mangled; make a reasonable guess
             int dot = line.lastIndexOf(".", colon);
@@ -1183,7 +1186,7 @@ public class MetamorphReader extends BaseTiffReader {
 
           // add key/value pair embedded in comment as separate metadata
           String key = line.substring(0, colon);
-          String value = line.substring(colon + 2);
+          String value = line.substring(colon + 1).trim();
           addSeriesMeta(key, value);
           if (key.equals("Exposure")) {
             if (value.indexOf("=") != -1) {
@@ -1798,11 +1801,10 @@ public class MetamorphReader extends BaseTiffReader {
 
     switch (type) {
       case 1:
-        in.skipBytes(1);
         while (getGlobalMeta("Channel #" + index + " " + key) != null) {
           index++;
         }
-        addGlobalMeta("Channel #" + index + " " + key, in.readDouble());
+        addGlobalMeta("Channel #" + index + " " + key, readRational(in).doubleValue());
         break;
       case 2:
         int valueLength = in.read();

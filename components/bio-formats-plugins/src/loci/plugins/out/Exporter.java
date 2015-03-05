@@ -33,6 +33,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Macro;
 import ij.Prefs;
+import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
@@ -102,6 +103,24 @@ public class Exporter {
 
     private LociExporter plugin;
 
+    /**
+     * Removes the extension of the specified name.
+     *
+     * @param name The name to handle.
+     * @return See above.
+     */
+    private String removeExtension(String name)
+    {
+        int index = name.lastIndexOf(".");
+        //check if separator
+        int unixPos = name.lastIndexOf('/');
+        int windowsPos = name.lastIndexOf('\\');
+        int max = Math.max(unixPos, windowsPos);
+        if (max < index) {
+            return name.substring(0, index);
+        }
+        return name;
+    }
     // -- Constructor --
 
     public Exporter(LociExporter plugin, ImagePlus imp) {
@@ -118,7 +137,9 @@ public class Exporter {
         Boolean splitC = null;
         Boolean splitT = null;
         Boolean saveRoi = null;
+        String compression = null;
 
+        Boolean windowless = Boolean.FALSE;
         if (plugin.arg != null) {
             outfile = Macro.getValue(plugin.arg, "outfile", null);
 
@@ -126,14 +147,27 @@ public class Exporter {
             String c = Macro.getValue(plugin.arg, "splitC", null);
             String t = Macro.getValue(plugin.arg, "splitT", null);
             String sr = Macro.getValue(plugin.arg, "saveRoi", null);
-
+            compression = Macro.getValue(plugin.arg, "compression", null);
+            String id = Macro.getValue(plugin.arg, "imageid", null);
             splitZ = z == null ? null : Boolean.valueOf(z);
             splitC = c == null ? null : Boolean.valueOf(c);
             splitT = t == null ? null : Boolean.valueOf(t);
             saveRoi = sr == null ? null : Boolean.valueOf(sr);
+            if (id != null) {
+                try {
+                    int imageID = Integer.parseInt(id);
+                    ImagePlus plus = WindowManager.getImage(imageID);
+                    if (plus != null) imp = plus;
+                } catch (Exception e) {
+                    //nothing to do, we use the current imagePlus
+                }
+            }
+            String w =  Macro.getValue(plugin.arg, "windowless", null);
+            if (w != null) {
+                windowless = Boolean.valueOf(w);
+            }
             plugin.arg = null;
         }
-
         if (outfile == null) {
             String options = Macro.getOptions();
             if (options != null) {
@@ -141,14 +175,40 @@ public class Exporter {
                 if (save != null) outfile = save;
             }
         }
-
+        //create a temporary file if window less
+        if (windowless && (outfile == null || outfile.length() == 0)) {
+            File tmp = null;
+            try {
+                String name = removeExtension(imp.getTitle());
+                String n = name+ ".ome.tif";
+                tmp = File.createTempFile(name, ".ome.tif");
+                File p = tmp.getParentFile();
+                File[] list = p.listFiles();
+                //make sure we delete a previous tmp file with same name if any
+                if (list != null) {
+                    File toDelete = null;
+                    for (int i = 0; i < list.length; i++) {
+                        if (list[i].getName().equals(n)) {
+                            toDelete = list[i];
+                            break;
+                        }
+                    }
+                    if (toDelete != null) {
+                        toDelete.delete();
+                    }
+                }
+                outfile = new File(p, n).getAbsolutePath();
+                if (Recorder.record) Recorder.recordPath("outputfile", outfile);
+                IJ.log("exporter outputfile "+outfile);
+            } catch (Exception e) {
+                //fall back to window mode.
+            } finally {
+                if (tmp != null) tmp.delete();
+            }
+        }
+        File f = null;
         if (outfile == null || outfile.length() == 0) {
             // open a dialog prompting for the filename to save
-
-            //SaveDialog sd = new SaveDialog("Bio-Formats Exporter", "", "");
-            //String dir = sd.getDirectory();
-            //String name = sd.getFileName();
-
             // NB: Copied and adapted from ij.io.SaveDIalog.jSaveDispatchThread,
             // so that the save dialog has a file filter for choosing output format.
 
@@ -177,20 +237,16 @@ public class Exporter {
                 Macro.abort();
                 return;
             }
-            File f = fc.getSelectedFile();
-
+            f = fc.getSelectedFile();
+            dir = fc.getCurrentDirectory().getPath() + File.separator;
+            name = fc.getName(f);
             if (f.exists()) {
                 int ret = JOptionPane.showConfirmDialog(fc,
                         "The file " + f.getName() + " already exists. \n" +
                                 "Would you like to replace it?", "Replace?",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (ret != JOptionPane.OK_OPTION) f = null;
-            }
-            if (f == null) Macro.abort();
-            else {
-                dir = fc.getCurrentDirectory().getPath() + File.separator;
-                name = fc.getName(f);
-
+            } else {
                 // ensure filename matches selected filter
                 FileFilter filter = fc.getFileFilter();
                 if (filter instanceof ExtensionFileFilter) {
@@ -223,15 +279,12 @@ public class Exporter {
                     }
 
                 }
-                if (f == null) {
-                    Macro.abort();
-                    return;
-                }
-                else{
-                    // do some ImageJ bookkeeping
-                    OpenDialog.setDefaultDirectory(dir);
-                    if (Recorder.record) Recorder.recordPath("save", dir+name);
-                }
+            }
+            if (f == null) Macro.abort();
+            else {
+                // do some ImageJ bookkeeping
+                OpenDialog.setDefaultDirectory(dir);
+                if (Recorder.record) Recorder.recordPath("save", dir+name);
             }
 
             if (dir == null || name == null) return;
@@ -239,6 +292,11 @@ public class Exporter {
             if (outfile == null) return;
         }
 
+        if (windowless) {
+            if (splitZ == null) splitZ = Boolean.FALSE;
+            if (splitC == null) splitC = Boolean.FALSE;
+            if (splitT == null) splitT = Boolean.FALSE;
+        }
         if (splitZ == null || splitC == null || splitT == null) {
             // ask if we want to export multiple files
 
@@ -252,6 +310,7 @@ public class Exporter {
             splitZ = multiFile.getNextBoolean();
             splitT = multiFile.getNextBoolean();
             splitC = multiFile.getNextBoolean();
+            if (multiFile.wasCanceled()) return;
         }
 
         try {
@@ -403,14 +462,16 @@ public class Exporter {
             if (imp.getImageStackSize() !=
                     imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
             {
-                IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
-                        "The number of planes in the stack (" + imp.getImageStackSize() +
-                        ") does not match the number of expected planes (" +
-                        (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
-                        "\nIf you select 'OK', only " + imp.getImageStackSize() +
-                        " planes will be exported. If you wish to export all of the " +
-                        "planes,\nselect 'Cancel' and convert the Image5D window " +
-                        "to a stack.");
+                if (!windowless) {
+                    IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
+                            "The number of planes in the stack (" + imp.getImageStackSize() +
+                            ") does not match the number of expected planes (" +
+                            (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
+                            "\nIf you select 'OK', only " + imp.getImageStackSize() +
+                            " planes will be exported. If you wish to export all of the " +
+                            "planes,\nselect 'Cancel' and convert the Image5D window " +
+                            "to a stack.");
+                }
                 store.setPixelsSizeZ(new PositiveInteger(imp.getImageStackSize()), 0);
                 store.setPixelsSizeC(new PositiveInteger(1), 0);
                 store.setPixelsSizeT(new PositiveInteger(1), 0);
@@ -519,22 +580,61 @@ public class Exporter {
             }
 
             if (codecs != null && codecs.length > 1) {
-                GenericDialog gd =
-                        new GenericDialog("Bio-Formats Exporter Options");
+                boolean selected = false;
+                if (compression != null) {
+                    for (int i = 0; i < codecs.length; i++) {
+                        if (codecs[i].equals(compression)) {
+                            selected = true;
+                            break;
+                        }
+                    }
+                }
+                if (!selected && !windowless) {
+                    GenericDialog gd =
+                            new GenericDialog("Bio-Formats Exporter Options");
 
+                    gd.addChoice("Compression type: ", codecs, codecs[0]);
+                    if (saveRoi != null) {
+                        gd.addCheckbox("Export ROIs", saveRoi.booleanValue());
+                    } else {
+                        gd.addCheckbox("Export ROIs", true);
+                    }
+                    gd.showDialog();
+                    saveRoi = gd.getNextBoolean();
 
-                gd.addChoice("Compression type: ", codecs, codecs[0]);
-                gd.addCheckbox("Export ROI's", false);
-                gd.showDialog();
-                saveRoi = gd.getNextBoolean();
-
-                if (gd.wasCanceled()) return;
-
-                w.setCompression(gd.getNextChoice());
+                    if (gd.wasCanceled()) return;
+                    compression = gd.getNextChoice();
+                }
             }
-
+            boolean in = false;
+            if (outputFiles.length > 1) {
+                for (int i = 0; i < outputFiles.length; i++) {
+                    if (new File(outputFiles[i]).exists()) {
+                        in = true;
+                        break;
+                    }
+                }
+            }
+            if (in && !windowless) {
+                int ret1 = JOptionPane.showConfirmDialog(null,
+                        "Some files already exist. \n" +
+                                "Would you like to replace them?", "Replace?",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (ret1 != JOptionPane.OK_OPTION) {
+                    return;
+                }
+                //Delete the files overwrite does not correctly work
+                for (int i = 0; i < outputFiles.length; i++) {
+                    new File(outputFiles[i]).delete();
+                }
+            }
+            //We are now ready to write the image
+            if (f != null) f.delete(); //delete the file.
+            if (compression != null) {
+                w.setCompression(compression);
+            }
             //Save ROI's
-            if (saveRoi.booleanValue()==true){
+            if (saveRoi != null && saveRoi.booleanValue()) {
                 ROIHandler.saveROIs(store);
             }
             w.setMetadataRetrieve(store);

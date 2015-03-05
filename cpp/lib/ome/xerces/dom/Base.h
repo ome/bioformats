@@ -42,6 +42,7 @@
 #include <ome/compat/config.h>
 #include <ome/compat/memory.h>
 
+#include <iostream>
 #include <stdexcept>
 
 namespace ome
@@ -51,309 +52,16 @@ namespace ome
     namespace dom
     {
 
-      /// Lifetime and memory management strategy for wrapped types.
-      enum ManagementStrategy
-        {
-          MANAGED,  ///< Managed by the wrapper.
-          UNMANAGED ///< Managed externally.
-        };
-
-      /**
-       * Manager of a wrapped resource.
-       *
-       * Only to be used via a shared_ptr since it's non-copyable.
-       * The managed instance will be freed when this manager object
-       * is destroyed.
-       */
-      template<typename T>
-      class Manager
+      namespace detail
       {
-      public:
-        /// Wrapped Xerces type.
-        typedef T element_type;
 
-      private:
-        /// The managed resource.
-        element_type *wrapped;
-
-      public:
-        /// Constructor.
-        Manager():
-          wrapped()
-        {}
-
-        /**
-         * Construct from pointer to resource.
-         *
-         * @param wrapped the resource to manage.
-         */
-        Manager(element_type *wrapped):
-          wrapped(wrapped)
-        {}
-
-        /**
-         * Destructor.
-         *
-         * The managed resource (if any) will be released.
-         */
-        ~Manager()
-        {
-          if (wrapped)
-            wrapped->release();
-        }
-
-      private:
-        /// Copy constructor (deleted).
-        Manager (const Manager&);
-
-        /// Assignment operator (deleted).
-        Manager&
-        operator= (const Manager&);
-
-      public:
-        /**
-         * Get the managed resource.
-         *
-         * @returns a pointer to the managed resource.
-         */
-        element_type *
-        get()
-        { return wrapped; }
-
-        /**
-         * Get the managed resource.
-         *
-         * @returns a pointer to the managed resource.
-         */
-        const element_type *
-        get() const
-        { return wrapped; }
-
-        /**
-         * Release the managed resource.
-         *
-         * The managed resource will be null after this method
-         * returns.
-         *
-         * @note This will not free the resource.  Only use this to
-         * transfer ownership and prevent the resource being
-         * destroyed when this object is destroyed.
-         * @returns the managed resource.
-         */
-        element_type *
-        release()
-        {
-          element_type *ret = wrapped;
-          wrapped = 0;
-          return ret;
-        }
-
-        /**
-         * Reset the managed resource.
-         *
-         * The managed resource will be null after this method
-         * returns.
-         *
-         * @note This will free the resource if it is the last
-         * reference to it.
-         */
+        template<typename T>
+        inline
         void
-        reset()
-        {
-        }
-      };
-
-      /**
-       * Base of the DOM wrapper hierarchy.
-       */
-      template<typename T, int S>
-      class BaseElement;
-
-      /**
-       * Managed base of the DOM wrapper hierarchy.
-       */
-      template<typename T>
-      class BaseElement<T, MANAGED>
-      {
-      public:
-        /// Wrapped Xerces type.
-        typedef T element_type;
-        /// Wrapper type.
-        typedef Manager<element_type> manager_type;
-
-        /**
-         * Constructor.
-         *
-         * A null manager will be created.
-         */
-        BaseElement():
-          wrapped(std::shared_ptr<manager_type>(new manager_type()))
+        unmanaged(T *)
         {}
 
-        /**
-         * Constructor.
-         *
-         * A new manager will be created taking ownership of the
-         * wrapped value.
-         *
-         * @param wrapped the value to wrap and take ownership of.
-         */
-        BaseElement(element_type *wrapped):
-          wrapped(std::shared_ptr<manager_type>(new manager_type(wrapped)))
-        {}
-
-        /**
-         * Get wrapped element_type.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped element_type.
-         */
-        element_type *
-        get()
-        { return wrapped->get(); }
-
-        /**
-         * Get wrapped element_type.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped element_type.
-         */
-        const element_type *
-        get() const
-        { return wrapped->get(); }
-
-        /**
-         * Set wrapped element_type.
-         *
-         * @note This will take ownership of the wrapped value.
-         *
-         * @param wrapped the new value.
-         */
-        void
-        set(element_type *wrapped)
-        { this->wrapped = std::shared_ptr<manager_type>(new manager_type(wrapped));; }
-
-        /**
-         * Release the managed resource.
-         *
-         * The managed resource will be null after this method
-         * returns.
-         *
-         * @note This will not free the resource.  Only use this to
-         * transfer ownership and prevent the resource being
-         * destroyed when this object is destroyed.
-         * @returns the managed resource.
-         */
-        element_type *
-        release()
-        {
-          return this->wrapped->release();
-        }
-
-        /**
-         * Free the managed resource.
-         *
-         * The managed resource will be freed and made null.
-         */
-        void
-        reset()
-        {
-          wrapped = std::shared_ptr<manager_type>(new manager_type());
-        }
-
-      private:
-        /// Managed reference.
-        std::shared_ptr<manager_type> wrapped;
-      };
-
-      /**
-       * Unmanaged base of the DOM wrapper hierarchy.
-       */
-      template<typename T>
-      class BaseElement<T, UNMANAGED>
-      {
-      public:
-        /// Wrapped Xerces type.
-        typedef T element_type;
-
-        /// Constructor.
-        BaseElement():
-          wrapped()
-        {}
-
-        /**
-         * Constructor.
-         *
-         * @param wrapped the value to wrap without taking ownership.
-         */
-        BaseElement(element_type *wrapped):
-          wrapped(wrapped)
-        {}
-
-        /**
-         * Get wrapped element_type.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped element_type.
-         */
-        element_type *
-        get()
-        { return wrapped; }
-
-        /**
-         * Get wrapped element_type.
-         *
-         * @note May be null.
-         *
-         * @returns the wrapped element_type.
-         */
-        const element_type *
-        get() const
-        { return wrapped; }
-
-        /**
-         * Set wrapped element_type.
-         *
-         * @param wrapped the new value.
-         */
-        void
-        set(element_type *wrapped)
-        { this->wrapped = wrapped; }
-
-        /**
-         * Release the unmanaged resource.
-         *
-         * For this unmanaged implementation, the wrapped value will
-         * null after this method returns.  No releasing occurs since
-         * we don't own it.
-         *
-         * @returns the unmanaged resource.
-         */
-        element_type *
-        release()
-        {
-          element_type *ret = this->wrapped;
-          this->wrapped = 0;
-          return ret;
-        }
-
-        /**
-         * Free the managed resource.
-         *
-         * The unmanaged resource will be made null.
-         */
-        void
-        reset()
-        {
-          this->wrapped = 0;
-        }
-      private:
-        /// Unmanaged reference.
-        element_type *wrapped;
-      };
+      }
 
       /**
        * Base of the DOM wrapper hierarchy.
@@ -361,7 +69,7 @@ namespace ome
        * This contains the managed or unmanaged base pointer to the
        * wrapped type.
        */
-      template<typename T, int S>
+      template<typename T>
       class Base
       {
       public:
@@ -376,12 +84,30 @@ namespace ome
         {}
 
         /**
-         * Construct with initial wrapped value.
+         * Construct with initial wrapped value (managed).
          *
-         * @param base the value to wrap.
+         * @param wrapped the value to wrap.
+         * @param del the deleter to clean up the wrapped value.
          */
-        Base(base_element_type *base):
-          base(base)
+        template<typename Deleter>
+        explicit
+        Base(base_element_type *wrapped,
+             Deleter            del):
+          base(wrapped ?
+               ome::compat::shared_ptr<base_element_type>(wrapped, del) :
+               ome::compat::shared_ptr<base_element_type>())
+        {}
+
+        /**
+         * Construct with initial wrapped value (unmanaged).
+         *
+         * @param wrapped the value to wrap.
+         */
+        explicit
+        Base(base_element_type *wrapped):
+          base(wrapped ?
+               ome::compat::shared_ptr<base_element_type>(wrapped, &ome::xerces::dom::detail::unmanaged<base_element_type>) :
+               ome::compat::shared_ptr<base_element_type>())
         {}
 
         /// Destructor.
@@ -426,25 +152,6 @@ namespace ome
         }
 
         /**
-         * Release the managed resource.
-         *
-         * The managed resource will be null after this method
-         * returns.
-         *
-         * @note This will not free the resource.  Only use this to
-         * transfer ownership and prevent the resource being
-         * destroyed when this object is destroyed.
-         * @returns the managed resource.
-         */
-        T *
-        release()
-        {
-          T *ret = base.release();
-          assign(0);
-          return ret;
-        }
-
-        /**
          * Free the managed resource.
          *
          * The managed resource will be freed and made null.
@@ -453,7 +160,8 @@ namespace ome
         reset()
         {
           base.reset();
-          assign(0);
+          ome::compat::shared_ptr<base_element_type> n;
+          assign(n);
         }
 
       protected:
@@ -473,13 +181,26 @@ namespace ome
         /**
          * Assign a new wrapped value.
          *
-         * @param newbase the new value.
+         * @param wrapped the new value.
          */
         virtual
         void
-        assign(base_element_type *newbase)
+        assign(const base_type& wrapped)
         {
-          base.set(newbase);
+          // Assign base directly to refcount already wrapped objects.
+          base = wrapped.base;
+        }
+
+        /**
+         * Assign a new wrapped value.
+         *
+         * @param wrapped the new value.
+         */
+        virtual
+        void
+        assign(ome::compat::shared_ptr<base_element_type>& wrapped)
+        {
+          base = wrapped;
         }
 
         /**
@@ -504,7 +225,7 @@ namespace ome
 
       private:
         /// Wrapped reference.
-        BaseElement<T, S> base;
+        ome::compat::shared_ptr<base_element_type> base;
       };
 
     }

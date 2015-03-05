@@ -853,15 +853,25 @@ public class ZeissCZIReader extends FormatReader {
         if (p.stageX != null) {
           store.setPlanePositionX(p.stageX, i, plane);
         }
-        else if (positionsX != null && i < positionsX.length) {
+        else if (positionsX != null && i < positionsX.length &&
+          positionsX[i] != null)
+        {
           store.setPlanePositionX(positionsX[i], i, plane);
+        }
+        else {
+          store.setPlanePositionX(new Length(p.col, UNITS.REFERENCEFRAME), i, plane);
         }
 
         if (p.stageY != null) {
           store.setPlanePositionY(p.stageY, i, plane);
         }
-        else if (positionsY != null && i < positionsY.length) {
+        else if (positionsY != null && i < positionsY.length &&
+          positionsY[i] != null)
+        {
           store.setPlanePositionY(positionsY[i], i, plane);
+        }
+        else {
+          store.setPlanePositionY(new Length(p.row, UNITS.REFERENCEFRAME), i, plane);
         }
 
         if (p.stageZ != null) {
@@ -2158,37 +2168,38 @@ public class ZeissCZIReader extends FormatReader {
       for (int i=0; i<groups.getLength(); i++) {
         Element group = (Element) groups.item(i);
 
-        int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
-        int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
-
         Element position = getFirstNode(group, "Position");
+        if (position != null) {
+          int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
+          int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
 
-        String x = position.getAttribute("X");
-        String y = position.getAttribute("Y");
-        String z = position.getAttribute("Z");
+          String x = position.getAttribute("X");
+          String y = position.getAttribute("Y");
+          String z = position.getAttribute("Z");
 
-        Length xPos = null;
-        try {
-          xPos = new Length(Double.valueOf(x), UNITS.REFERENCEFRAME);
-        }
-        catch (NumberFormatException e) { }
-        Length yPos = null;
-        try {
-          yPos = new Length(Double.valueOf(y), UNITS.REFERENCEFRAME);
-        }
-        catch (NumberFormatException e) { }
-        Length zPos = null;
-        try {
-          zPos = new Length(Double.valueOf(z), UNITS.REFERENCEFRAME);
-        }
-        catch (NumberFormatException e) { }
+          Length xPos = null;
+          try {
+            xPos = new Length(Double.valueOf(x), UNITS.REFERENCEFRAME);
+          }
+          catch (NumberFormatException e) { }
+          Length yPos = null;
+          try {
+            yPos = new Length(Double.valueOf(y), UNITS.REFERENCEFRAME);
+          }
+          catch (NumberFormatException e) { }
+          Length zPos = null;
+          try {
+            zPos = new Length(Double.valueOf(z), UNITS.REFERENCEFRAME);
+          }
+          catch (NumberFormatException e) { }
 
-        for (int tile=0; tile<tilesX * tilesY; tile++) {
-          int index = i * tilesX * tilesY + tile;
-          if (index < positionsX.length) {
-            positionsX[index] = xPos;
-            positionsY[index] = yPos;
-            positionsZ[index] = zPos;
+          for (int tile=0; tile<tilesX * tilesY; tile++) {
+            int index = i * tilesX * tilesY + tile;
+            if (index < positionsX.length) {
+              positionsX[index] = xPos;
+              positionsY[index] = yPos;
+              positionsZ[index] = zPos;
+            }
           }
         }
       }

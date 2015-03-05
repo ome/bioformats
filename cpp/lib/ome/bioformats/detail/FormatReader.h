@@ -70,11 +70,28 @@ namespace ome
         /// Format description.
         std::string description;
         /// Filename suffixes this format can handle.
-        std::vector<std::string> suffixes;
+        std::vector<boost::filesystem::path> suffixes;
         /// Filename compression suffixes this format can handle.
-        std::vector<std::string> compression_suffixes;
+        std::vector<boost::filesystem::path> compression_suffixes;
         /// Supported metadata levels.  A typical default is {METADATA_MINIMUM,METADATA_NO_OVERLAYS,METADATA_ALL}.
         std::set<MetadataOptions::MetadataLevel> metadata_levels;
+
+        /**
+         * Constructor.
+         *
+         * @param name the format name.
+         * @param description a short description of the format.
+         */
+        ReaderProperties(const std::string& name,
+                         const std::string& description):
+          name(name),
+          description(description),
+          suffixes(),
+          compression_suffixes(),
+          metadata_levels()
+        {
+          compression_suffixes.push_back(boost::filesystem::path(""));
+        }
       };
 
       /**
@@ -94,16 +111,16 @@ namespace ome
       {
       protected:
         /// List type for storing CoreMetadata.
-        typedef std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> > coremetadata_list_type;
+        typedef std::vector<ome::compat::shared_ptr< ::ome::bioformats::CoreMetadata> > coremetadata_list_type;
 
         /// Reader properties specific to the derived file format.
         const ReaderProperties& readerProperties;
 
         /// The identifier (path) of the currently open file.
-        boost::optional<std::string> currentId;
+        boost::optional<boost::filesystem::path> currentId;
 
         /// Current input.
-        std::shared_ptr<std::istream> in;
+        ome::compat::shared_ptr<std::istream> in;
 
         /// Mapping of metadata key/value pairs.
         ::ome::bioformats::MetadataMap metadata;
@@ -179,7 +196,7 @@ namespace ome
          * Current metadata store. Should never be accessed directly as the
          * semantics of getMetadataStore() prevent "null" access.
          */
-        std::shared_ptr< ::ome::xml::meta::MetadataStore> metadataStore;
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore> metadataStore;
 
         /// Metadata parsing options.
         MetadataOptions metadataOptions;
@@ -217,7 +234,7 @@ namespace ome
          */
         virtual
         void
-        initFile(const std::string& id);
+        initFile(const boost::filesystem::path& id);
 
         /**
          * Check if a file is in the used files list.
@@ -227,7 +244,7 @@ namespace ome
          */
         virtual
         bool
-        isUsedFile(const std::string& file);
+        isUsedFile(const boost::filesystem::path& file);
 
         /**
          * Read a raw plane.
@@ -284,7 +301,7 @@ namespace ome
          * @returns a FilterMetadata instance.
          */
         virtual
-        std::shared_ptr< ::ome::xml::meta::MetadataStore>
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>
         makeFilterMetadata();
 
         /**
@@ -292,8 +309,8 @@ namespace ome
          *
          * @param index the core index.
          * @returns the CoreMetadata.
-         * @throws @c std::range_error if the core index is invalid,
-         * or @c std::logic_error if the metadata is null.
+         * @throws std::range_error if the core index is invalid.
+         * @throws std::logic_error if the metadata is null.
          */
         const CoreMetadata&
         getCoreMetadata(dimension_size_type index) const
@@ -309,8 +326,8 @@ namespace ome
          *
          * @param index the core index.
          * @returns the CoreMetadata.
-         * @throws @c std::range_error if the core index is invalid,
-         * or @c std::logic_error if the metadata is null.
+         * @throws std::range_error if the core index is invalid.
+         * @throws std::logic_error if the metadata is null.
          */
         CoreMetadata&
         getCoreMetadata(dimension_size_type index)
@@ -355,8 +372,8 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isThisType(const std::string& name,
-                   bool               open = true) const;
+        isThisType(const boost::filesystem::path& name,
+                   bool                           open = true) const;
 
         // Documented in superclass.
         bool
@@ -387,7 +404,7 @@ namespace ome
          */
         virtual
         bool
-        isFilenameThisTypeImpl(const std::string& name) const;
+        isFilenameThisTypeImpl(const boost::filesystem::path& name) const;
 
         /**
          * isThisType stream implementation for readers.
@@ -460,7 +477,8 @@ namespace ome
 
         // Documented in superclass.
         void
-        getLookupTable(VariantPixelBuffer& buf) const;
+        getLookupTable(VariantPixelBuffer& buf,
+                       dimension_size_type no) const;
 
         // Documented in superclass.
         Modulo&
@@ -611,11 +629,11 @@ namespace ome
         isOriginalMetadataPopulated() const;
 
         // Documented in superclass.
-        const std::vector<std::string>
+        const std::vector<boost::filesystem::path>
         getUsedFiles(bool noPixels = false) const;
 
         // Documented in superclass.
-        const std::vector<std::string>
+        const std::vector<boost::filesystem::path>
         getSeriesUsedFiles(bool noPixels = false) const;
 
         // Documented in superclass.
@@ -627,7 +645,7 @@ namespace ome
         getAdvancedSeriesUsedFiles(bool noPixels = false) const;
 
         // Documented in superclass.
-        const boost::optional<std::string>&
+        const boost::optional<boost::filesystem::path>&
         getCurrentFile() const;
 
         // Documented in superclass.
@@ -637,11 +655,24 @@ namespace ome
                  dimension_size_type t) const;
 
         // Documented in superclass.
+        dimension_size_type
+        getIndex(dimension_size_type z,
+                 dimension_size_type c,
+                 dimension_size_type t,
+                 dimension_size_type moduloZ,
+                 dimension_size_type moduloC,
+                 dimension_size_type moduloT) const;
+
+        // Documented in superclass.
         std::array<dimension_size_type, 3>
         getZCTCoords(dimension_size_type index) const;
 
         // Documented in superclass.
-        const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> >&
+        std::array<dimension_size_type, 6>
+        getZCTModuloCoords(dimension_size_type index) const;
+
+        // Documented in superclass.
+        const std::vector<ome::compat::shared_ptr< ::ome::bioformats::CoreMetadata> >&
         getCoreMetadataList() const;
 
         // Documented in superclass.
@@ -654,23 +685,23 @@ namespace ome
 
         // Documented in superclass.
         void
-        setMetadataStore(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store);
+        setMetadataStore(ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>& store);
 
         // Documented in superclass.
-        const std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+        const ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
         getMetadataStore() const;
 
         // Documented in superclass.
-        std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
         getMetadataStore();
 
         // Documented in superclass.
-        std::vector<std::shared_ptr< ::ome::bioformats::FormatReader> >
+        std::vector<ome::compat::shared_ptr< ::ome::bioformats::FormatReader> >
         getUnderlyingReaders() const;
 
         // Documented in superclass.
         bool
-        isSingleFile(const std::string& id) const;
+        isSingleFile(const boost::filesystem::path& id) const;
 
         // Documented in superclass.
         uint32_t
@@ -738,7 +769,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        setId(const std::string& id);
+        setId(const boost::filesystem::path& id);
 
         // Documented in superclass.
         const std::string&
@@ -749,11 +780,11 @@ namespace ome
         getFormatDescription() const;
 
         // Documented in superclass.
-        const std::vector<std::string>&
+        const std::vector<boost::filesystem::path>&
         getSuffixes() const;
 
         // Documented in superclass.
-        const std::vector<std::string>&
+        const std::vector<boost::filesystem::path>&
         getCompressionSuffixes() const;
       };
 

@@ -187,7 +187,7 @@ namespace ome
       {
       private:
         /// The wrapped metadata store.
-	std::shared_ptr<MetadataStore> store;
+	ome::compat::shared_ptr<MetadataStore> store;
         /// Is filtering enabled?
 	bool filter;
 
@@ -199,11 +199,11 @@ namespace ome
          * @param filter @c true to enable filtering, @c false to
          * disable.
          */
-        FilterMetadata(std::shared_ptr<MetadataStore>& store,
+        FilterMetadata(ome::compat::shared_ptr<MetadataStore>& store,
                        bool filter);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      FilterMetadata::FilterMetadata(std::shared_ptr<MetadataStore>& store,
+      FilterMetadata::FilterMetadata(ome::compat::shared_ptr<MetadataStore>& store,
                                      bool filter):
         store(store),
         filter(filter)
@@ -237,11 +237,11 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::shared_ptr<MetadataRoot>&
+        ome::compat::shared_ptr<MetadataRoot>&
 	getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::shared_ptr<MetadataRoot>&
+      ome::compat::shared_ptr<MetadataRoot>&
       FilterMetadata::getRoot()
       {
         return store->getRoot();
@@ -251,11 +251,11 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
 	void
-        setRoot(std::shared_ptr<MetadataRoot>& root);
+        setRoot(ome::compat::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
+      FilterMetadata::setRoot(ome::compat::shared_ptr<MetadataRoot>& root)
       {
         store->setRoot(root);
       }
@@ -292,53 +292,6 @@ namespace ome
                                                 index_type binDataIndex)
       {
         store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                              index_type mapAnnotationIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                            index_type mapAnnotationIndex)
-      {
-        store->setMapAnnotationValue(map, mapAnnotationIndex);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                      index_type instrumentIndex,
-                                      index_type lightSourceIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                                    index_type instrumentIndex,
-                                                    index_type lightSourceIndex)
-      {
-        store->setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                 index_type imageIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                               index_type imageIndex)
-      {
-        store->setImagingEnvironmentMap(map, imageIndex);
       }
 {% end source %}\
 

@@ -739,6 +739,21 @@ public class ICSReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    if (in != null) {
+      in.close();
+    }
+    if (versionTwo) {
+      in = new RandomAccessInputStream(currentIcsId);
+    }
+    else {
+      in = new RandomAccessInputStream(currentIdsId);
+    }
+    in.order(isLittleEndian());
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -1392,7 +1407,7 @@ public class ICSReader extends FormatReader {
         m.moduloC.typeDescription = "TCSPC";
         m.moduloC.start = 0;
         m.moduloC.step = 1;
-        m.moduloC.end = clen0;
+        m.moduloC.end = clen0 - 1;
       }
     }
 

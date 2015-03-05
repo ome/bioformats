@@ -50,8 +50,9 @@ namespace ome
       namespace detail
       {
 
-        OMEModelObject::OMEModelObject ():
-          ::ome::xml::model::OMEModelObject()
+        OMEModelObject::OMEModelObject (const std::string& objectType):
+          ::ome::xml::model::OMEModelObject(),
+          logger(ome::compat::createLogger(objectType))
         {
         }
 
@@ -59,13 +60,20 @@ namespace ome
         {
         }
 
-        OMEModelObject::OMEModelObject (const OMEModelObject& /* copy */):
-          ::ome::xml::model::OMEModelObject()
+        OMEModelObject::OMEModelObject (const OMEModelObject& copy):
+          ::ome::xml::model::OMEModelObject(),
+          logger(copy.logger)
         {
           // Nothing to copy.
         }
 
-        xerces::dom::Element&
+        bool
+        OMEModelObject::validElementName(const std::string& /* name */) const
+        {
+          return false;
+        }
+
+        xerces::dom::Element
         OMEModelObject::asXMLElementInternal (xerces::dom::Document& /* document */,
                                               xerces::dom::Element&  element) const
         {
@@ -79,8 +87,8 @@ namespace ome
         }
 
         bool
-        OMEModelObject::link (std::shared_ptr<Reference>&                          /* reference */,
-                              std::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
+        OMEModelObject::link (ome::compat::shared_ptr<Reference>&                          /* reference */,
+                              ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
         {
           return false;
         }
@@ -100,16 +108,15 @@ namespace ome
             {
               try
                 {
-                   xerces::dom::Element child(pos->get());
-                   if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName())))
+                  xerces::dom::Element child(pos->get(), false);
+                  if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName())))
                     {
-                      xerces::dom::Element c2(child);
                       ret.push_back(child);
                     }
                 }
               catch (std::logic_error& /* e */)
                 {
-                   // Not an Element.
+                  // Not an Element.
                 }
             }
           return ret;
@@ -119,13 +126,11 @@ namespace ome
         OMEModelObject::stripNamespacePrefix (const std::string& value) {
           std::string ret;
           std::string::size_type i = value.find_last_of(':');
-          if (i != std::string::npos)
-            {
-              ++i;
-              if (i < value.size())
-                ret = value.substr(i);
-            }
-          return value;
+          if (i != std::string::npos && ++i < value.size())
+            ret = value.substr(i);
+          else
+            ret = value;
+          return ret;
         }
 
       }

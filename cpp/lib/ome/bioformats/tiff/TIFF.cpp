@@ -39,6 +39,8 @@
 #include <cmath>
 #include <cstdarg>
 
+#include <boost/range/size.hpp>
+
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Sentry.h>
@@ -84,8 +86,8 @@ namespace ome
         class TIFFConcrete : public TIFF
         {
         public:
-          TIFFConcrete(const std::string& filename,
-                       const std::string& mode):
+          TIFFConcrete(const boost::filesystem::path& filename,
+                       const std::string&             mode):
             TIFF(filename, mode)
           {
           }
@@ -106,6 +108,8 @@ namespace ome
       public:
         /// The libtiff file handle.
         ::TIFF *tiff;
+        /// The number of IFDs.
+        directory_index_type directoryCount;
 
         /**
          * The constructor.
@@ -115,13 +119,14 @@ namespace ome
          * @param filename the filename to open.
          * @param mode the file open mode.
          */
-        Impl(const std::string& filename,
-             const std::string& mode):
-          tiff()
+        Impl(const boost::filesystem::path& filename,
+             const std::string&             mode):
+          tiff(),
+          directoryCount(0)
         {
           Sentry sentry;
 
-          tiff = TIFFOpen(filename.c_str(), mode.c_str());
+          tiff = TIFFOpen(filename.native().c_str(), mode.c_str());
           if (!tiff)
             sentry.error();
         }
@@ -177,9 +182,9 @@ namespace ome
       };
 
       // Note boost::make_shared can't be used here.
-      TIFF::TIFF(const std::string& filename,
-                 const std::string& mode):
-        impl(std::shared_ptr<Impl>(new Impl(filename, mode)))
+      TIFF::TIFF(const boost::filesystem::path& filename,
+                 const std::string&             mode):
+        impl(ome::compat::shared_ptr<Impl>(new Impl(filename, mode)))
       {
         registerImageJTags();
       }
@@ -194,15 +199,15 @@ namespace ome
         return reinterpret_cast<wrapped_type *>(impl->tiff);
       }
 
-      std::shared_ptr<TIFF>
-      TIFF::open(const std::string& filename,
+      ome::compat::shared_ptr<TIFF>
+      TIFF::open(const boost::filesystem::path& filename,
                  const std::string& mode)
       {
-        std::shared_ptr<TIFF> ret;
+        ome::compat::shared_ptr<TIFF> ret;
         try
           {
             // Note boost::make_shared can't be used here.
-            ret = std::shared_ptr<TIFF>(new TIFFConcrete(filename, mode));
+            ret = ome::compat::shared_ptr<TIFF>(new TIFFConcrete(filename, mode));
           }
         catch (const std::exception& e)
           {
@@ -223,7 +228,21 @@ namespace ome
         return impl && impl->tiff;
       }
 
-      std::shared_ptr<IFD>
+      directory_index_type
+      TIFF::directoryCount() const
+      {
+        if (!impl->directoryCount)
+          {
+            directory_index_type nIFD = 0U;
+            for (const_iterator i = begin();
+                 i != end();
+                 ++i, ++nIFD);
+            impl->directoryCount = nIFD;
+          }
+        return impl->directoryCount;
+      }
+
+      ome::compat::shared_ptr<IFD>
       TIFF::getDirectoryByIndex(directory_index_type index) const
       {
         Sentry sentry;
@@ -231,11 +250,11 @@ namespace ome
         if (!TIFFSetDirectory(impl->tiff, index))
           sentry.error();
 
-        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
+        ome::compat::shared_ptr<TIFF> t(ome::compat::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::openIndex(t, index);
       }
 
-      std::shared_ptr<IFD>
+      ome::compat::shared_ptr<IFD>
       TIFF::getDirectoryByOffset(offset_type offset) const
       {
         Sentry sentry;
@@ -248,14 +267,14 @@ namespace ome
           sentry.error();
 #endif // TIFF_HAVE_BIGTIFF
 
-        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
+        ome::compat::shared_ptr<TIFF> t(ome::compat::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::openOffset(t, offset);
       }
 
-      std::shared_ptr<IFD>
+      ome::compat::shared_ptr<IFD>
       TIFF::getCurrentDirectory() const
       {
-        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
+        ome::compat::shared_ptr<TIFF> t(ome::compat::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::current(t);
       }
 
@@ -271,14 +290,14 @@ namespace ome
       TIFF::iterator
       TIFF::begin()
       {
-        std::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
+        ome::compat::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
         return iterator(ifd);
       }
 
       TIFF::const_iterator
       TIFF::begin() const
       {
-        std::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
+        ome::compat::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
         return const_iterator(ifd);
       }
 
@@ -328,11 +347,11 @@ namespace ome
         Sentry sentry;
 
 # if TIFF_HAVE_MERGEFIELDINFO_RETURN
-        int e = TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
+        int e = TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, boost::size(ImageJFieldInfo));
         if (e)
           sentry.error();
 # else // !TIFF_HAVE_MERGEFIELDINFO_RETURN
-        TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
+        TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, boost::size(ImageJFieldInfo));
 #endif // TIFF_HAVE_MERGEFIELDINFO_RETURN
 #endif // TIFF_HAVE_MERGEFIELDINFO
       }

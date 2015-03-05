@@ -68,8 +68,9 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
     GenericDialog gd = new GenericDialog("Dimension swapping options");
 
     String[] labels = {"Z", "C", "T"};
-    int[] sizes = new int[] {
-      reader.getSizeZ(), reader.getSizeC(), reader.getSizeT()
+    String[] sizes = new String[] {
+      String.valueOf(reader.getSizeZ()), String.valueOf(reader.getSizeC()),
+      String.valueOf(reader.getSizeT())
     };
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
@@ -78,7 +79,7 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
       gd.addMessage("Series " + (s + 1) + ":\n");
 
       for (int i=0; i<labels.length; i++) {
-        gd.addChoice(sizes[i] + "_planes", labels, labels[i]);
+        gd.addChoice(labels[i] + "_" + (s + 1), sizes, sizes[i]);
       }
     }
 
@@ -103,23 +104,39 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       reader.setSeries(s);
-      String z = gd.getNextChoice();
-      String c = gd.getNextChoice();
-      String t = gd.getNextChoice();
+      int z = Integer.parseInt(gd.getNextChoice());
+      int c = Integer.parseInt(gd.getNextChoice());
+      int t = Integer.parseInt(gd.getNextChoice());
 
-      if (z.equals(t) || z.equals(c) || c.equals(t)) {
-        // should never occur... ;-)
-        throw new IllegalStateException(
-          "Invalid swapping options - each axis can be used only once.");
-      }
+      int originalZ = reader.getSizeZ();
+      int originalC = reader.getSizeC();
+      int originalT = reader.getSizeT();
 
       String originalOrder = reader.getDimensionOrder();
       StringBuffer sb = new StringBuffer();
       sb.append("XY");
       for (int i=2; i<originalOrder.length(); i++) {
-        if (originalOrder.charAt(i) == 'Z') sb.append(z);
-        else if (originalOrder.charAt(i) == 'C') sb.append(c);
-        else if (originalOrder.charAt(i) == 'T') sb.append(t);
+        int originalValue = 0;
+        switch (originalOrder.charAt(i)) {
+          case 'Z':
+            originalValue = originalZ;
+            break;
+          case 'C':
+            originalValue = originalC;
+            break;
+          case 'T':
+            originalValue = originalT;
+            break;
+        }
+        if (originalValue == z && sb.indexOf("Z") < 0) {
+          sb.append("Z");
+        }
+        else if (originalValue == c && sb.indexOf("C") < 0) {
+          sb.append("C");
+        }
+        else if (originalValue == t && sb.indexOf("T") < 0) {
+          sb.append("T");
+        }
       }
 
       options.setInputOrder(s, sb.toString());

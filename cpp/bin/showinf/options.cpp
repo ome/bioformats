@@ -46,10 +46,10 @@ namespace showinf
     action(ACTION_METADATA),
     verbosity(MSG_NORMAL),
     showcore(true),
-    showformat(false),
+    showorig(true),
     filter(false),
     showomexml(false),
-    validate(false),
+    validate(true),
     showsa(true),
     showused(true),
     merge(false),
@@ -61,8 +61,10 @@ namespace showinf
     resolution(0),
     format(),
     files(),
-    swapin(),
-    swapout(),
+    inputOrderString(),
+    outputOrderString(),
+    inputOrder(),
+    outputOrder(),
     actions("Actions"),
     general("General options"),
     reader("Reader options"),
@@ -122,40 +124,42 @@ namespace showinf
     reader.add_options()
       ("format", opt::value<std::string>(&this->format),
        "Use the specified format reader")
-      ("flat", opt::value<bool>(&this->flat),
-       "Flatten subresolutions")
-      ("merge", opt::value<bool>(&this->merge),
-       "Combine separate channels into an RGB image")
-      ("group", opt::value<bool>(&this->group),
-       "Files in multi-file datasets are treated as a single dataset")
-      ("stitch", opt::value<bool>(&this->stitch),
-       "Group files with similar names")
-      ("separate", opt::value<bool>(&this->separate),
-       "Separate RGB image into separate channels")
+      ("flat", "Flatten subresolutions")
+      ("no-flat", "Do not flatten subresolutions (default)")
+      ("merge", "Combine separate channels into an RGB image")
+      ("no-merge", "Do not combine separate channels into an RGB image (default)")
+      ("group", "Files in multi-file datasets are grouped as a single dataset")
+      ("no-group", "Files in multi-file datasets are treated as a multiple datasets (default)")
+      ("stitch", "Group files with similar names")
+      ("no-stitch", "Do not group files with similar names (default)")
+      ("separate", "Separate RGB image into separate channels")
+      ("no-separate", "Do not separate RGB image into separate channels (default)")
       ("series", opt::value<ome::bioformats::dimension_size_type>(&this->series),
        "Use the specified series")
       ("resolution", opt::value<ome::bioformats::dimension_size_type>(&this->resolution),
        "Use the specified subresolution (only if unflattened)")
-      ("swapin", opt::value<std::string>(&this->swapin),
-       "Swap the dimension input order")
-      ("swapout", opt::value<std::string>(&this->swapout),
-       "Swap the dimension output order");
+      ("input-order",
+       opt::value<std::string>(&this->inputOrderString),
+       "Override the dimension input order")
+      ("output-order",
+       opt::value<std::string>(&this->outputOrderString),
+       "Override the dimension output order");
 
     metadata.add_options()
-      ("core", opt::value<bool>(&this->showcore),
-       "Display core metadata")
-      ("format", opt::value<bool>(&this->showformat),
-       "Display format-specific global and series metadata")
-      ("filter", opt::value<bool>(&this->filter),
-       "Filter format-specific global and series metadata")
-      ("omexml", opt::value<bool>(&this->showomexml),
-       "Display OME-XML metadata")
-      ("validate", opt::value<bool>(&this->validate),
-       "Validate OME-XML metadata")
-      ("sa", opt::value<bool>(&this->showsa),
-       "Display structured annotations")
-      ("used", opt::value<bool>(&this->showused),
-       "Display used files");
+      ("core", "Display core metadata (default)")
+      ("no-core", "Do not display core metadata")
+      ("orig", "Display original format-specific global and series metadata (default)")
+      ("no-orig", "Do not display original format-specific global and series metadata")
+      ("filter", "Filter format-specific global and series metadata")
+      ("no-filter", "Do not filter format-specific global and series metadata (default)")
+      ("omexml", "Display OME-XML metadata")
+      ("no-omexml", "Do not display OME-XML metadata (default)")
+      ("validate", "Validate OME-XML metadata (default)")
+      ("no-validate", "Do not validate OME-XML metadata")
+      ("sa", "Display structured annotations (default)")
+      ("no-sa", "Do not display structured annotations")
+      ("used", "Display used files (default)")
+      ("no-used", "Do not display used files");
 
     hidden.add_options()
       ("files", opt::value<std::vector<std::string> >(&this->files),
@@ -226,6 +230,71 @@ namespace showinf
       this->verbosity = MSG_VERBOSE;
     if (vm.count("debug"))
       this->verbosity = MSG_DEBUG;
+
+    if (vm.count("flat"))
+      this->flat = true;
+    if (vm.count("no-flat"))
+      this->flat = false;
+
+    if (vm.count("merge"))
+      this->merge = true;
+    if (vm.count("no-merge"))
+      this->merge = false;
+
+    if (vm.count("group"))
+      this->group = true;
+    if (vm.count("no-group"))
+      this->group = false;
+
+    if (vm.count("stitch"))
+      this->stitch = true;
+    if (vm.count("no-stitch"))
+      this->stitch = false;
+
+    if (vm.count("separate"))
+      this->separate = true;
+    if (vm.count("no-separate"))
+      this->separate = false;
+
+    if(!this->inputOrderString.empty())
+      this->inputOrder = ome::xml::model::enums::DimensionOrder(inputOrderString);
+    if(!this->outputOrderString.empty())
+      this->outputOrder = ome::xml::model::enums::DimensionOrder(outputOrderString);
+
+    if (vm.count("core"))
+      this->showcore = true;
+    if (vm.count("no-core"))
+      this->showcore = false;
+
+    if (vm.count("orig"))
+      this->showorig = true;
+    if (vm.count("no-orig"))
+      this->showorig = false;
+
+    if (vm.count("filter"))
+      this->filter = true;
+    if (vm.count("no-filter"))
+      this->filter = false;
+
+    if (vm.count("omexml"))
+      this->showomexml = true;
+    if (vm.count("no-omexml"))
+      this->showomexml = false;
+
+    if (vm.count("validate"))
+      this->validate = true;
+    if (vm.count("no-validate"))
+      this->validate = false;
+
+    if (vm.count("sa"))
+      this->showsa = true;
+    if (vm.count("no-sa"))
+      this->showsa = false;
+
+    if (vm.count("used"))
+      this->showused = true;
+    if (vm.count("no-used"))
+      this->showused = false;
   }
 
   void

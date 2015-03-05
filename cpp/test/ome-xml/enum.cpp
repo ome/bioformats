@@ -315,6 +315,30 @@ TEST_P(LaserTypeValue, StreamOutput)
   ASSERT_NE(os.str(), params.nameneg);
 }
 
+TEST_P(LaserTypeValue, StreamInput)
+{
+  const param_type& params = GetParam();
+
+  std::istringstream is(params.namepos);
+  enum_type e(params.nameneg);
+  is >> e;
+  ASSERT_TRUE(!!is);
+  ASSERT_EQ(params.valuepos, e);
+  ASSERT_NE(params.valueneg, e);
+}
+
+TEST_P(LaserTypeValue, StreamInputFail)
+{
+  const param_type& params = GetParam();
+
+  std::istringstream is("INVALID_ENUM_VALUE__");
+  enum_type e(params.value);
+  is >> e;
+  ASSERT_TRUE(!!is);
+  ASSERT_EQ(LaserType::OTHER, e); // Unchanged.
+  ASSERT_NE(params.valueneg, e);
+}
+
 typedef EnumValueParameters<LaserType> lts_param;
 lts_param lt_value_params[] =
   {
@@ -411,6 +435,32 @@ TEST(Enum, PixelTypeInvalid)
 {
   // No fallback to other.
   ASSERT_THROW(PixelType("Invalid"), EnumerationException);
+}
+
+TEST(Enum, PixelTypeStreamOutput)
+{
+  std::ostringstream os;
+  os << PixelType("uint32");
+  ASSERT_EQ(os.str(), "uint32");
+}
+
+TEST(Enum, PixelTypeStreamInput)
+{
+  std::istringstream is("int8");
+  PixelType e("uint16");
+  is >> e;
+  ASSERT_TRUE(!!is);
+  ASSERT_EQ(PixelType::INT8, e);
+  ASSERT_NE(PixelType::UINT16, e);
+}
+
+TEST(Enum, PixelTypeStreamInputFail)
+{
+  std::istringstream is("INVALID_ENUM_VALUE__");
+  PixelType e("uint16");
+  is >> e;
+  ASSERT_FALSE(!!is);
+  ASSERT_EQ(PixelType::UINT16, e); // Unchanged.
 }
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;

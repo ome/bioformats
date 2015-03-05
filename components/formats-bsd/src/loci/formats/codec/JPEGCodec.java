@@ -127,16 +127,20 @@ public class JPEGCodec extends BaseCodec {
       int nBytes = buf[0].length / (b.getWidth() * b.getHeight());
       int mask = (int) (Math.pow(2, nBytes * 8) - 1);
       for (int i=0; i<buf[0].length; i+=nBytes) {
-        int y = DataTools.bytesToInt(buf[0], i, nBytes, options.littleEndian);
-        int cb = DataTools.bytesToInt(buf[1], i, nBytes, options.littleEndian);
-        int cr = DataTools.bytesToInt(buf[2], i, nBytes, options.littleEndian);
+        double y = DataTools.bytesToInt(buf[0], i, nBytes, options.littleEndian);
+        double cb = DataTools.bytesToInt(buf[1], i, nBytes, options.littleEndian);
+        double cr = DataTools.bytesToInt(buf[2], i, nBytes, options.littleEndian);
 
-        cb = (int) Math.max(0, cb - 128);
-        cr = (int) Math.max(0, cr - 128);
+        cb = Math.max(0, cb - 128);
+        cr = Math.max(0, cr - 128);
 
-        int red = (int) (y + 1.402 * cr) & mask;
-        int green = (int) (y - 0.34414 * cb - 0.71414 * cr) & mask;
-        int blue = (int) (y + 1.772 * cb) & mask;
+        int red = (int) (y + 1.402 * cr);
+        int green = (int) (y - 0.34414 * cb - 0.71414 * cr);
+        int blue = (int) (y + 1.772 * cb);
+
+        red = (int) (Math.min(red, mask)) & mask;
+        green = (int) (Math.min(green, mask)) & mask;
+        blue = (int) (Math.min(blue, mask)) & mask;
 
         DataTools.unpackBytes(red, buf[0], i, nBytes, options.littleEndian);
         DataTools.unpackBytes(green, buf[1], i, nBytes, options.littleEndian);

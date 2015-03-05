@@ -41,9 +41,11 @@
 
 #include <ome/compat/config.h>
 
+#include <ome/xerces/String.h>
 #include <ome/xerces/dom/Base.h>
-#include <ome/xerces/dom/Wrapper.h>
 #include <ome/xerces/dom/NodeList.h>
+#include <ome/xerces/dom/NamedNodeMap.h>
+#include <ome/xerces/dom/Wrapper.h>
 
 #include <xercesc/dom/DOMNode.hpp>
 
@@ -61,8 +63,7 @@ namespace ome
        * object.  It can also be cast to a pointer to the wrapped
        * object, so can substitute for it directly.
        */
-      template<int S>
-      class NodeWrapper : public Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >
+      class Node : public Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode> >
       {
       public:
         /// The derived object type of a node.
@@ -71,8 +72,8 @@ namespace ome
         /**
          * Construct a NULL Node.
          */
-        NodeWrapper ():
-          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >()
+        Node ():
+          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode> >()
         {
         }
 
@@ -81,8 +82,8 @@ namespace ome
          *
          * @param node the Node to copy.
          */
-        NodeWrapper (const NodeWrapper& node):
-          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >(node)
+        Node (const Node& node):
+          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode> >(node)
         {
         }
 
@@ -90,14 +91,18 @@ namespace ome
          * Construct a Node from a xercesc::DOMNode *.
          *
          * @param node the Node to wrap.
+         * @param managed is the value to be managed?
          */
-        NodeWrapper (xercesc::DOMNode *node):
-          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode, S> >(node)
+        Node (xercesc::DOMNode *node,
+              bool              managed):
+          Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode> >(managed ?
+                                                             Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode> >(node, std::mem_fun(&base_element_type::release)) :
+                                                             Wrapper<xercesc::DOMNode, Base<xercesc::DOMNode> >(node, &ome::xerces::dom::detail::unmanaged<base_element_type>))
         {
         }
 
         /// Destructor.
-        ~NodeWrapper ()
+        ~Node ()
         {
         }
 
@@ -107,13 +112,13 @@ namespace ome
          * @param node the child Node to append.
          * @returns the appended Node.
          */
-        NodeWrapper
-        appendChild (NodeWrapper& node)
+        Node
+        appendChild (Node& node)
         {
           // TODO: Catch and rethrow xerces exceptions with the xerces
           // errors converted to sane descriptions.  And additionally
           // for all other xerces methods which throw.
-          return (*this)->appendChild(node.get());
+          return Node((*this)->appendChild(node.get()), false);
         }
 
         /**
@@ -126,14 +131,51 @@ namespace ome
         {
           return (*this)->getNodeType();
         }
-      };
 
-      /// Managed Node.
-      typedef NodeWrapper<MANAGED> ManagedNode;
-      /// Unmanaged Node.
-      typedef NodeWrapper<UNMANAGED> UnmanagedNode;
-      /// Default Node.
-      typedef UnmanagedNode Node;
+        /**
+         * Get child nodes.
+         *
+         * @returns the child nodes (if any).
+         */
+        NodeList
+        getChildNodes()
+        {
+          return NodeList((*this)->getChildNodes());
+        }
+
+        /**
+         * Get node attributes.
+         *
+         * @returns the attributes.
+         */
+        NamedNodeMap
+        getAttributes()
+        {
+          return NamedNodeMap((*this)->getAttributes());
+        }
+
+        /**
+         * Get node value.
+         *
+         * @returns the node value.
+         */
+        std::string
+        getNodeValue()
+        {
+          return String((*this)->getNodeValue());
+        }
+
+        /**
+         * Get node text content.
+         *
+         * @returns the text content.
+         */
+        std::string
+        getTextContent()
+        {
+          return String((*this)->getTextContent());
+        }
+      };
 
     }
   }

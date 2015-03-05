@@ -71,4 +71,3 @@ namespace ome
  * mode:C++
  * End:
  */
-

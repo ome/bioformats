@@ -165,7 +165,7 @@ struct RandomAssignTestVisitor : public boost::static_visitor<>
   }
 
   void
-  operator() (const std::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
+  operator() (const ome::compat::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
   {
     typedef PixelProperties<PT::BIT>::std_type value_type;
 
@@ -240,7 +240,7 @@ struct ConstructExtentRefTestVisitor : public boost::static_visitor<>
 
     // VariantPixelBuffer with unmanaged backing store.
     value_type backing[10];
-    std::shared_ptr<PixelBuffer<value_type> > buf
+    ome::compat::shared_ptr<PixelBuffer<value_type> > buf
       (new PixelBuffer<value_type>(&backing[0], extents));
     VariantPixelBuffer mbuf(buf);
 
@@ -264,7 +264,7 @@ struct ConstructRangeRefTestVisitor : public boost::static_visitor<>
 
     // VariantPixelBuffer with unmanaged backing store.
     value_type backing[100];
-    std::shared_ptr<PixelBuffer<value_type> > buf
+    ome::compat::shared_ptr<PixelBuffer<value_type> > buf
       (new PixelBuffer<value_type>(&backing[0],
                                    boost::extents[10][10][1][1][1][1][1][1][1]));
     VariantPixelBuffer mbuf(buf);
@@ -336,7 +336,7 @@ struct ManagedTestVisitor : public boost::static_visitor<>
     {
       // VariantPixelBuffer with unmanaged backing store.
       value_type backing[100];
-      std::shared_ptr<PixelBuffer<value_type> > buf
+      ome::compat::shared_ptr<PixelBuffer<value_type> > buf
         (new PixelBuffer<value_type>(&backing[0],
                                      boost::extents[10][10][1][1][1][1][1][1][1]));
       VariantPixelBuffer mbuf(buf);
@@ -388,7 +388,7 @@ struct GetIndexTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& /* v */)
+  operator() (const T& v)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -404,8 +404,8 @@ struct GetIndexTestVisitor : public boost::static_visitor<>
 
           value_type val = pixel_value<value_type>((j * 10) + i);
 
-          EXPECT_EQ(val, buf.at<value_type>(idx));
-          EXPECT_EQ(val, cbuf.at<value_type>(idx));
+          EXPECT_EQ(val, v->at(idx));
+          EXPECT_EQ(val, v->at(idx));
         }
   }
 };
@@ -425,9 +425,11 @@ struct SetIndexTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& /* v */)
+  operator() (T& v)
   {
     typedef typename T::element_type::value_type value_type;
+
+    const T& cv(v);
 
     for (uint32_t i = 0U; i < 10U; ++i)
       for (uint32_t j = 0U; j < 10U; ++j)
@@ -439,10 +441,10 @@ struct SetIndexTestVisitor : public boost::static_visitor<>
 
           value_type val = pixel_value<value_type>(i + j + j);
 
-          buf.at<value_type>(idx) = val;
+          v->at(idx) = val;
 
-          ASSERT_EQ(val, buf.at<value_type>(idx));
-          ASSERT_EQ(val, cbuf.at<value_type>(idx));
+          ASSERT_EQ(val, v->at(idx));
+          ASSERT_EQ(val, cv->at(idx));
         }
   }
 };
@@ -462,17 +464,19 @@ struct SetIndexDeathTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& /* v */)
+  operator() (const T& v)
   {
     typedef typename T::element_type::value_type value_type;
+
+    const T& cv(v);
 
     VariantPixelBuffer::indices_type badidx;
     badidx[0] = 13;
     badidx[1] = 2;
     badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
 
-    ASSERT_DEATH_IF_SUPPORTED(buf.at<value_type>(badidx) = value_type(4), "Assertion.*failed");
-    ASSERT_DEATH_IF_SUPPORTED(value_type obs = cbuf.at<value_type>(badidx), "Assertion.*failed");
+    ASSERT_DEATH_IF_SUPPORTED(v->at(badidx) = value_type(4), "Assertion.*failed");
+    ASSERT_DEATH_IF_SUPPORTED(value_type obs = cv->at(badidx), "Assertion.*failed");
   }
 };
 
@@ -491,7 +495,7 @@ struct StreamInputTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& /* v */)
+  operator() (const T& v)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -515,7 +519,7 @@ struct StreamInputTestVisitor : public boost::static_visitor<>
       for (idx[2] = 0; idx[2] < 3; ++idx[2])
         for (idx[1] = 0; idx[1] < 2; ++idx[1])
           for (idx[0] = 0; idx[0] < 2; ++idx[0])
-            EXPECT_EQ(pixel_value<value_type>(i++), buf.at<value_type>(idx));
+            EXPECT_EQ(pixel_value<value_type>(i++), v->at(idx));
   }
 };
 
@@ -534,7 +538,7 @@ struct StreamOutputTestVisitor : public boost::static_visitor<>
 
   template<typename T>
   void
-  operator() (const T& /* v */)
+  operator() (const T& v)
   {
     typedef typename T::element_type::value_type value_type;
 
@@ -561,7 +565,7 @@ struct StreamOutputTestVisitor : public boost::static_visitor<>
         for (idx[1] = 0; idx[1] < 2; ++idx[1])
           for (idx[0] = 0; idx[0] < 2; ++idx[0])
             {
-              EXPECT_EQ(pixel_value<value_type>(i), buf.at<value_type>(idx));
+              EXPECT_EQ(pixel_value<value_type>(i), v->at(idx));
               value_type sval;
               ss.read(reinterpret_cast<char *>(&sval), sizeof(value_type));
               EXPECT_FALSE(!ss);

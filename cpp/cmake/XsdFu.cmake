@@ -36,6 +36,11 @@
 
 cmake_policy(SET CMP0007 NEW)
 
+option(xsdfu-debug "Enable xsd-fu debug output (in generated code)" OFF)
+if(xsdfu-debug)
+  set(XSDFU_DEBUG --debug)
+endif()
+
 # The xsd-fu script
 set(XSD_FU_SCRIPT ${PROJECT_SOURCE_DIR}/components/xsd-fu/xsd-fu)
 
@@ -44,7 +49,7 @@ set(XSD_FU_SCRIPT ${PROJECT_SOURCE_DIR}/components/xsd-fu/xsd-fu)
 set(XSD_FU python ${XSD_FU_SCRIPT})
 
 # Version of the OME-XML model to use
-set(MODEL_VERSION 2013-10-dev-3)
+set(MODEL_VERSION 2013-06)
 
 # Path to the model within the source tree
 set(MODEL_PATH ${PROJECT_SOURCE_DIR}/components/specification/released-schema/${MODEL_VERSION})
@@ -61,7 +66,7 @@ set(MODEL_FILES
 set(GEN_DIR ${PROJECT_BINARY_DIR}/cpp/lib)
 
 # Default arguments to use when running xsd-fu
-set(XSD_FU_ARGS --language=C++ --output-directory=${GEN_DIR} ${MODEL_FILES})
+set(XSD_FU_ARGS ${XSDFU_DEBUG} --language=C++ --output-directory=${GEN_DIR} ${MODEL_FILES})
 
 # xsd_fu_single: Run xsd-fu for a single filetype
 #

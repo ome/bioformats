@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ijview: a script for displaying an image file in ImageJ
 #         using the Bio-Formats Importer plugin

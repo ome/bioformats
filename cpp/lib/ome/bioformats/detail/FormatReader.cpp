@@ -47,6 +47,7 @@
 #include <ome/compat/string.h>
 
 #include <ome/bioformats/FormatTools.h>
+#include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
@@ -95,7 +96,7 @@ namespace ome
         indexedAsRGB(false),
         group(true),
         domains(),
-        metadataStore(std::make_shared<DummyMetadata>()),
+        metadataStore(ome::compat::make_shared<DummyMetadata>()),
         metadataOptions()
       {
         assertId(currentId, false);
@@ -117,13 +118,13 @@ namespace ome
         return readerProperties.description;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatReader::getSuffixes() const
       {
         return readerProperties.suffixes;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatReader::getCompressionSuffixes() const
       {
         return readerProperties.compression_suffixes;
@@ -136,12 +137,12 @@ namespace ome
       }
 
       void
-      FormatReader::initFile(const std::string& id)
+      FormatReader::initFile(const boost::filesystem::path& id)
       {
         if (currentId)
           {
-            const std::vector<std::string>& s = getUsedFiles();
-            for (std::vector<std::string>::const_iterator i = s.begin();
+            const std::vector<path>& s = getUsedFiles();
+            for (std::vector<path>::const_iterator i = s.begin();
                  i != s.end();
                  ++i)
               {
@@ -156,7 +157,7 @@ namespace ome
         metadata.clear();
 
         core.clear();
-        core.push_back(std::make_shared<CoreMetadata>());
+        core.push_back(ome::compat::make_shared<CoreMetadata>());
 
         // reinitialize the MetadataStore
         // NB: critical for metadata conversion to work properly!
@@ -164,7 +165,7 @@ namespace ome
       }
 
       bool
-      FormatReader::isUsedFile(const std::string& file)
+      FormatReader::isUsedFile(const boost::filesystem::path& file)
       {
         bool used = false;
 
@@ -173,8 +174,8 @@ namespace ome
             path thisfile = ome::compat::canonical(path(file));
 
             /// @todo: Use a set rather than a list?
-            const std::vector<std::string>& s = getUsedFiles();
-            for (std::vector<std::string>::const_iterator i = s.begin();
+            const std::vector<path>& s = getUsedFiles();
+            for (std::vector<path>::const_iterator i = s.begin();
                  i != s.end();
                  ++i)
               {
@@ -386,12 +387,12 @@ namespace ome
         boost::apply_visitor(v, dest.vbuffer());
       }
 
-      std::shared_ptr< ::ome::xml::meta::MetadataStore>
+      ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>
       FormatReader::makeFilterMetadata()
       {
-        // While std::make_shared<> works, here, boost::make_shared<>
+        // While ome::compat::make_shared<> works, here, boost::make_shared<>
         // does not, so use new directly.
-        return std::shared_ptr< ::ome::xml::meta::MetadataStore>
+        return ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>
           (new FilterMetadata(getMetadataStore(), isMetadataFiltered()));
       }
 
@@ -414,8 +415,8 @@ namespace ome
       }
 
       bool
-      FormatReader::isThisType(const std::string& name,
-                               bool               open) const
+      FormatReader::isThisType(const boost::filesystem::path& name,
+                               bool                           open) const
       {
         // if file extension ID is insufficient and we can't open the file, give up
         if (!suffixSufficient && !open)
@@ -467,7 +468,7 @@ namespace ome
       }
 
       bool
-      FormatReader::isFilenameThisTypeImpl(const std::string& /* name */) const
+      FormatReader::isFilenameThisTypeImpl(const boost::filesystem::path& /* name */) const
       {
         return false;
       }
@@ -591,7 +592,8 @@ namespace ome
       }
 
       void
-      FormatReader::getLookupTable(VariantPixelBuffer& /* buf */) const
+      FormatReader::getLookupTable(VariantPixelBuffer& /* buf */,
+                                   dimension_size_type /* no */) const
       {
         throw std::runtime_error("Reader does not implement lookup tables");
       }
@@ -763,7 +765,7 @@ namespace ome
       FormatReader::close(bool fileOnly)
       {
         if (in)
-          in = std::shared_ptr<std::istream>(); // set to null.
+          in = ome::compat::shared_ptr<std::istream>(); // set to null.
         if (!fileOnly)
           {
             currentId = boost::none;
@@ -849,29 +851,29 @@ namespace ome
         return saveOriginalMetadata;
       }
 
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       FormatReader::getUsedFiles(bool noPixels) const
       {
         SaveSeries sentry(*this);
-        std::set<std::string> files;
+        std::set<path> files;
         for (dimension_size_type i = 0; i < getSeriesCount(); ++i)
           {
             setSeries(i);
-            std::vector<std::string> s = getSeriesUsedFiles(noPixels);
-            for (std::vector<std::string>::const_iterator file = s.begin();
+            std::vector<path> s = getSeriesUsedFiles(noPixels);
+            for (std::vector<path>::const_iterator file = s.begin();
                  file != s.end();
                  ++file)
               {
                 files.insert(*file);
               }
           }
-        return std::vector<std::string>(files.begin(), files.end());
+        return std::vector<path>(files.begin(), files.end());
       }
 
-      const std::vector<std::string>
+      const std::vector<boost::filesystem::path>
       FormatReader::getSeriesUsedFiles(bool noPixels) const
       {
-        std::vector<std::string> ret;
+        std::vector<path> ret;
         if (!noPixels && currentId)
           ret.push_back(currentId.get());
         return ret;
@@ -880,10 +882,10 @@ namespace ome
       std::vector<FileInfo>
       FormatReader::getAdvancedUsedFiles(bool noPixels) const
       {
-        std::vector<std::string> files = getUsedFiles(noPixels);
+        std::vector<path> files = getUsedFiles(noPixels);
         std::vector<FileInfo> infos(files.size());
 
-        for (std::vector<std::string>::iterator file = files.begin();
+        for (std::vector<path>::iterator file = files.begin();
              file != files.end();
              ++file)
           {
@@ -892,11 +894,11 @@ namespace ome
             info.reader = getFormat();
             info.usedToInitialize = false;
 
-            const boost::optional<std::string> currentid = getCurrentFile();
+            const boost::optional<path> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = ome::compat::canonical(path(currentid.get()));
-                path thisfile = ome::compat::canonical(path(*file));
+                path current = ome::compat::canonical(currentid.get());
+                path thisfile = ome::compat::canonical(*file);
 
                 info.usedToInitialize = (thisfile == current);
               }
@@ -909,10 +911,10 @@ namespace ome
       std::vector<FileInfo>
       FormatReader::getAdvancedSeriesUsedFiles(bool noPixels) const
       {
-        std::vector<std::string> files = getSeriesUsedFiles(noPixels);
+        std::vector<path> files = getSeriesUsedFiles(noPixels);
         std::vector<FileInfo> infos(files.size());
 
-        for (std::vector<std::string>::iterator file = files.begin();
+        for (std::vector<path>::iterator file = files.begin();
              file != files.end();
              ++file)
           {
@@ -921,11 +923,11 @@ namespace ome
             info.reader = getFormat();
             info.usedToInitialize = false;
 
-            const boost::optional<std::string> currentid = getCurrentFile();
+            const boost::optional<path> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = ome::compat::canonical(path(currentid.get()));
-                path thisfile = ome::compat::canonical(path(*file));
+                path current = ome::compat::canonical(currentid.get());
+                path thisfile = ome::compat::canonical(*file);
 
                 info.usedToInitialize = (thisfile == current);
               }
@@ -935,7 +937,7 @@ namespace ome
         return infos;
       }
 
-      const boost::optional<std::string>&
+      const boost::optional<boost::filesystem::path>&
       FormatReader::getCurrentFile() const
       {
         return currentId;
@@ -955,6 +957,27 @@ namespace ome
                                          z, c, t);
       }
 
+      dimension_size_type
+      FormatReader::getIndex(dimension_size_type z,
+                             dimension_size_type c,
+                             dimension_size_type t,
+                             dimension_size_type moduloZ,
+                             dimension_size_type moduloC,
+                             dimension_size_type moduloT) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getIndex(getDimensionOrder(),
+                                         getSizeZ(),
+                                         getEffectiveSizeC(),
+                                         getSizeT(),
+                                         getModuloZ().size(),
+                                         getModuloC().size(),
+                                         getModuloT().size(),
+                                         getImageCount(),
+                                         z, c, t,
+                                         moduloZ, moduloC, moduloT);
+      }
+
       std::array<dimension_size_type, 3>
       FormatReader::getZCTCoords(dimension_size_type index) const
       {
@@ -963,6 +986,21 @@ namespace ome
                                              getSizeZ(),
                                              getEffectiveSizeC(),
                                              getSizeT(),
+                                             getImageCount(),
+                                             index);
+      }
+
+      std::array<dimension_size_type, 6>
+      FormatReader::getZCTModuloCoords(dimension_size_type index) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getZCTCoords(getDimensionOrder(),
+                                             getSizeZ(),
+                                             getEffectiveSizeC(),
+                                             getSizeT(),
+                                             getModuloZ().size(),
+                                             getModuloC().size(),
+                                             getModuloT().size(),
                                              getImageCount(),
                                              index);
       }
@@ -993,7 +1031,7 @@ namespace ome
         return getCoreMetadata(getCoreIndex()).seriesMetadata;
       }
 
-      const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> >&
+      const std::vector<ome::compat::shared_ptr< ::ome::bioformats::CoreMetadata> >&
       FormatReader::getCoreMetadataList() const
       {
         assertId(currentId, true);
@@ -1014,7 +1052,7 @@ namespace ome
       }
 
       void
-      FormatReader::setMetadataStore(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store)
+      FormatReader::setMetadataStore(ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>& store)
       {
         assertId(currentId, false);
 
@@ -1024,26 +1062,26 @@ namespace ome
         metadataStore = store;
       }
 
-      const std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
       FormatReader::getMetadataStore() const
       {
         return metadataStore;
       }
 
-      std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
       FormatReader::getMetadataStore()
       {
         return metadataStore;
       }
 
-      std::vector<std::shared_ptr< ::ome::bioformats::FormatReader> >
+      std::vector<ome::compat::shared_ptr< ::ome::bioformats::FormatReader> >
       FormatReader::getUnderlyingReaders() const
       {
-        return std::vector<std::shared_ptr< ::ome::bioformats::FormatReader> >();
+        return std::vector<ome::compat::shared_ptr< ::ome::bioformats::FormatReader> >();
       }
 
       bool
-      FormatReader::isSingleFile(const std::string& /* id */) const
+      FormatReader::isSingleFile(const boost::filesystem::path& /* id */) const
       {
         return true;
       }
@@ -1268,15 +1306,24 @@ namespace ome
       }
 
       void
-      FormatReader::setId(const std::string& id)
+      FormatReader::setId(const boost::filesystem::path& id)
       {
         //    LOGGER.debug("{} initializing {}", getFormat(), id);
         if (!currentId || id != currentId.get())
           {
-            initFile(id);
+            path canonicalID(id);
+            try
+              {
+                // Attempt to canonicalize the path.
+                canonicalID = ome::compat::canonical(id);
+              }
+            catch (const std::exception& /* e */)
+              {
+              }
+            initFile(canonicalID);
 
-            const std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>& store =
-              std::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(getMetadataStore());
+            const ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>& store =
+              ome::compat::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(getMetadataStore());
             if(store)
               {
                 if(saveOriginalMetadata)
@@ -1312,10 +1359,7 @@ namespace ome
                         }
                     }
 
-                    /**
-                     * @todo Implement populateOriginalMetadata.  Requires bits of MetadataTools and OMEXMLServiceImpl.
-                     */
-                    // populateOriginalMetadata(store, allMetadata.flatten());
+                    fillOriginalMetadata(*store, allMetadata);
                   }
 
                 setSeries(0);

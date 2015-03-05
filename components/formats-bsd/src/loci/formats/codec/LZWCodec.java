@@ -339,7 +339,7 @@ public class LZWCodec extends BaseCodec {
           if (currCode == EOI_CODE) break;
             // write string[curr_code] to output
             // -- but here we are sure that string consists of a single byte
-            if (currOutPos >= output.length - 1) break;
+            if (currOutPos >= output.length) break;
             output[currOutPos++] = newBytes[currCode];
             oldCode = currCode;
         }

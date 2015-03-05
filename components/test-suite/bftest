@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # bftest: a script for running the Bio-Formats automated test suite
 

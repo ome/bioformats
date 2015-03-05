@@ -43,6 +43,7 @@
 
 #include <boost/program_options.hpp>
 
+#include <ome/compat/log.h>
 #include <ome/compat/memory.h>
 
 #include <ome/bioformats/FormatReader.h>
@@ -67,7 +68,7 @@ namespace showinf
     virtual ~ImageInfo ();
 
     void
-    setReader(std::shared_ptr<ome::bioformats::FormatReader>& reader);
+    setReader(ome::compat::shared_ptr<ome::bioformats::FormatReader>& reader);
 
     void
     testRead(std::ostream& stream);
@@ -95,10 +96,28 @@ namespace showinf
     checkWarnings(std::ostream& stream);
 
     /**
+     * Read and display used files.
+     */
+    void
+    readUsedFiles(std::ostream& stream);
+
+    /**
      * Read and display core metadata.
      */
     void
     readCoreMetadata(std::ostream& stream);
+
+    /**
+     * Read and display original metadata.
+     */
+    void
+    readOriginalMetadata(std::ostream& stream);
+
+    /**
+     * Read and display OME-XML metadata.
+     */
+    void
+    readOMEXMLMetadata(std::ostream& stream);
 
     /**
      * Print a single dimension.
@@ -110,12 +129,14 @@ namespace showinf
                    ome::bioformats::dimension_size_type effectiveSize,
                    const ome::bioformats::Modulo&       modulo);
 
+    /// Message logger.
+    ome::compat::Logger logger;
     /// File to open with FormatReader::setId.
     std::string file;
     /// Command-line options.
     options opts;
     /// FormatReader instance.
-    std::shared_ptr<ome::bioformats::FormatReader> reader;
+    ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
   };
 
 }

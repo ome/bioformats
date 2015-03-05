@@ -61,20 +61,15 @@ namespace
 {
 
   void
-  setup_parser(xercesc::XercesDOMParser& parser)
+  setup_parser(xercesc::XercesDOMParser&                parser,
+               const ome::xerces::dom::ParseParameters& params)
   {
-    xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto; // Val_Always
-    bool do_ns = true;
-    bool do_schema = true;
-    bool do_fullcheck = true;
-    bool do_create = true;
-
-    parser.setValidationScheme(vscheme);
-    parser.setDoNamespaces(do_ns);
-    parser.setDoSchema(do_schema);
-    parser.setHandleMultipleImports(true);
-    parser.setValidationSchemaFullChecking(do_fullcheck);
-    parser.setCreateEntityReferenceNodes(do_create);
+    parser.setValidationScheme(params.validationScheme);
+    parser.setDoNamespaces(params.doNamespaces);
+    parser.setDoSchema(params.doSchema);
+    parser.setHandleMultipleImports(params.handleMultipleImports);
+    parser.setValidationSchemaFullChecking(params.validationSchemaFullChecking);
+    parser.setCreateEntityReferenceNodes(params.createEntityReferenceNodes);
   }
 
   void
@@ -89,7 +84,7 @@ namespace
 
     parser.parse(source);
 
-    if (er)
+    if (er || !parser.getDocument())
       throw std::runtime_error("Parse error");
   }
 
@@ -202,47 +197,65 @@ namespace ome
       Document
       createEmptyDocument(const std::string& qualifiedName)
       {
-
         xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(String("LS"));
         if (!impl)
           throw std::runtime_error("Failed to create LS DOMImplementation");
 
-        return impl->createDocument(0, String(qualifiedName), 0);
-
+        return Document(impl->createDocument(0, String(qualifiedName), 0),
+                        true);
       }
 
       Document
-      createDocument(const boost::filesystem::path& file)
+      createEmptyDocument(const std::string& namespaceURI,
+                          const std::string& qualifiedName)
+      {
+        xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(String("LS"));
+        if (!impl)
+          throw std::runtime_error("Failed to create LS DOMImplementation");
+
+        return Document(impl->createDocument(String(namespaceURI),
+                                             String(qualifiedName),
+                                             0),
+                        true);
+      }
+
+      Document
+      createDocument(const boost::filesystem::path& file,
+                     const ParseParameters&         params)
       {
         Platform xmlplat;
 
         xercesc::LocalFileInputSource source(String(file.generic_string()));
 
         xercesc::XercesDOMParser parser;
-        setup_parser(parser);
+        setup_parser(parser, params);
         read_source(parser, source);
 
-        return parser.adoptDocument();
+        return Document(parser.adoptDocument(), true);
       }
 
       Document
-      createDocument(const std::string& text)
+      createDocument(const std::string&     text,
+                     const ParseParameters& params,
+                     const std::string&     id)
       {
         Platform xmlplat;
 
  	xercesc::MemBufInputSource source(reinterpret_cast<const XMLByte *>(text.c_str()),
                                           static_cast<XMLSize_t>(text.size()),
-                                          String("membuf"));
+                                          String(id));
 
         xercesc::XercesDOMParser parser;
-        setup_parser(parser);
+        setup_parser(parser, params);
         read_source(parser, source);
 
-        return parser.adoptDocument();
+        return Document(parser.adoptDocument(), true);
       }
 
       Document
-      createDocument(std::istream& stream)
+      createDocument(std::istream&          stream,
+                     const ParseParameters& params,
+                     const std::string&     id)
       {
         Platform xmlplat;
 
@@ -262,13 +275,13 @@ namespace ome
 
  	xercesc::MemBufInputSource source(reinterpret_cast<const XMLByte *>(data.c_str()),
                                           static_cast<XMLSize_t>(data.size()),
-                                          String("membuf"));
+                                          String(id));
 
         xercesc::XercesDOMParser parser;
-        setup_parser(parser);
+        setup_parser(parser, params);
         read_source(parser, source);
 
-        return parser.adoptDocument();
+        return Document(parser.adoptDocument(), true);
       }
 
       void
@@ -313,6 +326,54 @@ namespace ome
         XMLSize_t buflen(target.getLen());
         text.assign(reinterpret_cast<const char *>(buf),
                     reinterpret_cast<const char *>(buf) + buflen);
+      }
+
+      void
+      writeNode(Node&                          node,
+                const boost::filesystem::path& file,
+                const WriteParameters&         params)
+      {
+        writeNode(*(node.get()), file, params);
+      }
+
+      void
+      writeNode(Node&                  node,
+                std::ostream&          stream,
+                const WriteParameters& params)
+      {
+        writeNode(*(node.get()), stream, params);
+      }
+
+      void
+      writeNode(Node&                  node,
+                std::string&           text,
+                const WriteParameters& params)
+      {
+        writeNode(*(node.get()), text, params);
+      }
+
+      void
+      writeDocument(Document&                      document,
+                    const boost::filesystem::path& file,
+                    const WriteParameters&         params)
+      {
+        writeNode(*(document.get()), file, params);
+      }
+
+      void
+      writeDocument(Document&              document,
+                    std::ostream&          stream,
+                    const WriteParameters& params)
+      {
+        writeNode(*(document.get()), stream, params);
+      }
+
+      void
+      writeDocument(Document&              document,
+                    std::string&           text,
+                    const WriteParameters& params)
+      {
+        writeNode(*(document.get()), text, params);
       }
 
     }

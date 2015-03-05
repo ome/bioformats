@@ -57,4 +57,12 @@
 
 #include <ome/test/config.h>
 
+/**
+ * Tests issue verbose output.
+ *
+ * @returns @c true if verbose, @c false if quiet.
+ */
+bool
+verbose();
+
 #endif // OME_TEST_TEST_H

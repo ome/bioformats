@@ -116,7 +116,6 @@
 #include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/meta/MetadataRoot.h>
 #include <ome/xml/model/AffineTransform.h>
-#include <ome/xml/model/MapPairs.h>
 
 {% for include in model.getEnumHeaders() %}\
 #include <${include}>
@@ -221,7 +220,7 @@ namespace ome
          *
          * @todo should this be a reference or shared_ptr?
          */
-        virtual std::shared_ptr<MetadataRoot>&
+        virtual ome::compat::shared_ptr<MetadataRoot>&
         getRoot() = 0;
 
         /**
@@ -235,7 +234,7 @@ namespace ome
          * @todo should this be a reference or shared_ptr?
          */
         virtual void
-        setRoot(std::shared_ptr<MetadataRoot>& root) = 0;
+        setRoot(ome::compat::shared_ptr<MetadataRoot>& root) = 0;
 
 {% if debug %}\
         // -- Entity storage (manual definitions) --
@@ -252,38 +251,6 @@ namespace ome
         setPixelsBinDataBigEndian(bool bigEndian,
                                   index_type imageIndex,
                                   index_type binDataIndex = 0) = 0;
-
-	/**
-         * Set the Map value of MapAnnotation.
-         *
-         * @param map Map value.
-         * @param mapAnnotationIndex the MapAnnotation index.
-         */
-        virtual void
-        setMapAnnotationValue(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                              index_type mapAnnotationIndex) = 0;
-
-	/**
-         * Set the Map property of GenericExcitationSource.
-         *
-         * @param map Map to set.
-         * @param instrumentIndex the Instrument index.
-         * @param lightSourceIndex the LightSource index.
-         */
-        virtual void
-        setGenericExcitationSourceMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                      index_type instrumentIndex,
-                                      index_type lightSourceIndex) = 0;
-
-	/**
-         * Set the Map property of ImagingEnvironment.
-         *
-         * @param map Map to set.
-         * @param imageIndex the Image index.
-         */
-        virtual void
-        setImagingEnvironmentMap(const ::${lang.omexml_model_package}::MapPairs::map_type& map,
-                                 index_type imageIndex) = 0;
 
 {% if debug %}\
         // -- Entity storage (code generated definitions) --

@@ -42,14 +42,15 @@
 
 #include <ome/internal/config.h>
 
+#include <ome/bioformats/PlaneRegion.h>
+#include <ome/bioformats/TileBuffer.h>
+#include <ome/bioformats/TileCache.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/Field.h>
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
-#include <ome/bioformats/tiff/TileBuffer.h>
-#include <ome/bioformats/tiff/TileCache.h>
 
 #include <ome/compat/thread.h>
 #include <ome/compat/string.h>
@@ -65,6 +66,10 @@ namespace
   using ::ome::bioformats::dimension_size_type;
   using ::ome::bioformats::PixelBuffer;
   using ::ome::bioformats::PixelProperties;
+  using ::ome::bioformats::PlaneRegion;
+  using ::ome::bioformats::TileBuffer;
+  using ::ome::bioformats::TileCache;
+  using ::ome::bioformats::TileCoverage;
 
   // VariantPixelBuffer tile transfer
   // ────────────────────────────────
@@ -139,12 +144,12 @@ namespace
 
     template<typename T>
     void
-    transfer(std::shared_ptr<T>& buffer,
-             typename T::indices_type& destidx,
-             const TileBuffer& tilebuf,
-             PlaneRegion& rfull,
-             PlaneRegion& rclip,
-             uint16_t copysamples)
+    transfer(ome::compat::shared_ptr<T>& buffer,
+             typename T::indices_type&   destidx,
+             const TileBuffer&           tilebuf,
+             PlaneRegion&                rfull,
+             PlaneRegion&                rclip,
+             uint16_t                    copysamples)
     {
       if (rclip.w == rfull.w &&
           rclip.x == region.x &&
@@ -189,12 +194,12 @@ namespace
 
     // Special case for BIT
     void
-    transfer(std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
-             PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type& destidx,
-             const TileBuffer& tilebuf,
-             PlaneRegion& rfull,
-             PlaneRegion& rclip,
-             uint16_t copysamples)
+    transfer(ome::compat::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
+             PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type&             destidx,
+             const TileBuffer&                                                                 tilebuf,
+             PlaneRegion&                                                                      rfull,
+             PlaneRegion&                                                                      rclip,
+             uint16_t                                                                          copysamples)
     {
       // Unpack bits from buffer.
 
@@ -233,18 +238,18 @@ namespace
 
     template<typename T>
     dimension_size_type
-    expected_read(const std::shared_ptr<T>& /* buffer */,
-                  const PlaneRegion& rclip,
-                  uint16_t copysamples) const
+    expected_read(const ome::compat::shared_ptr<T>& /* buffer */,
+                  const PlaneRegion&                rclip,
+                  uint16_t                          copysamples) const
     {
       return rclip.w * rclip.h * copysamples * sizeof(typename T::value_type);
     }
 
     // Special case for BIT
     dimension_size_type
-    expected_read(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& /* buffer */,
-                  const PlaneRegion& rclip,
-                  uint16_t copysamples) const
+    expected_read(const ome::compat::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& /* buffer */,
+                  const PlaneRegion&                                                                      rclip,
+                  uint16_t                                                                                copysamples) const
     {
       dimension_size_type expectedread = rclip.w;
 
@@ -258,9 +263,9 @@ namespace
 
     template<typename T>
     void
-    operator()(std::shared_ptr<T>& buffer)
+    operator()(ome::compat::shared_ptr<T>& buffer)
     {
-      std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
+      ome::compat::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
       ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
       TileType type = tileinfo.tileType();
 
@@ -344,7 +349,7 @@ namespace
     void
     flush()
     {
-      std::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
+      ome::compat::shared_ptr< ::ome::bioformats::tiff::TIFF>& tiff(ifd.getTIFF());
       ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
       TileType type = tileinfo.tileType();
       PlaneRegion rimage(0, 0, ifd.getImageWidth(), ifd.getImageHeight());
@@ -387,12 +392,12 @@ namespace
 
     template<typename T>
     void
-    transfer(const std::shared_ptr<T>& buffer,
-             typename T::indices_type& srcidx,
-             TileBuffer& tilebuf,
-             PlaneRegion& rfull,
-             PlaneRegion& rclip,
-             uint16_t copysamples)
+    transfer(const ome::compat::shared_ptr<T>& buffer,
+             typename T::indices_type&         srcidx,
+             TileBuffer&                       tilebuf,
+             PlaneRegion&                      rfull,
+             PlaneRegion&                      rclip,
+             uint16_t                          copysamples)
     {
       if (rclip.w == rfull.w &&
           rclip.x == region.x &&
@@ -441,12 +446,12 @@ namespace
 
     // Special case for BIT
     void
-    transfer(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
-             PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type& srcidx,
-             TileBuffer& tilebuf,
-             PlaneRegion& rfull,
-             PlaneRegion& rclip,
-             uint16_t copysamples)
+    transfer(const ome::compat::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
+             PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type&                   srcidx,
+             TileBuffer&                                                                             tilebuf,
+             PlaneRegion&                                                                            rfull,
+             PlaneRegion&                                                                            rclip,
+             uint16_t                                                                                copysamples)
     {
       // Pack bits into buffer.
 
@@ -487,7 +492,7 @@ namespace
 
     template<typename T>
     void
-    operator()(const std::shared_ptr<T>& buffer)
+    operator()(const ome::compat::shared_ptr<T>& buffer)
     {
       uint16_t samples = ifd.getSamplesPerPixel();
       PlanarConfiguration planarconfig = ifd.getPlanarConfiguration();
@@ -515,7 +520,7 @@ namespace
           // Note boost::make_shared makes arguments const, so can't use
           // here.
           if (!tilecache.find(tile))
-            tilecache.insert(tile, std::shared_ptr<TileBuffer>(new TileBuffer(tileinfo.bufferSize())));
+            tilecache.insert(tile, ome::compat::shared_ptr<TileBuffer>(new TileBuffer(tileinfo.bufferSize())));
           assert(tilecache.find(tile));
           TileBuffer& tilebuf = *tilecache.find(tile);
 
@@ -551,13 +556,13 @@ namespace ome
         class IFDConcrete : public IFD
         {
         public:
-          IFDConcrete(std::shared_ptr<TIFF>& tiff,
+          IFDConcrete(ome::compat::shared_ptr<TIFF>& tiff,
                       offset_type            offset):
             IFD(tiff, offset)
           {
           }
 
-          IFDConcrete(std::shared_ptr<TIFF>& tiff):
+          IFDConcrete(ome::compat::shared_ptr<TIFF>& tiff):
             IFD(tiff, 0)
           {
           }
@@ -577,7 +582,7 @@ namespace ome
       {
       public:
         /// Reference to the parent TIFF.
-        std::shared_ptr<TIFF> tiff;
+        ome::compat::shared_ptr<TIFF> tiff;
         /// Offset of this IFD.
         offset_type offset;
         /// Tile coverage cache (used when writing).
@@ -611,8 +616,8 @@ namespace ome
          * @param tiff the parent TIFF.
          * @param offset the IFD offset.
          */
-        Impl(std::shared_ptr<TIFF>& tiff,
-             offset_type            offset):
+        Impl(ome::compat::shared_ptr<TIFF>& tiff,
+             offset_type                    offset):
           tiff(tiff),
           offset(offset),
           coverage(),
@@ -642,18 +647,18 @@ namespace ome
         operator= (const Impl&);
       };
 
-      IFD::IFD(std::shared_ptr<TIFF>& tiff,
-               offset_type            offset):
+      IFD::IFD(ome::compat::shared_ptr<TIFF>& tiff,
+               offset_type                    offset):
         // Note boost::make_shared makes arguments const, so can't use
         // here.
-        impl(std::shared_ptr<Impl>(new Impl(tiff, offset)))
+        impl(ome::compat::shared_ptr<Impl>(new Impl(tiff, offset)))
       {
       }
 
-      IFD::IFD(std::shared_ptr<TIFF>& tiff):
+      IFD::IFD(ome::compat::shared_ptr<TIFF>& tiff):
         // Note boost::make_shared makes arguments const, so can't use
         // here.
-        impl(std::shared_ptr<Impl>(new Impl(tiff, 0)))
+        impl(ome::compat::shared_ptr<Impl>(new Impl(tiff, 0)))
       {
       }
 
@@ -661,9 +666,9 @@ namespace ome
       {
       }
 
-      std::shared_ptr<IFD>
-      IFD::openIndex(std::shared_ptr<TIFF>& tiff,
-                     directory_index_type   index)
+      ome::compat::shared_ptr<IFD>
+      IFD::openIndex(ome::compat::shared_ptr<TIFF>& tiff,
+                     directory_index_type           index)
       {
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
@@ -677,27 +682,27 @@ namespace ome
         return openOffset(tiff, static_cast<uint64_t>(TIFFCurrentDirOffset(tiffraw)));
       }
 
-      std::shared_ptr<IFD>
-      IFD::openOffset(std::shared_ptr<TIFF>& tiff,
-                      offset_type            offset)
+      ome::compat::shared_ptr<IFD>
+      IFD::openOffset(ome::compat::shared_ptr<TIFF>& tiff,
+                      offset_type                    offset)
       {
         // Note boost::make_shared makes arguments const, so can't use
         // here.
-        return std::shared_ptr<IFD>(new IFDConcrete(tiff, offset));
+        return ome::compat::shared_ptr<IFD>(new IFDConcrete(tiff, offset));
       }
 
-      std::shared_ptr<IFD>
-      IFD::current(std::shared_ptr<TIFF>& tiff)
+      ome::compat::shared_ptr<IFD>
+      IFD::current(ome::compat::shared_ptr<TIFF>& tiff)
       {
         // Note boost::make_shared makes arguments const, so can't use
         // here.
-        return std::shared_ptr<IFD>(new IFDConcrete(tiff));
+        return ome::compat::shared_ptr<IFD>(new IFDConcrete(tiff));
       }
 
       void
       IFD::makeCurrent() const
       {
-        std::shared_ptr<TIFF>& tiff = getTIFF();
+        ome::compat::shared_ptr<TIFF>& tiff = getTIFF();
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
@@ -714,7 +719,7 @@ namespace ome
           }
       }
 
-      std::shared_ptr<TIFF>&
+      ome::compat::shared_ptr<TIFF>&
       IFD::getTIFF() const
       {
         return impl->tiff;
@@ -730,7 +735,7 @@ namespace ome
       IFD::getRawField(tag_type tag,
                        ...) const
       {
-        std::shared_ptr<TIFF>& tiff = getTIFF();
+        ome::compat::shared_ptr<TIFF>& tiff = getTIFF();
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
@@ -751,7 +756,7 @@ namespace ome
       IFD::setRawField(tag_type tag,
                        ...)
       {
-        std::shared_ptr<TIFF>& tiff = getTIFF();
+        ome::compat::shared_ptr<TIFF>& tiff = getTIFF();
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
@@ -1205,6 +1210,45 @@ namespace ome
       }
 
       void
+      IFD::readLookupTable(VariantPixelBuffer& buf) const
+      {
+        std::array<std::vector<uint16_t>, 3> cmap;
+        getField(tiff::COLORMAP).get(cmap);
+
+        std::array<VariantPixelBuffer::size_type, 9> shape;
+        shape[DIM_SPATIAL_X] = cmap.at(0).size();
+        shape[DIM_SPATIAL_Y] = 1;
+        shape[DIM_SUBCHANNEL] = cmap.size();
+        shape[DIM_SPATIAL_Z] = shape[DIM_TEMPORAL_T] = shape[DIM_CHANNEL] =
+          shape[DIM_MODULO_Z] = shape[DIM_MODULO_T] = shape[DIM_MODULO_C] = 1;
+
+        ::ome::bioformats::PixelBufferBase::storage_order_type order_planar(::ome::bioformats::PixelBufferBase::make_storage_order(::ome::xml::model::enums::DimensionOrder::XYZTC, false));
+
+        buf.setBuffer(shape, PixelType::UINT16, order_planar);
+
+        ome::compat::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> > uint16_buffer
+          (boost::get<ome::compat::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> > >(buf.vbuffer()));
+        assert(uint16_buffer);
+
+        for (VariantPixelBuffer::size_type s = 0U; s < shape[DIM_SUBCHANNEL]; ++s)
+          {
+            const std::vector<uint16_t>& channel(cmap.at(s));
+
+            VariantPixelBuffer::indices_type coord;
+            coord[DIM_SPATIAL_X] = 0;
+            coord[DIM_SPATIAL_Y] = 0;
+            coord[DIM_SUBCHANNEL] = s;
+            coord[DIM_SPATIAL_Z] = coord[DIM_TEMPORAL_T] =
+              coord[DIM_CHANNEL] = coord[DIM_MODULO_Z] =
+              coord[DIM_MODULO_T] = coord[DIM_MODULO_C] = 0;
+
+            std::copy(channel.begin(), channel.end(),
+                      &uint16_buffer->at(coord));
+          }
+
+      }
+
+      void
       IFD::writeImage(const VariantPixelBuffer& buf)
       {
         writeImage(buf, 0, 0, getImageWidth(), getImageHeight());
@@ -1256,12 +1300,12 @@ namespace ome
         boost::apply_visitor(v, source.vbuffer());
       }
 
-      std::shared_ptr<IFD>
+      ome::compat::shared_ptr<IFD>
       IFD::next() const
       {
-        std::shared_ptr<IFD> ret;
+        ome::compat::shared_ptr<IFD> ret;
 
-        std::shared_ptr<TIFF>& tiff = getTIFF();
+        ome::compat::shared_ptr<TIFF>& tiff = getTIFF();
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
@@ -1280,7 +1324,7 @@ namespace ome
       bool
       IFD::last() const
       {
-        std::shared_ptr<TIFF>& tiff = getTIFF();
+        ome::compat::shared_ptr<TIFF>& tiff = getTIFF();
         ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
@@ -1370,10 +1414,10 @@ namespace ome
 
       }
 
-      std::shared_ptr<CoreMetadata>
+      ome::compat::shared_ptr<CoreMetadata>
       makeCoreMetadata(const IFD& ifd)
       {
-        std::shared_ptr<CoreMetadata> m(std::make_shared<CoreMetadata>());
+        ome::compat::shared_ptr<CoreMetadata> m(ome::compat::make_shared<CoreMetadata>());
 
         m->dimensionOrder = ome::xml::model::enums::DimensionOrder::XYCZT;
         m->sizeX = ifd.getImageWidth();

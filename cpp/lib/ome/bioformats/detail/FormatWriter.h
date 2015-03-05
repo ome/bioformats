@@ -64,15 +64,34 @@ namespace ome
         /// Format description.
         std::string description;
         /// Filename suffixes this format can handle.
-        std::vector<std::string> suffixes;
+        std::vector<boost::filesystem::path> suffixes;
         /// Filename compression suffixes this format can handle.
-        std::vector<std::string> compression_suffixes;
+        std::vector<boost::filesystem::path> compression_suffixes;
         /// Supported compression types.
         std::set<std::string> compression_types;
         /// Supported pixel types.
         codec_pixel_type_map codec_pixel_types;
         /// Stacks are supported.
         bool stacks;
+
+        /**
+         * Constructor.
+         *
+         * @param name the format name.
+         * @param description a short description of the format.
+         */
+        WriterProperties(const std::string& name,
+                         const std::string& description):
+          name(name),
+          description(description),
+          suffixes(),
+          compression_suffixes(),
+          compression_types(),
+          codec_pixel_types(),
+          stacks()
+        {
+          compression_suffixes.push_back(boost::filesystem::path(""));
+        }
       };
 
       /**
@@ -94,10 +113,10 @@ namespace ome
         const WriterProperties& writerProperties;
 
         /// The identifier (path) of the currently open file.
-        boost::optional<std::string> currentId;
+        boost::optional<boost::filesystem::path> currentId;
 
         /// Current output.
-        std::shared_ptr<std::ostream> out;
+        ome::compat::shared_ptr<std::ostream> out;
 
         /// Current series.
         mutable dimension_size_type series;
@@ -115,7 +134,7 @@ namespace ome
          * Current metadata store. Should never be accessed directly as the
          * semantics of getMetadataRetrieve() prevent "null" access.
          */
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
 
       protected:
         /// Constructor.
@@ -136,8 +155,8 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isThisType(const std::string& name,
-                   bool               open = true) const;
+        isThisType(const boost::filesystem::path& name,
+                   bool                           open = true) const;
 
         // Documented in superclass.
         void
@@ -171,14 +190,14 @@ namespace ome
 
         // Documented in superclass.
         void
-        setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+        setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
 
         // Documented in superclass.
-        const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve() const;
 
         // Documented in superclass.
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve();
 
         // Documented in superclass.
@@ -220,7 +239,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        changeOutputFile(const std::string& id);
+        changeOutputFile(const boost::filesystem::path& id);
 
         // Documented in superclass.
         void
@@ -232,7 +251,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        setId(const std::string& id);
+        setId(const boost::filesystem::path& id);
 
         // Documented in superclass.
         void
@@ -247,11 +266,11 @@ namespace ome
         getFormatDescription() const;
 
         // Documented in superclass.
-        const std::vector<std::string>&
+        const std::vector<boost::filesystem::path>&
         getSuffixes() const;
 
         // Documented in superclass.
-        const std::vector<std::string>&
+        const std::vector<boost::filesystem::path>&
         getCompressionSuffixes() const;
       };
 

@@ -40,6 +40,9 @@
 #define OME_XERCES_DOM_WRAPPER_H
 
 #include <ome/compat/config.h>
+#include <ome/compat/memory.h>
+
+#include <ome/xerces/dom/Base.h>
 
 #include <string>
 #include <stdexcept>
@@ -91,19 +94,46 @@ namespace ome
           parent_type(),
           wrapped()
         {
-          assign(const_cast<base_element_type *>(base.get()));
+          assign(base);
         }
 
         /**
-         * Construct a Wrapper from a base_element_type *.
+         * Construct a Wrapper from a base_element_type * (managed).
+         *
+         * @param base the Wrapper to wrap.
+         * @param del the deleter to clean up the wrapped value
+         */
+        template<typename Deleter>
+        explicit
+        Wrapper (typename parent_type::base_element_type *base,
+                 Deleter                                  del):
+          parent_type(),
+          wrapped()
+        {
+          ome::compat::shared_ptr<base_element_type> pbase;
+          if (base)
+            pbase = ome::compat::shared_ptr<base_element_type>(base, del);
+          else
+            pbase = ome::compat::shared_ptr<base_element_type>();
+          assign(pbase);
+        }
+
+        /**
+         * Construct a Wrapper from a base_element_type * (unmanaged).
          *
          * @param base the Wrapper to wrap.
          */
+        explicit
         Wrapper (typename parent_type::base_element_type *base):
           parent_type(),
           wrapped()
         {
-          assign(base);
+          ome::compat::shared_ptr<base_element_type> pbase;
+          if (base)
+            pbase = ome::compat::shared_ptr<base_element_type>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>);
+          else
+            pbase = ome::compat::shared_ptr<base_element_type>();
+          assign(pbase);
         }
 
         /// Destructor.
@@ -139,19 +169,29 @@ namespace ome
 
       protected:
         /**
-         * Assign a new reference to wrap.
+         * Assign a new wrapped value.
          *
-         * @note: If this is a managed wrapper, this will take
-         * ownership of the reference.
-         *
-         * @param base the reference to assign.
+         * @param wrapped the new value.
          */
         virtual
         void
-        assign(typename parent_type::base_element_type *base)
+        assign(const base_type& wrapped)
         {
-          this->wrapped = this->template assign_check<element_type>(base);
-          parent_type::assign(base);
+          this->wrapped = this->template assign_check<element_type>(const_cast<base_element_type *>(wrapped.get()));
+          parent_type::assign(wrapped);
+        }
+
+        /**
+         * Assign a new wrapped value.
+         *
+         * @param wrapped the new value.
+         */
+        virtual
+        void
+        assign(ome::compat::shared_ptr<base_element_type>& wrapped)
+        {
+          this->wrapped = this->template assign_check<element_type>(wrapped.get());
+          parent_type::assign(wrapped);
         }
 
       public:
@@ -163,19 +203,6 @@ namespace ome
          */
         Wrapper&
         operator= (const Wrapper& wrapped)
-        {
-          assign(wrapped.wrapped);
-          return *this;
-        }
-
-        /**
-         * Assign a element_type *.
-         *
-         * @param wrapped the Wrapper to assign.
-         * @returns the Wrapper.
-         */
-        Wrapper&
-        operator= (element_type *wrapped)
         {
           assign(wrapped);
           return *this;

@@ -31,7 +31,7 @@ Currently available tools include:
 
     ijview
         Displays the given image file in ImageJ using the Bio-Formats Importer
-        plugin.
+        plugin.  See :doc:`ijview` for details.
 
     bfconvert
         Converts an image file from one format to another. Bio-Formats must
@@ -40,11 +40,12 @@ Currently available tools include:
 
     formatlist
         Displays a list of supported file formats in HTML, plaintext or XML.
+        See :doc:`formatlist` for details.
 
     xmlindent
-        A simple XML prettifier similar to ``xmllint --format`` but more
+        A simple XML prettifier similar to :command:`xmllint --format` but more
         robust in that it attempts to produce output regardless of syntax
-        errors in the XML.
+        errors in the XML.  See :doc:`xmlindent` for details.
 
     xmlvalid
         A command-line XML validation tool, useful for checking an OME-XML
@@ -55,12 +56,24 @@ Currently available tools include:
         for examining the OME-XML block in an OME-TIFF file (also see
         :doc:`edit`).
 
+    domainlist
+        Displays a list of imaging domains and the supported formats
+        associated with each domain.  See :doc:`domainlist` for more
+        information.
+
+    mkfake
+        Creates a "fake" high-content screen with configurable dimensions.
+        This is useful for testing how HCS metadata is handled, without
+        requiring real image data from an acquired screen.  See :doc:`mkfake`
+        for more information.
 
 Some of these tools also work in combination, for example
-:doc:`xml-validation` uses both ``tiffcomment`` and ``xmlvalid``.
+:doc:`xml-validation` uses both :command:`tiffcomment` and :command:`xmlvalid`.
 
 Running any of these commands without any arguments will print usage
-information to help you.
+information to help you. When run with the ``-version`` argument, :command:`showinf`
+and :command:`bfconvert` will display the version of Bio-Formats that is being used
+(version number, build date, and Git commit reference).
 
 Using the tools directly from source
 ------------------------------------
@@ -101,5 +114,16 @@ something like this:
     1.6.0_24-b24;java.vm.vendor=Sun+Microsystems+Inc.;bioformats.caller=
     Bio-Formats+utilities
 
-To avoid this issue, call the tool with the ``-no-upgrade`` parameter.
+To avoid this issue, call the tool with the :option:`-no-upgrade` parameter.
 
+Profiling
+---------
+
+For debugging errors or investigating performance issues, it can be useful to
+use profiling tools while running Bio-Formats. The command-line tools can
+invoke the HPROF_ agent library to profile Heap and CPU usage. Setting the
+:envvar:`BF_PROFILE` environment variable allows to turn profiling on, e.g.::
+
+    BF_PROFILE=true showinf -nopix -no-upgrade myfile
+
+.. _HPROF: http://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html

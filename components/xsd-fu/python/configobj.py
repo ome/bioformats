@@ -1720,10 +1720,11 @@ class ConfigObj(Section):
                               '#' not in value)
         need_triple = multiline and ((("'" in value) and ('"' in value)) or
                                      ('\n' in value))
-        hash_triple_quote = (multiline and not need_triple and ("'" in value)
-                             and ('"' in value) and ('#' in value))
-        check_for_single = ((no_lists_no_quotes or not need_triple)
-                            and not hash_triple_quote)
+        hash_triple_quote = (multiline and not need_triple and
+                             ("'" in value) and ('"' in value) and
+                             ('#' in value))
+        check_for_single = ((no_lists_no_quotes or not need_triple) and
+                            not hash_triple_quote)
 
         if check_for_single:
             if not self.list_values:

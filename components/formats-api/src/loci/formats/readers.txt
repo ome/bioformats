@@ -87,6 +87,7 @@ loci.formats.in.FakeReader            # fake
 loci.formats.in.AFIReader             # afi
 loci.formats.in.ImspectorReader       # msr
 loci.formats.in.BioRadSCNReader       # scn
+loci.formats.in.ZeissLMSReader        # lms
 loci.formats.in.PQBinReader           # bin
 loci.formats.in.FlowSightReader       # cif
 loci.formats.in.IM3Reader             # im3
@@ -123,7 +124,7 @@ loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
 loci.formats.in.PCIReader             # cxd [POI]
 loci.formats.in.ImarisHDFReader       # ims [NetCDF]
 loci.formats.in.WlzReader	      # wlz [JWlz]
-
+loci.formats.in.VeecoReader           # hdf [NetCDF]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]

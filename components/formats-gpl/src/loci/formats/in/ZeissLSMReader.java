@@ -53,9 +53,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -2137,7 +2134,7 @@ public class ZeissLSMReader extends FormatReader {
       case TYPE_RATIONAL:
         return new Double(in.readDouble());
       case TYPE_ASCII:
-        String s = in.readString(dataSize).trim();
+        String s = in.readByteToString(dataSize).trim();
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<s.length(); i++) {
           if (s.charAt(i) >= 10) sb.append(s.charAt(i));

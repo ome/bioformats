@@ -74,7 +74,7 @@ namespace ome
      */
 
     /**
-     * Replace special characters with XML entities.
+     * Replace special characters with XML entities in an XML string.
      *
      * @param s the string to escape.
      * @returns the escaped string.
@@ -83,7 +83,7 @@ namespace ome
     escapeXML(const std::string& s);
 
     /**
-     * Filter control codes and invalid sequences.
+     * Filter control codes and invalid sequences in an XML string.
      *
      * Remove all control codes except for LF, HT and CR.  Also
      * replace @c &# with @c #.
@@ -93,6 +93,18 @@ namespace ome
      */
     std::string
     sanitizeXML(const std::string& s);
+
+    /**
+     * Validate XML in an XML string.
+     *
+     * @param s the string to validate.
+     * @param loc the file location or other descriptive text for the
+     * string; used for error reporting only.
+     * @returns @c true if valid, @c false if invalid.
+     */
+    bool
+    validateXML(const std::string& s,
+                const std::string& loc = "XML");
 
   }
 }

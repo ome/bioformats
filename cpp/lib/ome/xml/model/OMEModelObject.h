@@ -74,7 +74,7 @@ namespace ome
        * could just be Object, since it's really an
        * ome::xml::model::Object.
        */
-      class OMEModelObject : public std::enable_shared_from_this<OMEModelObject>
+      class OMEModelObject : public ome::compat::enable_shared_from_this<OMEModelObject>
       {
       protected:
         /**
@@ -89,7 +89,7 @@ namespace ome
             Ptr<T>, // value type
             boost::multi_index::indexed_by<
               boost::multi_index::random_access<>, // insertion order
-              boost::multi_index::ordered_unique<boost::multi_index::identity<Ptr<T> >, std::owner_less<Ptr<T> >  > // sorted order
+              boost::multi_index::ordered_unique<boost::multi_index::identity<Ptr<T> >, ome::compat::owner_less<Ptr<T> > > // sorted order
               >
             > type;
         };
@@ -103,6 +103,29 @@ namespace ome
         virtual
         ~OMEModelObject ()
         {}
+
+        /**
+         * Get the element name of this model object.
+         *
+         * This will be the most-derived class name.
+         *
+         * @returns the element type.
+         */
+        virtual const std::string&
+        elementName() const = 0;
+
+        /**
+         * Check if a given element name is valid for processing by
+         * this model object.
+         *
+         * Used for processing nodes when interitance is involved.
+         *
+         * @param name the element name to check.
+         *
+         * @returns @c true if valid, @c false if invalid.
+         */
+        virtual bool
+        validElementName(const std::string& name) const = 0;
 
       private:
         /// Copy constructor (deleted).
@@ -120,7 +143,7 @@ namespace ome
          * @param document document for element creation
          * @returns an XML DOM tree root element for this model object.
          */
-        virtual xerces::dom::Element&
+        virtual xerces::dom::Element
         asXMLElement (xerces::dom::Document& document) const = 0;
 
         /**
@@ -163,8 +186,16 @@ namespace ome
          * to all generated model objects implementing this interface.
          */
         virtual bool
-        link (std::shared_ptr<Reference>&      reference,
-              std::shared_ptr<OMEModelObject>& object) = 0;
+        link (ome::compat::shared_ptr<Reference>&      reference,
+              ome::compat::shared_ptr<OMEModelObject>& object) = 0;
+
+        /**
+         * Get the XML namespace for this model object.
+         *
+         * @returns the XML namespace.
+         */
+        virtual const std::string&
+        getXMLNamespace() const = 0;
       };
 
     }

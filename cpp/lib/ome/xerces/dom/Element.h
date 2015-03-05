@@ -61,15 +61,14 @@ namespace ome
        * wrapped object.  It can also be cast to a pointer to the
        * wrapped object, so can substitute for it directly.
        */
-      template<int S>
-      class ElementWrapper : public Wrapper<xercesc::DOMElement, NodeWrapper<S> >
+      class Element : public Wrapper<xercesc::DOMElement, Node>
       {
       public:
         /**
          * Construct a NULL Element.
          */
-        ElementWrapper ():
-          Wrapper<xercesc::DOMElement, NodeWrapper<S> >()
+        Element ():
+          Wrapper<xercesc::DOMElement, Node>()
         {
         }
 
@@ -78,8 +77,8 @@ namespace ome
          *
          * @param element the Element to copy.
          */
-        ElementWrapper (const ElementWrapper& element):
-          Wrapper<xercesc::DOMElement, NodeWrapper<S> >(element)
+        Element (const Element& element):
+          Wrapper<xercesc::DOMElement, Node>(element)
         {
         }
 
@@ -88,8 +87,8 @@ namespace ome
          *
          * @param base the base type to copy (must be an Element).
          */
-        ElementWrapper (const typename Wrapper<xercesc::DOMElement, NodeWrapper<S> >::base_type& base):
-          Wrapper<xercesc::DOMElement, NodeWrapper<S> >(base)
+        Element (const Wrapper<xercesc::DOMElement, Node>::base_type& base):
+          Wrapper<xercesc::DOMElement, Node>(base)
         {
         }
 
@@ -97,9 +96,13 @@ namespace ome
          * Construct an Element from a xercesc::DOMElement *.
          *
          * @param element the Element to wrap.
+         * @param managed is the value to be managed?
          */
-        ElementWrapper (xercesc::DOMElement *element):
-          Wrapper<xercesc::DOMElement, NodeWrapper<S> >(element)
+        Element (xercesc::DOMElement *element,
+                 bool                 managed):
+          Wrapper<xercesc::DOMElement, Node>(managed ?
+                                             Wrapper<xercesc::DOMElement, Node>(element, std::mem_fun(&base_element_type::release)) :
+                                             Wrapper<xercesc::DOMElement, Node>(element, &ome::xerces::dom::detail::unmanaged<base_element_type>))
         {
         }
 
@@ -107,14 +110,18 @@ namespace ome
          * Construct an Element from a xercesc::DOMNode *.
          *
          * @param base the DOMNode to wrap.
+         * @param managed is the value to be managed?
          */
-        ElementWrapper (typename Wrapper<xercesc::DOMElement, NodeWrapper<S> >::base_element_type *base):
-          Wrapper<xercesc::DOMElement, NodeWrapper<S> >(base)
+        Element (Wrapper<xercesc::DOMElement, Node>::base_element_type *base,
+                 bool                                                   managed):
+          Wrapper<xercesc::DOMElement, Node>(managed ?
+                                             Wrapper<xercesc::DOMElement, Node>(base, std::mem_fun(&base_element_type::release)) :
+                                             Wrapper<xercesc::DOMElement, Node>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>))
         {
         }
 
         /// Destructor.
-        ~ElementWrapper()
+        ~Element()
         {
         }
 
@@ -127,6 +134,18 @@ namespace ome
         getTagName () const
         {
           return (*this)->getTagName();
+        }
+
+        /**
+         * Get child elements with a given tag name.
+         *
+         * @param name the element name to use.
+         * @returns the child nodes (if any).
+         */
+        NodeList
+        getElementsByTagName(const std::string& name)
+        {
+          return (*this)->getElementsByTagName(String(name));
         }
 
         /**
@@ -190,13 +209,6 @@ namespace ome
           return (*this)->setTextContent(xerces::String(val));
         }
       };
-
-      /// Managed Element.
-      typedef ElementWrapper<MANAGED> ManagedElement;
-      /// Unmanaged Element.
-      typedef ElementWrapper<UNMANAGED> UnmanagedElement;
-      /// Default Element.
-      typedef UnmanagedElement Element;
 
     }
   }

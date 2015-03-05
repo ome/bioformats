@@ -57,14 +57,12 @@ namespace ome
      * PixelBuffer for all combinations of pixel type (excluding
      * endian variants).
      *
-     * While direct access to the pixel data is possible using this
-     * class, please be aware that this will not provide high
-     * performance.  For high performance access to the pixel data,
-     * use of a @c boost::static_visitor is recommended.  This has the
-     * benefit of generalising the algorithm to operate on all
-     * PixelBuffer types, as well as allowing special casing for
-     * particular types (e.g. integer vs. float, signed vs. unsigned,
-     * simple vs. complex, or any other distinction which affects the
+     * For high performance access to the pixel data, use of a @c
+     * boost::static_visitor is recommended.  This has the benefit of
+     * generalising the algorithm to operate on all PixelBuffer types,
+     * as well as allowing special casing for particular types
+     * (e.g. integer vs. float, signed vs. unsigned, simple
+     * vs. complex, or any other distinction which affects the
      * algorithm).  This will also allow subsetting of the data if
      * required, again for all pixel types with special casing being
      * possible.
@@ -114,7 +112,7 @@ namespace ome
       struct make_buffer
       {
         /// Buffer type.
-        typedef std::shared_ptr<PixelBuffer<typename T::std_type> > type;
+        typedef ome::compat::shared_ptr<PixelBuffer<typename T::std_type> > type;
       };
 
       /// Aggregate view of all buffer types.
@@ -214,7 +212,7 @@ namespace ome
        */
       template<typename T>
       explicit
-      VariantPixelBuffer(std::shared_ptr<PixelBuffer<T> >& buffer):
+      VariantPixelBuffer(ome::compat::shared_ptr<PixelBuffer<T> >& buffer):
         buffer(buffer)
       {
       }
@@ -264,7 +262,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage));
+        return ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage));
       }
 
       /**
@@ -284,7 +282,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage));
+        return ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage));
       }
 
       // No switch default to avoid -Wunreachable-code errors.
@@ -661,52 +659,6 @@ namespace ome
              InputIterator end);
 
       /**
-       * Get the pixel value at an index.
-       *
-       * @note If the index is out of bounds, an assertion failure
-       * will immediately abort the program, so take care to ensure it
-       * is always valid.
-       *
-       * @param indices the multi-dimensional array index.
-       * @returns a reference to the pixel value.
-       * @throws if the contained PixelBuffer is not of the specified
-       * type.
-       */
-      template<typename T>
-      T&
-      at(const indices_type& indices)
-      {
-        std::shared_ptr<PixelBuffer<T> >& r
-          = boost::get<std::shared_ptr<PixelBuffer<T> > >(buffer);
-        if (!r)
-          throw std::runtime_error("Null pixel type");
-        return r->array()(indices);
-      }
-
-      /**
-       * Get the pixel value at an index.
-       *
-       * @note If the index is out of bounds, an assertion failure
-       * will immediately abort the program, so take care to ensure it
-       * is always valid.
-       *
-       * @param indices the multi-dimensional array index.
-       * @returns a constant reference to the pixel value.
-       * @throws if the contained PixelBuffer is not of the specified
-       * type.
-       */
-      template<typename T>
-      const T&
-      at(const indices_type& indices) const
-      {
-        const std::shared_ptr<PixelBuffer<T> >& r
-          = boost::get<std::shared_ptr<PixelBuffer<T> > >(buffer);
-        if (!r)
-          throw std::runtime_error("Null pixel type");
-        return r->array()(indices);
-      }
-
-      /**
        * Read raw pixel data from a stream in physical storage order.
        *
        * Note that the pixels will be read in the physical storage
@@ -754,7 +706,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         PixelBuffer<T>&
-        operator() (std::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (ome::compat::shared_ptr<PixelBuffer<T> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -787,7 +739,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         const PixelBuffer<T>&
-        operator() (const std::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (const ome::compat::shared_ptr<PixelBuffer<T> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -834,7 +786,7 @@ namespace ome
          * @throws if the PixelBuffer is null or the PixelBuffer's data array is null.
          */
         void
-        operator() (std::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
+        operator() (ome::compat::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");

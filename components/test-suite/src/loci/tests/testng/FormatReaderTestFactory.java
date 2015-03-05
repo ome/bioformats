@@ -144,6 +144,10 @@ public class FormatReaderTestFactory {
       configSuffix = "";
     }
 
+    // display local information
+    LOGGER.info("user.language = {}", System.getProperty("user.language"));
+    LOGGER.info("user.country = {}", System.getProperty("user.country"));
+
     // detect maximum heap size
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);

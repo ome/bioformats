@@ -48,6 +48,7 @@
 #include <ostream>
 
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include <ome/compat/filesystem.h>
 
@@ -73,15 +74,14 @@ namespace ome
        * wrapped object.  It can also be cast to a pointer to the
        * wrapped object, so can substitute for it directly.
        */
-      template<int S>
-      class DocumentWrapper : public Wrapper<xercesc::DOMDocument, NodeWrapper<S> >
+      class Document : public Wrapper<xercesc::DOMDocument, Node>
       {
       public:
         /**
          * Construct a NULL Document.
          */
-        DocumentWrapper ():
-          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >()
+        Document ():
+          Wrapper<xercesc::DOMDocument, Node>()
         {
         }
 
@@ -90,8 +90,8 @@ namespace ome
          *
          * @param document the Document to copy.
          */
-        DocumentWrapper (const DocumentWrapper& document):
-          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(document)
+        Document (const Document& document):
+          Wrapper<xercesc::DOMDocument, Node>(document)
         {
         }
 
@@ -100,8 +100,8 @@ namespace ome
          *
          * @param base the base type to copy (must be a Document).
          */
-        DocumentWrapper (const typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_type& base):
-          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
+        Document (const Wrapper<xercesc::DOMDocument, Node>::base_type& base):
+          Wrapper<xercesc::DOMDocument, Node>(base)
         {
         }
 
@@ -109,9 +109,13 @@ namespace ome
          * Construct a Document from a xercesc::DOMDocument *.
          *
          * @param document the Document to wrap.
+         * @param managed is the value to be managed?
          */
-        DocumentWrapper (typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::element_type *document):
-          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(document)
+        Document (Wrapper<xercesc::DOMDocument, Node>::element_type *document,
+                  bool                                               managed):
+          Wrapper<xercesc::DOMDocument, Node>(managed ?
+                                              Wrapper<xercesc::DOMDocument, Node>(document, std::mem_fun(&base_element_type::release)) :
+                                              Wrapper<xercesc::DOMDocument, Node>(document, &ome::xerces::dom::detail::unmanaged<base_element_type>))
         {
         }
 
@@ -119,14 +123,18 @@ namespace ome
          * Construct a Document from a xercesc::DOMNode *.
          *
          * @param base the DOMNode to wrap.
+         * @param managed is the value to be managed?
          */
-        DocumentWrapper (typename Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::base_element_type *base):
-          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >(base)
+        Document (Wrapper<xercesc::DOMDocument, Node>::base_element_type *base,
+                  bool                                                    managed):
+          Wrapper<xercesc::DOMDocument, Node>(managed ?
+                                              Wrapper<xercesc::DOMDocument, Node>(base, std::mem_fun(&base_element_type::release)) :
+                                              Wrapper<xercesc::DOMDocument, Node>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>))
         {
         }
 
         /// Destructor.
-        ~DocumentWrapper ()
+        ~Document ()
         {
         }
 
@@ -136,10 +144,10 @@ namespace ome
          * @param wrapped the Document to assign.
          * @returns the Document.
          */
-        DocumentWrapper&
-        operator= (const DocumentWrapper& wrapped)
+        Document&
+        operator= (const Document& wrapped)
         {
-          Wrapper<xercesc::DOMDocument, NodeWrapper<S> >::operator=(wrapped);
+          Wrapper<xercesc::DOMDocument, Node>::operator=(wrapped);
           return *this;
         }
 
@@ -157,7 +165,21 @@ namespace ome
           xerces::String xns(ns);
           xerces::String xname(name);
 
-          return (*this)->createElementNS(xns, xname);
+          return Element((*this)->createElementNS(xns, xname), false);
+        }
+
+        /**
+         * Create Element without namespace.
+         *
+         * @param name the element name.
+         * @returns the created Element.
+         */
+        Element
+        createElement(const std::string& name)
+        {
+          xerces::String xname(name);
+
+          return Element((*this)->createElement(xname), false);
         }
 
         /**
@@ -168,27 +190,63 @@ namespace ome
         Element
         getDocumentElement()
         {
-          return (*this)->getDocumentElement();
+          return Element((*this)->getDocumentElement(), false);
         }
 
         /**
-         * Get child nodes.
+         * Get child elements with a given tag name.
          *
+         * @param name the element name to use.
          * @returns the child nodes (if any).
          */
         NodeList
-        getChildNodes()
+        getElementsByTagName(const std::string& name)
         {
-          return (*this)->getChildNodes();
+          return (*this)->getElementsByTagName(String(name));
         }
       };
 
-      /// Managed Document.
-      typedef DocumentWrapper<MANAGED> ManagedDocument;
-      /// Unmanaged Document.
-      typedef DocumentWrapper<UNMANAGED> UnmanagedDocument;
-      /// Default Document.
-      typedef ManagedDocument Document;
+      /**
+       * Parameters controlling DOM writing.
+       *
+       * The DOMSerializer provides for some control over the process
+       * via DOMConfiguration.  They are settable here to allow their
+       * use at a high level without the need to have access to the
+       * internals of the Xerces-C writing process.  Simply create an
+       * instance of this class, adjust the parameters as needed, and
+       * then pass to a method call which uses WriteParameters as an
+       * optional argument.
+       *
+       * If more precise control of the process is required, use the
+       * Xerces-C classes directly.  These are simply a convienience
+       * for the common case and will not suit every situation.
+       */
+      struct ParseParameters
+      {
+        /// Validation scheme.
+        xercesc::XercesDOMParser::ValSchemes validationScheme;
+        /// Use namespaces?
+        bool doNamespaces;
+        /// Use schemas?
+        bool doSchema;
+        /// Handle multiple imports?
+        bool handleMultipleImports;
+        /// Do full checking during validation?
+        bool validationSchemaFullChecking;
+        /// Create entity reference nodes?
+        bool createEntityReferenceNodes;
+
+        /// Constructor.
+        ParseParameters():
+          validationScheme(xercesc::XercesDOMParser::Val_Auto),
+          doNamespaces(true),
+          doSchema(true),
+          handleMultipleImports(true),
+          validationSchemaFullChecking(true),
+          createEntityReferenceNodes(true)
+        {
+        }
+      };
 
       /**
        * Construct an empty Document.
@@ -200,31 +258,53 @@ namespace ome
       createEmptyDocument(const std::string& qualifiedName);
 
       /**
-       * Construct a Document from the content of a file.
+       * Construct an empty Document.
        *
-       * @param file the file to read.
+       * @param namespaceURI the namespace URI of the root document
+       * element.
+       * @param qualifiedName the qualified name of the document type.
        * @returns the new Document.
        */
       Document
-      createDocument(const boost::filesystem::path& file);
+      createEmptyDocument(const std::string& namespaceURI,
+                          const std::string& qualifiedName);
+
+      /**
+       * Construct a Document from the content of a file.
+       *
+       * @param file the file to read.
+       * @param params XML parser parameters.
+       * @returns the new Document.
+       */
+      Document
+      createDocument(const boost::filesystem::path& file,
+                     const ParseParameters&         params = ParseParameters());
 
       /**
        * Construct a Document from the content of a string.
        *
        * @param text the string to use.
+       * @param params XML parser parameters.
+       * @param id document filename (for error reporting only).
        * @returns the new Document.
        */
       Document
-      createDocument(const std::string& text);
+      createDocument(const std::string&     text,
+                     const ParseParameters& params = ParseParameters(),
+                     const std::string&     id = "membuf");
 
       /**
        * Construct a Document from the content of an input stream.
        *
        * @param stream the stream to read.
+       * @param params XML parser parameters.
+       * @param id document filename (for error reporting only).
        * @returns the new Document.
        */
       Document
-      createDocument(std::istream& stream);
+      createDocument(std::istream&          stream,
+                     const ParseParameters& params = ParseParameters(),
+                     const std::string&     id = "streambuf");
 
       /**
        * Parameters controlling DOM writing.
@@ -302,7 +382,7 @@ namespace ome
       void
       writeNode(xercesc::DOMNode&              node,
                 const boost::filesystem::path& file,
-                const WriteParameters&         params);
+                const WriteParameters& params = WriteParameters());
 
       /**
        * Write a Node to a stream.
@@ -335,14 +415,10 @@ namespace ome
        * @param file the file to write.
        * @param params XML output parameters.
        */
-      template<int S>
       void
-      writeNode(NodeWrapper<S>&                node,
+      writeNode(Node&                          node,
                 const boost::filesystem::path& file,
-                const WriteParameters&         params = WriteParameters())
-      {
-        writeNode(*(node.get()), file, params);
-      }
+                const WriteParameters&         params = WriteParameters());
 
       /**
        * Write a Node to a stream.
@@ -351,14 +427,10 @@ namespace ome
        * @param stream the stream to write to.
        * @param params XML output parameters.
        */
-      template<int S>
       void
-      writeNode(NodeWrapper<S>&        node,
+      writeNode(Node&                  node,
                 std::ostream&          stream,
-                const WriteParameters& params = WriteParameters())
-      {
-        writeNode(*(node.get()), stream, params);
-      }
+                const WriteParameters& params = WriteParameters());
 
       /**
        * Write a Node to a stream.
@@ -367,14 +439,10 @@ namespace ome
        * @param text the string to store the text in.
        * @param params XML output parameters.
        */
-      template<int S>
       void
-      writeNode(NodeWrapper<S>&        node,
+      writeNode(Node&                  node,
                 std::string&           text,
-                const WriteParameters& params = WriteParameters())
-      {
-        writeNode(*(node.get()), text, params);
-      }
+                const WriteParameters& params = WriteParameters());
 
       /**
        * Write a Document to a file.
@@ -383,14 +451,10 @@ namespace ome
        * @param file the file to write.
        * @param params XML output parameters.
        */
-      template<int S>
       void
-      writeDocument(DocumentWrapper<S>&            document,
+      writeDocument(Document&                      document,
                     const boost::filesystem::path& file,
-                    const WriteParameters&         params = WriteParameters())
-      {
-        writeNode(*(document.get()), file, params);
-      }
+                    const WriteParameters&         params = WriteParameters());
 
       /**
        * Write a Document to a stream.
@@ -399,30 +463,22 @@ namespace ome
        * @param stream the stream to write to.
        * @param params XML output parameters.
        */
-      template<int S>
       void
-      writeDocument(DocumentWrapper<S>&    document,
+      writeDocument(Document&              document,
                     std::ostream&          stream,
-                    const WriteParameters& params = WriteParameters())
-      {
-        writeNode(*(document.get()), stream, params);
-      }
+                    const WriteParameters& params = WriteParameters());
 
       /**
-       * Write a Document to a stream.
+       * Write a Document to a string.
        *
        * @param document the document to use.
        * @param text the string to store the text in.
        * @param params XML output parameters.
        */
-      template<int S>
       void
-      writeDocument(DocumentWrapper<S>&    document,
+      writeDocument(Document&              document,
                     std::string&           text,
-                    const WriteParameters& params = WriteParameters())
-      {
-        writeNode(*(document.get()), text, params);
-      }
+                    const WriteParameters& params = WriteParameters());
 
     }
   }

@@ -71,10 +71,16 @@ if(BUILD_TESTS)
   target_link_libraries(timestamp ome-xml)
   target_link_libraries(timestamp ome-test)
 
+  add_executable(model model.cpp)
+  target_link_libraries(model ome-xml)
+  target_link_libraries(model ome-test)
+
   bf_add_test(ome-xml/color color)
   bf_add_test(ome-xml/enum enum)
   bf_add_test(ome-xml/constrained-numeric constrained-numeric)
   bf_add_test(ome-xml/timestamp timestamp)
+  bf_add_test(ome-xml/model model)
+
 
   if(extended-tests)
     header_test_from_file(ome-xml ome-xml ome/xml)

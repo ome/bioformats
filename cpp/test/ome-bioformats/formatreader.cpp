@@ -49,6 +49,7 @@
 #include <ome/test/config.h>
 
 #include <boost/filesystem/operations.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/test/test.h>
 
@@ -68,6 +69,7 @@ using ome::xml::model::enums::PixelType;
 
 typedef ome::xml::model::enums::PixelType PT;
 typedef std::array<dimension_size_type, 3> dim;
+typedef std::array<dimension_size_type, 6> moddim;
 
 class FormatReaderTestParameters
 {
@@ -96,10 +98,7 @@ namespace
   ReaderProperties
   test_properties()
   {
-    ReaderProperties p;
-
-    p.name = "TestReader";
-    p.description = "Reader for unit testing";
+    ReaderProperties p("TestReader", "Reader for unit testing");
     p.suffixes.push_back("test");
     p.compression_suffixes.push_back("gz");
     p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
@@ -142,10 +141,10 @@ protected:
     return in == "Valid file content";
   }
 
-  std::shared_ptr<CoreMetadata>
+  ome::compat::shared_ptr<CoreMetadata>
   makeCore()
   {
-    std::shared_ptr<CoreMetadata> c(std::make_shared<CoreMetadata>());
+    ome::compat::shared_ptr<CoreMetadata> c(ome::compat::make_shared<CoreMetadata>());
 
     c->sizeX = 512;
     c->sizeY = 1024;
@@ -163,6 +162,9 @@ protected:
     c->metadataComplete = false;
     c->thumbnail = false;
     c->resolutionCount = 1;
+    c->moduloZ.start = 0.0f;
+    c->moduloZ.end = 8.0f;
+    c->moduloZ.step = 2.0f;
 
     return c;
   }
@@ -181,7 +183,7 @@ protected:
   }
 
   void
-  initFile(const std::string& id)
+  initFile(const boost::filesystem::path& id)
   {
     ::ome::bioformats::detail::FormatReader::initFile(id);
 
@@ -202,7 +204,7 @@ protected:
         // 5 series, 3 with subresolutions
         core.clear();
         {
-          std::shared_ptr<CoreMetadata> c(makeCore());
+          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 3;
           core.push_back(c);
           core.push_back(makeCore());
@@ -210,7 +212,7 @@ protected:
         }
 
         {
-          std::shared_ptr<CoreMetadata> c(makeCore());
+          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 2;
           core.push_back(c);
           core.push_back(makeCore());
@@ -220,7 +222,7 @@ protected:
         core.push_back(makeCore());
 
         {
-          std::shared_ptr<CoreMetadata> c(makeCore());
+          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 2;
           core.push_back(c);
           core.push_back(makeCore());
@@ -230,7 +232,7 @@ protected:
 
 public:
   bool
-  isUsedFile(const std::string& file)
+  isUsedFile(const boost::filesystem::path& file)
   {
     return ::ome::bioformats::detail::FormatReader::isUsedFile(file);
   }
@@ -288,8 +290,8 @@ TEST_P(FormatReaderTest, ReaderProperties)
   r.setId("test");
   ASSERT_EQ(props.name, r.getFormat());
   ASSERT_EQ(props.description, r.getFormatDescription());
-  ASSERT_EQ(props.suffixes, r.getSuffixes());
-  ASSERT_EQ(props.compression_suffixes, r.getCompressionSuffixes());
+  ASSERT_TRUE(props.suffixes == r.getSuffixes());
+  ASSERT_TRUE(props.compression_suffixes == r.getCompressionSuffixes());
 }
 
 TEST_P(FormatReaderTest, IsThisType)
@@ -303,9 +305,17 @@ TEST_P(FormatReaderTest, IsThisType)
   EXPECT_FALSE(r.isThisType("invalid.file", true));
   EXPECT_FALSE(r.isThisType("invalid.file", false));
 
+  EXPECT_FALSE(r.isThisType("invalid.file.gz"));
+  EXPECT_FALSE(r.isThisType("invalid.file.gz", true));
+  EXPECT_FALSE(r.isThisType("invalid.file.gz", false));
+
   EXPECT_TRUE(r.isThisType("valid.test"));
   EXPECT_TRUE(r.isThisType("valid.test", true));
   EXPECT_TRUE(r.isThisType("valid.test", false));
+
+  EXPECT_TRUE(r.isThisType("valid.test.gz"));
+  EXPECT_TRUE(r.isThisType("valid.test.gz", true));
+  EXPECT_TRUE(r.isThisType("valid.test.gz", false));
 
   EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
                             reinterpret_cast<uint8_t *>(&*icontent.end())));
@@ -385,6 +395,9 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
+  EXPECT_EQ(5U, r.getModuloZ().size());
+  EXPECT_EQ(1U, r.getModuloT().size());
+  EXPECT_EQ(1U, r.getModuloC().size());
   EXPECT_EQ(64U, r.getThumbSizeX());
   EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
@@ -424,6 +437,9 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
+  EXPECT_EQ(5U, r.getModuloZ().size());
+  EXPECT_EQ(1U, r.getModuloT().size());
+  EXPECT_EQ(1U, r.getModuloC().size());
   EXPECT_EQ(64U, r.getThumbSizeX());
   EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
@@ -463,6 +479,9 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_NO_THROW(r.getModuloZ());
   EXPECT_NO_THROW(r.getModuloT());
   EXPECT_NO_THROW(r.getModuloC());
+  EXPECT_EQ(5U, r.getModuloZ().size());
+  EXPECT_EQ(1U, r.getModuloT().size());
+  EXPECT_EQ(1U, r.getModuloC().size());
   EXPECT_EQ(64U, r.getThumbSizeX());
   EXPECT_EQ(128U, r.getThumbSizeY());
   EXPECT_EQ(params.endian == ::ome::bioformats::ENDIAN_LITTLE, r.isLittleEndian());
@@ -482,7 +501,7 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
 TEST_P(FormatReaderTest, DefaultLUT)
 {
   VariantPixelBuffer buf;
-  EXPECT_THROW(r.getLookupTable(buf), std::runtime_error);
+  EXPECT_THROW(r.getLookupTable(buf, 0U), std::runtime_error);
 }
 
 TEST_P(FormatReaderTest, FlatLUT)
@@ -490,7 +509,7 @@ TEST_P(FormatReaderTest, FlatLUT)
   r.setId("flat");
 
   VariantPixelBuffer buf;
-  EXPECT_THROW(r.getLookupTable(buf), std::runtime_error);
+  EXPECT_THROW(r.getLookupTable(buf, 0U), std::runtime_error);
 }
 
 TEST_P(FormatReaderTest, DefaultSeries)
@@ -507,7 +526,9 @@ TEST_P(FormatReaderTest, DefaultSeries)
   EXPECT_THROW(r.setResolution(0), std::logic_error);
 
   EXPECT_THROW(r.getIndex(0U, 0U, 0U), std::logic_error);
+  EXPECT_THROW(r.getIndex(0U, 0U, 0U, 0U, 0U, 0U), std::logic_error);
   EXPECT_THROW(r.getZCTCoords(0U), std::logic_error);
+  EXPECT_THROW(r.getZCTModuloCoords(0U), std::logic_error);
 }
 
 struct dims
@@ -528,6 +549,37 @@ struct dims
     ret[0] = z;
     ret[1] = c;
     ret[2] = t;
+    return ret;
+  }
+};
+
+struct moddims
+{
+  dimension_size_type z;
+  dimension_size_type t;
+  dimension_size_type c;
+  dimension_size_type mz;
+  dimension_size_type mt;
+  dimension_size_type mc;
+
+  moddims(dimension_size_type z,
+          dimension_size_type t,
+          dimension_size_type c,
+          dimension_size_type mz,
+          dimension_size_type mt,
+          dimension_size_type mc):
+    z(z), t(t), c(c), mz(mz), mt(mt), mc(mc)
+  {}
+
+  operator std::array<dimension_size_type, 6>() const
+  {
+    std::array<dimension_size_type, 6> ret;
+    ret[0] = z;
+    ret[1] = c;
+    ret[2] = t;
+    ret[3] = mz;
+    ret[4] = mc;
+    ret[5] = mt;
     return ret;
   }
 };
@@ -563,11 +615,27 @@ TEST_P(FormatReaderTest, FlatSeries)
       dims(19, 3, 1)
     };
 
+    moddims modcoords[] =
+    {
+      moddims(0, 0, 0, 0, 0, 0),
+      moddims(0, 0, 0, 1, 0, 0),
+      moddims(0, 1, 0, 0, 0, 0),
+      moddims(0, 0, 1, 0, 0, 0),
+      moddims(0, 1, 0, 1, 0, 0),
+      moddims(0, 0, 1, 1, 0, 0),
+      moddims(0, 1, 1, 0, 0, 0),
+      moddims(0, 1, 1, 1, 0, 0),
+      moddims(0, 2, 1, 3, 0, 0),
+      moddims(2, 3, 0, 2, 0, 0),
+      moddims(1, 2, 1, 3, 0, 0),
+      moddims(3, 3, 1, 4, 0, 0)
+    };
+
   dimension_size_type indexes[] =
     { 0, 1, 20, 80, 21, 81, 100, 101, 123, 72, 128, 159 };
 
   for (unsigned int i = 0;
-       i < sizeof(coords)/sizeof(coords[0]);
+       i < boost::size(coords);
        ++i)
     {
       const dim coord(static_cast<dim>(coords[i]));
@@ -575,6 +643,21 @@ TEST_P(FormatReaderTest, FlatSeries)
       EXPECT_EQ(indexes[i], r.getIndex(coord[0], coord[1], coord[2]));
 
       dim ncoord = r.getZCTCoords(indexes[i]);
+      // EXPECT_EQ should work here, but fails for Boost 1.42; works
+      // in 1.46.
+      EXPECT_TRUE(coord == ncoord);
+    }
+
+  for (unsigned int i = 0;
+       i < boost::size(modcoords);
+       ++i)
+    {
+      const moddim coord(static_cast<moddim>(modcoords[i]));
+
+      EXPECT_EQ(indexes[i], r.getIndex(coord[0], coord[1], coord[2],
+                                       coord[3], coord[4], coord[5]));
+
+      moddim ncoord = r.getZCTModuloCoords(indexes[i]);
       // EXPECT_EQ should work here, but fails for Boost 1.42; works
       // in 1.46.
       EXPECT_TRUE(coord == ncoord);
@@ -598,13 +681,18 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedSeries)
   EXPECT_NO_THROW(r.setResolution(0));
 
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
+  EXPECT_EQ(0U, r.getIndex(0, 0, 0, 0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
+  std::array<dimension_size_type, 6> modcoords;
+  modcoords[0] = modcoords[1] = modcoords[2] = modcoords[3] = modcoords[4] = modcoords[5] = 0;
 
   // EXPECT_EQ should work here, but fails for Boost 1.42; works
   // in 1.46.
   dim ncoords = r.getZCTCoords(0U);
   EXPECT_TRUE(coords == ncoords);
+  moddim modncoords = r.getZCTModuloCoords(0U);
+  EXPECT_TRUE(modcoords == modncoords);
 }
 
 TEST_P(FormatReaderTest, SubresolutionUnflattenedSeries)
@@ -624,13 +712,18 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedSeries)
   EXPECT_NO_THROW(r.setResolution(0));
 
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
+  EXPECT_EQ(0U, r.getIndex(0, 0, 0, 0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
+  std::array<dimension_size_type, 6> modcoords;
+  modcoords[0] = modcoords[1] = modcoords[2] = modcoords[3] = modcoords[4] = modcoords[5] = 0;
 
   // EXPECT_EQ should work here, but fails for Boost 1.42; works
   // in 1.46.
   dim ncoords = r.getZCTCoords(0U);
   EXPECT_TRUE(coords == ncoords);
+  moddim modncoords = r.getZCTModuloCoords(0U);
+  EXPECT_TRUE(modcoords == modncoords);
 }
 
 TEST_P(FormatReaderTest, DefaultGroupFiles)
@@ -821,17 +914,17 @@ TEST_P(FormatReaderTest, FlatMetadata)
 
 TEST_P(FormatReaderTest, DefaultMetadataStore)
 {
-  std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
+  ome::compat::shared_ptr<MetadataStore> store(ome::compat::make_shared<OMEXMLMetadata>());
 
   EXPECT_NO_THROW(r.setMetadataStore(store));
-  EXPECT_EQ(store, std::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
+  EXPECT_EQ(store, ome::compat::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
 }
 
 TEST_P(FormatReaderTest, FlatMetadataStore)
 {
   r.setId("flat");
 
-  std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
+  ome::compat::shared_ptr<MetadataStore> store(ome::compat::make_shared<OMEXMLMetadata>());
 
   EXPECT_THROW(r.setMetadataStore(store), std::logic_error);
 }
