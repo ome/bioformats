@@ -44,6 +44,7 @@
 #cmakedefine OME_HAVE_ARRAY 1
 #cmakedefine OME_HAVE_BOOST_ARRAY 1
 #cmakedefine OME_HAVE_CSTDINT 1
+#cmakedefine OME_HAVE_BOOST_CSTDINT 1
 #cmakedefine OME_HAVE_MEMORY 1
 #cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
 #cmakedefine OME_HAVE_BOOST_OWNER_LESS 1

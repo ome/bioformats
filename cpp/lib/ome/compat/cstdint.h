@@ -52,6 +52,8 @@
 
 # ifdef OME_HAVE_CSTDINT
 #  include <cstdint>
+# elif OME_HAVE_BOOST_CSTDINT
+#  include <boost/cstdint.hpp>
 # else
 #  include <stdint.h>
 # endif
