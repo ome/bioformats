@@ -96,10 +96,28 @@ namespace showinf
     checkWarnings(std::ostream& stream);
 
     /**
+     * Read and display used files.
+     */
+    void
+    readUsedFiles(std::ostream& stream);
+
+    /**
      * Read and display core metadata.
      */
     void
     readCoreMetadata(std::ostream& stream);
+
+    /**
+     * Read and display original metadata.
+     */
+    void
+    readOriginalMetadata(std::ostream& stream);
+
+    /**
+     * Read and display OME-XML metadata.
+     */
+    void
+    readOMEXMLMetadata(std::ostream& stream);
 
     /**
      * Print a single dimension.
