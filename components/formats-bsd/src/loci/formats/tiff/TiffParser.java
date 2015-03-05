@@ -855,6 +855,7 @@ public class TiffParser {
             // we only want a piece of the tile, so read each row separately
             // this is especially necessary for large single-tile images
             int bpp = ifd.getBitsPerSample()[0] / 8;
+            in.skipBytes((int) (y * bpp * tileWidth));
             for (int row=0; row<height; row++) {
               in.skipBytes(x * bpp);
               int len = (int) Math.min(buf.length - offset, width * bpp);
