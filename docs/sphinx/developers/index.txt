@@ -40,6 +40,7 @@ Using Bio-Formats as a Java library
     conversion
     matlab-dev
     python-dev
+    non-java-code
 
 Using Bio-Formats as a native C++ library
 =========================================
@@ -51,22 +52,6 @@ Using Bio-Formats as a native C++ library
     cpp/overview
     cpp/conversion
     cpp/showinf
-
-.. _bfapplications:
-
-Interfacing with the Java library from non-Java code
-====================================================
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    non-java-code
-    jace/overview
-    jace/build
-    jace/build-windows
-    jace/build-macosx
-    jace/build-linux
 
 Contributing to Bio-Formats
 ===========================
