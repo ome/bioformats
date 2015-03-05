@@ -1,6 +1,74 @@
 Version history
 ===============
 
+5.1.0 (2015 March 24)
+---------------------
+
+* Improvements to performance with network file systems
+* Improvements to developer documentation
+* Improved support for opening and saving ROI data with ImageJ
+* Added support for CellH5 data (thanks to Christophe Sommer)
+* Added support for Perkin Elmer Nuance data (thanks to Lee Kamentsky)
+* Added support for Amaris FlowSight data (thanks to Lee Kamentsky and Sebastien Simard)
+* Added support for Veeco AFM data
+* Added support for Zeiss .lms data (not to be confused with .lsm)
+* Added support for I2I data
+* Added support for writing Vaa3D data (thanks to Brian Long)
+* Updated to OME schema 2015-01
+* Update RandomAccessInputStream and RandomAccessOutputStream to read and write bits
+* Many bug fixes, including:
+    - Leica SCN
+        - fix pixel data decompression
+        - fix handling of files with multiple channels
+        - parse magnification and physical pixel size data
+    - Olympus/CellSens .vsi
+        - more thorough parsing of metadata
+        - improved reading of thumbnails and multi-resolution images
+    - NDPI
+        - fix reading of files larger than 4GB
+        - parse magnification data
+    - Zeiss CZI
+        - improve parsing of plane position coordinates
+    - Inveon
+        - fix reading of files larger than 2 GB
+    - Nikon ND2
+        - many improvements to dimension detection
+        - many improvements to metadata parsing accuracy
+        - update original metadata table to include PFS data
+    - Gatan DM3
+        - fix encoding when parsing metadata
+        - fix physical pixel size parsing
+    - Metamorph
+        - fix off-by-one in metadata parsing
+        - fix number parsing to be independent of the system locale
+    - JPEG
+        - parse EXIF data, if present (thanks to Paul Van Schayck)
+    - OME-XML/OME-TIFF
+        - fix handling of missing image data
+    - PrairieView
+        - improved support for version 5.2 data (thanks to Curtis Rueden)
+    - DICOM
+        - fix dimensions for multi-file datasets
+        - fix pixel data decoding for files with multiple images
+    - PNG
+        - reduce memory required to read large images
+    - Imspector OBF
+        - fix support for version 5 data (thanks to Bjoern Thiel)
+    - PCORAW
+        - fix reading of files larger than 4 GB
+    - AIM
+        - fix reading of files larger than 4 GB
+    - Fix build errors in MIPAV plugin
+    - ImageJ
+        - fix export from a script/macro
+        - fix windowless export
+        - allow exporting from any open image window
+        - allow the "Group files with similar names" and "Swap dimensions"
+          options to be used from a script/macro
+    - bfconvert
+        - fix writing each channel, Z section, and/or timepoint to a separate file
+        - add options for configuring the tile size to be used when saving images
+
 5.0.8 (2015 February 10)
 ------------------------
 
