@@ -41,6 +41,10 @@
 #include <ome/internal/version.h>
 
 #include <ome/test/test.h>
+#include <ome/test/io.h>
+
+#include <ome/xerces/Platform.h>
+#include <ome/xerces/dom/Document.h>
 
 #include <ome/xml/model/enums/EnumerationException.h>
 
@@ -96,9 +100,29 @@ TEST(MetadataToolsTest, CreateID4)
   ASSERT_EQ(std::string("Unknown:9:2:4:2"), u3);
 }
 
-TEST(MetadataToolsTest, ModelVersion)
+TEST(MetadataToolsTest, CurrentModelVersion)
 {
   ASSERT_EQ(std::string(OME_MODEL_VERSION), ome::bioformats::getModelVersion());
+}
+
+TEST(MetadataToolsTest, ModelVersionFromString)
+{
+  std::string xml;
+  readFile(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome", xml);
+  ASSERT_EQ(std::string("2012-06"), ome::bioformats::getModelVersion(xml));
+}
+
+TEST(MetadataToolsTest, ModelVersionFromDocument)
+{
+  ome::xerces::Platform xmlplat;
+
+  std::string xml;
+  readFile(PROJECT_SOURCE_DIR "/components/specification/samples/2013-06/18x24y5z5t2c8b-text.ome", xml);
+
+  ome::xerces::dom::Document doc = ome::xerces::dom::createDocument(xml);
+  ASSERT_TRUE(doc);
+
+  ASSERT_EQ(std::string("2013-06"), ome::bioformats::getModelVersion(doc));
 }
 
 TEST(MetadataToolsTest, CreateDimensionOrder)

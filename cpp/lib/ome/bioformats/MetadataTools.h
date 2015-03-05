@@ -383,6 +383,15 @@ namespace ome
      * @returns the model version.
      */
     std::string
+    getModelVersion(ome::xerces::dom::Document& document);
+
+    /**
+     * Get the model version used by an OME-XML document
+     *
+     * @param document the OME-XML document.
+     * @returns the model version.
+     */
+    std::string
     getModelVersion(const std::string& document);
 
     /**

@@ -44,9 +44,12 @@
 #include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/XMLTools.h>
 
+#include <ome/compat/regex.h>
+
 #include <ome/internal/version.h>
 
 #include <ome/xerces/Platform.h>
+#include <ome/xerces/String.h>
 #include <ome/xerces/dom/Document.h>
 #include <ome/xerces/dom/Element.h>
 #include <ome/xerces/dom/NodeList.h>
@@ -65,6 +68,12 @@
 #include <ome/xml/model/StructuredAnnotations.h>
 #include <ome/xml/model/XMLAnnotation.h>
 #include <ome/xml/model/primitives/Timestamp.h>
+
+#include <xercesc/framework/MemBufInputSource.hpp>
+#include <xercesc/sax/SAXException.hpp>
+#include <xercesc/sax2/DefaultHandler.hpp>
+#include <xercesc/sax2/SAX2XMLReader.hpp>
+#include <xercesc/sax2/XMLReaderFactory.hpp>
 
 using boost::format;
 
@@ -107,6 +116,47 @@ namespace
           }
       }
   }
+
+  const ome::compat::regex schema_match("^http://www.openmicroscopy.org/Schemas/OME/(.*)$");
+
+  class OMEXMLVersionParser : public xercesc::DefaultHandler
+  {
+  public:
+    OMEXMLVersionParser():
+      xercesc::DefaultHandler()
+    {}
+
+    virtual ~OMEXMLVersionParser() {}
+
+    void
+    startElement(const XMLCh* const         uri,
+                 const XMLCh* const         localname,
+                 const XMLCh* const         qname,
+                 const xercesc::Attributes& attrs)
+    {
+      if (ome::xerces::String(localname) == "OME")
+        {
+          std::string ns = ome::xerces::String(uri);
+
+          ome::compat::smatch found;
+
+          if (ome::compat::regex_match(ns, found, schema_match))
+            {
+              version = found[1];
+              throw xercesc::SAXException(ome::xerces::String("Found schema version"));
+            }
+        }
+    }
+
+    std::string
+    getVersion() const
+    {
+      return version;
+    }
+
+  private:
+    std::string version;
+  };
 
 }
 
@@ -197,6 +247,8 @@ namespace ome
     ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const std::string& text)
     {
+      std::cerr << "OMEXML VER: " << getModelVersion(text) << "\n";
+
       // Parse OME-XML into DOM Document.
       ome::xerces::Platform xmlplat;
       ome::xerces::dom::Document doc;
@@ -766,11 +818,71 @@ namespace ome
     }
 
     std::string
+    getModelVersion(ome::xerces::dom::Document& document)
+    {
+      ome::xerces::dom::Element docroot(document.getDocumentElement());
+
+      std::string ns = xerces::String(docroot->getNamespaceURI());
+
+      ome::compat::smatch found;
+
+      if (ome::compat::regex_match(ns, found, schema_match))
+        {
+          return found[1];
+        }
+      return "";
+    }
+
+    std::string
     getModelVersion(const std::string& document)
     {
-      /// @todo Parse model version.
+      ome::xerces::Platform xmlplat;
 
-      return getModelVersion();
+      ome::compat::shared_ptr<xercesc::SAX2XMLReader> parser(xercesc::XMLReaderFactory::createXMLReader());
+      // We only want to get the schema version, so disable checking
+      // of schema etc.  If there are problems with the XML, they'll
+      // be picked up when we parse it for real.  Here, we'll only
+      // read the first element if it's a valid OME-XML document.
+      parser->setFeature(xercesc::XMLUni::fgSAX2CoreValidation, false);
+      parser->setFeature(xercesc::XMLUni::fgXercesSchemaFullChecking, false);
+      parser->setFeature(xercesc::XMLUni::fgXercesLoadSchema, false);
+      // Needed to get the schema namespace.
+      parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, true);
+
+      xercesc::MemBufInputSource source(reinterpret_cast<const XMLByte *>(document.c_str()),
+                                        static_cast<XMLSize_t>(document.size()),
+                                        xerces::String("OME-XML model version"));
+
+      OMEXMLVersionParser handler;
+      parser->setContentHandler(&handler);
+
+      try
+        {
+          parser->parse(source);
+        }
+      catch (const xercesc::XMLException& e)
+        {
+          ome::xerces::String message(e.getMessage());
+          std::cerr << "XMLException parsing schema version: " << message << '\n';
+          return "";
+        }
+      catch (const xercesc::SAXParseException& e)
+        {
+          ome::xerces::String message(e.getMessage());
+          std::cerr << "SAXParseException parsing schema version: " << message << '\n';
+          return "";
+        }
+      catch (const xercesc::SAXException& e)
+        {
+          // Early termination (expected).
+        }
+      catch (...)
+        {
+          std::cerr << "Unexpected Exception parsing schema version\n";
+          return "";
+        }
+
+      return handler.getVersion();
     }
 
     std::string
