@@ -34,6 +34,11 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+# Don't use old-style compile definitions
+if (POLICY CMP0043)
+  cmake_policy(SET CMP0043 NEW)
+endif(POLICY CMP0043)
+
 if(OME_QTOPENGL AND BUILD_TESTS)
   include_directories(${OME_TOPLEVEL_INCLUDES}
                       ${Boost_INCLUDE_DIRS}
