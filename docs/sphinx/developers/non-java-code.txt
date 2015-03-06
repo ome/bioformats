@@ -15,3 +15,14 @@ For details, see LOCI's article
 Recommended **in-process solution**: :doc:`jace/overview`
 
 Recommended **inter-process solution**: :doc:`/users/subimager/index`
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    jace/overview
+    jace/build
+    jace/build-windows
+    jace/build-macosx
+    jace/build-linux
+
