@@ -44,7 +44,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Frequency;
