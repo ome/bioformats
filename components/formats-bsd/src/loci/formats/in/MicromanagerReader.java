@@ -809,11 +809,13 @@ public class MicromanagerReader extends FormatReader {
   /** Initialize the TIFF reader with the first file in the current series. */
   private void setupReader() {
     try {
-      String file = positions.get(getSeries()).getFile(0);
+      String file = positions.get(getSeries()).getFile(
+        getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+        getImageCount(), 0);
       tiffReader.setId(file);
     }
     catch (Exception e) {
-      LOGGER.debug("", e);
+      LOGGER.warn("", e);
     }
   }
 

@@ -50,6 +50,7 @@ namespace ome
     {
 
       class TIFF;
+      class IFD;
 
     }
 
@@ -69,7 +70,7 @@ namespace ome
         typedef std::vector<std::pair<dimension_size_type, dimension_size_type> > series_ifd_map_type;
 
         /// Underlying TIFF file.
-        std::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
 
         /// Mapping between series index and start and end IFD as a half-open range.
         series_ifd_map_type series_ifd_map;
@@ -88,7 +89,7 @@ namespace ome
       protected:
         // Documented in superclass.
         void
-        initFile(const std::string& id);
+        initFile(const boost::filesystem::path& id);
 
         /**
          * Read metadata from IFDs.
@@ -99,12 +100,27 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isFilenameThisTypeImpl(const std::string& name) const;
+        isFilenameThisTypeImpl(const boost::filesystem::path& name) const;
+
+        /**
+         * Get the IFD index for a plane in the current series.
+         *
+         * @param no the image index within the file.
+         * @returns the IFD index.
+         * @throws FormatException if out of range.
+         */
+        const ome::compat::shared_ptr<const tiff::IFD>
+        ifdAtIndex(dimension_size_type no) const;
 
       public:
         // Documented in superclass.
         void
         close(bool fileOnly = false);
+
+        // Documented in superclass.
+        void
+        getLookupTable(VariantPixelBuffer& buf,
+                       dimension_size_type no) const;
 
       protected:
         // Documented in superclass.
@@ -124,7 +140,7 @@ namespace ome
          *
          * @returns a reference to the TIFF file.
          */
-        std::shared_ptr<ome::bioformats::tiff::TIFF>
+        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
         getTIFF();
 
         /**
@@ -134,7 +150,7 @@ namespace ome
          *
          * @returns a reference to the TIFF file.
          */
-        const std::shared_ptr<ome::bioformats::tiff::TIFF>
+        const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
         getTIFF() const;
       };
 

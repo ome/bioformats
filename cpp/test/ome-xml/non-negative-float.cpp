@@ -36,6 +36,8 @@
  * #L%
  */
 
+#include <boost/range/size.hpp>
+
 #include <ome/xml/model/primitives/NonNegativeFloat.h>
 
 #include "constrained-numeric.h"
@@ -98,7 +100,8 @@ struct CompareGreaterOrEqual<NonNegativeFloat>
 };
 
 
-// Floating point types don't implement modulo, so make it a no-op.
+// Floating point types don't implement modulo, increment or
+// decrement, so make them a no-op.
 template<>
 struct OperationModulo<NonNegativeFloat>
 {
@@ -108,6 +111,20 @@ struct OperationModulo<NonNegativeFloat>
 
 template<>
 struct OperationModuloAssign<NonNegativeFloat>
+{
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationIncrement<NonNegativeFloat>
+{
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }
+};
+
+template<>
+struct OperationDecrement<NonNegativeFloat>
 {
   NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
   NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }
@@ -198,12 +215,12 @@ namespace
 template<>
 const std::vector<NumericTest<NonNegativeFloat>::test_str>
 NumericTest<NonNegativeFloat>::strings(init_strings,
-                                       init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+                                       init_strings + boost::size(init_strings));
 
 template<>
 const std::vector<NumericTest<NonNegativeFloat>::test_op>
 NumericTest<NonNegativeFloat>::ops(init_ops,
-                                   init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+                                   init_ops + boost::size(init_ops));
 
 template<>
 const NonNegativeFloat::value_type NumericTest<NonNegativeFloat>::error(0.0005);

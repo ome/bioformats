@@ -116,13 +116,40 @@ namespace ome
              dimension_size_type idx4);
 
     /**
-     * Create OME-XML metadata from XML document.
+     * Create OME-XML metadata from DOM Document.
      *
-     * @param document the XML document source.
+     * @param document the XML document.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::Metadata>
-    createOMEXMLMetadata(const std::string& document);
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(ome::xerces::dom::Document& document);
+
+    /**
+     * Create OME-XML metadata from XML file.
+     *
+     * @param file the XML file.
+     * @returns the OME-XML metadata.
+     */
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(const boost::filesystem::path& file);
+
+    /**
+     * Create OME-XML metadata from XML string.
+     *
+     * @param text the XML string.
+     * @returns the OME-XML metadata.
+     */
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(const std::string& text);
+
+    /**
+     * Create OME-XML metadata from XML input stream.
+     *
+     * @param stream the XML input stream.
+     * @returns the OME-XML metadata.
+     */
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(std::istream& stream);
 
     /**
      * Create OME-XML metadata from reader core metadata.
@@ -132,7 +159,7 @@ namespace ome
      * @param doImageName set image name if @c true.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::Metadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane = false,
                          bool                doImageName = true);
@@ -144,7 +171,7 @@ namespace ome
      * @param document the XML document source.
      * @returns the OME-XML metadata root.
      */
-    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    ome::compat::shared_ptr< ::ome::xml::meta::MetadataRoot>
     createOMEXMLRoot(const std::string& document);
 
     /**
@@ -155,8 +182,8 @@ namespace ome
      * @param retrieve the metadata to use.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::Metadata>
-    getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    getOMEXMLMetadata(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
 
     /**
      * Get OME-XML document from OME-XML metadata.
@@ -291,7 +318,47 @@ namespace ome
      */
     void
     verifyMinimum(::ome::xml::meta::MetadataRetrieve& retrieve,
-                    dimension_size_type               series = 0U);
+                  dimension_size_type                 series = 0U);
+
+    /**
+     * Remove all BinData elements from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     */
+    void
+    removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml);
+
+    /**
+     * Remove all but the specified number of valid Channel elements
+     * from OME-XML metadata.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param image the image index.
+     * @param sizeC the number of channels to retain.
+     */
+    void
+    removeChannels(::ome::xml::meta::OMEXMLMetadata& omexml,
+                   dimension_size_type               image,
+                   dimension_size_type               sizeC);
+
+    /**
+     * Get original metadata from OME-XML metadata StructuredAnnotations.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @returns a map of the original metadata annotations.
+     */
+    MetadataMap
+    getOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml);
+
+    /**
+     * Create OriginalMetadataAnnotations from MetadataMap.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param metadata the original metadata.
+     */
+    void
+    fillOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml,
+                         const MetadataMap&                metadata);
 
     /**
      * Check if default creation date is enabled.

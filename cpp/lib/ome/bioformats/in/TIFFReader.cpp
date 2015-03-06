@@ -35,6 +35,8 @@
  * #L%
  */
 
+#include <boost/range/size.hpp>
+
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/in/TIFFReader.h>
 #include <ome/bioformats/tiff/IFD.h>
@@ -62,12 +64,9 @@ namespace ome
         ReaderProperties
         tiff_properties()
         {
-          ReaderProperties p;
-
-          p.name = "TIFF";
-          p.description = "Tagged Image File Format";
-          p.suffixes = std::vector<std::string>(suffixes,
-                                                suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
+          ReaderProperties p("TIFF", "Tagged Image File Format");
+          p.suffixes = std::vector<boost::filesystem::path>(suffixes,
+                                                            suffixes + boost::size(suffixes));
           p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
           p.metadata_levels.insert(MetadataOptions::METADATA_NO_OVERLAYS);
           p.metadata_levels.insert(MetadataOptions::METADATA_ALL);
@@ -77,8 +76,8 @@ namespace ome
 
         const ReaderProperties props(tiff_properties());
 
-        std::vector<std::string> companion_suffixes(companion_suffixes_array,
-                                                    companion_suffixes_array + (sizeof(companion_suffixes_array) / sizeof(companion_suffixes_array[0])));
+        std::vector<boost::filesystem::path> companion_suffixes(companion_suffixes_array,
+                                                                companion_suffixes_array + boost::size(companion_suffixes_array));
 
       }
 
@@ -102,7 +101,7 @@ namespace ome
       void
       TIFFReader::readIFDs()
       {
-        std::shared_ptr<IFD> ifd0 = *(tiff->begin());
+        ome::compat::shared_ptr<IFD> ifd0 = *(tiff->begin());
 
         if (ifd0)
           {
@@ -112,7 +111,7 @@ namespace ome
               {
                 tiff::ImageJMetadata ijmeta(*ifd0);
 
-                std::shared_ptr<CoreMetadata> ijm(tiff::makeCoreMetadata(*ifd0));
+                ome::compat::shared_ptr<CoreMetadata> ijm(tiff::makeCoreMetadata(*ifd0));
 
                 ijm->sizeZ = ijmeta.slices;
                 ijm->sizeT = ijmeta.frames;

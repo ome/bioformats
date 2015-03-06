@@ -62,7 +62,7 @@ namespace ome
       /// Tile index type.
       typedef dimension_size_type key_type;
       /// Tile buffer type.
-      typedef std::shared_ptr<TileBuffer> value_type;
+      typedef ome::compat::shared_ptr<TileBuffer> value_type;
 
       /// Constructor.
       TileCache();

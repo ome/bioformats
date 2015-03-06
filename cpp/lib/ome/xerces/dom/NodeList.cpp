@@ -56,7 +56,7 @@ namespace ome
                                     size_type             index):
         index(index),
         xmlnodelist(xmlnodelist),
-        xmlnode(std::shared_ptr<Node>(new Node(xmlnodelist->item(index), false)))
+        xmlnode(ome::compat::shared_ptr<Node>(new Node(xmlnodelist->item(index), false)))
       {}
 
       NodeList::iterator::iterator (const iterator& rhs):

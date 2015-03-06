@@ -35,7 +35,10 @@
  * #L%
  */
 
+#include <cassert>
+
 #include <boost/format.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
@@ -65,12 +68,11 @@ namespace ome
         ReaderProperties
         tiff_properties()
         {
-          ReaderProperties p;
+          ReaderProperties p("MinimalTIFF",
+                             "Baseline Tagged Image File Format");
 
-          p.name = "MinimalTIFF";
-          p.description = "Baseline Tagged Image File Format";
-          p.suffixes = std::vector<std::string>(suffixes,
-                                                suffixes + (sizeof(suffixes) / sizeof(suffixes[0])));
+          p.suffixes = std::vector<boost::filesystem::path>(suffixes,
+                                                            suffixes + boost::size(suffixes));
           p.metadata_levels.insert(MetadataOptions::METADATA_MINIMUM);
           p.metadata_levels.insert(MetadataOptions::METADATA_NO_OVERLAYS);
           p.metadata_levels.insert(MetadataOptions::METADATA_ALL);
@@ -81,7 +83,7 @@ namespace ome
         const ReaderProperties props(tiff_properties());
 
         std::vector<std::string> companion_suffixes(companion_suffixes_array,
-                                                    companion_suffixes_array + (sizeof(companion_suffixes_array) / sizeof(companion_suffixes_array[0])));
+                                                    companion_suffixes_array + boost::size(companion_suffixes_array));
 
       }
 
@@ -90,7 +92,7 @@ namespace ome
         tiff(),
         series_ifd_map()
       {
-        domains.push_back(getDomain(GRAPHICS));
+        domains.push_back(getDomain(GRAPHICS_DOMAIN));
       }
 
       MinimalTIFFReader::MinimalTIFFReader(const ReaderProperties& readerProperties):
@@ -98,7 +100,7 @@ namespace ome
         tiff(),
         series_ifd_map()
       {
-        domains.push_back(getDomain(GRAPHICS));
+        domains.push_back(getDomain(GRAPHICS_DOMAIN));
       }
 
       MinimalTIFFReader::~MinimalTIFFReader()
@@ -106,9 +108,42 @@ namespace ome
       }
 
       bool
-      MinimalTIFFReader::isFilenameThisTypeImpl(const std::string& name) const
+      MinimalTIFFReader::isFilenameThisTypeImpl(const boost::filesystem::path& name) const
       {
         return static_cast<bool>(TIFF::open(name, "r"));
+      }
+
+      const ome::compat::shared_ptr<const tiff::IFD>
+      MinimalTIFFReader::ifdAtIndex(dimension_size_type no) const
+      {
+        dimension_size_type series = getSeries();
+
+        if (series >= series_ifd_map.size())
+          {
+            boost::format fmt("Invalid series number ‘%1%’");
+            fmt % series;
+            throw FormatException(fmt.str());
+          }
+        const series_ifd_map_type::value_type range(series_ifd_map.at(series));
+
+        // Compute timepoint and subchannel from plane number.
+        dimension_size_type plane = no;
+        if (isRGB())
+          {
+            plane = no / getSizeC();
+          }
+        dimension_size_type ifdidx = range.first + plane;
+        assert(range.first <= plane && plane < range.second);
+
+        if (plane >= (range.second - range.first))
+          {
+            boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
+            fmt % plane % series;
+            throw FormatException(fmt.str());
+          }
+
+        const ome::compat::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
+        return ifd;
       }
 
       void
@@ -121,7 +156,7 @@ namespace ome
       }
 
       void
-      MinimalTIFFReader::initFile(const std::string& id)
+      MinimalTIFFReader::initFile(const boost::filesystem::path& id)
       {
         ::ome::bioformats::detail::FormatReader::initFile(id);
 
@@ -130,7 +165,7 @@ namespace ome
         if (!tiff)
           {
             boost::format fmt("Failed to open ‘%1%’");
-            fmt % id;
+            fmt % id.native();
             throw FormatException(fmt.str());
           }
 
@@ -163,8 +198,8 @@ namespace ome
       {
         core.clear();
 
-        std::shared_ptr<const tiff::IFD> prev_ifd;
-        std::shared_ptr<CoreMetadata> prev_core;
+        ome::compat::shared_ptr<const tiff::IFD> prev_ifd;
+        ome::compat::shared_ptr<CoreMetadata> prev_core;
 
         dimension_size_type current_ifd = 0U;
 
@@ -194,6 +229,26 @@ namespace ome
       }
 
       void
+      MinimalTIFFReader::getLookupTable(VariantPixelBuffer& buf,
+                                        dimension_size_type no) const
+      {
+        assertId(currentId, true);
+
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+
+        try
+          {
+            ifd->readLookupTable(buf);
+          }
+        catch (const std::exception& e)
+          {
+            boost::format fmt("Failed to get lookup table:");
+            fmt % e.what();
+            throw FormatException(fmt.str());
+          }
+      }
+
+      void
       MinimalTIFFReader::openBytesImpl(dimension_size_type no,
                                        VariantPixelBuffer& buf,
                                        dimension_size_type x,
@@ -203,35 +258,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        dimension_size_type series = getSeries();
-
-        if (series >= series_ifd_map.size())
-          {
-            boost::format fmt("Invalid series number ‘%1%’");
-            fmt % series;
-            throw FormatException(fmt.str());
-          }
-        const series_ifd_map_type::value_type range(series_ifd_map.at(series));
-
-        // Compute timepoint and subchannel from plane number.
-        dimension_size_type plane = no;
-        dimension_size_type S = 0U;
-        if (isRGB())
-          {
-            plane = no / getSizeC();
-            S = no % getSizeC();
-          }
-        dimension_size_type ifdidx = range.first + plane;
-        assert(range.first <= plane && plane < range.second);
-
-        if (plane >= (range.second - range.first))
-          {
-            boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
-            fmt % plane % series;
-            throw FormatException(fmt.str());
-          }
-
-        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
         if (isRGB())
           {
@@ -239,6 +266,7 @@ namespace ome
             VariantPixelBuffer tmp;
             ifd->readImage(tmp, x, y, w, h);
 
+            dimension_size_type S = no % getSizeC();
             detail::CopySubchannelVisitor v(buf, S);
             boost::apply_visitor(v, tmp.vbuffer());
           }
@@ -246,13 +274,13 @@ namespace ome
           ifd->readImage(buf, x, y, w, h);
       }
 
-      std::shared_ptr<ome::bioformats::tiff::TIFF>
+      ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF()
       {
         return tiff;
       }
 
-      const std::shared_ptr<ome::bioformats::tiff::TIFF>
+      const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF() const
       {
         return tiff;

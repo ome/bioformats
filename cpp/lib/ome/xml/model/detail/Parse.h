@@ -73,7 +73,7 @@ namespace ome
 
         /// Type trait for shared_ptr.
         template <class T>
-        struct is_shared_ptr<std::shared_ptr<T> >
+        struct is_shared_ptr<ome::compat::shared_ptr<T> >
           : boost::true_type {};
 
         /**
@@ -122,6 +122,14 @@ namespace ome
             parse_value_fail(text, klass, property);
         }
 
+    // Disable -Wunused-parameter temporarily.  We can't comment out
+    // the names since they are needed for docstrings when used
+    // inline.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
         /**
          * Parse a string value.
          *
@@ -140,6 +148,10 @@ namespace ome
         {
           value = text;
         }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
         /**
          * Parse an arbitrary value.
@@ -186,7 +198,7 @@ namespace ome
         {
           typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type raw_type;
 
-          raw_type attr(std::make_shared<typename raw_type::element_type>());
+          raw_type attr(ome::compat::make_shared<typename raw_type::element_type>());
           parse_value(text, *attr, klass, property);
           return attr;
         }

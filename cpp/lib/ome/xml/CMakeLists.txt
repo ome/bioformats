@@ -52,6 +52,7 @@ foreach(hdr ${model_headers})
 endforeach(hdr)
 
 set(OME_XML_STATIC_SOURCES
+  meta/MetadataException.cpp
   meta/OMEXMLMetadataRoot.cpp
   meta/Convert.cpp
   model/Catalog.cpp
@@ -77,17 +78,20 @@ set(OME_XML_META_PRIVATE_STATIC_HEADERS
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
     meta/Metadata.h
+    meta/MetadataException.h
     meta/MetadataRoot.h
     meta/OMEXMLMetadataRoot.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
     model/ModelException.h
     model/OMEModel.h
-    model/OMEModelObject.h)
+    model/OMEModelObject.h
+    model/OriginalMetadataAnnotation.h)
 
 set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
     model/detail/OMEModel.h
     model/detail/OMEModelObject.h
+    model/OriginalMetadataAnnotation.cpp
     model/detail/Parse.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS

@@ -90,7 +90,7 @@ rst_prolog = """
     It is provided for the benefit of developers and should be considered a work in
     progress until the public release.** Please refer to the documentation for the
     `latest Bio-Formats 5.0.x version
-    <http://www.openmicroscopy.org/site/support/bio-formats5/>`_ or the
+    <http://www.openmicroscopy.org/site/support/bio-formats5.0/>`_ or the
     :legacy_plone:`previous versions <>` page to find documentation for the
     version you are using.
 """
@@ -162,7 +162,7 @@ downloads_root = 'http://downloads.openmicroscopy.org'
 if "OMERODOC_URI" in os.environ and len(os.environ.get('OMERODOC_URI')) > 0:
     omerodoc_uri = os.environ.get('OMERODOC_URI')
 else:
-    omerodoc_uri = oo_site_root + '/support/omero5'
+    omerodoc_uri = oo_site_root + '/support/omero5.1'
 
 extlinks = {
     # Trac links
@@ -191,7 +191,6 @@ extlinks = {
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
-    'faq_plone' : (oo_site_root + '/support/faq/%s', ''),
     'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
@@ -357,7 +356,9 @@ latex_show_urls = 'footnote'
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'OMERO', title, author, 1)
+    ('developers/cpp/overview', 'bf-cpp-overview', 'C++ implementation overview', author, 7),
+    ('developers/cpp/conversion', 'bf-cpp-conversion', 'C++ conventions for Java programmers switching to the C++ implementation', author, 7),
+    ('developers/cpp/showinf', 'bf-showinf', 'display and validate image metadata', author, 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -386,8 +387,7 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = ['http://www.openmicroscopy.org/site/support/faq',]
 
 import urllib
 brokenfiles_url = 'https://raw.github.com/openmicroscopy/sphinx-ignore-links/master/broken_links.txt'
-linkcheck_ignore.extend(urllib.urlopen(brokenfiles_url).read().splitlines())
+linkcheck_ignore = urllib.urlopen(brokenfiles_url).read().splitlines()

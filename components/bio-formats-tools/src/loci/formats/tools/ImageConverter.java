@@ -108,13 +108,169 @@ public final class ImageConverter {
   private int lastPlane = Integer.MAX_VALUE;
   private int channel = -1, zSection = -1, timepoint = -1;
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
+  private int saveTileWidth = 0, saveTileHeight = 0;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
 
+  private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
+  private boolean firstTile = true;
+
   // -- Constructor --
 
   private ImageConverter() { }
+
+  private boolean parseArgs(String[] args) {
+    if (args == null) {
+      return true;
+    }
+    for (int i=0; i<args.length; i++) {
+      if (args[i].startsWith("-") && args.length > 1) {
+        if (args[i].equals("-debug")) {
+          DebugTools.enableLogging("DEBUG");
+        }
+        else if (args[i].equals("-stitch")) stitch = true;
+        else if (args[i].equals("-separate")) separate = true;
+        else if (args[i].equals("-merge")) merge = true;
+        else if (args[i].equals("-expand")) fill = true;
+        else if (args[i].equals("-bigtiff")) bigtiff = true;
+        else if (args[i].equals("-map")) map = args[++i];
+        else if (args[i].equals("-compression")) compression = args[++i];
+        else if (args[i].equals("-nogroup")) group = false;
+        else if (args[i].equals("-autoscale")) autoscale = true;
+        else if (args[i].equals("-overwrite")) {
+          overwrite = true;
+        }
+        else if (args[i].equals("-nooverwrite")) {
+          overwrite = false;
+        }
+        else if (args[i].equals("-channel")) {
+          channel = Integer.parseInt(args[++i]);
+        }
+        else if (args[i].equals("-z")) {
+          zSection = Integer.parseInt(args[++i]);
+        }
+        else if (args[i].equals("-timepoint")) {
+          timepoint = Integer.parseInt(args[++i]);
+        }
+        else if (args[i].equals("-series")) {
+          try {
+            series = Integer.parseInt(args[++i]);
+          }
+          catch (NumberFormatException exc) { }
+        }
+        else if (args[i].equals("-range")) {
+          try {
+            firstPlane = Integer.parseInt(args[++i]);
+            lastPlane = Integer.parseInt(args[++i]) + 1;
+          }
+          catch (NumberFormatException exc) { }
+        }
+        else if (args[i].equals("-crop")) {
+          String[] tokens = args[++i].split(",");
+          xCoordinate = Integer.parseInt(tokens[0]);
+          yCoordinate = Integer.parseInt(tokens[1]);
+          width = Integer.parseInt(tokens[2]);
+          height = Integer.parseInt(tokens[3]);
+        }
+        else if (args[i].equals("-tilex")) {
+          try {
+            saveTileWidth = Integer.parseInt(args[++i]);
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (args[i].equals("-tiley")) {
+          try {
+            saveTileHeight = Integer.parseInt(args[++i]);
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
+          LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
+          return false;
+        }
+      }
+      else {
+        if (args[i].equals("-version")) printVersion = true;
+        else if (in == null) in = args[i];
+        else if (out == null) out = args[i];
+        else {
+          LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
+          LOGGER.error("You should specify exactly one input file and " +
+            "exactly one output file.");
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  private void printUsage() {
+    String[] s = {
+      "To convert a file between formats, run:",
+      "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
+      "    [-bigtiff] [-compression codec] [-series series] [-map id]",
+      "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
+      "    [-timepoint timepoint] [-nogroup] [-autoscale] [-version]",
+      "    [-no-upgrade] in_file out_file",
+      "",
+      "    -version: print the library version and exit",
+      " -no-upgrade: do not perform the upgrade check",
+      "      -debug: turn on debugging output",
+      "     -stitch: stitch input files with similar names",
+      "   -separate: split RGB images into separate channels",
+      "      -merge: combine separate channels into RGB image",
+      "     -expand: expand indexed color to RGB",
+      "    -bigtiff: force BigTIFF files to be written",
+      "-compression: specify the codec to use when saving images",
+      "     -series: specify which image series to convert",
+      "        -map: specify file on disk to which name should be mapped",
+      "      -range: specify range of planes to convert (inclusive)",
+      "    -nogroup: force multi-file datasets to be read as individual" +
+      "              files",
+      "  -autoscale: automatically adjust brightness and contrast before",
+      "              converting; this may mean that the original pixel",
+      "              values are not preserved",
+      "  -overwrite: always overwrite the output file, if it already exists",
+      "-nooverwrite: never overwrite the output file, if it already exists",
+      "       -crop: crop images before converting; argument is 'x,y,w,h'",
+      "    -channel: only convert the specified channel (indexed from 0)",
+      "          -z: only convert the specified Z section (indexed from 0)",
+      "  -timepoint: only convert the specified timepoint (indexed from 0)",
+      "",
+      "If any of the following patterns are present in out_file, they will",
+      "be replaced with the indicated metadata value from the input file.",
+      "",
+      "   Pattern:\tMetadata value:",
+      "   ---------------------------",
+      "   " + FormatTools.SERIES_NUM + "\t\tseries index",
+      "   " + FormatTools.SERIES_NAME + "\t\tseries name",
+      "   " + FormatTools.CHANNEL_NUM + "\t\tchannel index",
+      "   " + FormatTools.CHANNEL_NAME +"\t\tchannel name",
+      "   " + FormatTools.Z_NUM + "\t\tZ index",
+      "   " + FormatTools.T_NUM + "\t\tT index",
+      "   " + FormatTools.TIMESTAMP + "\t\tacquisition timestamp",
+      "",
+      "If any of these patterns are present, then the images to be saved",
+      "will be split into multiple files.  For example, if the input file",
+      "contains 5 Z sections and 3 timepoints, and out_file is",
+      "",
+      "  converted_Z" + FormatTools.Z_NUM + "_T" +
+      FormatTools.T_NUM + ".tiff",
+      "",
+      "then 15 files will be created, with the names",
+      "",
+      "  converted_Z0_T0.tiff",
+      "  converted_Z0_T1.tiff",
+      "  converted_Z0_T2.tiff",
+      "  converted_Z1_T0.tiff",
+      "  ...",
+      "  converted_Z4_T2.tiff",
+      "",
+      "Each file would have a single image plane."
+    };
+    for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
+  }
 
   // -- Utility methods --
 
@@ -122,74 +278,12 @@ public final class ImageConverter {
   public boolean testConvert(IFormatWriter writer, String[] args)
     throws FormatException, IOException
   {
+    nextOutputIndex.clear();
+    firstTile = true;
     DebugTools.enableLogging("INFO");
-    if (args != null) {
-      for (int i=0; i<args.length; i++) {
-        if (args[i].startsWith("-") && args.length > 1) {
-          if (args[i].equals("-debug")) {
-            DebugTools.enableLogging("DEBUG");
-          }
-          else if (args[i].equals("-stitch")) stitch = true;
-          else if (args[i].equals("-separate")) separate = true;
-          else if (args[i].equals("-merge")) merge = true;
-          else if (args[i].equals("-expand")) fill = true;
-          else if (args[i].equals("-bigtiff")) bigtiff = true;
-          else if (args[i].equals("-map")) map = args[++i];
-          else if (args[i].equals("-compression")) compression = args[++i];
-          else if (args[i].equals("-nogroup")) group = false;
-          else if (args[i].equals("-autoscale")) autoscale = true;
-          else if (args[i].equals("-overwrite")) {
-            overwrite = true;
-          }
-          else if (args[i].equals("-nooverwrite")) {
-            overwrite = false;
-          }
-          else if (args[i].equals("-channel")) {
-            channel = Integer.parseInt(args[++i]);
-          }
-          else if (args[i].equals("-z")) {
-            zSection = Integer.parseInt(args[++i]);
-          }
-          else if (args[i].equals("-timepoint")) {
-            timepoint = Integer.parseInt(args[++i]);
-          }
-          else if (args[i].equals("-series")) {
-            try {
-              series = Integer.parseInt(args[++i]);
-            }
-            catch (NumberFormatException exc) { }
-          }
-          else if (args[i].equals("-range")) {
-            try {
-              firstPlane = Integer.parseInt(args[++i]);
-              lastPlane = Integer.parseInt(args[++i]) + 1;
-            }
-            catch (NumberFormatException exc) { }
-          }
-          else if (args[i].equals("-crop")) {
-            String[] tokens = args[++i].split(",");
-            xCoordinate = Integer.parseInt(tokens[0]);
-            yCoordinate = Integer.parseInt(tokens[1]);
-            width = Integer.parseInt(tokens[2]);
-            height = Integer.parseInt(tokens[3]);
-          }
-          else if (!args[i].equals(NO_UPGRADE_CHECK)) {
-            LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
-            return false;
-          }
-        }
-        else {
-          if (args[i].equals("-version")) printVersion = true;
-          else if (in == null) in = args[i];
-          else if (out == null) out = args[i];
-          else {
-            LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
-            LOGGER.error("You should specify exactly one input file and " +
-              "exactly one output file.");
-            return false;
-          }
-        }
-      }
+    boolean success = parseArgs(args);
+    if (!success) {
+      return false;
     }
 
     if (printVersion) {
@@ -200,70 +294,7 @@ public final class ImageConverter {
     }
 
     if (in == null || out == null) {
-      String[] s = {
-        "To convert a file between formats, run:",
-        "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
-        "    [-bigtiff] [-compression codec] [-series series] [-map id]",
-        "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
-        "    [-timepoint timepoint] [-nogroup] [-autoscale] [-version]",
-        "    [-no-upgrade] in_file out_file",
-        "",
-        "    -version: print the library version and exit",
-        " -no-upgrade: do not perform the upgrade check",
-        "      -debug: turn on debugging output",
-        "     -stitch: stitch input files with similar names",
-        "   -separate: split RGB images into separate channels",
-        "      -merge: combine separate channels into RGB image",
-        "     -expand: expand indexed color to RGB",
-        "    -bigtiff: force BigTIFF files to be written",
-        "-compression: specify the codec to use when saving images",
-        "     -series: specify which image series to convert",
-        "        -map: specify file on disk to which name should be mapped",
-        "      -range: specify range of planes to convert (inclusive)",
-        "    -nogroup: force multi-file datasets to be read as individual" +
-        "              files",
-        "  -autoscale: automatically adjust brightness and contrast before",
-        "              converting; this may mean that the original pixel",
-        "              values are not preserved",
-        "  -overwrite: always overwrite the output file, if it already exists",
-        "-nooverwrite: never overwrite the output file, if it already exists",
-        "       -crop: crop images before converting; argument is 'x,y,w,h'",
-        "    -channel: only convert the specified channel (indexed from 0)",
-        "          -z: only convert the specified Z section (indexed from 0)",
-        "  -timepoint: only convert the specified timepoint (indexed from 0)",
-        "",
-        "If any of the following patterns are present in out_file, they will",
-        "be replaced with the indicated metadata value from the input file.",
-        "",
-        "   Pattern:\tMetadata value:",
-        "   ---------------------------",
-        "   " + FormatTools.SERIES_NUM + "\t\tseries index",
-        "   " + FormatTools.SERIES_NAME + "\t\tseries name",
-        "   " + FormatTools.CHANNEL_NUM + "\t\tchannel index",
-        "   " + FormatTools.CHANNEL_NAME +"\t\tchannel name",
-        "   " + FormatTools.Z_NUM + "\t\tZ index",
-        "   " + FormatTools.T_NUM + "\t\tT index",
-        "   " + FormatTools.TIMESTAMP + "\t\tacquisition timestamp",
-        "",
-        "If any of these patterns are present, then the images to be saved",
-        "will be split into multiple files.  For example, if the input file",
-        "contains 5 Z sections and 3 timepoints, and out_file is",
-        "",
-        "  converted_Z" + FormatTools.Z_NUM + "_T" +
-        FormatTools.T_NUM + ".tiff",
-        "",
-        "then 15 files will be created, with the names",
-        "",
-        "  converted_Z0_T0.tiff",
-        "  converted_Z0_T1.tiff",
-        "  converted_Z0_T2.tiff",
-        "  converted_Z1_T0.tiff",
-        "  ...",
-        "  converted_Z4_T2.tiff",
-        "",
-        "Each file would have a single image plane."
-      };
-      for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
+      printUsage();
       return false;
     }
 
@@ -400,10 +431,8 @@ public final class ImageConverter {
       }
       else {
         for (int i=0; i<reader.getSeriesCount(); i++) {
-          if (width != reader.getSizeX() || height != reader.getSizeY()) {
-            store.setPixelsSizeX(new PositiveInteger(width), 0);
-            store.setPixelsSizeY(new PositiveInteger(height), 0);
-          }
+          store.setPixelsSizeX(new PositiveInteger(width), 0);
+          store.setPixelsSizeY(new PositiveInteger(height), 0);
 
           if (autoscale) {
             store.setPixelsType(PixelType.UINT8, i);
@@ -448,6 +477,7 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
+      firstTile = true;
 
       if (!dimensionsSet) {
         width = reader.getSizeX();
@@ -477,7 +507,6 @@ public final class ImageConverter {
       total += numImages;
 
       int count = 0;
-      HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
       for (int i=startPlane; i<endPlane; i++) {
         int[] coords = reader.getZCTCoords(i);
 
@@ -488,8 +517,20 @@ public final class ImageConverter {
         }
 
         String outputName = FormatTools.getFilename(q, i, reader, out);
-        writer.setId(outputName);
-        if (compression != null) writer.setCompression(compression);
+        if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
+          writer.setId(outputName);
+          if (compression != null) writer.setCompression(compression);
+        }
+        else {
+          int tileNum = outputName.indexOf(FormatTools.TILE_NUM);
+          int tileX = outputName.indexOf(FormatTools.TILE_X);
+          int tileY = outputName.indexOf(FormatTools.TILE_Y);
+          if (tileNum < 0 && (tileX < 0 || tileY < 0)) {
+            throw new FormatException("Invalid file name pattern; " +
+              FormatTools.TILE_NUM + " or both of " + FormatTools.TILE_X +
+              " and " + FormatTools.TILE_Y + " must be specified.");
+          }
+        }
 
         int outputIndex = 0;
         if (nextOutputIndex.containsKey(outputName)) {
@@ -497,7 +538,7 @@ public final class ImageConverter {
         }
 
         long s = System.currentTimeMillis();
-        long m = convertPlane(writer, i, outputIndex);
+        long m = convertPlane(writer, i, outputIndex, outputName);
         long e = System.currentTimeMillis();
         read += m - s;
         write += e - m;
@@ -541,19 +582,21 @@ public final class ImageConverter {
 
   // -- Helper methods --
 
-  private long convertPlane(IFormatWriter writer, int index, int outputIndex)
+  private long convertPlane(IFormatWriter writer, int index, int outputIndex,
+    String currentFile)
     throws FormatException, IOException
   {
     if (DataTools.safeMultiply64(width, height) >=
-      DataTools.safeMultiply64(4096, 4096))
+      DataTools.safeMultiply64(4096, 4096) ||
+      saveTileWidth > 0 || saveTileHeight > 0)
     {
-      // this is a "big image", so we will attempt to convert it one tile
-      // at a time
+      // this is a "big image" or an output tile size was set, so we will attempt
+      // to convert it one tile at a time
 
       if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
         (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
       {
-        return convertTilePlane(writer, index, outputIndex);
+        return convertTilePlane(writer, index, outputIndex, currentFile);
       }
     }
 
@@ -567,11 +610,24 @@ public final class ImageConverter {
     return m;
   }
 
-  private long convertTilePlane(IFormatWriter writer, int index, int outputIndex)
+  private long convertTilePlane(IFormatWriter writer, int index, int outputIndex,
+    String currentFile)
     throws FormatException, IOException
   {
     int w = reader.getOptimalTileWidth();
     int h = reader.getOptimalTileHeight();
+    if (saveTileWidth > 0 && saveTileWidth <= width) {
+      w = saveTileWidth;
+    }
+    if (saveTileHeight > 0 && saveTileHeight <= height) {
+      h = saveTileHeight;
+    }
+
+    if (firstTile) {
+      LOGGER.info("Tile size = {} x {}", w, h);
+      firstTile = false;
+    }
+
     int nXTiles = width / w;
     int nYTiles = height / h;
 
@@ -596,6 +652,41 @@ public final class ImageConverter {
         byte[] buf =
           reader.openBytes(index, tileX, tileY, tileWidth, tileHeight);
 
+        String tileName =
+          FormatTools.getTileFilename(x, y, y * nXTiles + x, currentFile);
+        if (!currentFile.equals(tileName)) {
+          int nTileRows = getTileRows(currentFile);
+          int nTileCols = getTileColumns(currentFile);
+
+          int sizeX = nTileCols == 1 ? width : tileWidth;
+          int sizeY = nTileRows == 1 ? height : tileHeight;
+          MetadataRetrieve retrieve = writer.getMetadataRetrieve();
+          if (retrieve instanceof MetadataStore) {
+            ((MetadataStore) retrieve).setPixelsSizeX(
+              new PositiveInteger(sizeX), reader.getSeries());
+            ((MetadataStore) retrieve).setPixelsSizeY(
+              new PositiveInteger(sizeY), reader.getSeries());
+          }
+
+          writer.close();
+          writer.setMetadataRetrieve(retrieve);
+          writer.setId(tileName);
+          if (compression != null) writer.setCompression(compression);
+
+          outputIndex = 0;
+          if (nextOutputIndex.containsKey(tileName)) {
+            outputIndex = nextOutputIndex.get(tileName);
+          }
+          nextOutputIndex.put(tileName, outputIndex + 1);
+
+          if (nTileRows > 1) {
+            tileY = 0;
+          }
+          if (nTileCols > 1) {
+            tileX = 0;
+          }
+        }
+
         autoscalePlane(buf, index);
         applyLUT(writer);
         if (m == null) {
@@ -616,6 +707,41 @@ public final class ImageConverter {
       }
     }
     return m;
+  }
+
+  private int getTileRows(String outputName) {
+    if (outputName.indexOf(FormatTools.TILE_Y) >= 0 ||
+      outputName.indexOf(FormatTools.TILE_NUM) >= 0)
+    {
+      int h = reader.getOptimalTileHeight();
+      if (saveTileHeight > 0 && saveTileHeight <= height) {
+        h = saveTileHeight;
+      }
+      int nYTiles = height / h;
+      if (nYTiles * h != height) {
+        nYTiles++;
+      }
+      return nYTiles;
+    }
+    return 1;
+  }
+
+  public int getTileColumns(String outputName) {
+    if (outputName.indexOf(FormatTools.TILE_X) >= 0 ||
+      outputName.indexOf(FormatTools.TILE_NUM) >= 0)
+    {
+      int w = reader.getOptimalTileWidth();
+      if (saveTileWidth > 0 && saveTileWidth <= width) {
+        w = saveTileWidth;
+      }
+
+      int nXTiles = width / w;
+      if (nXTiles * w != width) {
+        nXTiles++;
+      }
+      return nXTiles;
+    }
+    return 1;
   }
 
   private void autoscalePlane(byte[] buf, int index)

@@ -23,7 +23,8 @@
       BaseMetadata::index_type
       DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string_dummy(indexes[:-1])}) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count",
+                                "intentionally not implemented");
       }
 {% end source %}\
 {% end %}\
@@ -66,7 +67,8 @@
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+                                "intentionally not implemented");
       }
 {% end source %}\
 {% end %}\
@@ -201,6 +203,7 @@
 #define ${fu.GUARD}
 
 #include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/MetadataException.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <ome/xml/meta/DummyMetadata.h>
@@ -263,25 +266,26 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::shared_ptr<MetadataRoot>&
+        ome::compat::shared_ptr<MetadataRoot>&
         getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::shared_ptr<MetadataRoot>&
+      ome::compat::shared_ptr<MetadataRoot>&
       DummyMetadata::getRoot()
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getRoot",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setRoot(std::shared_ptr<MetadataRoot>& root);
+        setRoot(ome::compat::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setRoot(std::shared_ptr<MetadataRoot>& /* root */)
+      DummyMetadata::setRoot(ome::compat::shared_ptr<MetadataRoot>& /* root */)
       {
       }
 {% end source %}\
@@ -299,7 +303,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getPixelsBinDataCount(index_type /* imageIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getPixelsBinDataCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -312,7 +317,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getBooleanAnnotationAnnotationCount(index_type /* booleanAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getBooleanAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -325,7 +331,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getCommentAnnotationAnnotationCount(index_type /* commentAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getCommentAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -338,7 +345,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getDoubleAnnotationAnnotationCount(index_type /* doubleAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getDoubleAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -351,7 +359,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getFileAnnotationAnnotationCount(index_type /* fileAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getFileAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -364,7 +373,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getListAnnotationAnnotationCount(index_type /* listAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getListAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -377,7 +387,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getLongAnnotationAnnotationCount(index_type /* longAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getLongAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -390,7 +401,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getTagAnnotationAnnotationCount(index_type /* tagAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getTagAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -403,7 +415,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getTermAnnotationAnnotationCount(index_type /* termAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getTermAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -416,7 +429,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getTimestampAnnotationAnnotationCount(index_type /* timestampAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getTimestampAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -429,7 +443,8 @@ namespace ome
       BaseMetadata::index_type
       DummyMetadata::getXMLAnnotationAnnotationCount(index_type /* xmlAnnotationIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getXMLAnnotationAnnotationCount",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -444,7 +459,8 @@ namespace ome
       DummyMetadata::getLightSourceType(index_type /* instrumentIndex */,
                                         index_type /* lightSourceIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getLightSourceType",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -459,7 +475,8 @@ namespace ome
       DummyMetadata::getShapeType(index_type /* roiIndex */,
                                   index_type /* shapeIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getShapeType",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -495,7 +512,8 @@ namespace ome
       ${o.langBaseType}
       DummyMetadata::get${o.name}Value(${indexes_string_dummy(indexes[o.name].items()[0][1])}) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "get${o.name}Value",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -529,7 +547,8 @@ ${counter(k, o, v)}\
       DummyMetadata::getPixelsBinDataBigEndian(index_type /* imageIndex */,
                                                index_type /* binDataIndex */) const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getPixelsBinDataBigEndian",
+                                "intentionally not implemented");
       }
 {% end source %}\
 
@@ -546,7 +565,8 @@ ${counter(k, o, v)}\
       const std::string&
       DummyMetadata::getUUID() const
       {
-        throw std::runtime_error("DummyMetadata: No metadata methods implemented");
+        throw MetadataException("DummyMetadata", "getUUID",
+                                "intentionally not implemented");
       }
 {% end source %}\
 

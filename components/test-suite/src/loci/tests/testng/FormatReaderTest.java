@@ -1356,7 +1356,9 @@ public class FormatReaderTest {
   @Test(groups = {"all", "type", "automated"})
   public void testRequiredDirectories() {
     if (!initFile()) return;
-    if (reader.getFormat().equals("Woolz")) {
+    if (reader.getFormat().equals("Woolz") ||
+      reader.getFormat().startsWith("CellH5"))
+    {
       throw new SkipException(SKIP_MESSAGE);
     }
     String testName = "testRequiredDirectories";
@@ -2289,6 +2291,7 @@ public class FormatReaderTest {
   /** Sets up the current IFormatReader. */
   private void setupReader() {
     reader = new BufferedImageReader(new FileStitcher(new Memoizer(Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
+    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(false);
     reader.setMetadataFiltered(true);

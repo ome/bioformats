@@ -1,6 +1,20 @@
 Version history
 ===============
 
+5.0.8 (2015 February 10)
+------------------------
+
+* No changes - release to keep version numbers in sync with OMERO
+
+5.0.7 (2015 February 5)
+-----------------------
+
+* Several bug fixes, including:
+    - ND filter parsing for DeltaVision
+    - Timepoint count and original metadata parsing for Metamorph
+    - Build issues when Genshi or Git are missing
+    - LZW image decoding
+
 5.0.6 (2014 November 11)
 ------------------------
 
@@ -215,7 +229,7 @@ Version history
 -------------------
 
 * Several bug fixes, including:
-   - Fixes for multi-position Deltavision files
+   - Fixes for multi-position DeltaVision files
    - Fixes for MicroManager 1.4 data
    - Fixes for 12 and 14-bit JPEG-2000 data
    - Various fixes for reading Volocity .mvd2 datasets
@@ -346,7 +360,7 @@ Version history
 2008 December 29
 ----------------
 
-* Improved metadata support for Deltavision, Zeiss LSM, MicroManager, and Leica
+* Improved metadata support for DeltaVision, Zeiss LSM, MicroManager, and Leica
   LEI
 * Restructured code base/build system to be component-driven
 * Added support for JPEG and JPEG-2000 codecs within TIFF, OME-TIFF and OME-XML
@@ -650,7 +664,7 @@ Version history
 * Fixed ZVI bugs: metadata truncation, and other problems
 * Fixed bugs in Leica LIF: incorrect calibration, first series labeling
 * Fixed memory bug in Zeiss LSM
-* Many bugfixes: PerkinElmer, Deltavision, Leica LEI, LSM, ND2, and others
+* Many bugfixes: PerkinElmer, DeltaVision, Leica LEI, LSM, ND2, and others
 * IFormatReader.close(boolean) method to close files temporarily
 * Replaced Compression utility class with extensible Compressor interface
 * Improved testing framework to use .bioformats configuration files

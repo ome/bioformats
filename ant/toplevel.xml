@@ -189,6 +189,8 @@ Type "ant -p" for a list of targets.
     <ant dir="docs/sphinx" target="html"/>
     <echo>----------=========== Sphinx PDF ===========----------</echo>
     <ant dir="docs/sphinx" target="pdf"/>
+    <echo>----------=========== Sphinx MAN ===========----------</echo>
+    <ant dir="docs/sphinx" target="man"/>
   </target>
 
   <target name="clean-docs-sphinx"
@@ -964,11 +966,6 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-xml" target="generate-source"/>
   </target>
 
-  <target name="metadata-src"
-    description="generate sources using xsd-fu">
-    <ant dir="components/formats-bsd" target="generate-source"/>
-  </target>
-
   <!-- Specification -->
   <target name="jar-specification"
     description="generate JAR file for OME-XML specification"
@@ -1035,7 +1032,7 @@ Type "ant -p" for a list of targets.
   <target name="release" description="zip the git release as bioformats-${release.version}.zip" depends="release-version">
     <mkdir dir="${artifact.dir}"/>
     <exec executable="python" failonerror="true">
-      <arg value="${root.dir}/tools/source-archive"/>
+      <arg value="${root.dir}/tools/source-archive.py"/>
       <arg value="--release=bioformats"/>
       <arg value="--bioformats-shortversion=${release.shortversion}"/>
       <arg value="--bioformats-version=${release.version}"/>
@@ -1046,9 +1043,21 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
+  <target name="store-version" description="store version information in a property file" depends="release-version">
+    <mkdir dir="${artifact.dir}"/>
+    <delete file="${artifact.dir}/bioformats.properties"/>
+    <propertyfile file="${artifact.dir}/bioformats.properties">
+      <entry key="release.shortversion" value="${release.shortversion}"/>
+      <entry key="release.version" value="${release.version}"/>
+      <entry key="vcs.date" value="${vcs.date}"/>
+      <entry key="vcs.revision" value="${vcs.revision}"/>
+      <entry key="vcs.date_unix" value="${vcs.date_unix}"/>
+    </propertyfile>
+  </target>
+
   <target name="version" description="print version information" depends="release-version">
     <echo>VERSION=${release.version}
-SHORTVERSION=${release.version}
+SHORTVERSION=${release.shortversion}
 VCS_DATE=${vcs.date}
 VCS_REVISION=${vcs.revision}
 </echo>

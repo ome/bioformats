@@ -220,7 +220,7 @@ namespace ome
          *
          * @todo should this be a reference or shared_ptr?
          */
-        virtual std::shared_ptr<MetadataRoot>&
+        virtual ome::compat::shared_ptr<MetadataRoot>&
         getRoot() = 0;
 
         /**
@@ -234,7 +234,7 @@ namespace ome
          * @todo should this be a reference or shared_ptr?
          */
         virtual void
-        setRoot(std::shared_ptr<MetadataRoot>& root) = 0;
+        setRoot(ome::compat::shared_ptr<MetadataRoot>& root) = 0;
 
 {% if debug %}\
         // -- Entity storage (manual definitions) --

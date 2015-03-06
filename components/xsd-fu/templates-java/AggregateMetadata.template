@@ -301,16 +301,6 @@ public class AggregateMetadata implements IMetadata
 		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
-	/**
-	 * Unsupported with an AggregateMetadata.
-	 * @throws RuntimeException Always.
-	 */
-	@Deprecated
-	public void setRoot(Object root)
-	{
-		throw new RuntimeException("Unsupported by AggregateMetadata");
-	}
-
 	// -- AggregateMetadata API methods --
 
 

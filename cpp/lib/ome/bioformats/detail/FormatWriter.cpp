@@ -83,7 +83,7 @@ namespace ome
         compression(boost::none),
         sequential(false),
         framesPerSecond(0),
-        metadataRetrieve(std::make_shared<DummyMetadata>())
+        metadataRetrieve(ome::compat::make_shared<DummyMetadata>())
       {
         assertId(currentId, false);
       }
@@ -93,16 +93,16 @@ namespace ome
       }
 
       void
-      FormatWriter::setId(const std::string& id)
+      FormatWriter::setId(const boost::filesystem::path& id)
       {
         if (!currentId || id != currentId.get())
           {
             if (out)
-              out = std::shared_ptr<std::ostream>();
+              out = ome::compat::shared_ptr<std::ostream>();
 
             SaveSeries sentry(*this);
 
-            std::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
+            ome::compat::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
 
             for (dimension_size_type  s = 0;
                  s < mr->getImageCount();
@@ -124,7 +124,7 @@ namespace ome
       FormatWriter::close(bool fileOnly)
       {
         if (out)
-          out = std::shared_ptr<std::ostream>(); // set to null.
+          out = ome::compat::shared_ptr<std::ostream>(); // set to null.
         if (!fileOnly)
           {
             currentId = boost::none;
@@ -133,8 +133,8 @@ namespace ome
       }
 
       bool
-      FormatWriter::isThisType(const std::string& name,
-                               bool               /* open */) const
+      FormatWriter::isThisType(const boost::filesystem::path& name,
+                               bool                           /* open */) const
       {
         return checkSuffix(name,
                            writerProperties.suffixes,
@@ -241,7 +241,7 @@ namespace ome
       }
 
       void
-      FormatWriter::changeOutputFile(const std::string& id)
+      FormatWriter::changeOutputFile(const boost::filesystem::path& id)
       {
         assertId(currentId, true);
 
@@ -261,7 +261,7 @@ namespace ome
       }
 
       void
-      FormatWriter::setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
+      FormatWriter::setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
       {
         assertId(currentId, false);
 
@@ -271,13 +271,13 @@ namespace ome
         metadataRetrieve = retrieve;
       }
 
-      const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve() const
       {
         return metadataRetrieve;
       }
 
-      std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve()
       {
         return metadataRetrieve;
@@ -295,13 +295,13 @@ namespace ome
         return writerProperties.description;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatWriter::getSuffixes() const
       {
         return writerProperties.suffixes;
       }
 
-      const std::vector<std::string>&
+      const std::vector<boost::filesystem::path>&
       FormatWriter::getCompressionSuffixes() const
       {
         return writerProperties.compression_suffixes;

@@ -7,13 +7,12 @@ import logging
 # The generateDS package and our generateds module
 # collide on case-insensitive file systems.
 import generateDS.generateDS
-XschemaHandler = generateDS.generateDS.XschemaHandler
-set_type_constants = generateDS.generateDS.set_type_constants
-
 from ome.modeltools.exceptions import ModelProcessingError
 from xml import sax
-
 from ome.modeltools.model import OMEModel
+
+XschemaHandler = generateDS.generateDS.XschemaHandler
+set_type_constants = generateDS.generateDS.set_type_constants
 
 
 def parse(opts):

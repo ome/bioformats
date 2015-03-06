@@ -38,4 +38,5 @@ set(OME_BIN_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR})
 
+add_subdirectory(glview)
 add_subdirectory(showinf)

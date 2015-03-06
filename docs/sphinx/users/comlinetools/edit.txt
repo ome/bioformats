@@ -1,7 +1,7 @@
 Editing XML in an OME-TIFF
 ==========================
 
-To edit the XML in an OME-TIFF file you can use ``tiffcomment``, one of the
+To edit the XML in an OME-TIFF file you can use :command:`tiffcomment`, one of the
 Bio-Formats tools.
 
 To use the built in editor run:

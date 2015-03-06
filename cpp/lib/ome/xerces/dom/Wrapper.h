@@ -110,11 +110,11 @@ namespace ome
           parent_type(),
           wrapped()
         {
-          std::shared_ptr<base_element_type> pbase;
+          ome::compat::shared_ptr<base_element_type> pbase;
           if (base)
-            pbase = std::shared_ptr<base_element_type>(base, del);
+            pbase = ome::compat::shared_ptr<base_element_type>(base, del);
           else
-            pbase = std::shared_ptr<base_element_type>();
+            pbase = ome::compat::shared_ptr<base_element_type>();
           assign(pbase);
         }
 
@@ -128,11 +128,11 @@ namespace ome
           parent_type(),
           wrapped()
         {
-          std::shared_ptr<base_element_type> pbase;
+          ome::compat::shared_ptr<base_element_type> pbase;
           if (base)
-            pbase = std::shared_ptr<base_element_type>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>);
+            pbase = ome::compat::shared_ptr<base_element_type>(base, &ome::xerces::dom::detail::unmanaged<base_element_type>);
           else
-            pbase = std::shared_ptr<base_element_type>();
+            pbase = ome::compat::shared_ptr<base_element_type>();
           assign(pbase);
         }
 
@@ -188,7 +188,7 @@ namespace ome
          */
         virtual
         void
-        assign(std::shared_ptr<base_element_type>& wrapped)
+        assign(ome::compat::shared_ptr<base_element_type>& wrapped)
         {
           this->wrapped = this->template assign_check<element_type>(wrapped.get());
           parent_type::assign(wrapped);

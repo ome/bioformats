@@ -91,7 +91,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 {
 
   /** Latest OME-XML version namespace. */
-  public static final String LATEST_VERSION = "2013-10-dev-5";
+  public static final String LATEST_VERSION = "2015-01";
 
   public static final String NO_OME_XML_MSG =
     "ome-xml.jar is required to read OME-TIFF files.  " +
@@ -123,7 +123,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static final String XSLT_201206 =
     XSLT_PATH + "2012-06-to-2013-06.xsl";
   private static final String XSLT_201306 =
-    XSLT_PATH + "2013-06-to-2013-10-dev-5.xsl";
+    XSLT_PATH + "2013-06-to-2015-01.xsl";
 
   // -- Cached stylesheets --
 
@@ -202,7 +202,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       if (!version.equals("2009-09") && !version.equals("2010-04") &&
         !version.equals("2010-06") && !version.equals("2011-06") &&
         !version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2013-10-dev-5") )
+        !version.equals("2015-01") )
       {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200809 stylesheet.");
@@ -217,7 +217,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       if (!version.equals("2010-04") && !version.equals("2010-06") &&
         !version.equals("2011-06") && !version.equals("2012-06") &&
         !version.equals("2013-06") &&
-        !version.equals("2013-10-dev-5") )
+        !version.equals("2015-01") )
       {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200909 stylesheet.");
@@ -233,7 +233,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
       if (!version.equals("2010-06") && !version.equals("2011-06") &&
         !version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2013-10-dev-5") )
+        !version.equals("2015-01") )
       {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201004 stylesheet.");
@@ -248,7 +248,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
       if (!version.equals("2011-06") && !version.equals("2012-06") &&
         !version.equals("2013-06") &&
-        !version.equals("2013-10-dev-5") ) {
+        !version.equals("2015-01") ) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201006 stylesheet.");
         if (update201006 == null) {
@@ -261,7 +261,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2011-06");
 
       if (!version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2013-10-dev-5") ) {
+        !version.equals("2015-01") ) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201106 stylesheet.");
         if (update201106 == null) {
@@ -274,7 +274,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2012-06");
 
       if (!version.equals("2013-06") &&
-        !version.equals("2013-10-dev-5") ) {
+        !version.equals("2015-01") ) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201206 stylesheet.");
         if (update201206 == null) {
@@ -286,7 +286,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2013-06");
 
-      if (!version.equals("2013-10-dev-5") ) {
+      if (!version.equals("2015-01") ) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201306 stylesheet.");
         if (update201306 == null) {
@@ -296,7 +296,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         transformed = XMLTools.transformXML(transformed, update201306);
       }
       else transformed = xml;
-      LOGGER.debug("XML updated to at least 2013-10-dev-5");
+      LOGGER.debug("XML updated to at least 2015-01");
 
 
       // fix namespaces

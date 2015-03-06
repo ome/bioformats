@@ -94,8 +94,8 @@ namespace ome
         Base(base_element_type *wrapped,
              Deleter            del):
           base(wrapped ?
-               std::shared_ptr<base_element_type>(wrapped, del) :
-               std::shared_ptr<base_element_type>())
+               ome::compat::shared_ptr<base_element_type>(wrapped, del) :
+               ome::compat::shared_ptr<base_element_type>())
         {}
 
         /**
@@ -106,8 +106,8 @@ namespace ome
         explicit
         Base(base_element_type *wrapped):
           base(wrapped ?
-               std::shared_ptr<base_element_type>(wrapped, &ome::xerces::dom::detail::unmanaged<base_element_type>) :
-               std::shared_ptr<base_element_type>())
+               ome::compat::shared_ptr<base_element_type>(wrapped, &ome::xerces::dom::detail::unmanaged<base_element_type>) :
+               ome::compat::shared_ptr<base_element_type>())
         {}
 
         /// Destructor.
@@ -160,7 +160,7 @@ namespace ome
         reset()
         {
           base.reset();
-          std::shared_ptr<base_element_type> n;
+          ome::compat::shared_ptr<base_element_type> n;
           assign(n);
         }
 
@@ -198,7 +198,7 @@ namespace ome
          */
         virtual
         void
-        assign(std::shared_ptr<base_element_type>& wrapped)
+        assign(ome::compat::shared_ptr<base_element_type>& wrapped)
         {
           base = wrapped;
         }
@@ -225,7 +225,7 @@ namespace ome
 
       private:
         /// Wrapped reference.
-        std::shared_ptr<base_element_type> base;
+        ome::compat::shared_ptr<base_element_type> base;
       };
 
     }

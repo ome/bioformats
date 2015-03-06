@@ -36,6 +36,7 @@
  */
 
 #include <ome/bioformats/in/TIFFReader.h>
+#include <ome/bioformats/in/OMETIFFReader.h>
 
 #include <ome/xerces/Platform.h>
 #include <ome/xerces/dom/Document.h>
@@ -63,6 +64,7 @@ namespace showinf
 
   ImageInfo::ImageInfo (const std::string &file,
                         const options&     opts):
+    logger(ome::compat::createLogger("ImageInfo")),
     file(file),
     opts(opts),
     reader()
@@ -74,7 +76,7 @@ namespace showinf
   }
 
   void
-  ImageInfo::setReader(std::shared_ptr<FormatReader>& reader)
+  ImageInfo::setReader(ome::compat::shared_ptr<FormatReader>& reader)
   {
     this->reader = reader;
   }
@@ -83,7 +85,7 @@ namespace showinf
   ImageInfo::testRead(std::ostream& stream)
   {
     if (!reader)
-      reader = std::make_shared<in::TIFFReader>();
+      reader = ome::compat::make_shared<in::OMETIFFReader>();
 
     preInit(stream);
 
@@ -92,12 +94,29 @@ namespace showinf
     Timestamp t2;
     stream << "Reader setup took "
            << static_cast<Timestamp::value_type>(t2) - static_cast<Timestamp::value_type>(t1)
-           << '\n';
+           << "\n\n";
 
     postInit(stream);
     checkWarnings(stream);
+
+    if (opts.stitch)
+      stream << "File pattern = " << file << '\n';
+    else
+      stream << "Filename = "
+             << (reader->getCurrentFile() ? *reader->getCurrentFile() : "null")
+             << '\n';
+
+    /// @todo Log mapped filename (if any)
+
+    if (opts.showused)
+      readUsedFiles(stream);
+    stream << '\n';
     if (opts.showcore)
       readCoreMetadata(stream);
+    if (opts.showorig)
+      readOriginalMetadata(stream);
+    if (opts.showomexml)
+      readOMEXMLMetadata(stream);
   }
 
   void
@@ -106,12 +125,12 @@ namespace showinf
     if (opts.showomexml)
       {
         reader->setOriginalMetadataPopulated(opts.showsa);
-        std::shared_ptr<ome::xml::meta::MetadataStore> store(std::make_shared<ome::xml::meta::OMEXMLMetadata>());
+        ome::compat::shared_ptr<ome::xml::meta::MetadataStore> store(ome::compat::make_shared<ome::xml::meta::OMEXMLMetadata>());
         reader->setMetadataStore(store);
       }
 
     /// @todo ImageReader format detection.
-    std::shared_ptr<ome::bioformats::detail::FormatReader> detail = std::dynamic_pointer_cast<ome::bioformats::detail::FormatReader>(reader);
+    ome::compat::shared_ptr<ome::bioformats::detail::FormatReader> detail = ome::compat::dynamic_pointer_cast<ome::bioformats::detail::FormatReader>(reader);
     if (detail)
       stream << "Using reader: " << detail->getFormat()
              << " (" << detail->getFormatDescription() << ")\n";
@@ -148,41 +167,33 @@ namespace showinf
   }
 
   void
-  ImageInfo::readCoreMetadata(std::ostream& stream)
+  ImageInfo::readUsedFiles(std::ostream& stream)
   {
-    stream << "\nReading core metadata\n";
-    if (opts.stitch)
-      stream << "File pattern = " << file << '\n';
-    else
-      stream << "Filename = "
-             << (reader->getCurrentFile() ? *reader->getCurrentFile() : "null")
-             << '\n';
-
-    /// @todo Log mapped filename (if any)
-
-    if (opts.showused)
+    const std::vector<boost::filesystem::path> used(reader->getUsedFiles());
+    if (used.empty())
       {
-        const std::vector<std::string> used(reader->getUsedFiles());
-        if (used.empty())
+        stream << "Used files = []";
+      }
+    else if (used.size() == 1)
+      {
+        stream << "Used files = [" << used.at(0) << "]\n";
+      }
+    else
+      {
+        stream << "Used files\n";
+        for (std::vector<boost::filesystem::path>::const_iterator i = used.begin();
+             i != used.end();
+             ++i)
           {
-            stream << "Used files = []";
-          }
-        else if (used.size() == 1)
-          {
-            stream << "Used files = [" << used.at(0) << "]\n";
-          }
-        else
-          {
-            stream << "Used files\n";
-            for (std::vector<std::string>::const_iterator i = used.begin();
-                 i != used.end();
-                 ++i)
-              {
-                stream << '\t' << *i << '\n';
-              }
+            stream << '\t' << *i << '\n';
           }
       }
+  }
 
+  void
+  ImageInfo::readCoreMetadata(std::ostream& stream)
+  {
+    stream << "Reading core metadata\n";
     dimension_size_type seriesCount(reader->getSeriesCount());
     stream << "Series count = " << seriesCount << '\n' << '\n';
 
@@ -229,7 +240,11 @@ namespace showinf
                << "\tThumbnailSeries = " << (reader->isThumbnailSeries() ? "true" : "false") << '\n'
                << '\n';
       }
+  }
 
+  void
+  ImageInfo::readOriginalMetadata(std::ostream& stream)
+  {
     const ome::bioformats::MetadataMap global = reader->getGlobalMetadata().flatten();
     if (global.empty())
       {
@@ -242,11 +257,12 @@ namespace showinf
              i != global.end();
              ++i)
           {
-            std::cout << '\t' << i->first << ": " << i->second << '\n';
+            stream << '\t' << i->first << ": " << i->second << '\n';
           }
         stream << '\n';
       }
 
+    dimension_size_type seriesCount(reader->getSeriesCount());
     for (dimension_size_type s = 0; s < seriesCount; ++s)
       {
         reader->setSeries(s);
@@ -259,53 +275,54 @@ namespace showinf
                  i != series.end();
                  ++i)
               {
-                std::cout << '\t' << i->first << ": " << i->second << '\n';
+                stream << '\t' << i->first << ": " << i->second << '\n';
               }
+            stream << '\n';
           }
-        stream << '\n';
       }
+  }
 
+  void
+  ImageInfo::readOMEXMLMetadata(std::ostream& stream)
+  {
     try
       {
-        std::shared_ptr<ome::xml::meta::MetadataStore> ms(reader->getMetadataStore());
-        std::shared_ptr<ome::xml::meta::MetadataRetrieve> mr(std::dynamic_pointer_cast<ome::xml::meta::MetadataRetrieve>(ms));
+        ome::compat::shared_ptr<ome::xml::meta::MetadataStore> ms(reader->getMetadataStore());
+        ome::compat::shared_ptr<ome::xml::meta::MetadataRetrieve> mr(ome::compat::dynamic_pointer_cast<ome::xml::meta::MetadataRetrieve>(ms));
       }
     catch (const std::exception& e)
       {
         std::cerr << "Failed to get metadata: " << e.what() << '\n';
       }
 
-    if (opts.showomexml)
+    ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadata> omemeta(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(reader->getMetadataStore()));
+    if (omemeta)
       {
-        std::shared_ptr<ome::xml::meta::OMEXMLMetadata> omemeta(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(reader->getMetadataStore()));
-        if (omemeta)
-          {
-            ome::xerces::Platform xmlplat;
+        ome::xerces::Platform xmlplat;
 
-            std::string omexml;
-            bool omexml_dumped = false;
+        std::string omexml;
+        bool omexml_dumped = false;
+        try
+          {
+            omexml = omemeta->dumpXML();
+            stream << "OME-XML metadata:\n" << omexml << '\n';
+            omexml_dumped = true;
+          }
+        catch (const std::exception& e)
+          {
+            stream << "Failed to get OME-XML metadata: " << e.what() << '\n';
+          }
+
+        if (omexml_dumped && opts.validate)
+          {
             try
               {
-                omexml = omemeta->dumpXML();
-                stream << "OME-XML metadata:\n" << omexml << '\n';
-                omexml_dumped = true;
+                ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(omexml));
+                stream << "OME-XML validation successful\n";
               }
             catch (const std::exception& e)
               {
-                stream << "Failed to get OME-XML metadata: " << e.what() << '\n';
-              }
-
-            if (omexml_dumped && opts.validate)
-              {
-                try
-                  {
-                    ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(omexml));
-                    stream << "OME-XML validation successful\n";
-                  }
-                catch (const std::exception& e)
-                  {
-                    stream << "Failed to validate OME-XML metadata: " << e.what() << '\n';
-                  }
+                stream << "Failed to validate OME-XML metadata: " << e.what() << '\n';
               }
           }
       }

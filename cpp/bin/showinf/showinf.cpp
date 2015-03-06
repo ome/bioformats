@@ -41,6 +41,8 @@
 
 #include <ome/internal/version.h>
 
+#include <ome/compat/log.h>
+
 #include <showinf/options.h>
 #include <showinf/ImageInfo.h>
 
@@ -102,6 +104,28 @@ main(int argc, char *argv[])
     {
       options opts;
       opts.parse(argc, argv);
+
+      ome::logging::trivial::severity_level logLevel;
+
+      switch (opts.verbosity)
+        {
+        case options::MSG_QUIET:
+          logLevel = ome::logging::trivial::fatal;
+          break;
+        case options::MSG_NORMAL:
+          logLevel = ome::logging::trivial::warning;
+          break;
+        case options::MSG_VERBOSE:
+          logLevel = ome::logging::trivial::info;
+          break;
+        case options::MSG_DEBUG:
+          logLevel = ome::logging::trivial::debug;
+          break;
+        default:
+          break;
+        }
+
+      ome::compat::setLogLevel(logLevel);
 
       switch (opts.action)
         {

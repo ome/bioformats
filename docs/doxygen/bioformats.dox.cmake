@@ -705,7 +705,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = moc_*.cpp
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1597,6 +1597,7 @@ PREDEFINED             = OME_HAVE_MEMORY \
                          OME_HAVE_TUPLE \
                          OME_HAVE_NOEXCEPT \
                          OME_HAVE_BOOST_FORMAT \
+                         OME_HAVE_BOOST_LOG \
                          OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
