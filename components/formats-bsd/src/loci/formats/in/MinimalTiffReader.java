@@ -429,7 +429,7 @@ public class MinimalTiffReader extends FormatReader {
     initTiffParser();
     Boolean littleEndian = tiffParser.checkHeader();
     if (littleEndian == null) {
-      throw new FormatException("Invalid TIFF file");
+      throw new FormatException("Invalid TIFF file: " + id);
     }
     boolean little = littleEndian.booleanValue();
     in.order(little);
