@@ -294,7 +294,10 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Image dimensions not found");
       }
 
-      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+      Boolean endian = null;
+      if (binData.size() > 0) {
+        omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+      }
       String pixType = omexmlMeta.getPixelsType(i).toString();
       ms.dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
       ms.sizeX = w.intValue();
