@@ -84,6 +84,11 @@ if(NOT OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP)
   message(WARNING "Spatial indexes not available with this version of Boost.Geometry; tile coverage lookups will have reduced performance (linear scan replacing quadratic R*Tree)")
 endif()
 
+check_cxx_source_compiles("
+#include <boost/cstdint.hpp>
+int main() { uint16_t test(134); }
+" OME_HAVE_BOOST_CSTDINT)
+
 # Boost library checks could be dropped?
 # boost::program_options::variables_map in -lboost_program_options
 # + BOOST_PROGRAM_OPTIONS_DESCRIPTION_OLD (drop?)
