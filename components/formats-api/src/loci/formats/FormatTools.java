@@ -304,15 +304,15 @@ public final class FormatTools {
 
   /** URL of Bio-Formats web page. */
   public static final String URL_BIO_FORMATS =
-    "http://www.openmicroscopy.org/site/products/bio-formats";
+    "http://openmicroscopy.org/info/bio-formats";
 
   /** URL of 'Bio-Formats as a Java Library' web page. */
   public static final String URL_BIO_FORMATS_LIBRARIES =
-    "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html";
+    "http://openmicroscopy.org/info/bio-formats/developers/java-library.html";
 
   /** URL of OME-TIFF web page. */
   public static final String URL_OME_TIFF =
-    "http://ome-xml.org/wiki/OmeTiff";
+    "http://openmicroscopy.org/site/support/ome-model/ome-tiff/";
 
   // -- Constructor --
 

@@ -44,11 +44,11 @@ public final class About implements PlugIn {
 
   /** URL of the Bio-Formats web page. */
   public static final String URL_SOFTWARE =
-    "http://www.openmicroscopy.org/site/products/bio-formats";
+    "http://openmicroscopy.org/info/bio-formats";
 
   /** URL of Bio-Formats ImageJ web page. */
   public static final String URL_BIO_FORMATS_IMAGEJ =
-    "http://www.openmicroscopy.org/site/support/bio-formats/users/imagej/features.html";
+    "http://openmicroscopy.org/info/bio-formats/users/imagej/features.html";
 
   /** URL of Data Browser web page. */
   public static final String URL_DATA_BROWSER =
