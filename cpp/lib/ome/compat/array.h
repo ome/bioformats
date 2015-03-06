@@ -52,10 +52,21 @@
 
 # ifdef OME_HAVE_ARRAY
 #  include <array>
+namespace ome
+{
+  namespace compat
+  {
+    using std::array;
+  }
+}
 # elif OME_HAVE_BOOST_ARRAY
 #  include <boost/array.hpp>
-namespace std {
+namespace ome
+{
+  namespace compat
+  {
     using boost::array;
+  }
 }
 # else
 #  error An array implementation is not available

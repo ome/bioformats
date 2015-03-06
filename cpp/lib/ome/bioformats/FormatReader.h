@@ -833,7 +833,7 @@ namespace ome
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
-      std::array<dimension_size_type, 3>
+      ome::compat::array<dimension_size_type, 3>
       getZCTCoords(dimension_size_type index) const = 0;
 
       /**
@@ -853,7 +853,7 @@ namespace ome
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
-      std::array<dimension_size_type, 6>
+      ome::compat::array<dimension_size_type, 6>
       getZCTModuloCoords(dimension_size_type index) const = 0;
 
       /**

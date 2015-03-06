@@ -233,7 +233,7 @@ namespace ome
               dimension_size_type mt = reader->getModuloT().size();
               dimension_size_type mc = reader->getModuloC().size();
 
-              std::array<dimension_size_type, 3> coords(reader->getZCTCoords(plane));
+              ome::compat::array<dimension_size_type, 3> coords(reader->getZCTCoords(plane));
               reader->setSeries(oldseries);
 
               // Effective and modulo dimension positions

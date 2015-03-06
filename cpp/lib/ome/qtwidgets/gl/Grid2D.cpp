@@ -135,7 +135,7 @@ namespace ome
       Grid2D::setSize(const glm::vec2& xlim,
                       const glm::vec2& ylim)
       {
-        std::array<glm::vec3, 3> gridcol;
+        ome::compat::array<glm::vec3, 3> gridcol;
         gridcol[0] = glm::vec3(0.5f, 0.5f, 0.5f);
         gridcol[1] = glm::vec3(0.7f, 0.7f, 0.7f);
         gridcol[2] = glm::vec3(0.9f, 0.9f, 0.9f);

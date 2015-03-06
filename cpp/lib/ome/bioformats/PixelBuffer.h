@@ -111,7 +111,7 @@ namespace ome
       typedef boost::multi_array_types::index index;
 
       /// Type used to index all dimensions in public interfaces.
-      typedef std::array<boost::multi_array_types::index,
+      typedef ome::compat::array<boost::multi_array_types::index,
                          PixelBufferBase::dimensions> indices_type;
 
       /// Storage ordering type for controlling pixel memory layout.

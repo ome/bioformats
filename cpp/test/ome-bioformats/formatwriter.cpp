@@ -118,7 +118,7 @@ namespace std
 }
 
 typedef ome::xml::model::enums::PixelType PT;
-typedef std::array<dimension_size_type, 3> dim;
+typedef ome::compat::array<dimension_size_type, 3> dim;
 
 class FormatWriterTestParameters
 {
