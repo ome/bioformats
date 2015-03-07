@@ -43,6 +43,7 @@
 #include <ome/xerces/Platform.h>
 
 #include <ome/test/test.h>
+#include <ome/test/io.h>
 
 TEST(XMLTools, Escape)
 {
@@ -89,16 +90,7 @@ TEST_P(XMLToolsFileTest, ValidateXML)
   const XMLToolsFileTestParameters& params = GetParam();
 
   std::string data;
-
-  std::ifstream in(params.filename.c_str());
-
-  ASSERT_TRUE(!!in);
-  in.seekg(0, std::ios::end);
-  data.reserve(in.tellg());
-  in.seekg(0, std::ios::beg);
-
-  data.assign(std::istreambuf_iterator<char>(in),
-              std::istreambuf_iterator<char>());
+  readFile(params.filename, data);
 
   if (params.valid)
     {
