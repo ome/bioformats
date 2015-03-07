@@ -1653,13 +1653,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 22) div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((625*math:power(10, 18)) div 5912956545363)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((125*math:power(10, 12)) div 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 30)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 28)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 27)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 25)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 25)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((78125*math:power(10, 20)) div 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 28)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((4724412*math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701*math:power(10, 20))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((9842525*math:power(10, 18)) div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((9842525*math:power(10, 18)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((559234375*math:power(10, 13)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((28346472*math:power(10, 20))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1700,13 +1700,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 19) div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((625*math:power(10, 15)) div 5912956545363)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((125*math:power(10, 9)) div 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 27)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 25)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 24)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 22)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 22)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((78125*math:power(10, 17)) div 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 25)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((4724412*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701*math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((9842525*math:power(10, 15)) div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((9842525*math:power(10, 15)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((559234375*math:power(10, 10)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((28346472*math:power(10, 17))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1747,13 +1747,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 16) div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((625*math:power(10, 12)) div 5912956545363)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="(((125*math:power(10, 6)) div 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 24)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 22)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 21)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 19)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 19)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((78125*math:power(10, 14)) div 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 22)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((4724412*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701*math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((9842525*math:power(10, 12)) div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((9842525*math:power(10, 12)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((559234375*math:power(10, 7)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((28346472*math:power(10, 14))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1794,13 +1794,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 13) div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((625*math:power(10, 9)) div 5912956545363)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((125000 div 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 21)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 19)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 18)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 16)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 16)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((78125*math:power(10, 11)) div 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 19)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((4724412*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701*math:power(10, 11))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((9842525*math:power(10, 9)) div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((9842525*math:power(10, 9)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((559234375*math:power(10, 4)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((28346472*math:power(10, 11))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1841,13 +1841,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 10) div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((625*math:power(10, 6)) div 5912956545363)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((125 div 3857097)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 18)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 16)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 15)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 13)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 13)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((78125*math:power(10, 8)) div 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 16)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((4724412*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701*math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((9842525*math:power(10, 6)) div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((9842525*math:power(10, 6)) div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((5592343750 div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((28346472*math:power(10, 8))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1888,13 +1888,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 7) div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((625000 div 5912956545363)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div 30856776)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 15)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 13)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 12)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 10)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 10)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((78125*math:power(10, 5)) div 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 13)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(39370100*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((4724412*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((9842525000 div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9842525000 div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((22369375 div 36)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((28346472*math:power(10, 5))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1935,13 +1935,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 4) div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((625 div 5912956545363)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div 30856776000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 12)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 10)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 9)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 7)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 7)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((7812500 div 12573)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 10)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(472441200*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(39370100*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((9842525 div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((9842525 div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((178955 div 288)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(2834647200*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -1982,13 +1982,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((10 div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((5 div 47303652362904)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 9)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 7)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((125*math:power(10, 4)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((125*math:power(10, 4)) div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((15625 div 25146)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 7)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((2362206 div 5)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div 10)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div 120)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div 360)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div 57600)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((14173236 div 5)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2029,13 +2029,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div 1495978707)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div 94607304725808)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 8)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 5)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((125000 div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((125000 div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((3125 div 50292)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div 100)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div 1200)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div 3600)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div 576000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((7086618 div 25)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2076,13 +2076,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div 14959787070)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div 946073047258080)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 7)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 5)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((5*math:power(10, 4)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((12500 div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((12500 div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((625 div 100584)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 5)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div 250)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div 1000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div 12000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div 36000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div 125)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2123,13 +2123,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div 149597870700)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div 9460730472580800)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 9)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((6*math:power(10, 4)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((5000 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1250 div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1250 div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((125 div 201168)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((36*math:power(10, 4)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div 2500)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div 1250)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2170,13 +2170,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div 1495978707000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div 94607304725808000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 10)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 5)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((6000 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((500 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((125 div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((125 div 1143)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((25 div 402336)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((36000 div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 8))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div 25000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div 12500)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2217,13 +2217,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 4)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 4)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 11)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((5*math:power(10, 4)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((600 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((50 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((25 div 762)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((25 div 2286)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((5 div 804672)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3600 div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 9))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 6))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div 125000)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2264,13 +2264,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 5)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 5)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 12)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((5000 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((60 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((5 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((5 div 1524)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((5 div 4572)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div 1609344)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((360 div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 7))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 4)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2311,13 +2311,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 8)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 8)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 15)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((5 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div 6350)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div 25400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div 304800)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div 914400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div 1609344000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div 3175)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 10))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 7)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2358,13 +2358,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 11)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 11)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 18)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div 25400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div (635*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div (254*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div (3048*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div (9144*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (1609344*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div 3175000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 13))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 10)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2405,13 +2405,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 14)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 14)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 21)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div (254*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div (635*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div (254*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div (3048*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div (9144*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (1609344*math:power(10, 9)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div (3175*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 16))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 16)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 13)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2452,13 +2452,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 17)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 17)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 24)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div (254*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div (635*math:power(10, 10)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div (254*math:power(10, 11)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div (3048*math:power(10, 11)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div (9144*math:power(10, 11)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (1609344*math:power(10, 12)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div (3175*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 19))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 19)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 16)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2499,13 +2499,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 20)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 20)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 27)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div (254*math:power(10, 11)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div (635*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div (254*math:power(10, 14)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div (3048*math:power(10, 14)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div (9144*math:power(10, 14)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (1609344*math:power(10, 15)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div (3175*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 22))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 22)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 22)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 23)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 19)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2546,13 +2546,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 23)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 23)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 30)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div (254*math:power(10, 14)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div (635*math:power(10, 16)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div (254*math:power(10, 17)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div (3048*math:power(10, 17)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div (9144*math:power(10, 17)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (1609344*math:power(10, 18)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div (3175*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 28))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 23)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 25))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 25)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 25)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 26)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 22)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2593,13 +2593,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 26)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 26)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 33)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div (254*math:power(10, 17)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div (635*math:power(10, 19)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div (254*math:power(10, 20)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div (3048*math:power(10, 20)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div (9144*math:power(10, 20)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (1609344*math:power(10, 21)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div (3175*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 31))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 26)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 28))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 28)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 28)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 29)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 25)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2640,13 +2640,13 @@
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1 div (1495978707*math:power(10, 12)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1 div (94607304725808*math:power(10, 12)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (30856776*math:power(10, 19)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div 254000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div (635*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div (254*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div (3048*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div (9144*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (1609344*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div (3175*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((393701 div math:power(10, 17))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1181103 div (25*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((393701 div math:power(10, 14))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((393701 div (12*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((393701 div (36*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((35791 div (576*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((3543309 div (125*math:power(10, 11)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2687,13 +2687,13 @@
 					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1495978707*math:power(10, 12))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((6830953 div 431996825232)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((498659569 div (10285592*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((7479893535*math:power(10, 8)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((8975872242*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((7479893535*math:power(10, 5)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((62332446125000 div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((62332446125000 div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1558311153125 div 16764)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((53855233452*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((588968312924607 div math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1766904938773821 div 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((588968312924607 div 100)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((196322770974869 div 400)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((196322770974869 div 1200)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((17847524634079 div 192000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((10601429632642926 div 25)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2734,13 +2734,13 @@
 					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((94607304725808*math:power(10, 12))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((431996825232 div 6830953)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1970985515121 div (6428495*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((47303652362904*math:power(10, 9)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((567643828354848*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((47303652362904*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((3941971030242*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((1313990343414*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((8212439646337500 div 1397)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((3405862970129088*math:power(10, 6)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((2327936904865958463 div 6250)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((111740971433566006224 div 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((9311747619463833852 div 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((775978968288652821 div 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((258659656096217607 div 25)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((23514514190565237 div 4000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((670445828601396037344 div 25)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2781,13 +2781,13 @@
 					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((30856776*math:power(10, 19))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="(((10285592*math:power(10, 7)) div 498659569)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="(((6428495*math:power(10, 6)) div 1970985515121)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(((15428388*math:power(10, 16)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(((185140656*math:power(10, 13)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(((15428388*math:power(10, 13)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(((1285699*math:power(10, 13)) div 127)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((1285699*math:power(10, 13)) div 381)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="(((803561875*math:power(10, 8)) div 4191)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(((1110843936*math:power(10, 13)) div 127)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(1214834356797600*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((145780122815712*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((12148343567976*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1012361963998*math:power(10, 5))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="(((1012361963998*math:power(10, 5)) div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((57520566136250 div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((874680736894272*math:power(10, 5))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2804,37 +2804,37 @@
 			<xsl:when test="$theCurrentUnit = 'thou'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((127 div (5*math:power(10, 30)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((127 div (5*math:power(10, 27)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((127 div (5*math:power(10, 24)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((127 div (5*math:power(10, 21)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((127 div (5*math:power(10, 18)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((127 div (5*math:power(10, 15)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((127 div (5*math:power(10, 12)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((127 div (5*math:power(10, 9)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((127 div (5*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((127 div (5*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((127 div (5*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((127 div (5*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((127 div (5*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((127 div 5000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((127 div 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(25400*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((254*math:power(10, 5))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((254*math:power(10, 8))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((254*math:power(10, 11))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((254*math:power(10, 14))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((254*math:power(10, 17))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(254000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((127 div (7479893535*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((127 div (47303652362904*math:power(10, 9)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((127 div (15428388*math:power(10, 16)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((3 div 250)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div 12000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div 36000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((1 div (6336*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="((9 div 125)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((1 div (393701*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1 div (393701*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1 div (393701*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1 div (393701*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 div (393701*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 div 39370100)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((10 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((math:power(10, 4) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((math:power(10, 5) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((math:power(10, 6) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, 7) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, 8) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, 9) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, 10) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, 13) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, 16) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, 19) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, 22) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, 25) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, 28) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, 31) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, 17) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((math:power(10, 5) div 588968312924607)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((6250 div 2327936904865958463)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div 1214834356797600)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(12000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((250 div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((250 div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mi'"><xsl:value-of select="((25 div 1584)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pt'"><xsl:value-of select="(72000*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -2851,32 +2851,32 @@
 			<xsl:when test="$theCurrentUnit = 'li'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((127 div (6*math:power(10, 28)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((127 div (6*math:power(10, 25)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((127 div (6*math:power(10, 22)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((127 div (6*math:power(10, 19)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((127 div (6*math:power(10, 16)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((127 div (6*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((127 div (6*math:power(10, 10)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((127 div (6*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((127 div (6*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((127 div (6*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((127 div (6*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((127 div 6000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((127 div 600)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((127 div 60)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((6350 div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(((635*math:power(10, 4)) div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(((635*math:power(10, 7)) div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(((635*math:power(10, 10)) div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(((635*math:power(10, 13)) div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(((635*math:power(10, 16)) div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="(((635*math:power(10, 19)) div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(((635*math:power(10, 5)) div 3)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((127 div (8975872242*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((127 div (567643828354848*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((127 div (185140656*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((250 div 3)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((1 div (4724412*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1 div (4724412*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1 div (4724412*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1 div (4724412*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 div (4724412*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 div (4724412*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 div 472441200)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((5 div 2362206)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((25 div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((250 div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((2500 div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((25000 div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(((25*math:power(10, 4)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(((25*math:power(10, 5)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(((25*math:power(10, 8)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(((25*math:power(10, 11)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(((25*math:power(10, 14)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(((25*math:power(10, 17)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(((25*math:power(10, 20)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(((25*math:power(10, 23)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="(((25*math:power(10, 26)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(((25*math:power(10, 12)) div 1181103)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((25 div 1766904938773821)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((25 div 111740971433566006224)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (145780122815712*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div 12000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div 12)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div 144)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div 432)*$theValue)"/></xsl:when>
@@ -2898,32 +2898,32 @@
 			<xsl:when test="$theCurrentUnit = 'in'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((127 div (5*math:power(10, 27)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((127 div (5*math:power(10, 24)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((127 div (5*math:power(10, 21)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((127 div (5*math:power(10, 18)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((127 div (5*math:power(10, 15)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((127 div (5*math:power(10, 12)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((127 div (5*math:power(10, 9)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((127 div (5*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((127 div (5*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((127 div (5*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((127 div 5000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((127 div 500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((127 div 50)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((127 div 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(25400*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((254*math:power(10, 5))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((254*math:power(10, 8))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((254*math:power(10, 11))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((254*math:power(10, 14))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((254*math:power(10, 17))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((254*math:power(10, 20))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((254*math:power(10, 6))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((127 div (7479893535*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((127 div (47303652362904*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((127 div (15428388*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((1 div (393701*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1 div (393701*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1 div (393701*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1 div (393701*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 div (393701*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 div (393701*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 div 39370100)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((10 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((100 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1000 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((math:power(10, 4) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((math:power(10, 5) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((math:power(10, 6) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((math:power(10, 7) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((math:power(10, 10) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((math:power(10, 13) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((math:power(10, 16) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((math:power(10, 19) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((math:power(10, 22) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((math:power(10, 25) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((math:power(10, 28) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((math:power(10, 14) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((100 div 588968312924607)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((25 div 9311747619463833852)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (12148343567976*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div 1000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(12*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div 12)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div 36)*$theValue)"/></xsl:when>
@@ -2945,32 +2945,32 @@
 			<xsl:when test="$theCurrentUnit = 'ft'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((381 div (125*math:power(10, 25)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((381 div (125*math:power(10, 22)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((381 div (125*math:power(10, 19)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((381 div (125*math:power(10, 16)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((381 div (125*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((381 div (125*math:power(10, 10)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((381 div (125*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((381 div (125*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((381 div 125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((381 div 12500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((381 div 1250)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((381 div 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((762 div 25)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((1524 div 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(304800*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((3048*math:power(10, 5))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((3048*math:power(10, 8))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((3048*math:power(10, 11))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((3048*math:power(10, 14))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((3048*math:power(10, 17))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((3048*math:power(10, 20))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((3048*math:power(10, 6))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((127 div 62332446125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((127 div (3941971030242*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((127 div (1285699*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(12000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((3 div (9842525*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((3 div (9842525*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((3 div (9842525*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((3 div (9842525*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((3 div (9842525*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((3 div 9842525000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((3 div 9842525)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((120 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1200 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((12000 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(((12*math:power(10, 4)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(((12*math:power(10, 5)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(((12*math:power(10, 6)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(((12*math:power(10, 7)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(((12*math:power(10, 10)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(((12*math:power(10, 13)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(((12*math:power(10, 16)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(((12*math:power(10, 19)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(((12*math:power(10, 22)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(((12*math:power(10, 25)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="(((12*math:power(10, 28)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(((12*math:power(10, 14)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((400 div 196322770974869)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((25 div 775978968288652821)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (1012361963998*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((3 div 250)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(144*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(12*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'yd'"><xsl:value-of select="((1 div 3)*$theValue)"/></xsl:when>
@@ -2992,32 +2992,32 @@
 			<xsl:when test="$theCurrentUnit = 'yd'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((1143 div (125*math:power(10, 25)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1143 div (125*math:power(10, 22)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1143 div (125*math:power(10, 19)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1143 div (125*math:power(10, 16)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1143 div (125*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1143 div (125*math:power(10, 10)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1143 div (125*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((1143 div (125*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((1143 div 125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((1143 div 12500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1143 div 1250)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((1143 div 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((2286 div 25)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((4572 div 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(914400*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((9144*math:power(10, 5))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((9144*math:power(10, 8))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((9144*math:power(10, 11))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((9144*math:power(10, 14))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((9144*math:power(10, 17))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((9144*math:power(10, 20))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((9144*math:power(10, 6))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((381 div 62332446125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((127 div (1313990343414*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((381 div (1285699*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="(36000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((9 div (9842525*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((9 div (9842525*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((9 div (9842525*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((9 div (9842525*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((9 div (9842525*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((9 div 9842525000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((9 div 9842525)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((360 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((3600 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((36000 div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(((36*math:power(10, 4)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(((36*math:power(10, 5)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(((36*math:power(10, 6)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(((36*math:power(10, 7)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(((36*math:power(10, 10)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(((36*math:power(10, 13)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(((36*math:power(10, 16)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(((36*math:power(10, 19)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(((36*math:power(10, 22)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(((36*math:power(10, 25)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="(((36*math:power(10, 28)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(((36*math:power(10, 14)) div 393701)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((1200 div 196322770974869)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((25 div 258659656096217607)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((3 div (1012361963998*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((9 div 250)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(432*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(36*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(3*$theValue)"/></xsl:when>
@@ -3039,32 +3039,32 @@
 			<xsl:when test="$theCurrentUnit = 'mi'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((12573 div (78125*math:power(10, 20)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((12573 div (78125*math:power(10, 17)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((12573 div (78125*math:power(10, 14)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((12573 div (78125*math:power(10, 11)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((12573 div (78125*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((12573 div (78125*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((12573 div 7812500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((25146 div 15625)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((50292 div 3125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((100584 div 625)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((201168 div 125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((402336 div 25)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((804672 div 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(1609344*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(1609344000*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((1609344*math:power(10, 6))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="((1609344*math:power(10, 9))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="((1609344*math:power(10, 12))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="((1609344*math:power(10, 15))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="((1609344*math:power(10, 18))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="((1609344*math:power(10, 21))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="((1609344*math:power(10, 7))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((16764 div 1558311153125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((1397 div 8212439646337500)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((4191 div (803561875*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((6336*math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((9 div (559234375*math:power(10, 13)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((9 div (559234375*math:power(10, 10)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((9 div (559234375*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((9 div (559234375*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((9 div 5592343750)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((36 div 22369375)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((288 div 178955)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((57600 div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((576000 div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="(((576*math:power(10, 4)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="(((576*math:power(10, 5)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="(((576*math:power(10, 6)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="(((576*math:power(10, 7)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(((576*math:power(10, 8)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(((576*math:power(10, 11)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(((576*math:power(10, 14)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(((576*math:power(10, 17)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(((576*math:power(10, 20)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(((576*math:power(10, 23)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(((576*math:power(10, 26)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="(((576*math:power(10, 29)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(((576*math:power(10, 15)) div 35791)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((192000 div 17847524634079)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((4000 div 23514514190565237)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((3 div 57520566136250)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1584 div 25)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="(760320*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="(63360*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="(5280*$theValue)"/></xsl:when>
@@ -3086,32 +3086,32 @@
 			<xsl:when test="$theCurrentUnit = 'pt'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((127 div (36*math:power(10, 28)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((127 div (36*math:power(10, 25)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((127 div (36*math:power(10, 22)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((127 div (36*math:power(10, 19)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((127 div (36*math:power(10, 16)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((127 div (36*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((127 div (36*math:power(10, 10)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((127 div (36*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((127 div (36*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((127 div (36*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((127 div (36*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((127 div 36000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((127 div 3600)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="((127 div 360)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="((3175 div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="((3175000 div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(((3175*math:power(10, 6)) div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(((3175*math:power(10, 9)) div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(((3175*math:power(10, 12)) div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(((3175*math:power(10, 15)) div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="(((3175*math:power(10, 18)) div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(((3175*math:power(10, 4)) div 9)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((127 div (53855233452*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((127 div (3405862970129088*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((127 div (1110843936*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((125 div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Ym'"><xsl:value-of select="((1 div (28346472*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Zm'"><xsl:value-of select="((1 div (28346472*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Em'"><xsl:value-of select="((1 div (28346472*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pm'"><xsl:value-of select="((1 div (28346472*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Tm'"><xsl:value-of select="((1 div (28346472*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Gm'"><xsl:value-of select="((1 div (28346472*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mm'"><xsl:value-of select="((1 div 2834647200)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'km'"><xsl:value-of select="((5 div 14173236)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hm'"><xsl:value-of select="((25 div 7086618)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dam'"><xsl:value-of select="((125 div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'm'"><xsl:value-of select="((1250 div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dm'"><xsl:value-of select="((12500 div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cm'"><xsl:value-of select="((125000 div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm'"><xsl:value-of select="(((125*math:power(10, 4)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µm'"><xsl:value-of select="(((125*math:power(10, 7)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nm'"><xsl:value-of select="(((125*math:power(10, 10)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pm'"><xsl:value-of select="(((125*math:power(10, 13)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fm'"><xsl:value-of select="(((125*math:power(10, 16)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'am'"><xsl:value-of select="(((125*math:power(10, 19)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zm'"><xsl:value-of select="(((125*math:power(10, 22)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ym'"><xsl:value-of select="(((125*math:power(10, 25)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Å'"><xsl:value-of select="(((125*math:power(10, 11)) div 3543309)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ua'"><xsl:value-of select="((25 div 10601429632642926)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ly'"><xsl:value-of select="((25 div 670445828601396037344)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pc'"><xsl:value-of select="((1 div (874680736894272*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'thou'"><xsl:value-of select="((1 div 72000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'li'"><xsl:value-of select="((1 div 6)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'in'"><xsl:value-of select="((1 div 72)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'ft'"><xsl:value-of select="((1 div 864)*$theValue)"/></xsl:when>
@@ -3950,7 +3950,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 22)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 33)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 23)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 26)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 20)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 32)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -3997,7 +3997,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 19)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 30)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 20)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 23)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 17)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 29)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4044,7 +4044,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 16)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 27)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 17)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 20)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 14)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 26)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4091,7 +4091,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 13)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 24)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 14)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 17)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 11)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 23)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4138,7 +4138,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 10)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 21)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 11)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 14)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 8)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 20)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4185,7 +4185,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 7)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 18)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 8)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 11)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 5)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 17)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4232,7 +4232,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 4)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 15)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 5)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 8)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((30400 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 14)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4279,7 +4279,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((40 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 12)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((30400 div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 5)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((152 div 20265)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 11)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4326,7 +4326,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((4 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 11)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((3040 div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 4)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((76 div 101325)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 10)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4373,7 +4373,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((2 div 20265)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 10)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((304 div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((304000 div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((38 div 506625)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 9)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4420,7 +4420,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div 101325)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 9)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((152 div 20265)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((30400 div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div 2533125)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 8)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4467,7 +4467,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div 1013250)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 8)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((76 div 101325)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((3040 div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div 25331250)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 7)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4514,7 +4514,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div 10132500)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 7)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((38 div 506625)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((304 div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div 253312500)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 6)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4561,7 +4561,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div 101325000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 6)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div 2533125)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((152 div 20265)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div 2533125000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 5)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4608,7 +4608,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (101325*math:power(10, 6)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((25000 div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div 2533125000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div 2533125)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 6)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((200 div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4655,7 +4655,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (101325*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((25 div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div (2533125*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div 2533125000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((1 div 133322387415)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4702,7 +4702,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (101325*math:power(10, 12)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((1 div 6894757293168360)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div (2533125*math:power(10, 9)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 6)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 12)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((1 div 133322387415000)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4749,7 +4749,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (101325*math:power(10, 15)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((1 div (689475729316836*math:power(10, 4)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div (2533125*math:power(10, 12)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 9)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 15)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((1 div (133322387415*math:power(10, 6)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4796,7 +4796,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (101325*math:power(10, 18)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((1 div (689475729316836*math:power(10, 7)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div (2533125*math:power(10, 15)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 12)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 18)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((1 div (133322387415*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4843,7 +4843,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (101325*math:power(10, 21)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((1 div (689475729316836*math:power(10, 10)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div (2533125*math:power(10, 18)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 15)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 21)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((1 div (133322387415*math:power(10, 12)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4890,7 +4890,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (101325*math:power(10, 24)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((1 div (689475729316836*math:power(10, 13)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((19 div (2533125*math:power(10, 21)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 18)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div (2533125*math:power(10, 24)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((1 div (133322387415*math:power(10, 15)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4937,7 +4937,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((4000 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 14)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 4)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 7)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((3040 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 13)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -4984,7 +4984,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 9)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 20)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 10)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 13)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 7)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 19)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5031,7 +5031,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="(((4*math:power(10, 6)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 17)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(((304*math:power(10, 7)) div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 10)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 4)) div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 16)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5078,7 +5078,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((400 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 13)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((304000 div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 6)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((304 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 12)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5125,7 +5125,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((40 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 12)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((30400 div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 5)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((152 div 20265)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 11)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5172,7 +5172,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((4 div 4053)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((25*math:power(10, 11)) div 172368932329209)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((3040 div 4053)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(((304*math:power(10, 4)) div 4053)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((76 div 101325)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((2*math:power(10, 10)) div 26664477483)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5219,7 +5219,7 @@
 					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((4053 div 4)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((120625*math:power(10, 9)) div 8208044396629)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(760*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((76*math:power(10, 4))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((19 div 25)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((965*math:power(10, 9)) div 1269737023)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5266,7 +5266,7 @@
 					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((172368932329209 div (25*math:power(10, 11)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((8208044396629 div (120625*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((155952843535951 div (3015625*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((155952843535951 div 3015625000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((155952843535951 div (3015625*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((8208044396629 div 158717127875)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5313,7 +5313,7 @@
 					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((4053 div 3040)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div 760)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((3015625*math:power(10, 6)) div 155952843535951)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((1 div 1000)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((24125*math:power(10, 6)) div 24125003437)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
@@ -5331,37 +5331,37 @@
 			<xsl:when test="$theCurrentUnit = 'mTorr'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="((4053 div (304*math:power(10, 26)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((4053 div (304*math:power(10, 23)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((4053 div (304*math:power(10, 20)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((4053 div (304*math:power(10, 17)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((4053 div (304*math:power(10, 14)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((4053 div (304*math:power(10, 11)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((4053 div (304*math:power(10, 8)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((4053 div (304*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((4053 div (304*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((4053 div 304000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Pa'"><xsl:value-of select="((4053 div 30400)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((4053 div 3040)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((4053 div 304)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((20265 div 152)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="((2533125 div 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="((2533125000 div 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(((2533125*math:power(10, 6)) div 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(((2533125*math:power(10, 9)) div 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="(((2533125*math:power(10, 12)) div 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="(((2533125*math:power(10, 15)) div 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="(((2533125*math:power(10, 18)) div 19)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((4053 div (304*math:power(10, 7)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((4053 div (304*math:power(10, 13)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((4053 div (304*math:power(10, 10)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((4053 div (304*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((4053 div (304*math:power(10, 5)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((4053 div (304*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1 div (76*math:power(10, 4)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((3015625000 div 155952843535951)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((1 div 1000)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="((24125000 div 24125003437)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'YPa'"><xsl:value-of select="((4053 div (304*math:power(10, 20)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'ZPa'"><xsl:value-of select="((4053 div (304*math:power(10, 17)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'EPa'"><xsl:value-of select="((4053 div (304*math:power(10, 14)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'PPa'"><xsl:value-of select="((4053 div (304*math:power(10, 11)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'TPa'"><xsl:value-of select="((4053 div (304*math:power(10, 8)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'GPa'"><xsl:value-of select="((4053 div (304*math:power(10, 5)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'MPa'"><xsl:value-of select="((4053 div 30400)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kPa'"><xsl:value-of select="((20265 div 152)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'hPa'"><xsl:value-of select="((101325 div 76)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'daPa'"><xsl:value-of select="((506625 div 38)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Pa'"><xsl:value-of select="((2533125 div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dPa'"><xsl:value-of select="((25331250 div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cPa'"><xsl:value-of select="((253312500 div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mPa'"><xsl:value-of select="((2533125000 div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'µPa'"><xsl:value-of select="(((2533125*math:power(10, 6)) div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'nPa'"><xsl:value-of select="(((2533125*math:power(10, 9)) div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'pPa'"><xsl:value-of select="(((2533125*math:power(10, 12)) div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'fPa'"><xsl:value-of select="(((2533125*math:power(10, 15)) div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'aPa'"><xsl:value-of select="(((2533125*math:power(10, 18)) div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'zPa'"><xsl:value-of select="(((2533125*math:power(10, 21)) div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'yPa'"><xsl:value-of select="(((2533125*math:power(10, 24)) div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'bar'"><xsl:value-of select="((4053 div 3040)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Mbar'"><xsl:value-of select="((4053 div (304*math:power(10, 7)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'kbar'"><xsl:value-of select="((4053 div (304*math:power(10, 4)))*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'dbar'"><xsl:value-of select="((4053 div 304)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'cbar'"><xsl:value-of select="((20265 div 152)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mbar'"><xsl:value-of select="((101325 div 76)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((25 div 19)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="(((3015625*math:power(10, 9)) div 155952843535951)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="(1000*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mm Hg'"><xsl:value-of select="(((24125*math:power(10, 9)) div 24125003437)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5408,7 +5408,7 @@
 					<xsl:when test="$theNewUnit = 'atm'"><xsl:value-of select="((1269737023 div (965*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'psi'"><xsl:value-of select="((158717127875 div 8208044396629)*$theValue)"/></xsl:when>
 					<xsl:when test="$theNewUnit = 'Torr'"><xsl:value-of select="((24125003437 div (24125*math:power(10, 6)))*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((24125003437 div 24125000)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'mTorr'"><xsl:value-of select="((24125003437 div (24125*math:power(10, 9)))*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5425,9 +5425,9 @@
 			<xsl:when test="$theCurrentUnit = 'K'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="($theValue+(5463 div 20))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((5 div 9)*$theValue)+(45967 div 180))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="((5 div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="($theValue+(-5463 div 20))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((9 div 5)*$theValue)+(-45967 div 100))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="((9 div 5)*$theValue)"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5444,9 +5444,9 @@
 			<xsl:when test="$theCurrentUnit = '°C'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="($theValue+(-5463 div 20))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((5 div 9)*$theValue)+(-160 div 9))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="(((5 div 9)*$theValue)+(-5463 div 20))"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="($theValue+(5463 div 20))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="(((9 div 5)*$theValue)+32)"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="(((9 div 5)*$theValue)+(49167 div 100))"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5463,9 +5463,9 @@
 			<xsl:when test="$theCurrentUnit = '°F'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="(((9 div 5)*$theValue)+(-45967 div 100))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((9 div 5)*$theValue)+32)"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="($theValue+(-45967 div 100))"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="(((5 div 9)*$theValue)+(45967 div 180))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((5 div 9)*$theValue)+(-160 div 9))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°R'"><xsl:value-of select="($theValue+(45967 div 100))"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
@@ -5482,9 +5482,9 @@
 			<xsl:when test="$theCurrentUnit = '°R'">
 				<xsl:choose>
 					<xsl:when test="$theNewUnit = 'UNKNOWN%SYMBOL'"><xsl:value-of select="ERROR"/></xsl:when>
-					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="((9 div 5)*$theValue)"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((9 div 5)*$theValue)+(49167 div 100))"/></xsl:when>
-					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="($theValue+(45967 div 100))"/></xsl:when>
+					<xsl:when test="$theNewUnit = 'K'"><xsl:value-of select="((5 div 9)*$theValue)"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°C'"><xsl:value-of select="(((5 div 9)*$theValue)+(-5463 div 20))"/></xsl:when>
+					<xsl:when test="$theNewUnit = '°F'"><xsl:value-of select="($theValue+(-45967 div 100))"/></xsl:when>
 					<xsl:otherwise>
 						<xsl:message terminate="yes">OME-XSLT: units-conversion.xsl - ERROR - ConvertValueToUnit, cannot perform conversion, [<xsl:value-of select="$theCurrentUnit"/>] to [<xsl:value-of select="$theNewUnit"/>] is not supported.</xsl:message>
 					</xsl:otherwise>
