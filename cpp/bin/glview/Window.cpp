@@ -44,8 +44,9 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/in/OMETIFFReader.h>
 
+#include <ome/common/module.h>
+
 #include <ome/compat/memory.h>
-#include <ome/compat/module.h>
 
 using namespace ome::qtwidgets;
 using ome::bioformats::dimension_size_type;
@@ -79,7 +80,7 @@ namespace glview
 
   void Window::createActions()
   {
-    boost::filesystem::path iconpath(ome::compat::module_runtime_path("bf-icon"));
+    boost::filesystem::path iconpath(ome::common::module_runtime_path("bf-icon"));
 
     openAction = new QAction(tr("&Open image..."), this);
     openAction->setShortcuts(QKeySequence::Open);

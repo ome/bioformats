@@ -54,8 +54,6 @@ namespace ome
         const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_MODEL_VERSION);
       }
 
-      ome::compat::Logger MapPairs::logger = ome::compat::createLogger("MapPairs");
-
       MapPairs::MapPairs ():
         ::ome::xml::model::OMEModelObject(),
         detail::OMEModelObject(),
@@ -80,9 +78,14 @@ namespace ome
         detail::OMEModelObject(),
         map(map)
       {
+#ifdef OME_HAVE_BOOST_LOG
+        logger.add_attribute("ClassName", logging::attributes::constant<std::string>("MapPairs"));
+#else // ! OME_HAVE_BOOST_LOG
+        logger.className("MapPairs");
+#endif // OME_HAVE_BOOST_LOG
       }
 
-      MapPairs::MapPairs (xerces::dom::Element&        element,
+      MapPairs::MapPairs (common::xml::dom::Element&        element,
                           ::ome::xml::model::OMEModel& model):
         detail::OMEModelObject(),
         map()
@@ -110,7 +113,7 @@ namespace ome
       }
 
       void
-      MapPairs::update(const xerces::dom::Element&  element,
+      MapPairs::update(const common::xml::dom::Element&  element,
                        ::ome::xml::model::OMEModel& model)
       {
         detail::OMEModelObject::update(element, model);
@@ -122,8 +125,8 @@ namespace ome
               << "Expecting node name of Map or Value, got " << tagName;
           }
 
-        std::vector<xerces::dom::Element> M_nodeList(getChildrenByTagName(element, "M"));
-        for (std::vector<xerces::dom::Element>::iterator elem = M_nodeList.begin();
+        std::vector<common::xml::dom::Element> M_nodeList(getChildrenByTagName(element, "M"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = M_nodeList.begin();
              elem != M_nodeList.end();
              ++elem)
           {
@@ -155,16 +158,16 @@ namespace ome
         return false;
       }
 
-      xerces::dom::Element
-      MapPairs::asXMLElement (xerces::dom::Document& document) const
+      common::xml::dom::Element
+      MapPairs::asXMLElement (common::xml::dom::Document& document) const
       {
-        xerces::dom::Element nullelem;
+        common::xml::dom::Element nullelem;
         return asXMLElementInternal(document, nullelem);
       }
 
-      xerces::dom::Element
-      MapPairs::asXMLElementInternal (xerces::dom::Document& document,
-                                      xerces::dom::Element&  element) const
+      common::xml::dom::Element
+      MapPairs::asXMLElementInternal (common::xml::dom::Document& document,
+                                      common::xml::dom::Element&  element) const
       {
         // Creating XML block for Line
 
@@ -174,7 +177,7 @@ namespace ome
             // with an instance of Map (a subclass of MapPairs), in
             // which case it is the subclass' responsibility to ensure
             // that 'pairs' is a node of the correct name and type.
-            xerces::dom::Element newElement = document.createElementNS(MAP_NAMESPACE, "Line");
+            common::xml::dom::Element newElement = document.createElementNS(MAP_NAMESPACE, "Line");
             element = newElement;
           }
 
@@ -182,7 +185,7 @@ namespace ome
              i != map.end();
              ++i)
           {
-            xerces::dom::Element pair = document.createElementNS(PAIRS_NAMESPACE, "M");
+            common::xml::dom::Element pair = document.createElementNS(PAIRS_NAMESPACE, "M");
             pair.setAttribute("K", i->first);
             pair.setTextContent(i->second);
             element.appendChild(pair);

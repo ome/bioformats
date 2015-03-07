@@ -55,7 +55,7 @@ namespace ome
 
         OMEModel::OMEModel ():
           ::ome::xml::model::OMEModel(),
-          logger(ome::compat::createLogger("OMEModel")),
+          logger(ome::common::createLogger("OMEModel")),
           modelObjects(),
           references()
         {

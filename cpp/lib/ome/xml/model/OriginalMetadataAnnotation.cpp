@@ -44,7 +44,7 @@
 
 #include <boost/format.hpp>
 
-#include <ome/xerces/Platform.h>
+#include <ome/common/xml/Platform.h>
 
 #include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/OMEModel.h>
@@ -91,7 +91,7 @@ namespace ome
       {
       }
 
-      OriginalMetadataAnnotation::OriginalMetadataAnnotation (xerces::dom::Element&        element,
+      OriginalMetadataAnnotation::OriginalMetadataAnnotation (common::xml::dom::Element&        element,
                           ::ome::xml::model::OMEModel& model):
         XMLAnnotation(),
         metadata()
@@ -119,13 +119,13 @@ namespace ome
       }
 
       void
-      OriginalMetadataAnnotation::update(const xerces::dom::Element&  element,
+      OriginalMetadataAnnotation::update(const common::xml::dom::Element&  element,
                                          ::ome::xml::model::OMEModel& model)
       {
         // Delegate checking of element type.
         XMLAnnotation::update(element, model);
 
-        std::vector<xerces::dom::Element> XMLValue_nodeList = getChildrenByTagName(element, "Value");
+        std::vector<common::xml::dom::Element> XMLValue_nodeList = getChildrenByTagName(element, "Value");
         if (XMLValue_nodeList.size() > 1)
           {
             format fmt("Value node list size %1% != 1");
@@ -134,7 +134,7 @@ namespace ome
           }
         else if (XMLValue_nodeList.size() != 0)
           {
-            std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = getChildrenByTagName(XMLValue_nodeList.at(0), "OriginalMetadata");
+            std::vector<common::xml::dom::Element> OriginalMetadataValue_nodeList = getChildrenByTagName(XMLValue_nodeList.at(0), "OriginalMetadata");
             if (OriginalMetadataValue_nodeList.size() > 1)
               {
                 format fmt("OriginalMetadata node list size %1% != 1");
@@ -143,7 +143,7 @@ namespace ome
               }
             else if (OriginalMetadataValue_nodeList.size() != 0)
               {
-                std::vector<xerces::dom::Element> Key_nodeList = getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Key");
+                std::vector<common::xml::dom::Element> Key_nodeList = getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Key");
                 if (Key_nodeList.size() > 1)
                   {
                     format fmt("OriginalMetadata Key node list size %1% != 1");
@@ -154,7 +154,7 @@ namespace ome
                   {
                     metadata.first = Key_nodeList.at(0).getTextContent();
                   }
-                std::vector<xerces::dom::Element> Value_nodeList = getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Value");
+                std::vector<common::xml::dom::Element> Value_nodeList = getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Value");
                 if (Value_nodeList.size() > 1)
                   {
                     format fmt("OriginalMetadata Value node list size %1% != 1");
@@ -183,16 +183,16 @@ namespace ome
         return false;
       }
 
-      xerces::dom::Element
-      OriginalMetadataAnnotation::asXMLElement (xerces::dom::Document& document) const
+      common::xml::dom::Element
+      OriginalMetadataAnnotation::asXMLElement (common::xml::dom::Document& document) const
       {
-        xerces::dom::Element nullelem;
+        common::xml::dom::Element nullelem;
         return asXMLElementInternal(document, nullelem);
       }
 
-      xerces::dom::Element
-      OriginalMetadataAnnotation::asXMLElementInternal (xerces::dom::Document& document,
-                                                        xerces::dom::Element&  element) const
+      common::xml::dom::Element
+      OriginalMetadataAnnotation::asXMLElementInternal (common::xml::dom::Document& document,
+                                                        common::xml::dom::Element&  element) const
       {
 
         return XMLAnnotation::asXMLElementInternal(document, element);
@@ -215,26 +215,26 @@ namespace ome
       {
         this->metadata = metadata;
 
-        xerces::Platform xmlplat;
+        common::xml::Platform xmlplat;
 
-        xerces::dom::Document Value_document(ome::xerces::dom::createEmptyDocument("wrapped"));
-        xerces::dom::Element Value_root = Value_document.getDocumentElement();
+        common::xml::dom::Document Value_document(ome::common::xml::dom::createEmptyDocument("wrapped"));
+        common::xml::dom::Element Value_root = Value_document.getDocumentElement();
 
-        xerces::dom::Element keyElement =
+        common::xml::dom::Element keyElement =
           Value_document.createElement("Key");
         keyElement.setTextContent(metadata.first);
-        xerces::dom::Element valueElement =
+        common::xml::dom::Element valueElement =
           Value_document.createElement("Value");
         valueElement.setTextContent(metadata.second);
 
-        xerces::dom::Element originalMetadata =
+        common::xml::dom::Element originalMetadata =
           Value_document.createElement("OriginalMetadata");
         originalMetadata.appendChild(keyElement);
         originalMetadata.appendChild(valueElement);
         Value_root.appendChild(originalMetadata);
 
         std::string textvalue;
-        ome::xerces::dom::writeNode(originalMetadata, textvalue);
+        ome::common::xml::dom::writeNode(originalMetadata, textvalue);
         setValue(textvalue);
 
       }

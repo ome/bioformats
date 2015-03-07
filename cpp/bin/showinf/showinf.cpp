@@ -41,7 +41,7 @@
 
 #include <ome/internal/version.h>
 
-#include <ome/compat/log.h>
+#include <ome/common/log.h>
 
 #include <showinf/options.h>
 #include <showinf/ImageInfo.h>
@@ -125,7 +125,7 @@ main(int argc, char *argv[])
           break;
         }
 
-      ome::compat::setLogLevel(logLevel);
+      ome::common::setLogLevel(logLevel);
 
       switch (opts.action)
         {

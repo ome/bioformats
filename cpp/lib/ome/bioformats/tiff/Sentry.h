@@ -41,9 +41,10 @@
 #include <cstdarg>
 #include <string>
 
+#include <boost/thread.hpp>
+
 #include <ome/compat/cstdint.h>
 #include <ome/compat/memory.h>
-#include <ome/compat/thread.h>
 
 namespace ome
 {

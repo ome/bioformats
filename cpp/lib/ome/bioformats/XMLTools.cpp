@@ -39,11 +39,11 @@
 
 #include <ome/bioformats/XMLTools.h>
 
-#include <ome/xerces/ErrorReporter.h>
-#include <ome/xerces/Platform.h>
-#include <ome/xerces/String.h>
+#include <ome/common/xml/ErrorReporter.h>
+#include <ome/common/xml/Platform.h>
+#include <ome/common/xml/String.h>
 
-namespace xml = ome::xerces;
+namespace xml = ome::common::xml;
 
 namespace
 {
@@ -134,7 +134,7 @@ namespace ome
 
       try
         {
-          ome::xerces::dom::createDocument(s);
+          ome::common::xml::dom::createDocument(s);
         }
       catch (const std::runtime_error& e)
         {

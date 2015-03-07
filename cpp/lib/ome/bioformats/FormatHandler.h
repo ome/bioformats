@@ -48,7 +48,7 @@
 #include <boost/optional.hpp>
 #include <boost/version.hpp>
 
-#include <ome/compat/filesystem.h>
+#include <ome/common/filesystem.h>
 
 namespace ome
 {

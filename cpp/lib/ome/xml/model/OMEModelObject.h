@@ -52,8 +52,8 @@
 
 #include <ome/compat/memory.h>
 
-#include <ome/xerces/dom/Element.h>
-#include <ome/xerces/dom/Document.h>
+#include <ome/common/xml/dom/Element.h>
+#include <ome/common/xml/dom/Document.h>
 
 namespace ome
 {
@@ -143,8 +143,8 @@ namespace ome
          * @param document document for element creation
          * @returns an XML DOM tree root element for this model object.
          */
-        virtual xerces::dom::Element
-        asXMLElement (xerces::dom::Document& document) const = 0;
+        virtual common::xml::dom::Element
+        asXMLElement (common::xml::dom::Document& document) const = 0;
 
         /**
          * Update the object hierarchy recursively from an XML DOM tree.
@@ -161,7 +161,7 @@ namespace ome
          * errors found during processing.
          */
         virtual void
-        update (const xerces::dom::Element& element,
+        update (const common::xml::dom::Element& element,
                 OMEModel&                   model) = 0;
 
         /**

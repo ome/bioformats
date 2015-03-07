@@ -40,7 +40,7 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
 
-#include <ome/compat/filesystem.h>
+#include <ome/common/filesystem.h>
 
 #include <ome/xml/meta/Metadata.h>
 #include <ome/xml/meta/MetadataRoot.h>
@@ -122,7 +122,7 @@ namespace ome
      * @returns the OME-XML metadata.
      */
     ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
-    createOMEXMLMetadata(ome::xerces::dom::Document& document);
+    createOMEXMLMetadata(ome::common::xml::dom::Document& document);
 
     /**
      * Create OME-XML metadata from XML file.
@@ -383,7 +383,7 @@ namespace ome
      * @returns the model version.
      */
     std::string
-    getModelVersion(ome::xerces::dom::Document& document);
+    getModelVersion(ome::common::xml::dom::Document& document);
 
     /**
      * Get the model version used by an OME-XML document

@@ -41,10 +41,11 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <ome/compat/filesystem.h>
-#include <ome/compat/mstream.h>
+#include <ome/common/filesystem.h>
+#include <ome/common/mstream.h>
+#include <ome/common/string.h>
+
 #include <ome/compat/regex.h>
-#include <ome/compat/string.h>
 
 #include <ome/bioformats/FormatTools.h>
 #include <ome/bioformats/MetadataTools.h>
@@ -171,7 +172,7 @@ namespace ome
 
         try
           {
-            path thisfile = ome::compat::canonical(path(file));
+            path thisfile = ome::common::canonical(path(file));
 
             /// @todo: Use a set rather than a list?
             const std::vector<path>& s = getUsedFiles();
@@ -181,7 +182,7 @@ namespace ome
               {
                 try
                   {
-                    path usedfile = ome::compat::canonical(path(*i));
+                    path usedfile = ome::common::canonical(path(*i));
                     if (thisfile == usedfile)
                       {
                         used = true;
@@ -448,8 +449,8 @@ namespace ome
       FormatReader::isThisType(const uint8_t *begin,
                                const uint8_t *end) const
       {
-        imstream ims(reinterpret_cast<const char *>(begin),
-                     reinterpret_cast<const char *>(end));
+        ome::common::imstream ims(reinterpret_cast<const char *>(begin),
+                                  reinterpret_cast<const char *>(end));
         return isThisType(ims);
       }
 
@@ -457,7 +458,7 @@ namespace ome
       FormatReader::isThisType(const uint8_t *begin,
                                std::size_t    length) const
       {
-        imstream ims(reinterpret_cast<const char *>(begin), length);
+        ome::common::imstream ims(reinterpret_cast<const char *>(begin), length);
         return isThisType(ims);
       }
 
@@ -897,8 +898,8 @@ namespace ome
             const boost::optional<path> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = ome::compat::canonical(currentid.get());
-                path thisfile = ome::compat::canonical(*file);
+                path current = ome::common::canonical(currentid.get());
+                path thisfile = ome::common::canonical(*file);
 
                 info.usedToInitialize = (thisfile == current);
               }
@@ -926,8 +927,8 @@ namespace ome
             const boost::optional<path> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = ome::compat::canonical(currentid.get());
-                path thisfile = ome::compat::canonical(*file);
+                path current = ome::common::canonical(currentid.get());
+                path thisfile = ome::common::canonical(*file);
 
                 info.usedToInitialize = (thisfile == current);
               }
@@ -1315,7 +1316,7 @@ namespace ome
             try
               {
                 // Attempt to canonicalize the path.
-                canonicalID = ome::compat::canonical(id);
+                canonicalID = ome::common::canonical(id);
               }
             catch (const std::exception& /* e */)
               {
@@ -1344,7 +1345,7 @@ namespace ome
                           try
                             {
                               std::string imageName = store->getImageName(series);
-                              if (!imageName.empty() && trim(imageName).size() != 0)
+                              if (!imageName.empty() && ome::common::trim(imageName).size() != 0)
                                 name = imageName;
                             }
                           catch (std::exception& e)

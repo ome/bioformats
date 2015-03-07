@@ -43,8 +43,8 @@
 #include <ome/test/test.h>
 #include <ome/test/io.h>
 
-#include <ome/xerces/Platform.h>
-#include <ome/xerces/dom/Document.h>
+#include <ome/common/xml/Platform.h>
+#include <ome/common/xml/dom/Document.h>
 
 #include <ome/xml/model/enums/EnumerationException.h>
 
@@ -114,12 +114,12 @@ TEST(MetadataToolsTest, ModelVersionFromString)
 
 TEST(MetadataToolsTest, ModelVersionFromDocument)
 {
-  ome::xerces::Platform xmlplat;
+  ome::common::xml::Platform xmlplat;
 
   std::string xml;
   readFile(PROJECT_SOURCE_DIR "/components/specification/samples/2013-06/18x24y5z5t2c8b-text.ome", xml);
 
-  ome::xerces::dom::Document doc = ome::xerces::dom::createDocument(xml);
+  ome::common::xml::dom::Document doc = ome::common::xml::dom::createDocument(xml);
   ASSERT_TRUE(doc);
 
   ASSERT_EQ(std::string("2013-06"), ome::bioformats::getModelVersion(doc));

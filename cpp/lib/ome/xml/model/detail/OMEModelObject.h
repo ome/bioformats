@@ -39,7 +39,7 @@
 #ifndef OME_XML_MODEL_DETAIL_OMEMODELOBJECT_H
 #define OME_XML_MODEL_DETAIL_OMEMODELOBJECT_H
 
-#include <ome/compat/log.h>
+#include <ome/common/log.h>
 
 #include <ome/xml/model/OMEModelObject.h>
 
@@ -96,14 +96,14 @@ namespace ome
            * @param element XML element for setting model data.
            * @returns an XML DOM tree root element for this model object.
            */
-          virtual xerces::dom::Element
-          asXMLElementInternal (xerces::dom::Document& document,
-                                xerces::dom::Element&  element) const = 0;
+          virtual common::xml::dom::Element
+          asXMLElementInternal (common::xml::dom::Document& document,
+                                common::xml::dom::Element&  element) const = 0;
 
         public:
           /// @copydoc ome::xml::model::OMEModelObject::update
           virtual void
-          update (const xerces::dom::Element&  element,
+          update (const common::xml::dom::Element&  element,
                   ::ome::xml::model::OMEModel& model);
 
           /// @copydoc ome::xml::model::OMEModelObject::link
@@ -120,8 +120,8 @@ namespace ome
            * @param name name of the tags to retrieve.
            * @return list of elements which have the tag <code>name</code>.
            */
-          static std::vector<xerces::dom::Element>
-          getChildrenByTagName (const xerces::dom::Element& parent,
+          static std::vector<common::xml::dom::Element>
+          getChildrenByTagName (const common::xml::dom::Element& parent,
                                 const std::string&          name);
 
           /**
@@ -234,7 +234,7 @@ namespace ome
           }
 
           /// Message logger.
-          ome::compat::Logger logger;
+          ome::common::Logger logger;
         };
 
       }

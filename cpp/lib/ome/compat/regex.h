@@ -48,7 +48,7 @@
 #ifndef OME_COMPAT_REGEX_H
 # define OME_COMPAT_REGEX_H
 
-# include <ome/compat/config.h>
+# include <ome/common/config.h>
 
 # ifdef OME_HAVE_REGEX
 #  include <regex>

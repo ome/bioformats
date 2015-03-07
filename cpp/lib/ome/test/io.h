@@ -42,7 +42,7 @@
 #include <istream>
 #include <string>
 
-#include <ome/compat/filesystem.h>
+#include <ome/common/filesystem.h>
 
 /**
  * Read file into string.

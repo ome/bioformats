@@ -454,7 +454,7 @@ ${customContent[obj.name][prop.name]}
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <ome/internal/version.h>
 
-#include <ome/xerces/Platform.h>
+#include <ome/common/xml/Platform.h>
 
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
@@ -623,15 +623,15 @@ namespace ome
       std::string
       OMEXMLMetadata::dumpXML()
       {
-        ome::xerces::Platform xmlplat;
+        ome::common::xml::Platform xmlplat;
 
         resolveReferences();
 
-        ome::xerces::dom::Document doc(ome::xerces::dom::createEmptyDocument("${model.getObjectByName("OME").namespace}", "OME"));
-        ome::xerces::dom::Element ome = root->asXMLElement(doc);
+        ome::common::xml::dom::Document doc(ome::common::xml::dom::createEmptyDocument("${model.getObjectByName("OME").namespace}", "OME"));
+        ome::common::xml::dom::Element ome = root->asXMLElement(doc);
 
         std::string text;
-        ome::xerces::dom::writeDocument(doc, text);
+        ome::common::xml::dom::writeDocument(doc, text);
         return text;
       }
 {% end source %}\

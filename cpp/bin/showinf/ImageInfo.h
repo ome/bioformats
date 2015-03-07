@@ -43,7 +43,8 @@
 
 #include <boost/program_options.hpp>
 
-#include <ome/compat/log.h>
+#include <ome/common/log.h>
+
 #include <ome/compat/memory.h>
 
 #include <ome/bioformats/FormatReader.h>
@@ -130,7 +131,7 @@ namespace showinf
                    const ome::bioformats::Modulo&       modulo);
 
     /// Message logger.
-    ome::compat::Logger logger;
+    ome::common::Logger logger;
     /// File to open with FormatReader::setId.
     std::string file;
     /// Command-line options.

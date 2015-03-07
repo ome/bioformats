@@ -53,12 +53,12 @@
 #include <string>
 #include <vector>
 
-#include <ome/compat/log.h>
+#include <ome/common/log.h>
 
-#include <ome/xerces/dom/Document.h>
-#include <ome/xerces/dom/Element.h>
-#include <ome/xerces/dom/Node.h>
-#include <ome/xerces/dom/NodeList.h>
+#include <ome/common/xml/dom/Document.h>
+#include <ome/common/xml/dom/Element.h>
+#include <ome/common/xml/dom/Node.h>
+#include <ome/common/xml/dom/NodeList.h>
 
 {% for include in klass.header_dependencies %}\
 #include <${include}>
@@ -67,7 +67,7 @@
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <sstream>
 
-#include <ome/xerces/String.h>
+#include <ome/common/xml/String.h>
 
 #include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/detail/Parse.h>
@@ -289,12 +289,12 @@ namespace ome
          * @returns a new model object.
          */
         static ome::compat::shared_ptr< ${klass.name}>
-        create(const xerces::dom::Element& element,
+        create(const common::xml::dom::Element& element,
                ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ome::compat::shared_ptr< ${klass.name}>
-      ${klass.name}::create(const xerces::dom::Element& element,
+      ${klass.name}::create(const common::xml::dom::Element& element,
                               ${lang.omexml_model_package}::OMEModel& model)
       {
         ome::compat::shared_ptr< ${klass.name}> newinstance(ome::compat::make_shared< ${klass.name}>());
@@ -352,13 +352,13 @@ ${customContent}\
 
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::update
         virtual void
-        update(const xerces::dom::Element&  element,
+        update(const common::xml::dom::Element&  element,
                ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 
       void
-      ${klass.name}::update(const xerces::dom::Element&  element,
+      ${klass.name}::update(const common::xml::dom::Element&  element,
                             ${lang.omexml_model_package}::OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
@@ -399,8 +399,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.isReference %}\
         // Element reference ${prop.name}
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
@@ -467,7 +467,7 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         if (${prop.name}_nodeList.size() > 1)
           {
             format fmt("${prop.name} node list size %1% != 1");
@@ -479,7 +479,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
 {% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %}\
-            xerces::dom::Element elem(${prop.name}_nodeList.at(0));
+            common::xml::dom::Element elem(${prop.name}_nodeList.at(0));
             // While ome::compat::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
             ${prop.instanceVariableType} p(${prop.langTypeNS}::create(elem, model));
@@ -516,15 +516,15 @@ ${customUpdatePropertyContent[prop.name]}
         // sub-elements) and occurs more than once. The element's model
         // object type is also abstract so we need to have a handler for
         // each "subclass".
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
 {% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
-            std::vector<xerces::dom::Element> ${inner_prop.name}_nodeList(getChildrenByTagName(*elem, "${inner_prop.name}"));
-                 for (std::vector<xerces::dom::Element>::iterator inner_elem = ${inner_prop.name}_nodeList.begin();
+            std::vector<common::xml::dom::Element> ${inner_prop.name}_nodeList(getChildrenByTagName(*elem, "${inner_prop.name}"));
+                 for (std::vector<common::xml::dom::Element>::iterator inner_elem = ${inner_prop.name}_nodeList.begin();
                  inner_elem != ${inner_prop.name}_nodeList.end();
                  ++inner_elem)
                    {
@@ -542,8 +542,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isAbstractProprietary %}\
         // Element property ${prop.name} which is complex (has
         // sub-elements) and occurs more than once
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
@@ -557,8 +557,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.maxOccurs > 1 %}\
         // Element property ${prop.name} which is not complex (has no
         // sub-elements) which occurs more than once
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
@@ -1162,18 +1162,18 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
-        virtual xerces::dom::Element
-        asXMLElement (xerces::dom::Document& document) const;
+        virtual common::xml::dom::Element
+        asXMLElement (common::xml::dom::Document& document) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element
-      ${klass.name}::asXMLElement (xerces::dom::Document& document) const
+      common::xml::dom::Element
+      ${klass.name}::asXMLElement (common::xml::dom::Document& document) const
       {
 {% if klass.name != "OME" %}\
-        xerces::dom::Element element(document.createElementNS(NAMESPACE, "${klass.name}"));
+        common::xml::dom::Element element(document.createElementNS(NAMESPACE, "${klass.name}"));
 {% end if %}\
 {% if klass.name == "OME" %}\
-        xerces::dom::Element element(document.getDocumentElement());
+        common::xml::dom::Element element(document.getDocumentElement());
 {% end if %}\
         return asXMLElementInternal(document, element);
       }
@@ -1184,14 +1184,14 @@ ${customUpdatePropertyContent[prop.name]}
 
       protected:
         // Documented in base class.
-        virtual xerces::dom::Element
-        asXMLElementInternal (xerces::dom::Document& document,
-                              xerces::dom::Element&  element) const;
+        virtual common::xml::dom::Element
+        asXMLElementInternal (common::xml::dom::Document& document,
+                              common::xml::dom::Element&  element) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element
-      ${klass.name}::asXMLElementInternal (xerces::dom::Document& document,
-                                           xerces::dom::Element&  element) const
+      common::xml::dom::Element
+      ${klass.name}::asXMLElementInternal (common::xml::dom::Document& document,
+                                           common::xml::dom::Element&  element) const
       {
         // Create XML block for ${klass.name}
 
@@ -1204,7 +1204,7 @@ ${customUpdatePropertyContent[prop.name]}
         // Class is abstract so we may need to create its "container" element
         if (std::string(element.getTagName()) != "${klass.name}")
           {
-            xerces::dom::Element abstractElement =
+            common::xml::dom::Element abstractElement =
               document.createElementNS(NAMESPACE, "${klass.name}");
             abstractElement.appendChild(element);
             element = abstractElement;
@@ -1212,7 +1212,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
         if (!element)
           {
-            xerces::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
+            common::xml::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
             element = newElement;
           }
 
@@ -1269,7 +1269,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 if (is)
                   {
                     o->setID(is->getID());
-                    xerces::dom::Element child(o->asXMLElement(document));
+                    common::xml::dom::Element child(o->asXMLElement(document));
                     element.appendChild(child);
                   }
               }
@@ -1286,7 +1286,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
             if (sv)
               {
                 o->setID(sv->getID());
-                xerces::dom::Element child(o->asXMLElement(document));
+                common::xml::dom::Element child(o->asXMLElement(document));
                 element.appendChild(child);
               }
           }
@@ -1329,7 +1329,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // sub-elements)
           if (${prop.instanceVariableName})
             {
-              xerces::dom::Element child(${prop.instanceVariableName}->asXMLElement(document));
+              common::xml::dom::Element child(${prop.instanceVariableName}->asXMLElement(document));
               element.appendChild(child);
             }
 {% end %}\
@@ -1338,7 +1338,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // sub-elements)
           {
 {% if prop.minOccurs == 1 %}\
-            xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+            common::xml::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
             std::ostringstream os;
             os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
@@ -1353,7 +1353,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% if prop.minOccurs == 0 %}\
             if (${prop.instanceVariableName})
               {
-                xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+                common::xml::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
                 std::ostringstream os;
                 os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
@@ -1378,7 +1378,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
               {
                 if (*i)
                   {
-                    xerces::dom::Element child((*i)->asXMLElement(document));
+                    common::xml::dom::Element child((*i)->asXMLElement(document));
                     element.appendChild(child);
                   }
               }
@@ -1392,7 +1392,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                  i != ${prop.instanceVariableName}.end();
                  ++i)
               {
-                xerces::dom::Element ${prop.instanceVariableName}_element =
+                common::xml::dom::Element ${prop.instanceVariableName}_element =
                                                                    document.createElementNS(NAMESPACE, "${prop.name}");
                 std::ostringstream os;
                 os.imbue(std::locale::classic());
@@ -1403,7 +1403,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 os << std::boolalpha << *i;
 {% end %}\
                 ${prop.instanceVariableName}_element.setTextContent(os.str());
-                xerces::dom::Element child(${prop.instanceVariableName}_element);
+                common::xml::dom::Element child(${prop.instanceVariableName}_element);
                 element.appendChild(child);
               }
           }

@@ -40,7 +40,7 @@
 
 #include <ome/bioformats/XMLTools.h>
 
-#include <ome/xerces/Platform.h>
+#include <ome/common/xml/Platform.h>
 
 #include <ome/test/test.h>
 #include <ome/test/io.h>
@@ -82,7 +82,7 @@ public:
 class XMLToolsFileTest : public ::testing::TestWithParam<XMLToolsFileTestParameters>
 {
 public:
-  ome::xerces::Platform plat;
+  ome::common::xml::Platform plat;
 };
 
 TEST_P(XMLToolsFileTest, ValidateXML)
@@ -105,8 +105,8 @@ TEST_P(XMLToolsFileTest, ValidateXML)
 XMLToolsFileTestParameters params[] =
   {
     XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome", true),
-    XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/cpp/test/ome-xerces/data/18x24y5z5t2c8b-text-invalid.ome", false),
-    XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/cpp/test/ome-xerces/data/18x24y5z5t2c8b-text-invalid2.ome", false)
+    XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/cpp/test/ome-common/data/18x24y5z5t2c8b-text-invalid.ome", false),
+    XMLToolsFileTestParameters(PROJECT_SOURCE_DIR "/cpp/test/ome-common/data/18x24y5z5t2c8b-text-invalid2.ome", false)
   };
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;

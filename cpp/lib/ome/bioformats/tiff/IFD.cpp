@@ -42,6 +42,8 @@
 
 #include <ome/internal/config.h>
 
+#include <boost/thread.hpp>
+
 #include <ome/bioformats/PlaneRegion.h>
 #include <ome/bioformats/TileBuffer.h>
 #include <ome/bioformats/TileCache.h>
@@ -52,8 +54,7 @@
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
 
-#include <ome/compat/thread.h>
-#include <ome/compat/string.h>
+#include <ome/common/string.h>
 
 #include <tiffio.h>
 

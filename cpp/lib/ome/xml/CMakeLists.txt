@@ -134,7 +134,7 @@ set(OME_XML_SOURCES
 add_library(ome-xml SHARED
             ${OME_XML_SOURCES}
             ${OME_XML_HEADERS})
-target_link_libraries(ome-xml ome-compat ome-xerces)
+target_link_libraries(ome-xml ome-compat ome-common)
 target_link_libraries(ome-xml ${Boost_DATE_TIME_LIBRARY_RELEASE})
 set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 
