@@ -675,6 +675,7 @@ public class FV1000Reader extends FormatReader {
         if (isOIB) {
           file = tiffPath + File.separator + file;
         }
+        else file = new Location(tiffPath, file).getAbsolutePath();
         file = replaceExtension(file, "pty", "tif");
         tiffs.add(ii, file);
       }
