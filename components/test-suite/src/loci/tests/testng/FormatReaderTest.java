@@ -1356,7 +1356,9 @@ public class FormatReaderTest {
   @Test(groups = {"all", "type", "automated"})
   public void testRequiredDirectories() {
     if (!initFile()) return;
-    if (reader.getFormat().startsWith("CellH5")) {
+    if (reader.getFormat().equals("Woolz") ||
+      reader.getFormat().startsWith("CellH5"))
+    {
       throw new SkipException(SKIP_MESSAGE);
     }
     String testName = "testRequiredDirectories";

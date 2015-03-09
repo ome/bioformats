@@ -451,7 +451,7 @@ public class WlzServiceImpl extends AbstractService
             buf = readBytes3DDomObj(buf, x, y, no, w, h);
             break;
           default:
-            throw new FormatException("Unsupported Woolz object type");
+            throw new FormatException("Unsupported Woolz object type " + objType);
         }
       }
       catch (WlzException e) {
@@ -502,22 +502,42 @@ public class WlzServiceImpl extends AbstractService
     }
     catch (WlzException e) {
       throw new IOException("Failed to read Woolz object (" +
-                            e + ")");
+                            e + ")", e);
     }
     try {
+      if (objType == WlzObjectType.WLZ_COMPOUND_ARR_1 ||
+        objType == WlzObjectType.WLZ_COMPOUND_ARR_2)
+      {
+        int count = objType == WlzObjectType.WLZ_COMPOUND_ARR_1 ? 1 : 2;
+        WlzObject[][] dest = new WlzObject[1][count];
+        WlzObject.WlzExplode(new int[] {count}, dest, wlzObj);
+        wlzObj = dest[0][0];
+
+        bBox = WlzObject.WlzBoundingBox3I(wlzObj);
+        objType = WlzObject.WlzGetObjectType(wlzObj);
+        if (objType == WlzObjectType.WLZ_3D_DOMAINOBJ) {
+          voxSz = WlzObject.WlzGetVoxelSize(wlzObj);
+        }
+      }
+
       if(WlzObject.WlzObjectValuesIsNull(wlzObj) != 0) {
         /* Here we use WLZ_GREY_ERROR to indicate that the object has no
          * values not an error. */
         objGType = WlzGreyType.WLZ_GREY_ERROR;
       }
       else {
+        // throw an exception here instead of segfaulting during readBytes*
+        if (WlzObject.WlzGetObjectValuesType(wlzObj) > WlzObjectType.WLZ_GREY_TAB_TILED) {
+          throw new FormatException("Value table data not supported");
+        }
+
         objGType = WlzObject.WlzGreyTypeFromObj(wlzObj);
       }
     }
     catch (WlzException e) {
       throw new FormatException(
           "Unable to determine Woolz object value type (" +
-          e + ")");
+          e + ")", e);
     }
     switch(objGType) {
       case WlzGreyType.WLZ_GREY_UBYTE:
