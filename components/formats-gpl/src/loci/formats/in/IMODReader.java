@@ -438,7 +438,9 @@ public class IMODReader extends FormatReader {
         store.setROIID(roiIDs.get(i), i);
         store.setImageROIRef(roiIDs.get(i), 0, i);
       }
+    }
 
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (physicalX > 0) {
         store.setPixelsPhysicalSizeX(
           FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalX), UNITS.MICROM), 0);
