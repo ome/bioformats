@@ -872,7 +872,9 @@ public class FormatReaderTest {
       if (reader.getPixelType() !=
         FormatTools.pixelTypeFromString(config.getPixelType()))
       {
-        result(testName, false, "Series " + i + " (expected " + config.getPixelType() + ", actual " + reader.getPixelType() + ")");
+        result(testName, false, "Series " + i + " (expected " +
+               config.getPixelType() + ", actual " +
+               FormatTools.getPixelTypeString(reader.getPixelType()) + ")");
       }
     }
     result(testName, true);
