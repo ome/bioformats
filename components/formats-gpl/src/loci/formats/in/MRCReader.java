@@ -254,21 +254,6 @@ public class MRCReader extends FormatReader {
     }
     double pixelTypeMax = pixelTypeMin + range;
 
-    if (pixelTypeMax < maxValue || pixelTypeMin > minValue && signed) {
-      // make the pixel type unsigned
-      switch (getPixelType()) {
-        case FormatTools.INT8:
-          m.pixelType = FormatTools.UINT8;
-          break;
-        case FormatTools.INT16:
-          m.pixelType = FormatTools.UINT16;
-          break;
-        case FormatTools.INT32:
-          m.pixelType = FormatTools.UINT32;
-          break;
-      }
-    }
-
     in.skipBytes(4);
 
     extHeaderSize = in.readInt();
