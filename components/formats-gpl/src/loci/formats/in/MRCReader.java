@@ -254,6 +254,19 @@ public class MRCReader extends FormatReader {
     }
     double pixelTypeMax = pixelTypeMin + range;
 
+    // Fix for EMAN2 generated MRC files containining unsigned 16-bit data
+    // See https://trac.openmicroscopy.org.uk/ome/ticket/4619
+    if (pixelTypeMax < maxValue || pixelTypeMin > minValue && signed) {
+      switch (getPixelType()) {
+        case FormatTools.INT16:
+          m.pixelType = FormatTools.UINT16;
+          break;
+        case FormatTools.INT32:
+          m.pixelType = FormatTools.UINT32;
+          break;
+      }
+    }
+
     in.skipBytes(4);
 
     extHeaderSize = in.readInt();
