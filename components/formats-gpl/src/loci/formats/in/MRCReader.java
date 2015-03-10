@@ -59,7 +59,9 @@ public class MRCReader extends FormatReader {
     {"mrc", "st", "ali", "map", "rec"};
 
   private static final int HEADER_SIZE = 1024;
+  private static final int GRIDSIZE_OFFSET = 28;
   private static final int ENDIANNESS_OFFSET = 212;
+  private static final int IMODSTAMP_OFFSET = 152;
 
   // -- Fields --
 
@@ -174,7 +176,15 @@ public class MRCReader extends FormatReader {
     int mode = in.readInt();
     switch (mode) {
       case 0:
-        m.pixelType = FormatTools.UINT8;
+        in.seek(IMODSTAMP_OFFSET);
+        if (in.readInt() == 1146047817)
+        {
+          m.pixelType = FormatTools.INT8;
+        }
+        else
+        {
+          m.pixelType = FormatTools.UINT8;
+        }
         break;
       case 1:
         m.pixelType = FormatTools.INT16;
@@ -198,7 +208,7 @@ public class MRCReader extends FormatReader {
         break;
     }
 
-    in.skipBytes(12);
+    in.seek(GRIDSIZE_OFFSET);
 
     // pixel size = xlen / mx
 
