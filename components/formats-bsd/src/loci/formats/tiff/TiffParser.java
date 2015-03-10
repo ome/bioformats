@@ -809,67 +809,66 @@ public class TiffParser {
     codecOptions.littleEndian = ifd.isLittleEndian();
     long imageLength = ifd.getImageLength();
 
+    long[] stripOffsets = ifd.getStripOffsets();
+    long[] stripByteCounts = ifd.getStripByteCounts();
+
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
     if (effectiveChannels == 1 && (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
-      numTileRows * numTileCols == 1)
+      numTileRows * numTileCols == 1 && stripOffsets != null && stripByteCounts != null &&
+      in.length() >= stripOffsets[0] + stripByteCounts[0])
     {
-      long[] stripOffsets = ifd.getStripOffsets();
-      long[] stripByteCounts = ifd.getStripByteCounts();
+      long column = x / tileWidth;
+      int firstTile = (int) ((y / tileLength) * numTileCols + column);
+      int lastTile =
+        (int) (((y + height) / tileLength) * numTileCols + column);
+      lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
+      if (planarConfig == 2) {
+        lastTile = stripOffsets.length - 1;
+      }
 
-      if (stripOffsets != null && stripByteCounts != null) {
-        long column = x / tileWidth;
-        int firstTile = (int) ((y / tileLength) * numTileCols + column);
-        int lastTile =
-          (int) (((y + height) / tileLength) * numTileCols + column);
-        lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
-        if (planarConfig == 2) {
-          lastTile = stripOffsets.length - 1;
+      int offset = 0;
+      for (int tile=firstTile; tile<=lastTile; tile++) {
+        long byteCount =
+          equalStrips ? stripByteCounts[0] : stripByteCounts[tile];
+        if (byteCount == numSamples && pixel > 1) {
+          byteCount *= pixel;
         }
 
-        int offset = 0;
-        for (int tile=firstTile; tile<=lastTile; tile++) {
-          long byteCount =
-            equalStrips ? stripByteCounts[0] : stripByteCounts[tile];
-          if (byteCount == numSamples && pixel > 1) {
-            byteCount *= pixel;
-          }
+        if (stripOffsets[tile] < in.length()) {
+          in.seek(stripOffsets[tile]);
+        }
+        else {
+          continue;
+        }
 
-          if (stripOffsets[tile] < in.length()) {
-            in.seek(stripOffsets[tile]);
-          }
-          else {
-            continue;
-          }
-
-          if (width == tileWidth && height == imageLength) {
-            // we want to entire tile, so just read the whole thing directly
-            int len = (int) Math.min(buf.length - offset, byteCount);
-            in.read(buf, offset, len);
-            offset += len;
-          }
-          else {
-            // we only want a piece of the tile, so read each row separately
-            // this is especially necessary for large single-tile images
-            int bpp = ifd.getBitsPerSample()[0] / 8;
-            in.skipBytes((int) (y * bpp * tileWidth));
-            for (int row=0; row<height; row++) {
-              in.skipBytes(x * bpp);
-              int len = (int) Math.min(buf.length - offset, width * bpp);
-              if (len > 0) {
-                in.read(buf, offset, len);
-                offset += len;
-                int skip = (int) (bpp * (tileWidth - x - width));
-                if (skip + in.getFilePointer() < in.length()) {
-                  in.skipBytes(skip);
-                }
+        if (width == tileWidth && height == imageLength) {
+          // we want to entire tile, so just read the whole thing directly
+          int len = (int) Math.min(buf.length - offset, byteCount);
+          in.read(buf, offset, len);
+          offset += len;
+        }
+        else {
+          // we only want a piece of the tile, so read each row separately
+          // this is especially necessary for large single-tile images
+          int bpp = ifd.getBitsPerSample()[0] / 8;
+          in.skipBytes((int) (y * bpp * tileWidth));
+          for (int row=0; row<height; row++) {
+            in.skipBytes(x * bpp);
+            int len = (int) Math.min(buf.length - offset, width * bpp);
+            if (len > 0) {
+              in.read(buf, offset, len);
+              offset += len;
+              int skip = (int) (bpp * (tileWidth - x - width));
+              if (skip + in.getFilePointer() < in.length()) {
+                in.skipBytes(skip);
               }
-              else {
-                break;
-              }
+            }
+            else {
+              break;
             }
           }
         }
