@@ -156,7 +156,7 @@ public class JPEGReader extends DelegateReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return new String[] {currentId.replaceAll(".fixed", "")};
+    return noPixels ? null : new String[] {currentId.replaceAll(".fixed", "")};
   }
 
   /* @see IFormatReader#close(boolean) */
