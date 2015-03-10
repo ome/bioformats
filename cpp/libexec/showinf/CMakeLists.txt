@@ -35,7 +35,7 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${OME_BIN_INCLUDES}
+                    ${OME_LIBEXEC_INCLUDES}
                     ${Boost_INCLUDE_DIRS})
 
 set(showinf_SOURCES
@@ -49,7 +49,7 @@ add_executable(showinf ${showinf_SOURCES})
 target_link_libraries(showinf ome-bioformats ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} ${CMAKE_THREAD_LIBS_INIT})
 
 install(TARGETS showinf RUNTIME
-        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        DESTINATION ${OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR}
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
                     GROUP_READ GROUP_EXECUTE
                     WORLD_READ WORLD_EXECUTE)

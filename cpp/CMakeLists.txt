@@ -39,5 +39,5 @@ set(OME_TOPLEVEL_INCLUDES
     ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 add_subdirectory(lib)
-add_subdirectory(bin)
+add_subdirectory(libexec)
 add_subdirectory(test)

@@ -36,10 +36,7 @@
  * #L%
  */
 
-#include <QtWidgets>
-
-#include "Window.h"
-#include <ome/qtwidgets/GLContainer.h>
+#include <glview/Window.h>
 
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/in/OMETIFFReader.h>
@@ -47,6 +44,10 @@
 #include <ome/common/module.h>
 
 #include <ome/compat/memory.h>
+
+#include <ome/qtwidgets/GLContainer.h>
+
+#include <QtWidgets>
 
 using namespace ome::qtwidgets;
 using ome::bioformats::dimension_size_type;
