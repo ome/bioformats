@@ -795,13 +795,19 @@ public class OMETiffReader extends FormatReader {
       CoreMetadata m = core.get(s);
       info[s] = planes;
       try {
-        if (!info[s][0].reader.isThisType(info[s][0].id)) {
+        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id);
+        if (!info[s][0].reader.isThisType(testFile)) {
           info[s][0].id = currentId;
+          info[s][0].exists = false;
         }
+        testFile.close();
         for (int plane=0; plane<info[s].length; plane++) {
-          if (!info[s][plane].reader.isThisType(info[s][plane].id)) {
+          testFile = new RandomAccessInputStream(info[s][plane].id);
+          if (!info[s][plane].reader.isThisType(testFile)) {
             info[s][plane].id = info[s][0].id;
+            info[s][plane].exists = false;
           }
+          testFile.close();
         }
 
         info[s][0].reader.setId(info[s][0].id);
