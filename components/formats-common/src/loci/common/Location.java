@@ -41,10 +41,11 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.MapMaker;
 
 /**
  * Pseudo-extension of java.io.File that supports reading over HTTP (among
@@ -83,8 +84,8 @@ public class Location {
       this.time = time;
     }
   }
-  private static Map<String, ListingsResult> fileListings =
-    new ConcurrentHashMap<String, ListingsResult>();
+  private static final Map<String, ListingsResult> fileListings =
+    new MapMaker().makeMap();  // like Java's ConcurrentHashMap
 
   // -- Fields --
 
@@ -176,7 +177,7 @@ public class Location {
    * Do this if directory contents might have changed in a significant way.
    */
   public static void clearDirectoryListingsCache() {
-    fileListings = new ConcurrentHashMap<String, ListingsResult>();
+    fileListings.clear();
   }
 
   /**
