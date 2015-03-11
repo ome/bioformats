@@ -51,7 +51,9 @@ Using Bio-Formats as a native C++ library
 
     cpp/overview
     cpp/conversion
-    cpp/showinf
+    cpp/commands/bf
+    cpp/commands/bf-info
+    cpp/commands/bf-view
 
 Contributing to Bio-Formats
 ===========================

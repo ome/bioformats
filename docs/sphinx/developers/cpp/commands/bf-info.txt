@@ -1,21 +1,36 @@
-showinf
+.. _bf-info:
+
+bf-info
 =======
 
 Synopsis
 --------
 
-**showinf** [*options*] *file*
+**bf info** [*options*] *file*
 
 Description
 -----------
 
-:program:`showinf` will display the metadata for an image file,
+:program:`bf info` will display the metadata for an image file,
 including the :emphasis:`core` and :emphasis:`original` metadata, and
 can optionally display and validate the :emphasis:`OME-XML` metadata.
 
+.. note::
+
+  Viewing is currently restricted to the first series of an OME-TIFF
+  file using the 2013-06 schema.  Future releases will extend this to
+  multiple series, all schema versions and additional file formats.
+
+Options
+-------
+
 .. option:: -h, --help
 
-  Show help options.
+  Show this manual page.
+
+.. option:: -u, --usage
+
+  Show usage summary.
 
 .. option:: -V, --version
 

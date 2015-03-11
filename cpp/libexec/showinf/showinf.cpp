@@ -59,7 +59,7 @@ namespace
   print_version(std::ostream& stream)
   {
     format fmtr("%1% (%2%) %3% (%4%)");
-    fmtr % "showinf" % "OME Bio-Formats"
+    fmtr % "bf info" % "OME Bio-Formats"
       % OME_VERSION_MAJOR_S "." OME_VERSION_MINOR_S "." OME_VERSION_PATCH_S OME_VERSION_EXTRA_S
       % OME_VCS_DATE_S;
 
@@ -77,7 +77,7 @@ namespace
   print_help(std::ostream& stream,
              const options& opts)
   {
-    stream << "Usage:\n  showinf  [OPTION…] [FILE] — show image metadata\n"
+    stream << "Usage:\n  bf info  [OPTION…] [FILE] — display and validate image metadata\n"
            << opts.get_visible_options()
            << std::flush;
   }
@@ -149,7 +149,7 @@ main(int argc, char *argv[])
           print_help(std::cout, opts);
           break;
         case options::ACTION_HELP:
-          display_manpage("bf-showinf", "1");
+          display_manpage("bf-info", "1");
           break;
         case options::ACTION_METADATA:
           print_metadata(std::cout, opts);

@@ -137,7 +137,7 @@ EOF
 }
 
 help() {
-  exec man -M "$MANDIR" 7 bf-cpp-overview
+  exec man -M "$MANDIR" 1 bf
   exit 1
 }
 
