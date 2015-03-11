@@ -40,6 +40,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -185,14 +186,12 @@ public class Location {
    */
   public static void cleanStaleCacheEntries() {
     long t = System.nanoTime() - cacheNanos;
-    ArrayList<String> staleKeys = new ArrayList();
-    for (String key : fileListings.keySet()) {
-      if (fileListings.get(key).time < t) {
-        staleKeys.add(key);
+    final Iterator<ListingsResult> cacheValues =
+      fileListings.values().iterator();
+    while (cacheValues.hasNext()) {
+      if (cacheValues.next().time < t) {
+        cacheValues.remove();
       }
-    }
-    for (String key : staleKeys) {
-      fileListings.remove(key);
     }
   }
 
