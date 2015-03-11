@@ -36,86 +36,25 @@
  * #L%
  */
 
-#ifndef WINDOW_H
-#define WINDOW_H
+#include <QApplication>
+#include <QDesktopWidget>
 
-#include <QMainWindow>
+#include <view/Window.h>
 
-#include <ome/qtwidgets/GLView2D.h>
-#include <ome/qtwidgets/NavigationDock2D.h>
+using namespace view;
 
-QT_BEGIN_NAMESPACE
-class QSlider;
-class QMenu;
-class QAction;
-class QActionGroup;
-QT_END_NAMESPACE
-
-namespace glview
+int main(int argc, char *argv[])
 {
+  QApplication app(argc, argv);
+  Window window;
+  window.resize(600,600);
 
-  class Window : public QMainWindow
-  {
-    Q_OBJECT
+  float desktopArea = static_cast<float>(QApplication::desktop()->width() * QApplication::desktop()->height());
+  float widgetArea = static_cast<float>(window.width() * window.height());
+  if ((widgetArea / desktopArea) < 0.75f)
+    window.show();
+  else
+    window.showMaximized();
 
-  public:
-    Window();
-
-  private slots:
-    void open();
-    void open(const QString& file);
-    void quit();
-    void view_reset();
-    void view_zoom();
-    void view_pan();
-    void view_rotate();
-    void viewFocusChanged(ome::qtwidgets::GLView2D *glView);
-    void tabChanged(int index);
-
-  private:
-    void createActions();
-    void createMenus();
-    void createToolbars();
-    void createDockWindows();
-
-    QMenu *fileMenu;
-    QMenu *viewMenu;
-
-    QToolBar *Cam2DTools;
-
-    QAction *openAction;
-    QAction *quitAction;
-
-    QAction *viewResetAction;
-
-    QActionGroup *viewActionGroup;
-    QAction *viewZoomAction;
-    QAction *viewPanAction;
-    QAction *viewRotateAction;
-
-    QSlider *createAngleSlider();
-    QSlider *createRangeSlider();
-    ome::qtwidgets::NavigationDock2D *navigation;
-
-    QTabWidget *tabs;
-    ome::qtwidgets::GLView2D *glView;
-    QSlider *minSlider;
-    QSlider *maxSlider;
-
-    QMetaObject::Connection minSliderChanged;
-    QMetaObject::Connection minSliderUpdate;
-    QMetaObject::Connection maxSliderChanged;
-    QMetaObject::Connection maxSliderUpdate;
-    QMetaObject::Connection navigationChanged;
-    QMetaObject::Connection navigationUpdate;
-  };
-
+  return app.exec();
 }
-
-#endif // WINDOW_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */

@@ -10,10 +10,10 @@ cmd=$1
 shift
 
 if [ "$cmd" = "info" -o "$cmd" = "showinf" ]; then
-  cmd=cpp/libexec/showinf/showinf
+  cmd=cpp/libexec/info/info
 fi
 if [ "$cmd" = "view" -o "$cmd" = "glview" ]; then
-  cmd=cpp/libexec/glview/glview
+  cmd=cpp/libexec/view/view
 fi
 
 exec "$cmd" "$@"

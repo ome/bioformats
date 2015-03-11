@@ -35,11 +35,11 @@
  * #L%
  */
 
-#include <showinf/options.h>
+#include <info/options.h>
 
 namespace opt = boost::program_options;
 
-namespace showinf
+namespace info
 {
 
   options::options ():

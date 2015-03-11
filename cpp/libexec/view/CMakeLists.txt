@@ -34,23 +34,42 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${OME_LIBEXEC_INCLUDES}
-                    ${Boost_INCLUDE_DIRS})
+# Don't use old-style compile definitions
+if (POLICY CMP0043)
+  cmake_policy(SET CMP0043 NEW)
+endif(POLICY CMP0043)
 
-set(showinf_SOURCES
-    ImageInfo.h
-    ImageInfo.cpp
-    options.h
-    options.cpp
-    showinf.cpp)
+if (OME_QTOPENGL)
 
-add_executable(showinf ${showinf_SOURCES})
-target_link_libraries(showinf ome-bioformats ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} ${CMAKE_THREAD_LIBS_INIT})
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-install(TARGETS showinf RUNTIME
-        DESTINATION ${OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR}
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                    GROUP_READ GROUP_EXECUTE
-                    WORLD_READ WORLD_EXECUTE)
+  include_directories(${OME_TOPLEVEL_INCLUDES}
+                      ${OME_LIBEXEC_INCLUDES}
+                      ${OPENGL_INCLUDE_DIR}
+                      ${GLM_INCLUDE_DIR}
+                      ${Qt5_INCLUDE_DIRS})
 
+  set(view_SOURCES
+      view.cpp
+      Window.cpp)
+
+  set(view_HEADERS
+      Window.h)
+
+  add_executable(view
+                 ${view_SOURCES}
+                 ${view_HEADERS}
+                 ${view_HEADERS_MOC}
+                 ${view_RESOURCES})
+  qt5_use_modules(view Core Gui Widgets Svg)
+  target_link_libraries(view ome-bioformats ome-qtwidgets)
+
+
+  install(TARGETS view RUNTIME
+          DESTINATION ${OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR}
+          PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                      GROUP_READ GROUP_EXECUTE
+                      WORLD_READ WORLD_EXECUTE)
+
+endif()

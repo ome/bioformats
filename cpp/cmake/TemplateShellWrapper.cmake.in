@@ -146,10 +146,10 @@ run() {
   shift
 
   if [ "$realcmd" = "info" -o "$realcmd" = "showinf" ]; then
-    realcmd=showinf
+    realcmd=info
   fi
   if [ "$realcmd" = "view" -o "$realcmd" = "glview" ]; then
-    realcmd=glview
+    realcmd=view
   fi
   realcmd="$LIBEXECDIR/$realcmd"
 

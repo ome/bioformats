@@ -49,11 +49,11 @@
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 
-namespace showinf
+namespace info
 {
 
   /**
-   * showinf command-line options.
+   * Command-line options.
    */
   class options
   {

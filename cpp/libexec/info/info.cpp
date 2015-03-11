@@ -44,13 +44,13 @@
 #include <ome/common/log.h>
 #include <ome/common/module.h>
 
-#include <showinf/options.h>
-#include <showinf/ImageInfo.h>
+#include <info/options.h>
+#include <info/ImageInfo.h>
 
 #include <unistd.h>
 
 using boost::format;
-using namespace showinf;
+using namespace info;
 
 namespace
 {

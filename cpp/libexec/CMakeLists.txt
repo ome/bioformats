@@ -38,5 +38,5 @@ set(OME_LIBEXEC_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR})
 
-add_subdirectory(glview)
-add_subdirectory(showinf)
+add_subdirectory(view)
+add_subdirectory(info)

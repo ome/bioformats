@@ -36,7 +36,7 @@
  * #L%
  */
 
-#include <glview/Window.h>
+#include <view/Window.h>
 
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/in/OMETIFFReader.h>
@@ -52,7 +52,7 @@
 using namespace ome::qtwidgets;
 using ome::bioformats::dimension_size_type;
 
-namespace glview
+namespace view
 {
 
   Window::Window()
