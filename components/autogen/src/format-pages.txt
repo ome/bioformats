@@ -86,6 +86,7 @@ bsd = yes
 export = no
 weHave = * a few sample datasets
 pixelsRating = Good
+metadataRating = Fair
 opennessRating = Good
 presenceRating = Poor
 utilityRating = Fair

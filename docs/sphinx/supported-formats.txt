@@ -82,7 +82,7 @@ Supported Formats
    * - :doc:`formats/amnis-flowsight`
      - .cif
      - |Good|
-     - |Good|
+     - |Fair|
      - |Good|
      - |Poor|
      - |Fair|
