@@ -40,7 +40,7 @@
 
 #include <ome/bioformats/PixelBuffer.h>
 
-#include <ome/compat/variant.h>
+#include <ome/common/variant.h>
 
 namespace ome
 {

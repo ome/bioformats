@@ -34,10 +34,10 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
 
-# Default policy is from 2.8.0
-cmake_policy(VERSION 2.8.0)
+# Default policy is from 2.8.12
+cmake_policy(VERSION 2.8.12)
 # Set MacOSX @rpath usage globally.
 if (POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW)

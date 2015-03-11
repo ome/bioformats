@@ -41,10 +41,11 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <ome/compat/filesystem.h>
-#include <ome/compat/mstream.h>
+#include <ome/common/filesystem.h>
+#include <ome/common/mstream.h>
+#include <ome/common/string.h>
+
 #include <ome/compat/regex.h>
-#include <ome/compat/string.h>
 
 #include <ome/bioformats/FormatTools.h>
 #include <ome/bioformats/PixelBuffer.h>

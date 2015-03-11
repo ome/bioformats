@@ -48,7 +48,7 @@
 #include <vector>
 
 #include <ome/compat/cstdint.h>
-#include <ome/compat/variant.h>
+#include <ome/common/variant.h>
 
 namespace ome
 {

@@ -40,6 +40,7 @@
 #include <cstdarg>
 
 #include <boost/range/size.hpp>
+#include <boost/thread.hpp>
 
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/IFD.h>
@@ -47,8 +48,7 @@
 #include <ome/bioformats/tiff/Exception.h>
 #include <ome/bioformats/detail/tiff/Tags.h>
 
-#include <ome/compat/thread.h>
-#include <ome/compat/string.h>
+#include <ome/common/string.h>
 
 #include <ome/internal/config.h>
 

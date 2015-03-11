@@ -48,7 +48,7 @@
 #ifndef OME_COMPAT_ARRAY_H
 # define OME_COMPAT_ARRAY_H
 
-# include <ome/compat/config.h>
+# include <ome/common/config.h>
 
 # ifdef OME_HAVE_ARRAY
 #  include <array>

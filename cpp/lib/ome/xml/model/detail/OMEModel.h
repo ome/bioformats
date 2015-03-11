@@ -39,7 +39,7 @@
 #ifndef OME_XML_MODEL_DETAIL_OMEMODEL_H
 #define OME_XML_MODEL_DETAIL_OMEMODEL_H
 
-#include <ome/compat/log.h>
+#include <ome/common/log.h>
 
 #include <ome/xml/model/OMEModel.h>
 #include <ome/xml/model/OMEModelObject.h>
@@ -60,7 +60,7 @@ namespace ome
         {
         private:
           /// Message logger.
-          ome::compat::Logger logger;
+          ome::common::Logger logger;
           /// Mapping of id to model object.
           object_map_type modelObjects;
           /// Mapping of model object to reference.

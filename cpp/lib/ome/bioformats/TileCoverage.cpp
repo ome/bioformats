@@ -35,7 +35,7 @@
  * #L%
  */
 
-#include <ome/compat/config.h>
+#include <ome/common/config.h>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>

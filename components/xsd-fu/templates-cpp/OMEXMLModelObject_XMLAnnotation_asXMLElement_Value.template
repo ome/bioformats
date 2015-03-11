@@ -5,17 +5,17 @@
         std::string wrappedValue("<wrapped>");
         wrappedValue += value;
         wrappedValue += "</wrapped>";
-        xerces::dom::ParseParameters params;
+        common::xml::dom::ParseParameters params;
         params.validationScheme = xercesc::XercesDOMParser::Val_Never;
-        xerces::dom::Document Value_document(ome::xerces::dom::createDocument(wrappedValue, params));
-        xerces::dom::Element value_element = document.createElementNS(NAMESPACE, "Value");
-        xerces::dom::NodeList Value_subNodes = Value_document.getDocumentElement().getChildNodes();
+        common::xml::dom::Document Value_document(ome::common::xml::dom::createDocument(wrappedValue, params));
+        common::xml::dom::Element value_element = document.createElementNS(NAMESPACE, "Value");
+        common::xml::dom::NodeList Value_subNodes = Value_document.getDocumentElement().getChildNodes();
 
-        for (xerces::dom::NodeList::iterator elem = Value_subNodes.begin();
+        for (common::xml::dom::NodeList::iterator elem = Value_subNodes.begin();
              elem != Value_subNodes.end();
              ++elem)
           {
-            xerces::dom::Node Value_subNode(document->importNode(elem->get(), true), false);
+            common::xml::dom::Node Value_subNode(document->importNode(elem->get(), true), false);
             value_element.appendChild(Value_subNode);
           }
         element.appendChild(value_element);

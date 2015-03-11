@@ -46,7 +46,6 @@ endfunction()
 
 add_subdirectory(ome-compat)
 add_subdirectory(ome-internal)
-add_subdirectory(ome-xerces)
 add_subdirectory(ome-xml)
 add_subdirectory(ome-bioformats)
 add_subdirectory(ome-qtwidgets)

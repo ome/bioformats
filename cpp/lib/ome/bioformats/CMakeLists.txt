@@ -147,7 +147,7 @@ set(BIOFORMATS_HEADERS
 add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-compat ome-xml
+target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
                       ${Boost_FILESYSTEM_LIBRARY_RELEASE}
                       ${Boost_SYSTEM_LIBRARY_RELEASE}
                       ${TIFF_LIBRARIES})

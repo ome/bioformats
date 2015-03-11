@@ -57,7 +57,7 @@
 
 namespace fs = boost::filesystem;
 using boost::filesystem::path;
-using ome::compat::canonical;
+using ome::common::canonical;
 
 using ome::bioformats::detail::ReaderProperties;
 using ome::bioformats::tiff::TIFF;
@@ -198,7 +198,7 @@ namespace ome
       }
 
       OMETIFFReader::OMETIFFReader():
-        logger(ome::compat::createLogger("OMETIFFReader")),
+        logger(ome::common::createLogger("OMETIFFReader")),
         detail::FormatReader(props),
         files(),
         tiffs(),

@@ -35,7 +35,7 @@ but are not supported.
 +================+==============+==============+
 | Boost          | 1.54         | 1.48         |
 +----------------+--------------+--------------+
-| CMake          | 3.0          | 2.8          |
+| CMake          | 3.0          | 2.8.12       |
 +----------------+--------------+--------------+
 | HDF5*          | 1.8.x        | 1.8.x        |
 +----------------+--------------+--------------+
@@ -504,8 +504,6 @@ Source tree layout::
   │       │   └── tiff
   │       ├── compat
   │       ├── internal
-  │       ├── xerces
-  │       │   └── dom
   │       └── xml
   │           ├── meta
   │           └── model
@@ -513,9 +511,9 @@ Source tree layout::
   │               └── primitives
   └── test
       ├── ome-bioformats
+      ├── ome-common
       ├── ome-compat
       ├── ome-internal
-      ├── ome-xerces
       └── ome-xml
 
 Top-level directories inside :file:`cpp`:

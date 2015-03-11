@@ -38,8 +38,8 @@
 #include <ome/bioformats/in/TIFFReader.h>
 #include <ome/bioformats/in/OMETIFFReader.h>
 
-#include <ome/xerces/Platform.h>
-#include <ome/xerces/dom/Document.h>
+#include <ome/common/xml/Platform.h>
+#include <ome/common/xml/dom/Document.h>
 
 #include <ome/xml/meta/MetadataStore.h>
 #include <ome/xml/meta/MetadataRetrieve.h>
@@ -64,7 +64,7 @@ namespace showinf
 
   ImageInfo::ImageInfo (const std::string &file,
                         const options&     opts):
-    logger(ome::compat::createLogger("ImageInfo")),
+    logger(ome::common::createLogger("ImageInfo")),
     file(file),
     opts(opts),
     reader()
@@ -298,7 +298,7 @@ namespace showinf
     ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadata> omemeta(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(reader->getMetadataStore()));
     if (omemeta)
       {
-        ome::xerces::Platform xmlplat;
+        ome::common::xml::Platform xmlplat;
 
         std::string omexml;
         bool omexml_dumped = false;
@@ -317,7 +317,7 @@ namespace showinf
           {
             try
               {
-                ome::xerces::dom::Document doc(ome::xerces::dom::createDocument(omexml));
+                ome::common::xml::dom::Document doc(ome::common::xml::dom::createDocument(omexml));
                 stream << "OME-XML validation successful\n";
               }
             catch (const std::exception& e)

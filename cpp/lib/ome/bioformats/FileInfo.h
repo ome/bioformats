@@ -41,7 +41,7 @@
 #include <string>
 #include <ostream>
 
-#include <ome/compat/filesystem.h>
+#include <ome/common/filesystem.h>
 
 namespace ome
 {

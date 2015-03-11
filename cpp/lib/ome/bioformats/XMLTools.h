@@ -38,7 +38,7 @@
 #ifndef OME_BIOFORMATS_XMLTOOLS_H
 #define OME_BIOFORMATS_XMLTOOLS_H
 
-#include <ome/xerces/dom/Document.h>
+#include <ome/common/xml/dom/Document.h>
 
 namespace ome
 {
@@ -50,16 +50,16 @@ namespace ome
      * the Java XMLtools implementation, with the following
      * differences:
      *
-     * createBuilder: Not required; handled internally by xerces::dom.
-     * createDocument: Use ome::xerces::dom::createDocument(qualifiedName).
-     * parseDOM(file): Use ome::xerces::dom::createDocument(file)
-     * parseDOM(string): Use ome::xerces::dom::createDocument(string)
-     * parseDOM(stream): Use ome::xerces::dom::createDocument(steam)
+     * createBuilder: Not required; handled internally by common::xml::dom.
+     * createDocument: Use ome::common::xml::dom::createDocument(qualifiedName).
+     * parseDOM(file): Use ome::common::xml::dom::createDocument(file)
+     * parseDOM(string): Use ome::common::xml::dom::createDocument(string)
+     * parseDOM(stream): Use ome::common::xml::dom::createDocument(steam)
      *
-     * dumpXML(): Use ome::xerces::dom::writeDocument(doc, string);
-     * writeXML(stream): Use ome::xerces::dom::writeDocument(doc, stream);
+     * dumpXML(): Use ome::common::xml::dom::writeDocument(doc, string);
+     * writeXML(stream): Use ome::common::xml::dom::writeDocument(doc, stream);
      *
-     * validateXML(doc): Use ome::xerces::dom::validate(doc)
+     * validateXML(doc): Use ome::common::xml::dom::validate(doc)
      *
      * All parseXML SAX methods are currently unimplemented.
      *

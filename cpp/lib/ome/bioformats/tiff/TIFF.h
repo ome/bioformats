@@ -44,8 +44,9 @@
 
 #include <ome/bioformats/tiff/Types.h>
 
+#include <ome/common/filesystem.h>
+
 #include <ome/compat/cstdint.h>
-#include <ome/compat/filesystem.h>
 #include <ome/compat/memory.h>
 
 namespace ome

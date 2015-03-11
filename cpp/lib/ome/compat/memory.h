@@ -48,7 +48,7 @@
 #ifndef OME_COMPAT_MEMORY_H
 # define OME_COMPAT_MEMORY_H
 
-# include <ome/compat/config.h>
+# include <ome/common/config.h>
 
 # ifdef OME_HAVE_MEMORY
 #  include <memory>
