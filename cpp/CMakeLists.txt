@@ -40,4 +40,5 @@ set(OME_TOPLEVEL_INCLUDES
 
 add_subdirectory(lib)
 add_subdirectory(libexec)
+add_subdirectory(share/icons)
 add_subdirectory(test)

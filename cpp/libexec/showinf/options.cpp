@@ -106,8 +106,10 @@ namespace showinf
   options::add_options ()
   {
     actions.add_options()
+      ("usage,u",
+       "Show command usage")
       ("help,h",
-       "Show help options")
+       "Display manual for this command")
       ("metadata",
        "Display image metadata (default)")
       ("version,V",
@@ -218,6 +220,9 @@ namespace showinf
   void
   options::check_options ()
   {
+    if (vm.count("usage"))
+      this->action = ACTION_USAGE;
+
     if (vm.count("help"))
       this->action = ACTION_HELP;
 

@@ -56,10 +56,12 @@ namespace fs = boost::filesystem;
 #endif
 #include <dlfcn.h>
 #include <stdio.h>
+#endif // OME_HAVE_DLADDR
 
 namespace
 {
 
+#ifdef OME_HAVE_DLADDR
   Dl_info this_module;
 
   __attribute__((constructor))
@@ -68,6 +70,7 @@ namespace
   {
     dladdr(reinterpret_cast<void *>(find_module), &this_module);
   }
+#endif // OME_HAVE_DLADDR
 
   bool
   validate_root_path(const fs::path& path)
@@ -107,7 +110,8 @@ namespace
       // Standard GNU paths.
       pm("bin",         internalpath("BIOFORMATS_BINDIR",         INSTALL_FULL_BINDIR,         INSTALL_BINDIR)),
       pm("sbin",        internalpath("BIOFORMATS_SBINDIR",        INSTALL_FULL_SBINDIR,        INSTALL_SBINDIR)),
-      pm("libexec",     internalpath("BIOFORMATS_LIBEXECDIR",     INSTALL_FULL_LIBEXECDIR,     INSTALL_LIBEXECDIR)),
+      // Note envvar SYS prefix to avoid clash with package path.
+      pm("libexec",     internalpath("BIOFORMATS_SYSLIBEXECDIR",  INSTALL_FULL_LIBEXECDIR,     INSTALL_LIBEXECDIR)),
       pm("sysconf",     internalpath("BIOFORMATS_SYSCONFDIR",     INSTALL_FULL_SYSCONFDIR,     INSTALL_SYSCONFDIR)),
       pm("sharedstate", internalpath("BIOFORMATS_SHAREDSTATEDIR", INSTALL_FULL_SHAREDSTATEDIR, INSTALL_SHAREDSTATEDIR)),
       pm("localstate",  internalpath("BIOFORMATS_LOCALSTATEDIR",  INSTALL_FULL_LOCALSTATEDIR,  INSTALL_LOCALSTATEDIR)),
@@ -126,6 +130,7 @@ namespace
       pm("bf-root",      internalpath("BIOFORMATS_ROOTDIR",       INSTALL_PREFIX,                           "")),
       pm("bf-data",      internalpath("BIOFORMATS_DATADIR",       OME_BIOFORMATS_INSTALL_FULL_DATADIR,      OME_BIOFORMATS_INSTALL_DATADIR)),
       pm("bf-icon",      internalpath("BIOFORMATS_ICONDIR",       OME_BIOFORMATS_INSTALL_FULL_ICONDIR,      OME_BIOFORMATS_INSTALL_ICONDIR)),
+      pm("bf-libexec",   internalpath("BIOFORMATS_LIBEXECDIR",    OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR,   OME_BIOFORMATS_INSTALL_LIBEXECDIR)),
       pm("bf-schema",    internalpath("BIOFORMATS_SCHEMADIR",     OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR,    OME_BIOFORMATS_INSTALL_SCHEMADIR)),
       pm("bf-transform", internalpath("BIOFORMATS_TRANSFORMDIR",  OME_BIOFORMATS_INSTALL_FULL_TRANSFORMDIR, OME_BIOFORMATS_INSTALL_TRANSFORMDIR))
     };
@@ -134,7 +139,6 @@ namespace
                          paths + boost::size(paths));
 }
 
-#endif // OME_HAVE_DLADDR
 
 namespace ome
 {

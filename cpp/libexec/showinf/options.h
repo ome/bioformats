@@ -76,6 +76,7 @@ namespace showinf
 
     enum userAction
       {
+        ACTION_USAGE,
         ACTION_HELP,
         ACTION_VERSION,
         ACTION_METADATA
