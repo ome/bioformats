@@ -79,6 +79,15 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
+   * - :doc:`formats/amnis-flowsight`
+     - .cif
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |yes|
    * - :doc:`formats/analyze-75`
      - .img, .hdr
      - |Very good|
@@ -221,6 +230,15 @@ Supported Formats
      - |Fair|
      - |Fair|
      - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/cellh5`
+     - .ch5
+     - |Very good|
+     - |Good|
+     - |Outstanding|
+     - |Fair|
+     - |Very good|
      - |no|
      - |no|
    * - :doc:`formats/cellomics`
@@ -391,6 +409,15 @@ Supported Formats
      - |Very good|
      - |Very good|
      - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/i2i`
+     - .i2i
+     - |Very Good|
+     - |Good|
+     - |Very Good|
+     - |Poor|
      - |Fair|
      - |no|
      - |no|
@@ -907,6 +934,15 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
+   * - :doc:`formats/perkinelmer-nuance`
+     - .im3
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |yes|
    * - :doc:`formats/perkinelmer-operetta`
      - .tiff, .xml
      - |Very good|
@@ -1150,6 +1186,15 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
+   * - :doc:`formats/veeco-afm`
+     - .hdf
+     - |Good|
+     - |Fair|
+     - |Very Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
    * - :doc:`formats/vg-sam`
      - .dti
      - |Good|
@@ -1213,6 +1258,15 @@ Supported Formats
      - |Fair|
      - |yes|
      - |no|
+   * - :doc:`formats/zeiss-axio-csm`
+     - .lms
+     - |Good|
+     - |Poor|
+     - |Poor|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
    * - :doc:`formats/zeiss-axiovision-tiff`
      - .xml, .tiff
      - |Very good|
@@ -1250,7 +1304,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **136** formats
+Bio-Formats currently supports **142** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1318,6 +1372,7 @@ Bio-Formats currently supports **136** formats
     formats/alicona-3d
     formats/amersham-biosciences-gel
     formats/amira-mesh
+    formats/amnis-flowsight
     formats/analyze-75
     formats/animated-png
     formats/aperio-afi
@@ -1334,6 +1389,7 @@ Bio-Formats currently supports **136** formats
     formats/bruker-mri
     formats/burleigh
     formats/canon-dng
+    formats/cellh5
     formats/cellomics
     formats/cellsens-vsi
     formats/cellvoyager
@@ -1353,6 +1409,7 @@ Bio-Formats currently supports **136** formats
     formats/hamamatsu-ndpi
     formats/hamamatsu-vms
     formats/hitachi-s-4800
+    formats/i2i
     formats/ics
     formats/imacon
     formats/imagepro-sequence
@@ -1410,6 +1467,7 @@ Bio-Formats currently supports **136** formats
     formats/pcoraw
     formats/pcx-pc-paintbrush
     formats/perkin-elmer-densitometer
+    formats/perkinelmer-nuance
     formats/perkinelmer-operetta
     formats/perkinelmer-ultraview
     formats/pgm
@@ -1437,6 +1495,7 @@ Bio-Formats currently supports **136** formats
     formats/ubm
     formats/unisoku
     formats/varian-fdf
+    formats/veeco-afm
     formats/vg-sam
     formats/visitech-xys
     formats/volocity
@@ -1444,6 +1503,7 @@ Bio-Formats currently supports **136** formats
     formats/wa-top
     formats/windows-bitmap
     formats/woolz
+    formats/zeiss-axio-csm
     formats/zeiss-axiovision-tiff
     formats/zeiss-axiovision-zvi
     formats/zeiss-czi
