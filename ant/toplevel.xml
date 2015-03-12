@@ -1036,6 +1036,7 @@ Type "ant -p" for a list of targets.
       <arg value="--release=bioformats"/>
       <arg value="--bioformats-shortversion=${release.shortversion}"/>
       <arg value="--bioformats-version=${release.version}"/>
+      <arg value="--bioformats-vcsshortrevision=${vcs.shortrevision}"/>
       <arg value="--bioformats-vcsrevision=${vcs.revision}"/>
       <arg value="--bioformats-vcsdate=${vcs.date}"/>
       <arg value="--bioformats-vcsdate-unix=${vcs.date_unix}"/>
@@ -1050,6 +1051,7 @@ Type "ant -p" for a list of targets.
       <entry key="release.shortversion" value="${release.shortversion}"/>
       <entry key="release.version" value="${release.version}"/>
       <entry key="vcs.date" value="${vcs.date}"/>
+      <entry key="vcs.shortrevision" value="${vcs.shortrevision}"/>
       <entry key="vcs.revision" value="${vcs.revision}"/>
       <entry key="vcs.date_unix" value="${vcs.date_unix}"/>
     </propertyfile>
@@ -1059,6 +1061,7 @@ Type "ant -p" for a list of targets.
     <echo>VERSION=${release.version}
 SHORTVERSION=${release.shortversion}
 VCS_DATE=${vcs.date}
+VCS_SHORTREVISION=${vcs.shortrevision}
 VCS_REVISION=${vcs.revision}
 </echo>
   </target>

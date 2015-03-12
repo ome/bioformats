@@ -202,6 +202,10 @@ public final class FormatTools {
   public static final String VCS_REVISION =
     VERSION_PROPERTIES.getProperty("vcs.revision");
 
+  /** Current VCS revision (short form). */
+  public static final String VCS_SHORT_REVISION =
+    VERSION_PROPERTIES.getProperty("vcs.shortrevision");
+
   /** Date on which this release was built. */
   public static final String DATE = VERSION_PROPERTIES.getProperty("date");
 
