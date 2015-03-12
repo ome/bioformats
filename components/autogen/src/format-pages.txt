@@ -79,6 +79,19 @@ notes = Known deficiencies: \n
 - Support for 16-bit AL3D images is present, but has never been tested. \n
 - Texture data is currently ignored.
 
+[Amnis FlowSight]
+extensions = .cif
+owner = `Amnis <http://www.amnis.com/>`_
+bsd = yes
+export = no
+weHave = * a few sample datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+reader = FlowSightReader.java
+
 [Amersham Biosciences Gel]
 extensions = .gel
 owner = `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
@@ -429,6 +442,20 @@ presenceRating = Fair
 utilityRating = Good
 reader = MicromanagerReader.java
 
+[CellH5]
+extensions = .ch5
+developer = `CellH5 <http://cellh5.org/>`_
+bsd = no
+export = no
+software = `CellH5 <http://cellh5.org/>`_
+weHave = * a few CellH5 datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Very good
+reader = CellH5Reader.java
+
 [Cellomics]
 extensions = .c01
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
@@ -752,6 +779,21 @@ opennessRating = Very good
 presenceRating = Fair
 utilityRating = Fair
 reader = HitachiReader.java
+
+[I2I]
+extensions = .i2i
+developer = `Biomedical Imaging Group, UMass Medical School <http://invitro.umassmed.edu/>`_
+bsd = no
+export = no
+weHave = * several example datasets \n
+* a specification document \n
+* an ImageJ plugin that can read I2I data
+pixelsRating = Very Good
+metadataRating = Good
+opennessRating = Very Good
+presenceRating = Poor
+utilityRating = Fair
+reader = I2IReader.java
 
 [ICS (Image Cytometry Standard)]
 pagename = ics
@@ -1772,6 +1814,19 @@ presenceRating = Poor
 utilityRating = Fair
 reader = PDSReader.java
 
+[PerkinElmer Nuance]
+extensions = .im3
+developer = `PerkinElmer <http://www.perkinelmer.com/>`_
+bsd = yes
+export = no
+weHave = * a few sample datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Fair
+reader = IM3Reader.java
+
 [PerkinElmer Operetta]
 extensions = .tiff, .xml
 developer = `PerkinElmer <http://www.perkinelmer.com/>`_
@@ -2210,6 +2265,19 @@ presenceRating = Fair
 utilityRating = Fair
 reader = VarianFDFReader.java
 
+[Veeco AFM]
+extensions = .hdf
+developer = `Veeco <http://www.veeco.com>`_
+bsd = no
+export = no
+weHave = * a few sample datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Very Good
+presenceRating = Fair
+utilityRating = Good
+reader = VeecoReader.java
+
 [VG SAM]
 extensions = .dti
 bsd = no
@@ -2321,6 +2389,23 @@ utilityRating = Fair
 reader = WlzReader.java
 writer = WlzWriter.java
 
+[Zeiss Axio CSM]
+extensions = .lms
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+bsd = no
+export = no
+weHave = * one example dataset
+pixelsRating = Good
+metadataRating = Poor
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Fair
+reader = ZeissLMSReader.java
+notes = This should not be confused with the more common Zeiss LSM format, \n
+which has a similar extension.  As far as we know, the Axio CSM 700 system is \n
+the only one which saves files in the .lms format. \n
+
 [Zeiss AxioVision TIFF]
 extensions = .xml, .tiff
 owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
@@ -2416,3 +2501,4 @@ Commercial applications that support this format include: \n
 * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
 * `Amira <http://www.amira.com/>`_ \n
 * `Image-Pro Plus <http://www.mediacy.com/>`_
+
