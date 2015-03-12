@@ -69,7 +69,7 @@ if(BUILD_TESTS)
   bf_add_test(ome-common/mstream mstream)
 
   add_executable(thread thread.cpp)
-  target_link_libraries(thread ome-common)
+  target_link_libraries(thread ome-common ${THREAD_LIBRARY})
   target_link_libraries(thread ome-test)
 
   bf_add_test(ome-common/thread thread)

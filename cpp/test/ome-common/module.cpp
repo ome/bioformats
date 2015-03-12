@@ -70,7 +70,7 @@ TEST_P(ModulePathTest, CheckPath)
   // exception.  It will only error on segfaults.
   try
     {
-      boost::filesystem::path path(ome::compat::module_runtime_path(params.dtype));
+      boost::filesystem::path path(ome::common::module_runtime_path(params.dtype));
       if (verbose())
         std::cout << params.dtype << " path is: " << path << '\n';
     }
@@ -95,9 +95,9 @@ TEST_P(ModulePathTest, ValidEnv)
   setenv(params.envvar.c_str(), PROJECT_BINARY_DIR, 1);
 
   if (!params.logic_error)
-    ASSERT_NO_THROW(ome::compat::module_runtime_path(params.dtype));
+    ASSERT_NO_THROW(ome::common::module_runtime_path(params.dtype));
   else
-    ASSERT_THROW(ome::compat::module_runtime_path(params.dtype), std::logic_error);
+    ASSERT_THROW(ome::common::module_runtime_path(params.dtype), std::logic_error);
 }
 
 TEST_P(ModulePathTest, InvalidEnv)
@@ -108,7 +108,7 @@ TEST_P(ModulePathTest, InvalidEnv)
 
   try
     {
-      ome::compat::module_runtime_path(params.dtype);
+      ome::common::module_runtime_path(params.dtype);
     }
   catch (const std::runtime_error& e)
     {
@@ -123,7 +123,7 @@ ModulePathTestParameters params[] =
   {
     ModulePathTestParameters("bin",          "BIOFORMATS_BINDIR",         false),
     ModulePathTestParameters("sbin",         "BIOFORMATS_SBINDIR",        false),
-    ModulePathTestParameters("libexec",      "BIOFORMATS_LIBEXECDIR",     false),
+    ModulePathTestParameters("libexec",      "BIOFORMATS_SYSLIBEXECDIR",  false),
     ModulePathTestParameters("sysconf",      "BIOFORMATS_SYSCONFDIR",     false),
     ModulePathTestParameters("sharedstate",  "BIOFORMATS_SHAREDSTATEDIR", false),
     ModulePathTestParameters("localstate",   "BIOFORMATS_LOCALSTATEDIR",  false),
@@ -140,6 +140,7 @@ ModulePathTestParameters params[] =
     ModulePathTestParameters("bf-root",      "BIOFORMATS_ROOTDIR",        false),
     ModulePathTestParameters("bf-data",      "BIOFORMATS_DATADIR",        false),
     ModulePathTestParameters("bf-icon",      "BIOFORMATS_ICONDIR",        false),
+    ModulePathTestParameters("bf-libexec",   "BIOFORMATS_LIBEXECDIR",     false),
     ModulePathTestParameters("bf-schema",    "BIOFORMATS_SCHEMADIR",      false),
     ModulePathTestParameters("bf-transform", "BIOFORMATS_TRANSFORMDIR",   false),
 
