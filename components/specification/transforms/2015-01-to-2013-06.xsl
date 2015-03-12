@@ -60,9 +60,22 @@
 	<!-- strip EmissionWavelength and ExcitationWavelength ONLY if it is not an integer -->
 	<xsl:template match="OME:Channel">
 		<xsl:element name="OME:Channel" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'EmissionWavelength' or name() = 'ExcitationWavelength' or name() = 'EmissionWavelengthUnit' or name() = 'ExcitationWavelengthUnit')]">
+			<xsl:for-each select="@* [not(name() = 'EmissionWavelength' or name() = 'ExcitationWavelength' or name() = 'EmissionWavelengthUnit' or name() = 'ExcitationWavelengthUnit' or name() = 'PinholeSize' or name() = 'PinholeSizeUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValuePinhole">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@PinholeSize"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@PinholeSizeUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">PinholeSize</xsl:with-param>
+					<xsl:with-param name="theElementName">Channel</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'PinholeSize']">
+				<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="$theConvertedValuePinhole"/>
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValueEm">
