@@ -178,9 +178,10 @@ help() {
 }
 
 run() {
-  realcmd="$1"
+  runcmd="$1"
   shift
 
+  realcmd="$runcmd"
   if [ "$realcmd" = "info" -o "$realcmd" = "showinf" ]; then
     realcmd=info
   fi
@@ -190,7 +191,7 @@ run() {
   realcmd="$LIBEXECDIR/$realcmd"
 
   if [ ! -x "$realcmd" ]; then
-    echo "bf: '$realcmd' is not a bf command.  See 'bf --help'" >&2
+    echo "bf: '$runcmd' is not a bf command.  See 'bf --help'" >&2
     exit 1
   fi
 
