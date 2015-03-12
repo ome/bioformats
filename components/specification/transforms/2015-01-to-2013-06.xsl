@@ -56,11 +56,11 @@
 	<xsl:preserve-space elements="*"/>
 
 	<!-- Actual schema changes -->
-	
+
 	<!-- strip EmissionWavelength and ExcitationWavelength ONLY if it is not an integer -->
 	<xsl:template match="OME:Channel">
 		<xsl:element name="OME:Channel" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'EmissionWavelength' or name() = 'ExcitationWavelength')]">
+			<xsl:for-each select="@* [not(name() = 'EmissionWavelength' or name() = 'ExcitationWavelength' or name() = 'EmissionWavelengthUnit' or name() = 'ExcitationWavelengthUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
@@ -236,13 +236,23 @@
 	<!-- strip GenericExcitationSource and terminate -->
 	<xsl:template match="OME:GenericExcitationSource">
 		<xsl:comment>GenericExcitationSource elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
-		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - GenericExcitationSource elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+		<xsl:message terminate="yes">OME-XSLT: 2015-01-to-2013-06.xsl - ERROR - GenericExcitationSource elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
 	</xsl:template>
 
-	<!-- strip GenericExcitationSource and terminate -->
+	<!-- strip MapAnnotation and terminate -->
 	<xsl:template match="SA:MapAnnotation">
 		<xsl:comment>MapAnnotation elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
-		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - MapAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+		<xsl:message terminate="yes">OME-XSLT: 2015-01-to-2013-06.xsl - ERROR - MapAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+	</xsl:template>
+
+	<!-- strip child nodes from ImagingEnvironment and warn about Map -->
+	<xsl:template match="OME:ImagingEnvironment">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:call-template name="attribute-units-conversion"/>
+		</xsl:element>
+		<xsl:for-each select="* [(local-name() = 'Map')]">
+			<xsl:comment>ImagingEnvironment:Map elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
+		</xsl:for-each>
 	</xsl:template>
 
 	<!-- Rewriting all namespaces -->
