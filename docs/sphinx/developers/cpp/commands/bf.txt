@@ -9,7 +9,8 @@ Synopsis
 Description
 -----------
 
-:program:`bf` is a frontend for running the Bio-Formats (C++) command-line tools.
+:program:`bf` is a front end for running the Bio-Formats (C++)
+command-line tools.
 
 This takes care of setting up the environment to ensure that all
 needed libraries, programs and data files are made available.  It is

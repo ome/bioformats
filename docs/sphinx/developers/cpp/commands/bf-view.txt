@@ -11,7 +11,7 @@ Synopsis
 Description
 -----------
 
-:program:`bf view` will render the pixel data of an image file using
+:program:`bf view` renders the pixel data of an image file using
 OpenGL.
 
 Open an image using :menuselection:`File --> Open`.
@@ -27,7 +27,6 @@ Open an image using :menuselection:`File --> Open`.
    The viewer currently supports viewing of multi-dimensional
    greyscale planes; RGB images are not yet supported.  This will be
    rectified in a future update.
-
 
 Navigation
 ----------
@@ -53,7 +52,6 @@ This range is used to render with a HiLo lookup table.
   The rendering settings will be improved in a future update to allow
   alternate lookup tables and per-channel rendering settings.
 
-
 2D Camera
 ---------
 
@@ -70,5 +68,5 @@ pam
   then drag to move the image.
 rotate
   Press and hold the first mouse button anywhere in the image view,
-  then drag up or down to rotate the image anticlockwise or clockwise,
-  respectively.
+  then drag up or down to rotate the image counterclockwise or
+  clockwise, respectively.
