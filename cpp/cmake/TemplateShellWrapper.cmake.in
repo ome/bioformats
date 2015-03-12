@@ -190,7 +190,7 @@ run() {
   realcmd="$LIBEXECDIR/$realcmd"
 
   if [ ! -x "$realcmd" ]; then
-    echo "bf: '$1' is not a bf command.  See 'bf --help'" >&2
+    echo "bf: '$realcmd' is not a bf command.  See 'bf --help'" >&2
     exit 1
   fi
 
