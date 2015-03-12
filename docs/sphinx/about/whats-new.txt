@@ -59,6 +59,8 @@ Version history
         - fix reading of files larger than 4 GB
     - AIM
         - fix reading of files larger than 4 GB
+    - MRC
+        - add support for signed 8-bit data
     - Fix build errors in MIPAV plugin
     - ImageJ
         - fix export from a script/macro
