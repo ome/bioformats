@@ -93,6 +93,9 @@ public class OMETiffReader extends FormatReader {
   private int[] tileHeight;
 
   private OMEXMLService service;
+  private transient OMEXMLMetadata meta;
+  private String metaFile;
+
   private String metadataFile;
 
   // -- Constructor --
@@ -130,6 +133,7 @@ public class OMETiffReader extends FormatReader {
     OMEXMLMetadata meta;
     try {
       meta = service.createOMEXMLMetadata(xml);
+      metaFile = new Location(id).getAbsolutePath();
     }
     catch (ServiceException se) {
       throw new FormatException(se);
@@ -157,6 +161,7 @@ public class OMETiffReader extends FormatReader {
       // force the reader to pick up binary-only companion files
       return true;
     }
+    metaFile = new Location(name).getAbsolutePath();
     return super.isThisType(name, open);
   }
 
@@ -197,7 +202,7 @@ public class OMETiffReader extends FormatReader {
 
     try {
       if (service == null) setupService();
-      IMetadata meta = service.createOMEXMLMetadata(comment);
+      meta = service.createOMEXMLMetadata(comment);
 
       try {
         String metadataFile = meta.getBinaryOnlyMetadataFile();
@@ -421,9 +426,11 @@ public class OMETiffReader extends FormatReader {
     }
 
     if (service == null) setupService();
-    OMEXMLMetadata meta;
     try {
-      meta = service.createOMEXMLMetadata(xml);
+      if (meta == null || !metaFile.equals(currentId)) {
+        meta = service.createOMEXMLMetadata(xml);
+        metaFile = currentId;
+      }
       if (companion) {
         String firstTIFF = meta.getUUIDFileName(0, 0);
         initFile(new Location(dir, firstTIFF).getAbsolutePath());
