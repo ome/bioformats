@@ -6,15 +6,16 @@ Version history
 
 * Improvements to performance with network file systems
 * Improvements to developer documentation
+* Initial version of :doc:`native C++ implementation </developers/cpp/overview>`
 * Improved support for opening and saving ROI data with ImageJ
-* Added support for CellH5 data (thanks to Christophe Sommer)
-* Added support for Perkin Elmer Nuance data (thanks to Lee Kamentsky)
-* Added support for Amaris FlowSight data (thanks to Lee Kamentsky and Sebastien Simard)
-* Added support for Veeco AFM data
-* Added support for Zeiss .lms data (not to be confused with .lsm)
-* Added support for I2I data
+* Added support for :doc:`CellH5 </formats/cellh5>` data (thanks to Christophe Sommer)
+* Added support for :doc:`Perkin Elmer Nuance </formats/perkinelmer-nuance>` data (thanks to Lee Kamentsky)
+* Added support for :doc:`Amnis FlowSight </formats/amnis-flowsight>` data (thanks to Lee Kamentsky and Sebastien Simard)
+* Added support for :doc:`Veeco AFM </formats/veeco-afm>` data
+* Added support for :doc:`Zeiss .lms </formats/zeiss-axio-csm>` data (not to be confused with .lsm)
+* Added support for :doc:`I2I </formats/i2i>` data
 * Added support for writing Vaa3D data (thanks to Brian Long)
-* Updated to OME schema 2015-01
+* Updated to :model_doc:`OME schema 2015-01 </schemas/january-2015.html>`
 * Update RandomAccessInputStream and RandomAccessOutputStream to read and write bits
 * Many bug fixes, including:
     - Leica SCN
