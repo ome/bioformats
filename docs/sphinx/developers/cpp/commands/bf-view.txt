@@ -32,8 +32,8 @@ Open an image using :menuselection:`File --> Open`.
 Navigation
 ----------
 
-The Navigation dock allows navigation of the constituent planes of an
-image.  The Plane slider allows the absolute plane number to be
+The Navigation dock allows navigation between the constituent planes
+of an image.  The Plane slider allows the absolute plane number to be
 changed, while individual Z, T, C sliders permit the Z slice,
 timepoint or channel to be changed, respectively.  These sliders will
 only be available for images using these dimensions.  Additional
