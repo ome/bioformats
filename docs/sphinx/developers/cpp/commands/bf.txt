@@ -41,7 +41,7 @@ info (or showinf)
 view (or glview)
   View image pixel data
 
-.. seealso::
+See also
+--------
 
-    :ref:`bf-info`
-    :ref:`bf-view`
+:ref:`bf-env`, :ref:`bf-info`, :ref:`bf-view`.

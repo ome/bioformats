@@ -1,6 +1,6 @@
 .. _bf-view:
 
-bf-view
+bf view
 =======
 
 Synopsis
@@ -70,3 +70,11 @@ rotate
   Press and hold the first mouse button anywhere in the image view,
   then drag up or down to rotate the image counterclockwise or
   clockwise, respectively.
+
+Environment
+-----------
+
+:envvar:`BIOFORMATS_OPENGL_DEBUG`
+  If set (to any value), create an OpenGL debugging context and
+  verbosely log all OpenGL activity
+

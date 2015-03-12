@@ -127,7 +127,7 @@ namespace
       pm("doc",         internalpath("BIOFORMATS_DOCDIR",         INSTALL_FULL_DOCDIR,         INSTALL_DOCDIR)),
 
       // Bio-Formats package-specific paths.
-      pm("bf-root",      internalpath("BIOFORMATS_ROOTDIR",       INSTALL_PREFIX,                           "")),
+      pm("bf-root",      internalpath("BIOFORMATS_HOME",          INSTALL_PREFIX,                           "")),
       pm("bf-data",      internalpath("BIOFORMATS_DATADIR",       OME_BIOFORMATS_INSTALL_FULL_DATADIR,      OME_BIOFORMATS_INSTALL_DATADIR)),
       pm("bf-icon",      internalpath("BIOFORMATS_ICONDIR",       OME_BIOFORMATS_INSTALL_FULL_ICONDIR,      OME_BIOFORMATS_INSTALL_ICONDIR)),
       pm("bf-libexec",   internalpath("BIOFORMATS_LIBEXECDIR",    OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR,   OME_BIOFORMATS_INSTALL_LIBEXECDIR)),

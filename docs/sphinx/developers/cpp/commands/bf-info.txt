@@ -1,6 +1,6 @@
 .. _bf-info:
 
-bf-info
+bf info
 =======
 
 Synopsis
