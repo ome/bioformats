@@ -270,7 +270,8 @@ public class ROIHandler {
                         }
                         if (sc != null) roi.setStrokeColor(sc);
                         manager.add(images[imageNum], roi, nextRoi++);
-
+                        manager.runCommand("Select All");
+                        manager.runCommand("Show All");
                     }
                 }
             }
@@ -305,7 +306,11 @@ public class ROIHandler {
         if (rois == null || rois.length == 0) return;
         List<String> discardList = new ArrayList<String>();
         String roiID = null;
-        int cntr = 0;
+
+        OME root = (OME) store.getRoot();
+        int roicount = root.sizeOfROIList();
+        int cntr = roicount;
+
         for (int i=0; i<rois.length; i++) {
 
             String polylineID = MetadataTools.createLSID("Shape", cntr, 0);
