@@ -288,7 +288,7 @@ public class OMETiffReader extends FormatReader {
     r.lastPlane = i;
     IFDList ifdList = r.getIFDs();
     if (i >= ifdList.size()) {
-      LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed.");
+      LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed (IFD #{} missing).", i);
       return buf;
     }
     IFD ifd = ifdList.get(i);
@@ -796,14 +796,26 @@ public class OMETiffReader extends FormatReader {
       info[s] = planes;
       try {
         RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id);
+        String firstFile = info[s][0].id;
         if (!info[s][0].reader.isThisType(testFile)) {
+          LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
           info[s][0].id = currentId;
           info[s][0].exists = false;
         }
         testFile.close();
-        for (int plane=0; plane<info[s].length; plane++) {
+        for (int plane=1; plane<info[s].length; plane++) {
+          if (info[s][plane].id.equals(firstFile)) {
+            // don't repeat slow type checking if the files are the same
+            if (!info[s][0].exists) {
+              info[s][plane].id = info[s][0].id;
+              info[s][plane].exists = false;
+            }
+
+            continue;
+          }
           testFile = new RandomAccessInputStream(info[s][plane].id);
           if (!info[s][plane].reader.isThisType(testFile)) {
+            LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
             info[s][plane].id = info[s][0].id;
             info[s][plane].exists = false;
           }
