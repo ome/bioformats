@@ -296,9 +296,7 @@
 	<xsl:template match="OME:MetadataOnly">
 		<xsl:comment>MetadataOnly Files cannot be suported in version 2008-02 schema.</xsl:comment>
 		<xsl:comment>Begin Dummy BinData</xsl:comment>
-		<xsl:element name="BIN:BinData" namespace="{$newBINNS}">
-			<xsl:attribute name="Length">0</xsl:attribute>
-		</xsl:element>
+		<xsl:element name="BIN:BinData" namespace="{$newBINNS}"/>
 		<xsl:comment>End Dummy BinData</xsl:comment>
 	</xsl:template>
 
