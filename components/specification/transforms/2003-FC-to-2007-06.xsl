@@ -280,6 +280,11 @@
 							<xsl:value-of select="."/>
 						</xsl:attribute>
 					</xsl:when>
+					<xsl:when test="local-name(.)='ID'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="substring-after(.,'xslt.fix:LogicalChannel:XSLT:')"/>
+						</xsl:attribute>
+					</xsl:when>
 					<xsl:otherwise>
 						<xsl:attribute name="{local-name(.)}">
 							<xsl:value-of select="."/>
@@ -287,8 +292,28 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
-			<xsl:for-each select="* [not(name() = 'AuxLightSourceRef')]">
+			<xsl:for-each select="* [not(name() = 'AuxLightSourceRef' or name()='ChannelComponent')]">
 				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.) = 'ChannelComponent']"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:ChannelComponent">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Pixels'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="substring-after(.,'xslt.fix:Pixels:XSLT:')"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
@@ -668,14 +693,28 @@
 	-->
 	<xsl:template match="OME:Pixels">
 		<xsl:element name="Pixels" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*[not(local-name(.)='PixelType')]"/>
-			<xsl:for-each select="@* [name() = 'PixelType']">
-				<xsl:attribute name="{local-name(.)}">
-					<xsl:call-template name="transformEnumerationValue">
-						<xsl:with-param name="mappingName" select="'PixelsPixelType'"/>
-						<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
-					</xsl:call-template>
-				</xsl:attribute>
+			<xsl:apply-templates select="@*[not(local-name(.)='PixelType' or local-name(.)='ID')]"/>
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='PixelType'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+							<xsl:with-param name="mappingName" select="'PixelsPixelType'"/>
+							<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='ID'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="substring-after(.,'xslt.fix:Pixels:XSLT:')"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:for-each>
 			<xsl:for-each select="ancestor::OME:Image">
 				<xsl:for-each select="@* [name() = 'PixelSizeX']">
@@ -1001,7 +1040,7 @@
 				<xsl:choose>
 					<xsl:when test="local-name(.)='ID'">
 						<xsl:attribute name="{local-name(.)}">
-							<xsl:value-of select="."/>
+							<xsl:value-of select="substring-after(.,'xslt.fix:Image:XSLT:')"/>
 						</xsl:attribute>
 					</xsl:when>
 					<xsl:when test="local-name(.)='Name'">
@@ -1011,14 +1050,14 @@
 					</xsl:when>
 					<xsl:when test="local-name(.)='DefaultPixels'">
 						<xsl:attribute name="{local-name(.)}">
-							<xsl:value-of select="."/>
+							<xsl:value-of select="substring-after(.,'xslt.fix:Pixels:XSLT:')"/>
 						</xsl:attribute>
 					</xsl:when>
 				</xsl:choose>
 			</xsl:for-each>
 			<xsl:variable name="defaultPixels">
 				<xsl:for-each select="@*[name(.) = 'DefaultPixels']">
-					<xsl:value-of select="."/>
+					<xsl:value-of select="substring-after(.,'xslt.fix:Pixels:XSLT:')"/>
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:for-each select="*[local-name(.) = 'ObjectiveRef']">
