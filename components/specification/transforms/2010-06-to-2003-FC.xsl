@@ -263,6 +263,7 @@
 			</xsl:for-each>
 			<xsl:apply-templates select="* [local-name(.) = 'BinData']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'TiffData']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MetadataOnly']"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -292,6 +293,14 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template match="OME:MetadataOnly">
+		<xsl:comment>MetadataOnly Files cannot be suported in version 2008-02 schema.</xsl:comment>
+		<xsl:comment>Begin Dummy BinData</xsl:comment>
+		<xsl:element name="BIN:BinData" namespace="{$newBINNS}">
+			<xsl:attribute name="Length">0</xsl:attribute>
+		</xsl:element>
+		<xsl:comment>End Dummy BinData</xsl:comment>
+	</xsl:template>
 
 	<xsl:template match="ROI:*"/>
 	<xsl:template match="SA:*"/>
