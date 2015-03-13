@@ -164,7 +164,7 @@
 				<xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
 			</xsl:for-each>
 			<xsl:attribute name="DefaultPixels">
-				<xsl:variable name="firstPixels"><xsl:for-each select="* [name(.) = 'Pixels'][1]">
+				<xsl:variable name="firstPixels"><xsl:for-each select="* [local-name(.) = 'Pixels'][1]">
 					<xsl:value-of select="@ID"/>
 				</xsl:for-each>
 				</xsl:variable>
