@@ -179,13 +179,12 @@
 				<xsl:attribute name="ID">xslt.fix:Image:XSLT:<xsl:value-of select="."/></xsl:attribute>
 			</xsl:for-each>
 			<xsl:attribute name="DefaultPixels">
-				<xsl:variable name="firstPixels">xslt.fix:Pixels:XSLT:<xsl:for-each select="* [name(.) = 'Pixels'][1]">
+				<xsl:variable name="firstPixels">xslt.fix:Pixels:XSLT:<xsl:for-each select="* [local-name(.) = 'Pixels'][1]">
 						<xsl:value-of select="@ID"/>
 					</xsl:for-each>
 				</xsl:variable>
 				<xsl:value-of select="$firstPixels"/>
 			</xsl:attribute>
-
 			<xsl:choose>
 				<xsl:when test="local-name(*[1])='AcquiredDate'">
 					<xsl:apply-templates select="* [name(.) = 'AcquiredDate']"/>
@@ -224,7 +223,7 @@
 					</xsl:element>
 				</xsl:element>
 			</xsl:for-each>
-			<xsl:apply-templates select="* [name(.) = 'Pixels']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Pixels']"/>
 
 		</xsl:element>
 	</xsl:template>
