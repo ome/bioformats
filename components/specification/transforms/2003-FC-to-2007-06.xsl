@@ -313,8 +313,7 @@
 	        <xsl:value-of select="substring-before($text,$replace)"/>
 	        <xsl:value-of select="$with"/>
 	        <xsl:call-template name="replace-string">
-	          <xsl:with-param name="text"
-	select="substring-after($text,$replace)"/>
+	          <xsl:with-param name="text" select="substring-after($text,$replace)"/>
 	          <xsl:with-param name="replace" select="$replace"/>
 	          <xsl:with-param name="with" select="$with"/>
 	        </xsl:call-template>
