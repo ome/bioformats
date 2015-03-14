@@ -282,7 +282,11 @@
 					</xsl:when>
 					<xsl:when test="local-name(.)='ID'">
 						<xsl:attribute name="{local-name(.)}">
-							<xsl:value-of select="substring-after(.,'xslt.fix:LogicalChannel:XSLT:')"/>
+							<xsl:call-template name="replace-string">
+								<xsl:with-param name="text" select="substring-after(.,'xslt.fix:LogicalChannel:XSLT:')"/>
+								<xsl:with-param name="replace" select="'Channel'"/>
+								<xsl:with-param name="with" select="'LogicalChannel'"/>
+							</xsl:call-template>
 						</xsl:attribute>
 					</xsl:when>
 					<xsl:otherwise>
@@ -298,6 +302,28 @@
 			<xsl:apply-templates select="* [local-name(.) = 'ChannelComponent']"/>
 		</xsl:element>
 	</xsl:template>
+
+	<!-- function used to fix the LogicalChannel ID-->
+	<xsl:template name="replace-string">
+	    <xsl:param name="text"/>
+	    <xsl:param name="replace"/>
+	    <xsl:param name="with"/>
+	    <xsl:choose>
+	      <xsl:when test="contains($text,$replace)">
+	        <xsl:value-of select="substring-before($text,$replace)"/>
+	        <xsl:value-of select="$with"/>
+	        <xsl:call-template name="replace-string">
+	          <xsl:with-param name="text"
+	select="substring-after($text,$replace)"/>
+	          <xsl:with-param name="replace" select="$replace"/>
+	          <xsl:with-param name="with" select="$with"/>
+	        </xsl:call-template>
+	      </xsl:when>
+	      <xsl:otherwise>
+	        <xsl:value-of select="$text"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
+  	</xsl:template>
 
 	<xsl:template match="OME:ChannelComponent">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
