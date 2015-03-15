@@ -251,7 +251,7 @@
 	<!-- strip AnnotationRef on Filter -->
 	<xsl:template match="OME:TransmittanceRange">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'CutIn' or name() = 'CutInUnit' or name() = 'CutOut' or name() = 'CutOutUnit')]">
+			<xsl:for-each select="@* [not(name() = 'CutIn' or name() = 'CutInUnit' or name() = 'CutOut' or name() = 'CutOutUnit' or name() = 'CutInTolerance' or name() = 'CutInToleranceUnit' or name() = 'CutOutTolerance' or name() = 'CutOutToleranceUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
@@ -283,6 +283,36 @@
 				<xsl:if test="$theConvertedValueCutOut=round($theConvertedValueCutOut)">
 					<xsl:attribute name="{local-name(.)}">
 						<xsl:value-of select="round($theConvertedValueCutOut)"/>
+					</xsl:attribute>
+				</xsl:if>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutInTolerance">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutInTolerance"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutInToleranceUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutInTolerance</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutInTolerance']">
+				<xsl:if test="$theConvertedValueCutInTolerance=round($theConvertedValueCutInTolerance)">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="round($theConvertedValueCutInTolerance)"/>
+					</xsl:attribute>
+				</xsl:if>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutOutTolerance">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutOutTolerance"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutOutToleranceUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutOutTolerance</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutOutTolerance']">
+				<xsl:if test="$theConvertedValueCutOutTolerance=round($theConvertedValueCutOutTolerance)">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="round($theConvertedValueCutOutTolerance)"/>
 					</xsl:attribute>
 				</xsl:if>
 			</xsl:for-each>
