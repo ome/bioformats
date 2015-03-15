@@ -295,10 +295,25 @@
 	<!-- strip AnnotationRef on LightSource -->
 	<xsl:template match="OME:LightSource">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-				<xsl:apply-templates select="."/>
+			<xsl:for-each select="@* [not(name() = 'Power' or name() = 'PowerUnit' or name() = 'AnnotationRef')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
 			</xsl:for-each>
+			<xsl:variable name="theConvertedValuePower">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Power"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@PowerUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Power</xsl:with-param>
+					<xsl:with-param name="theElementName">LightSource</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'Power']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="$theConvertedValuePower"/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 
