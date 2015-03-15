@@ -752,7 +752,7 @@
 					<xsl:value-of select="."/>
 				</xsl:element>
 			</xsl:for-each>
-			<xsl:for-each select="@* [name(.) = 'UserName']">
+			<xsl:for-each select="@* [name(.) = 'UserName' or name(.) = 'DisplayName']">
 				<xsl:element name="OMEName" namespace="{$newOMENS}">
 					<xsl:value-of select="."/>
 				</xsl:element>
