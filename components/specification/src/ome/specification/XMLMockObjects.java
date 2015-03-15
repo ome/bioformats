@@ -140,7 +140,6 @@ import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
-import omero.model.enums.UnitsLength;
 
 /**
  * Creates XML objects for the 2010-06 schema.
