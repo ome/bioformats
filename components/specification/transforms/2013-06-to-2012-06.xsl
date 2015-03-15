@@ -158,11 +158,12 @@
 			</xsl:for-each>
 			<xsl:variable name="theValue" select="@NominalMagnification"/>
 			<xsl:for-each select="@* [name() = 'NominalMagnification']">
-				<xsl:if test="$theValue=round($theValue)">
+				<!--<xsl:if test="$theValue=round($theValue)">-->
+					<!-- keep rounded value otherwise we cannot go back to older schema-->
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="."/>
+						<xsl:value-of select="round($theValue)"/>
 					</xsl:attribute>
-				</xsl:if>
+				<!--</xsl:if>-->
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
