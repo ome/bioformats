@@ -715,12 +715,14 @@
 	</xsl:template>
 
 	<xsl:template match="OME:Experiment">
+		<!--
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Description']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulation']"/>
 		</xsl:element>
+	-->
 	</xsl:template>
 
 	<xsl:template match="OME:Experimenter">
