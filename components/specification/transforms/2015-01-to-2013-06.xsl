@@ -142,9 +142,22 @@
 	<!-- strip Wavelength from Laser ONLY if it is not an integer -->
 	<xsl:template match="OME:Laser">
 		<xsl:element name="OME:Laser" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit')]">
+			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit' or name() = 'RepetitionRate' or name() = 'RepetitionRateUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueRepetitionRate">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@RepetitionRate"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@RepetitionRateeUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">RepetitionRate</xsl:with-param>
+					<xsl:with-param name="theElementName">Laser</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'RepetitionRate']">
+				<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="$theConvertedValueRepetitionRate"/>
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValue">
