@@ -1085,8 +1085,6 @@ public class XMLMockObjects
         channel.setLightSourceSettings(createLightSourceSettings(j));
         channel.setLightPath(createLightPath());
         channel.setDetectorSettings(ds);
-        //link the channel to the OTF
-        //if (otf != null) otf.linkChannel(channel);
         j++;
       }
       pixels.addChannel(channel);
@@ -1329,7 +1327,7 @@ public class XMLMockObjects
    */
   public OME createImage(boolean metadata)
   {
-    ome.addImage(createImage(0, true));
+    ome.addImage(createImage(0, metadata));
     return ome;
   }
 
@@ -1379,7 +1377,6 @@ public class XMLMockObjects
     ome.addExperiment(exp);
     MicrobeamManipulation mm = createMicrobeamManipulation(0);
     exp.addMicrobeamManipulation(mm);
-    Pixels pixels = image.getPixels();
     image.linkExperiment(exp);
     image.linkInstrument(instrument);
     ome.addImage(image);
