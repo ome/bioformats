@@ -202,9 +202,23 @@
 	<!-- strip AnnotationRef on Objective -->
 	<xsl:template match="OME:Objective">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-				<xsl:apply-templates select="."/>
+			<xsl:for-each select="@* [not(name() = 'WorkingDistance' or name() = 'WorkingDistanceUnit' or name() = 'AnnotationRef')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueWorkingDistance">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@WorkingDistance"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WorkingDistanceUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">WorkingDistance</xsl:with-param>
+					<xsl:with-param name="theElementName">Objective</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'WorkingDistance']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="$theConvertedValueWorkingDistance"/>
+				</xsl:attribute>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
