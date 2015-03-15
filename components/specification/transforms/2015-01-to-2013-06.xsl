@@ -196,15 +196,30 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- strip AnnotationRef on Detector -->
+	<!-- strip AnnotationRef on Detector and voltage unit-->
 	<xsl:template match="OME:Detector">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-				<xsl:apply-templates select="."/>
+			<xsl:for-each select="@* [not(name() = 'Voltage' or name() = 'VoltageUnit' or name() = 'AnnotationRef')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueVoltage">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Voltage"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@VoltageUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Voltage</xsl:with-param>
+					<xsl:with-param name="theElementName">Detector</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'Voltage']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="$theConvertedValueVoltage"/>
+				</xsl:attribute>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
+
 
 	<!-- strip AnnotationRef on Filter -->
 	<xsl:template match="OME:Filter">
