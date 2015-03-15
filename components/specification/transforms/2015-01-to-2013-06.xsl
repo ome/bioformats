@@ -222,10 +222,51 @@
 
 
 	<!-- strip AnnotationRef on Filter -->
+	<xsl:template match="OME:TransmittanceRange">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'CutIn' or name() = 'CutInUnit' or name() = 'CutOut' or name() = 'CutOutUnit')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutIn">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutIn"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutInUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutIn</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutIn']">
+				<xsl:if test="$theConvertedValueCutIn=round($theConvertedValueCutIn)">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="round($theConvertedValueCutIn)"/>
+					</xsl:attribute>
+				</xsl:if>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutOut">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutOut"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutOutUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutOut</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutOut']">
+				<xsl:if test="$theConvertedValueCutOut=round($theConvertedValueCutOut)">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="round($theConvertedValueCutOut)"/>
+					</xsl:attribute>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- strip AnnotationRef on Filter -->
 	<xsl:template match="OME:Filter">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+			<xsl:for-each select="* [not(name() = 'AnnotationRef')]">
 				<xsl:apply-templates select="."/>
 			</xsl:for-each>
 		</xsl:element>
