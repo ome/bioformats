@@ -45,16 +45,11 @@
  */
 package ome.specification;
 
-//Java imports
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//Third-party libraries
-
-
-//Application-internal dependencies
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 import ome.xml.model.AffineTransform;
@@ -145,6 +140,7 @@ import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
+import omero.model.enums.UnitsLength;
 
 /**
  * Creates XML objects for the 2010-06 schema.
@@ -1061,6 +1057,9 @@ public class XMLMockObjects
     pixels.setSizeZ(new PositiveInteger(SIZE_Z));
     pixels.setSizeC(new PositiveInteger(SIZE_C));
     pixels.setSizeT(new PositiveInteger(SIZE_T));
+    pixels.setPhysicalSizeX(new Length(1, UNITS.MICROM));
+    pixels.setPhysicalSizeY(new Length(1, UNITS.MICROM));
+    pixels.setPhysicalSizeZ(new Length(1, UNITS.MICROM));
     pixels.setDimensionOrder(DIMENSION_ORDER);
     pixels.setType(PIXEL_TYPE);
     BinData data;
