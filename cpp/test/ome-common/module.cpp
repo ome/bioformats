@@ -137,7 +137,7 @@ ModulePathTestParameters params[] =
     ModulePathTestParameters("man",          "BIOFORMATS_MANDIR",         false),
     ModulePathTestParameters("doc",          "BIOFORMATS_DOCDIR",         false),
 
-    ModulePathTestParameters("bf-root",      "BIOFORMATS_ROOTDIR",        false),
+    ModulePathTestParameters("bf-root",      "BIOFORMATS_HOME",           false),
     ModulePathTestParameters("bf-data",      "BIOFORMATS_DATADIR",        false),
     ModulePathTestParameters("bf-icon",      "BIOFORMATS_ICONDIR",        false),
     ModulePathTestParameters("bf-libexec",   "BIOFORMATS_LIBEXECDIR",     false),
