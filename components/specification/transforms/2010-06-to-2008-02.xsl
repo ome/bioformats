@@ -475,14 +475,6 @@
 	</xsl:template>
 
 	<xsl:template match="OME:MicrobeamManipulation">
-		<xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [name(.) = 'ID']">
-				<xsl:attribute name="{local-name(.)}">
-					<xsl:value-of select="."/>
-				</xsl:attribute>
-			</xsl:for-each>
-			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
-		</xsl:element>
 		<xsl:for-each select="* [name(.) = 'ExperimenterRef']">
 			<xsl:element name="{name()}" namespace="{$newOMENS}">
 	    		<xsl:for-each select="@* [name(.) = 'ID']">
@@ -492,6 +484,14 @@
 				</xsl:for-each>
 			</xsl:element>
   		</xsl:for-each>
+		<xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [name(.) = 'ID']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
+		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="OME:Microscope">
