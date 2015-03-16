@@ -642,7 +642,16 @@ namespace ome
                 else
                   {
                     // All the other cases will already have a canonical path.
-                    filename = canonical(*filename, dir);
+                    if (fs::exists(*filename))
+                      filename = canonical(*filename, dir);
+                    else
+                      {
+                        boost::format fmt("UUID filename %1% not found; falling back to %2%");
+                        fmt % *filename % *currentId;
+                        BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+
+                        filename = *currentId;
+                      }
                   }
 
                 addTIFF(*filename);
