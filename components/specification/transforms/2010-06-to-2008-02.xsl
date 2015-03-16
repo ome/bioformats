@@ -468,7 +468,7 @@
 				<xsl:for-each select="* [local-name(.) = 'ROIRef']">
 					<xsl:apply-templates select="." mode="inMicrobeam"/>
 				</xsl:for-each>
-				<!--<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>-->
+				<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
 				<xsl:apply-templates select="* [local-name(.) = 'LightSourceSettings']"/>
 			</xsl:element>
 		</xsl:for-each>
