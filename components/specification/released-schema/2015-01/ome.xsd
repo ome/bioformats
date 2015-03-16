@@ -1440,7 +1440,7 @@
 				A simple type that restricts the value to a float between >=0 and max 32-bit float {i.e. (2−2^-23) × 2^27 ≈ 3.4 × 10^38}
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:restriction base="xsd:long">
+		<xsd:restriction base="xsd:float">
 			<xsd:minInclusive value="0"/>
 		</xsd:restriction>
 	</xsd:simpleType>
