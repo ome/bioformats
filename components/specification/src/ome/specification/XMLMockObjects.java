@@ -64,6 +64,7 @@ import ome.xml.model.Dataset;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
+import ome.xml.model.DoubleAnnotation;
 import ome.xml.model.Ellipse;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
@@ -81,6 +82,8 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.Line;
 import ome.xml.model.LongAnnotation;
+import ome.xml.model.Map;
+import ome.xml.model.MapAnnotation;
 import ome.xml.model.Mask;
 import ome.xml.model.MicrobeamManipulation;
 import ome.xml.model.Microscope;
@@ -1384,6 +1387,62 @@ public class XMLMockObjects
     return ome;
   }
 
+  /**
+   * Creates an image with acquisition data.
+   *
+   * @return See above.
+   */
+  public OME createImageWithAnnotatedAcquisitionData()
+  {
+    populateInstrument();
+    //annotate
+    instrument.setLinkedAnnotation(0, new TagAnnotation());
+    List<Detector> detectors = instrument.copyDetectorList();
+    Iterator<Detector> i = detectors.iterator();
+    int index = 0;
+    while (i.hasNext()) {
+        i.next().setLinkedAnnotation(index, new BooleanAnnotation());
+        index++;
+    }
+    List<Dichroic> dichroics = instrument.copyDichroicList();
+    index = 0;
+    Iterator<Dichroic> j = dichroics.iterator();
+    while (j.hasNext()) {
+        j.next().setLinkedAnnotation(index, new LongAnnotation());
+        index++;
+    }
+    List<Filter> filters = instrument.copyFilterList();
+    index = 0;
+    Iterator<Filter> k = filters.iterator();
+    while (k.hasNext()) {
+        k.next().setLinkedAnnotation(index, new TermAnnotation());
+        index++;
+    }
+    List<LightSource> lights = instrument.copyLightSourceList();
+    index = 0;
+    Iterator<LightSource> l = lights.iterator();
+    while (l.hasNext()) {
+        l.next().setLinkedAnnotation(index, new DoubleAnnotation());
+        index++;
+    }
+    List<Objective> objectives = instrument.copyObjectiveList();
+    index = 0;
+    Iterator<Objective> m = objectives.iterator();
+    while (m.hasNext()) {
+        m.next().setLinkedAnnotation(index,new MapAnnotation());
+        index++;
+    }
+    Image image = createImage(0, true);
+    ObjectiveSettings settings = createObjectiveSettings(0);
+    image.setObjectiveSettings(settings);
+
+    Experiment exp = createExperiment(0);
+    ome.addExperiment(exp);
+    image.linkExperiment(exp);
+    image.linkInstrument(instrument);
+    ome.addImage(image);
+    return ome;
+  }
   /**
    * Creates an image with a given experiment. The Image is not added to ome.
    *
