@@ -1379,6 +1379,7 @@ public class XMLMockObjects
     exp.addMicrobeamManipulation(mm);
     image.linkExperiment(exp);
     image.linkInstrument(instrument);
+    image.linkMicrobeamManipulation(mm);
     ome.addImage(image);
     return ome;
   }
