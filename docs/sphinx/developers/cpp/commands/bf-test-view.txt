@@ -1,17 +1,17 @@
-.. _bf-view:
+.. _bf-test-view:
 
-bf view
-=======
+bf-test view
+============
 
 Synopsis
 --------
 
-**bf view** [*options*] *file*
+**bf-test view** [*options*] *file*
 
 Description
 -----------
 
-:program:`bf view` renders the pixel data of an image file using
+:program:`bf-test view` renders the pixel data of an image file using
 OpenGL.
 
 Open an image using :menuselection:`File --> Open`.

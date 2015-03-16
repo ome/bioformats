@@ -118,22 +118,24 @@ file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/bin")
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/cmake/bf @ONLY)
+               ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/bin/bf @ONLY)
-file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf
+               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
+file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
      DESTINATION ${PROJECT_BINARY_DIR}
      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
      GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf
+install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
         DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 if(WIN32)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config.bat @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/bf.bat @ONLY)
+               ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/bin/bf.bat @ONLY)
+               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif()
 
 message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")

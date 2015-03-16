@@ -1,17 +1,17 @@
-.. _bf-info:
+.. _bf-test-info:
 
-bf info
-=======
+bf-test info
+============
 
 Synopsis
 --------
 
-**bf info** [*options*] *file*
+**bf-test info** [*options*] *file*
 
 Description
 -----------
 
-:program:`bf info` will display the metadata for an image file,
+:program:`bf-test info` will display the metadata for an image file,
 including the :emphasis:`core` and :emphasis:`original` metadata, and
 can optionally display and validate the :emphasis:`OME-XML` metadata.
 

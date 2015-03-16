@@ -1,15 +1,15 @@
-bf
-==
+bf-test
+=======
 
 Synopsis
 --------
 
-**bf** command [*options*]
+**bf-test** command [*options*]
 
 Description
 -----------
 
-:program:`bf` is a front end for running the Bio-Formats (C++)
+:program:`bf-test` is a front end for running the Bio-Formats (C++)
 command-line tools.
 
 This takes care of setting up the environment to ensure that all
@@ -44,4 +44,4 @@ view (or glview)
 See also
 --------
 
-:ref:`bf-env`, :ref:`bf-info`, :ref:`bf-view`.
+:ref:`bf-env`, :ref:`bf-test-info`, :ref:`bf-test-view`.

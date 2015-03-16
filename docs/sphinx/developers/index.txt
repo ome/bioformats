@@ -52,9 +52,9 @@ Using Bio-Formats as a native C++ library
     cpp/overview
     cpp/conversion
     cpp/bf-env
-    cpp/commands/bf
-    cpp/commands/bf-info
-    cpp/commands/bf-view
+    cpp/commands/bf-test
+    cpp/commands/bf-test-info
+    cpp/commands/bf-test-view
 
 Contributing to Bio-Formats
 ===========================

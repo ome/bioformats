@@ -156,7 +156,7 @@ usage() {
   cat <<EOF
 usage: $prog [--help] [--usage] <cmd> [<args>]
 
-available bf commands in '$LIBEXECDIR'
+available bf-test commands in '$LIBEXECDIR'
 
 EOF
   ls -C "$LIBEXECDIR" | sed -e 's;^;	;'
@@ -164,7 +164,7 @@ EOF
 
 version() {
   cat <<EOF
-bf (OME Bio-Formats) $VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH$VERSION_EXTRA ($RELEASE_DATE)
+bf-test (OME Bio-Formats) $VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH$VERSION_EXTRA ($RELEASE_DATE)
 Copyright © 2006–2015 Open Microscopy Environment
 
 This is free software; see the source for copying conditions.  There is NO
@@ -173,7 +173,7 @@ EOF
 }
 
 help() {
-  exec man -M "$MANDIR" 1 bf
+  exec man -M "$MANDIR" 1 bf-test
   exit 1
 }
 
@@ -191,7 +191,7 @@ run() {
   realcmd="$LIBEXECDIR/$realcmd"
 
   if [ ! -x "$realcmd" ]; then
-    echo "bf: '$runcmd' is not a bf command.  See 'bf --help'" >&2
+    echo "bf-test: '$runcmd' is not a bf-test command.  See 'bf-test --help'" >&2
     exit 1
   fi
 
