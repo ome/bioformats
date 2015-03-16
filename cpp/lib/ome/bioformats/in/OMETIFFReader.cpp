@@ -201,6 +201,7 @@ namespace ome
         detail::FormatReader(props),
         logger(ome::common::createLogger("OMETIFFReader")),
         files(),
+        invalidFiles(),
         tiffs(),
         metadataFile(),
         usedFiles(),
@@ -225,6 +226,7 @@ namespace ome
         if (!fileOnly)
           {
             files.clear();
+            invalidFiles.clear();
             hasSPW = false;
             usedFiles.clear();
             metadataFile.clear();
@@ -647,11 +649,20 @@ namespace ome
                       filename = canonical(*filename, dir);
                     else
                       {
-                        boost::format fmt("UUID filename %1% not found; falling back to %2%");
-                        fmt % *filename % *currentId;
-                        BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+                        invalid_file_map::const_iterator invalid = invalidFiles.find(*filename);
+                        if (invalid != invalidFiles.end())
+                          {
+                            filename = invalid->second;
+                          }
+                        else
+                          {
+                            boost::format fmt("UUID filename %1% not found; falling back to %2%");
+                            fmt % *filename % *currentId;
+                            BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
 
-                        filename = *currentId;
+                            invalidFiles.insert(invalid_file_map::value_type(*filename, *currentId));
+                            filename = *currentId;
+                          }
                       }
                   }
 
@@ -1103,7 +1114,7 @@ namespace ome
           }
 
         path filename;
-        file_map::const_iterator i = files.find(uuid);
+        uuid_file_map::const_iterator i = files.find(uuid);
         if (i != files.end())
           filename = i->second;
         else

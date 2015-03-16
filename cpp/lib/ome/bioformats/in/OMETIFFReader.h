@@ -73,13 +73,19 @@ namespace ome
         ome::common::Logger logger;
 
         /// Map UUID to filename.
-        typedef std::map<std::string, boost::filesystem::path> file_map;
+        typedef std::map<std::string, boost::filesystem::path> uuid_file_map;
+
+        /// Map filename to another file.
+        typedef std::map<boost::filesystem::path, boost::filesystem::path> invalid_file_map;
 
         /// Map filename to open TIFF handle.
         typedef std::map<boost::filesystem::path, ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> > tiff_map;
 
         /// UUID to filename mapping.
-        file_map files;
+        uuid_file_map files;
+
+        /// Invalid filename to valid filename mapping.
+        invalid_file_map invalidFiles;
 
         // Mutable to allow opening TIFFs when const.
         /// Open TIFF files
