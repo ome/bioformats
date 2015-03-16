@@ -189,7 +189,6 @@
 			<xsl:apply-templates select="* [local-name(.) = 'InstrumentRef']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ObjectiveSettings']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ImagingEnvironment']"/>
-
 			<xsl:for-each select=" descendant::OME:Channel">
 				<xsl:element name="LogicalChannel" namespace="{$newOMENS}">
 					<xsl:for-each select="@* [not(name(.) = 'Color' or name(.) = 'PinholeSize')]">
@@ -356,6 +355,59 @@
 			<xsl:apply-templates select="* [local-name(.) = 'BinData']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'TiffData']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'MetadataOnly']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Plane']"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Plane">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [(name(.) = 'TheZ' or name(.) = 'TheC' or name(.) = 'TheT')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<!-- check if planetiming can be created -->
+			<xsl:choose>
+          		<xsl:when test="./@DeltaT">
+	            <xsl:choose>
+          			<xsl:when test="./@ExposureTime">
+	            		<xsl:element name="PlaneTiming" namespace="{$newOMENS}">
+	            			<xsl:attribute name="DeltaT">
+								<xsl:value-of select="./@DeltaT"/>
+							</xsl:attribute>
+							<xsl:attribute name="ExposureTime">
+								<xsl:value-of select="./@ExposureTime"/>
+							</xsl:attribute>
+	            		</xsl:element>
+          			</xsl:when>
+        		</xsl:choose>
+          		</xsl:when>
+        	</xsl:choose>
+        	<!-- check if StageLabel can be created -->
+			<xsl:choose>
+          		<xsl:when test="./@PositionX">
+	            <xsl:choose>
+          			<xsl:when test="./@PositionY">
+          				<xsl:choose>
+          					<xsl:when test="./@PositionZ">
+			            		<xsl:element name="StagePosition" namespace="{$newOMENS}">
+			            			<xsl:attribute name="PositionX">
+										<xsl:value-of select="./@PositionX"/>
+									</xsl:attribute>
+									<xsl:attribute name="PositionY">
+										<xsl:value-of select="./@PositionY"/>
+									</xsl:attribute>
+									<xsl:attribute name="PositionZ">
+										<xsl:value-of select="./@PositionZ"/>
+									</xsl:attribute>
+			            		</xsl:element>
+			            	</xsl:when>
+			            </xsl:choose>
+          			</xsl:when>
+        		</xsl:choose>
+          		</xsl:when>
+        	</xsl:choose>
+        	<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 
