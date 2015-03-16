@@ -423,22 +423,23 @@ namespace ome
       OMETIFFReader::initFile(const boost::filesystem::path& id)
       {
         detail::FormatReader::initFile(id);
-        path dir(id.parent_path());
+        // Note: Use canonical currentId rather than non-canonical id after this point.
+        path dir((*currentId).parent_path());
 
-        if (checkSuffix(id, companion_suffixes))
+        if (checkSuffix(*currentId, companion_suffixes))
           {
             // This is a companion file.  Read the metadata, get the
             // TIFF for the TiffData for the first image, and then
             // recurse with this file as the id.
-            ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(id));
+            ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(*currentId));
             path firstTIFF(path(meta->getUUIDFileName(0, 0)));
             initFile(canonical(firstTIFF, dir));
             return;
           }
 
         // Cache and use this TIFF.
-        addTIFF(id);
-        const ome::compat::shared_ptr<const TIFF> tiff(getTIFF(id));
+        addTIFF(*currentId);
+        const ome::compat::shared_ptr<const TIFF> tiff(getTIFF(*currentId));
 
         // Get the OME-XML from the first TIFF, and create OME-XML
         // metadata from it.
@@ -503,7 +504,7 @@ namespace ome
           core.push_back(ome::compat::make_shared<OMETIFFMetadata>());
 
         // UUID → file mapping and used files.
-        findUsedFiles(*meta, id, dir, currentUUID);
+        findUsedFiles(*meta, *currentId, dir, currentUUID);
 
         // Process TiffData elements.
         for (index_type series = 0; series < seriesCount; ++series)
@@ -630,7 +631,7 @@ namespace ome
                   {
                     if (!uuid)
                       {
-                        filename = id;
+                        filename = *currentId;
                       }
                     else
                       {
@@ -671,7 +672,7 @@ namespace ome
                       }
                     else
                       {
-                        filename = id;
+                        filename = *currentId;
                         exists = usedFiles.size() == 1;
                       }
                   }
@@ -761,7 +762,7 @@ namespace ome
                     for (dimension_size_type p = 0; p < nIFD; ++p)
                       {
                         OMETIFFPlane& plane(coreMeta->tiffPlanes.at(p));
-                        plane.id = id;
+                        plane.id = *currentId;
                         plane.ifd = p;
                       }
                     break;
