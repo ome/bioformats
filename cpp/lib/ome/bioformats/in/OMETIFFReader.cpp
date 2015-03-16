@@ -198,8 +198,8 @@ namespace ome
       }
 
       OMETIFFReader::OMETIFFReader():
-        logger(ome::common::createLogger("OMETIFFReader")),
         detail::FormatReader(props),
+        logger(ome::common::createLogger("OMETIFFReader")),
         files(),
         tiffs(),
         metadataFile(),
