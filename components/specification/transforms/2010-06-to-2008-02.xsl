@@ -282,6 +282,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'StageLabel']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Pixels']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ROIRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']" mode="justROI"/>
 			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
 		</xsl:element>
 	</xsl:template>
@@ -471,6 +472,18 @@
 				<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
 				<xsl:apply-templates select="* [local-name(.) = 'LightSourceSettings']"/>
 			</xsl:element>
+		</xsl:for-each>
+	</xsl:template>
+
+	<xsl:template match="OME:MicrobeamManipulationRef" mode="justROI">
+		<xsl:comment>Add the roi used by MicrobeamManipulation</xsl:comment>
+		<xsl:variable name="theMicrobeamManipulationID">
+			<xsl:value-of select="@ID"/>
+		</xsl:variable>
+		<xsl:for-each select="//OME:MicrobeamManipulation[@ID=$theMicrobeamManipulationID]">
+				<xsl:for-each select="* [local-name(.) = 'ROIRef']">
+					<xsl:apply-templates select="."/>
+				</xsl:for-each>
 		</xsl:for-each>
 	</xsl:template>
 
