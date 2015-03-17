@@ -46,7 +46,7 @@
 #include <ome/xml/meta/OMEXMLMetadata.h>
 #include <ome/xml/model/primitives/Timestamp.h>
 
-#include <showinf/ImageInfo.h>
+#include <info/ImageInfo.h>
 
 using namespace ome::bioformats;
 using ome::bioformats::dimension_size_type;
@@ -59,7 +59,7 @@ namespace
 
 }
 
-namespace showinf
+namespace info
 {
 
   ImageInfo::ImageInfo (const std::string &file,

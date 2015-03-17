@@ -45,6 +45,7 @@ function(bf_add_test)
 endfunction()
 
 add_subdirectory(ome-compat)
+add_subdirectory(ome-common)
 add_subdirectory(ome-internal)
 add_subdirectory(ome-xml)
 add_subdirectory(ome-bioformats)

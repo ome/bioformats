@@ -142,5 +142,5 @@ if (OME_QTOPENGL)
   header_include_list_write(QTWIDGETS_HEADERS "" ome/qtwidgets ${PROJECT_BINARY_DIR}/cpp/test/ome-qtwidgets)
 
 else()
-  message(WARNING "Not building Qt widgets and glview; Qt5.2, OpenGL or glm not found")
+  message(WARNING "Not building Qt widgets and view program; Qt5.2, OpenGL or glm not found")
 endif()

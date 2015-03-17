@@ -50,13 +50,13 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
 
-#include <showinf/options.h>
+#include <info/options.h>
 
-namespace showinf
+namespace info
 {
 
   /**
-   * showinf format reader information.
+   * Metadata from format reader.
    */
   class ImageInfo
   {

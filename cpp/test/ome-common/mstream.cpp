@@ -40,7 +40,7 @@
 
 #include <ome/test/test.h>
 
-using ome::imstream;
+using ome::common::imstream;
 
 TEST(Imstream, CreateFromIterator)
 {

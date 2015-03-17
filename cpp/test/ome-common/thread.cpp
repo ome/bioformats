@@ -36,7 +36,7 @@
  * #L%
  */
 
-#include <boost/thread.h>
+#include <boost/thread.hpp>
 
 #include <ome/test/test.h>
 

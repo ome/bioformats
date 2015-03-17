@@ -42,12 +42,15 @@
 #include <ome/internal/version.h>
 
 #include <ome/common/log.h>
+#include <ome/common/module.h>
 
-#include <showinf/options.h>
-#include <showinf/ImageInfo.h>
+#include <info/options.h>
+#include <info/ImageInfo.h>
+
+#include <unistd.h>
 
 using boost::format;
-using namespace showinf;
+using namespace info;
 
 namespace
 {
@@ -56,7 +59,7 @@ namespace
   print_version(std::ostream& stream)
   {
     format fmtr("%1% (%2%) %3% (%4%)");
-    fmtr % "showinf" % "OME Bio-Formats"
+    fmtr % "bf-test info" % "OME Bio-Formats"
       % OME_VERSION_MAJOR_S "." OME_VERSION_MINOR_S "." OME_VERSION_PATCH_S OME_VERSION_EXTRA_S
       % OME_VCS_DATE_S;
 
@@ -74,9 +77,19 @@ namespace
   print_help(std::ostream& stream,
              const options& opts)
   {
-    stream << "Usage:\n  showinf  [OPTION…] [FILE] — show image metadata\n"
+    stream << "Usage:\n  bf-test info  [OPTION…] [FILE] — display and validate image metadata\n"
            << opts.get_visible_options()
            << std::flush;
+  }
+
+  void
+  display_manpage(const std::string& name,
+                  const std::string& section)
+  {
+    boost::filesystem::path mandir(ome::common::module_runtime_path("man"));
+    execlp("man", "man", "-M", mandir.generic_string().c_str(), section.c_str(), name.c_str(), static_cast<char *>(0));
+    std::cerr << "E: Failed to run man to view " << name << '.' << section << std::endl;
+    std::exit(EXIT_FAILURE);
   }
 
   void
@@ -132,8 +145,11 @@ main(int argc, char *argv[])
         case options::ACTION_VERSION:
           print_version(std::cout);
           break;
-        case options::ACTION_HELP:
+        case options::ACTION_USAGE:
           print_help(std::cout, opts);
+          break;
+        case options::ACTION_HELP:
+          display_manpage("bf-test-info", "1");
           break;
         case options::ACTION_METADATA:
           print_metadata(std::cout, opts);
