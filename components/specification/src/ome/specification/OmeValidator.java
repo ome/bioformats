@@ -149,6 +149,19 @@ public class OmeValidator
      * Parses the specified file and returns the document.
      *
      * @param file The file to parse.
+     * @return Document
+     * @throws Exception Thrown if an error occurred.
+     */
+    public Document parseFile(File file)
+        throws Exception
+    {
+        return parseFile(file, null);
+    }
+
+    /**
+     * Parses the specified file and returns the document.
+     *
+     * @param file The file to parse.
      * @param schema The schema used to validate the specified file.
      * @return Document
      * @throws Exception Thrown if an error occurred.
