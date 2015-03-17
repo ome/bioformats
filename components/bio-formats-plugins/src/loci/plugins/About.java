@@ -65,7 +65,7 @@ public final class About implements PlugIn {
 
   public static void about() {
     String msg = "<html>" +
-      "Bio-Formats Plugins for ImageJ, revision " + FormatTools.VCS_REVISION +
+      "Bio-Formats Plugins for ImageJ, revision " + FormatTools.VCS_SHORT_REVISION +
       ", built " + FormatTools.DATE + "<br>Release: " + FormatTools.VERSION +
       "<br>Copyright (C) 2005 - " + FormatTools.YEAR +
       " Open Microscopy Environment:" +

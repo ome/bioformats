@@ -498,7 +498,7 @@ bool testRead(int argc, const char *argv[]) {
   parseArgs(argc, argv);
   if (printVersion) {
     cout << "Version: " << FormatTools::VERSION() << endl;
-    cout << "VCS revision: " << FormatTools::VCS_REVISION() << endl;
+    cout << "VCS revision: " << FormatTools::VCS_SHORT_REVISION() << endl;
     cout << "Build date: " << FormatTools::DATE() << endl;
     return true;
   }
