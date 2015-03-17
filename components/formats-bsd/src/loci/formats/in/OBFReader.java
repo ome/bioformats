@@ -97,7 +97,7 @@ public class OBFReader extends FormatReader
   }
   private Frame currentInflatedFrame = new Frame();
 
-  private transient Inflater inflater = new Inflater();
+  private transient Inflater inflater;
 
   public OBFReader()
   {
@@ -515,6 +515,10 @@ public class OBFReader extends FormatReader
         currentInflatedFrame.number = - 1;
       }
 
+      if (inflater == null) {
+        inflater = new Inflater();
+      }
+
       byte[] bytes = currentInflatedFrame.bytes;
       if (no != currentInflatedFrame.number)
       {
@@ -585,11 +589,12 @@ public class OBFReader extends FormatReader
   @Override
   public void close(boolean fileOnly) throws IOException
   {
-    stacks = new ArrayList<Stack>();
-    currentInflatedFrame = new Frame();
-    inflater = new Inflater();
-
     super.close(fileOnly);
+    if (!fileOnly) {
+      stacks.clear();
+      currentInflatedFrame = new Frame();
+      inflater = null;
+    }
   }
 
 

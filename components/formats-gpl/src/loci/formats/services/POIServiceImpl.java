@@ -44,6 +44,8 @@ import loci.poi.poifs.filesystem.POIFSFileSystem;
  */
 public class POIServiceImpl extends AbstractService implements POIService {
 
+  private static final int MAX_BLOCK_SIZE = 4096;
+
   // -- Fields --
 
   private POIFSFileSystem fileSystem;
@@ -67,7 +69,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
   /* @see POIService#initialize(String) */
   @Override
   public void initialize(String file) throws IOException {
-    initialize(new RandomAccessInputStream(file));
+    initialize(new RandomAccessInputStream(file, MAX_BLOCK_SIZE));
   }
 
   /* @see POIService#initialize(RandomAccessInputStream) */

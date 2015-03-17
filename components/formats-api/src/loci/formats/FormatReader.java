@@ -1388,7 +1388,10 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public void setId(String id) throws FormatException, IOException {
     LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
-    if (!id.equals(currentId)) {
+
+    if (currentId == null || !new Location(id).getAbsolutePath().equals(
+      new Location(currentId).getAbsolutePath()))
+    {
       initFile(id);
 
       MetadataStore store = getMetadataStore();

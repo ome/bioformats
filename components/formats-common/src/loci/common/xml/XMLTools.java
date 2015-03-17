@@ -110,6 +110,14 @@ public final class XMLTools {
   private static final SchemaFactory FACTORY =
     SchemaFactory.newInstance(XML_SCHEMA_PATH);
 
+  private static final TransformerFactory transformFactory = createTransformFactory();
+
+  private static TransformerFactory createTransformFactory() {
+    TransformerFactory factory = TransformerFactory.newInstance();
+    factory.setErrorListener(new XMLListener());
+    return factory;
+  };
+
   // -- Fields --
 
   private static ThreadLocal<HashMap<URI, Schema>> schemas =
@@ -195,14 +203,9 @@ public final class XMLTools {
   public static String getXML(Document doc)
     throws TransformerConfigurationException, TransformerException
   {
-    Source source = new DOMSource(doc);
     StringWriter stringWriter = new StringWriter();
     Result result = new StreamResult(stringWriter);
-    // Java XML factories are not declared to be thread safe
-    TransformerFactory factory = TransformerFactory.newInstance();
-    factory.setErrorListener(new XMLListener());
-    Transformer transformer = factory.newTransformer();
-    transformer.transform(source, result);
+    writeXML(result, doc, true);
     return stringWriter.getBuffer().toString();
   }
 
@@ -450,13 +453,19 @@ public final class XMLTools {
     boolean includeXMLDeclaration)
     throws TransformerException
   {
-    TransformerFactory transformFactory = TransformerFactory.newInstance();
+    writeXML(new StreamResult(os), doc, includeXMLDeclaration);
+  }
+
+  /** Writes the specified DOM to the given stream. */
+  public static void writeXML(Result output, Document doc,
+    boolean includeXMLDeclaration)
+    throws TransformerException
+  {
     Transformer idTransform = transformFactory.newTransformer();
     if (!includeXMLDeclaration) {
       idTransform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
     }
     Source input = new DOMSource(doc);
-    Result output = new StreamResult(os);
     idTransform.transform(input, output);
   }
 
@@ -483,9 +492,7 @@ public final class XMLTools {
     try {
       StreamSource xsltSource = new StreamSource(xsltStream);
       // Java XML factories are not declared to be thread safe
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
-      transformerFactory.setErrorListener(new XMLListener());
-      return transformerFactory.newTemplates(xsltSource);
+      return transformFactory.newTemplates(xsltSource);
     }
     catch (TransformerConfigurationException exc) {
       LOGGER.debug("Could not construct template", exc);

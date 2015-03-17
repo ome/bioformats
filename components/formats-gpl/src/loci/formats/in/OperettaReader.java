@@ -301,7 +301,7 @@ public class OperettaReader extends FormatReader {
       ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
       RandomAccessInputStream s =
-        new RandomAccessInputStream(planes[i][0].filename);
+        new RandomAccessInputStream(planes[i][0].filename, 16);
       TiffParser parser = new TiffParser(s);
       parser.setDoCaching(false);
 

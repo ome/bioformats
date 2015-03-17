@@ -33,8 +33,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -158,6 +156,8 @@ public class ZeissCZIReader extends FormatReader {
   private int scanDim = 1;
 
   private String[] rotationLabels, phaseLabels, illuminationLabels;
+
+  private transient DocumentBuilder parser;
 
   // -- Constructor --
 
@@ -462,6 +462,7 @@ public class ZeissCZIReader extends FormatReader {
       illuminationLabels = null;
       phaseLabels = null;
       indexIntoPlanes.clear();
+      parser = null;
     }
   }
 
@@ -471,6 +472,8 @@ public class ZeissCZIReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    parser = XMLTools.createBuilder();
 
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
@@ -707,6 +710,7 @@ public class ZeissCZIReader extends FormatReader {
         AttachmentEntry entry = ((Attachment) segment).attachment;
 
         if (entry.name.trim().equals("TimeStamps")) {
+          segment.fillInData();
           RandomAccessInputStream s =
             new RandomAccessInputStream(((Attachment) segment).attachmentData);
           try {
@@ -1205,15 +1209,10 @@ public class ZeissCZIReader extends FormatReader {
   {
     Element root = null;
     try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder parser = factory.newDocumentBuilder();
       ByteArrayInputStream s =
         new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
       root = parser.parse(s).getDocumentElement();
       s.close();
-    }
-    catch (ParserConfigurationException e) {
-      throw new FormatException(e);
     }
     catch (SAXException e) {
       throw new FormatException(e);
@@ -2407,7 +2406,7 @@ public class ZeissCZIReader extends FormatReader {
 
       String attrName = attr.getNodeName();
       String attrValue = attr.getNodeValue();
-      
+
       String keyString = key.toString();
       if (attrName.endsWith("|")){
         attrName = attrName.substring(0, attrName.length() - 1);
@@ -2454,7 +2453,9 @@ public class ZeissCZIReader extends FormatReader {
       segment = new SubBlock();
     }
     else if (segmentID.equals("ZISRAWATTACH")) {
-      segment = new Attachment();
+      segment = new Attachment(filename, startingPosition);
+      // attachments can be large, so only read binary data on demand
+      skipData = true;
     }
     else if (segmentID.equals("ZISRAWDIRECTORY")) {
       segment = new Directory();
@@ -2479,10 +2480,12 @@ public class ZeissCZIReader extends FormatReader {
     segment.stream = in;
 
     if (!(segment instanceof Metadata)) {
-      segment.fillInData();
+      if (!skipData) {
+        segment.fillInData();
+      }
     }
     else {
-      ((Metadata) segment).skipData(); 
+      ((Metadata) segment).skipData();
     }
 
     long pos = segment.startingPosition + segment.allocatedSize + HEADER_SIZE;
@@ -2493,7 +2496,7 @@ public class ZeissCZIReader extends FormatReader {
       in.seek(in.length());
     }
 
-    if (skipData) {
+    if (skipData && !(segment instanceof Attachment)) {
       segment.close();
       return null;
     }
@@ -2631,6 +2634,11 @@ public class ZeissCZIReader extends FormatReader {
       allocatedSize = 0;
       usedSize = 0;
       stream = null;
+    }
+
+    public Segment(String filename) {
+      this();
+      this.filename = filename;
     }
 
     public Segment(Segment model) {
@@ -2895,16 +2903,10 @@ public class ZeissCZIReader extends FormatReader {
 
       Element root = null;
       try {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder parser = factory.newDocumentBuilder();
         ByteArrayInputStream s =
           new ByteArrayInputStream(metadata.getBytes(Constants.ENCODING));
         root = parser.parse(s).getDocumentElement();
         s.close();
-      }
-      catch (ParserConfigurationException e) {
-        metadata = null;
-        return;
       }
       catch (SAXException e) {
         metadata = null;
@@ -3070,11 +3072,12 @@ public class ZeissCZIReader extends FormatReader {
     public int dataSize;
     public AttachmentEntry attachment;
     public byte[] attachmentData;
+    public long dataOffset;
 
-    @Override
-    public void fillInData() throws IOException {
+    public Attachment(String filename, long position) throws IOException {
+      super(filename);
+      this.startingPosition = position;
       super.fillInData();
-
       RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
@@ -3082,7 +3085,21 @@ public class ZeissCZIReader extends FormatReader {
         dataSize = s.readInt();
         s.skipBytes(12); // reserved
         attachment = new AttachmentEntry(s);
-        s.skipBytes(112); // reserved
+        dataOffset = s.getFilePointer() + 112; // skip reserved bytes
+      }
+      finally {
+        if (stream == null) {
+          s.close();
+        }
+      }
+    }
+
+    @Override
+    public void fillInData() throws IOException {
+      RandomAccessInputStream s = getStream();
+      try {
+        s.order(isLittleEndian());
+        s.seek(dataOffset);
         attachmentData = new byte[dataSize];
         s.read(attachmentData);
       }

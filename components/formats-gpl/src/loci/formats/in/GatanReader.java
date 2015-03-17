@@ -144,7 +144,7 @@ public class GatanReader extends FormatReader {
       info = null;
       adjustEndianness = true;
       version = 0;
-      posX = posY = posZ = new Length(0, UNITS.REFERENCEFRAME);
+      posX = posY = posZ = null;
       sampleTime = 0;
       units = null;
     }

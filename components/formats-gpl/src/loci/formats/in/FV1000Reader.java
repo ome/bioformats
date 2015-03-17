@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -152,6 +153,8 @@ public class FV1000Reader extends FormatReader {
 
   private String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
 
+  private ArrayList<IFDList> ifds = new ArrayList<IFDList>();
+
   // -- Constructor --
 
   /** Constructs a new FV1000 reader. */
@@ -268,6 +271,7 @@ public class FV1000Reader extends FormatReader {
 
     int nFiles = getSeries() == 0 ? tiffs.size() : previewNames.size();
     int image = no % (getImageCount() / nFiles);
+    int file = no / (getImageCount() / nFiles);
 
     int[] coords = getZCTCoords(image);
     lastChannel = coords[1];
@@ -276,10 +280,11 @@ public class FV1000Reader extends FormatReader {
 
     if (plane == null) return buf;
     TiffParser tp = new TiffParser(plane);
-    IFDList ifds = tp.getIFDs();
-    if (image >= ifds.size()) return buf;
+    int index = getSeries() == 0 ? file : tiffs.size() + file;
+    IFDList ifdList = ifds.get(index);
+    if (image >= ifdList.size()) return buf;
 
-    IFD ifd = ifds.get(image);
+    IFD ifd = ifdList.get(image);
     if (getSizeY() != ifd.getImageLength()) {
       tp.getSamples(ifd, buf, x,
         getIndex(coords[0], 0, coords[2]), w, 1);
@@ -332,8 +337,8 @@ public class FV1000Reader extends FormatReader {
 
     if (!fileOnly) {
       tiffs = usedFiles = null;
-      filenames = new Hashtable<Integer, String>();
-      roiFilenames = new Hashtable<Integer, String>();
+      filenames.clear();
+      roiFilenames.clear();
       thumbReader = null;
       thumbId = null;
       isOIB = false;
@@ -358,6 +363,7 @@ public class FV1000Reader extends FormatReader {
       if (lutNames != null) {
         lutNames.clear();
       }
+      ifds.clear();
     }
   }
 
@@ -639,7 +645,7 @@ public class FV1000Reader extends FormatReader {
         String tiff = replaceExtension(file, "pty", "tif");
         Location tiffFile = new Location(tiff);
         if (tiffFile.exists()) {
-          tiffs.add(ii, tiff);
+          tiffs.add(ii, tiffFile.getAbsolutePath());
           continue;
         }
         else {
@@ -666,12 +672,10 @@ public class FV1000Reader extends FormatReader {
         while (file.indexOf("GST") != -1) {
           file = removeGST(file);
         }
-        if (!mappedOIF) {
-          if (isOIB) {
-            file = tiffPath + File.separator + file;
-          }
-          else file = new Location(tiffPath, file).getAbsolutePath();
+        if (isOIB) {
+          file = tiffPath + File.separator + file;
         }
+        else file = new Location(tiffPath, file).getAbsolutePath();
         file = replaceExtension(file, "pty", "tif");
         tiffs.add(ii, file);
       }
@@ -931,6 +935,24 @@ public class FV1000Reader extends FormatReader {
       ms.metadataComplete = true;
       ms.indexed = lut != null;
       ms.falseColor = true;
+
+      int nFiles = i == 0 ? tiffs.size() : previewNames.size();
+      for (int file=0; file<nFiles; file++) {
+        RandomAccessInputStream plane =
+          getFile(i == 0 ? tiffs.get(file) : previewNames.get(file));
+        if (plane == null) {
+          ifds.add(null);
+          continue;
+        }
+        try {
+          TiffParser tp = new TiffParser(plane);
+          IFDList ifd = tp.getIFDs();
+          ifds.add(ifd);
+        }
+        finally {
+          plane.close();
+        }
+      }
     }
 
     // populate MetadataStore
@@ -1599,9 +1621,7 @@ public class FV1000Reader extends FormatReader {
       }
       return poi.getDocumentStream(realName);
     }
-    else {
-      return new RandomAccessInputStream(name);
-    }
+    return new RandomAccessInputStream(name, 16);
   }
 
   private RandomAccessInputStream getPlane(int seriesIndex, int planeIndex) {

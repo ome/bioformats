@@ -127,9 +127,9 @@ public class VarianFDFReader extends FormatReader {
       pixelSizeX = 0d;
       pixelSizeY = 0d;
       pixelSizeZ = 0d;
-      originX = new Length(0d, UNITS.REFERENCEFRAME);
-      originY = new Length(0d, UNITS.REFERENCEFRAME);
-      originZ = new Length(0d, UNITS.REFERENCEFRAME);
+      originX = null;
+      originY = null;
+      originZ = null;
       units = null;
     }
   }

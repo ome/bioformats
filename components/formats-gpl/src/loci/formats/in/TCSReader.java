@@ -271,7 +271,7 @@ public class TCSReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    in = new RandomAccessInputStream(id);
+    in = new RandomAccessInputStream(id, 16);
     tiffParser = new TiffParser(in);
     tiffs = new Vector<String>();
 
@@ -536,7 +536,7 @@ public class TCSReader extends FormatReader {
     HashMap<String, Long> timestamps = new HashMap<String, Long>();
 
     RandomAccessInputStream s =
-      new RandomAccessInputStream(current.getAbsolutePath());
+      new RandomAccessInputStream(current.getAbsolutePath(), 16);
     TiffParser p = new TiffParser(s);
     IFD ifd = p.getIFDs().get(0);
     s.close();
@@ -550,7 +550,7 @@ public class TCSReader extends FormatReader {
       file = new Location(parent, file).getAbsolutePath();
       if (file.length() != current.getAbsolutePath().length()) continue;
 
-      RandomAccessInputStream rais = new RandomAccessInputStream(file);
+      RandomAccessInputStream rais = new RandomAccessInputStream(file, 16);
       TiffParser tp = new TiffParser(rais);
       if (!tp.isValidHeader()) {
         continue;
@@ -583,7 +583,7 @@ public class TCSReader extends FormatReader {
       long thisStamp = timestamps.get(file).longValue();
       boolean match = false;
       for (String tiff : tiffs) {
-        s = new RandomAccessInputStream(tiff);
+        s = new RandomAccessInputStream(tiff, 16);
         TiffParser parser = new TiffParser(s);
         ifd = parser.getIFDs().get(0);
         s.close();
