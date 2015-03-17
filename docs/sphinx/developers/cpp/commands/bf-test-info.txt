@@ -11,7 +11,7 @@ Synopsis
 Description
 -----------
 
-:program:`bf-test info` will display the metadata for an image file,
+:program:`bf-test info` displays the metadata for an image file,
 including the :emphasis:`core` and :emphasis:`original` metadata, and
 can optionally display and validate the :emphasis:`OME-XML` metadata.
 
