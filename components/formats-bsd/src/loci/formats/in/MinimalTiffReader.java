@@ -143,7 +143,7 @@ public class MinimalTiffReader extends FormatReader {
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
+    if (ifds == null || lastPlane < 0 || lastPlane >= ifds.size()) return null;
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 8) {
@@ -180,7 +180,7 @@ public class MinimalTiffReader extends FormatReader {
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
+    if (ifds == null || lastPlane < 0 || lastPlane >= ifds.size()) return null;
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 16 && bits[0] > 8) {
