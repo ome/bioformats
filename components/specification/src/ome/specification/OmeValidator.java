@@ -32,23 +32,12 @@
 package ome.specification;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.io.FileInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -90,7 +79,7 @@ public class OmeValidator
     {
         try {
             // try parsing the file and return true if no errors
-            Document theDocument = parseFile(file, schema);
+            parseFile(file, schema);
             return true;
         } catch (Exception e) {
             return false;
@@ -107,7 +96,7 @@ public class OmeValidator
     {
         try {
             // try parsing the file and return true if no errors
-            Document theDocument = parseFileWithStreamArray(file, schemaStreamArray);
+            parseFileWithStreamArray(file, schemaStreamArray);
             return true;
         } catch (Exception e) {
             return false;
@@ -125,7 +114,7 @@ public class OmeValidator
         throws Exception
     {
         // try parsing the file
-        Document theDocument = parseFileWithStreamArray(file, schemaStreamArray);
+        parseFileWithStreamArray(file, schemaStreamArray);
     }
 
     /*
@@ -139,7 +128,7 @@ public class OmeValidator
         throws Exception
     {
         // try parsing the file
-        Document theDocument = parseFile(file, schema);
+        parseFile(file, schema);
     }
 
     /*
@@ -153,7 +142,7 @@ public class OmeValidator
         throws Exception
     {
         // try parsing the file
-        Document theDocument = parseFileWithStreamArrayToSdtErr(file, schemaStreamArray);
+        parseFileWithStreamArrayToSdtErr(file, schemaStreamArray);
     }
 
     /**
@@ -167,18 +156,17 @@ public class OmeValidator
     public Document parseFile(File file, File schema)
         throws Exception
     {
-        if (file == null)
+        if (file == null || !file.exists())
             throw new IllegalArgumentException("No file to parse.");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
         if (schema != null) {
-            dbf.setValidating(true);
-            dbf.setNamespaceAware(true);
-            dbf.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
             // Set the schema file
             dbf.setAttribute(JAXP_SCHEMA_SOURCE, schema);
         }
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        return builder.parse(file);
+        return builder.parse(new FileInputStream(file));
     }
 
 
@@ -206,7 +194,7 @@ public class OmeValidator
 
         // Version - two step parse then validate (throws error as exception)
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(file);
+        Document theDoc = builder.parse(new FileInputStream(file));
         Validator validator=theSchema.newValidator();
         validator.validate(new DOMSource(theDoc));
         return theDoc;
@@ -237,7 +225,7 @@ public class OmeValidator
         // Version - one step parse and validate (print error to stdErr)
         dbf.setSchema(theSchema);
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(file);
+        Document theDoc = builder.parse(new FileInputStream(file));
         return theDoc;
     }
 
