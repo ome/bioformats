@@ -87,11 +87,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'EmissionWavelength']">
-				<xsl:if test="$theConvertedValueEm=round($theConvertedValueEm)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueEm)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueEm)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValueEx">
 				<xsl:call-template name="ConvertValueToDefault">
@@ -102,11 +100,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'ExcitationWavelength']">
-				<xsl:if test="$theConvertedValueEx=round($theConvertedValueEx)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueEx)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueEx)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
@@ -129,11 +125,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValue)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValue)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
@@ -169,11 +163,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValue)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValue)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
@@ -265,11 +257,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'CutIn']">
-				<xsl:if test="$theConvertedValueCutIn=round($theConvertedValueCutIn)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueCutIn)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutIn)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValueCutOut">
 				<xsl:call-template name="ConvertValueToDefault">
@@ -280,11 +270,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'CutOut']">
-				<xsl:if test="$theConvertedValueCutOut=round($theConvertedValueCutOut)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueCutOut)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutOut)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValueCutInTolerance">
 				<xsl:call-template name="ConvertValueToDefault">
@@ -295,11 +283,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'CutInTolerance']">
-				<xsl:if test="$theConvertedValueCutInTolerance=round($theConvertedValueCutInTolerance)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueCutInTolerance)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutInTolerance)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValueCutOutTolerance">
 				<xsl:call-template name="ConvertValueToDefault">
@@ -310,11 +296,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'CutOutTolerance']">
-				<xsl:if test="$theConvertedValueCutOutTolerance=round($theConvertedValueCutOutTolerance)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueCutOutTolerance)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutOutTolerance)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
