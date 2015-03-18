@@ -1083,6 +1083,9 @@ public class XMLMockObjects
     for (int i = 0; i < SIZE_C; i++) {
       channel = createChannel(i);
       channel.setID("Channel:" + index + ":" + i);
+      channel.setPinholeSize(new Length(3, UNITS.NM));
+      channel.setEmissionWavelength(new Length(2, UNITS.NM));
+      channel.setExcitationWavelength(new Length(500, UNITS.NM));
       if (metadata) {
         if (j == n) j = 0;
         channel.setLightSourceSettings(createLightSourceSettings(j));
