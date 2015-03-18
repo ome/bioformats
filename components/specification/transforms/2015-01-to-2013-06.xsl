@@ -144,7 +144,7 @@
 			<xsl:variable name="theConvertedValueRepetitionRate">
 				<xsl:call-template name="ConvertValueToDefault">
 					<xsl:with-param name="theValue"><xsl:value-of select="@RepetitionRate"/></xsl:with-param>
-					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@RepetitionRateeUnit"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@RepetitionRateUnit"/></xsl:with-param>
 					<xsl:with-param name="theAttributeName">RepetitionRate</xsl:with-param>
 					<xsl:with-param name="theElementName">Laser</xsl:with-param>
 				</xsl:call-template>
