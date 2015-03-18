@@ -363,14 +363,12 @@
 			</target>
 			<target schema="2008-09" quality="fair">
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2008-09.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+				<transform file="2008-02-to-2008-09.xsl"/>
 			</target>
-			<target schema="2008-02" quality="poor">
+			<target schema="2008-02" quality="fair">
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2007-06.xsl"/>
-				<transform file="2007-06-to-2008-02.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
 				<transform file="2010-04-to-2010-06.xsl"/>
@@ -420,18 +418,16 @@
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2008-09" quality="poor">
+			<target schema="2008-09" quality="fair">
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2008-09.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+				<transform file="2008-02-to-2008-09.xsl"/>
 			</target>
-			<target schema="2008-02" quality="poor">
+			<target schema="2008-02" quality="fair">
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2007-06.xsl"/>
-				<transform file="2007-06-to-2008-02.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
 				<transform file="2009-09-to-2010-04.xsl"/>
@@ -492,13 +488,11 @@
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2008-02" quality="poor">
+			<target schema="2008-02" quality="fair">
 				<transform file="2008-09-to-2009-09.xsl"/>
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2007-06.xsl"/>
-				<transform file="2007-06-to-2008-02.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
 				<transform file="2008-09-to-2009-09.xsl"/>
