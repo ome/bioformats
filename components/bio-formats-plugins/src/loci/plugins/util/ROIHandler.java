@@ -36,6 +36,7 @@ import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
+import ij.gui.RoiProperties;
 import ij.gui.ShapeRoi;
 import ij.gui.TextRoi;
 import ij.plugin.frame.RoiManager;
@@ -88,9 +89,10 @@ public class ROIHandler {
         RoiManager manager = RoiManager.getInstance();
 
         OME root = (OME) retrieve.getRoot();
-        Color sc = null;
-        Color fc = null;
-        Float sw = null;
+        Roi roi;
+        Float sw;
+        Color sc;
+        Color fc;
 
         int imageCount = images.length;
         for (int imageNum=0; imageNum<imageCount; imageNum++) {
@@ -105,8 +107,11 @@ public class ROIHandler {
 
                 for (int shape=0; shape<shapeCount; shape++) {
                     Shape shapeObject = shapeSet.getShape(shape);
-
-                    Roi roi = null;
+                    
+                    roi = null;
+                    sw = null;
+                    sc = null;
+                    fc = null;
 
                     if (shapeObject instanceof Ellipse) {
                         Ellipse ellipse = (Ellipse) shapeObject;
@@ -297,7 +302,7 @@ public class ROIHandler {
 
                     if (roi != null) {
                         roi.setName(shapeObject.getID());
-
+                        
                         if (shapeObject.getTheC() != null &&
                           shapeObject.getTheZ() != null &&
                           shapeObject.getTheT() != null)
@@ -310,10 +315,12 @@ public class ROIHandler {
 
                         roi.setImage(images[imageNum]);
 
+                        if (sw == null){
+                            roi.setStrokeWidth((float) 1);
+                        }
                         if (sw != null) {
-                            if(sw==0) sw=(float) 1; 
+                            if(sw==0) sw=(float) 1;
                             roi.setStrokeWidth(sw);
-
                         }
                         if (sc != null) roi.setStrokeColor(sc);
                         manager.add(images[imageNum], roi, nextRoi++);
