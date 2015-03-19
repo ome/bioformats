@@ -186,7 +186,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     put("Instrument Make", firstIFD, IFD.MAKE);
     put("Instrument Model", firstIFD, IFD.MODEL);
     put("Document Name", firstIFD, IFD.DOCUMENT_NAME);
-    put("DateTime", firstIFD, IFD.DATE_TIME);
+    put("DateTime", getImageCreationDate());
     put("Artist", firstIFD, IFD.ARTIST);
 
     put("HostComputer", firstIFD, IFD.HOST_COMPUTER);
