@@ -233,3 +233,174 @@ Full example source: :download:`model-io.cpp <examples/model-io.cpp>`
 
   - :doxygen:`OME model classes <namespaceome_1_1xml_1_1model.html>`
   - :doxygen:`OME <classome_1_1xml_1_1model_1_1OME.html>`
+
+
+Pixel data
+----------
+
+The Bio-Formats Java implementation stores and passes pixel values in
+a raw :cpp:type:`byte` array.  Due to limitations with C++ array
+passing, this was not possible for the C++ implementation.  While a
+vector or other container could have been used, several problems
+remain.  The type and endianness of the data in the raw bytes is not
+known, and the dimension ordering and dimension extents are also
+unknown, which imposes a significant burden on the programmer to
+correctly process the data.  The C++ implementation provides two types
+to solve these problems.
+
+The :cpp:class:`PixelBuffer` class is a container of pixel data.  It
+is a template class, templated on the pixel type in use.  The class
+contains the order of the dimensions, and the size of each dimension,
+making it possible to process pixel data without need for
+externally-provided metadata to describe its structure.  This class
+may be used to contain and process pixel data of a specific pixel
+type.  Internally, the pixel data is contained within a
+:cpp:class:`boost::multi_array` as a 9D hyper-volume, though its usage
+in this release of Bio-Formats is limited to 5D.  The class can either
+contain its own memory allocation for pixel data or reference memory
+allocated or mapped externally, allowing use with memory-mapped data,
+for example.
+
+In many situations, it is desirable to work with arbitrary pixel
+types, or at least the set of pixel types defined in the OME data
+model in its :cpp:class:`PixelType` enumeration.  The
+:cpp:class:`VariantPixelBuffer` fulfills this need, using
+:cpp:class:`boost::variant` to allow it to contain a
+:cpp:class:`PixelBuffer` specialised for any of the pixel types in the
+OME data model.  This is used to allow transfer and processing of any
+supported pixel type, for example by the :cpp:class:`FormatReader`
+class' :cpp:func:`getLookupTable` and :cpp:func:`openBytes` methods,
+and the corresponding :cpp:class:`FormatWriter` class'
+:cpp:func:`setLookupTable` and :cpp:func:`saveBytes` methods.
+
+An additional problem with supporting many different pixel types is
+that each operation upon the pixel data, for example for display or
+analysis, may require implementing separately for each pixel type.
+This imposes a significant testing and maintenance burden.
+:cpp:class:`VariantPixelBuffer` solves this problem through use of
+:cpp:func:`boost::apply_visitor` and
+:cpp:class:`boost::static_visitor`, which allow algorithms to be
+defined in a template and compiled for each pixel type.  They also
+allow algorithms to be specialised for different classes of pixel
+type, for example signed vs. unsigned, integer vs. floating point, or
+simple vs. complex, or special-cased per type e.g. for bitmasks.  When
+:cpp:func:`boost::apply_visitor` is called with a specified algorithm
+and :cpp:class:`VariantPixelBuffer` object, it will select the
+matching algorithm for the pixel type contained within the buffer, and
+then invoke it on the buffer.  This permits the programmer to support
+arbitrary pixel types without creating a maintenance nightmare, and
+without unnecessary code duplication.
+
+The 9D pixel buffer makes a distinction between the logical dimension
+order (used by the API) and the storage order (the layout of the pixel
+data in memory).  The logical order is defined by the values in the
+:doxygen:`Dimensions
+<namespaceome_1_1bioformats.html#ad9ebb405a4815c189fa788325f68a91a>`
+enum.  The storage order is specified by the programmer when creating
+a pixel buffer.
+
+The following example shows creation of a pixel buffer with a defined
+size, and :doxygen:`default storage order
+<classome_1_1bioformats_1_1PixelBufferBase.html#a419ad49f2ea90937a57b81a74b56380b>`:
+
+.. literalinclude:: examples/pixeldata.cpp
+   :language: cpp
+   :start-after: create-example-start
+   :end-before: create-example-end
+
+The storage order may be set explicitly.  The order may be created by
+hand, or with a :doxygen:`helper function
+<classome_1_1bioformats_1_1PixelBufferBase.html#ac7e922610bf561f311d13c3d7fcaeb69>`.
+While the helper function is limited to supporting the ordering
+defined by the data model, specifying the order by hand allows
+additional flexibility, for example allowing the indexing for
+individual dimensions to run backwards which is useful for example if
+the Y-axis requires inverting.  The following example shows creation
+of a pixel buffer with defined storage order using the helper
+function:
+
+.. literalinclude:: examples/pixeldata.cpp
+   :language: cpp
+   :start-after: create-ordered-example-start
+   :end-before: create-ordered-example-end
+
+Note that the logical order of the dimension extents is unchanged.
+
+In practice, it is unlikely that you will need to create any
+:cpp:class:`PixelBuffer` objects directly.  The
+:cpp:class:`FormatReader` and :cpp:class:`FormatWriter` interfaces use
+:cpp:class:`VariantPixelBuffer` objects, and in the case of the reader
+interface the :cpp:func:`getLookupTable` and :cpp:func:`openBytes`
+methods can be passed a default-constructed
+:cpp:class:`VariantPixelBuffer` and it will be set up automatically,
+changing the image dimensions, dimension order and pixel type to match
+the data being fetched, if the size, order and type do not match.
+
+Both buffer classes provide access to the pixel data so that it may be
+access, manipulated and passed elsewhere.  The
+:cpp:class:`PixelBuffer` class provides an :cpp:class:`at` method.
+This will allow access to individual pixel values using a 9D
+coordinate:
+
+.. literalinclude:: examples/pixeldata.cpp
+   :language: cpp
+   :start-after: at-example-start
+   :end-before: at-example-end
+
+The :cpp:class:`VariantPixelBuffer` does not provide an
+:cpp:class:`at` method for efficiency reasons.  Instead, visitors
+should be used for processing of bulk pixel data.  For example, this
+is one way the minimum and maximum pixel values could be obtained:
+
+.. literalinclude:: examples/pixeldata.cpp
+   :language: cpp
+   :start-after: visitor-example-start
+   :end-before: visitor-example-end
+
+This example demonstrates several features:
+
+- The visitor operators can return values to the caller (for more
+  complex algorithms, the visitor class could use member variables and
+  additional methods)
+- The operator is expanded once for each pixel type
+- The operators can be special-cased for individual pixel types; here
+  we use SFINAE to implement a specialisation for an entire category
+  of pixel types (complex numbers), but standard function overloading
+  and templates will also work for more common cases
+- Pixel data can be assigned to the buffer with a single
+  :cpp:func:`assign` call.
+
+The Bio-Formats source uses this for several purposes, for example to
+load pixel data into OpenGL textures, handling format conversion and
+repacking of pixel data as needed.
+
+While the pixel buffers may appear complex, they do permit the
+Bio-Formats library to support all pixel types with relative ease, and
+it will allow your applications to also handle multiple pixel types by
+writing your own visitors.  Assignment of one buffer to another will
+also repack the pixel data if they use different storage ordering
+(i.e. the logical ordering is used for the copy), which can be useful
+if you need the pixel data in a defined ordering.
+
+If all your want is access to the raw data, as in the Java API, you
+are not required to use the above features.  Simply use the
+:cpp:func:`data` method on the buffer to get a pointer to the raw
+data.  Note that you will need to multiply the buffer size obtained
+with :cpp:func:`num_elements` by the size of the pixel type (use
+:cpp:func:`bytesPerPixel` or :cpp:func:`sizeof` on the buffer
+:cpp:type:`value_type`).
+
+Alternatively, it is also possible to access the underlying
+:cpp:class:`boost::multi_array` using the :cpp:func:`array` method, if
+you need access to functionality not wrapped by
+:cpp:class:`PixelBuffer`.
+
+.. seealso::
+
+  - :doxygen:`PixelType <classome_1_1xml_1_1model_1_1enums_1_1PixelType.html>`
+  - :doxygen:`PixelBuffer <classome_1_1bioformats_1_1PixelBuffer.html>`
+  - :doxygen:`VariantPixelBuffer <classome_1_1bioformats_1_1VariantPixelBuffer.html>`
+  - :doxygen:`FormatReader::getLookupTable <classome_1_1bioformats_1_1FormatReader.html#a416742287de02c29d68147e7965316c4>`
+  - :doxygen:`FormatReader::openBytes <classome_1_1bioformats_1_1FormatReader.html#a91184deaf16c42b51eb564ee11e76fe2>`
+  - :doxygen:`FormatWriter::setLookupTable <classome_1_1bioformats_1_1FormatWriter.html#a7ee8eaab7b440be78f3707d1f34ec372>`
+  - :doxygen:`FormatWriter::saveBytes <classome_1_1bioformats_1_1FormatWriter.html#a3f75d001c244c06883c986df988d31b5>`
