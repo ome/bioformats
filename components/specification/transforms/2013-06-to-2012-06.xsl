@@ -158,11 +158,9 @@
 			</xsl:for-each>
 			<xsl:variable name="theValue" select="@NominalMagnification"/>
 			<xsl:for-each select="@* [name() = 'NominalMagnification']">
-				<xsl:if test="$theValue=round($theValue)">
 					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="."/>
+						<xsl:value-of select="round($theValue)"/>
 					</xsl:attribute>
-				</xsl:if>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>

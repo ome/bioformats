@@ -45,16 +45,11 @@
  */
 package ome.specification;
 
-//Java imports
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//Third-party libraries
-
-
-//Application-internal dependencies
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 import ome.xml.model.AffineTransform;
@@ -69,6 +64,7 @@ import ome.xml.model.Dataset;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
+import ome.xml.model.DoubleAnnotation;
 import ome.xml.model.Ellipse;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
@@ -86,6 +82,8 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.Line;
 import ome.xml.model.LongAnnotation;
+import ome.xml.model.Map;
+import ome.xml.model.MapAnnotation;
 import ome.xml.model.Mask;
 import ome.xml.model.MicrobeamManipulation;
 import ome.xml.model.Microscope;
@@ -1061,6 +1059,9 @@ public class XMLMockObjects
     pixels.setSizeZ(new PositiveInteger(SIZE_Z));
     pixels.setSizeC(new PositiveInteger(SIZE_C));
     pixels.setSizeT(new PositiveInteger(SIZE_T));
+    pixels.setPhysicalSizeX(new Length(1, UNITS.MICROM));
+    pixels.setPhysicalSizeY(new Length(1, UNITS.MICROM));
+    pixels.setPhysicalSizeZ(new Length(1, UNITS.MICROM));
     pixels.setDimensionOrder(DIMENSION_ORDER);
     pixels.setType(PIXEL_TYPE);
     BinData data;
@@ -1082,13 +1083,14 @@ public class XMLMockObjects
     for (int i = 0; i < SIZE_C; i++) {
       channel = createChannel(i);
       channel.setID("Channel:" + index + ":" + i);
+      channel.setPinholeSize(new Length(3, UNITS.NM));
+      channel.setEmissionWavelength(new Length(2, UNITS.NM));
+      channel.setExcitationWavelength(new Length(500, UNITS.NM));
       if (metadata) {
         if (j == n) j = 0;
         channel.setLightSourceSettings(createLightSourceSettings(j));
         channel.setLightPath(createLightPath());
         channel.setDetectorSettings(ds);
-        //link the channel to the OTF
-        //if (otf != null) otf.linkChannel(channel);
         j++;
       }
       pixels.addChannel(channel);
@@ -1331,7 +1333,7 @@ public class XMLMockObjects
    */
   public OME createImage(boolean metadata)
   {
-    ome.addImage(createImage(0, true));
+    ome.addImage(createImage(0, metadata));
     return ome;
   }
 
@@ -1381,13 +1383,69 @@ public class XMLMockObjects
     ome.addExperiment(exp);
     MicrobeamManipulation mm = createMicrobeamManipulation(0);
     exp.addMicrobeamManipulation(mm);
-    Pixels pixels = image.getPixels();
+    image.linkExperiment(exp);
+    image.linkInstrument(instrument);
+    image.linkMicrobeamManipulation(mm);
+    ome.addImage(image);
+    return ome;
+  }
+
+  /**
+   * Creates an image with acquisition data.
+   *
+   * @return See above.
+   */
+  public OME createImageWithAnnotatedAcquisitionData()
+  {
+    populateInstrument();
+    //annotate
+    instrument.setLinkedAnnotation(0, new TagAnnotation());
+    List<Detector> detectors = instrument.copyDetectorList();
+    Iterator<Detector> i = detectors.iterator();
+    int index = 0;
+    while (i.hasNext()) {
+        i.next().setLinkedAnnotation(index, new BooleanAnnotation());
+        index++;
+    }
+    List<Dichroic> dichroics = instrument.copyDichroicList();
+    index = 0;
+    Iterator<Dichroic> j = dichroics.iterator();
+    while (j.hasNext()) {
+        j.next().setLinkedAnnotation(index, new LongAnnotation());
+        index++;
+    }
+    List<Filter> filters = instrument.copyFilterList();
+    index = 0;
+    Iterator<Filter> k = filters.iterator();
+    while (k.hasNext()) {
+        k.next().setLinkedAnnotation(index, new TermAnnotation());
+        index++;
+    }
+    List<LightSource> lights = instrument.copyLightSourceList();
+    index = 0;
+    Iterator<LightSource> l = lights.iterator();
+    while (l.hasNext()) {
+        l.next().setLinkedAnnotation(index, new DoubleAnnotation());
+        index++;
+    }
+    List<Objective> objectives = instrument.copyObjectiveList();
+    index = 0;
+    Iterator<Objective> m = objectives.iterator();
+    while (m.hasNext()) {
+        m.next().setLinkedAnnotation(index,new MapAnnotation());
+        index++;
+    }
+    Image image = createImage(0, true);
+    ObjectiveSettings settings = createObjectiveSettings(0);
+    image.setObjectiveSettings(settings);
+
+    Experiment exp = createExperiment(0);
+    ome.addExperiment(exp);
     image.linkExperiment(exp);
     image.linkInstrument(instrument);
     ome.addImage(image);
     return ome;
   }
-
   /**
    * Creates an image with a given experiment. The Image is not added to ome.
    *
