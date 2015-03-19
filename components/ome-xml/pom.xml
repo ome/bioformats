@@ -16,7 +16,7 @@
 
   <name>OME-XML Java library</name>
   <description>A library for working with OME-XML metadata structures.</description>
-  <url>http://ome-xml.org/wiki/OmeXmlJava</url>
+  <url>http://www.openmicroscopy.org/site/support/ome-model/ome-xml/java-library.html</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>
