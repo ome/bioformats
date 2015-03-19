@@ -36,7 +36,6 @@ import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
-import ij.gui.RoiProperties;
 import ij.gui.ShapeRoi;
 import ij.gui.TextRoi;
 import ij.plugin.frame.RoiManager;
