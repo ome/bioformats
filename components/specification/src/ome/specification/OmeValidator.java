@@ -53,7 +53,6 @@ import org.w3c.dom.Document;
 public class OmeValidator
 {
 
-
    /** Path the schema language. */
     public static final String JAXP_SCHEMA_LANGUAGE =
         "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
@@ -69,7 +68,8 @@ public class OmeValidator
     public OmeValidator()
     {
     }
-    /*
+
+    /**
      * Validate the specified file
      * @param file The file to parse.
      * @param schema The schema used to validate the specified file.
@@ -86,7 +86,7 @@ public class OmeValidator
         }
     }
 
-    /*
+    /**
      * Validate the specified file
      * @param file The file to parse.
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
@@ -103,7 +103,7 @@ public class OmeValidator
         }
     }
 
-    /*
+    /**
      * Validate the specified file
      * Any validation errors thrown as an exception.
      * @param file The file to parse.
@@ -131,7 +131,7 @@ public class OmeValidator
         parseFile(file, schema);
     }
 
-    /*
+    /**
      * Validate the specified file
      * Any validation errors are sent to StdErr, not thrown as an exception.
      * @param file The file to parse.
@@ -178,10 +178,17 @@ public class OmeValidator
             // Set the schema file
             dbf.setAttribute(JAXP_SCHEMA_SOURCE, schema);
         }
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        return builder.parse(new FileInputStream(file));
+        FileInputStream is = null;
+        try {
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            is = new FileInputStream(file);
+            return builder.parse(is);
+        } catch (Exception e) {
+            throw new Exception("Not able to parse the file.");
+        } finally {
+            if (is != null) is.close();
+        }
     }
-
 
     /**
      * Parses the specified file and returns the document.
@@ -194,7 +201,7 @@ public class OmeValidator
     public Document parseFileWithStreamArray(File file, StreamSource[] schemaStreamArray)
         throws Exception
     {
-        if (file == null)
+        if (file == null || !file.exists())
             throw new IllegalArgumentException("No file to parse.");
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -207,10 +214,18 @@ public class OmeValidator
 
         // Version - two step parse then validate (throws error as exception)
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(new FileInputStream(file));
-        Validator validator=theSchema.newValidator();
-        validator.validate(new DOMSource(theDoc));
-        return theDoc;
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            Document theDoc = builder.parse(is);
+            Validator validator=theSchema.newValidator();
+            validator.validate(new DOMSource(theDoc));
+            return theDoc;
+        } catch (Exception e) {
+            throw new Exception("Cannot parse the file", e);
+        } finally {
+            if (is != null) is.close();
+        }
     }
 
     /**
@@ -224,7 +239,7 @@ public class OmeValidator
     public Document parseFileWithStreamArrayToSdtErr(File file, StreamSource[] schemaStreamArray)
         throws Exception
     {
-        if (file == null)
+        if (file == null || !file.exists())
             throw new IllegalArgumentException("No file to parse.");
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -233,13 +248,20 @@ public class OmeValidator
         SchemaResolver theTestClassResolver = new SchemaResolver();
         sFactory.setResourceResolver(theTestClassResolver);
 
-        Schema theSchema = sFactory.newSchema( schemaStreamArray );
-
-        // Version - one step parse and validate (print error to stdErr)
-        dbf.setSchema(theSchema);
+        Schema theSchema = sFactory.newSchema(schemaStreamArray);
+        // Version - two step parse then validate (throws error as exception)
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(new FileInputStream(file));
-        return theDoc;
+        FileInputStream is = null;
+        try {
+            dbf.setSchema(theSchema);
+            is = new FileInputStream(file);
+            Document theDoc = builder.parse(is);
+            return theDoc;
+        } catch (Exception e) {
+            throw new Exception("Cannot parse the file", e);
+        } finally {
+            if (is != null) is.close();
+        }
     }
 
 }
