@@ -29,7 +29,7 @@ Metadata store
   Bio-Formats reader and writer interfaces.
 
 OME-XML data model objects
-  The abstract OME-XML data model is realised as a collection of
+  The abstract OME-XML data model is realized as a collection of
   *model objects*.  Classes are generated from the elements of the
   OME-XML data model schema, and a tree of the model objects acts as a
   representation of the OME data model which may be modified and
@@ -88,7 +88,7 @@ Metadata store
 
 Access to metadata is provided via the :cpp:class:`MetadataStore` and
 :cpp:class:`MetadataRetrieve` interfaces.  These provide setters and
-getters, respectively, to store and retrieve metadata from an
+getters, respectively, to store and retrieve metadata to and from an
 underlying abstract metadata store.  The primary store is the
 :cpp:class:`OMEXMLMetadata` which stores the metadata in OME-XML data
 model objects (see below), and implements both interfaces.  However,
@@ -140,10 +140,10 @@ Since objects can contain other objects, some accessor methods require
 the use of more than one index.  For example, an :cpp:class:`Image`
 object can contain multiple :cpp:class:`Plane` objects.  Similar to
 the above example, there is a :cpp:func:`getPlaneCount` method,
-however since it's contained by an :cpp:class:`Image` it has an
+however since it is contained by an :cpp:class:`Image` it has an
 additional image index argument to get the plane count for the
 specified image.  Likewise its accessors such as
-:cpp:func:`getPlaneTheZ` contain two arguments, the image index and
+:cpp:func:`getPlaneTheZ` take two arguments, the image index and
 the plane index.  Internally, these indices will be used to find the
 :cpp:class:`Image`, then the :cpp:class:`Plane`, and then call
 :cpp:func:`getTheZ`.  When using the :cpp:class:`MetadataRetrieve`
