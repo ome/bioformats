@@ -158,21 +158,28 @@ public class EditTiffG extends JFrame implements ActionListener {
   }
 
   public void saveFile(File f) {
+    RandomAccessInputStream in = null;
+    RandomAccessOutputStream out = null;
     try {
       String xml = getXML();
       String path = f.getAbsolutePath();
-      RandomAccessInputStream in = new RandomAccessInputStream(path);
-      RandomAccessOutputStream out = new RandomAccessOutputStream(path);
+      in = new RandomAccessInputStream(path);
+      out = new RandomAccessOutputStream(path);
       TiffSaver saver = new TiffSaver(out, path);
       saver.overwriteComment(in, xml);
-      in.close();
-      out.close();
     }
     catch (FormatException exc) {
       showError(exc);
     }
     catch (IOException exc) {
       showError(exc);
+    } finally {
+      try {
+        if (in != null) in.close();
+      } catch (Exception e) {}
+      try {
+        if (out != null) in.close();
+      } catch (Exception e) {}
     }
   }
 
