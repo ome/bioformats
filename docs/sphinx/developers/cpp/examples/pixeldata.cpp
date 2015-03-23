@@ -70,7 +70,7 @@ namespace
 
     /* at-example-start */
     // Set all pixel values for Z=2 and C=1 to 0.5
-    // 9D index, default values default to zero if unused
+    // 9D index, default values to zero if unused
     PixelBuffer<float_pixel_type>::indices_type idx;
     // Set Z and C indices
     idx[ome::bioformats::DIM_SPATIAL_Z] = 2;
@@ -99,8 +99,9 @@ namespace
     /* create-ordered-example-start */
     // Language type for UINT16 pixel data
     typedef PixelProperties<PixelType::UINT16>::std_type uint16_pixel_type;
-    // Storage order is XYSZCTztc; subchannels are not interleaved
-    // ("planar") after XY
+    // Storage order is XYSCTZztc; subchannels are not interleaved
+    // ("planar") after XY; lowercase letters are unused Modulo
+    // dimensions
     PixelBufferBase::storage_order_type order1
       (PixelBufferBase::make_storage_order(DimensionOrder::XYCTZ, false));
     // Create PixelBuffer for unsigned 16-bit data with specified
@@ -114,8 +115,9 @@ namespace
 
     // Language type for INT8 pixel data
     typedef PixelProperties<PixelType::INT8>::std_type int8_pixel_type;
-    // Storage order is SXYCTZztc; subchannels are interleaved
-    // ("chunky") before XY
+    // Storage order is SXYZCTztc; subchannels are interleaved
+    // ("chunky") before XY; lowercase letters are unused Modulo
+    // dimensions
     PixelBufferBase::storage_order_type order2
       (PixelBufferBase::make_storage_order(DimensionOrder::XYZCT, true));
     // Create PixelBuffer for signed 8-bit RGB data with specified storage
@@ -132,7 +134,7 @@ namespace
   /* visitor-example-start */
   // Visitor to compute min and max pixel value for pixel buffer of
   // any pixel type
-  // The static_visitor specialisation is the required return type of
+  // The static_visitor specialization is the required return type of
   // the operator() methods and boost::apply_visitor()
   struct MinMaxVisitor : public boost::static_visitor<std::pair<double, double> >
   {

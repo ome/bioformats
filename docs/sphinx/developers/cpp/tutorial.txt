@@ -257,16 +257,16 @@ may be used to contain and process pixel data of a specific pixel
 type.  Internally, the pixel data is contained within a
 :cpp:class:`boost::multi_array` as a 9D hyper-volume, though its usage
 in this release of Bio-Formats is limited to 5D.  The class can either
-contain its own memory allocation for pixel data or reference memory
-allocated or mapped externally, allowing use with memory-mapped data,
-for example.
+contain its own memory allocation for pixel data, or it can reference
+memory allocated or mapped externally, allowing use with memory-mapped
+data, for example.
 
 In many situations, it is desirable to work with arbitrary pixel
 types, or at least the set of pixel types defined in the OME data
 model in its :cpp:class:`PixelType` enumeration.  The
 :cpp:class:`VariantPixelBuffer` fulfills this need, using
 :cpp:class:`boost::variant` to allow it to contain a
-:cpp:class:`PixelBuffer` specialised for any of the pixel types in the
+:cpp:class:`PixelBuffer` specialized for any of the pixel types in the
 OME data model.  This is used to allow transfer and processing of any
 supported pixel type, for example by the :cpp:class:`FormatReader`
 class' :cpp:func:`getLookupTable` and :cpp:func:`openBytes` methods,
@@ -281,7 +281,7 @@ This imposes a significant testing and maintenance burden.
 :cpp:func:`boost::apply_visitor` and
 :cpp:class:`boost::static_visitor`, which allow algorithms to be
 defined in a template and compiled for each pixel type.  They also
-allow algorithms to be specialised for different classes of pixel
+allow algorithms to be specialized for different classes of pixel
 type, for example signed vs. unsigned, integer vs. floating point, or
 simple vs. complex, or special-cased per type e.g. for bitmasks.  When
 :cpp:func:`boost::apply_visitor` is called with a specified algorithm
@@ -313,11 +313,11 @@ hand, or with a :doxygen:`helper function
 <classome_1_1bioformats_1_1PixelBufferBase.html#ac7e922610bf561f311d13c3d7fcaeb69>`.
 While the helper function is limited to supporting the ordering
 defined by the data model, specifying the order by hand allows
-additional flexibility, for example allowing the indexing for
-individual dimensions to run backwards which is useful for example if
-the Y-axis requires inverting.  The following example shows creation
-of a pixel buffer with defined storage order using the helper
-function:
+additional flexibility.  Manual ordering may be used to allow the
+indexing for individual dimensions to run backward rather than
+forward, which is useful if the Y-axis requires inverting, for
+example.  The following example shows creation of two pixel buffers with
+defined storage order using the helper function:
 
 .. literalinclude:: examples/pixeldata.cpp
    :language: cpp
@@ -337,20 +337,22 @@ changing the image dimensions, dimension order and pixel type to match
 the data being fetched, if the size, order and type do not match.
 
 Both buffer classes provide access to the pixel data so that it may be
-access, manipulated and passed elsewhere.  The
+accessed, manipulated and passed elsewhere.  The
 :cpp:class:`PixelBuffer` class provides an :cpp:class:`at` method.
-This will allow access to individual pixel values using a 9D
-coordinate:
+This allows access to individual pixel values using a 9D coordinate:
 
 .. literalinclude:: examples/pixeldata.cpp
    :language: cpp
    :start-after: at-example-start
    :end-before: at-example-end
 
-The :cpp:class:`VariantPixelBuffer` does not provide an
-:cpp:class:`at` method for efficiency reasons.  Instead, visitors
-should be used for processing of bulk pixel data.  For example, this
-is one way the minimum and maximum pixel values could be obtained:
+Conceptually, this is the same as using an index for a normal 1D
+array, but extended to use an array of nine indices for each of the
+nine dimensions, in the logical storage order.  The
+:cpp:class:`VariantPixelBuffer` does not provide an :cpp:class:`at`
+method for efficiency reasons.  Instead, visitors should be used for
+the processing of bulk pixel data.  For example, this is one way the
+minimum and maximum pixel values could be obtained:
 
 .. literalinclude:: examples/pixeldata.cpp
    :language: cpp
@@ -364,15 +366,18 @@ This example demonstrates several features:
   additional methods)
 - The operator is expanded once for each pixel type
 - The operators can be special-cased for individual pixel types; here
-  we use SFINAE to implement a specialisation for an entire category
-  of pixel types (complex numbers), but standard function overloading
-  and templates will also work for more common cases
+  we use the `SFINAE rule
+  <http://en.cppreference.com/w/cpp/language/sfinae>`_ to implement a
+  specialization for an entire category of pixel types (complex
+  numbers), but standard function overloading and templates will also
+  work for more common cases
 - Pixel data can be assigned to the buffer with a single
   :cpp:func:`assign` call.
 
-The Bio-Formats source uses this for several purposes, for example to
-load pixel data into OpenGL textures, handling format conversion and
-repacking of pixel data as needed.
+The Bio-Formats source uses pixel buffer visitors for several
+purposes, for example to load pixel data into OpenGL textures, which
+automatically handles pixel format conversion and repacking of pixel
+data as needed.
 
 While the pixel buffers may appear complex, they do permit the
 Bio-Formats library to support all pixel types with relative ease, and
@@ -382,8 +387,8 @@ also repack the pixel data if they use different storage ordering
 (i.e. the logical ordering is used for the copy), which can be useful
 if you need the pixel data in a defined ordering.
 
-If all your want is access to the raw data, as in the Java API, you
-are not required to use the above features.  Simply use the
+If all you want is access to the raw data, as in the Java API, you are
+not required to use the above features.  Simply use the
 :cpp:func:`data` method on the buffer to get a pointer to the raw
 data.  Note that you will need to multiply the buffer size obtained
 with :cpp:func:`num_elements` by the size of the pixel type (use
