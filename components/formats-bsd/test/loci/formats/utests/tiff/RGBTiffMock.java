@@ -35,8 +35,6 @@ package loci.formats.utests.tiff;
 import java.io.IOException;
 
 import loci.formats.FormatException;
-import loci.formats.tiff.IFD;
-import loci.formats.tiff.IFDType;
 
 /**
  *
