@@ -184,7 +184,7 @@ public class OmeValidator
             is = new FileInputStream(file);
             return builder.parse(is);
         } catch (Exception e) {
-            throw new Exception("Not able to parse the file.");
+            throw new Exception("Not able to parse the file.", e);
         } finally {
             if (is != null) is.close();
         }
