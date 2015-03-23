@@ -188,7 +188,7 @@ Full example source: :download:`metadata-io.cpp <examples/metadata-io.cpp>`
 
   - :doxygen:`Metadata classes <namespaceome_1_1xml_1_1meta.html>`
   - :doxygen:`createID <namespaceome_1_1bioformats.html#ab3bf80ec03bcf20b199ce2761d48fe01>`
-  - :doxygen:`createOMEXMLMetadata <namespaceome_1_1bioformats.html#a094cce3a9581c222d128cc9f366aaa75>`
+  - :doxygen:`createOMEXMLMetadata <namespaceome_1_1bioformats.html#ae61f12958973765e8328348874a85731>`
   - :doxygen:`getOMEXML <namespaceome_1_1bioformats.html#a32e5424991ce09b857ddc0d5be37c4f1>`
 
 
