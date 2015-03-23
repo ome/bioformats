@@ -126,6 +126,12 @@ public class MicromanagerReader extends FormatReader {
         return false;
       }
     }
+    else if (!isGroupFiles()) {
+      // if file grouping was disabled, allow each of the TIFFs to be
+      // read separately; this will have no effect if the metadata file
+      // is chosen
+      return false;
+    }
     try {
       Location parent = new Location(name).getAbsoluteFile().getParentFile();
       Location metaFile = new Location(parent, METADATA);

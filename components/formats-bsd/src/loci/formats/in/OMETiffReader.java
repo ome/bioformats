@@ -162,7 +162,17 @@ public class OMETiffReader extends FormatReader {
       return true;
     }
     metaFile = new Location(name).getAbsolutePath();
-    return super.isThisType(name, open);
+    boolean valid = super.isThisType(name, open);
+    if (valid && !isGroupFiles()) {
+      try {
+        return isSingleFile(metaFile);
+      }
+      catch (Exception e) {
+        LOGGER.debug("", e);
+        return false;
+      }
+    }
+    return valid;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
