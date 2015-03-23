@@ -66,6 +66,7 @@ public class Frequency extends Quantity implements Comparable<Frequency>
     hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
 
+  @Override
   public Number value()
   {
     return value;
@@ -84,6 +85,7 @@ public class Frequency extends Quantity implements Comparable<Frequency>
     return null;
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if (other == null)
@@ -138,6 +140,7 @@ public class Frequency extends Quantity implements Comparable<Frequency>
     return result.toString();
   }
 
+  @Override
   public Unit<ome.units.quantity.Frequency> unit()
   {
     return unit;

@@ -66,6 +66,7 @@ public class Angle extends Quantity implements Comparable<Angle>
     hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
 
+  @Override
   public Number value()
   {
     return value;
@@ -84,6 +85,7 @@ public class Angle extends Quantity implements Comparable<Angle>
     return null;
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if (other == null)
@@ -138,6 +140,7 @@ public class Angle extends Quantity implements Comparable<Angle>
     return result.toString();
   }
 
+  @Override
   public Unit<ome.units.quantity.Angle> unit()
   {
     return unit;

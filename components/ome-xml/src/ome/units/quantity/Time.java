@@ -66,6 +66,7 @@ public class Time extends Quantity implements Comparable<Time>
     hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
 
+  @Override
   public Number value()
   {
     return value;
@@ -84,6 +85,7 @@ public class Time extends Quantity implements Comparable<Time>
     return null;
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if (other == null)
@@ -138,6 +140,7 @@ public class Time extends Quantity implements Comparable<Time>
     return result.toString();
   }
 
+  @Override
   public Unit<ome.units.quantity.Time> unit()
   {
     return unit;
