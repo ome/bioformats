@@ -132,7 +132,11 @@ if [ -d "$INSTALL_PREFIX" ]; then
   fi
 else
   bindir=$(dirname "$prog")
-  rootdir=${bindir%@CMAKE_INSTALL_FULL_BINDIR@}
+  rootdir=$(eval echo "\${bindir%$INSTALL_BINDIR}")
+  rootdir=${rootdir%/}
+  if [ -z "$rootdir" ]; then
+    rootdir=$(pwd)
+  fi
 
   PATH="${rootdir}${INSTALL_FULL_BINDIR}:$PATH"
   LIBEXECDIR="${rootdir}${BF_INSTALL_FULL_LIBEXECDIR}"
