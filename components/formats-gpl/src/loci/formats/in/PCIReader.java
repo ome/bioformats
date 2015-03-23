@@ -296,7 +296,7 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Position_Z") != -1) {
         double zPos = stream.readDouble();
-        if (!uniqueZ.contains(zPos) && (getImageCount() == 0 || getSizeZ() == 1))
+        if (!uniqueZ.contains(zPos) && getSizeZ() <= 1)
         {
           uniqueZ.add(zPos);
         }
