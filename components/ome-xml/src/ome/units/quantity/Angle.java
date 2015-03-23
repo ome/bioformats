@@ -31,9 +31,7 @@
 
 package ome.units.quantity;
 
-import ome.units.quantity.Quantity;
 import ome.units.unit.Unit;
-import ome.units.UNITS;
 
 /**
  * A wrapper for the Angle class from the units implementation.
