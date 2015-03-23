@@ -178,7 +178,7 @@ public class EditTiffG extends JFrame implements ActionListener {
         if (in != null) in.close();
       } catch (Exception e) {}
       try {
-        if (out != null) in.close();
+        if (out != null) out.close();
       } catch (Exception e) {}
     }
   }
