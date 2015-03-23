@@ -95,7 +95,7 @@ namespace
                 const std::string&            state,
                 std::ostream&                 stream)
   {
-    // Get total number of images
+    // Get total number of images (series)
     index_type ic = meta.getImageCount();
     stream << "Image count: " << ic << '\n';
 
@@ -134,7 +134,7 @@ namespace
   void
   updateMetadata(meta::Metadata& meta)
   {
-    // Get total number of images
+    // Get total number of images (series)
     index_type ic = meta.getImageCount();
 
     // Loop over images
@@ -154,7 +154,7 @@ namespace
   void
   addMetadata(meta::Metadata& meta)
   {
-    // Get total number of images
+    // Get total number of images (series)
     index_type i = meta.getImageCount();
 
     // Size of Z, T and C dimensions

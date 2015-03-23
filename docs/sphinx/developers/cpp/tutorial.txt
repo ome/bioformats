@@ -61,6 +61,13 @@ the :cpp:class:`getCoreMetadataList` method.  The
 :cpp:class:`FormatReader` interface should be preferred; the objects
 themselves are more of an implementation detail at present.
 
+.. literalinclude:: examples/metadata-formatreader.cpp
+   :language: cpp
+   :start-after: read-example-start
+   :end-before: read-example-end
+
+Full example source: :download:`metadata-formatreader.cpp <examples/metadata-formatreader.cpp>`
+
 .. seealso::
 
   - :doxygen:`CoreMetadata <classome_1_1bioformats_1_1CoreMetadata.html>`
@@ -75,7 +82,23 @@ Original metadata is stored in two forms: in a
 :cpp:class:`FormatReader` interface, which offers access to individual
 keys and the whole map for both global and series metadata.  It is
 also accessible using the metadata store; original metadata is stored
-as an :cpp:class:`XMLAnnotation`.
+as an :cpp:class:`XMLAnnotation`.  The following example demonstrates
+access to the global and series metadata using the
+:cpp:class:`FormatReader` interface to get access to the maps:
+
+.. literalinclude:: examples/metadata-formatreader.cpp
+   :language: cpp
+   :start-after: original-example-start
+   :end-before: original-example-end
+
+It would also be possible to use :cpp:func:`getMetadataValue` and
+:cpp:func:`getSeriesMetadataValue` to obtain values for individual
+keys.  Note that the :cpp:class:`MetadataMap` values can be scalar
+values or lists of scalar values; call the :cpp:func:`flatten` method
+to split the lists into separate key-value pairs with a numbered
+suffix.
+
+Full example source: :download:`metadata-formatreader.cpp <examples/metadata-formatreader.cpp>`
 
 .. seealso::
 
@@ -334,7 +357,14 @@ interface the :cpp:func:`getLookupTable` and :cpp:func:`openBytes`
 methods can be passed a default-constructed
 :cpp:class:`VariantPixelBuffer` and it will be set up automatically,
 changing the image dimensions, dimension order and pixel type to match
-the data being fetched, if the size, order and type do not match.
+the data being fetched, if the size, order and type do not match.  For
+example, to read all pixel data in an image using
+:cpp:func:`openBytes`:
+
+.. literalinclude:: examples/metadata-formatreader.cpp
+   :language: cpp
+   :start-after: pixel-example-start
+   :end-before: pixel-example-end
 
 Both buffer classes provide access to the pixel data so that it may be
 accessed, manipulated and passed elsewhere.  The
@@ -400,6 +430,8 @@ Alternatively, it is also possible to access the underlying
 you need access to functionality not wrapped by
 :cpp:class:`PixelBuffer`.
 
+Full example source: :download:`pixeldata.cpp <examples/pixeldata.cpp>`
+
 .. seealso::
 
   - :doxygen:`PixelType <classome_1_1xml_1_1model_1_1enums_1_1PixelType.html>`
@@ -409,3 +441,55 @@ you need access to functionality not wrapped by
   - :doxygen:`FormatReader::openBytes <classome_1_1bioformats_1_1FormatReader.html#a91184deaf16c42b51eb564ee11e76fe2>`
   - :doxygen:`FormatWriter::setLookupTable <classome_1_1bioformats_1_1FormatWriter.html#a7ee8eaab7b440be78f3707d1f34ec372>`
   - :doxygen:`FormatWriter::saveBytes <classome_1_1bioformats_1_1FormatWriter.html#a3f75d001c244c06883c986df988d31b5>`
+
+Reading images
+--------------
+
+Image reading is performed using the :cpp:class:`FormatReader`
+interface.  This is an abstract reader interface implemented by file
+format-specific reader classes.  Examples of readers include
+:cpp:class:`TIFFReader`, which implements reading of Baseline TIFF
+(optionally with additional ImageJ metadata), and
+:cpp:class:`OMETIFFReader` which implements reading of OME-TIFF (TIFF
+with OME-XML metadata).
+
+Using a reader involves these steps:
+
+#. Create a reader instance
+#. Set options to control reader behavior
+#. Call :cpp:func:`setId` to read a specific image file
+#. Retrieve desired metadata and pixel data
+
+These steps are illustrated in this example:
+
+.. literalinclude:: examples/metadata-formatreader.cpp
+   :language: cpp
+   :start-after: reader-example-start
+   :end-before: reader-example-end
+
+Here we create a reader to read TIFF files, set two options (metadata
+filtering and file grouping), and then call :cpp:func:`setId`.  At
+this point the reader has been set up and initialized, and we can then
+read metadata and pixel data, which we covered in the preceding
+sections.  You might like to combine this example with the
+:cpp:class:`MinMaxVisitor` example to make it display the minimum and
+maximum values for each plane in an image; if you try running the
+example with TIFF images of different pixel types, it will
+transparently adapt to any supported pixel type.
+
+.. note::
+
+  - reader option methods may only be called *before* :cpp:func:`setId`
+  - reader state changing methods such as :cpp:func:`setSeries`,
+    metadata retrieval and pixel data retrieval methods may only be
+    called *after* :cpp:func:`setId`
+  - if these constraints are violated, a :cpp:class:`FormatException`
+    will be thrown
+
+Full example source: :download:`metadata-formatreader.cpp <examples/metadata-formatreader.cpp>`
+
+.. seealso::
+
+  - :doxygen:`FormatReader <classome_1_1bioformats_1_1FormatReader.html>`
+  - :doxygen:`TIFFReader <classome_1_1bioformats_1_1in_1_1TIFFReader.html>`
+  - :doxygen:`OMETIFFReader <classome_1_1bioformats_1_1in_1_1OMETIFFReader.html>`
