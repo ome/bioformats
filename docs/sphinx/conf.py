@@ -196,7 +196,7 @@ extlinks = {
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5.1/%s', ''),
     'javadoc' : (downloads_root + '/latest/bio-formats5.1/api/%s', ''),
-    'doxygen' : (downloads_root + '/latest/bio-formats5.1/doxygen/%s', ''),
+    'doxygen' : (downloads_root + '/latest/bio-formats-cpp5.1/api/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')

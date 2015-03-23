@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,20 +34,22 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-set(OME_TOPLEVEL_INCLUDES
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib
-    ${CMAKE_CURRENT_BINARY_DIR}/lib)
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS})
 
-# Add test, making sure it's run with a suitable environment.
-# If updated, make sure to update the wrappers in cpp/cmake.
-function(bf_add_test)
-  add_test(${ARGV})
-  set_tests_properties(${ARGV0}
-    PROPERTIES ENVIRONMENT "BIOFORMATS_SCHEMADIR=${PROJECT_SOURCE_DIR}/components/specification/released-schema")
-endfunction()
+set(exampledir "${PROJECT_SOURCE_DIR}/docs/sphinx/developers/cpp/examples")
 
-add_subdirectory(lib)
-add_subdirectory(libexec)
-add_subdirectory(share/icons)
-add_subdirectory(test)
-add_subdirectory(examples)
+add_executable(model-io "${exampledir}/model-io.cpp")
+target_link_libraries(model-io ome-xml ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(metadata-io "${exampledir}/metadata-io.cpp")
+target_link_libraries(metadata-io ome-xml ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(pixeldata "${exampledir}/pixeldata.cpp")
+target_link_libraries(pixeldata ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
+
+if(BUILD_TESTS)
+  bf_add_test(examples/model-io model-io "${PROJECT_SOURCE_DIR}/components/specification/samples/${MODEL_VERSION}/18x24y1z5t1c8b-text.ome")
+  bf_add_test(examples/metadata-io metadata-io "${PROJECT_SOURCE_DIR}/components/specification/samples/${MODEL_VERSION}/18x24y1z5t1c8b-text.ome")
+  bf_add_test(examples/pixeldata pixeldata "${PROJECT_SOURCE_DIR}/components/specification/samples/${MODEL_VERSION}/18x24y1z5t1c8b-text.ome")
+endif(BUILD_TESTS)

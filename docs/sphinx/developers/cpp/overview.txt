@@ -125,9 +125,11 @@ If possible, install one of the following packages:
 | RedHat/CentOS    | boost-devel      |
 +------------------+------------------+
 
-1.41 is known to not work nicely with :program:`cmake`; 1.48 or later
-needed for Boost.Geometry; 1.54 or later needed for Boost.Geometry
-spatial indexes.
+1.48 or later needed for Boost.Geometry; 1.54 or later needed for
+Boost.Geometry spatial indexes.  RHEL/CentOS 6 users might want to
+look at the `Boost 1.48 SCL
+<https://www.softwarecollections.org/en/scls/denisarnaud/boost148/>`_
+or build a more recent Boost release.
 
 CMake
 ^^^^^

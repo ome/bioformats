@@ -336,7 +336,7 @@ namespace ome
     {
       std::string xml(omexml.dumpXML());
 
-      if (!validateOMEXML(xml))
+      if (validate && !validateOMEXML(xml))
         throw std::runtime_error("Invalid OME-XML");
 
       return xml;
