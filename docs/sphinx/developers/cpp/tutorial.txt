@@ -446,8 +446,8 @@ Reading images
 --------------
 
 Image reading is performed using the :cpp:class:`FormatReader`
-interface.  This is an abstract reader interface implemented by file
-format-specific reader classes.  Examples of readers include
+interface.  This is an abstract reader interface implemented by
+file-format-specific reader classes.  Examples of readers include
 :cpp:class:`TIFFReader`, which implements reading of Baseline TIFF
 (optionally with additional ImageJ metadata), and
 :cpp:class:`OMETIFFReader` which implements reading of OME-TIFF (TIFF
@@ -479,12 +479,12 @@ transparently adapt to any supported pixel type.
 
 .. note::
 
-  - reader option methods may only be called *before* :cpp:func:`setId`
-  - reader state changing methods such as :cpp:func:`setSeries`,
-    metadata retrieval and pixel data retrieval methods may only be
-    called *after* :cpp:func:`setId`
-  - if these constraints are violated, a :cpp:class:`FormatException`
-    will be thrown
+  Reader option-setting methods may only be called *before*
+  :cpp:func:`setId`.  Reader state changing and querying methods such
+  as :cpp:func:`setSeries` and :cpp:func:`getSeries`, metadata
+  retrieval and pixel data retrieval methods may only be called
+  *after* :cpp:func:`setId`.  If these constraints are violated, a
+  :cpp:class:`FormatException` will be thrown.
 
 Full example source: :download:`metadata-formatreader.cpp <examples/metadata-formatreader.cpp>`
 
