@@ -29,6 +29,7 @@ GITVERSION_XML = """<?xml version="1.0" encoding="utf-8"?>
 <project name="gitversion" basedir=".">
     <property name="release.version" value="%s"/>
     <property name="release.shortversion" value="%s"/>
+    <property name="vcs.shortrevision" value="%s"/>
     <property name="vcs.revision" value="%s"/>
     <property name="vcs.date" value="%s"/>
 </project>
@@ -36,6 +37,7 @@ GITVERSION_XML = """<?xml version="1.0" encoding="utf-8"?>
 
 GITVERSION_CMAKE = """set(OME_VERSION "%s")
 set(OME_VERSION_SHORT "%s")
+set(OME_VCS_SHORTREVISION "%s")
 set(OME_VCS_REVISION "%s")
 set(OME_VCS_DATE %s)
 set(OME_VCS_DATE_S "%s")
@@ -52,6 +54,9 @@ if __name__ == "__main__":
     parser.add_option(
         "--bioformats-shortversion", action="store", type="string",
         dest="bioformats_shortversion")
+    parser.add_option(
+        "--bioformats-vcsshortrevision", action="store", type="string",
+        dest="bioformats_vcsshortrevision")
     parser.add_option(
         "--bioformats-vcsrevision", action="store", type="string",
         dest="bioformats_vcsrevision")
@@ -71,6 +76,7 @@ if __name__ == "__main__":
     version = options.bioformats_version
     shortversion = options.bioformats_shortversion
     vcsdate = options.bioformats_vcsdate
+    vcsshortrevision = options.bioformats_vcsshortrevision
     vcsrevision = options.bioformats_vcsrevision
 
     prefix = "%s-%s" % (options.release, version)
@@ -141,10 +147,13 @@ if __name__ == "__main__":
         "%s/ant/gitversion.xml" % (prefix),
         GITVERSION_XML % (
             options.bioformats_version, options.bioformats_shortversion,
-            options.bioformats_vcsrevision, options.bioformats_vcsdate))
+            options.bioformats_vcsshortrevision,
+            options.bioformats_vcsrevision,
+            options.bioformats_vcsdate))
     basezip.writestr(
         "%s/cpp/cmake/GitVersion.cmake" % (prefix),
         GITVERSION_CMAKE % (
             options.bioformats_version, options.bioformats_shortversion,
+            options.bioformats_vcsshortrevision,
             options.bioformats_vcsrevision,
             options.bioformats_vcsdate_unix, options.bioformats_vcsdate))

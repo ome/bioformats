@@ -39,6 +39,7 @@ cmake_policy(SET CMP0007 NEW)
 function(ome_version)
   set(OME_VERSION UNKNOWN)
   set(OME_VERSION_SHORT UNKNOWN)
+  set(OME_VCS_SHORTREVISION UNKNOWN)
   set(OME_VCS_REVISION UNKNOWN)
   set(OME_VCS_DATE UNKNOWN)
   set(OME_VCS_DATE_S UNKNOWN)
@@ -56,6 +57,14 @@ function(ome_version)
     endif(NOT GIT_FOUND)
 
     execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 HEAD --pretty=%h
+      OUTPUT_VARIABLE commit_hash_short RESULT_VARIABLE git_log_fail ERROR_QUIET
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+    if (git_log_fail)
+      message(FATAL_ERROR "Could not obtain release commit hash from git")
+    endif (git_log_fail)
+    string(REPLACE "\n" "" commit_hash_short "${commit_hash_short}")
+
+    execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 HEAD --pretty=%H
       OUTPUT_VARIABLE commit_hash RESULT_VARIABLE git_log_fail ERROR_QUIET
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     if (git_log_fail)
@@ -79,6 +88,7 @@ function(ome_version)
     endif (git_log_fail)
     string(REPLACE "\n" "" commit_date_unix "${commit_date_unix}")
 
+    set(OME_VCS_SHORTREVISION ${commit_hash_short})
     set(OME_VCS_REVISION ${commit_hash})
     set(OME_VCS_DATE ${commit_date_unix})
     set(OME_VCS_DATE_S ${commit_date_string})
@@ -110,6 +120,7 @@ function(ome_version)
     endif(NOT describe_exact_fail)
   endif(EXISTS "${PROJECT_SOURCE_DIR}/cpp/cmake/GitVersion.cmake")
 
+  set(OME_VCS_SHORTREVISION "${OME_VCS_SHORTREVISION}" PARENT_SCOPE)
   set(OME_VCS_REVISION "${OME_VCS_REVISION}" PARENT_SCOPE)
   set(OME_VCS_DATE "${OME_VCS_DATE}" PARENT_SCOPE)
   set(OME_VCS_DATE_S "${OME_VCS_DATE_S}" PARENT_SCOPE)
@@ -145,6 +156,6 @@ endfunction(ome_version)
 ome_version()
 
 message(STATUS "Configuring Bio-Formats version ${OME_VERSION}")
-if(OME_VCS_REVISION AND OME_VCS_DATE_S)
-  message(STATUS "Using git commit ${OME_VCS_REVISION} on ${OME_VCS_DATE_S}")
-endif(OME_VCS_REVISION AND OME_VCS_DATE_S)
+if(OME_VCS_SHORTREVISION AND OME_VCS_DATE_S)
+  message(STATUS "Using git commit ${OME_VCS_SHORTREVISION} on ${OME_VCS_DATE_S}")
+endif()
