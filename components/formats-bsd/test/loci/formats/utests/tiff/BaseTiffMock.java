@@ -40,7 +40,6 @@ import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.tiff.IFD;
-import loci.formats.tiff.IFDType;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
@@ -92,6 +91,16 @@ public class BaseTiffMock {
 
     in = new RandomAccessInputStream(handle);
     tiffParser = new TiffParser(in);
+  }
+
+  /**
+   * Closes the streams.
+   *
+   * @throws Exception Thrown if an error occurred while closing.
+   */
+  protected void close() throws IOException {
+    if (in != null) in.close();
+    if (tiffSaver != null) tiffSaver.close();
   }
 
   protected int getEntryCount() {
