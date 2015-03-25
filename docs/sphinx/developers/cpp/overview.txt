@@ -106,16 +106,17 @@ Quick start
 Install the following packages to build Bio-Formats C++.  A subset of
 these packages (or their dependencies) may be used for deployment,
 where the development package headers and tools for building
-documentation etc. are not required.
+documentation etc. are not required.  Run the appropriate command below
+for your platform to install the build dependencies:
 
 BSD Ports
-  run ``pkg install devel/boost-all devel/cmake science/hdf5 graphics/png lang/python textproc/py-genshi graphics/tiff textproc/xerces-c3 devel/git devel/googletest math/glm devel/qt5 graphics/graphviz devel/apache-ant java/openjdk7 textproc/py-sphinx print/texlive-full``
+  ``pkg install devel/boost-all devel/cmake science/hdf5 graphics/png lang/python textproc/py-genshi graphics/tiff textproc/xerces-c3 devel/git devel/googletest math/glm devel/qt5 graphics/graphviz devel/apache-ant java/openjdk7 textproc/py-sphinx print/texlive-full``
 Debian/Ubuntu
-  run ``apt-get install build-essential libboost-all-dev cmake libhdf5-dev libpng12-dev python python-genshi libtiff5-dev libxerces-c-dev git libgtest-dev libglm-dev qt5-default libqt5-opengl5-dev libqt5-svg5-dev graphviz ant ant-contrib ant-optional openjdk-7-jdk openjdk-7-jre python-sphinx texlive-full``
+  ``apt-get install build-essential libboost-all-dev cmake libhdf5-dev libpng12-dev python python-genshi libtiff5-dev libxerces-c-dev git libgtest-dev libglm-dev qt5-default libqt5-opengl5-dev libqt5-svg5-dev graphviz ant ant-contrib ant-optional openjdk-7-jdk openjdk-7-jre python-sphinx texlive-full``
 Homebrew
-  run ``brew install boost cmake hdf5 libpng python libtiff xerces-c git glm qt5 graphviz ant``
+  ``brew install boost cmake hdf5 libpng python libtiff xerces-c git glm qt5 graphviz ant``
 RedHat/CentOS
-  run ``yum install libhdf5-devel libpng-devel python python-genshi libtiff-devel xerces-c-devel git gtest-devel graphviz java-1.7.0-openjdk``
+  ``yum install libhdf5-devel libpng-devel python python-genshi libtiff-devel xerces-c-devel git gtest-devel graphviz java-1.7.0-openjdk``
 
 Note that Homebrew and RedHat/CentOS do not provide packages for everything you need; see below for details.
 
