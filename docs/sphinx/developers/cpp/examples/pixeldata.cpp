@@ -227,7 +227,6 @@ namespace
   }
   /* visitor-example-end */
 
-
 }
 
 int
