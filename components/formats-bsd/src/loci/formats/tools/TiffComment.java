@@ -117,12 +117,7 @@ public class TiffComment {
     for (String file : files) {
       if (edit) EditTiffG.openFile(file);
       else if (newComment != null) {
-        RandomAccessInputStream in = new RandomAccessInputStream(file);
-        RandomAccessOutputStream out = new RandomAccessOutputStream(file);
-        TiffSaver saver = new TiffSaver(out, file);
-        saver.overwriteComment(in, newComment);
-        in.close();
-        out.close();
+          overwriteComment(file, newComment);
       }
       else {
         String comment = new TiffParser(file).getComment();
@@ -132,4 +127,30 @@ public class TiffComment {
     }
   }
 
+  /**
+   * Overwrites the comment.
+   *
+   * @param file The path to the file to handle.
+   * @param comment The new comment to write.
+   */
+  private static void overwriteComment(String file, String comment)
+  {
+    RandomAccessInputStream in = null;
+    RandomAccessOutputStream out = null;
+    try {
+      in = new RandomAccessInputStream(file);
+      out = new RandomAccessOutputStream(file);
+      TiffSaver saver = new TiffSaver(out, file);
+      saver.overwriteComment(in, comment);
+    } catch (Exception e) {
+      System.out.println(e.toString());
+    } finally {
+      try {
+        if (in != null) in.close();
+      } catch (Exception e) {}
+      try {
+        if (out != null) out.close();
+      } catch (Exception e) {}
+    }
+  }
 }

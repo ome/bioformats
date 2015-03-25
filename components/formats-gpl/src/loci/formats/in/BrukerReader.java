@@ -60,6 +60,9 @@ public class BrukerReader extends FormatReader {
   private ArrayList<String> pixelsFiles = new ArrayList<String>();
   private ArrayList<String> allFiles = new ArrayList<String>();
 
+  private int lastSeries = -1;
+  private RandomAccessInputStream seriesStream;
+
   // -- Constructor --
 
   /** Constructs a new Bruker reader. */
@@ -110,11 +113,16 @@ public class BrukerReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(pixelsFiles.get(getSeries()));
-    s.seek(no * FormatTools.getPlaneSize(this));
-    readPlane(s, x, y, w, h, buf);
-    s.close();
+    if (getSeries() != lastSeries) {
+      if (seriesStream != null) {
+        seriesStream.close();
+      }
+      seriesStream = new RandomAccessInputStream(pixelsFiles.get(getSeries()));
+      lastSeries = getSeries();
+    }
+
+    seriesStream.seek((long) no * FormatTools.getPlaneSize(this));
+    readPlane(seriesStream, x, y, w, h, buf);
     return buf;
   }
 
@@ -155,6 +163,11 @@ public class BrukerReader extends FormatReader {
     if (!fileOnly) {
       pixelsFiles.clear();
       allFiles.clear();
+      lastSeries = -1;
+      if (seriesStream != null) {
+        seriesStream.close();
+      }
+      seriesStream = null;
     }
   }
 

@@ -80,6 +80,7 @@ import loci.plugins.util.WindowTools;
 import ome.units.UNITS;
 import ome.units.quantity.Time;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.ROI;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
@@ -351,14 +352,24 @@ public class Exporter {
             catch (DependencyException de) { }
             catch (ServiceException se) { }
 
+
+
             if (store == null) IJ.error("OME-XML Java library not found.");
+
+            OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
+            if (root.sizeOfROIList()>0){
+                while (root.sizeOfROIList() > 0) {
+                    ROI roi = root.getROI(0);
+                    root.removeROI(roi);
+                }
+                store.setRoot(root);
+            }
             if (xml == null) {
                 store.createRoot();
             }
             else if (store.getImageCount() > 1) {
                 // the original dataset had multiple series
                 // we need to modify the IMetadata to represent the correct series
-
                 ArrayList<Integer> matchingSeries = new ArrayList<Integer>();
                 for (int series=0; series<store.getImageCount(); series++) {
                     String type = store.getPixelsType(series).toString();
@@ -394,7 +405,6 @@ public class Exporter {
                 }
                 else if (matchingSeries.size() == 1) series = matchingSeries.get(0);
 
-                OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
                 ome.xml.model.Image exportImage = root.getImage(series);
                 List<ome.xml.model.Image> allImages = root.copyImageList();
                 for (ome.xml.model.Image img : allImages) {

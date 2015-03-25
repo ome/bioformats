@@ -329,6 +329,11 @@
 				</xsl:for-each>
 			</xsl:for-each>
 		</xsl:variable>
+		<xsl:variable name="initROIID">
+			<xsl:for-each select="@* [name() = 'ID']">
+					<xsl:value-of select="."/>
+			</xsl:for-each>
+		</xsl:variable>
 		<xsl:variable name="X0">
 				<xsl:for-each select="@* [name() = 'X0']">
 					<xsl:value-of select="."/>
@@ -449,10 +454,63 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:variable name="theShapeIDRoot"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
+		<xsl:variable name="theShapeIDRoot">
+			<xsl:choose>
+					<xsl:when test="not(normalize-space($parentID))">
+						<xsl:number value="position()"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/>
+					</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:element name="ROI" namespace="{$newOMENS}">
-			<xsl:variable name="shapeEndID"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
-			<xsl:attribute name="ID">ROI:<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
+			<xsl:variable name="shapeEndID">
+				<xsl:choose>
+					<xsl:when test="not(normalize-space($parentID))">
+						<xsl:number value="position()"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="roiID">
+				<xsl:choose>
+					<xsl:when test="not(normalize-space($parentID))">
+						<!-- check if we have an id for roi -->
+						<xsl:choose>
+							<xsl:when test="not(normalize-space($initROIID))">
+								<xsl:number value="position()"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$initROIID"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="not(normalize-space($initROIID))">
+								<xsl:number value="position()"/>
+								<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$initROIID"/>:<xsl:value-of select="$parentID"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:attribute name="ID">
+				<xsl:choose>
+					<xsl:when test="not(normalize-space($initROIID))">
+						ROI:<xsl:value-of select="$roiID"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$roiID"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
 			<xsl:element name="Union" namespace="{$newOMENS}">
 				<xsl:choose>
 					<xsl:when test="(($theMaxT = $theMinT) and ($theMaxZ = $theMinZ) and not(( $T0 = 'NaN') or ( $Z0 = 'NaN') or ( $T1 = 'NaN') or ( $Z1 = 'NaN') ))">

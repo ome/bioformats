@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -77,8 +77,12 @@ set(OME_BIOFORMATS_INSTALL_FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIO
 
 # Use standard path if using a prefix.
 if(CMAKE_INSTALL_PREFIX)
+  set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats")
+  set(OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/ome/bioformats")
   set(OME_BIOFORMATS_ICONDIR icons/hicolor/scalable)
 else()
+  set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}")
+  set(OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}")
   set(OME_BIOFORMATS_ICONDIR icons)
 endif()
 set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_ICONDIR}")
@@ -110,19 +114,28 @@ add_subdirectory(docs/doxygen)
 add_subdirectory(cpp)
 
 set(LIBRARY_PREFIX OME)
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/bin")
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config)
+               ${PROJECT_BINARY_DIR}/config @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/cmake/bf)
-file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf
+               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
+file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
      DESTINATION ${PROJECT_BINARY_DIR}
      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
      GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 if(WIN32)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config.bat)
+               ${PROJECT_BINARY_DIR}/config.bat @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/bf.bat)
+               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif()
 
 message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")

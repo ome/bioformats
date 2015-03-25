@@ -49,11 +49,11 @@
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 
-namespace showinf
+namespace info
 {
 
   /**
-   * showinf command-line options.
+   * Command-line options.
    */
   class options
   {
@@ -76,6 +76,7 @@ namespace showinf
 
     enum userAction
       {
+        ACTION_USAGE,
         ACTION_HELP,
         ACTION_VERSION,
         ACTION_METADATA

@@ -336,8 +336,8 @@ namespace ome
             setZoom(camera.zoom + 8 * dy);
             break;
           case MODE_PAN:
-            setXTranslation(camera.xTran + 2 *  dx);
-            setYTranslation(camera.yTran + 2 * -dy);
+            setXTranslation(camera.xTran + 2 * -dx);
+            setYTranslation(camera.yTran + 2 *  dy);
             break;
           case MODE_ROTATE:
             setZRotation(camera.zRot + 8 * -dy);

@@ -343,6 +343,9 @@ public class TiffWriter extends FormatWriter {
     if (in != null) {
       in.close();
     }
+    if (tiffSaver != null) {
+      tiffSaver.close();
+    }
   }
 
   /* @see loci.formats.FormatWriter#getPlaneCount() */

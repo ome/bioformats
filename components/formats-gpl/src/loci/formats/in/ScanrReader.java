@@ -98,6 +98,9 @@ public class ScanrReader extends FormatReader {
   private Vector<Double> exposures = new Vector<Double>();
   private Double deltaT = null;
 
+  private Hashtable<Integer, String[]> seriesFiles =
+    new Hashtable<Integer, String[]>();
+
   // -- Constructor --
 
   /** Constructs a new ScanR reader. */
@@ -176,6 +179,10 @@ public class ScanrReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
+    if (seriesFiles.containsKey(getSeries())) {
+      return seriesFiles.get(getSeries());
+    }
+
     Vector<String> files = new Vector<String>();
     for (String file : metadataFiles) {
       if (file != null) files.add(file);
@@ -192,7 +199,9 @@ public class ScanrReader extends FormatReader {
       }
     }
 
-    return files.toArray(new String[files.size()]);
+    String[] fileList = files.toArray(new String[files.size()]);
+    seriesFiles.put(getSeries(), fileList);
+    return fileList;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -221,6 +230,7 @@ public class ScanrReader extends FormatReader {
       exposures.clear();
       deltaT = null;
       foundPositions = false;
+      seriesFiles.clear();
     }
   }
 
@@ -333,7 +343,7 @@ public class ScanrReader extends FormatReader {
 
     for (String file : list) {
       Location f = new Location(dir, file);
-      if (!f.isDirectory() && checkSuffix(file, METADATA_SUFFIXES)) {
+      if (checkSuffix(file, METADATA_SUFFIXES) && !f.isDirectory()) {
         metadataFiles.add(f.getAbsolutePath());
       }
     }

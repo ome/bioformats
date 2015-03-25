@@ -40,9 +40,9 @@
 
 #include <ome/test/test.h>
 
-using ome::ltrim;
-using ome::rtrim;
-using ome::trim;
+using ome::common::ltrim;
+using ome::common::rtrim;
+using ome::common::trim;
 
 TEST(String, LeftTrim)
 {

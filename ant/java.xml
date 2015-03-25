@@ -264,6 +264,7 @@ your FindBugs installation's lib directory. E.g.:
 
     <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
     <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+    <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
     <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
     <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
     <replace dir="${dest.dir}" token="$${vcs.date}_unix" value="${vcs.date_unix}"/>
@@ -297,6 +298,7 @@ your FindBugs installation's lib directory. E.g.:
 
   <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
   <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+  <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
   <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
   <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
   <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>

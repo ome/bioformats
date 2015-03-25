@@ -180,6 +180,7 @@ public class TiffParserTest {
     tiffParser = mock.getTiffParser();
     assertTrue(tiffParser.checkHeader());
     tiffParser.getFirstIFD().getRowsPerStrip();
+    mock.close();
   }
 
   @Test
@@ -194,6 +195,7 @@ public class TiffParserTest {
     for (int i=0; i<mockBitsPerSample.length; i++) {
       assertEquals(bitsPerSample[i], mockBitsPerSample[i]);
     }
+    mock.close();
   }
 
   // TODO: Test wrong type exceptions

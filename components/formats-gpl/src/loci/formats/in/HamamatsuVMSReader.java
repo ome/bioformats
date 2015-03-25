@@ -73,7 +73,7 @@ public class HamamatsuVMSReader extends FormatReader {
   private String[][][] tileFiles;
   private String[] jpeg;
 
-  private JPEGTurboService service = new JPEGTurboServiceImpl();
+  private JPEGTurboService service;
   private HashMap<String, long[]> restartMarkers =
     new HashMap<String, long[]>();
 
@@ -137,6 +137,10 @@ public class HamamatsuVMSReader extends FormatReader {
       return buf;
     }
 
+    if (service == null) {
+      service = new JPEGTurboServiceImpl();
+    }
+
     try {
       if (initializedSeries != getCoreIndex() || initializedPlane != no) {
         service.close();
@@ -171,7 +175,10 @@ public class HamamatsuVMSReader extends FormatReader {
     if (!fileOnly) {
       tileFiles = null;
       files.clear();
-      service.close();
+      if (service != null) {
+        service.close();
+        service = null;
+      }
       jpeg = null;
       restartMarkers.clear();
       initializedSeries = -1;

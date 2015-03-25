@@ -654,10 +654,11 @@ public class Location {
     if (isURL) {
       return false;
     }
+    boolean dotFile = file.getName().startsWith(".");
     if (IS_WINDOWS) {
-      return file.isHidden();
+      return dotFile || file.isHidden();
     }
-    return file.getName().startsWith(".");
+    return dotFile;
   }
 
   /**

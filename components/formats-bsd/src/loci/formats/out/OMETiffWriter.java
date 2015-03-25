@@ -281,7 +281,6 @@ public class OMETiffWriter extends TiffWriter {
       in = new RandomAccessInputStream(file);
       saver.overwriteLastIFDOffset(in);
       saver.overwriteComment(in, xml);
-      in.close();
     }
     catch (FormatException exc) {
       IOException io = new IOException("Unable to append OME-XML comment");

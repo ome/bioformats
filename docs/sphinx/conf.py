@@ -196,7 +196,7 @@ extlinks = {
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5.1/%s', ''),
     'javadoc' : (downloads_root + '/latest/bio-formats5.1/api/%s', ''),
-    'doxygen' : (downloads_root + '/latest/bio-formats5.1/doxygen/%s', ''),
+    'doxygen' : (downloads_root + '/latest/bio-formats-cpp5.1/api/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')
@@ -358,7 +358,10 @@ latex_show_urls = 'footnote'
 man_pages = [
     ('developers/cpp/overview', 'bf-cpp-overview', 'C++ implementation overview', author, 7),
     ('developers/cpp/conversion', 'bf-cpp-conversion', 'C++ conventions for Java programmers switching to the C++ implementation', author, 7),
-    ('developers/cpp/showinf', 'bf-showinf', 'display and validate image metadata', author, 1)
+    ('developers/cpp/bf-env', 'bf-env', 'Bio-Formats environment variables', author, 7),
+    ('developers/cpp/commands/bf-test', 'bf-test', 'run Bio-Formats (C++) test tools', author, 1),
+    ('developers/cpp/commands/bf-test-info', 'bf-test-info', 'display and validate image metadata', author, 1),
+    ('developers/cpp/commands/bf-test-view', 'bf-test-view', 'view image pixel data', author, 1)
 ]
 
 # If true, show URL addresses after external links.

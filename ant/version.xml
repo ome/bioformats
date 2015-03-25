@@ -15,12 +15,19 @@ Ant build file for release version numbering.
     <if>
       <isset property="git.present"/>
       <then>
-        <exec executable="git" outputproperty="vcs.revision"
+        <exec executable="git" outputproperty="vcs.shortrevision"
           failifexecutionfails="true">
           <arg value="log"/>
           <arg value="-1"/>
           <arg value="HEAD"/>
           <arg value="--pretty=%h"/>
+        </exec>
+        <exec executable="git" outputproperty="vcs.revision"
+          failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
+          <arg value="HEAD"/>
+          <arg value="--pretty=%H"/>
         </exec>
         <exec executable="git" outputproperty="vcs.date"
               failifexecutionfails="true">
@@ -99,6 +106,7 @@ Ant build file for release version numbering.
     <!-- set release version by default if nothing is set -->
     <property name="release.version" value="UNKNOWN"/>
     <property name="release.shortversion" value="UNKNOWN"/>
+    <property name="vcs.shortrevision" value="UNKNOWN"/>
     <property name="vcs.revision" value="UNKNOWN"/>
     <property name="vcs.date" value="UNKNOWN"/>
   </target>

@@ -31,9 +31,7 @@
 
 package ome.units.quantity;
 
-import ome.units.quantity.Quantity;
 import ome.units.unit.Unit;
-import ome.units.UNITS;
 
 /**
  * A wrapper for the Power class from the units implementation.
@@ -68,6 +66,7 @@ public class Power extends Quantity implements Comparable<Power>
     hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
 
+  @Override
   public Number value()
   {
     return value;
@@ -86,6 +85,7 @@ public class Power extends Quantity implements Comparable<Power>
     return null;
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if (other == null)
@@ -140,6 +140,7 @@ public class Power extends Quantity implements Comparable<Power>
     return result.toString();
   }
 
+  @Override
   public Unit<ome.units.quantity.Power> unit()
   {
     return unit;

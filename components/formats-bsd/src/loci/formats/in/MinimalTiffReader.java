@@ -143,7 +143,7 @@ public class MinimalTiffReader extends FormatReader {
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
+    if (ifds == null || lastPlane < 0 || lastPlane >= ifds.size()) return null;
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 8) {
@@ -180,7 +180,7 @@ public class MinimalTiffReader extends FormatReader {
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane > ifds.size()) return null;
+    if (ifds == null || lastPlane < 0 || lastPlane >= ifds.size()) return null;
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 16 && bits[0] > 8) {
@@ -292,9 +292,6 @@ public class MinimalTiffReader extends FormatReader {
     }
 
     if (tiffParser == null) {
-      if (in == null) {
-        in = new RandomAccessInputStream(getCurrentFile());
-      }
       initTiffParser();
     }
 
@@ -370,11 +367,11 @@ public class MinimalTiffReader extends FormatReader {
       }
       ifds = null;
       thumbnailIFDs = null;
-      subResolutionIFDs = new ArrayList<IFDList>();
+      subResolutionIFDs = null;
       lastPlane = 0;
       tiffParser = null;
       resolutionLevels = null;
-      j2kCodecOptions = JPEG2000CodecOptions.getDefaultOptions();
+      j2kCodecOptions = null;
     }
   }
 
@@ -425,7 +422,7 @@ public class MinimalTiffReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessInputStream(id);
+    in = new RandomAccessInputStream(id, 16);
     initTiffParser();
     Boolean littleEndian = tiffParser.checkHeader();
     if (littleEndian == null) {
@@ -444,6 +441,7 @@ public class MinimalTiffReader extends FormatReader {
 
     ifds = new IFDList();
     thumbnailIFDs = new IFDList();
+    subResolutionIFDs = new ArrayList<IFDList>();
     for (IFD ifd : allIFDs) {
       Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
@@ -609,6 +607,9 @@ public class MinimalTiffReader extends FormatReader {
     if (tiffParser == null) {
       initTiffParser();
     }
+    if (j2kCodecOptions == null) {
+      j2kCodecOptions = new JPEG2000CodecOptions();
+    }
     j2kCodecOptions.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     LOGGER.debug("Using JPEG 2000 resolution level {}",
         j2kCodecOptions.resolution);
@@ -620,7 +621,7 @@ public class MinimalTiffReader extends FormatReader {
   protected void initTiffParser() {
     if (in == null) {
       try {
-        in = new RandomAccessInputStream(getCurrentFile());
+        in = new RandomAccessInputStream(getCurrentFile(), 16);
       }
       catch (IOException e) {
         LOGGER.error("Could not initialize stream", e);

@@ -39,9 +39,9 @@
 #include <QApplication>
 #include <QDesktopWidget>
 
-#include "Window.h"
+#include <view/Window.h>
 
-using namespace glview;
+using namespace view;
 
 int main(int argc, char *argv[])
 {

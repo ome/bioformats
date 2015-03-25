@@ -2329,7 +2329,14 @@ public class FormatReaderTest {
       setupReader();
     }
 
-    if (id.equals(reader.getCurrentFile())) return true; // already initialized
+    String absPath = new Location(id).getAbsolutePath();
+    if (reader.getCurrentFile() != null &&
+      (absPath.equals(
+      new Location(reader.getCurrentFile()).getAbsolutePath()) ||
+      DataTools.indexOf(reader.getUsedFiles(), absPath) >= 0))
+    {
+      return true;  // already initialized
+    }
 
     // skip files that were already tested as part of another file's dataset
     int ndx = skipFiles.indexOf(id);

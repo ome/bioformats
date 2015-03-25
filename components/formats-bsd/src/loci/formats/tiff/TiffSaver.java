@@ -85,7 +85,6 @@ public class TiffSaver {
   private CodecOptions options;
 
   // -- Constructors --
-
   /**
    * Constructs a new TIFF saver from the given filename.
    * @param filename Filename of the output stream that we may use to create
@@ -134,6 +133,16 @@ public class TiffSaver {
   }
 
   // -- TiffSaver methods --
+
+  /**
+   * Closes the output stream if not null.
+   * @throws IOException Thrown if an error occurred while closing.
+   */
+  public void close() throws IOException {
+    if (out != null) {
+      out.close();
+    }
+  }
 
   /**
    * Sets whether or not we know that the planes will be written sequentially.

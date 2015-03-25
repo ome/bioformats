@@ -54,6 +54,7 @@ namespace ome
 
     }
 
+    /// Reader implementations.
     namespace in
     {
 

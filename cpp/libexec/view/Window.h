@@ -40,6 +40,7 @@
 #define WINDOW_H
 
 #include <QMainWindow>
+
 #include <ome/qtwidgets/GLView2D.h>
 #include <ome/qtwidgets/NavigationDock2D.h>
 
@@ -50,7 +51,7 @@ class QAction;
 class QActionGroup;
 QT_END_NAMESPACE
 
-namespace glview
+namespace view
 {
 
   class Window : public QMainWindow

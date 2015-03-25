@@ -1,0 +1,47 @@
+bf-test
+=======
+
+Synopsis
+--------
+
+**bf-test** command [*options*]
+
+Description
+-----------
+
+:program:`bf-test` is a front end for running the Bio-Formats (C++)
+command-line tools.
+
+This takes care of setting up the environment to ensure that all
+needed libraries, programs and data files are made available.  It is
+of course possible to run the tools directly if desired.
+
+Options
+-------
+
+.. option:: -h, --help
+
+  Show this manual page.
+
+.. option:: -u, --usage
+
+  Show usage information.
+
+.. option:: -V, --version
+
+  Print version information.
+
+Commands
+--------
+
+Commonly-used commands are:
+
+info (or showinf)
+  Display and validate image metadata
+view (or glview)
+  View image pixel data
+
+See also
+--------
+
+:ref:`bf-env`, :ref:`bf-test-info`, :ref:`bf-test-view`.

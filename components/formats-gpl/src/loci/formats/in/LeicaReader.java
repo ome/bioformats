@@ -603,7 +603,7 @@ public class LeicaReader extends FormatReader {
       String filename = (String) files[i].get(0);
 
       if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
-        RandomAccessInputStream s = new RandomAccessInputStream(filename);
+        RandomAccessInputStream s = new RandomAccessInputStream(filename, 16);
         try {
           TiffParser parser = new TiffParser(s);
           parser.setDoCaching(false);
@@ -761,7 +761,7 @@ public class LeicaReader extends FormatReader {
       // need to find the associated .lei file
       if (ifds == null) super.initFile(baseFile);
 
-      in = new RandomAccessInputStream(baseFile);
+      in = new RandomAccessInputStream(baseFile, 16);
       TiffParser tp = new TiffParser(in);
       in.order(tp.checkHeader().booleanValue());
 

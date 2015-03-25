@@ -31,9 +31,11 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -91,6 +93,9 @@ public class BDReader extends FormatReader {
   private int wellRows, wellCols;
   private int fieldRows;
   private int fieldCols;
+
+  private String[] rootList;
+  private ArrayList<String[]> wellList = new ArrayList<String[]>();
 
   // -- Constructor --
 
@@ -187,6 +192,8 @@ public class BDReader extends FormatReader {
       wellCols = 0;
       fieldRows = 0;
       fieldCols = 0;
+      wellList.clear();
+      rootList = null;
     }
   }
 
@@ -218,7 +225,12 @@ public class BDReader extends FormatReader {
 
     if (file != null) {
       try {
-        reader.setId(file);
+        if (reader.getCurrentFile() == null || !new Location(
+          file).getAbsolutePath().equals(
+          new Location(reader.getCurrentFile()).getAbsolutePath()))
+        {
+          reader.setId(file);
+        }
         if (fieldRows * fieldCols == 1) {
           reader.openBytes(0, buf, x, y, w, h);
         }
@@ -266,16 +278,23 @@ public class BDReader extends FormatReader {
     id = locateExperimentFile(id);
     super.initFile(id);
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
+    rootList = dir.list(true);
+    Arrays.sort(rootList);
 
-    for (String file : dir.list(true)) {
+    for (int i=0; i<rootList.length; i++) {
+      String file = rootList[i];
       Location f = new Location(dir, file);
+      rootList[i] = f.getAbsolutePath();
       if (!f.isDirectory()) {
-        if (checkSuffix(file, META_EXT)) {
+        if (checkSuffix(file, META_EXT) && !f.isDirectory()) {
           metadataFiles.add(f.getAbsolutePath());
         }
       }
       else {
-        for (String well : f.list(true)) {
+        String[] wells = f.list(true);
+        Arrays.sort(wells);
+        wellList.add(wells);
+        for (String well : wells) {
           Location wellFile = new Location(f, well);
           if (!wellFile.isDirectory()) {
             if (checkSuffix(well, META_EXT)) {
@@ -319,7 +338,7 @@ public class BDReader extends FormatReader {
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
     if (nChannels == 0) nChannels = 1;
 
-    tiffs = getTiffs(dir.getAbsolutePath());
+    tiffs = getTiffs();
 
     reader = new MinimalTiffReader();
     reader.setId(tiffs[0][0]);
@@ -586,12 +605,10 @@ public class BDReader extends FormatReader {
       wellCols = 24;
     }
 
-    Location dir = new Location(id).getAbsoluteFile().getParentFile();
-    String[] wellList = dir.list();
-    Arrays.sort(wellList);
-    for (String filename : wellList) {
-      if (filename.startsWith("Well ")) {
-        wellLabels.add(filename.split("\\s|\\.")[1]);
+    for (String filename : rootList) {
+      String name = new Location(filename).getName();
+      if (name.startsWith("Well ")) {
+        wellLabels.add(name.split("\\s|\\.")[1]);
       }
     }
 
@@ -640,11 +657,9 @@ public class BDReader extends FormatReader {
 
     // Count Images
     ms0.sizeT = 0;
-    Location well = new Location(dir.getAbsolutePath(),
-      "Well " + wellLabels.get(1));
     for (String channelName : channelNames) {
       int images = 0;
-      for (String filename : well.list()) {
+      for (String filename : wellList.get(1)) {
         if (filename.startsWith(channelName) && filename.endsWith(".tif")) {
           images++;
         }
@@ -694,21 +709,19 @@ public class BDReader extends FormatReader {
     }
   }
 
-  private String[][] getTiffs(String dir) {
-    Location f = new Location(dir);
+  private String[][] getTiffs() {
     Vector<Vector<String>> files = new Vector<Vector<String>>();
 
-    String[] wells = f.list(true);
-    Arrays.sort(wells);
+    Pattern p = Pattern.compile(".* - n\\d\\d\\d\\d\\d\\d\\.tif");
 
-    for (String filename : wells) {
-      Location file = new Location(f, filename).getAbsoluteFile();
-      if (file.isDirectory() && filename.startsWith("Well ")) {
-        String[] list = file.list(true);
+    int nextWell = 0;
+    for (String filename : rootList) {
+      Location file = new Location(filename).getAbsoluteFile();
+      if (file.getName().startsWith("Well ") && file.isDirectory()) {
+        String[] list = wellList.get(nextWell++);
         Vector<String> tiffList = new Vector<String>();
-        Arrays.sort(list);
         for (String tiff : list) {
-          if (tiff.matches(".* - n\\d\\d\\d\\d\\d\\d\\.tif")) {
+          if (p.matcher(tiff).matches()) {
             tiffList.add(new Location(file, tiff).getAbsolutePath());
           }
         }
@@ -778,7 +791,7 @@ public class BDReader extends FormatReader {
   }
 
   private long getTimestamp(String file) throws FormatException, IOException {
-    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
     TiffParser parser = new TiffParser(s);
     parser.setDoCaching(false);
     IFD firstIFD = parser.getFirstIFD();
