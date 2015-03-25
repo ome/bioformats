@@ -130,6 +130,17 @@ if __name__ == "__main__":
                     os.path.basename(info.filename) == '.gitmodule' or
                     os.path.basename(info.filename) == '.travis.yml'):
                 continue
+            # Skip files for which we don't have source in this repository, for GPL compliance
+            if (options.release.endswith("-dfsg") and
+                (os.path.splitext(info.filename)[1] == ".jar" or
+                 os.path.splitext(info.filename)[1] == ".dll" or
+                 os.path.splitext(info.filename)[1] == ".dylib" or
+                 os.path.splitext(info.filename)[1] == ".so")):
+                continue
+            if (options.release.endswith("-dfsg") and
+                info.filename.startswith("%s/components/xsd-fu/python/genshi" % (prefix))):
+                continue
+            print("File: %s" % (info.filename))
             # Repack a single zip object; preserve the metadata
             # directly via the ZipInfo object and rewrite the content
             # (which unfortunately requires decompression and

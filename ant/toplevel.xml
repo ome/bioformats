@@ -1029,7 +1029,7 @@ Type "ant -p" for a list of targets.
   <target name="init"/>
 
   <!-- Source release -->
-  <target name="release" description="zip the git release as bioformats-${release.version}.zip" depends="release-version">
+  <target name="release" description="zip the git release as bioformats-[dfsg-]${release.version}.zip" depends="release-version">
     <mkdir dir="${artifact.dir}"/>
     <exec executable="python" failonerror="true">
       <arg value="${root.dir}/tools/source-archive.py"/>
@@ -1037,6 +1037,16 @@ Type "ant -p" for a list of targets.
       <arg value="--bioformats-shortversion=${release.shortversion}"/>
       <arg value="--bioformats-version=${release.version}"/>
       <arg value="--bioformats-vcsshortrevision=${vcs.shortrevision}"/>
+      <arg value="--bioformats-vcsrevision=${vcs.revision}"/>
+      <arg value="--bioformats-vcsdate=${vcs.date}"/>
+      <arg value="--bioformats-vcsdate-unix=${vcs.date_unix}"/>
+      <arg value="--target=${artifact.dir}"/>
+    </exec>
+    <exec executable="python" failonerror="true">
+      <arg value="${root.dir}/tools/source-archive.py"/>
+      <arg value="--release=bioformats-dfsg"/>
+      <arg value="--bioformats-shortversion=${release.shortversion}"/>
+      <arg value="--bioformats-version=${release.version}"/>
       <arg value="--bioformats-vcsrevision=${vcs.revision}"/>
       <arg value="--bioformats-vcsdate=${vcs.date}"/>
       <arg value="--bioformats-vcsdate-unix=${vcs.date_unix}"/>
