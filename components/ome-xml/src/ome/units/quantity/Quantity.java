@@ -31,6 +31,8 @@
 
 package ome.units.quantity;
 
+import ome.units.unit.Unit;
+
 /**
  * A wrapper for the Quantity class from the units implimintation.
  *
@@ -44,4 +46,6 @@ package ome.units.quantity;
  */
 public abstract class Quantity
 {
+  public abstract Number value();
+  public abstract Unit<? extends Quantity> unit();
 }
