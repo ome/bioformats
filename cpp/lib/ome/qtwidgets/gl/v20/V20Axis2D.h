@@ -2,7 +2,7 @@
  * #%L
  * OME-QTWIDGETS C++ library for display of Bio-Formats pixel data and metadata.
  * %%
- * Copyright © 2014 Open Microscopy Environment:
+ * Copyright © 2014 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee

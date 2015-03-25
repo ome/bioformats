@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
