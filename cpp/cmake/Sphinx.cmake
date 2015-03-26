@@ -41,37 +41,40 @@ if (SPHINX_BUILD)
 else()
   message(STATUS "Looking for sphinx-build - not found")
 endif()
+
 if (SPHINX_BUILD)
-  message(STATUS "Generating manual pages with sphinx-build")
-  set(ENV{SOURCE_BRANCH})
-  set(ENV{SOURCE_USER} openmicroscopy)
-  set(ENV{BF_RELEASE} "${OME_VERSION}")
-  set(ENV{JENKINS_JOB})
-  set(ENV{JENKINS_CPP_JOB})
-  set(ENV{OMERODOC_URI})
-  set(ENV{SOURCE_BRANCH})
-  set(ENV{SOURCE_BRANCH})
-  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/man")
-  execute_process(COMMAND ${SPHINX_BUILD} -q -b man
-                          "${PROJECT_SOURCE_DIR}/docs/sphinx" cpp/man
+  message(STATUS "Checking manual page dependencies")
+  execute_process(COMMAND python -B ${CMAKE_CURRENT_LIST_DIR}/list-manpages.py
+                          "${PROJECT_SOURCE_DIR}/docs/sphinx"
+                          "${PROJECT_BINARY_DIR}/cpp/man"
                   RESULT_VARIABLE sphinx_man_fail
-                  ERROR_FILE cpp/man/sphinx.log)
-  if (sphinx_man_fail)
-    message(WARNING "Failed to generate manual pages; see cpp/man/sphinx.log")
-  else()
-    foreach(section 1 3 5 7 8)
-      file(GLOB manpages "${PROJECT_BINARY_DIR}/cpp/man/*.${section}")
-      if (manpages)
-      foreach (man ${manpages})
-        get_filename_component(manfile "${man}" NAME)
-        file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/man/man${section}")
-        file(RENAME "${man}" "${PROJECT_BINARY_DIR}/cpp/man/man${section}/${manfile}")
-        install(FILES "${PROJECT_BINARY_DIR}/cpp/man/man${section}/${manfile}"
-                DESTINATION "${CMAKE_INSTALL_FULL_MANDIR}/man${section}")
-        endforeach()
-      endif()
-    endforeach()
-  endif()
+                  OUTPUT_VARIABLE MAN_PAGES
+                  ERROR_FILE cpp/man/sphinx-man.log)
+  string(REPLACE "\n" ";" MAN_PAGES "${MAN_PAGES}")
+  execute_process(COMMAND python -B ${CMAKE_CURRENT_LIST_DIR}/list-manpage-dependencies.py
+                          "${PROJECT_SOURCE_DIR}/docs/sphinx"
+                  RESULT_VARIABLE sphinx_man_dep_fail
+                  OUTPUT_VARIABLE MAN_PAGE_DEPENDENCIES
+                  ERROR_FILE cpp/man/sphinx-man-dep.log)
+  string(REPLACE "\n" ";" MAN_PAGE_DEPENDENCIES "${MAN_PAGE_DEPENDENCIES}")
+
+  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/man")
+  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/doc/sphinx")
+  add_custom_command(OUTPUT ${MAN_PAGES}
+                     COMMAND ${SPHINX_BUILD}
+                             -D "release=${OME_VERSION_SHORT}"
+                             -D "version=${OME_VERSION_MAJOR}.${OME_VERSION_MINOR}"
+                             -b man
+                             "${PROJECT_SOURCE_DIR}/docs/sphinx" cpp/man
+                     DEPENDS ${MAN_PAGE_DEPENDENCIES})
+
+  add_custom_target(man ALL DEPENDS ${MAN_PAGES})
+
+  foreach (man ${MAN_PAGES})
+    string(REGEX REPLACE ".*(.)\$" "\\1" man_section "${man}")
+    install(FILES "${man}"
+            DESTINATION "${CMAKE_INSTALL_FULL_MANDIR}/man${man_section}")
+  endforeach()
 else()
   message(WARNING "Manual pages will not be generated or installed")
 endif()
