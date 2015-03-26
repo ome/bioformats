@@ -1,11 +1,11 @@
-C++ implementation
-==================
+C++ overview
+============
 
 A completely native Bio-Formats C++ interface is now available.
-Unlike the BF-CPP bindings, this does not wrap the Java
-implementation.  With this release, TIFF reading and writing are
-available.  OME-TIFF reading and writing will be available soon.  All
-other readers and writers from the Java implementation are currently
+Unlike the JACE bindings, this does not wrap the Java implementation.
+With this release, TIFF reading and writing, and OME-TIFF reading are
+available.  OME-TIFF writing will be available soon.  All other
+readers and writers from the Java implementation are currently
 unavailable; the intention is that support for these will be added
 over time.
 
@@ -26,56 +26,99 @@ Prerequisites
 In order to build the C++ library and its documentation, a number of
 packages are required to be installed.  Note that the minimum version
 is the minimum version we regularly test with; older versions may work
-but are not supported.
+but are not supported.  Some packages are required only for building
+Bio-Formats (*BF build*).  A subset of these are required for building
+client applications making use of Bio-Formats (*Client build*) For
+end-user deployment (*Deploy*), the library packages rather than the
+development packages should be preferred; in some cases such as for
+Boost and Qt5, these are split up into a separate package for each
+library.
 
-+----------------+--------------+--------------+
-|                |           Version           |
-+----------------+--------------+--------------+
-| Package        | Recommended  | Minimum      |
-+================+==============+==============+
-| Boost          | 1.54         | 1.48         |
-+----------------+--------------+--------------+
-| CMake          | 3.0          | 2.8.12       |
-+----------------+--------------+--------------+
-| HDF5*          | 1.8.x        | 1.8.x        |
-+----------------+--------------+--------------+
-| PNG            | 1.2          | 1.2          |
-+----------------+--------------+--------------+
-| Python         | 2.7          | 2.6          |
-+----------------+--------------+--------------+
-| Python Genshi  | 0.7          | 0.6          |
-+----------------+--------------+--------------+
-| TIFF           | 4.0.3        | 3.9.5        |
-+----------------+--------------+--------------+
-| Xerces-C       | 3.0          | 3.0          |
-+----------------+--------------+--------------+
-| Git*           | 2.1.x        | 1.7.x        |
-+----------------+--------------+--------------+
-| GTest*         | 1.7          | 1.5          |
-+----------------+--------------+--------------+
-| Doxygen†       | 1.8          | 1.6          |
-+----------------+--------------+--------------+
-| Graphviz†      | 2.x          | 1.8.10       |
-+----------------+--------------+--------------+
-| Apache Ant‡    | 1.9.x        | 1.8.x        |
-+----------------+--------------+--------------+
-| Java‡          | 1.7.x        | 1.6.x        |
-+----------------+--------------+--------------+
-| Python Sphinx‡ | 1.2.x        | 1.1.x        |
-+----------------+--------------+--------------+
-| TeX (XeLaTeX)‡ | TeXLive 2014 | TeXLive 2012 |
-+----------------+--------------+--------------+
+.. tabularcolumns:: |l|l|l|c|c|c|
+
++-----------------+--------------+--------------+----------------------------------+
+|                 |           Version           |           When required          |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Package         | Recommended  | Minimum      | BF build | Client build | Deploy |
++=================+==============+==============+==========+==============+========+
+| Boost           | 1.54         | 1.48         |    \•    | \•           | \•     |
++-----------------+--------------+--------------+----------+--------------+--------+
+| HDF5            | 1.8.x        | 1.8.x        |    ◦     | ◦            | ◦      |
++-----------------+--------------+--------------+----------+--------------+--------+
+| PNG             | 1.2          | 1.2          |    \•    | \•           | \•     |
++-----------------+--------------+--------------+----------+--------------+--------+
+| TIFF            | 4.0.3        | 3.9.5        |    \•    | \•           | \•     |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Xerces-C        | 3.0          | 3.0          |    \•    | \•           | \•     |
++-----------------+--------------+--------------+----------+--------------+--------+
+| GLM*            | 0.9.6        | 0.9.5        |    ◦     | ◦            |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Qt5*            | 5.2          | 5.0          |    ◦     | ◦            | ◦      |
++-----------------+--------------+--------------+----------+--------------+--------+
+| CMake           | 3.0          | 2.8.12       |    \•    |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Python          | 2.7          | 2.6          |    \•    |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Python Genshi   | 0.7          | 0.6          |    \•    |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Git             | 2.1.x        | 1.7.x        |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| GTest           | 1.7          | 1.5          |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Doxygen†        | 1.8          | 1.6          |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Graphviz†       | 2.x          | 1.8.10       |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Python Sphinx‡§ | 1.2.x        | 1.1.x        |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Apache Ant§     | 1.9.x        | 1.8.x        |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| Java§           | 1.7.x        | 1.6.x        |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+| TeX (XeLaTeX)§  | TeXLive 2014 | TeXLive 2012 |    ◦     |              |        |
++-----------------+--------------+--------------+----------+--------------+--------+
+
+\•
+  Required for Bio-Formats build; headers may be needed for client
+  build; libraries and any data files required for deployment
+◦
+  Optional for Bio-Formats build; if used for the Bio-Formats build,
+  headers may be required for client build and libraries and any data
+  files required for deployment
 
 \*
-  Optional
+  Optional, needed to build the OpenGL image viewer and client applications
+  Optional, needed only for building
 †
   Optional, needed to build the API reference
 ‡
-  Optional, needed to build the Sphinx manual
+  Optional, needed to build the manual pages
+§
+  Optional, needed to build the manual (HTML and PDF)
 
 Due to lacking a package manager, if building on Windows most of the
 above packages will require downloading and installing by hand.  Links
 for these are provided below.
+
+Quick start
+^^^^^^^^^^^
+
+Install the following packages to build Bio-Formats C++.  A subset of
+these packages (or their dependencies) may be used for deployment,
+where the development package headers and tools for building
+documentation etc. are not required.  Run the appropriate command below
+for your platform to install the build dependencies:
+
+BSD Ports
+  ``pkg install devel/boost-all devel/cmake science/hdf5 graphics/png lang/python textproc/py-genshi graphics/tiff textproc/xerces-c3 devel/git devel/googletest math/glm devel/qt5 graphics/graphviz devel/apache-ant java/openjdk7 textproc/py-sphinx print/texlive-full``
+Debian/Ubuntu
+  ``apt-get install build-essential libboost-all-dev cmake libhdf5-dev libpng12-dev python python-genshi libtiff5-dev libxerces-c-dev git libgtest-dev libglm-dev qt5-default libqt5-opengl5-dev libqt5-svg5-dev graphviz ant ant-contrib ant-optional openjdk-7-jdk openjdk-7-jre python-sphinx texlive-full``
+Homebrew
+  ``brew install boost cmake hdf5 libpng python libtiff xerces-c git glm qt5 graphviz ant``
+RedHat/CentOS
+  ``yum install libhdf5-devel libpng-devel python python-genshi libtiff-devel xerces-c-devel git gtest-devel graphviz java-1.7.0-openjdk``
+
+Note that Homebrew and RedHat/CentOS do not provide packages for everything you need; see below for details.
 
 Basic toolchain
 ^^^^^^^^^^^^^^^
@@ -324,10 +367,56 @@ the default library search path, this is not necessary.
 - `Zip download <https://code.google.com/p/googletest/downloads/detail?name=gtest-1.7.0.zip>`__
 - `SVN tag <http://googletest.googlecode.com/svn/tags/release-1.7.0>`__
 
-Doxygen
-^^^^^^^
+GLM
+^^^
 
 If possible, install the following packages:
+
++------------------+--------------+
+| System           | Package      |
++==================+==============+
+| BSD Ports        | math/glm     |
++------------------+--------------+
+| Debian/Ubuntu    | libglm-dev   |
++------------------+--------------+
+| Homebrew         | glm          |
++------------------+--------------+
+| RedHat/CentOS    | N/A          |
++------------------+--------------+
+
+.. note::
+
+  Older versions will allow compilation but use degrees rather than
+  radians, which will lead to unexpected results.
+
+- `Website <http://glm.g-truc.net/0.9.6/index.html>`__
+- `Download <http://sourceforge.net/projects/ogl-math/files/>`__
+
+Qt5
+^^^
+
+If possible, install the following packages:
+
++------------------+------------------------------------------------+
+| System           | Package                                        |
++==================+================================================+
+| BSD Ports        | devel/qt5                                      |
++------------------+------------------------------------------------+
+| Debian/Ubuntu    | qt5-default libqt5-opengl5-dev libqt5-svg5-dev |
++------------------+------------------------------------------------+
+| Homebrew         | qt5*                                           |
++------------------+------------------------------------------------+
+| RedHat/CentOS    | N/A                                            |
++------------------+------------------------------------------------+
+
+\*
+  Add :file:`/usr/local/opt/qt5/bin` to :envvar:`PATH`
+
+- `Website <http://www.qt.io/>`__
+- `Download <http://www.qt.io/download/>`__
+
+Doxygen
+^^^^^^^
 
 +------------------+---------------+
 | System           | Package       |
@@ -343,7 +432,6 @@ If possible, install the following packages:
 
 - `Website <http://www.stack.nl/~dimitri/doxygen/>`__
 - `Download <http://www.stack.nl/~dimitri/doxygen/download.html>`__
-
 
 Graphviz
 ^^^^^^^^
@@ -416,9 +504,9 @@ If possible, install the following packages:
 +------------------+--------------------+
 | Debian/Ubuntu    | python-sphinx      |
 +------------------+--------------------+
-| Homebrew         | N/A                |
+| Homebrew         | N/A (use pip)      |
 +------------------+--------------------+
-| RedHat/CentOS    | N/A                |
+| RedHat/CentOS    | N/A (use pip)      |
 +------------------+--------------------+
 
 Use ``pip install sphinx`` if a packaged version is not available.
@@ -448,7 +536,7 @@ If possible, install the following packages:
 - `TeXLive website (for Unix) <https://www.tug.org/texlive/>`__
 - `TeXLive quick install (for Unix) <https://www.tug.org/texlive/quickinstall.html>`__
 - `MacTeX website (for MacOS X) <https://tug.org/mactex/>`__
-- `MaxTeX download (for MacOS X) <http://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg>`__
+- `MacTeX download (for MacOS X) <http://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg>`__
 - `MikTeX website (for Windows) <http://www.miktex.org/>`__
 - `MikTeX download (for Windows) <http://www.miktex.org/download>`__
 
@@ -463,6 +551,9 @@ TeX Gyre fonts available:
 
 Build environment
 -----------------
+
+General
+^^^^^^^
 
 Custom configuration is needed primarily on Windows, where the needed
 tools may not be on the search path by default.  There are several
@@ -488,6 +579,12 @@ console replacement such as :program:`ConsoleZ` is used.
   default search path.  Not all tools need to be on the default path;
   some will be discovered automatically by :program:`cmake`
 
+Homebrew
+^^^^^^^^
+
+If ``qt5`` and ``glm`` are installed, for building the Qt image
+viewer, ensure that :file:`/usr/local/opt/qt5/bin` is on the
+:envvar:`PATH` to allow Qt to be autodetected by :program:`cmake`.
 
 Source tree layout
 ------------------
@@ -504,19 +601,20 @@ Source tree layout::
   │       │   ├── in
   │       │   ├── out
   │       │   └── tiff
+  │       ├── common
+  │       │   ├── endian
+  │       │   └── xml
+  │       │       └── dom
   │       ├── compat
   │       ├── internal
+  │       ├── qtwidgets
+  │       ├── test
   │       └── xml
-  │           ├── meta
-  │           └── model
-  │               ├── enums
-  │               └── primitives
+  ├── libexec
+  │   ├── info
+  │   └── view
+  ├── share
   └── test
-      ├── ome-bioformats
-      ├── ome-common
-      ├── ome-compat
-      ├── ome-internal
-      └── ome-xml
 
 Top-level directories inside :file:`cpp`:
 
@@ -526,6 +624,10 @@ Top-level directories inside :file:`cpp`:
   External third-party code
 :file:`lib`
   Bio-Formats library headers and sources
+:file:`libexec`
+  Bio-Formats internal binaries (not direct public API)
+:file:`share`
+  Bio-Formats architecture-independent data files
 :file:`test`
   Bio-Formats unit tests
 
@@ -533,12 +635,16 @@ Components in :file:`lib` and :file:`test`:
 
 :file:`bioformats`
   Bio-Formats reader and writer interfaces and implementations
+:file:`common`
+  Common functionality used by all other components
 :file:`compat`
   Compatibility workarounds
 :file:`internal`
   Private implementation details
-:file:`xerces`
-  Xerces-C XML DOM wrappers
+:file:`qtwidgets`
+  Qt5 widgets for image rendering with OpenGL
+:file:`test`
+  Unit test common functions
 :file:`xml`
   OME XML model and metadata
 
@@ -571,14 +677,14 @@ Run ``cmake -LH`` to see the configurable project options; use
 supported:
 
 cxxstd-autodetect=(ON|OFF)
-  Enable (default) or disable C++ compiler standard autodetection.  If
+  Enable or disable (default) C++ compiler standard autodetection.  If
   enabled, the compiler will be put into C++11 mode if available,
-  otherwise falling back to C++03 or C++98.  If disabled, it is the
-  responsibility of the user to add the appropriate compiler options
-  to build using the required standard.  This is useful if
-  autodetection fails or a compiler is buggy in certain modes (e.g. GCC
-  4.4 or 4.6 require ``-std=gnu++98`` or else ``stdarg`` support is
-  broken).
+  otherwise falling back to C++03 or C++98.  If disabled, the default
+  compiler standard mode is used, and it is the responsibility of the
+  user to add the appropriate compiler options to build using the
+  required standard.  This is useful if autodetection fails or a
+  compiler is buggy in certain modes (e.g. GCC 4.4 or 4.6 require
+  ``-std=gnu++98`` or else ``stdarg`` support is broken).
 doxygen=(ON|OFF)
   Enable doxygen documentation.  These will be enabled by default if
   doxygen is found.
@@ -615,13 +721,15 @@ C++11
 ^^^^^
 
 C++11 features such as :cpp:class:`std::shared_ptr` are used when
-using a C++11 compiler.  When using an older compiler, the Boost
-equivalents will be used as fallbacks to provide the same
-functionality.  :program:`cmake` will automatically detect and use
-C++11 features when available.  These types are imported into the
-:cpp:class:`ome::compat` namespace, for example as
-:cpp:class:`ome::compat::shared_ptr`.
-
+using a C++11 or C++14 compiler, or when ``-Dcxxstd-autodetect=ON`` is
+used and the compiler can be put into a C++11 or C++14 compatibility
+mode.  When using an older compatbility mode such as C++98, the Boost
+equivalents of C++11 library features will be used as fallbacks to
+provide the same functionality.  In both cases these types are
+imported into the :cpp:class:`ome::compat` namespace, for example as
+:cpp:class:`ome::compat::shared_ptr`, and the types in this namespaces
+should be used for portability when using any part of the API which
+use types from this namespace.
 
 Linux and MacOS X
 ^^^^^^^^^^^^^^^^^
@@ -777,24 +885,19 @@ Installation layout
 A typical installation layout::
 
   $CMAKE_INSTALL_PREFIX
+  ├── bin
   ├── include
   │   └── ome
   │       ├── bioformats
-  │       │   ├── detail
-  │       │   ├── in
-  │       │   ├── out
-  │       │   └── tiff
+  │       ├── common
   │       ├── compat
-  │       ├── xerces
-  │       │   └── dom
   │       └── xml
-  │           ├── meta
-  │           └── model
-  │               ├── enums
-  │               └── primitives
-  └── lib
-      └── cmake
-
+  ├── lib
+  ├── libexec
+  └── share
+      ├── icons
+      ├── man
+      └── xml
 
 Using the library
 -----------------
