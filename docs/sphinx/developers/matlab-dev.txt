@@ -284,3 +284,52 @@ and pass this object directly to ``bfsave``::
 
 For more information about the methods to store the metadata, see the
 :javadoc:`MetadataStore <loci/formats/meta/MetadataStore.html>` Javadoc page.
+
+Improving reading performance
+-----------------------------
+
+Initializing a Bio-Formats reader can consume time and memory. Most of the
+initialization time is spend in the :javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId(java.lang.String)>` call. Various
+factors can impact the performance of this step including the file size, the
+amount of metadata in the image and also the file format itself.
+
+To decrease initialization time, a solution is to use the
+:javadoc:`loci.formats.Memoizer <loci/formats/Memoizer.html>` reader wrapper.
+
+The simplest way to make use the ``Memoizer`` functionalities in MATLAB is
+illustrated by the following example::
+
+    % Construct an empty Bio-Formats reader
+    r = bfGetReader();
+    % Decorate the reader with the Memoizer wrapper
+    r = loci.formats.Memoizer(r)
+    % Initialize the reader with an input file
+    % If the call is longer than a minimal time, the initialized reader will
+    % be cached in a file under the same directory as the initial file
+    % name .large_file.bfmemo
+    r.setId('/path/to/large_file');
+
+    % Perform work using the reader
+
+    % Close the reader
+    r.close()
+
+    % If the reader has been cached in the cal above, re-initializing the
+    % reader will use the memo file and complete much faster especially for
+    % large data
+    r.setId('/path/to/large_file');
+
+    % Perform additional work
+
+    % Close the reader
+    r.close()
+
+If the time required to call :javadoc:`setId(java.lang.String) <loci/formats/Memoizer.html#setId(java.lang.String)>` method is larger
+than :javadoc:`minimumElapsed <loci/formats/Memoizer.html#minimumElapsed>`,
+the initialized reader will be cached in a memo file under the same folder as
+the input file. Any subsequent call to ``setId()`` with a reader decorated by
+the ``Memoizer`` on the same input file will load the reader from the memo
+file instead of performing a full reader initialization.
+
+More constructors are described in the
+:javadoc:`Memoizer javadocs <loci/formats/Memoizer.html>` allowing to control the minimal initialization time required before caching the reader and/or to define a root directory under which the reader should be cached.
