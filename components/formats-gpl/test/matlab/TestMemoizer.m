@@ -89,5 +89,20 @@ classdef TestMemoizer < ReaderTest
             self.reader.close()
             clear reader2
         end
+        
+        function testMultiThreaded(self)
+            % Create memoized reader
+            self.reader = loci.formats.Memoizer(bfGetReader(), 0);
+            self.reader.setId(self.filepath);
+            
+            localpath = self.filepath;
+            for i = 1 : 4
+                r = loci.formats.Memoizer(bfGetReader(), 0);
+                r.setId(localpath);
+                assertTrue(r.isLoadedFromMemo());
+                assertFalse(r.isSavedToMemo());
+                r.close();
+            end
+        end
     end
 end
