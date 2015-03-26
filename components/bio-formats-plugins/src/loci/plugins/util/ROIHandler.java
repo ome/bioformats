@@ -168,7 +168,7 @@ public class ROIHandler {
                         Point point = (Point) shapeObject;
                         int x = point.getX().intValue();
                         int y = point.getY().intValue();
-                        roi = new OvalRoi(x, y, 0, 0);
+                        roi = new PointRoi(x, y);
 
                         if (point.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = point.getStrokeColor();
