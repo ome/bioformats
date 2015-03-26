@@ -316,7 +316,7 @@ illustrated by the following example::
     % Close the reader
     r.close()
 
-    % If the reader has been cached in the cal above, re-initializing the
+    % If the reader has been cached in the call above, re-initializing the
     % reader will use the memo file and complete much faster especially for
     % large data
     r.setId('/path/to/large_file');
@@ -327,14 +327,17 @@ illustrated by the following example::
     r.close()
 
 If the time required to call :javadoc:`setId(java.lang.String) <loci/formats/Memoizer.html#setId(java.lang.String)>` method is larger
-than :javadoc:`minimumElapsed <loci/formats/Memoizer.html#minimumElapsed>`,
-the initialized reader will be cached in a memo file under the same folder as
-the input file. Any subsequent call to ``setId()`` with a reader decorated by
-the ``Memoizer`` on the same input file will load the reader from the memo
-file instead of performing a full reader initialization.
+than :javadoc:`DEFAULT_MINIMUM_ELAPSED <loci/formats/Memoizer.html#DEFAULT_MINIMUM_ELAPSED>` or the minimum value
+passed in the constructor, the initialized reader will be cached in a memo
+file under the same folder as the input file. Any subsequent call to
+``setId()`` with a reader decorated by the ``Memoizer`` on the same input file
+will load the reader from the memo file instead of performing a full reader
+initialization.
 
 More constructors are described in the
-:javadoc:`Memoizer javadocs <loci/formats/Memoizer.html>` allowing to control the minimal initialization time required before caching the reader and/or to define a root directory under which the reader should be cached.
+:javadoc:`Memoizer javadocs <loci/formats/Memoizer.html>` allowing to control
+the minimal initialization time required before caching the reader and/or to
+define a root directory under which the reader should be cached.
 
 As Bio-Formats is not thread-safe, reader memoization offers new solution to
 increase reading performance when doing parallel work. For instance, the
