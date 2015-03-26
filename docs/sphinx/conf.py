@@ -17,16 +17,6 @@ import re
 import subprocess
 from datetime import datetime
 
-def popen(args, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
-        copy = os.environ.copy()
-        shell = (sys.platform == "win32")
-        return subprocess.Popen(args,
-                env=copy,
-                stdin=stdin,
-                stdout=stdout,
-                stderr=stderr,
-                shell=shell)
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -67,23 +57,10 @@ copyright = u'2000-%d, %s ' % (now.year, author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
-# built documents.
+# built documents.  Set on command-line or via ant build to real version.
 #
-try:
-    if "BF_RELEASE" in os.environ and len(os.environ.get('BF_RELEASE')) > 0:
-        release = os.environ.get('BF_RELEASE')
-    else:
-        p = popen(['git','describe'])
-        tag = p.communicate()
-        split_tag = re.split("^(v)?(.*?)(-[0-9]+)?((-)g(.*?))?$",tag[0])
-        # The full version, including alpha/beta/rc tags.
-        release = split_tag[2]
-    split_release =  re.split("^([0-9]\.[0-9])(\.[0-9]+)(.*?)$",release)
-    # The short X.Y version.
-    version = split_release[1]
-except:
-    version = 'UNKNOWN'
-    release = 'UNKNOWN'
+version = 'UNKNOWN'
+release = 'UNKNOWN'
 
 rst_prolog = """
 .. note:: **This documentation is for the new Bio-Formats 5.1 version.**
@@ -128,15 +105,8 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 # Variables used to define Github extlinks
-if "SOURCE_BRANCH" in os.environ and len(os.environ.get('SOURCE_BRANCH')) > 0:
-    source_branch = os.environ.get('SOURCE_BRANCH')
-else:
-    source_branch = 'develop'
-
-if "SOURCE_USER" in os.environ and len(os.environ.get('SOURCE_USER')) > 0:
-    user = os.environ.get('SOURCE_USER')
-else:
-    user = 'openmicroscopy'
+source_branch = 'develop'
+user = 'openmicroscopy'
 
 github_root = 'https://github.com/'
 bf_github_root = github_root + user + '/bioformats/'
@@ -157,10 +127,7 @@ oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
-if "OMERODOC_URI" in os.environ and len(os.environ.get('OMERODOC_URI')) > 0:
-    omerodoc_uri = os.environ.get('OMERODOC_URI')
-else:
-    omerodoc_uri = oo_site_root + '/support/omero5.1'
+omerodoc_uri = oo_site_root + '/support/omero5.1'
 
 extlinks = {
     # Trac links
@@ -323,7 +290,7 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-target = project + '-' + release + '.tex'
+target = project + '.tex'
 latex_documents = [
   (master_doc, target, title, author, 'manual'),
 ]

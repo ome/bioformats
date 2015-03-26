@@ -16,14 +16,6 @@ ifdef SOURCE_USER
 ANT_SOURCE_USER := -Dsource.user="$(SOURCE_USER)"
 endif
 
-ifdef JENKINS_JOB
-ANT_JENKINS_JOB := -Djenkins.job="$(JENKINS_JOB)"
-endif
-
-ifdef JENKINS_CPP_JOB
-ANT_JENKINS_CPP_JOB := -Djenkins.cpp.job="$(JENKINS_CPP_JOB)"
-endif
-
 ifdef OMERODOC_URI_JOB
 ANT_OMERODOC_URI_JOB := -Domerodoc.uri="$(OMERODOC_URI_JOB)"
 endif

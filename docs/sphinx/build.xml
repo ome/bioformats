@@ -9,6 +9,7 @@ Type "ant -p" for a list of targets.
 <project name="sphinx" default="html" basedir=".">
   <description>Build file for sphinx documentation</description>
   <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/ant/version.xml"/>
   <import file="${root.dir}/ant/global.xml"/>
 
   <property name="sphinx.build" value="sphinx-build"/>
@@ -16,22 +17,24 @@ Type "ant -p" for a list of targets.
   <property name="sphinx.opts" value=""/>
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
-  <property name="source.branch" value=""/>
+  <property name="source.branch" value="develop"/>
   <property name="source.user" value="openmicroscopy"/>
-  <property name="jenkins.job" value=""/>
-  <property name="jenkins.cpp.job" value=""/>
-  <property name="omerodoc.uri" value=""/>
+  <property name="omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
 
   <target name="init"/>
 
-  <target name="html">
+  <target name="html" depends="release-version">
     <exec executable="${sphinx.build}" failonerror="true">
-      <env key="SOURCE_BRANCH" value="${source.branch}"/>
-      <env key="SOURCE_USER" value="${source.user}"/>
-      <env key="BF_RELEASE" value="${bf.release}"/>
-      <env key="JENKINS_JOB" value="${jenkins.job}"/>
-      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
-      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-D"/>
+      <arg value="release=${release.shortversion}"/>
+      <arg value="-D"/>
+      <arg value="version=${release.major}.${release.minor}"/>
+      <arg value="-D"/>
+      <arg value="source_branch=${source.branch}"/>
+      <arg value="-D"/>
+      <arg value="user=${source.user}"/>
+      <arg value="-D"/>
+      <arg value="omerodoc_uri=${omerodoc.uri}"/>
       <arg value="-b"/>
       <arg value="html"/>
       <arg line="${sphinx.opts}"/>
@@ -39,16 +42,31 @@ Type "ant -p" for a list of targets.
       <arg value="."/>
       <arg value="${sphinx.builddir}/html"/>
     </exec>
+    <delete dir="${artifact.dir}/bio-formats-doc-${release.shortversion}"/>
+    <copy todir="${artifact.dir}/bio-formats-doc-${release.shortversion}">
+      <!--
+        include (none) to prevent problems if component.resources-bin is empty
+      -->
+      <fileset dir="_build/html"/>
+    </copy>
+    <zip destfile="${artifact.dir}/bio-formats-doc-${release.shortversion}.zip">
+      <zipfileset dir="_build/html" includes="**/*" prefix="bio-formats-doc-${release.shortversion}"/>
+    </zip>
+    <delete dir="${artifact.dir}/bio-formats-doc-${release.shortversion}"/>
   </target>
 
-  <target name="man">
+  <target name="man" depends="release-version">
     <exec executable="${sphinx.build}" failonerror="true">
-      <env key="SOURCE_BRANCH" value="${source.branch}"/>
-      <env key="SOURCE_USER" value="${source.user}"/>
-      <env key="BF_RELEASE" value="${bf.release}"/>
-      <env key="JENKINS_JOB" value="${jenkins.job}"/>
-      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
-      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-D"/>
+      <arg value="release=${release.shortversion}"/>
+      <arg value="-D"/>
+      <arg value="version=${release.major}.${release.minor}"/>
+      <arg value="-D"/>
+      <arg value="source_branch=${source.branch}"/>
+      <arg value="-D"/>
+      <arg value="user=${source.user}"/>
+      <arg value="-D"/>
+      <arg value="omerodoc_uri=${omerodoc.uri}"/>
       <arg value="-b"/>
       <arg value="man"/>
       <arg line="${sphinx.opts}"/>
@@ -97,14 +115,18 @@ Type "ant -p" for a list of targets.
     </sequential>
   </macrodef>
 
-  <target name="latexpdf">
+  <target name="latexpdf" depends="release-version">
     <exec executable="${sphinx.build}" failonerror="true">
-      <env key="SOURCE_BRANCH" value="${source.branch}"/>
-      <env key="SOURCE_USER" value="${source.user}"/>
-      <env key="BF_RELEASE" value="${bf.release}"/>
-      <env key="JENKINS_JOB" value="${jenkins.job}"/>
-      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
-      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-D"/>
+      <arg value="release=${release.shortversion}"/>
+      <arg value="-D"/>
+      <arg value="version=${release.major}.${release.minor}"/>
+      <arg value="-D"/>
+      <arg value="source_branch=${source.branch}"/>
+      <arg value="-D"/>
+      <arg value="user=${source.user}"/>
+      <arg value="-D"/>
+      <arg value="omerodoc_uri=${omerodoc.uri}"/>
       <arg value="-b"/>
       <arg value="latex"/>
       <arg line="${sphinx.opts}"/>
@@ -121,18 +143,23 @@ Type "ant -p" for a list of targets.
         <runlatex file="@{file}"/>
       </sequential>
     </for>
+    <copy file="_build/latex/Bio-Formats.pdf" tofile="${artifact.dir}/Bio-Formats-${release.shortversion}.pdf"/>
   </target>
 
   <target name="pdf" depends="latexpdf"/>
 
-  <target name="linkcheck">
+  <target name="linkcheck" depends="release-version">
     <exec executable="${sphinx.build}" failonerror="true">
-      <env key="SOURCE_BRANCH" value="${source.branch}"/>
-      <env key="SOURCE_USER" value="${source.user}"/>
-      <env key="BF_RELEASE" value="${bf.release}"/>
-      <env key="JENKINS_JOB" value="${jenkins.job}"/>
-      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
-      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-D"/>
+      <arg value="release=${release.shortversion}"/>
+      <arg value="-D"/>
+      <arg value="version=${release.major}.${release.minor}"/>
+      <arg value="-D"/>
+      <arg value="source_branch=${source.branch}"/>
+      <arg value="-D"/>
+      <arg value="user=${source.user}"/>
+      <arg value="-D"/>
+      <arg value="omerodoc_uri=${omerodoc.uri}"/>
       <arg value="-b"/>
       <arg value="linkcheck"/>
       <arg line="${sphinx.opts}"/>
