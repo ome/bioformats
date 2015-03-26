@@ -193,6 +193,7 @@ your FindBugs installation's lib directory. E.g.:
       classpath="${component.classpath}:${classes.dir}"
       encoding="UTF-8"
       author="true" version="true" use="true"
+      access="private"
       nodeprecated="false" windowtitle="Bio-Formats API">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>

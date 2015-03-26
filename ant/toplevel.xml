@@ -167,6 +167,7 @@ Type "ant -p" for a list of targets.
       maxmemory="${merged-docs.memory}"
       encoding="UTF-8"
       failonerror="true" author="true" version="true" use="true"
+      access="private"
       nodeprecated="false" windowtitle="Bio-Formats API">
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
