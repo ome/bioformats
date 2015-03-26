@@ -727,7 +727,7 @@ mode.  When using an older compatbility mode such as C++98, the Boost
 equivalents of C++11 library features will be used as fallbacks to
 provide the same functionality.  In both cases these types are
 imported into the :cpp:class:`ome::compat` namespace, for example as
-:cpp:class:`ome::compat::shared_ptr`, and the types in this namespaces
+:cpp:class:`ome::compat::shared_ptr`, and the types in this namespace
 should be used for portability when using any part of the API which
 use types from this namespace.
 
