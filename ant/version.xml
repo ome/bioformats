@@ -9,6 +9,7 @@ Ant build file for release version numbering.
   <import file="${root.dir}/ant/gitversion.xml" optional="true"/>
 
   <target name="release-version">
+    <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
     <!-- check for Git versioning information -->
     <property name="git.path" value="${root.dir}/.git"/>
     <available file="${git.path}" property="git.present"/>
@@ -67,7 +68,6 @@ Ant build file for release version numbering.
         <if>
           <isset property="git.describe"/>
           <then>
-            <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
             <propertyregex property="tag.major" input="${git.describe}" regexp="${release.version.regex}" select="\1"/>
             <propertyregex property="tag.minor" input="${git.describe}" regexp="${release.version.regex}" select="\2"/>
             <propertyregex property="tag.patch" input="${git.describe}" regexp="${release.version.regex}" select="\3"/>
@@ -102,6 +102,12 @@ Ant build file for release version numbering.
         </if>
       </then>
     </if>
+
+    <!-- set version components -->
+    <propertyregex property="release.major" input="${release.version}" regexp="${release.version.regex}" select="\1"/>
+    <propertyregex property="release.minor" input="${release.version}" regexp="${release.version.regex}" select="\2"/>
+    <propertyregex property="release.patch" input="${release.version}" regexp="${release.version.regex}" select="\3"/>
+    <propertyregex property="release.extra" input="${release.version}" regexp="${release.version.regex}" select="\4"/>
 
     <!-- set release version by default if nothing is set -->
     <property name="release.version" value="UNKNOWN"/>
