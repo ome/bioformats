@@ -285,6 +285,8 @@ and pass this object directly to ``bfsave``::
 For more information about the methods to store the metadata, see the
 :javadoc:`MetadataStore <loci/formats/meta/MetadataStore.html>` Javadoc page.
 
+.. _reader_performance:
+
 Improving reading performance
 -----------------------------
 
@@ -333,3 +335,29 @@ file instead of performing a full reader initialization.
 
 More constructors are described in the
 :javadoc:`Memoizer javadocs <loci/formats/Memoizer.html>` allowing to control the minimal initialization time required before caching the reader and/or to define a root directory under which the reader should be cached.
+
+As Bio-Formats is not thread-safe, reader memoization offers new solution to
+increase reading performance when doing parallel work. For instance, the
+following example should how to combine memoization and MATLAB parfor to do
+work on a single file in a parallel loop::
+
+    % Construct a Bio-Formats reader decorated with the Memoizer wrapper
+    r = loci.formats.Memoizer(bfGetReader(r, 0))
+    % Initialize the reader with an input file to cache the reader
+    r.setId('/path/to/large_file');
+    % Close reader
+    r.close()
+
+    % Enter parallel loop
+    parfor i = 1 : nWorkers
+        % Initialize a new reader per worker as Bio-Formats is not thread safe
+        r2 = loci.formats.Memoizer(bfGetReader(r, 0))
+        % Initialization should use the memo file cached before entering the
+        % parallel loop
+        r2.setId('/path/to/large_file');
+
+        % Perform work
+
+        % Close the reader
+        r2.close()
+    end
