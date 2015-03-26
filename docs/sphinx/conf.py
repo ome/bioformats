@@ -284,7 +284,7 @@ latex_elements = {
 \\addcontentsline{toc}{part}{\indexname}
 \\printindex''',
     'preamble': '''
-\input{../../preamble.tex}
+\input{preamble.tex}
 ''',
 }
 
