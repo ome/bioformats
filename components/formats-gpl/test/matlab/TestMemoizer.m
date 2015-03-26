@@ -48,6 +48,18 @@ classdef TestMemoizer < ReaderTest
             if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
             tearDown@ReaderTest(self);
         end
+ 
+        function testMinimumElapsed(self)            
+            % Create memoizer reader with large minimum initialization
+            % time
+            self.reader = loci.formats.Memoizer(bfGetReader(), 1e10);
+            self.reader.setId(self.filepath);
+            
+            % Check reader is not saved to memo file
+            assertFalse(self.reader.isLoadedFromMemo());
+            assertFalse(self.reader.isSavedToMemo());
+            self.reader.close();
+        end
         
         function testInPlaceCaching(self)
             
