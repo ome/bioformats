@@ -43,6 +43,7 @@ import java.awt.Panel;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -250,11 +251,11 @@ public class FilePatternDialog extends ImporterDialog {
 
     Vector checkboxes = gd.getCheckboxes();
     Vector fields = gd.getStringFields();
-    Vector labels = new Vector();
+    final ArrayList<Label> labels = new ArrayList<Label>();
 
     for (Component c : gd.getComponents()) {
       if (c instanceof Label) {
-        labels.add(c);
+        labels.add((Label) c);
       }
     }
 
