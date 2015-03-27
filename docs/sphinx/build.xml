@@ -17,31 +17,43 @@ Type "ant -p" for a list of targets.
   <property name="sphinx.opts" value=""/>
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
-  <property name="source.branch" value="develop"/>
-  <property name="source.user" value="openmicroscopy"/>
-  <property name="omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
 
-  <target name="init"/>
+  <target name="init" depends="release-version">
+    <property name="sphinx.release" value="${release.shortversion}"/>
+    <property name="sphinx.version" value="${release.major}.${release.minor}"/>
+    <property name="source.branch" value="develop"/>
+    <property name="source.user" value="openmicroscopy"/>
+    <property name="omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
+  </target>
 
-  <target name="html" depends="release-version">
-    <exec executable="${sphinx.build}" failonerror="true">
-      <arg value="-D"/>
-      <arg value="release=${release.shortversion}"/>
-      <arg value="-D"/>
-      <arg value="version=${release.major}.${release.minor}"/>
-      <arg value="-D"/>
-      <arg value="source_branch=${source.branch}"/>
-      <arg value="-D"/>
-      <arg value="user=${source.user}"/>
-      <arg value="-D"/>
-      <arg value="omerodoc_uri=${omerodoc.uri}"/>
-      <arg value="-b"/>
-      <arg value="html"/>
-      <arg line="${sphinx.opts}"/>
-      <arg line="${sphinx.warnopts}"/>
-      <arg value="."/>
-      <arg value="${sphinx.builddir}/html"/>
-    </exec>
+  <macrodef name="sphinx" description="Run sphinx-build">
+    <attribute name="buildtype" default="html"/>
+    <attribute name="srcdir" default="."/>
+    <attribute name="destdir" default=""/>
+    <sequential>
+      <exec executable="${sphinx.build}" failonerror="true">
+        <arg value="-D"/>
+        <arg value="release=${release.shortversion}"/>
+        <arg value="-D"/>
+        <arg value="version=${release.major}.${release.minor}"/>
+        <arg value="-D"/>
+        <arg value="source_branch=${source.branch}"/>
+        <arg value="-D"/>
+        <arg value="user=${source.user}"/>
+        <arg value="-D"/>
+        <arg value="omerodoc_uri=${omerodoc.uri}"/>
+        <arg value="-b"/>
+        <arg value="@{buildtype}"/>
+        <arg line="${sphinx.opts}"/>
+        <arg line="${sphinx.warnopts}"/>
+        <arg value="@{srcdir}"/>
+        <arg value="@{destdir}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <target name="html" depends="init">
+    <sphinx buildtype="html" srcdir="." destdir="${sphinx.builddir}/html"/>
     <delete dir="${artifact.dir}/bio-formats-doc-${release.shortversion}"/>
     <copy todir="${artifact.dir}/bio-formats-doc-${release.shortversion}">
       <!--
@@ -55,24 +67,8 @@ Type "ant -p" for a list of targets.
     <delete dir="${artifact.dir}/bio-formats-doc-${release.shortversion}"/>
   </target>
 
-  <target name="man" depends="release-version">
-    <exec executable="${sphinx.build}" failonerror="true">
-      <arg value="-D"/>
-      <arg value="release=${release.shortversion}"/>
-      <arg value="-D"/>
-      <arg value="version=${release.major}.${release.minor}"/>
-      <arg value="-D"/>
-      <arg value="source_branch=${source.branch}"/>
-      <arg value="-D"/>
-      <arg value="user=${source.user}"/>
-      <arg value="-D"/>
-      <arg value="omerodoc_uri=${omerodoc.uri}"/>
-      <arg value="-b"/>
-      <arg value="man"/>
-      <arg line="${sphinx.opts}"/>
-      <arg value="."/>
-      <arg value="${sphinx.builddir}/man"/>
-    </exec>
+  <target name="man" depends="init">
+    <sphinx buildtype="man" srcdir="." destdir="${sphinx.builddir}/man"/>
   </target>
 
   <macrodef name="xelatex" description="Run XeLaTeX">
@@ -114,25 +110,8 @@ Type "ant -p" for a list of targets.
     </sequential>
   </macrodef>
 
-  <target name="latexpdf" depends="release-version">
-    <exec executable="${sphinx.build}" failonerror="true">
-      <arg value="-D"/>
-      <arg value="release=${release.shortversion}"/>
-      <arg value="-D"/>
-      <arg value="version=${release.major}.${release.minor}"/>
-      <arg value="-D"/>
-      <arg value="source_branch=${source.branch}"/>
-      <arg value="-D"/>
-      <arg value="user=${source.user}"/>
-      <arg value="-D"/>
-      <arg value="omerodoc_uri=${omerodoc.uri}"/>
-      <arg value="-b"/>
-      <arg value="latex"/>
-      <arg line="${sphinx.opts}"/>
-      <arg line="${sphinx.warnopts}"/>
-      <arg value="."/>
-      <arg value="${sphinx.builddir}/latex"/>
-    </exec>
+  <target name="latexpdf" depends="init">
+    <sphinx buildtype="latex" srcdir="." destdir="${sphinx.builddir}/latex"/>
     <copy file="preamble.tex" todir="${sphinx.builddir}/latex"/>
 
     <for param="file">
@@ -148,25 +127,8 @@ Type "ant -p" for a list of targets.
 
   <target name="pdf" depends="latexpdf"/>
 
-  <target name="linkcheck" depends="release-version">
-    <exec executable="${sphinx.build}" failonerror="true">
-      <arg value="-D"/>
-      <arg value="release=${release.shortversion}"/>
-      <arg value="-D"/>
-      <arg value="version=${release.major}.${release.minor}"/>
-      <arg value="-D"/>
-      <arg value="source_branch=${source.branch}"/>
-      <arg value="-D"/>
-      <arg value="user=${source.user}"/>
-      <arg value="-D"/>
-      <arg value="omerodoc_uri=${omerodoc.uri}"/>
-      <arg value="-b"/>
-      <arg value="linkcheck"/>
-      <arg line="${sphinx.opts}"/>
-      <arg line="${sphinx.warnopts}"/>
-      <arg value="."/>
-      <arg value="${sphinx.builddir}/linkcheck"/>
-    </exec>
+  <target name="linkcheck" depends="init">
+    <sphinx buildtype="linkcheck" srcdir="." destdir="${sphinx.builddir}/linkcheck"/>
   </target>
 
   <target name="clean">
