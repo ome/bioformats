@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -1133,13 +1134,11 @@ public class DicomReader extends FormatReader {
         }
       }
 
-      Integer[] keys = fileList.keySet().toArray(new Integer[0]);
-      Arrays.sort(keys);
-      for (Integer key : keys) {
-        for (int j=0; j<fileList.get(key).size(); j++) {
-          if (fileList.get(key).get(j) == null) {
-            fileList.get(key).remove(j);
-            j--;
+      for (final List<String> files : fileList.values()) {
+        final Iterator<String> fileIterator = files.iterator();
+        while (fileIterator.hasNext()) {
+          if (fileIterator.next() == null) {
+            fileIterator.remove();
           }
         }
       }
