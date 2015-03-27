@@ -28,8 +28,11 @@ package loci.formats.services;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
@@ -52,9 +55,9 @@ public class POIServiceImpl extends AbstractService implements POIService {
   private DirectoryEntry root;
   private RandomAccessInputStream stream;
 
-  private Vector<String> filePath;
-  private Hashtable<String, Integer> fileSizes;
-  private Hashtable<String, DocumentEntry> files;
+  private List<String> filePath;
+  private Map<String, Integer> fileSizes;
+  private Map<String, DocumentEntry> files;
 
   // -- POIService API methods --
 
@@ -87,9 +90,9 @@ public class POIServiceImpl extends AbstractService implements POIService {
     root = fileSystem.getRoot();
 
     // build the list of files in the file system
-    filePath = new Vector<String>();
-    fileSizes = new Hashtable<String, Integer>();
-    files = new Hashtable<String, DocumentEntry>();
+    filePath = new ArrayList<String>();
+    fileSizes = new HashMap<String, Integer>();
+    files = new HashMap<String, DocumentEntry>();
 
     parseFile(root);
   }
@@ -178,12 +181,12 @@ public class POIServiceImpl extends AbstractService implements POIService {
 
         DocumentInputStream s =
           new DocumentInputStream((DocumentEntry) o, stream);
-        fileSizes.put(path.toString(), new Integer(s.available()));
+        fileSizes.put(path.toString(), s.available());
         files.put(path.toString(), (DocumentEntry) o);
         s.close();
       }
     }
-    filePath.removeElementAt(filePath.size() - 1);
+    filePath.remove(filePath.size() - 1);
   }
 
 }
