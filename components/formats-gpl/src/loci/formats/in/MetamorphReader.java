@@ -1430,7 +1430,7 @@ public class MetamorphReader extends BaseTiffReader {
    * stage X/Y positions,
    * camera chip offsets,
    * stage labels...
-   * @param uic4offset: offset of UIC4 table (not tiff-compliant)
+   * @param uic4offset offset of UIC4 table (not tiff-compliant)
    * @throws IOException
    */
   private void parseUIC4Tags(long uic4offset) throws IOException {
