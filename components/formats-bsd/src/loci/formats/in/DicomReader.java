@@ -37,6 +37,9 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -74,7 +77,7 @@ public class DicomReader extends FormatReader {
     "dic", "dcm", "dicom", "j2ki", "j2kr"
   };
 
-  private static final Hashtable<Integer, String> TYPES = buildTypes();
+  private static final ImmutableMap<Integer, String> TYPES = buildTypes();
 
   private static final int PIXEL_REPRESENTATION = 0x00280103;
   private static final int PIXEL_SIGN = 0x00281041;
@@ -1307,8 +1310,8 @@ public class DicomReader extends FormatReader {
    * This is incomplete at best, since there are literally thousands of
    * fields defined by the DICOM specifications.
    */
-  private static Hashtable<Integer, String> buildTypes() {
-    Hashtable<Integer, String> dict = new Hashtable<Integer, String>();
+  private static ImmutableMap<Integer, String> buildTypes() {
+    final Builder<Integer, String> dict = ImmutableMap.builder();
 
     dict.put(new Integer(0x00020002), "Media Storage SOP Class UID");
     dict.put(new Integer(0x00020003), "Media Storage SOP Instance UID");
@@ -1923,7 +1926,7 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00540400), "Image ID");
     dict.put(new Integer(0x20100100), "Border Density");
 
-    return dict;
+    return dict.build();
   }
 
 }
