@@ -340,10 +340,9 @@ public class FormulaParser {
             }
         }
     }
-    
+
     /**
      * Adds a pointer to the last token to the latest function argument list.
-     * @param obj
      */
     private void addArgumentPointer() {
 		if (this.functionTokens.size() > 0) {

@@ -54,7 +54,6 @@ public abstract class PrimitiveType<T> {
 
   /**
    * Default constructor.
-   * @param value The delegate value to use.
    */
   PrimitiveType() {
   }
