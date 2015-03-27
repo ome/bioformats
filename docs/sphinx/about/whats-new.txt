@@ -1,7 +1,7 @@
 Version history
 ===============
 
-5.1.0 (2015 March 24)
+5.1.0 (2015 March 31)
 ---------------------
 
 * Improvements to performance with network file systems
