@@ -21,9 +21,9 @@ Type "ant -p" for a list of targets.
   <target name="init" depends="release-version">
     <property name="sphinx.release" value="${release.shortversion}"/>
     <property name="sphinx.version" value="${release.major}.${release.minor}"/>
-    <property name="source.branch" value="develop"/>
-    <property name="source.user" value="openmicroscopy"/>
-    <property name="omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
+    <property name="sphinx.source.branch" value="develop"/>
+    <property name="sphinx.source.user" value="openmicroscopy"/>
+    <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
   </target>
 
   <macrodef name="sphinx" description="Run sphinx-build">
@@ -33,15 +33,15 @@ Type "ant -p" for a list of targets.
     <sequential>
       <exec executable="${sphinx.build}" failonerror="true">
         <arg value="-D"/>
-        <arg value="release=${release.shortversion}"/>
+        <arg value="release=${sphinx.release}"/>
         <arg value="-D"/>
-        <arg value="version=${release.major}.${release.minor}"/>
+        <arg value="version=${sphinx.version}"/>
         <arg value="-D"/>
-        <arg value="source_branch=${source.branch}"/>
+        <arg value="source_branch=${sphinx.source.branch}"/>
         <arg value="-D"/>
-        <arg value="user=${source.user}"/>
+        <arg value="user=${sphinx.source.user}"/>
         <arg value="-D"/>
-        <arg value="omerodoc_uri=${omerodoc.uri}"/>
+        <arg value="omerodoc_uri=${sphinx.omerodoc.uri}"/>
         <arg value="-b"/>
         <arg value="@{buildtype}"/>
         <arg line="${sphinx.opts}"/>
@@ -54,17 +54,17 @@ Type "ant -p" for a list of targets.
 
   <target name="html" depends="init">
     <sphinx buildtype="html" srcdir="." destdir="${sphinx.builddir}/html"/>
-    <delete dir="${artifact.dir}/bio-formats-doc-${release.shortversion}"/>
-    <copy todir="${artifact.dir}/bio-formats-doc-${release.shortversion}">
+    <delete dir="${artifact.dir}/bio-formats-doc-${sphinx.release}"/>
+    <copy todir="${artifact.dir}/bio-formats-doc-${sphinx.release}">
       <!--
         include (none) to prevent problems if component.resources-bin is empty
       -->
       <fileset dir="_build/html"/>
     </copy>
-    <zip destfile="${artifact.dir}/bio-formats-doc-${release.shortversion}.zip">
-      <zipfileset dir="_build/html" includes="**/*" prefix="bio-formats-doc-${release.shortversion}"/>
+    <zip destfile="${artifact.dir}/bio-formats-doc-${sphinx.release}.zip">
+      <zipfileset dir="_build/html" includes="**/*" prefix="bio-formats-doc-${sphinx.release}"/>
     </zip>
-    <delete dir="${artifact.dir}/bio-formats-doc-${release.shortversion}"/>
+    <delete dir="${artifact.dir}/bio-formats-doc-${sphinx.release}"/>
   </target>
 
   <target name="man" depends="init">
@@ -122,7 +122,7 @@ Type "ant -p" for a list of targets.
         <runlatex file="@{file}"/>
       </sequential>
     </for>
-    <copy file="_build/latex/Bio-Formats.pdf" tofile="${artifact.dir}/Bio-Formats-${release.shortversion}.pdf"/>
+    <copy file="_build/latex/Bio-Formats.pdf" tofile="${artifact.dir}/Bio-Formats-${sphinx.release}.pdf"/>
   </target>
 
   <target name="pdf" depends="latexpdf"/>
