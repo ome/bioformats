@@ -71,6 +71,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
 /**
  * LIFReader is the file format reader for Leica LIF files.
  *
@@ -86,23 +89,23 @@ public class LIFReader extends FormatReader {
   /** The encoding used in this file.*/
   private static final String ENCODING = "ISO-8859-1";
 
-  private static final HashMap<String, Integer> CHANNEL_PRIORITIES =
+  private static final ImmutableMap<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
 
-  private static HashMap<String, Integer> createChannelPriorities() {
-    HashMap<String, Integer> h = new HashMap<String, Integer>();
+  private static ImmutableMap<String, Integer> createChannelPriorities() {
+    final Builder<String, Integer> h = ImmutableMap.builder();
 
-    h.put("red", new Integer(0));
-    h.put("green", new Integer(1));
-    h.put("blue", new Integer(2));
-    h.put("cyan", new Integer(3));
-    h.put("magenta", new Integer(4));
-    h.put("yellow", new Integer(5));
-    h.put("black", new Integer(6));
-    h.put("gray", new Integer(7));
-    h.put("", new Integer(8));
+    h.put("red", 0);
+    h.put("green", 1);
+    h.put("blue", 2);
+    h.put("cyan", 3);
+    h.put("magenta", 4);
+    h.put("yellow", 5);
+    h.put("black", 6);
+    h.put("gray", 7);
+    h.put("", 8);
 
-    return h;
+    return h.build();
   }
 
   // -- Fields --
