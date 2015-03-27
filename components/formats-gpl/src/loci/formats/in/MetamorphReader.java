@@ -1430,7 +1430,7 @@ public class MetamorphReader extends BaseTiffReader {
    * stage X/Y positions,
    * camera chip offsets,
    * stage labels...
-   * @param long uic4offset: offset of UIC4 table (not tiff-compliant)
+   * @param uic4offset offset of UIC4 table (not tiff-compliant)
    * @throws IOException
    */
   private void parseUIC4Tags(long uic4offset) throws IOException {
@@ -1527,8 +1527,8 @@ public class MetamorphReader extends BaseTiffReader {
   /**
    * UIC1 entry parser
    * @throws IOException
-   * @param long uic1offset : offset as found in the tiff tag 33628 (UIC1Tag)
-   * @param int uic1count : number of entries in UIC1 table (not tiff-compliant)
+   * @param uic1offset offset as found in the tiff tag 33628 (UIC1Tag)
+   * @param uic1count number of entries in UIC1 table (not tiff-compliant)
    */
   private void parseUIC1Tags(long uic1offset, int uic1count) throws IOException
   {

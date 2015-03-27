@@ -194,7 +194,8 @@ your FindBugs installation's lib directory. E.g.:
       encoding="UTF-8"
       author="true" version="true" use="true"
       access="private"
-      nodeprecated="false" windowtitle="Bio-Formats API">
+      nodeprecated="false" windowtitle="Bio-Formats API"
+      additionalparam="-Xdoclint:none">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>

@@ -641,7 +641,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     /**
      * Get a dimension by its index.  If the dimension does not yet
      * exist, a new one will be created.
-     * @param An XML element name.  The index number will be parsed
+     * @param key An XML element name.  The index number will be parsed
      * from this name.
      * @return A Dimension object.
      */

@@ -151,7 +151,7 @@ public class MemoryData implements Data
   /**
    * sort the data by the given column using only the given rows
    * insertion sort is used for the sort
-   * @todo replace with a better sorting algorithm
+   * todo: replace with a better sorting algorithm
    * @param columnToSort the column to sort
    * @param startAt the row to start sorting at
    * @param endAt the row to end sorting at

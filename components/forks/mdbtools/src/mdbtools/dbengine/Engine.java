@@ -56,7 +56,7 @@ public class Engine
 
   /**
    * Execute a sql select query
-   * @param sql
+   * @param select
    */
   private Data execute(Select select)
     throws SQLException
