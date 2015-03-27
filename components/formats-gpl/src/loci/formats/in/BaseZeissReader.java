@@ -28,12 +28,12 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import java.util.ArrayList;
 import java.lang.Math;
 
@@ -71,14 +71,14 @@ public abstract class BaseZeissReader extends FormatReader {
   protected int[] offsets;
   protected int[][] coordinates;
 
-  protected Hashtable<Integer, String> timestamps, exposureTime;
+  protected Map<Integer, String> timestamps, exposureTime;
   protected int cIndex = -1;
   protected boolean isJPEG, isZlib;
 
   protected int realWidth, realHeight;
 
 
-  protected Vector<String> tagsToParse;
+  protected List<String> tagsToParse;
   protected int nextEmWave = 0, nextExWave = 0, nextChName = 0;
   protected Hashtable<Integer, Length> stageX = new Hashtable<Integer, Length>();
   protected Hashtable<Integer, Length> stageY = new Hashtable<Integer, Length>();
@@ -107,7 +107,7 @@ public abstract class BaseZeissReader extends FormatReader {
   protected Set<Integer> timepointIndices = new HashSet<Integer>();
   protected Set<Integer> tileIndices = new HashSet<Integer>();
 
-  protected Vector<String> roiIDs = new Vector<String>();
+  protected List<String> roiIDs = new ArrayList<String>();
 
   // Layer annotations (contain Shapes, i.e. ROIs).
   public ArrayList<Layer> layers = new ArrayList<BaseZeissReader.Layer>();
@@ -143,9 +143,9 @@ public abstract class BaseZeissReader extends FormatReader {
   }
 
   protected void initVars(String id) throws FormatException, IOException {
-    timestamps = new Hashtable<Integer, String>();
-    exposureTime = new Hashtable<Integer, String>();
-    tagsToParse = new Vector<String>();
+    timestamps = new HashMap<Integer, String>();
+    exposureTime = new HashMap<Integer, String>();
+    tagsToParse = new ArrayList<String>();
   }
 
   protected void countImages() {
@@ -383,7 +383,7 @@ public abstract class BaseZeissReader extends FormatReader {
           }
           String exposure = exposureTime.get(expIndex);
           if (exposure == null && exposureTime.size() == 1) {
-            exposure = exposureTime.get(exposureTime.keys().nextElement());
+            exposure = exposureTime.values().iterator().next();
           }
           Double exp = new Double(0.0);
           try { exp = new Double(exposure); }

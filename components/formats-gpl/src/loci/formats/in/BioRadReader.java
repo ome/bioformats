@@ -27,9 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -140,7 +141,7 @@ public class BioRadReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector<String> used;
+  private List<String> used;
 
   private String[] picFiles;
 
@@ -148,9 +149,9 @@ public class BioRadReader extends FormatReader {
   private int lastChannel = 0;
   private boolean brokenNotes = false;
 
-  private Vector<Note> noteStrings;
+  private List<Note> noteStrings;
 
-  private Vector<Double> offset, gain;
+  private List<Double> offset, gain;
 
   // -- Constructor --
 
@@ -223,7 +224,7 @@ public class BioRadReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
-      Vector<String> files = new Vector<String>();
+      final List<String> files = new ArrayList<String>();
       for (String f : used) {
         if (!checkSuffix(f, PIC_SUFFIX)) files.add(f);
       }
@@ -298,15 +299,15 @@ public class BioRadReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    offset = new Vector<Double>();
-    gain = new Vector<Double>();
+    offset = new ArrayList<Double>();
+    gain = new ArrayList<Double>();
 
-    used = new Vector<String>();
+    used = new ArrayList<String>();
     used.add(new Location(currentId).getAbsolutePath());
 
     LOGGER.info("Reading image dimensions");
 
-    noteStrings = new Vector<Note>();
+    noteStrings = new ArrayList<Note>();
 
     // read header
     CoreMetadata m = core.get(0);
@@ -404,7 +405,7 @@ public class BioRadReader extends FormatReader {
 
     // look for companion metadata files
 
-    Vector<String> pics = new Vector<String>();
+    final List<String> pics = new ArrayList<String>();
 
     if (isGroupFiles()) {
       Location parent =
@@ -444,7 +445,7 @@ public class BioRadReader extends FormatReader {
 
     boolean multipleFiles = parseNotes(store);
 
-    if (multipleFiles && isGroupFiles() && pics.size() == 0) {
+    if (multipleFiles && isGroupFiles() && pics.isEmpty()) {
       // do file grouping
       used.remove(currentId);
       long length = new Location(currentId).length();
@@ -591,7 +592,7 @@ public class BioRadReader extends FormatReader {
       n.p = n.p.substring(0, ndx).trim();
 
       String value = n.p.replaceAll("=", "");
-      Vector<String> v = new Vector<String>();
+      final List<String> v = new ArrayList<String>();
       StringTokenizer t = new StringTokenizer(value, " ");
       while (t.hasMoreTokens()) {
         String token = t.nextToken().trim();
@@ -673,7 +674,7 @@ public class BioRadReader extends FormatReader {
 
                     if (key.endsWith("OFFSET")) {
                       if (nextDetector < offset.size()) {
-                        offset.setElementAt(new Double(value), nextDetector);
+                        offset.set(nextDetector, Double.parseDouble(value));
                       }
                       else {
                         while (nextDetector > offset.size()) {
@@ -684,7 +685,7 @@ public class BioRadReader extends FormatReader {
                     }
                     else if (key.endsWith("GAIN")) {
                       if (nextDetector < gain.size()) {
-                        gain.setElementAt(new Double(value), nextDetector);
+                        gain.set(nextDetector, Double.parseDouble(value));
                       }
                       else {
                         while (nextDetector > gain.size()) {
@@ -969,7 +970,7 @@ public class BioRadReader extends FormatReader {
 
       if (n.p.indexOf("AXIS") != -1) {
         n.p = n.p.replaceAll("=", "");
-        Vector<String> v = new Vector<String>();
+        final List<String> v = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(n.p, " ");
         while (tokens.hasMoreTokens()) {
           String token = tokens.nextToken().trim();
