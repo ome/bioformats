@@ -290,13 +290,17 @@ For more information about the methods to store the metadata, see the
 Improving reading performance
 -----------------------------
 
-Initializing a Bio-Formats reader can consume time and memory. Most of the
-initialization time is spend in the :javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId(java.lang.String)>` call. Various
-factors can impact the performance of this step including the file size, the
-amount of metadata in the image and also the file format itself.
+Initializing a Bio-Formats reader can consume substantial time and memory.
+Most of the initialization time is spend in the
+:javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId(java.lang.String)>`
+call. Various factors can impact the performance of this step including the
+file size, the amount of metadata in the image and also the file format itself.
 
-To decrease initialization time, a solution is to use the
+One solution to improve reading performance is to use Bio-Formats memoization
+functionalities with the
 :javadoc:`loci.formats.Memoizer <loci/formats/Memoizer.html>` reader wrapper.
+By essence, the speedup gained from memoization will only happen after the
+first initialization of the reader for a particular file.
 
 The simplest way to make use the ``Memoizer`` functionalities in MATLAB is
 illustrated by the following example::
@@ -339,9 +343,9 @@ More constructors are described in the
 the minimal initialization time required before caching the reader and/or to
 define a root directory under which the reader should be cached.
 
-As Bio-Formats is not thread-safe, reader memoization offers new solution to
+As Bio-Formats is not thread-safe, reader memoization offers a new solution to
 increase reading performance when doing parallel work. For instance, the
-following example should how to combine memoization and MATLAB parfor to do
+following example shows how to combine memoization and MATLAB parfor to do
 work on a single file in a parallel loop::
 
     % Construct a Bio-Formats reader decorated with the Memoizer wrapper
