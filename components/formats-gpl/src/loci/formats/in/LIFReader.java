@@ -1386,7 +1386,7 @@ public class LIFReader extends FormatReader {
         }
         else {
           for (int i=laserWavelength[image].size(); i<index; i++) {
-            laserWavelength[image].add(new Double(0));
+            laserWavelength[image].add(Double.valueOf(0));
           }
           laserWavelength[image].add(wavelength);
         }

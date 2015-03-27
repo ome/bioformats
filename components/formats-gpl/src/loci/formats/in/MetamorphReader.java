@@ -878,7 +878,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
-        Double deltaT = new Double(0);
+        Double deltaT = Double.valueOf(0);
         Double expTime = exposureTime;
         Double xmlZPosition = null;
 
