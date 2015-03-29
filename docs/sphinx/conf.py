@@ -393,4 +393,7 @@ texinfo_documents = [
 
 import urllib
 brokenfiles_url = 'https://raw.github.com/openmicroscopy/sphinx-ignore-links/master/broken_links.txt'
-linkcheck_ignore = urllib.urlopen(brokenfiles_url).read().splitlines()
+try:
+    linkcheck_ignore = urllib.urlopen(brokenfiles_url).read().splitlines()
+except IOError:
+    linkcheck_ignore = []

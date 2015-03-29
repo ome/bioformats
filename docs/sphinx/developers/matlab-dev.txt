@@ -284,3 +284,87 @@ and pass this object directly to ``bfsave``::
 
 For more information about the methods to store the metadata, see the
 :javadoc:`MetadataStore <loci/formats/meta/MetadataStore.html>` Javadoc page.
+
+.. _reader_performance:
+
+Improving reading performance
+-----------------------------
+
+Initializing a Bio-Formats reader can consume substantial time and memory.
+Most of the initialization time is spend in the
+:javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId(java.lang.String)>`
+call. Various factors can impact the performance of this step including the
+file size, the amount of metadata in the image and also the file format itself.
+
+One solution to improve reading performance is to use Bio-Formats memoization
+functionalities with the
+:javadoc:`loci.formats.Memoizer <loci/formats/Memoizer.html>` reader wrapper.
+By essence, the speedup gained from memoization will only happen after the
+first initialization of the reader for a particular file.
+
+The simplest way to make use the ``Memoizer`` functionalities in MATLAB is
+illustrated by the following example::
+
+    % Construct an empty Bio-Formats reader
+    r = bfGetReader();
+    % Decorate the reader with the Memoizer wrapper
+    r = loci.formats.Memoizer(r)
+    % Initialize the reader with an input file
+    % If the call is longer than a minimal time, the initialized reader will
+    % be cached in a file under the same directory as the initial file
+    % name .large_file.bfmemo
+    r.setId('/path/to/large_file');
+
+    % Perform work using the reader
+
+    % Close the reader
+    r.close()
+
+    % If the reader has been cached in the call above, re-initializing the
+    % reader will use the memo file and complete much faster especially for
+    % large data
+    r.setId('/path/to/large_file');
+
+    % Perform additional work
+
+    % Close the reader
+    r.close()
+
+If the time required to call :javadoc:`setId(java.lang.String) <loci/formats/Memoizer.html#setId(java.lang.String)>` method is larger
+than :javadoc:`DEFAULT_MINIMUM_ELAPSED <loci/formats/Memoizer.html#DEFAULT_MINIMUM_ELAPSED>` or the minimum value
+passed in the constructor, the initialized reader will be cached in a memo
+file under the same folder as the input file. Any subsequent call to
+``setId()`` with a reader decorated by the ``Memoizer`` on the same input file
+will load the reader from the memo file instead of performing a full reader
+initialization.
+
+More constructors are described in the
+:javadoc:`Memoizer javadocs <loci/formats/Memoizer.html>` allowing to control
+the minimal initialization time required before caching the reader and/or to
+define a root directory under which the reader should be cached.
+
+As Bio-Formats is not thread-safe, reader memoization offers a new solution to
+increase reading performance when doing parallel work. For instance, the
+following example shows how to combine memoization and MATLAB parfor to do
+work on a single file in a parallel loop::
+
+    % Construct a Bio-Formats reader decorated with the Memoizer wrapper
+    r = loci.formats.Memoizer(bfGetReader(r, 0))
+    % Initialize the reader with an input file to cache the reader
+    r.setId('/path/to/large_file');
+    % Close reader
+    r.close()
+
+    % Enter parallel loop
+    parfor i = 1 : nWorkers
+        % Initialize a new reader per worker as Bio-Formats is not thread safe
+        r2 = loci.formats.Memoizer(bfGetReader(r, 0))
+        % Initialization should use the memo file cached before entering the
+        % parallel loop
+        r2.setId('/path/to/large_file');
+
+        % Perform work
+
+        % Close the reader
+        r2.close()
+    end

@@ -145,6 +145,9 @@ Bio-Formats provides a few extras to make file reading more flexible.
     * - :javadoc:`loci.formats.DimensionSwapper <loci/formats/DimensionSwapper.html>`
       - Provides an API for changing the dimension order of a file
 
+    * - :javadoc:`loci.formats.Memoizer <loci/formats/Memoizer.html>`
+      - Caches the state of the reader into a memoization file
+
 - :javadoc:`loci.formats.ImageTools <loci/formats/ImageTools.html>`
   and :javadoc:`loci.formats.gui.AWTImageTools <loci/formats/gui/AWTImageTools.html>`
   provide a number of methods for manipulating BufferedImages and primitive
@@ -164,3 +167,8 @@ Troubleshooting
 - If you are working on a Macintosh, make sure that the data and resource
   forks of your image files are stored together. Bio-Formats does not handle
   separated forks (the native QuickTime reader tries, but usually fails).
+
+- Bio-Formats file readers are not thread-safe. If files are read within a
+  parallelized environment, a new reader must be fully initialized in each
+  parallel session. See :ref:`reader_performance` about ways to improve file
+  reading performance in multi-threaded mode.
