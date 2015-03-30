@@ -155,7 +155,7 @@ Type "ant -p" for a list of targets.
       utils-formats-bsd"
     description="compile all extra utilities"/>
 
-  <target name="docs" depends="jars"
+  <target name="docs" depends="jars, javadoc-properties"
     description="generate the Javadocs for most components">
     <echo>----------=========== Javadocs ===========----------</echo>
     <tstamp>
@@ -169,7 +169,7 @@ Type "ant -p" for a list of targets.
       failonerror="true" author="true" version="true" use="true"
       access="private"
       nodeprecated="false" windowtitle="Bio-Formats API"
-      additionalparam="-Xdoclint:none">
+      additionalparam="${javadoc.doclint}">
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
       <link href="http://docs.oracle.com/javase/6/docs/api/"/>
