@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -334,8 +334,8 @@ public class ZeissZVIReader extends BaseZeissReader {
     if (core.size() > 1) {
       Integer[] t = tiles.keySet().toArray(new Integer[tiles.size()]);
       Arrays.sort(t);
-      Vector<Integer> tmpOffsets = new Vector<Integer>();
-      Vector<String> tmpFiles = new Vector<String>();
+      final List<Integer> tmpOffsets = new ArrayList<Integer>();
+      final List<String> tmpFiles = new ArrayList<String>();
       int index = 0;
       for (Integer key : t) {
         int nTiles = tiles.get(key).intValue();
@@ -503,7 +503,7 @@ public class ZeissZVIReader extends BaseZeissReader {
 
     // scan stream for offsets to each ROI
 
-    Vector<Long> roiOffsets = new Vector<Long>();
+    final List<Long> roiOffsets = new ArrayList<Long>();
 
 
     // Bytes 0x0-1 == 0x3

@@ -27,9 +27,15 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -151,17 +157,18 @@ public class ZeissLSMReader extends FormatReader {
 
   // -- Static fields --
 
-  private static final Hashtable<Integer, String> METADATA_KEYS = createKeys();
+  private static final ImmutableMap<Integer, String> METADATA_KEYS =
+    createKeys();
 
   // -- Fields --
 
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private byte[][][] lut = null;
-  private Vector<Double> timestamps;
+  private List<Double> timestamps;
   private int validChannels;
 
   private String[] lsmFilenames;
-  private Vector<IFDList> ifdsList;
+  private List<IFDList> ifdsList;
   private transient TiffParser tiffParser;
 
   private int nextLaser = 0, nextDetector = 0;
@@ -169,11 +176,11 @@ public class ZeissLSMReader extends FormatReader {
   private int nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
   private double zoom;
-  private Vector<String> imageNames;
+  private List<String> imageNames;
   private String binning;
-  private Vector<Double> xCoordinates, yCoordinates, zCoordinates;
+  private List<Double> xCoordinates, yCoordinates, zCoordinates;
   private int dimensionM, dimensionP;
-  private Hashtable<String, Integer> seriesCounts;
+  private Map<String, Integer> seriesCounts;
   private String userName;
   private String[][] channelNames;
 
@@ -186,8 +193,8 @@ public class ZeissLSMReader extends FormatReader {
   private byte[] prevBuf = null;
   private Region prevRegion = null;
 
-  private Hashtable<Integer, String> acquiredDate =
-    new Hashtable<Integer, String>();
+  private Map<Integer, String> acquiredDate =
+    new HashMap<Integer, String>();
 
   // -- Constructor --
 
@@ -423,16 +430,16 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     totalROIs = 0;
-    timestamps = new Vector<Double>();
-    imageNames = new Vector<String>();
-    xCoordinates = new Vector<Double>();
-    yCoordinates = new Vector<Double>();
-    zCoordinates = new Vector<Double>();
-    seriesCounts = new Hashtable<String, Integer>();
+    timestamps = new ArrayList<Double>();
+    imageNames = new ArrayList<String>();
+    xCoordinates = new ArrayList<Double>();
+    yCoordinates = new ArrayList<Double>();
+    zCoordinates = new ArrayList<Double>();
+    seriesCounts = new HashMap<String, Integer>();
 
     int seriesCount = 0;
 
-    Vector<String> validFiles = new Vector<String>();
+    final List<String> validFiles = new ArrayList<String>();
     for (String filename : lsmFilenames) {
       try {
         int extraSeries = getExtraSeries(filename);
@@ -452,8 +459,10 @@ public class ZeissLSMReader extends FormatReader {
         core.add(ms);
     }
     channelNames = new String[seriesCount][];
-    ifdsList = new Vector<IFDList>();
-    ifdsList.setSize(seriesCount);
+    ifdsList = new ArrayList<IFDList>();
+    for (int series = 0; series < seriesCount; series++) {
+      ifdsList.add(null);
+    }
 
     int realSeries = 0;
     for (int i=0; i<lsmFilenames.length; i++) {
@@ -477,7 +486,7 @@ public class ZeissLSMReader extends FormatReader {
             tp.setDoCaching(offset == 0);
             IFD ifd = tp.getIFD(ifdOffsets[offset]);
             if (offset == 0) zeissTag = ifd.get(ZEISS_ID);
-            if (offset > 0 && ifds.size() == 0) {
+            if (offset > 0 && ifds.isEmpty()) {
               ifd.putIFDValue(ZEISS_ID, zeissTag);
             }
             ifds.add(ifd);
@@ -1014,21 +1023,21 @@ public class ZeissLSMReader extends FormatReader {
           double zPos = originZ + in.readDouble() * 1000000;
           if (xCoordinates.size() > i) {
             xPos += xCoordinates.get(i);
-            xCoordinates.setElementAt(xPos, i);
+            xCoordinates.set(i, xPos);
           }
           else if (xCoordinates.size() == i) {
             xCoordinates.add(xPos);
           }
           if (yCoordinates.size() > i) {
             yPos += yCoordinates.get(i);
-            yCoordinates.setElementAt(yPos, i);
+            yCoordinates.set(i, yPos);
           }
           else if (yCoordinates.size() == i) {
             yCoordinates.add(yPos);
           }
           if (zCoordinates.size() > i) {
             zPos += zCoordinates.get(i);
-            zCoordinates.setElementAt(zPos, i);
+            zCoordinates.set(i, zPos);
           }
           else if (zCoordinates.size() == i) {
             zCoordinates.add(zPos);
@@ -1140,7 +1149,7 @@ public class ZeissLSMReader extends FormatReader {
         nextFilter = nextDichroicChannel = nextDichroic = 0;
         nextDetectChannel = nextIllumChannel = 0;
 
-        Vector<SubBlock> blocks = new Vector<SubBlock>();
+        final List<SubBlock> blocks = new ArrayList<SubBlock>();
 
         while (in.getFilePointer() < in.length() - 12) {
           if (in.getFilePointer() < 0) break;
@@ -1191,7 +1200,7 @@ public class ZeissLSMReader extends FormatReader {
           else break;
         }
 
-        Vector<SubBlock> nonAcquiredBlocks = new Vector<SubBlock>();
+        final List<SubBlock> nonAcquiredBlocks = new ArrayList<SubBlock>();
 
         SubBlock[] metadataBlocks = blocks.toArray(new SubBlock[0]);
         for (SubBlock block : metadataBlocks) {
@@ -1870,7 +1879,7 @@ public class ZeissLSMReader extends FormatReader {
     }
     Vector<Vector<String[]>> tables = mdbService.parseDatabase();
     mdbService.close();
-    Vector<String> referencedLSMs = new Vector<String>();
+    final List<String> referencedLSMs = new ArrayList<String>();
 
     int referenceCount = 0;
 
@@ -1962,8 +1971,8 @@ public class ZeissLSMReader extends FormatReader {
     return referencedLSMs.toArray(new String[0]);
   }
 
-  private static Hashtable<Integer, String> createKeys() {
-    Hashtable<Integer, String> h = new Hashtable<Integer, String>();
+  private static ImmutableMap<Integer, String> createKeys() {
+    final Builder<Integer, String> h = ImmutableMap.builder();
     h.put(new Integer(0x10000001), "Name");
     h.put(new Integer(0x4000000c), "Name");
     h.put(new Integer(0x50000001), "Name");
@@ -2125,7 +2134,7 @@ public class ZeissLSMReader extends FormatReader {
     h.put(new Integer(0xd0000013), "Ratio First Images 2");
     h.put(new Integer(0xd0000016), "Spectrum");
     h.put(new Integer(0x12000003), "Interval");
-    return h;
+    return h.build();
   }
 
   private Integer readEntry() throws IOException {
@@ -2208,7 +2217,7 @@ public class ZeissLSMReader extends FormatReader {
   // -- Helper classes --
 
   class SubBlock {
-    public Hashtable<Integer, Object> blockData;
+    public Map<Integer, Object> blockData;
     public boolean acquire = true;
 
     public SubBlock() {
@@ -2244,7 +2253,7 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     protected void read() throws IOException {
-      blockData = new Hashtable<Integer, Object>();
+      blockData = new HashMap<Integer, Object>();
       Integer entry = readEntry();
       Object value = readValue();
       while (value != null && in.getFilePointer() < in.length()) {

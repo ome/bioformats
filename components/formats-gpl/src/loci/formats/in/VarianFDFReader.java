@@ -26,8 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -49,7 +50,7 @@ public class VarianFDFReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector<String> files = new Vector<String>();
+  private final List<String> files = new ArrayList<String>();
   private long[] pixelOffsets;
   private double pixelSizeX;
   private double pixelSizeY;
@@ -81,7 +82,7 @@ public class VarianFDFReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     if (noPixels) return null;
-    if (files.size() == 0) return new String[] {currentId};
+    if (files.isEmpty()) return new String[] {currentId};
     return files.toArray(new String[files.size()]);
   }
 
@@ -296,7 +297,7 @@ public class VarianFDFReader extends FormatReader {
       addGlobalMeta(var, value);
     }
 
-    if (multifile && files.size() == 0) {
+    if (multifile && files.isEmpty()) {
       Location thisFile = new Location(file).getAbsoluteFile();
       Location parent = thisFile.getParentFile();
       String[] list = parent.list(true);

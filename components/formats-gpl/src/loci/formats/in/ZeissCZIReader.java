@@ -28,10 +28,11 @@ package loci.formats.in;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
 
 import loci.common.ByteArrayHandle;
@@ -1240,7 +1241,7 @@ public class ZeissCZIReader extends FormatReader {
     translateLayers(realRoot);
     translateHardwareSettings(realRoot);
 
-    Stack<String> nameStack = new Stack<String>();
+    final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(realRoot, nameStack);
   }
 
@@ -2367,7 +2368,7 @@ public class ZeissCZIReader extends FormatReader {
     return null;
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
     String name = root.getNodeName();
     if (name.equals("DisplaySetting")) {
       return;

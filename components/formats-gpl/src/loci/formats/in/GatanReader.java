@@ -27,7 +27,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.text.Collator;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -77,8 +79,8 @@ public class GatanReader extends FormatReader {
   private long pixelOffset;
 
   /** List of pixel sizes. */
-  private Vector<Double> pixelSizes;
-  private Vector<String> units;
+  private List<Double> pixelSizes;
+  private List<String> units;
 
   private int bytesPerPixel;
 
@@ -163,8 +165,8 @@ public class GatanReader extends FormatReader {
     LOGGER.info("Verifying Gatan format");
 
     m.littleEndian = false;
-    pixelSizes = new Vector<Double>();
-    units = new Vector<String>();
+    pixelSizes = new ArrayList<Double>();
+    units = new ArrayList<String>();
 
     in.order(isLittleEndian());
 
