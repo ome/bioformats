@@ -1498,9 +1498,7 @@ public class ZeissLSMReader extends FormatReader {
 
     in.skipBytes(164);
 
-    System.err.println(totalROIs);
     for (int i=totalROIs; i<totalROIs+numberOfShapes; i++) {
-      //totalROIs++;
       long offset = in.getFilePointer();
       int type = in.readInt();
       int blockLength = in.readInt();
