@@ -422,6 +422,7 @@ public class ZeissLSMReader extends FormatReader {
       throw new FormatException("LSM files were not found.");
     }
 
+    totalROIs = 0;
     timestamps = new Vector<Double>();
     imageNames = new Vector<String>();
     xCoordinates = new Vector<Double>();
@@ -932,8 +933,6 @@ public class ZeissLSMReader extends FormatReader {
           parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
         }
       }
-
-      totalROIs = 0;
 
       addSeriesMeta("ToolbarFlags", ras.readInt());
 
@@ -1490,7 +1489,9 @@ public class ZeissLSMReader extends FormatReader {
 
     in.skipBytes(164);
 
+    System.err.println(totalROIs);
     for (int i=totalROIs; i<totalROIs+numberOfShapes; i++) {
+      //totalROIs++;
       long offset = in.getFilePointer();
       int type = in.readInt();
       int blockLength = in.readInt();
