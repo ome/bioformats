@@ -330,7 +330,7 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    * Minimum number of milliseconds which must elapse during the call to
-   * {@link setId} before a memo file will be created.
+   * {@link #setId} before a memo file will be created.
    */
   private final long minimumElapsed;
 
@@ -387,14 +387,14 @@ public class Memoizer extends ReaderWrapper {
    * no special actions are taken during {@link #setId(String)}. If a value
    * is set, however, we must be careful with attempting to serialize it
    *
-   * @see {@link #handleMetadataStore()}
+   * @see #handleMetadataStore(IFormatReader)
    */
   private MetadataStore userMetadataStore = null;
 
   /**
    * {@link MetadataStore} created internally.
    *
-   * @see {@link #handleMetadataStore()}
+   * @see #handleMetadataStore(IFormatReader)
    */
   private MetadataStore replacementMetadataStore = null;
 

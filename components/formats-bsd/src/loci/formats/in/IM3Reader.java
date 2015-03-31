@@ -834,7 +834,7 @@ public class IM3Reader extends FormatReader {
      * Parse the spectrum record
      *
      * @param is the file handle
-     * @param subRec the spectrum container record
+     * @param rec the spectrum container record
      * @throws IOException
      */
     private void parseSpectrumRecord(IRandomAccess is, ContainerRecord rec) throws IOException {

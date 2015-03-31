@@ -1439,7 +1439,7 @@ public abstract class FormatReader extends FormatHandler
     }
   }
 
-  /** Initialize the OMEXMLService needed by {@link setId(String)} */
+  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
   private void setupService() {
     try {
       if (factory == null) factory = new ServiceFactory();

@@ -187,13 +187,15 @@ your FindBugs installation's lib directory. E.g.:
     </javac>
   </target>
 
-  <target name="docs" depends="compile"
+  <target name="docs" depends="compile, javadoc-properties"
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${component.classpath}:${classes.dir}"
       encoding="UTF-8"
       author="true" version="true" use="true"
-      nodeprecated="false" windowtitle="Bio-Formats API">
+      access="private"
+      nodeprecated="false" windowtitle="Bio-Formats API"
+      additionalparam="${javadoc.doclint}">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>

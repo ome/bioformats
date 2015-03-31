@@ -464,9 +464,6 @@ public class SelectEngine
 
   /**
    * merge the data from several datasets to a single dataset
-   * @param s
-   * @param tables
-   * @param index
    */
   private void mergeData(MemoryData memData,
                          Object[] _row,int columnIndex,
@@ -523,7 +520,7 @@ public class SelectEngine
 
   /**
    * resolve a column down to it's final value
-   * @param value the value from the data set
+   * @param data the value from the data set
    * @param column the object from the sql query
    * @return Object
    */
@@ -548,7 +545,7 @@ public class SelectEngine
 
   /**
    * sort the data
-   * @todo allow for sorting non-memory data
+   * todo: allow for sorting non-memory data
    * @param data
    * @return Data
    */
