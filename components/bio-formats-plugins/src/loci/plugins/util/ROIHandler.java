@@ -29,6 +29,7 @@ package loci.plugins.util;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.Prefs;
 import ij.gui.EllipseRoi;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
@@ -81,7 +82,7 @@ public class ROIHandler {
     public static void openROIs(IMetadata retrieve, ImagePlus[] images) {
         openROIs(retrieve,images, false);
     }
-    
+
     public static void openROIs(IMetadata retrieve, ImagePlus[] images, boolean isOMERO) {
         if (!(retrieve instanceof OMEXMLMetadata)) return;
         int nextRoi = 0;
@@ -99,18 +100,21 @@ public class ROIHandler {
             if (roiCount > 0 && manager == null) {
                 manager = new RoiManager();
             }
-            
+
             for (int roiNum=0; roiNum<roiCount; roiNum++) {
                 Union shapeSet = root.getROI(roiNum).getUnion();
                 int shapeCount = shapeSet.sizeOfShapeList();
 
                 for (int shape=0; shape<shapeCount; shape++) {
                     Shape shapeObject = shapeSet.getShape(shape);
-                    
+
                     roi = null;
                     sw = null;
                     sc = null;
                     fc = null;
+                    int c= 0;
+                    int z= 0;
+                    int t= 0;
 
                     if (shapeObject instanceof Ellipse) {
                         Ellipse ellipse = (Ellipse) shapeObject;
@@ -301,17 +305,13 @@ public class ROIHandler {
 
                     if (roi != null) {
                         roi.setName(shapeObject.getID());
-                        
-                        if (shapeObject.getTheC() != null &&
-                          shapeObject.getTheZ() != null &&
-                          shapeObject.getTheT() != null)
-                        {
-                          int c = shapeObject.getTheC().getValue();
-                          int z = shapeObject.getTheZ().getValue();
-                          int t = shapeObject.getTheT().getValue();
-                          roi.setPosition(c, z, t);
-                        }
 
+                        if (Prefs.showAllSliceOnly){
+                            if(shapeObject.getTheC() != null)c = shapeObject.getTheC().getValue();
+                            if(shapeObject.getTheZ() != null)z = shapeObject.getTheZ().getValue();
+                            if(shapeObject.getTheT() != null)t = shapeObject.getTheT().getValue();
+                            roi.setPosition(c, z, t);
+                        }
                         roi.setImage(images[imageNum]);
 
                         if (sw == null){
@@ -329,7 +329,7 @@ public class ROIHandler {
                 }
             }
         }
-        
+
     }
 
 
@@ -722,6 +722,6 @@ public class ROIHandler {
         return test ;
 
     }
-    
-    
+
+
 }
