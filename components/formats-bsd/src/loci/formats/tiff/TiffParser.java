@@ -550,8 +550,10 @@ public class TiffParser {
         longs = new long[1];
         longs[0] = in.readLong();
       }
-      else if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
-        entry.getTag() == IFD.TILE_OFFSETS))
+      else if (entry.getTag() == IFD.STRIP_OFFSETS ||
+        entry.getTag() == IFD.TILE_OFFSETS ||
+        entry.getTag() == IFD.STRIP_BYTE_COUNTS ||
+        entry.getTag() == IFD.TILE_BYTE_COUNTS)
       {
         OnDemandLongArray offsets = new OnDemandLongArray(in);
         offsets.setSize(count);
@@ -647,6 +649,19 @@ public class TiffParser {
     int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
 
+    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+
     long[] stripByteCounts = ifd.getStripByteCounts();
     long[] rowsPerStrip = ifd.getRowsPerStrip();
 
@@ -671,6 +686,9 @@ public class TiffParser {
 
     if (ifd.getOnDemandStripOffsets() != null) {
       OnDemandLongArray stripOffsets = ifd.getOnDemandStripOffsets();
+      if (stripOffsets.getStream() == null) {
+        stripOffsets.setStream(in);
+      }
       stripOffset = stripOffsets.get(offsetIndex);
       nStrips = stripOffsets.size();
     }
@@ -809,7 +827,32 @@ public class TiffParser {
     codecOptions.littleEndian = ifd.isLittleEndian();
     long imageLength = ifd.getImageLength();
 
-    long[] stripOffsets = ifd.getStripOffsets();
+    long[] stripOffsets = null;
+
+    if (ifd.getOnDemandStripOffsets() != null) {
+      OnDemandLongArray offsets = ifd.getOnDemandStripOffsets();
+      if (offsets.getStream() == null) {
+        offsets.setStream(in);
+      }
+      stripOffsets = offsets.toArray();
+    }
+    else {
+      stripOffsets = ifd.getStripOffsets();
+    }
+
+    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+
     long[] stripByteCounts = ifd.getStripByteCounts();
 
     // special case: if we only need one tile, and that tile doesn't need

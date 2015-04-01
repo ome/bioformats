@@ -197,6 +197,8 @@ public class IFD extends HashMap<Integer, Object> {
   public static final int SHARPNESS = 41994;
   public static final int SUBJECT_DISTANCE_RANGE = 41996;
 
+  private transient TiffCompression compression;
+
   // -- Constructors --
 
   public IFD() {
@@ -390,6 +392,14 @@ public class IFD extends HashMap<Integer, Object> {
       int[] integers = (int[]) value;
       results = new long[integers.length];
       for (int i=0; i<integers.length; i++) results[i] = integers[i];
+    }
+    else if (value instanceof OnDemandLongArray) {
+      try {
+        results = ((OnDemandLongArray) value).toArray();
+      }
+      catch (IOException e) {
+        throw new FormatException(e);
+      }
     }
     else if (value != null) {
       throw new FormatException(getIFDTagName(tag) +
@@ -658,8 +668,11 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public TiffCompression getCompression() throws FormatException {
-    return TiffCompression.get(getIFDIntValue(
+    if (compression == null) {
+      compression = TiffCompression.get(getIFDIntValue(
         COMPRESSION, TiffCompression.UNCOMPRESSED.getCode()));
+    }
+    return compression;
   }
 
   /**
