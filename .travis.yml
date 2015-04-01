@@ -7,7 +7,7 @@ jdk:
 
 env:
   - BUILD=maven
-  - BUILD=cpp
+#  - BUILD=cpp
   - BUILD=cppwrap
   - BUILD=flake8
   - BUILD=sphinx
