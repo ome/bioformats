@@ -1365,6 +1365,7 @@ public class FormatReaderTest {
     }
     String testName = "testRequiredDirectories";
     String file = reader.getCurrentFile();
+    LOGGER.debug("testRequiredDirectories({})", file);
     int directories = -1;
 
     try {
@@ -1373,6 +1374,8 @@ public class FormatReaderTest {
     catch (Exception e) {
       LOGGER.warn("Could not retrieve directory count", e);
     }
+
+    LOGGER.debug("directories = {}", directories);
 
     if (directories < 0) {
       result(testName, false, "Invalid directory count (" + directories + ")");
@@ -1394,9 +1397,12 @@ public class FormatReaderTest {
         }
       }
 
+      LOGGER.debug("commonParent = {}", commonParent);
+
       // remove extra directories
 
       String split = File.separatorChar == '\\' ? "\\\\" : File.separator;
+      LOGGER.debug("split = {}", split);
       String[] f = commonParent.split(split);
       StringBuilder toRemove = new StringBuilder();
       for (int i=0; i<f.length - directories - 1; i++) {
@@ -1411,6 +1417,7 @@ public class FormatReaderTest {
       String newFile = null;
       for (int i=0; i<usedFiles.length; i++) {
         newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
+        LOGGER.debug("mapping {} to {}", newFiles[i], usedFiles[i]);
         Location.mapId(newFiles[i], usedFiles[i]);
 
         if (usedFiles[i].equals(file)) {
@@ -1420,6 +1427,8 @@ public class FormatReaderTest {
       if (newFile == null) {
         newFile = newFiles[0];
       }
+
+      LOGGER.debug("newFile = {}", newFile);
 
       IFormatReader check = new FileStitcher();
       try {
