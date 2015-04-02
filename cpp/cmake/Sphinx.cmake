@@ -142,7 +142,7 @@ if (BUILD_SPHINX AND SPHINX_BUILD)
   add_custom_target(doc-html ALL DEPENDS "${sphinx_builddir}/html/index.html")
 
   install(DIRECTORY "${sphinx_builddir}/html"
-          DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}")
+          DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}/user")
 
   # Generate and install PDF manual
 
@@ -173,7 +173,7 @@ if (BUILD_SPHINX AND SPHINX_BUILD)
     add_custom_target(doc-pdf ALL DEPENDS "${sphinx_builddir}/latex/Bio-Formats.pdf")
 
     install(FILES "${sphinx_builddir}/latex/Bio-Formats.pdf"
-            DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}")
+            DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}/user")
   endif (BUILD_SPHINX_PDF AND XELATEX AND MAKEINDEX)
 else()
   message(WARNING "Manual pages and HTML manual will not be generated or installed")
