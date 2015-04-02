@@ -1450,6 +1450,14 @@ operator<< (std::basic_ostream<charT,traits>& os,
 
 class PixelTest : public ::testing::TestWithParam<PixelTestParameters>
 {
+  void
+  TearDown()
+  {
+    // Delete file (if any)
+    const PixelTestParameters& params = GetParam();
+    if (boost::filesystem::exists(params.filename))
+      boost::filesystem::remove(params.filename);
+  }
 };
 
 TEST_P(PixelTest, WriteTIFF)
