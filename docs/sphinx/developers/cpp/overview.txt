@@ -705,6 +705,12 @@ extra-warnings=(ON|OFF)
 fatal-warnings=(ON|OFF)
   Make compiler warnings into fatal errors.  This is disabled by
   default.
+sphinx=(ON|OFF)
+  Build manual pages and HTML documentation with Sphinx.  Enabled by
+  default if Sphinx is autodetected.
+sphinx-pdf=(ON|OFF)
+  Build PDF documentation with Sphinx.  Enabled by default if Sphinx
+  and XeLaTeX are autodetected.
 test=(ON|OFF)
   Enable unit tests.  Tests are enabled by default.
 
