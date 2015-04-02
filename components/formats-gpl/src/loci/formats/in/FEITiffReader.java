@@ -127,6 +127,9 @@ public class FEITiffReader extends BaseTiffReader {
     String tag = ifds.get(0).getIFDTextValue(helios ? HELIOS_TAG : SFEG_TAG);
     tag = tag.trim();
 
+    if (tag.length() == 0) {
+      return;//fall back to regular reader
+    }
     // store metadata for later conversion to OME-XML
     if (tag.startsWith("<")) {
       XMLTools.parseXML(tag, new FEIHandler());
