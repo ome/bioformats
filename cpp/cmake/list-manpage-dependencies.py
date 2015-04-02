@@ -16,5 +16,6 @@ if __name__ == "__main__":
     conf = imp.load_source('conf', os.path.join(dir, 'conf.py'))
 
     for man in conf.man_pages:
-        print os.path.join(sys.argv[2], "%s%s" % (man[0], conf.source_suffix))
+        print os.path.join(sys.argv[2], "%s%s" %
+                           (man[0], conf.source_suffix))
     print os.path.join(dir, 'conf.py')

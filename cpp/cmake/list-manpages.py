@@ -11,7 +11,8 @@ import sys
 if __name__ == "__main__":
 
     if len(sys.argv) != 4:
-        sys.exit("Usage: %s sphinx-confdir sphinx-srcdir manpage-dir" % (sys.argv[0]))
+        sys.exit("Usage: %s sphinx-confdir sphinx-srcdir manpage-dir" %
+                 (sys.argv[0]))
 
     dir = os.path.abspath(sys.argv[1])
     conf = imp.load_source('conf', os.path.join(dir, 'conf.py'))
