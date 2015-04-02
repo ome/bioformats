@@ -156,7 +156,7 @@ public class EPSReader extends FormatReader {
 
     in.seek(0);
     for (int line=0; line<=start; line++) {
-      in.readLine();
+      readLine();
     }
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
@@ -208,7 +208,7 @@ public class EPSReader extends FormatReader {
 
     LOGGER.info("Verifying EPS format");
 
-    String line = in.readLine();
+    String line = readLine();
     if (!line.trim().startsWith("%!PS")) {
       // read the TIFF preview
 
@@ -258,7 +258,7 @@ public class EPSReader extends FormatReader {
     String image = "image";
     int lineNum = 1;
 
-    line = in.readLine().trim();
+    line = readLine().trim();
 
     while (line != null && !line.equals("%%EOF")) {
       if (line.endsWith(image)) {
@@ -266,16 +266,22 @@ public class EPSReader extends FormatReader {
           if (line.indexOf("colorimage") != -1) m.sizeC = 3;
           String[] t = line.split(" ");
           try {
-            m.sizeX = Integer.parseInt(t[0]);
-            m.sizeY = Integer.parseInt(t[1]);
+            int newX = Integer.parseInt(t[0]);
+            int newY = Integer.parseInt(t[1]);
+            if (newX >= m.sizeX && newY >= m.sizeY) {
+              m.sizeX = newX;
+              m.sizeY = newY;
+              start = lineNum;
+            }
           }
           catch (NumberFormatException exc) {
             LOGGER.debug("Could not parse image dimensions", exc);
-            m.sizeC = Integer.parseInt(t[3]);
+            if (t.length > 3) {
+              m.sizeC = Integer.parseInt(t[3]);
+            }
           }
         }
 
-        start = lineNum;
         break;
       }
       else if (line.startsWith("%%")) {
@@ -324,7 +330,7 @@ public class EPSReader extends FormatReader {
         }
       }
       lineNum++;
-      line = in.readLine().trim();
+      line = readLine().trim();
     }
 
     LOGGER.info("Populating metadata");
@@ -345,6 +351,11 @@ public class EPSReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);
+  }
+
+  private String readLine() throws IOException {
+    String s = in.findString("\r", "\n");
+    return s.length() == 0 ? null : s;
   }
 
 }
