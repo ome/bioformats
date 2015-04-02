@@ -37,6 +37,8 @@ Type "ant -p" for a list of targets.
     <attribute name="buildtype" default="html"/>
     <attribute name="srcdir" default="."/>
     <attribute name="destdir" default=""/>
+    <attribute name="opts" default=""/>
+    <attribute name="warnopts" default=""/>
     <sequential>
       <exec executable="${sphinx.build}" failonerror="true">
         <arg value="-D"/>
@@ -45,8 +47,8 @@ Type "ant -p" for a list of targets.
         <arg value="version=${sphinx.version}"/>
         <arg value="-b"/>
         <arg value="@{buildtype}"/>
-        <arg line="${sphinx.opts}"/>
-        <arg line="${sphinx.warnopts}"/>
+        <arg line="@{opts}"/>
+        <arg line="@{warnopts}"/>
         <arg value="@{srcdir}"/>
         <arg value="@{destdir}"/>
       </exec>
@@ -54,7 +56,11 @@ Type "ant -p" for a list of targets.
   </macrodef>
 
   <target name="html" depends="init">
-    <sphinx buildtype="html" srcdir="." destdir="${sphinx.builddir}/html"/>
+    <sphinx buildtype="html"
+            srcdir="."
+            destdir="${sphinx.builddir}/html"
+            opts="${sphinx.opts}"
+            warnopts="${sphinx.warnopts}"/>
     <delete dir="${artifact.dir}/bio-formats-doc-${sphinx.release}"/>
     <copy todir="${artifact.dir}/bio-formats-doc-${sphinx.release}">
       <!--
@@ -69,7 +75,10 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="man" depends="init">
-    <sphinx buildtype="man" srcdir="." destdir="${sphinx.builddir}/man"/>
+    <sphinx buildtype="man"
+            srcdir="."
+            destdir="${sphinx.builddir}/man"
+            opts="${sphinx.opts}"/>
   </target>
 
   <macrodef name="xelatex" description="Run XeLaTeX">
@@ -112,7 +121,11 @@ Type "ant -p" for a list of targets.
   </macrodef>
 
   <target name="latexpdf" depends="init">
-    <sphinx buildtype="latex" srcdir="." destdir="${sphinx.builddir}/latex"/>
+    <sphinx buildtype="latex"
+            srcdir="."
+            destdir="${sphinx.builddir}/latex"
+            opts="${sphinx.opts}"
+            warnopts="${sphinx.warnopts}"/>
     <copy file="preamble.tex" todir="${sphinx.builddir}/latex"/>
 
     <for param="file">
@@ -129,7 +142,10 @@ Type "ant -p" for a list of targets.
   <target name="pdf" depends="latexpdf"/>
 
   <target name="linkcheck" depends="init">
-    <sphinx buildtype="linkcheck" srcdir="." destdir="${sphinx.builddir}/linkcheck"/>
+    <sphinx buildtype="linkcheck" srcdir="."
+            destdir="${sphinx.builddir}/linkcheck"
+            opts="${sphinx.opts}"
+            warnopts="${sphinx.warnopts}"/>
   </target>
 
   <target name="clean">
