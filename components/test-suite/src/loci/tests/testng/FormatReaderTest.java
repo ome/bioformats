@@ -1390,7 +1390,7 @@ public class FormatReaderTest {
 
       // find the common parent
 
-      String commonParent = new Location(usedFiles[0]).getParent();
+      String commonParent = new Location(usedFiles[0]).getAbsoluteFile().getParent();
       for (int i=1; i<usedFiles.length; i++) {
         while (!usedFiles[i].startsWith(commonParent)) {
           commonParent = commonParent.substring(0, commonParent.lastIndexOf(File.separator));
@@ -1408,7 +1408,7 @@ public class FormatReaderTest {
       for (int i=0; i<f.length - directories - 1; i++) {
         toRemove.append(f[i]);
         if (i < f.length - directories - 2) {
-          toRemove.append(File.separator);
+          toRemove.append(split);
         }
       }
 
