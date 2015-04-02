@@ -125,9 +125,11 @@ public class FEITiffReader extends BaseTiffReader {
     addGlobalMeta("Software", helios ? "Helios NanoLab" : "S-FEG");
 
     String tag = ifds.get(0).getIFDTextValue(helios ? HELIOS_TAG : SFEG_TAG);
+    if (tag == null) {
+      return;
+    }
     tag = tag.trim();
-
-    if (tag.length() == 0) {
+    if (tag.isEmpty()) {
       return;//fall back to regular reader
     }
     // store metadata for later conversion to OME-XML
