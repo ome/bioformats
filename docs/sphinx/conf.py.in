@@ -11,11 +11,19 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+# Substitutions from external build system.
+srcdir = '${sphinx_srcdir}'
+builddir = '${sphinx_builddir}'
+ext_source_branch = '${sphinx_source_branch}'
+ext_source_user = '${sphinx_source_user}'
+ext_omerodoc_uri = '${sphinx_omerodoc_uri}'
+
 import sys, os
-sys.path.insert(0, os.path.abspath('../sphinx/_ext'))
+sys.path.insert(0, os.path.abspath(os.path.join(srcdir, '_ext')))
 import re
 import subprocess
 from datetime import datetime
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -37,7 +45,7 @@ edit_on_github_branch = 'develop'
 edit_on_github_prefix = 'docs/sphinx'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['../sphinx/_templates']
+templates_path = [os.path.join(srcdir, '_templates')]
 
 # The suffix of source filenames.
 source_suffix = '.txt'
@@ -106,7 +114,13 @@ pygments_style = 'sphinx'
 
 # Variables used to define Github extlinks
 source_branch = 'develop'
+if (ext_source_branch is not None and len(ext_source_branch) > 0 and
+    ext_source_branch != '${sphinx_source_branch}'):
+    source_branch = ext_source_branch
 user = 'openmicroscopy'
+if (ext_source_user is not None and len(ext_source_user) > 0 and
+    ext_source_user != '${sphinx_source_user}'):
+    source_user = ext_source_user
 
 github_root = 'https://github.com/'
 bf_github_root = github_root + user + '/bioformats/'
@@ -128,6 +142,9 @@ oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
 omerodoc_uri = oo_site_root + '/support/omero5.1'
+if (ext_omerodoc_uri is not None and len(ext_omerodoc_uri) > 0 and
+    ext_omerodoc_uri != '${sphinx_omerodoc_uri}'):
+    omerodoc_uri = ext_omerodoc_uri
 
 extlinks = {
     # Trac links
@@ -297,7 +314,7 @@ latex_documents = [
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-latex_logo = "images/bio-formats-logo.pdf"
+latex_logo = os.path.join(srcdir, 'images/bio-formats-logo.pdf')
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
