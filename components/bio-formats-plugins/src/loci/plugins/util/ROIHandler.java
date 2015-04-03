@@ -60,6 +60,7 @@ import ome.xml.model.Polygon;
 import ome.xml.model.Polyline;
 import ome.xml.model.Shape;
 import ome.xml.model.Union;
+import ome.xml.model.primitives.NonNegativeInteger;
 
 
 // TODO: Stored ROIs are not correctly linked to Image.
@@ -518,6 +519,9 @@ public class ROIHandler {
     }
 
     // -- Helper methods --
+    private static NonNegativeInteger unwrap(int r) {
+        return new NonNegativeInteger(r);
+    }
 
     private static void storeText(TextRoi roi, MetadataStore store, int roiNum, int shape) {
 
@@ -526,7 +530,9 @@ public class ROIHandler {
 
         store.setLabelText(roi.getText().trim(), roiNum, shape);
         store.setLabelFontSize(new Length(roi.getCurrentFont().getSize(), UNITS.PIXEL), roiNum, shape);
-
+        store.setLabelTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setLabelTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setLabelTheT(unwrap(roi.getTPosition()), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
             store.setLabelStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
@@ -551,6 +557,10 @@ public class ROIHandler {
             store.setPointX((double) xCoordinates[cntr], roiNum, shape+cntr);
             store.setPointY((double) yCoordinates[cntr], roiNum, shape+cntr);
             store.setPointText(roi.getName(), roiNum, shape+cntr);
+            store.setPointTheC(unwrap(roi.getCPosition()), roiNum, shape);
+            store.setPointTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+            store.setPointTheT(unwrap(roi.getTPosition()), roiNum, shape);
+            
             if (roi.getStrokeWidth() > 0) {
                 store.setPointStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape+cntr);
             }
@@ -573,6 +583,9 @@ public class ROIHandler {
         store.setLineX2(new Double(roi.x2), roiNum, shape);
         store.setLineY1(new Double(roi.y1), roiNum, shape);
         store.setLineY2(new Double(roi.y2), roiNum, shape);
+        store.setLineTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setLineTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setLineTheT(unwrap(roi.getTPosition()), roiNum, shape);
 
         store.setLineText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
@@ -596,6 +609,9 @@ public class ROIHandler {
         store.setRectangleY(new Double(bounds.y), roiNum, shape);
         store.setRectangleWidth(new Double(bounds.width), roiNum, shape);
         store.setRectangleHeight(new Double(bounds.height), roiNum, shape);
+        store.setRectangleTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setRectangleTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setRectangleTheT(unwrap(roi.getTPosition()), roiNum, shape);
 
         store.setRectangleText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
@@ -614,16 +630,6 @@ public class ROIHandler {
     private static void storePolygon(PolygonRoi roi, MetadataStore store,
             int roiNum, int shape)
     {
-        //        Rectangle bounds = roi.getBounds();
-        //        int[] xCoordinates = roi.getXCoordinates();
-        //        int[] yCoordinates = roi.getYCoordinates();
-        //        StringBuffer points = new StringBuffer();
-        //        for (int i=0; i<xCoordinates.length; i++) {
-        //            points.append(xCoordinates[i] + bounds.x);
-        //            points.append(",");
-        //            points.append(yCoordinates[i] + bounds.y);
-        //            if (i < xCoordinates.length - 1) points.append(" ");
-        //        }
 
         int[] xCoordinates = roi.getPolygon().xpoints;
         int[] yCoordinates = roi.getPolygon().ypoints;
@@ -641,6 +647,9 @@ public class ROIHandler {
         if (st1.matches("Polyline") || st1.matches("Freeline") || st1.matches("Angle")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
             store.setPolylineText(roi.getName(), roiNum, shape);
+            store.setPolylineTheC(unwrap(roi.getCPosition()), roiNum, shape);
+            store.setPolylineTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+            store.setPolylineTheT(unwrap(roi.getTPosition()), roiNum, shape);
             if (roi.getStrokeWidth() > 0) {
                 store.setPolylineStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
             }
@@ -654,6 +663,10 @@ public class ROIHandler {
         else if (st1.matches("Polygon") || st1.matches("Freehand") || st1.matches("Traced")){
             store.setPolygonPoints(points.toString(), roiNum, shape);
             store.setPolygonText(roi.getName(), roiNum, shape);
+            store.setPolygonTheC(unwrap(roi.getCPosition()), roiNum, shape);
+            store.setPolygonTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+            store.setPolygonTheT(unwrap(roi.getTPosition()), roiNum, shape);
+            
             if (roi.getStrokeWidth() > 0) {
                 store.setPolygonStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
             }
@@ -682,6 +695,10 @@ public class ROIHandler {
         store.setEllipseRadiusX((double) rx/2, roiNum, shape);
         store.setEllipseRadiusY((double) ry/2, roiNum, shape);
         store.setEllipseText(roi.getName(), roiNum, shape);
+        store.setEllipseTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setEllipseTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setEllipseTheT(unwrap(roi.getTPosition()), roiNum, shape);
+        
         if (roi.getStrokeWidth() > 0) {
             store.setEllipseStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
