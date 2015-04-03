@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -53,17 +52,14 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -71,7 +67,6 @@ import ome.units.UNITS;
 
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -491,11 +486,10 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
-    IMetadata omexml = null;
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      omexml = service.createOMEXMLMetadata();
+      service.createOMEXMLMetadata();
     }
     catch (DependencyException exc) {
       throw new FormatException("Could not create OME-XML store.", exc);
@@ -504,7 +498,6 @@ public class LIFReader extends FormatReader {
       throw new FormatException("Could not create OME-XML store.", exc);
     }
     MetadataStore store = makeFilterMetadata();
-    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
