@@ -454,7 +454,9 @@ public class BioRadReader extends FormatReader {
         Location f = new Location(file);
         if (f.length() == length) {
           pics.add(file);
-          used.add(f.getAbsolutePath());
+          if (!used.contains(f.getAbsolutePath())) {
+            used.add(f.getAbsolutePath());
+          }
         }
       }
       if (pics.size() == 1) m.sizeC = 1;
