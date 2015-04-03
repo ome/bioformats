@@ -55,6 +55,7 @@ public class MetamorphHandler extends BaseHandler {
   private Vector<Double> zPositions;
   private double pixelSizeX, pixelSizeY;
   private double temperature;
+  private double lensNA;
   private String binning;
   private double readOutRate, zoom;
   private Length positionX, positionY;
@@ -111,6 +112,8 @@ public class MetamorphHandler extends BaseHandler {
   public Length getStagePositionX() { return positionX; }
 
   public Length getStagePositionY() { return positionY; }
+
+  public double getLensNA() { return lensNA; }
 
   public Vector<Double> getExposures() { return exposures; }
 
@@ -255,6 +258,9 @@ public class MetamorphHandler extends BaseHandler {
         gain = new Double(value.replaceAll("[xX]", ""));
       }
       catch (NumberFormatException e) { }
+    }
+    else if (key.equals("_MagNA_")) {
+      lensNA = Double.parseDouble(value);
     }
   }
 

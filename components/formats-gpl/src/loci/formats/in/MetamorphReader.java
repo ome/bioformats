@@ -762,6 +762,13 @@ public class MetamorphReader extends BaseTiffReader {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
       }
 
+      String objectiveID = MetadataTools.createLSID("Objective", i, 0);
+      store.setObjectiveID(objectiveID, i, 0);
+      if (handler.getLensNA() != 0) {
+          store.setObjectiveLensNA(handler.getLensNA(), i, 0);
+      }
+      store.setObjectiveSettingsID(objectiveID, i);
+
       int waveIndex = 0;
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (firstSeriesChannels == null ||
