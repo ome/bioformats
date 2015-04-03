@@ -926,20 +926,20 @@ public class LIFReader extends FormatReader {
   private Element getMetadataRoot(String xml)
     throws FormatException, IOException
   {
+    ByteArrayInputStream s = null;
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      ByteArrayInputStream s =
-        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
-      Element root = parser.parse(s).getDocumentElement();
-      s.close();
-      return root;
+      s = new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
+      return parser.parse(s).getDocumentElement();
     }
     catch (ParserConfigurationException e) {
       throw new FormatException(e);
     }
     catch (SAXException e) {
       throw new FormatException(e);
+    } finally {
+        if (s != null) s.close();
     }
   }
 
