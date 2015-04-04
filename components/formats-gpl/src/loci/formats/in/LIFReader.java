@@ -83,6 +83,9 @@ public class LIFReader extends FormatReader {
   public static final byte LIF_MAGIC_BYTE = 0x70;
   public static final byte LIF_MEMORY_BYTE = 0x2a;
 
+  /** The encoding used in this file.*/
+  private static final String ENCODING = "ISO-8859-1";
+
   private static final HashMap<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
 
@@ -381,6 +384,7 @@ public class LIFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    in.setEncoding(ENCODING);
     offsets = new Vector<Long>();
 
     in.order(true);
@@ -501,13 +505,12 @@ public class LIFReader extends FormatReader {
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
 
-    String encoding = "ISO-8859-1";
-    xml = "<?xml version=\"1.0\" encoding=\""+encoding+"\"?><LEICA>" + xml +
+    xml = "<?xml version=\"1.0\" encoding=\""+ENCODING+"\"?><LEICA>" + xml +
       "</LEICA>";
 
     xml = XMLTools.sanitizeXML(xml);
 
-    translateMetadata(getMetadataRoot(xml, encoding));
+    translateMetadata(getMetadataRoot(xml));
 
     for (int i=0; i<imageNames.length; i++) {
       setSeries(i);
@@ -923,14 +926,14 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  private Element getMetadataRoot(String xml, String encoding)
+  private Element getMetadataRoot(String xml)
     throws FormatException, IOException
   {
     ByteArrayInputStream s = null;
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      s = new ByteArrayInputStream(xml.getBytes(encoding));
+      s = new ByteArrayInputStream(xml.getBytes(ENCODING));
       return parser.parse(s).getDocumentElement();
     }
     catch (ParserConfigurationException e) {
