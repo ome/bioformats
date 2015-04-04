@@ -38,7 +38,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -1789,6 +1788,9 @@ public class LIFReader extends FormatReader {
             // XZ scan - swap Y and Z
             ms.sizeY = len;
             ms.sizeZ = 1;
+            if (ms.sizeX == 0) {
+              ms.sizeX = len;
+            }
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = physicalLen;
           }
@@ -1803,6 +1805,9 @@ public class LIFReader extends FormatReader {
             // XT scan - swap Y and T
             ms.sizeY = len;
             ms.sizeT = 1;
+            if (ms.sizeX == 0) {
+                ms.sizeX = len;
+              }
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = physicalLen;
           }
