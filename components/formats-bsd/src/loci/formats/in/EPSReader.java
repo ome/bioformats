@@ -268,7 +268,7 @@ public class EPSReader extends FormatReader {
           try {
             int newX = Integer.parseInt(t[0]);
             int newY = Integer.parseInt(t[1]);
-            if (newX >= m.sizeX && newY >= m.sizeY) {
+            if (t.length > 2 && Integer.parseInt(t[2]) >= 8) {
               m.sizeX = newX;
               m.sizeY = newY;
               start = lineNum;
