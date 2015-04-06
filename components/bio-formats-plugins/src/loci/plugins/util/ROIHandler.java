@@ -308,9 +308,9 @@ public class ROIHandler {
                         roi.setName(shapeObject.getID());
 
                         if (Prefs.showAllSliceOnly){
-                            if(shapeObject.getTheC() != null)c = shapeObject.getTheC().getValue();
-                            if(shapeObject.getTheZ() != null)z = shapeObject.getTheZ().getValue();
-                            if(shapeObject.getTheT() != null)t = shapeObject.getTheT().getValue();
+                            if(shapeObject.getTheC() != null);c = shapeObject.getTheC().getValue();
+                            if(shapeObject.getTheZ() != null);z = shapeObject.getTheZ().getValue();
+                            if(shapeObject.getTheT() != null);t = shapeObject.getTheT().getValue();
                             roi.setPosition(c, z, t);
                         }
                         roi.setImage(images[imageNum]);
@@ -324,6 +324,7 @@ public class ROIHandler {
                         }
                         if (sc != null) roi.setStrokeColor(sc);
                         manager.add(images[imageNum], roi, nextRoi++);
+                        manager.setAlwaysOnTop(true);
                         manager.runCommand("Select All");
                         manager.runCommand("Show All");
                     }
