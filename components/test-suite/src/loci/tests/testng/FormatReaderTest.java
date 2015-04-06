@@ -1417,6 +1417,11 @@ public class FormatReaderTest {
       String newFile = null;
       for (int i=0; i<usedFiles.length; i++) {
         newFiles[i] = usedFiles[i].replaceAll(toRemove.toString(), "");
+        // sanitize file separators on Windows
+        // a forward-slash should work just as well as a backslash, so we
+        // use that for the mapped file name to avoid problems with creating
+        // a FilePattern that contains multiple files
+        newFiles[i] = newFiles[i].replace('\\', '/');
         LOGGER.debug("mapping {} to {}", newFiles[i], usedFiles[i]);
         Location.mapId(newFiles[i], usedFiles[i]);
 
