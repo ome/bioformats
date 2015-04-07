@@ -266,7 +266,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("ResolutionUnit", resUnit);
 
-    putInt("PageNumber", firstIFD, IFD.PAGE_NUMBER);
+    putString("PageNumber", firstIFD, IFD.PAGE_NUMBER);
     putInt("TransferFunction", firstIFD, IFD.TRANSFER_FUNCTION);
 
     int predict = firstIFD.getIFDIntValue(IFD.PREDICTOR);
@@ -531,6 +531,15 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   protected void putInt(String key, IFD ifd, int tag) {
     put(key, ifd.getIFDIntValue(tag));
+  }
+
+  protected void putString(String key, IFD ifd, int tag) {
+    String value = "";
+    try {
+      value = ifd.getIFDStringValue(tag);
+    } catch (FormatException e) {
+    }
+    put(key, value);
   }
 
   // -- Internal FormatReader API methods --
