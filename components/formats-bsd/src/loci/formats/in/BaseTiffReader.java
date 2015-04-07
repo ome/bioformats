@@ -33,6 +33,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -462,9 +464,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      Length sizeX = FormatTools.getPhysicalSizeX(pixX);
-      Length sizeY = FormatTools.getPhysicalSizeY(pixY);
-
+      String unit = getResolutionUnitFromComment(firstIFD);
+      
+      Length sizeX = FormatTools.getPhysicalSizeX(pixX, unit);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixY, unit);
+      
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -485,6 +489,27 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         }
       }
     }
+  }
+  
+  /**
+   * Extracts the resolution unit symbol from the comment field
+   * 
+   * @param ifd
+   *          The {@link IFD}
+   * @return The unit symbol or <code>null</code> if the information is not
+   *         available
+   */
+  private String getResolutionUnitFromComment(IFD ifd) {
+    String comment = ifd.getComment();
+    if (comment != null && comment.trim().length() > 0) {
+      String p = "(.*)unit=(\\w+)(.*)";
+      Pattern pattern = Pattern.compile(p, Pattern.DOTALL);
+      Matcher m = pattern.matcher(comment);
+      if (m.matches()) {
+        return m.group(2);
+      }
+    }
+    return null;
   }
 
   /**

@@ -52,6 +52,8 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -1386,19 +1388,41 @@ public final class FormatTools {
   // -- OME-XML primitive type methods --
 
   public static Length getPhysicalSizeX(Double value) {
+   return getPhysicalSizeX(value, null);
+  }
+  
+  public static Length getPhysicalSizeX(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
+      if (unit != null) {
+        try {
+          UnitsLength ul = UnitsLength.fromString(unit);
+          return UnitsLength.create(value, ul);
+        } catch (EnumerationException e) {
+        }
+      }
       return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
     return null;
   }
-
+  
   public static Length getPhysicalSizeY(Double value) {
+    return getPhysicalSizeY(value, null);
+  }
+  
+  public static Length getPhysicalSizeY(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
+      if (unit != null) {
+        try {
+          UnitsLength ul = UnitsLength.fromString(unit);
+          return UnitsLength.create(value, ul);
+        } catch (EnumerationException e) {
+        }
+      }
       return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
