@@ -1887,10 +1887,10 @@ public class NativeND2Reader extends FormatReader {
 
       String pos = "for position";
       for (int n=0; n<getImageCount(); n++) {
-        int index = i * getImageCount() + n;
+        int index = n * getSeriesCount() + i;
         if (split) {
           int planes = getImageCount() / getSizeC();
-          index = i * planes + (n % planes);
+          index = (n / getSizeC()) * getSeriesCount() + i;
         }
         if (posX != null) {
           if (index >= posX.size()) index = i;
