@@ -1791,9 +1791,6 @@ public class LIFReader extends FormatReader {
             // XZ scan - swap Y and Z
             ms.sizeY = len;
             ms.sizeZ = 1;
-            if (ms.sizeX == 0) {
-              ms.sizeX = len;
-            }
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = physicalLen;
           }
@@ -1808,9 +1805,6 @@ public class LIFReader extends FormatReader {
             // XT scan - swap Y and T
             ms.sizeY = len;
             ms.sizeT = 1;
-            if (ms.sizeX == 0) {
-                ms.sizeX = len;
-              }
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = physicalLen;
           }
@@ -1845,6 +1839,9 @@ public class LIFReader extends FormatReader {
     if (ms.sizeC == 0) ms.sizeC = 1;
     if (ms.sizeZ == 0) ms.sizeZ = 1;
     if (ms.sizeT == 0) ms.sizeT = 1;
+
+    if (ms.sizeX == 0) ms.sizeX = 1;
+    if (ms.sizeY == 0) ms.sizeY = 1;
 
     ms.interleaved = ms.rgb;
     ms.indexed = !ms.rgb;
