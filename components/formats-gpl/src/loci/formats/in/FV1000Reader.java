@@ -1579,6 +1579,9 @@ public class FV1000Reader extends FormatReader {
   private String sanitizeFile(String file, String path) {
     String f = sanitizeValue(file);
     if (path.equals("")) return f;
+    if (path.endsWith(File.separator)) {
+      return path + f;
+    }
     return path + File.separator + f;
   }
 
