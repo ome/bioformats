@@ -1146,15 +1146,11 @@ public class MetamorphReader extends BaseTiffReader {
     // parse (mangle) TIFF comment
     String descr = ifds.get(0).getComment();
     if (descr != null) {
-      String[] lines = descr.split("\n");
       StringBuffer sb = new StringBuffer();
-      for (int i=0; i<lines.length; i++) {
-        String line = lines[i].trim();
+      String line = descr.substring(0, descr.indexOf("\n"));
 
-        if (line.startsWith("<") && line.endsWith(">")) {
-          // XML comment; this will have already been parsed so can be ignored
-          break;
-        }
+      if (!line.startsWith("<") || !line.endsWith(">")) {
+        // Not an XML comment (which will have already been parsed so can be ignored)
 
         Hashtable<String, Object> meta = getSeriesMetadata();
         MetamorphHandler handler = new MetamorphHandler(meta);

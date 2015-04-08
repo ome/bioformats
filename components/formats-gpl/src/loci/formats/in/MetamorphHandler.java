@@ -133,16 +133,18 @@ public class MetamorphHandler extends BaseHandler {
     String k = null, v = null;
 
     String delim = " #13; #10;";
-    if (desc != null && desc.indexOf(delim) < 0) {
+    if (desc.indexOf(delim) < 0) {
       delim = "&#13;&#10;";
+    }
+    if (desc.indexOf(delim) < 0) {
+      delim = "\n";
     }
 
     if (desc.indexOf(delim) != -1) {
       String vDescription = null;
 
-      int currentIndex = -delim.length();
+      int currentIndex = 0;
       while (currentIndex != -1) {
-        currentIndex += delim.length();
         int nextIndex = desc.indexOf(delim, currentIndex);
 
         String line = null;
@@ -153,6 +155,8 @@ public class MetamorphHandler extends BaseHandler {
           line = desc.substring(currentIndex, nextIndex);
         }
         currentIndex = nextIndex;
+        if (currentIndex != -1)
+          currentIndex += delim.length();
 
         if (line.isEmpty()) {
           continue;
