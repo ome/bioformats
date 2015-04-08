@@ -123,7 +123,95 @@ public class MetamorphHandler extends BaseHandler {
 
   public Vector<Double> getExposures() { return exposures; }
 
+  public void parseTextDescription(String desc)
+  {
+    if (desc == null)
+      return;
+
+    if (metadata != null) metadata.remove("Comment");
+
+    String k = null, v = null;
+
+    String delim = " #13; #10;";
+    if (desc != null && desc.indexOf(delim) < 0) {
+      delim = "&#13;&#10;";
+    }
+
+    if (desc.indexOf(delim) != -1) {
+      String vDescription = null;
+
+      int currentIndex = -delim.length();
+      while (currentIndex != -1) {
+        currentIndex += delim.length();
+        int nextIndex = desc.indexOf(delim, currentIndex);
+
+        String line = null;
+        if (nextIndex == -1) {
+          line = desc.substring(currentIndex, desc.length());
+        }
+        else {
+          line = desc.substring(currentIndex, nextIndex);
+        }
+        currentIndex = nextIndex;
+
+        if (line.isEmpty()) {
+          continue;
+        }
+
+        // We use a dictionary to identify the standard MetaMorph keys:
+        boolean vLineIsMetaMorphStandard = false;
+        for (String vDescriptionKey : mDesciptionKeyList) {
+          if (line.startsWith(vDescriptionKey)) {
+            vLineIsMetaMorphStandard = true;
+            break;
+          }
+        }
+        if (vLineIsMetaMorphStandard) {
+          // The majority of tags can be split at the colon:
+          int colon = line.indexOf(":");
+          if (colon != -1) {
+            k = line.substring(0, colon).trim();
+            v = line.substring(colon + 1).trim();
+            if (metadata != null) metadata.put(k, v);
+            checkKey(k, v);
+          } else {
+            // There was no colon, so the key is a full line:
+            k = line.trim();
+            v = line.trim();
+            if (metadata != null) metadata.put(k, v);
+            checkKey(k, v);
+          }
+        } else {
+          // This is NOT a standard tag in the description field, so it
+	      // must be a multi-line description from the user (i.e. from
+	      // the MetaXpress free-text "Description" field in the screening
+	      // application).
+          if (vDescription == null) {
+            vDescription = line;
+          } else {
+            vDescription = vDescription + "\n" + line;
+          }
+        }
+      }
+      if (metadata != null && vDescription != null) metadata.put("Description", vDescription);
+    }
+    else {
+      int colon = desc.indexOf(":");
+      while (colon != -1) {
+        k = desc.substring(0, colon);
+        int space = desc.lastIndexOf(" ", desc.indexOf(":", colon + 1));
+        if (space == -1) space = desc.length();
+        v = desc.substring(colon + 1, space).trim();
+        if (metadata != null) metadata.put(k, v);
+        desc = desc.substring(space).trim();
+        colon = desc.indexOf(":");
+        checkKey(k, v);
+      }
+    }
+  }
+
   // -- DefaultHandler API methods --
+
 
   @Override
   public void startElement(String uri, String localName, String qName,
@@ -131,87 +219,9 @@ public class MetamorphHandler extends BaseHandler {
   {
     String id = attributes.getValue("id");
     String value = attributes.getValue("value");
-    String delim = " #13; #10;";
-    if (value != null && value.indexOf(delim) < 0) {
-      delim = "&#13;&#10;";
-    }
     if (id != null && value != null) {
       if (id.equals("Description")) {
-        if (metadata != null) metadata.remove("Comment");
-
-        String k = null, v = null;
-
-        if (value.indexOf(delim) != -1) {
-          String vDescription = null;
-
-          int currentIndex = -delim.length();
-          while (currentIndex != -1) {
-            currentIndex += delim.length();
-            int nextIndex = value.indexOf(delim, currentIndex);
-
-            String line = null;
-            if (nextIndex == -1) {
-              line = value.substring(currentIndex, value.length());
-            }
-            else {
-              line = value.substring(currentIndex, nextIndex);
-            }
-            currentIndex = nextIndex;
-
-            if (line.isEmpty()) {
-              continue;
-            }
-
-            // We use a dictionary to identify the standard MetaMorph keys:
-            boolean vLineIsMetaMorphStandard = false;
-            for (String vDescriptionKey : mDesciptionKeyList) {
-              if (line.startsWith(vDescriptionKey)) {
-                vLineIsMetaMorphStandard = true;
-                break;
-              }
-            }
-            if (vLineIsMetaMorphStandard) {
-              // The majority of tags can be split at the colon:
-              int colon = line.indexOf(":");
-              if (colon != -1) {
-                k = line.substring(0, colon).trim();
-                v = line.substring(colon + 1).trim();
-                if (metadata != null) metadata.put(k, v);
-                checkKey(k, v);
-              } else {
-                // There was no colon, so the key is a full line:
-                k = line.trim();
-                v = line.trim();
-                if (metadata != null) metadata.put(k, v);
-                checkKey(k, v);
-              }
-            } else {
-              // This is NOT a standard tag in the description field, so it
-	      // must be a multi-line description from the user (i.e. from
-	      // the MetaXpress free-text "Description" field in the screening
-	      // application).
-              if (vDescription == null) {
-                vDescription = line;
-              } else {
-                vDescription = vDescription + "\n" + line;
-              }
-            }
-          }
-          if (metadata != null && vDescription != null) metadata.put("Description", vDescription);
-        }
-        else {
-          int colon = value.indexOf(":");
-          while (colon != -1) {
-            k = value.substring(0, colon);
-            int space = value.lastIndexOf(" ", value.indexOf(":", colon + 1));
-            if (space == -1) space = value.length();
-            v = value.substring(colon + 1, space).trim();
-            if (metadata != null) metadata.put(k, v);
-            value = value.substring(space).trim();
-            colon = value.indexOf(":");
-            checkKey(k, v);
-          }
-        }
+        parseTextDescription(value);
       }
       else {
         if (metadata != null) metadata.put(id, value);

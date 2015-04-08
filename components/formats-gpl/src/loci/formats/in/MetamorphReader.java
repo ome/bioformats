@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import org.joda.time.DateTime;
@@ -1155,74 +1156,45 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         }
 
-        int colon = line.indexOf(":");
+        Hashtable<String, Object> meta = getSeriesMetadata();
+        MetamorphHandler handler = new MetamorphHandler(meta);
+        handler.parseTextDescription(descr);
 
-        if (colon < 0) {
-          // normal line (not a key/value pair)
-          if (line.length() > 0) {
-            // not a blank line
-            sb.append(line);
-            sb.append("  ");
+        // add key/value pair embedded in comment as separate metadata
+        String exposurestr = (String) meta.get("Exposure");
+        if (exposurestr != null) {
+          if (exposurestr.indexOf(" ") != -1) {
+            exposurestr = exposurestr.substring(0, exposurestr.indexOf(" "));
           }
+          try {
+            exposurestr = exposurestr.replace(',', '.');
+            double exposure = Double.parseDouble(exposurestr);
+            exposureTime = new Double(exposure / 1000);
+          }
+          catch (NumberFormatException e) { }
         }
-        else {
-          String descrValue = null;
-          if (i == 0) {
-            // first line could be mangled; make a reasonable guess
-            int dot = line.lastIndexOf(".", colon);
-            if (dot >= 0) {
-              descrValue = line.substring(0, dot + 1);
-            }
-            line = line.substring(dot + 1);
-            colon -= dot + 1;
+        String depthstr = (String) meta.get("Bit Depth");
+        if (depthstr != null) {
+          if (depthstr.indexOf("-") != -1) {
+            depthstr = depthstr.substring(0, depthstr.indexOf("-"));
           }
-
-          // append value to description
-          if (descrValue != null) {
-            sb.append(descrValue);
-            if (!descrValue.endsWith(".")) sb.append(".");
-            sb.append("  ");
+          try {
+            ms0.bitsPerPixel = Integer.parseInt(depthstr);
           }
-
-          // add key/value pair embedded in comment as separate metadata
-          String key = line.substring(0, colon);
-          String value = line.substring(colon + 1).trim();
-          addSeriesMeta(key, value);
-          if (key.equals("Exposure")) {
-            if (value.indexOf("=") != -1) {
-              value = value.substring(value.indexOf("=") + 1).trim();
-            }
-            if (value.indexOf(" ") != -1) {
-              value = value.substring(0, value.indexOf(" "));
+          catch (NumberFormatException e) { }
+        }
+        String gainstr = (String) meta.get("Gain");
+        if (gain != null) {
+          int space = gainstr.indexOf(" ");
+          if (space != -1) {
+            int nextSpace = gainstr.indexOf(" ", space + 1);
+            if (nextSpace < 0) {
+              nextSpace = gainstr.length();
             }
             try {
-              value = value.replace(',', '.');
-              double exposure = Double.parseDouble(value);
-              exposureTime = new Double(exposure / 1000);
+              gain = new Double(gainstr.substring(space, nextSpace));
             }
             catch (NumberFormatException e) { }
-          }
-          else if (key.equals("Bit Depth")) {
-            if (value.indexOf("-") != -1) {
-              value = value.substring(0, value.indexOf("-"));
-            }
-            try {
-              ms0.bitsPerPixel = Integer.parseInt(value);
-            }
-            catch (NumberFormatException e) { }
-          }
-          else if (key.equals("Gain")) {
-            int space = value.indexOf(" ");
-            if (space != -1) {
-              int nextSpace = value.indexOf(" ", space + 1);
-              if (nextSpace < 0) {
-                nextSpace = value.length();
-              }
-              try {
-                gain = new Double(value.substring(space, nextSpace));
-              }
-              catch (NumberFormatException e) { }
-            }
           }
         }
       }
