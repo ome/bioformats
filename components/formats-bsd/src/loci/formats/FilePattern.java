@@ -451,13 +451,6 @@ public class FilePattern {
     }
     sb.append(q > 0 ? name.substring(endList[q - 1]) : name);
 
-    for (int i=0; i<sb.length(); i++) {
-      if (sb.charAt(i) == '\\') {
-        sb.insert(i, '\\');
-        i++;
-      }
-    }
-
     return sb.toString();
   }
 
