@@ -1147,8 +1147,10 @@ public class MetamorphReader extends BaseTiffReader {
     String descr = ifds.get(0).getComment();
     if (descr != null) {
       StringBuffer sb = new StringBuffer();
-      String line = descr.substring(0, descr.indexOf("\n"));
-
+      String line = descr;
+      if (descr.indexOf("\n") != -1) {
+        line = descr.substring(0, descr.indexOf("\n"));
+      }
       if (!line.startsWith("<") || !line.endsWith(">")) {
         // Not an XML comment (which will have already been parsed so can be ignored)
 
