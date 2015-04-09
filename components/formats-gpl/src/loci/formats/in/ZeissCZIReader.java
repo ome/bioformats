@@ -1245,7 +1245,7 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       if (angles > 1 && noAngle) {
-        extra[extraDimOrder.indexOf("V")] =
+        extra[extraDimOrder.indexOf('V')] =
           p / (getImageCount() * (getSeriesCount() / angles));
       }
 
