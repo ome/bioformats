@@ -117,13 +117,13 @@ source_branch = 'develop'
 if (ext_source_branch is not None and len(ext_source_branch) > 0 and
     ext_source_branch != "${%s}" % ('sphinx_source_branch')):
     source_branch = ext_source_branch
-user = 'openmicroscopy'
+source_user = 'openmicroscopy'
 if (ext_source_user is not None and len(ext_source_user) > 0 and
     ext_source_user != "${%s}" % ('sphinx_source_user}')):
     source_user = ext_source_user
 
 github_root = 'https://github.com/'
-bf_github_root = github_root + user + '/bioformats/'
+bf_github_root = github_root + source_user + '/bioformats/'
 bf_github_tree = bf_github_root + 'tree/' + source_branch + '/'
 bf_github_blob = bf_github_root + 'blob/' + source_branch + '/'
 gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
