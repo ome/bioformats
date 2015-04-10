@@ -44,7 +44,8 @@ if (BUILD_SPHINX AND SPHINX_BUILD)
   set(sphinx_builddir "${PROJECT_BINARY_DIR}/docs/sphinx")
   file(MAKE_DIRECTORY "${sphinx_builddir}")
   configure_file("${sphinx_srcdir}/conf.py.in"
-                 "${sphinx_builddir}/conf.py")
+                 "${sphinx_builddir}/conf.py"
+                 @ONLY)
 
   sphinx_manpages("${sphinx_srcdir}" "${sphinx_builddir}"
                   "${PROJECT_BINARY_DIR}/cpp/man" MAN_PAGES)

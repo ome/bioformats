@@ -26,11 +26,11 @@ Type "ant -p" for a list of targets.
     <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
 
     <copy file="conf.py.in" tofile="conf.py" overwrite="true"/>
-    <replace file="conf.py" token="$${sphinx_srcdir}" value="."/>
-    <replace file="conf.py" token="$${sphinx_builddir}" value="."/>
-    <replace file="conf.py" token="$${sphinx_source_branch}" value="${sphinx.source.branch}"/>
-    <replace file="conf.py" token="$${sphinx_source_user}" value="${sphinx.source.user}"/>
-    <replace file="conf.py" token="$${sphinx_omerodoc_uri}" value="${sphinx.omerodoc.uri}"/>
+    <replace file="conf.py" token="@sphinx_srcdir@" value="."/>
+    <replace file="conf.py" token="@sphinx_builddir@" value="."/>
+    <replace file="conf.py" token="@sphinx_source_branch@" value="${sphinx.source.branch}"/>
+    <replace file="conf.py" token="@sphinx_source_user@" value="${sphinx.source.user}"/>
+    <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
   </target>
 
   <macrodef name="sphinx" description="Run sphinx-build">

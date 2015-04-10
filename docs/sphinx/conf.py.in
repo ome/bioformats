@@ -12,11 +12,11 @@
 # serve to show the default.
 
 # Substitutions from external build system.
-srcdir = '${sphinx_srcdir}'
-builddir = '${sphinx_builddir}'
-ext_source_branch = '${sphinx_source_branch}'
-ext_source_user = '${sphinx_source_user}'
-ext_omerodoc_uri = '${sphinx_omerodoc_uri}'
+srcdir = '@sphinx_srcdir@'
+builddir = '@sphinx_builddir@'
+ext_source_branch = '@sphinx_source_branch@'
+ext_source_user = '@sphinx_source_user@'
+ext_omerodoc_uri = '@sphinx_omerodoc_uri@'
 
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(srcdir, '_ext')))
@@ -115,11 +115,11 @@ pygments_style = 'sphinx'
 # Variables used to define Github extlinks
 source_branch = 'develop'
 if (ext_source_branch is not None and len(ext_source_branch) > 0 and
-    ext_source_branch != "${%s}" % ('sphinx_source_branch')):
+    ext_source_branch != "@%s@" % ('sphinx_source_branch')):
     source_branch = ext_source_branch
 source_user = 'openmicroscopy'
 if (ext_source_user is not None and len(ext_source_user) > 0 and
-    ext_source_user != "${%s}" % ('sphinx_source_user}')):
+    ext_source_user != "@%s@" % ('sphinx_source_user}')):
     source_user = ext_source_user
 
 github_root = 'https://github.com/'
@@ -143,7 +143,7 @@ lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
 omerodoc_uri = oo_site_root + '/support/omero5.1'
 if (ext_omerodoc_uri is not None and len(ext_omerodoc_uri) > 0 and
-    ext_omerodoc_uri != "${%s}" % ('sphinx_omerodoc_uri}')):
+    ext_omerodoc_uri != "@%s@" % ('sphinx_omerodoc_uri}')):
     omerodoc_uri = ext_omerodoc_uri
 
 extlinks = {
