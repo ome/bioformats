@@ -907,7 +907,9 @@ public class ZeissCZIReader extends FormatReader {
         if (c < channels.size()) {
           store.setChannelName(channels.get(c).name, i, c);
           store.setChannelFluor(channels.get(c).fluor, i, c);
-          store.setChannelFilterSetRef(channels.get(c).filterSetRef, i, c);
+          if (channels.get(c).filterSetRef != null) {
+            store.setChannelFilterSetRef(channels.get(c).filterSetRef, i, c);
+          }
 
           String color = channels.get(c).color;
           if (color != null) {
