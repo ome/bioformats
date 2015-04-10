@@ -1768,7 +1768,8 @@ public final class AWTImageTools {
     ColorModel sourceModel = source.getColorModel();
     if ((sourceModel instanceof Index16ColorModel) ||
       (sourceModel instanceof IndexColorModel) ||
-      (sourceModel instanceof SignedColorModel))
+      (sourceModel instanceof SignedColorModel) ||
+      FormatTools.isFloatingPoint(pixelType))
     {
       DataBuffer buffer = source.getData().getDataBuffer();
       WritableRaster raster = Raster.createWritableRaster(
