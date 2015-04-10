@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -39,7 +38,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -53,17 +51,14 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -71,7 +66,6 @@ import ome.units.UNITS;
 
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -88,6 +82,9 @@ public class LIFReader extends FormatReader {
 
   public static final byte LIF_MAGIC_BYTE = 0x70;
   public static final byte LIF_MEMORY_BYTE = 0x2a;
+
+  /** The encoding used in this file.*/
+  private static final String ENCODING = "ISO-8859-1";
 
   private static final HashMap<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
@@ -387,6 +384,7 @@ public class LIFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    in.setEncoding(ENCODING);
     offsets = new Vector<Long>();
 
     in.order(true);
@@ -491,11 +489,10 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
-    IMetadata omexml = null;
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      omexml = service.createOMEXMLMetadata();
+      service.createOMEXMLMetadata();
     }
     catch (DependencyException exc) {
       throw new FormatException("Could not create OME-XML store.", exc);
@@ -504,12 +501,11 @@ public class LIFReader extends FormatReader {
       throw new FormatException("Could not create OME-XML store.", exc);
     }
     MetadataStore store = makeFilterMetadata();
-    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
 
-    xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml +
+    xml = "<?xml version=\"1.0\" encoding=\""+ENCODING+"\"?><LEICA>" + xml +
       "</LEICA>";
 
     xml = XMLTools.sanitizeXML(xml);
@@ -933,20 +929,20 @@ public class LIFReader extends FormatReader {
   private Element getMetadataRoot(String xml)
     throws FormatException, IOException
   {
+    ByteArrayInputStream s = null;
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      ByteArrayInputStream s =
-        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
-      Element root = parser.parse(s).getDocumentElement();
-      s.close();
-      return root;
+      s = new ByteArrayInputStream(xml.getBytes(ENCODING));
+      return parser.parse(s).getDocumentElement();
     }
     catch (ParserConfigurationException e) {
       throw new FormatException(e);
     }
     catch (SAXException e) {
       throw new FormatException(e);
+    } finally {
+        if (s != null) s.close();
     }
   }
 
@@ -1843,6 +1839,9 @@ public class LIFReader extends FormatReader {
     if (ms.sizeC == 0) ms.sizeC = 1;
     if (ms.sizeZ == 0) ms.sizeZ = 1;
     if (ms.sizeT == 0) ms.sizeT = 1;
+
+    if (ms.sizeX == 0) ms.sizeX = 1;
+    if (ms.sizeY == 0) ms.sizeY = 1;
 
     ms.interleaved = ms.rgb;
     ms.indexed = !ms.rgb;
