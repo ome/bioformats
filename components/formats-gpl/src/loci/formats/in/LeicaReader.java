@@ -670,7 +670,7 @@ public class LeicaReader extends FormatReader {
       if (i < timestamps.length && timestamps[i] != null &&
         timestamps[i].length > 0)
       {
-        firstPlane = getTime(timestamps[i][0]);
+        firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT, ":");
         String date = DateTools.formatDate(timestamps[i][0], DATE_FORMAT);
         if (date != null) {
           store.setImageAcquisitionDate(new Timestamp(date), i);
@@ -735,7 +735,7 @@ public class LeicaReader extends FormatReader {
 
       for (int j=0; j<ms.imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
-          long time = getTime(timestamps[i][j]);
+          long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT, ":");
           double elapsedTime = (double) (time - firstPlane) / 1000;
           store.setPlaneDeltaT(new Time(elapsedTime, UNITS.S), i, j);
           if (exposureTime[i] > 0) {
@@ -1153,7 +1153,8 @@ public class LeicaReader extends FormatReader {
     timestamps[seriesIndex] = new String[numStamps];
     for (int j=0; j<numStamps; j++) {
       timestamps[seriesIndex][j] = DateTools.convertDate(
-        getTime(getString(64)), DateTools.UNIX, DATE_FORMAT + ":SSS");
+        DateTools.getTime(getString(64), DATE_FORMAT, ":"), DateTools.UNIX,
+        DATE_FORMAT + ":SSS");
       addSeriesMetaList("Timestamp", timestamps[seriesIndex][j]);
     }
 
@@ -1671,13 +1672,6 @@ public class LeicaReader extends FormatReader {
     table.put(new Integer(5832782), "logical y-wide");
     table.put(new Integer(5898318), "logical z-wide");
     return table;
-  }
-
-  private long getTime(String stamp) {
-    int msSeparator = stamp.lastIndexOf(":");
-    String newStamp = stamp.substring(0, msSeparator);
-    long ms = Long.parseLong(stamp.substring(msSeparator + 1));
-    return DateTools.getTime(newStamp, DATE_FORMAT) + ms;
   }
 
   // -- Helper class --
