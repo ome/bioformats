@@ -1651,6 +1651,9 @@ public class FormatReaderTest {
 
           for (int j=0; j<comp.length && success; j++) {
             if (!comp[j].equals(base[j])) {
+              if (base[j].equals(new Location(comp[j]).getCanonicalPath())) {
+                continue;
+              }
               success = false;
               msg = base[i] + "(file @ " + j + " was '" + comp[j] +
                 "', expected '" + base[j] + "')";
