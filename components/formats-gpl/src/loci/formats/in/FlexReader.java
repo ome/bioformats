@@ -813,9 +813,13 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(0);
     }
     else {
-      TiffParser parser = new TiffParser(file.file);
-      ifd = parser.getFirstIFD();
-      parser.getStream().close();
+      RandomAccessInputStream ras = new RandomAccessInputStream(file.file);
+      try {
+        TiffParser parser = new TiffParser(ras);
+        ifd = parser.getFirstIFD();
+      } finally {
+        ras.close();
+      }
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
 
