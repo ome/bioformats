@@ -79,7 +79,6 @@ public class MetamorphReader extends BaseTiffReader {
     LoggerFactory.getLogger(MetamorphReader.class);
 
   public static final String SHORT_DATE_FORMAT = "yyyyMMdd HH:mm:ss";
-  public static final String MEDIUM_DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";
   public static final String LONG_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
   public static final String[] ND_SUFFIX = {"nd"};
@@ -830,9 +829,10 @@ public class MetamorphReader extends BaseTiffReader {
       timestamps = handler.getTimestamps();
 
       for (int t=0; t<timestamps.size(); t++) {
-        long date = DateTools.getTime(timestamps.get(t), SHORT_DATE_FORMAT, ".");
-        addSeriesMetaList("timestamp", DateTools.formatDate(date,
-          MEDIUM_DATE_FORMAT));
+        String date = DateTools.convertDate(DateTools.getTime(
+          timestamps.get(t), SHORT_DATE_FORMAT, "."), DateTools.UNIX,
+          SHORT_DATE_FORMAT + ".SSS");
+        addSeriesMetaList("timestamp", date);
       }
 
       long startDate = 0;
