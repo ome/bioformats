@@ -402,8 +402,11 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Reading contents of .mea file");
     LOGGER.info("Parsing XML from .mea file");
     RandomAccessInputStream s = new RandomAccessInputStream(id);
-    XMLTools.parseXML(s, handler);
-    s.close();
+    try {
+      XMLTools.parseXML(s, handler);
+    } finally {
+      s.close();
+    }
 
     Vector<String> flex = handler.getFlexFiles();
     if (flex.size() == 0) {
