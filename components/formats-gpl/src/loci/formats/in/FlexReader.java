@@ -826,8 +826,8 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Parsing XML in .flex file");
 
     xml = xml.trim();
-    // some files have a trailing ">", which needs to be removed
-    if (xml.endsWith(">>")) {
+    // some files have a trailing ">" or "%", which needs to be removed
+    if (xml.endsWith(">>") || xml.endsWith("%")) {
       xml = xml.substring(0, xml.length() - 1);
     }
 
