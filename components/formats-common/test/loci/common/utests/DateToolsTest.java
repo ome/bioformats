@@ -68,6 +68,15 @@ public class DateToolsTest {
     };
   }
   
+  @DataProvider(name = "times_ms_separators")
+  public Object[][] createTimesSeparators() {
+    return new Object[][] {
+      {"1970-01-01 00:00:00:10", 10L, ":"},
+      {"1970-01-01 00:00:00.10", 10L, "."},
+      {"1970-01-01 00:00:00-10", 10L, "-"},
+    };
+  }
+
   @Test(dataProvider = "times_no_ms")
   public void testGetTime(String date, long ms) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT));
@@ -77,6 +86,11 @@ public class DateToolsTest {
   public void testGetTimeMs(String date, long ms1, long ms2) {
     assertEquals(ms1, DateTools.getTime(date, DATE_FORMAT, ":"));
     assertEquals(ms2, DateTools.getTime(date, DATE_FORMAT + ":SSS"));
+  }
+
+  @Test(dataProvider = "times_ms_separators")
+  public void testGetTimeSeparators(String date, long ms, String separator) {
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, separator));
   }
 
 }
