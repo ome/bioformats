@@ -291,8 +291,12 @@ public final class DateTools {
    */
   public static long getTime(String date, String format, String separator) {
     int msSeparator = date.lastIndexOf(separator);
-    String newStamp = date.substring(0, msSeparator);
-    long ms = Long.parseLong(date.substring(msSeparator + 1));
+    long ms = 0;
+    String newStamp = date;
+    if (msSeparator > 0) {
+        newStamp = date.substring(0, msSeparator);
+        ms = Long.parseLong(date.substring(msSeparator + 1));
+    }
     return getTime(newStamp, format) + ms;
   }
 
