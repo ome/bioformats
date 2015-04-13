@@ -1500,7 +1500,10 @@ public class LIFReader extends FormatReader {
             String na = token.substring(x + 1);
 
             magnification[image] = new Double(token.substring(0, x));
-            lensNA[image] = new Double(na);
+
+            if (na.length() > 0) {
+              lensNA[image] = new Double(na);
+            }
           }
           else {
             model.append(token);
