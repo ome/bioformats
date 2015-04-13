@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,8 +43,6 @@ import loci.common.DateTools;
  */
 public class DateToolsTest {
 
-  // -- Tests --
-  
   String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   @DataProvider(name = "times_no_ms")
@@ -56,7 +54,7 @@ public class DateToolsTest {
       {"1970-01-02 00:00:00", 86400000L},
     };
   }
-  
+
   @DataProvider(name = "times_with_ms")
   public Object[][] createTimesMs() {
     return new Object[][] {
@@ -67,14 +65,13 @@ public class DateToolsTest {
       {"1970-01-01 00:00:00:001", 1L, 1L},
     };
   }
-  
+
   @DataProvider(name = "times_ms_separators")
   public Object[][] createTimesSeparators() {
     return new Object[][] {
       {"1970-01-01 00:00:00:10", 10L, ":"},
       {"1970-01-01 00:00:00.10", 10L, "."},
       {"1970-01-01 00:00:00-10", 10L, "-"},
-      {"1970-01-01 00:00:00", 0L, "."},
     };
   }
 
@@ -87,7 +84,7 @@ public class DateToolsTest {
   public void testGetTimeInvalid() {
     assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT));
   }
-  
+
   @Test(dataProvider = "times_with_ms")
   public void testGetTimeMs(String date, long ms1, long ms2) {
     assertEquals(ms1, DateTools.getTime(date, DATE_FORMAT, ":"));
@@ -99,4 +96,15 @@ public class DateToolsTest {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, separator));
   }
 
+  @Test
+  public void testGetTimeSeparatorNoMs() {
+    assertEquals(0L, DateTools.getTime(
+      "1970-01-01 00:00:00", DATE_FORMAT, "."));
+  }
+
+  @Test
+  public void testGetTimeConflictingSeparator() {
+    assertEquals(-1, DateTools.getTime(
+      "1970-01-01 00:00:00", DATE_FORMAT, ":"));
+  }
 }
