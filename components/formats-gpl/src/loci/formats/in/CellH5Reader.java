@@ -304,7 +304,7 @@ public class CellH5Reader extends FormatReader {
     // Series. This is why they only will be loaded if the CellH5 contains two
     // image / series assuming that the first is the image and 2nd the labels
     if (seriesCount <= 2 &&
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS)
     {
         parseROIs(0);
     }
