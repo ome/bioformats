@@ -1112,7 +1112,58 @@ public class ZeissCZIReader extends FormatReader {
       angles = 1;
     }
 
-    int[] extraLengths = {positions, acquisitions, mosaics, angles};
+    // use the natural ordering of the extra dimensions,
+    // instead of always using SBMV
+    ArrayList<Character> extraDimOrder = new ArrayList<Character>();
+    int[] extraLengths = new int[4];
+
+    int prevS = 0, prevB = 0, prevM = 0, prevV = 0;
+    for (int p=0; p<planes.size(); p++) {
+      SubBlock plane = planes.get(p);
+      for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
+        if (dimension == null) {
+          continue;
+        }
+        switch (dimension.dimension.charAt(0)) {
+          case 'S':
+            if (dimension.start > prevS) {
+              if (!extraDimOrder.contains('S')) {
+                extraLengths[extraDimOrder.size()] = positions;
+                extraDimOrder.add('S');
+              }
+            }
+            prevS = dimension.start;
+            break;
+          case 'B':
+            if (dimension.start > prevB) {
+              if (!extraDimOrder.contains('B')) {
+                extraLengths[extraDimOrder.size()] = acquisitions;
+                extraDimOrder.add('B');
+              }
+            }
+            prevB = dimension.start;
+            break;
+          case 'M':
+            if (dimension.start > prevM) {
+              if (!extraDimOrder.contains('M')) {
+                extraLengths[extraDimOrder.size()] = mosaics;
+                extraDimOrder.add('M');
+              }
+            }
+            prevM = dimension.start;
+            break;
+          case 'V':
+            if (dimension.start > prevV) {
+              if (!extraDimOrder.contains('V')) {
+                extraLengths[extraDimOrder.size()] = angles;
+                extraDimOrder.add('V');
+              }
+            }
+            prevV = dimension.start;
+            break;
+        }
+      }
+    }
 
     for (int p=0; p<planes.size(); p++) {
       LOGGER.trace("  processing plane #{} of {}", p, planes.size());
@@ -1133,6 +1184,7 @@ public class ZeissCZIReader extends FormatReader {
         if (dimension == null) {
           continue;
         }
+        int extraIndex = extraDimOrder.indexOf(dimension.dimension.charAt(0));
         switch (dimension.dimension.charAt(0)) {
           case 'C':
             c = dimension.start;
@@ -1153,33 +1205,41 @@ public class ZeissCZIReader extends FormatReader {
             r = dimension.start;
             break;
           case 'S':
-            extra[0] = dimension.start;
-            if (extra[0] >= extraLengths[0]) {
-              extra[0] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             break;
           case 'I':
             i = dimension.start;
             break;
           case 'B':
-            extra[1] = dimension.start;
-            if (extra[1] >= extraLengths[1]) {
-              extra[1] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             break;
           case 'M':
-            extra[2] = dimension.start;
-            if (extra[2] >= extraLengths[2]) {
-              extra[2] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             break;
           case 'H':
             phase = dimension.start;
             break;
           case 'V':
-            extra[3] = dimension.start;
-            if (extra[3] >= extraLengths[3]) {
-              extra[3] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             noAngle = false;
             break;
@@ -1187,7 +1247,8 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       if (angles > 1 && noAngle) {
-        extra[3] = p / (getImageCount() * (getSeriesCount() / angles));
+        extra[extraDimOrder.indexOf('V')] =
+          p / (getImageCount() * (getSeriesCount() / angles));
       }
 
       if (rotations > 0) {
