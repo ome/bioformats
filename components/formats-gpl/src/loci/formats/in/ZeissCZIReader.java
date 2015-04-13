@@ -754,7 +754,7 @@ public class ZeissCZIReader extends FormatReader {
       indexIntoPlanes.put(c, indices);
     }
 
-    if (channels.size() > 0 && channels.get(0).color != null) {
+    if (channels.size() > 0 && channels.get(0).color != null && !isRGB()) {
       for (int i=0; i<seriesCount; i++) {
         core.get(i).indexed = true;
       }
