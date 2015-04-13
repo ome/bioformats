@@ -60,21 +60,23 @@ public class DateToolsTest {
   @DataProvider(name = "times_with_ms")
   public Object[][] createTimesMs() {
     return new Object[][] {
-      {"1970-01-01 00:00:00:1", 1L},
-      {"1970-01-01 00:00:00:10", 10L},
-      {"1970-01-01 00:00:00:100", 100L},
-      {"1970-01-01 00:00:00:010", 10L},
+      {"1970-01-01 00:00:00:1", 1L, 100L},
+      {"1970-01-01 00:00:00:10", 10L, 100L},
+      {"1970-01-01 00:00:00:100", 100L, 100L},
+      {"1970-01-01 00:00:00:010", 10L, 10L},
+      {"1970-01-01 00:00:00:001", 1L, 1L},
     };
   }
   
   @Test(dataProvider = "times_no_ms")
-  public void testGetTime(String date, long milliseconds) {
-    assertEquals(milliseconds, DateTools.getTime(date, DATE_FORMAT));
+  public void testGetTime(String date, long ms) {
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT));
   }
   
   @Test(dataProvider = "times_with_ms")
-  public void testGetTimeMs(String date, long milliseconds) {
-    assertEquals(milliseconds, DateTools.getTime(date, DATE_FORMAT, ":"));
+  public void testGetTimeMs(String date, long ms1, long ms2) {
+    assertEquals(ms1, DateTools.getTime(date, DATE_FORMAT, ":"));
+    assertEquals(ms2, DateTools.getTime(date, DATE_FORMAT + ":SSS"));
   }
 
 }
