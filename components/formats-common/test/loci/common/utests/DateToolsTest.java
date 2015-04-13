@@ -82,6 +82,11 @@ public class DateToolsTest {
   public void testGetTime(String date, long ms) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT));
   }
+
+  @Test()
+  public void testGetTimeInvalid() {
+    assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT));
+  }
   
   @Test(dataProvider = "times_with_ms")
   public void testGetTimeMs(String date, long ms1, long ms2) {
