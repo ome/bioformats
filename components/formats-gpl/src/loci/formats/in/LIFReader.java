@@ -1643,7 +1643,9 @@ public class LIFReader extends FormatReader {
           }
         }
         // NB: "UesrDefName" is not a typo.
-        else if (id.endsWith("UesrDefName") && !value.equals("None")) {
+        else if ((id.endsWith("UesrDefName") || id.endsWith("UserDefName")) &&
+          !value.equals("None"))
+        {
           if (channelNames[image][c] == null ||
             channelNames[image][c].trim().length() == 0)
           {
