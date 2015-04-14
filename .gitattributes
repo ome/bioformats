@@ -10,3 +10,4 @@
 *.so binary
 *.dylib binary
 *.h5 binary
+*.mdb binary
