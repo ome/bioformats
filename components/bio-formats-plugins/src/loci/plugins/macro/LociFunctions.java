@@ -80,6 +80,7 @@ public class LociFunctions extends MacroFunctions {
   // -- Fields --
 
   private ImageProcessorReader r;
+  private int series = 0;
 
   // -- Constructor --
 
@@ -205,7 +206,10 @@ public class LociFunctions extends MacroFunctions {
   public void openImagePlus(String path) {
     ImagePlus[] imps = null;
     try {
-      imps = BF.openImagePlus(path);
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setSeriesOn(series, true);
+      imps = BF.openImagePlus(options);
       for (ImagePlus imp : imps) imp.show();
     }
     catch (IOException exc) {
@@ -219,7 +223,10 @@ public class LociFunctions extends MacroFunctions {
   public void openThumbImagePlus(String path) {
     ImagePlus[] imps = null;
     try {
-      imps = BF.openThumbImagePlus(path);
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setSeriesOn(series, true);
+      imps = BF.openThumbImagePlus(options);
       for (ImagePlus imp : imps) imp.show();
     }
     catch (IOException exc) {
@@ -307,7 +314,10 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void setSeries(Double seriesNum) {
-    r.setSeries(seriesNum.intValue());
+    series = seriesNum.intValue();
+    if (r.getCurrentFile() != null) {
+      r.setSeries(series);
+    }
   }
 
   public void getSeries(Double[] seriesNum) {
