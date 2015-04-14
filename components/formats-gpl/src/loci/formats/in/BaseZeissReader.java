@@ -302,7 +302,7 @@ public abstract class BaseZeissReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       long firstStamp = 0;
       if (timestamps.size() > 0) {
-        String timestamp = timestamps.get(new Integer(0));
+        String timestamp = timestamps.get(0);
         firstStamp = parseTimestamp(timestamp);
         firstStamp /= 1600;
         int epoch = timestamps.size() == 1 ? DateTools.ALT_ZVI : DateTools.ZVI;
@@ -373,7 +373,7 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setPixelsPhysicalSizeZ(sizeZ, i);
         }
 
-        long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
+        long firstStamp = parseTimestamp(timestamps.get(0));
 
         for (int plane=0; plane<getImageCount(); plane++) {
           int[] zct = getZCTCoords(plane);
@@ -818,7 +818,7 @@ public abstract class BaseZeissReader extends FormatReader {
 
         if (key.startsWith("ImageTile") && !(store instanceof DummyMetadata)) {
           if (!tiles.containsKey(new Integer(value))) {
-            tiles.put(new Integer(value), new Integer(1));
+            tiles.put(Integer.valueOf(value), 1);
           }
           else {
             int v = tiles.get(new Integer(value)).intValue() + 1;

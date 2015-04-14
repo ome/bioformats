@@ -1008,7 +1008,7 @@ public class ICSReader extends FormatReader {
               metadata.remove(key);
             }
             else if (key.startsWith("history gain")) {
-              Integer n = new Integer(0);
+              Integer n = 0;
               try {
                 n = new Integer(key.substring(12).trim());
                 n = new Integer(n.intValue() - 1);
@@ -1363,8 +1363,8 @@ public class ICSReader extends FormatReader {
       }
     }
 
-    if (channelLengths.size() == 0) {
-      channelLengths.add(new Integer(1));
+    if (channelLengths.isEmpty()) {
+      channelLengths.add(1);
       channelTypes.add(FormatTools.CHANNEL);
     }
 
