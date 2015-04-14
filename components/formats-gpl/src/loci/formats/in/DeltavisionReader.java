@@ -1128,13 +1128,7 @@ public class DeltavisionReader extends FormatReader {
         }
         // Plane properties
         else if (key.equals("EM filter")) {
-          int cIndex = 0;
-          try {
-            cIndex = getZCTCoords(currentImage)[1];
-          }
-          catch (IllegalArgumentException e) {
-            LOGGER.debug("", e);
-          }
+          int cIndex = currentImage % getSizeC();
           for (int series=0; series<getSeriesCount(); series++) {
             store.setChannelName(value, series, cIndex);
           }
@@ -1142,7 +1136,7 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("ND filter")) {
           value = value.replaceAll("%", "");
           try {
-            int cIndex = getZCTCoords(currentImage)[1];
+            int cIndex = currentImage % getSizeC();
             double nd = Double.parseDouble(value);
             ndFilters[cIndex] = new Double(nd / 100);
           }
