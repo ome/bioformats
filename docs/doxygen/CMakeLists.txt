@@ -48,5 +48,10 @@ if(BUILD_DOXYGEN)
                     COMMAND ${CMAKE_COMMAND} -Dlogfile=${CMAKE_CURRENT_BINARY_DIR}/bioformats.log -P ${PROJECT_SOURCE_DIR}/cpp/cmake/DoxygenCheck.cmake
                     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log)
 
-  add_custom_target(doc DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log doc-check)
+  add_custom_target(doc-api ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log doc-check)
+  # For backward compatibility
+  add_custom_target(doc DEPENDS doc-api)
+
+  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bioformats/"
+          DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}/cpp-api")
 endif(BUILD_DOXYGEN)
