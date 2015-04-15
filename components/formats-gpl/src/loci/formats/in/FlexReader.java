@@ -53,7 +53,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -403,8 +402,11 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Reading contents of .mea file");
     LOGGER.info("Parsing XML from .mea file");
     RandomAccessInputStream s = new RandomAccessInputStream(id);
-    XMLTools.parseXML(s, handler);
-    s.close();
+    try {
+      XMLTools.parseXML(s, handler);
+    } finally {
+      s.close();
+    }
 
     Vector<String> flex = handler.getFlexFiles();
     if (flex.size() == 0) {
@@ -814,9 +816,13 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(0);
     }
     else {
-      TiffParser parser = new TiffParser(file.file);
-      ifd = parser.getFirstIFD();
-      parser.getStream().close();
+      RandomAccessInputStream ras = new RandomAccessInputStream(file.file);
+      try {
+        TiffParser parser = new TiffParser(ras);
+        ifd = parser.getFirstIFD();
+      } finally {
+        ras.close();
+      }
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
 
@@ -827,8 +833,8 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Parsing XML in .flex file");
 
     xml = xml.trim();
-    // some files have a trailing ">", which needs to be removed
-    if (xml.endsWith(">>")) {
+    // some files have a trailing ">" or "%", which needs to be removed
+    if (xml.endsWith(">>") || xml.endsWith("%")) {
       xml = xml.substring(0, xml.length() - 1);
     }
 
