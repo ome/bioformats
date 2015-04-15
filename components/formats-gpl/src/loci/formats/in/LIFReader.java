@@ -1256,9 +1256,13 @@ public class LIFReader extends FormatReader {
       roi.scaleY = parseDouble(roiNode.getAttribute("transScalingY"));
       roi.rotation = parseDouble(roiNode.getAttribute("transRotation"));
       String linewidth = roiNode.getAttribute("linewidth");
-      if (linewidth != null && !linewidth.trim().isEmpty()) {
-        roi.linewidth = Integer.parseInt(linewidth.trim());
+      try {
+        if (linewidth != null && !linewidth.trim().isEmpty()) {
+          roi.linewidth = Integer.parseInt(linewidth.trim());
+        }
       }
+      catch (NumberFormatException e) { }
+
       roi.text = roiNode.getAttribute("text");
 
       NodeList vertices = getNodes(roiNode, "Vertex");
