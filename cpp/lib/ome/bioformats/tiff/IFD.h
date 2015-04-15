@@ -426,6 +426,14 @@ namespace ome
         readImage(VariantPixelBuffer& buf) const;
 
         /**
+         * @copydoc IFD::readImage(VariantPixelBuffer&) const
+         * @param subC the subchannel to read
+         */
+        void
+        readImage(VariantPixelBuffer& buf,
+                  dimension_size_type subC) const;
+
+        /**
          * Read a region of an image plane into a pixel buffer.
          *
          * If the destination pixel buffer is of a different size to
@@ -445,6 +453,18 @@ namespace ome
                   dimension_size_type y,
                   dimension_size_type w,
                   dimension_size_type h) const;
+
+        /**
+         * @copydoc IFD::readImage(VariantPixelBuffer&,dimension_size_type,dimension_size_type,dimension_size_type,dimension_size_type) const
+         * @param subC the subchannel to read
+         */
+        void
+        readImage(VariantPixelBuffer& dest,
+                  dimension_size_type x,
+                  dimension_size_type y,
+                  dimension_size_type w,
+                  dimension_size_type h,
+                  dimension_size_type subC) const;
 
         /**
          * Read a lookup table into a pixel buffer.

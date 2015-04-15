@@ -1169,6 +1169,13 @@ namespace ome
       }
 
       void
+      IFD::readImage(VariantPixelBuffer& buf,
+                     dimension_size_type subC) const
+      {
+        readImage(buf, 0, 0, getImageWidth(), getImageHeight(), subC);
+      }
+
+      void
       IFD::readImage(VariantPixelBuffer& dest,
                      dimension_size_type x,
                      dimension_size_type y,
@@ -1208,6 +1215,22 @@ namespace ome
 
         ReadVisitor v(*this, info, region, tiles);
         boost::apply_visitor(v, dest.vbuffer());
+      }
+
+      void
+      IFD::readImage(VariantPixelBuffer& dest,
+                     dimension_size_type x,
+                     dimension_size_type y,
+                     dimension_size_type w,
+                     dimension_size_type h,
+                     dimension_size_type subC) const
+      {
+        // Copy the desired subchannel into the destination buffer.
+        VariantPixelBuffer tmp;
+        readImage(tmp, x, y, w, h);
+
+        detail::CopySubchannelVisitor v(dest, subC);
+        boost::apply_visitor(v, tmp.vbuffer());
       }
 
       void

@@ -883,7 +883,7 @@ namespace ome
          * @param subC the subchannel to copy.
          */
         CopySubchannelVisitor(VariantPixelBuffer& dest,
-                                dimension_size_type subC):
+                              dimension_size_type subC):
           dest(dest),
           subC(subC)
         {}

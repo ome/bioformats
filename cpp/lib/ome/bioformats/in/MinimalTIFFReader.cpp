@@ -265,13 +265,9 @@ namespace ome
 
         if (isRGB())
           {
-            // Copy the desired subchannel into the destination buffer.
-            VariantPixelBuffer tmp;
-            ifd->readImage(tmp, x, y, w, h);
-
-            dimension_size_type S = no % getSizeC();
-            detail::CopySubchannelVisitor v(buf, S);
-            boost::apply_visitor(v, tmp.vbuffer());
+            // Read single subchannel.
+            dimension_size_type subC = no % getSizeC();
+            ifd->readImage(buf, x, y, w, h, subC);
           }
         else
           ifd->readImage(buf, x, y, w, h);
