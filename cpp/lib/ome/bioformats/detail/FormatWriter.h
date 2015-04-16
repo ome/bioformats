@@ -222,6 +222,82 @@ namespace ome
         ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve();
 
+        /**
+         * Determine the number of image planes in the current series.
+         *
+         * @returns the number of image planes.
+         */
+        virtual
+        dimension_size_type
+        getImageCount() const;
+
+        /**
+         * Get the size of the X dimension.
+         *
+         * @returns the X dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeX() const;
+
+        /**
+         * Get the size of the Y dimension.
+         *
+         * @returns the Y dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeY() const;
+
+        /**
+         * Get the size of the Z dimension.
+         *
+         * @returns the Z dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeZ() const;
+
+        /**
+         * Get the size of the T dimension.
+         *
+         * @returns the T dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeT() const;
+
+        /**
+         * Get the size of the C dimension.
+         *
+         * @returns the C dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeC() const;
+
+        /**
+         * Get the pixel type.
+         *
+         * @returns the pixel type.
+         */
+        virtual
+        ome::xml::model::enums::PixelType
+        getPixelType() const;
+
+        /**
+         * Get the number of valid bits per pixel.
+         *
+         * The number of valid bits per pixel is always less than or
+         * equal to the number of bits per pixel that correspond to
+         * getPixelType().
+         *
+         * @returns the number of valid bits per pixel.
+         */
+        virtual
+        pixel_size_type
+        getBitsPerPixel() const;
+
         // Documented in superclass.
         void
         setFramesPerSecond(frame_rate_type rate);

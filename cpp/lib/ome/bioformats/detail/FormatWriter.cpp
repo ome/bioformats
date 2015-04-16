@@ -327,6 +327,76 @@ namespace ome
         return metadataRetrieve;
       }
 
+      dimension_size_type
+      FormatWriter::getImageCount() const
+      {
+        return getSizeZ() * getSizeT() * getSizeC();
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeX() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeX = metadataRetrieve->getPixelsSizeX(series);
+        if (sizeX == 0U)
+          sizeX = 1U;
+        return sizeX;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeY() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeY = metadataRetrieve->getPixelsSizeY(series);
+        if (sizeY == 0U)
+          sizeY = 1U;
+        return sizeY;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeZ() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeZ = metadataRetrieve->getPixelsSizeZ(series);
+        if (sizeZ == 0U)
+          sizeZ = 1U;
+        return sizeZ;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeT() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeT = metadataRetrieve->getPixelsSizeT(series);
+        if (sizeT == 0U)
+          sizeT = 1U;
+        return sizeT;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeC() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeC = metadataRetrieve->getPixelsSizeC(series);
+        if (sizeC == 0U)
+          sizeC = 1U;
+        return sizeC;
+      }
+
+      ome::xml::model::enums::PixelType
+      FormatWriter::getPixelType() const
+      {
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getPixelsType(series);
+      }
+
+      pixel_size_type
+      FormatWriter::getBitsPerPixel() const
+      {
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getPixelsSignificantBits(series);
+      }
+
       const std::string&
       FormatWriter::getFormat() const
       {
