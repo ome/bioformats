@@ -479,6 +479,59 @@ namespace ome
     ome::xml::model::enums::DimensionOrder
     createDimensionOrder(const std::string& order);
 
+    /**
+     * Get the total size of pixel data in a series.
+     *
+     * The size for the pixel type is rounded up to the nearest byte
+     * before multiplying by the dimension sizes.
+     *
+     * @param meta the metadata to use.
+     * @param series the image series to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+              dimension_size_type                       series);
+
+    /**
+     * Get the total size of pixel data for all series.
+     *
+     * The size for the pixel type is rounded up to the nearest byte
+     * before multiplying by the dimension sizes.
+     *
+     * @param meta the metadata to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta);
+
+
+    /**
+     * Get the total significant size of pixel data in a series.
+     *
+     * The significant size for the pixel type (in bits) is multiplied
+     * by the dimension sizes before converting to bytes.
+     *
+     * @param meta the metadata to use.
+     * @param series the image series to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+                         dimension_size_type                       series);
+
+    /**
+     * Get the total significant size of pixel data for all series.
+     *
+     * The significant size for the pixel type (in bits) is multiplied
+     * by the dimension sizes before converting to bytes.
+     *
+     * @param meta the metadata to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta);
+
   }
 }
 

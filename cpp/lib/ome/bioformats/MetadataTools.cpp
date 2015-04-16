@@ -43,6 +43,7 @@
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
 #include <ome/bioformats/MetadataTools.h>
+#include <ome/bioformats/PixelProperties.h>
 #include <ome/bioformats/XMLTools.h>
 
 #include <ome/compat/regex.h>
@@ -1034,6 +1035,76 @@ namespace ome
         }
 
       return ome::xml::model::enums::DimensionOrder(validorder);
+    }
+
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+              dimension_size_type                       series)
+    {
+      dimension_size_type x = meta.getPixelsSizeX(series);
+      dimension_size_type y = meta.getPixelsSizeY(series);
+      dimension_size_type z = meta.getPixelsSizeZ(series);
+      dimension_size_type t = meta.getPixelsSizeT(series);
+      dimension_size_type c = meta.getPixelsSizeC(series);
+
+      storage_size_type size = bytesPerPixel(meta.getPixelsType(series));
+      size *= x;
+      size *= y;
+      size *= z;
+      size *= t;
+      size *= c;
+
+      return size;
+    }
+
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta)
+    {
+      storage_size_type size = 0;
+
+      for (dimension_size_type  s = 0;
+           s < meta.getImageCount();
+           ++s)
+        {
+          size += pixelSize(meta, s);
+        }
+
+      return size;
+    }
+
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+                         dimension_size_type                       series)
+    {
+      dimension_size_type x = meta.getPixelsSizeX(series);
+      dimension_size_type y = meta.getPixelsSizeY(series);
+      dimension_size_type z = meta.getPixelsSizeZ(series);
+      dimension_size_type t = meta.getPixelsSizeT(series);
+      dimension_size_type c = meta.getPixelsSizeC(series);
+
+      storage_size_type size = significantBitsPerPixel(meta.getPixelsType(series));
+      size *= x;
+      size *= y;
+      size *= z;
+      size *= t;
+      size *= c;
+
+      return size;
+    }
+
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta)
+    {
+      storage_size_type size = 0;
+
+      for (dimension_size_type  s = 0;
+           s < meta.getImageCount();
+           ++s)
+        {
+          size += pixelSize(meta, s);
+        }
+
+      return size;
     }
 
   }
