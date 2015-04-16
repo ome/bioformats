@@ -43,6 +43,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/type_traits.hpp>
 
+#include <ome/bioformats/PixelProperties.h>
 #include <ome/bioformats/tiff/Codec.h>
 #include <ome/bioformats/tiff/TileInfo.h>
 #include <ome/bioformats/tiff/TIFF.h>
@@ -68,6 +69,7 @@ using ome::bioformats::tiff::TIFF;
 using ome::bioformats::tiff::IFD;
 using ome::bioformats::tiff::Codec;
 using ome::bioformats::dimension_size_type;
+using ome::bioformats::significantBitsPerPixel;
 using ome::bioformats::VariantPixelBuffer;
 using ome::bioformats::PixelBuffer;
 using ome::bioformats::PixelProperties;
@@ -899,6 +901,7 @@ TEST(TIFFTest, PixelType)
   ASSERT_TRUE(static_cast<bool>(ifd));
 
   ASSERT_EQ(PT::UINT8, ifd->getPixelType());
+  ASSERT_EQ(8U, ifd->getBitsPerSample());
 }
 
 TEST(TIFFCodec, ListCodecs)
@@ -1503,6 +1506,7 @@ TEST_P(PixelTest, WriteTIFF)
     ASSERT_NO_THROW(wifd->setTileWidth(params.tilewidth));
     ASSERT_NO_THROW(wifd->setTileHeight(params.tileheight));
     ASSERT_NO_THROW(wifd->setPixelType(params.pixeltype));
+    ASSERT_NO_THROW(wifd->setBitsPerSample(significantBitsPerPixel(params.pixeltype)));
     ASSERT_NO_THROW(wifd->setSamplesPerPixel(shape[ome::bioformats::DIM_SUBCHANNEL]));
     ASSERT_NO_THROW(wifd->setPlanarConfiguration(params.planarconfig));
     ASSERT_NO_THROW(wifd->setPhotometricInterpretation(params.photometricinterp));
@@ -1514,6 +1518,7 @@ TEST_P(PixelTest, WriteTIFF)
     EXPECT_EQ(params.tilewidth, wifd->getTileWidth());
     EXPECT_EQ(params.tileheight, wifd->getTileHeight());
     EXPECT_EQ(params.pixeltype, wifd->getPixelType());
+    EXPECT_EQ(significantBitsPerPixel(params.pixeltype), wifd->getBitsPerSample());
     EXPECT_EQ(shape[ome::bioformats::DIM_SUBCHANNEL], wifd->getSamplesPerPixel());
     EXPECT_EQ(params.planarconfig, wifd->getPlanarConfiguration());
 
@@ -1598,6 +1603,7 @@ TEST_P(PixelTest, WriteTIFF)
     EXPECT_EQ(params.tilewidth, ifd->getTileWidth());
     EXPECT_EQ(params.tileheight, ifd->getTileHeight());
     EXPECT_EQ(params.pixeltype, ifd->getPixelType());
+    EXPECT_EQ(significantBitsPerPixel(params.pixeltype), ifd->getBitsPerSample());
     EXPECT_EQ(shape[ome::bioformats::DIM_SUBCHANNEL], ifd->getSamplesPerPixel());
     EXPECT_EQ(params.planarconfig, ifd->getPlanarConfiguration());
     EXPECT_EQ(params.photometricinterp, ifd->getPhotometricInterpretation());
