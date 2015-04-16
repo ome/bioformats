@@ -56,12 +56,12 @@
 #include <ome/internal/config.h>
 
 #include <ome/test/config.h>
+#include <ome/test/test.h>
 
 #include <png.h>
 
-#include <ome/test/test.h>
-
 #include "pixel.h"
+#include "tiffsamples.h"
 
 using ome::bioformats::tiff::directory_index_type;
 using ome::bioformats::tiff::TileInfo;
@@ -78,113 +78,8 @@ typedef ome::xml::model::enums::PixelType PT;
 
 using namespace boost::filesystem;
 
-struct TileTestParameters
-{
-  bool tile;
-  std::string file;
-  std::string wfile;
-  bool imageplanar;
-  dimension_size_type imagewidth;
-  dimension_size_type imagelength;
-  dimension_size_type tilewidth;
-  dimension_size_type tilelength;
-};
-
-template<class charT, class traits>
-inline std::basic_ostream<charT,traits>&
-operator<< (std::basic_ostream<charT,traits>& os,
-            const TileTestParameters& p)
-{
-  return os << p.file << " [" << p.wfile << "] ("
-            << p.imagewidth << "x" << p.imagelength
-            << (p.imageplanar ? " planar" : " chunky")
-            << (p.tile ? " tiled " : " strips ")
-            << p.tilewidth << "x" << p.tilelength
-            << ")";
-}
-
 namespace
 {
-
-  std::vector<TileTestParameters>
-  find_tile_tests()
-  {
-    std::vector<TileTestParameters> params;
-
-    path dir(PROJECT_BINARY_DIR "/cpp/test/ome-bioformats/data");
-    if (exists(dir) && is_directory(dir))
-      {
-        for(directory_iterator i(dir); i != directory_iterator(); ++i)
-          {
-            static ome::compat::regex tile_match(".*/data-layout-([[:digit:]]+)x([[:digit:]]+)-([[:alpha:]]+)-tiles-([[:digit:]]+)x([[:digit:]]+)\\.tiff");
-            static ome::compat::regex strip_match(".*/data-layout-([[:digit:]]+)x([[:digit:]]+)-([[:alpha:]]+)-strips-([[:digit:]]+)\\.tiff");
-
-            ome::compat::smatch found;
-            std::string file(i->path().string());
-            path wpath(i->path().parent_path());
-            wpath /= std::string("w-") + i->path().filename().string();
-            std::string wfile(wpath.string());
-            if (ome::compat::regex_match(file, found, tile_match))
-              {
-                TileTestParameters p;
-                p.tile = true;
-                p.file = file;
-                p.wfile = wfile;
-
-                std::istringstream iwid(found[1]);
-                if (!(iwid >> p.imagewidth))
-                  continue;
-
-                std::istringstream iht(found[2]);
-                if (!(iht >> p.imagelength))
-                  continue;
-
-                p.imageplanar = false;
-                if (found[3] == "planar")
-                  p.imageplanar = true;
-
-                std::istringstream twid(found[4]);
-                if (!(twid >> p.tilewidth))
-                  continue;
-
-                std::istringstream tht(found[5]);
-                if (!(tht >> p.tilelength))
-                  continue;
-
-                params.push_back(p);
-              }
-            else if (ome::compat::regex_match(file, found, strip_match))
-              {
-                TileTestParameters p;
-                p.tile = false;
-                p.file = file;
-                p.wfile = wfile;
-
-                std::istringstream iwid(found[1]);
-                if (!(iwid >> p.imagewidth))
-                  continue;
-
-                std::istringstream iht(found[2]);
-                if (!(iht >> p.imagelength))
-                  continue;
-
-                p.imageplanar = false;
-                if (found[3] == "planar")
-                  p.imageplanar = true;
-
-                p.tilewidth = p.imagewidth;
-
-                std::istringstream srow(found[4]);
-                if (!(srow >> p.tilelength))
-                  continue;
-
-                params.push_back(p);
-              }
-          }
-      }
-
-    return params;
-  }
 
   struct DumpPixelBufferVisitor : public boost::static_visitor<>
   {
