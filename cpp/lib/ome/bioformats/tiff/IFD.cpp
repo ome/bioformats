@@ -602,6 +602,8 @@ namespace ome
         boost::optional<uint32_t> tileheight;
         /// Pixel type.
         boost::optional<PixelType> pixeltype;
+        /// Bits per sample.
+        boost::optional<uint16_t> bits;
         /// Samples per pixel.
         boost::optional<uint16_t> samples;
         /// Planar configuration.
@@ -966,8 +968,7 @@ namespace ome
                 fmt = UNSIGNED_INT;
               }
 
-            uint16_t bits;
-            getField(BITSPERSAMPLE).get(bits);
+            uint16_t bits = getBitsPerSample();
 
             switch(fmt)
               {
@@ -1061,48 +1062,30 @@ namespace ome
           }
 
         getField(SAMPLEFORMAT).set(fmt);
+        impl->pixeltype = type;
+      }
 
-        uint16_t bits = 0;
-
-        switch(type)
+      uint16_t
+      IFD::getBitsPerSample() const
+      {
+        if (!impl->bits)
           {
-          case PixelType::BIT:
-            bits = 1;
-            break;
-
-          case PixelType::UINT8:
-          case PixelType::INT8:
-            bits = 8;
-            break;
-
-          case PixelType::UINT16:
-          case PixelType::INT16:
-            bits = 16;
-            break;
-
-          case PixelType::UINT32:
-          case PixelType::INT32:
-          case PixelType::FLOAT:
-            bits = 32;
-            break;
-
-          case PixelType::DOUBLE:
-          case PixelType::COMPLEX:
-            bits = 64;
-            break;
-
-          case PixelType::DOUBLECOMPLEX:
-            bits = 128;
-            break;
-
-          default:
-            throw Exception("Unsupported OME data model PixelType");
-            break;
+            uint16_t bits;
+            getField(BITSPERSAMPLE).get(bits);
+            impl->bits = bits;
           }
+        return impl->bits.get();
+      }
+
+      void
+      IFD::setBitsPerSample(uint16_t bits)
+      {
+        uint16 max_bits = significantBitsPerPixel(getPixelType());
+        if (bits > max_bits)
+          bits = max_bits;
 
         getField(BITSPERSAMPLE).set(bits);
-
-        impl->pixeltype = type;
+        impl->bits = bits;
       }
 
       uint16_t
@@ -1183,12 +1166,8 @@ namespace ome
                      dimension_size_type h) const
       {
         PixelType type = getPixelType();
-
-        PlanarConfiguration planarconfig;
-        getField(PLANARCONFIG).get(planarconfig);
-
-        uint16_t subC;
-        getField(SAMPLESPERPIXEL).get(subC);
+        PlanarConfiguration planarconfig = getPlanarConfiguration();
+        uint16_t subC = getSamplesPerPixel();
 
         ome::compat::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
         shape[DIM_SPATIAL_X] = w;

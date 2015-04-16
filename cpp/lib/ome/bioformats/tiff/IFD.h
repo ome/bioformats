@@ -370,6 +370,22 @@ namespace ome
         setPixelType(::ome::xml::model::enums::PixelType type);
 
         /**
+         * Get bits per sample.
+         *
+         * @returns the number of bits per sample.
+         */
+        uint16_t
+        getBitsPerSample() const;
+
+        /**
+         * Set bits per sample.
+         *
+         * @param samples the number of bits per sample.
+         */
+        void
+        setBitsPerSample(uint16_t samples);
+
+        /**
          * Get samples per pixel.
          *
          * @returns the number of samples per pixel.
