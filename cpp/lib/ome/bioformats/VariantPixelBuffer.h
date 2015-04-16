@@ -897,13 +897,21 @@ namespace ome
         void
         operator()(const T& v)
         {
+          // Shape is the same as the source buffer, but with one subchannel.
           ome::compat::array<VariantPixelBuffer::size_type, 9> dest_shape;
           const VariantPixelBuffer::size_type *shape_ptr(v->shape());
           std::copy(shape_ptr, shape_ptr + PixelBufferBase::dimensions,
                     dest_shape.begin());
           dest_shape[DIM_SUBCHANNEL] = 1;
 
-          dest.setBuffer(dest_shape, v->pixelType());
+          // Default to planar ordering; since openByes/saveBytes
+          // don't use ZTC the DimensionOrder doesn't matter here so
+          // long as it matches what the TIFF reader/writer uses.
+          PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, false));
+
+          /// @todo Only call setBuffer if the shape and pixel type
+          /// differ, to allow user control over storage order.
+          dest.setBuffer(dest_shape, v->pixelType(), order);
 
           T& destbuf = boost::get<T>(dest.vbuffer());
 
