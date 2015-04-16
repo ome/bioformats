@@ -100,6 +100,12 @@ set(OME_BIOFORMATS_IN_HEADERS
     in/OMETIFFReader.h
     in/TIFFReader.h)
 
+set(OME_BIOFORMATS_OUT_SOURCES
+    out/MinimalTIFFWriter.cpp)
+
+set(OME_BIOFORMATS_OUT_HEADERS
+    out/MinimalTIFFWriter.h)
+
 set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/Codec.cpp
     tiff/Exception.cpp
@@ -124,10 +130,6 @@ set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/TileInfo.h
     tiff/Types.h
     tiff/Util.h)
-
-set(OME_BIOFORMATS_OUT_SOURCES)
-
-set(OME_BIOFORMATS_OUT_HEADERS)
 
 set(BIOFORMATS_SOURCES
     ${OME_BIOFORMATS_SOURCES}

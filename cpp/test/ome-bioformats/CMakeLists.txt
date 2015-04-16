@@ -126,6 +126,12 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-bioformats/minimaltiffreader minimaltiffreader)
 
+  add_executable(minimaltiffwriter minimaltiffwriter.cpp tiffsamples.cpp)
+  target_link_libraries(minimaltiffwriter ome-bioformats)
+  target_link_libraries(minimaltiffwriter ome-test)
+
+  bf_add_test(ome-bioformats/minimaltiffwriter minimaltiffwriter)
+
   add_executable(tiffreader tiffreader.cpp)
   target_link_libraries(tiffreader ome-bioformats)
   target_link_libraries(tiffreader ome-test)
