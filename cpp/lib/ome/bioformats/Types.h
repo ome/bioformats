@@ -61,6 +61,9 @@ namespace ome
     /// Size type for pixel bit depths.
     typedef uint32_t pixel_size_type;
 
+    /// Size type for storage size.
+    typedef uint64_t storage_size_type;
+
   }
 }
 
