@@ -86,57 +86,6 @@ namespace ome
       typedef uint16_t frame_rate_type;
 
     protected:
-      /**
-       * Sentry for saving and restoring writer series state.
-       *
-       * For any FormatWriter method or subclass method which needs to
-       * set and later restore the series/coreIndex/resolution as part
-       * of its operation, this class exists to manage the safe
-       * restoration of the state.  Create an instance of this class
-       * with the writer set to @c *this.  When the instance goes out
-       * of scope, e.g. at the end of a block or method, or when an
-       * exception is thrown, the saved state will be transparently
-       * restored.
-       */
-      class SaveSeries
-      {
-      private:
-        /// Writer for which the state will be saved and restored.
-        const FormatWriter& writer;
-        /// Saved state.
-        dimension_size_type series;
-
-      public:
-        /**
-         * Constructor.
-         *
-         * @param writer the writer to manage.
-         */
-        SaveSeries(const FormatWriter& writer):
-          writer(writer),
-          series(writer.getSeries())
-        {}
-
-        /**
-         * Destructor.
-         *
-         * Saved state will be restored when run.
-         */
-        ~SaveSeries()
-        {
-          try
-            {
-              if (series != writer.getSeries())
-                writer.setSeries(series);
-            }
-          catch (...)
-            {
-              // We can't throw in a destructor.
-            }
-        }
-      };
-
-    protected:
       /// Constructor.
       FormatWriter()
       {}

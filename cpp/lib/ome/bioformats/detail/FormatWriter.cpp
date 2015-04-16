@@ -101,22 +101,6 @@ namespace ome
             if (out)
               out = ome::compat::shared_ptr<std::ostream>();
 
-            SaveSeries sentry(*this);
-
-            ome::compat::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
-
-            for (dimension_size_type  s = 0;
-                 s < mr->getImageCount();
-                 ++s)
-              {
-                setSeries(s);
-
-                dimension_size_type z = mr->getPixelsSizeZ(s);
-                dimension_size_type t = mr->getPixelsSizeT(s);
-                dimension_size_type c = mr->getPixelsSizeC(s);
-                c /= mr->getChannelSamplesPerPixel(s, 0);
-              }
-
             currentId = id;
           }
       }
