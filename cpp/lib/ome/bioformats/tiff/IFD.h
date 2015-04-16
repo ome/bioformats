@@ -443,7 +443,7 @@ namespace ome
 
         /**
          * @copydoc IFD::readImage(VariantPixelBuffer&) const
-         * @param subC the subchannel to read
+         * @param subC the subchannel to read.
          */
         void
         readImage(VariantPixelBuffer& buf,
@@ -472,7 +472,7 @@ namespace ome
 
         /**
          * @copydoc IFD::readImage(VariantPixelBuffer&,dimension_size_type,dimension_size_type,dimension_size_type,dimension_size_type) const
-         * @param subC the subchannel to read
+         * @param subC the subchannel to read.
          */
         void
         readImage(VariantPixelBuffer& dest,
@@ -499,6 +499,14 @@ namespace ome
         writeImage(const VariantPixelBuffer& buf);
 
         /**
+         * @copydoc IFD::writeImage(const VariantPixelBuffer&)
+         * @param subC the subchannel to write.
+         */
+        void
+        writeImage(const VariantPixelBuffer& buf,
+                   dimension_size_type       subC);
+
+        /**
          * Write a whole image plane from a pixel buffer.
          *
          * The source pixel buffer must match the size of the region
@@ -519,6 +527,18 @@ namespace ome
                    dimension_size_type       h);
 
         /**
+         * @copydoc IFD::writeImage(const VariantPixelBuffer&,dimension_size_type,dimension_size_type,dimension_size_type,dimension_size_type)
+         * @param subC the subchannel to write.
+         */
+        void
+        writeImage(const VariantPixelBuffer& source,
+                   dimension_size_type       x,
+                   dimension_size_type       y,
+                   dimension_size_type       w,
+                   dimension_size_type       h,
+                   dimension_size_type       subC);
+
+        /**
          * Get next directory.
          *
          * @returns the next directory, or null if this is the last directory.
@@ -534,15 +554,6 @@ namespace ome
         bool
         last() const;
       };
-
-      /**
-       * Create CoreMetadata from an IFD.
-       *
-       * @param ifd the IFD to use.
-       * @returns the CoreMetadata.
-       */
-      ome::compat::shared_ptr<CoreMetadata>
-      makeCoreMetadata(const IFD& ifd);
 
     }
   }

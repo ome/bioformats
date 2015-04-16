@@ -40,6 +40,8 @@
 
 #include <ome/bioformats/detail/FormatReader.h>
 
+#include <ome/bioformats/tiff/Util.h>
+
 #include <vector>
 
 namespace ome
@@ -62,19 +64,16 @@ namespace ome
        * Basic TIFF reader.
        *
        * @note Any derived reader which does not implement its own
-       * openBytesImpl() must fill @c series_ifd_map.
+       * openBytesImpl() must fill @c seriesIFDRange.
        */
       class MinimalTIFFReader : public ::ome::bioformats::detail::FormatReader
       {
       protected:
-        /// Mapping between series index and start and end IFD as a half-open range.
-        typedef std::vector<std::pair<dimension_size_type, dimension_size_type> > series_ifd_map_type;
-
         /// Underlying TIFF file.
         ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
 
         /// Mapping between series index and start and end IFD as a half-open range.
-        series_ifd_map_type series_ifd_map;
+        tiff::SeriesIFDRange seriesIFDRange;
 
       public:
         /// Constructor.

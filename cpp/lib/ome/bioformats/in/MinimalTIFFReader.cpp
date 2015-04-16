@@ -46,6 +46,7 @@
 #include <ome/bioformats/in/MinimalTIFFReader.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/TIFF.h>
+#include <ome/bioformats/tiff/Util.h>
 
 using ome::bioformats::detail::ReaderProperties;
 using ome::bioformats::tiff::TIFF;
@@ -93,7 +94,7 @@ namespace ome
       MinimalTIFFReader::MinimalTIFFReader():
         ::ome::bioformats::detail::FormatReader(props),
         tiff(),
-        series_ifd_map()
+        seriesIFDRange()
       {
         domains.push_back(getDomain(GRAPHICS_DOMAIN));
       }
@@ -101,7 +102,7 @@ namespace ome
       MinimalTIFFReader::MinimalTIFFReader(const ReaderProperties& readerProperties):
         ::ome::bioformats::detail::FormatReader(readerProperties),
         tiff(),
-        series_ifd_map()
+        seriesIFDRange()
       {
         domains.push_back(getDomain(GRAPHICS_DOMAIN));
       }
@@ -119,33 +120,9 @@ namespace ome
       const ome::compat::shared_ptr<const tiff::IFD>
       MinimalTIFFReader::ifdAtIndex(dimension_size_type no) const
       {
-        dimension_size_type series = getSeries();
-
-        if (series >= series_ifd_map.size())
-          {
-            boost::format fmt("Invalid series number ‘%1%’");
-            fmt % series;
-            throw FormatException(fmt.str());
-          }
-        const series_ifd_map_type::value_type range(series_ifd_map.at(series));
-
-        // Compute timepoint and subchannel from plane number.
-        dimension_size_type plane = no;
-        if (isRGB())
-          {
-            plane = no / getSizeC();
-          }
-        dimension_size_type ifdidx = range.first + plane;
-        assert(range.first <= plane && plane < range.second);
-
-        if (plane >= (range.second - range.first))
-          {
-            boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
-            fmt % plane % series;
-            throw FormatException(fmt.str());
-          }
-
+        dimension_size_type ifdidx = tiff::ifdIndex(seriesIFDRange, getSeries(), no, getSizeC(), isRGB());
         const ome::compat::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
+
         return ifd;
       }
 
@@ -219,13 +196,19 @@ namespace ome
               {
                 ++prev_core->sizeT;
                 prev_core->imageCount = prev_core->sizeT;
-                ++(series_ifd_map.back().second);
+                ++(seriesIFDRange.back().end);
               }
             else
               {
                 prev_core = makeCoreMetadata(**i);
                 core.push_back(prev_core);
-                series_ifd_map.push_back(std::make_pair(current_ifd, current_ifd + 1));
+
+                tiff::IFDRange range;
+                range.filename = *currentId;
+                range.begin = current_ifd;
+                range.end = current_ifd + 1;
+
+                seriesIFDRange.push_back(range);
               }
             prev_ifd = *i;
           }

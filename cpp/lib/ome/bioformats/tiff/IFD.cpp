@@ -1252,6 +1252,13 @@ namespace ome
       }
 
       void
+      IFD::writeImage(const VariantPixelBuffer& buf,
+                      dimension_size_type       subC)
+      {
+        writeImage(buf, 0, 0, getImageWidth(), getImageHeight(), subC);
+      }
+
+      void
       IFD::writeImage(const VariantPixelBuffer& buf)
       {
         writeImage(buf, 0, 0, getImageWidth(), getImageHeight());
@@ -1259,18 +1266,14 @@ namespace ome
 
       void
       IFD::writeImage(const VariantPixelBuffer& source,
-                      dimension_size_type x,
-                      dimension_size_type y,
-                      dimension_size_type w,
-                      dimension_size_type h)
+                      dimension_size_type       x,
+                      dimension_size_type       y,
+                      dimension_size_type       w,
+                      dimension_size_type       h)
       {
         PixelType type = getPixelType();
-
-        PlanarConfiguration planarconfig;
-        getField(PLANARCONFIG).get(planarconfig);
-
-        uint16_t subC;
-        getField(SAMPLESPERPIXEL).get(subC);
+        PlanarConfiguration planarconfig = getPlanarConfiguration();
+        uint16_t subC = getSamplesPerPixel();
 
         ome::compat::array<VariantPixelBuffer::size_type, 9> shape, source_shape;
         shape[DIM_SPATIAL_X] = w;
@@ -1301,6 +1304,17 @@ namespace ome
 
         WriteVisitor v(*this, impl->coverage, impl->tilecache, info, region, tiles);
         boost::apply_visitor(v, source.vbuffer());
+      }
+
+      void
+      IFD::writeImage(const VariantPixelBuffer& /* source*/,
+                      dimension_size_type       /* x*/,
+                      dimension_size_type       /* y*/,
+                      dimension_size_type       /* w*/,
+                      dimension_size_type       /* h*/,
+                      dimension_size_type       /* subC */)
+      {
+        throw Exception("Writing subchannels separately is not yet implemented (requires TileCache and WriteVisitor to handle writing and caching of interleaved and non-interleaved subchannels; currently it handles writing all subchannels in one call only and can not combine separate subchannels from separate calls");
       }
 
       ome::compat::shared_ptr<IFD>
@@ -1335,313 +1349,6 @@ namespace ome
         makeCurrent();
 
         return TIFFLastDirectory(tiffraw) != 0;
-      }
-
-      namespace
-      {
-
-        // Scalar
-        template<typename T>
-        void
-        setMetadata(CoreMetadata&      core,
-                    const std::string& key,
-                    const T&           value)
-        {
-          core.seriesMetadata.set(key, value);
-        }
-
-        // Vector
-        template <typename T>
-        void
-        setMetadata(CoreMetadata&         core,
-                    const std::string&    key,
-                    const std::vector<T>& value)
-        {
-          std::ostringstream os;
-          for (typename std::vector<T>::const_iterator i = value.begin();
-               i != value.end();
-               ++i)
-            {
-              os << *i;
-              if (i + 1 != value.end())
-                os << ", ";
-            }
-          core.seriesMetadata.set(key, os.str());
-        }
-
-        // Array
-        template <template <typename, std::size_t> class C,
-                  typename T,
-                  std::size_t S>
-        void
-        setMetadata(CoreMetadata&      core,
-                    const std::string& key,
-                    const C<T, S>&     value)
-        {
-          std::ostringstream os;
-          for (typename C<T, S>::const_iterator i = value.begin();
-               i != value.end();
-               ++i)
-            {
-              os << *i;
-              if (i + 1 != value.end())
-                os << ", ";
-            }
-          core.seriesMetadata.set(key, os.str());
-        }
-
-        template<typename TagCategory>
-        bool
-        setMetadata(const IFD&         ifd,
-                    CoreMetadata&      core,
-                    const std::string& key,
-                    TagCategory        tag)
-        {
-          bool set = false;
-
-          typedef typename ::ome::bioformats::detail::tiff::TagProperties<TagCategory>::value_type value_type;
-
-          try
-            {
-              value_type v;
-              ifd.getField(tag).get(v);
-              setMetadata(core, key, v);
-              set = true;
-            }
-          catch (...)
-            {
-            }
-
-          return set;
-        }
-
-      }
-
-      ome::compat::shared_ptr<CoreMetadata>
-      makeCoreMetadata(const IFD& ifd)
-      {
-        ome::compat::shared_ptr<CoreMetadata> m(ome::compat::make_shared<CoreMetadata>());
-
-        m->dimensionOrder = ome::xml::model::enums::DimensionOrder::XYCZT;
-        m->sizeX = ifd.getImageWidth();
-        m->sizeY = ifd.getImageHeight();
-        m->pixelType = ifd.getPixelType();
-        m->bitsPerPixel = bitsPerPixel(m->pixelType);
-
-        uint16_t samples = ifd.getSamplesPerPixel();
-        tiff::PhotometricInterpretation photometric = ifd.getPhotometricInterpretation();
-
-        // Note that RGB does not mean photometric interpretation is
-        // RGB.  It's a way to force the subchannels into sizeC as
-        // addressable channels in the absence of an nD API.
-        if (samples > 1 || photometric == tiff::RGB)
-          {
-            m->rgb = true;
-            m->sizeC = samples;
-          }
-        m->sizeZ = m->sizeC = m->imageCount = 1;
-
-        // libtiff does any needed endian conversion
-        // automatically, so the data is always in the native
-        // byte order.
-#ifdef BOOST_BIG_ENDIAN
-        m->littleEndian = false;
-#else // ! BOOST_BIG_ENDIAN
-        m->littleEndian = true;
-#endif // BOOST_BIG_ENDIAN
-
-        // This doesn't match the reality, but since subchannels are
-        // addressed as planes this is needed.
-        m->interleaved = false;
-
-        // Indexed samples.
-        if (samples == 1 && photometric == tiff::PALETTE)
-          {
-            try
-              {
-                ome::compat::array<std::vector<uint16_t>, 3> cmap;
-                ifd.getField(tiff::COLORMAP).get(cmap);
-                m->indexed = true;
-                m->rgb = false;
-              }
-            catch (...)
-              {
-              }
-          }
-        // Indexed samples for different photometric interpretations;
-        // not currently supported fully.
-        else
-          {
-            try
-              {
-                uint16_t indexed;
-                ifd.getField(tiff::INDEXED).get(indexed);
-                if (indexed)
-                  {
-                    m->indexed = true;
-                    m->rgb = false;
-                  }
-              }
-            catch (...)
-              {
-              }
-          }
-
-        // Add series metadata from tags.
-        setMetadata(ifd, *m, "PageName #", PAGENAME);
-        setMetadata(ifd, *m, "ImageWidth", IMAGEWIDTH);
-        setMetadata(ifd, *m, "ImageLength", IMAGELENGTH);
-        setMetadata(ifd, *m, "BitsPerSample", BITSPERSAMPLE);
-
-        /// @todo EXIF IFDs
-
-        setMetadata(ifd, *m, "PhotometricInterpretation", PHOTOMETRIC);
-
-        /// @todo Text stream output for Tag enums.
-        /// @todo Metadata type for PhotometricInterpretation.
-
-        try
-          {
-            setMetadata(ifd, *m, "Artist", ARTIST);
-            Threshholding th;
-            ifd.getField(THRESHHOLDING).get(th);
-            m->seriesMetadata.set("Threshholding", th);
-            if (th == HALFTONE)
-              {
-                setMetadata(ifd, *m, "CellWidth", CELLWIDTH);
-                setMetadata(ifd, *m, "CellLength", CELLLENGTH);
-              }
-          }
-        catch (...)
-          {
-          }
-
-        setMetadata(ifd, *m, "Orientation", ORIENTATION);
-
-        /// @todo Image orientation (storage order and direction) from
-        /// ORIENTATION; fix up width and length from orientation.
-
-        setMetadata(ifd, *m, "SamplesPerPixel", SAMPLESPERPIXEL);
-        setMetadata(ifd, *m, "Software", SOFTWARE);
-        setMetadata(ifd, *m, "Instrument Make", MAKE);
-        setMetadata(ifd, *m, "Instrument Model", MODEL);
-        setMetadata(ifd, *m, "Make", MAKE);
-        setMetadata(ifd, *m, "Model", MODEL);
-        setMetadata(ifd, *m, "Document Name", DOCUMENTNAME);
-        setMetadata(ifd, *m, "Date Time", DATETIME);
-        setMetadata(ifd, *m, "Artist", ARTIST);
-
-        setMetadata(ifd, *m, "Host Computer", HOSTCOMPUTER);
-        setMetadata(ifd, *m, "Copyright", COPYRIGHT);
-
-        setMetadata(ifd, *m, "Subfile Type", SUBFILETYPE);
-        setMetadata(ifd, *m, "Fill Order", FILLORDER);
-
-        setMetadata(ifd, *m, "Min Sample Value", MINSAMPLEVALUE);
-        setMetadata(ifd, *m, "Max Sample Value", MAXSAMPLEVALUE);
-
-        setMetadata(ifd, *m, "XResolution", XRESOLUTION);
-        setMetadata(ifd, *m, "YResolution", YRESOLUTION);
-
-        setMetadata(ifd, *m, "Planar Configuration", PLANARCONFIG);
-
-        setMetadata(ifd, *m, "XPosition", XPOSITION);
-        setMetadata(ifd, *m, "YPosition", YPOSITION);
-
-        /// @todo Only set if debugging/verbose.
-        // setMetadata(ifd, *m, "FreeOffsets", FREEOFFSETS);
-        // setMetadata(ifd, *m, "FreeByteCounts", FREEBYTECOUNTS);
-
-        setMetadata(ifd, *m, "GrayResponseUnit", GRAYRESPONSEUNIT);
-        setMetadata(ifd, *m, "GrayResponseCurve", GRAYRESPONSECURVE);
-
-        try
-          {
-            Compression cmpr;
-            ifd.getField(COMPRESSION).get(cmpr);
-            m->seriesMetadata.set("Compression", cmpr);
-            if (cmpr == COMPRESSION_CCITT_T4)
-              setMetadata(ifd, *m, "T4Options", T4OPTIONS);
-            else if (cmpr == COMPRESSION_CCITT_T6)
-              setMetadata(ifd, *m, "T6Options", T6OPTIONS);
-            else if (cmpr == COMPRESSION_LZW)
-              setMetadata(ifd, *m, "Predictor", PREDICTOR);
-          }
-        catch (...)
-          {
-          }
-
-        setMetadata(ifd, *m, "ResolutionUnit", RESOLUTIONUNIT);
-
-        setMetadata(ifd, *m, "PageNumber", PAGENUMBER);
-
-        // TransferRange only valid if TransferFunction set.
-        if (setMetadata(ifd, *m, "TransferFunction", TRANSFERFUNCTION))
-          setMetadata(ifd, *m, "TransferRange", TRANSFERRANGE);
-
-        setMetadata(ifd, *m, "WhitePoint", WHITEPOINT);
-        setMetadata(ifd, *m, "PrimaryChromacities", PRIMARYCHROMATICITIES);
-        setMetadata(ifd, *m, "HalftoneHints", HALFTONEHINTS);
-
-        setMetadata(ifd, *m, "TileWidth", TILEWIDTH);
-        setMetadata(ifd, *m, "TileLength", TILELENGTH);
-
-        /// @todo Only set if debugging/verbose.
-        // setMetadata(ifd, *m, "TileOffsets", TILEOFFSETS);
-        // setMetadata(ifd, *m, "TileByteCounts", TILEBYTECOUNTS);
-
-        setMetadata(ifd, *m, "InkSet", INKSET);
-        setMetadata(ifd, *m, "InkNames", INKNAMES);
-        setMetadata(ifd, *m, "NumberOfInks", NUMBEROFINKS);
-        setMetadata(ifd, *m, "DotRange", DOTRANGE);
-        setMetadata(ifd, *m, "TargetPrinter", TARGETPRINTER);
-        setMetadata(ifd, *m, "ExtraSamples", EXTRASAMPLES);
-
-        setMetadata(ifd, *m, "SampleFormat", SAMPLEFORMAT);
-
-        /// @todo sminsamplevalue
-        /// @todo smaxsamplevalue
-
-        /// @todo Only set if debugging/verbose.
-        // setMetadata(ifd, *m, "StripOffsets", STRIPOFFSETS);
-        // setMetadata(ifd, *m, "StripByteCounts", STRIPBYTECOUNTS);
-
-        /// @todo JPEG tags
-
-        setMetadata(ifd, *m, "YCbCrCoefficients", YCBCRCOEFFICIENTS);
-        setMetadata(ifd, *m, "YCbCrSubSampling", YCBCRSUBSAMPLING);
-        setMetadata(ifd, *m, "YCbCrPositioning", YCBCRPOSITIONING);
-        setMetadata(ifd, *m, "ReferenceBlackWhite", REFERENCEBLACKWHITE);
-
-        try
-          {
-            uint16_t samples;
-            ifd.getField(SAMPLESPERPIXEL).get(samples);
-            PhotometricInterpretation photometric;
-            ifd.getField(PHOTOMETRIC).get(photometric);
-            if (photometric == RGB ||
-                photometric == CFA_ARRAY)
-              samples = 3;
-
-            try
-              {
-                std::vector<ExtraSamples> extra;
-                ifd.getField(EXTRASAMPLES).get(extra);
-                samples += static_cast<uint16_t>(extra.size());
-              }
-            catch (...)
-              {
-              }
-
-            m->seriesMetadata.set("NumberOfChannels", samples);
-          }
-        catch (...)
-          {
-          }
-
-        m->seriesMetadata.set("BitsPerSample", bitsPerPixel(ifd.getPixelType()));
-
-        return m;
       }
 
     }

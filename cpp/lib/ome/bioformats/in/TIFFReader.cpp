@@ -43,6 +43,7 @@
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/Field.h>
+#include <ome/bioformats/tiff/Util.h>
 
 using ome::bioformats::detail::ReaderProperties;
 using ome::bioformats::tiff::TIFF;

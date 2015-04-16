@@ -109,7 +109,8 @@ set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/Sentry.cpp
     tiff/Tags.cpp
     tiff/TIFF.cpp
-    tiff/TileInfo.cpp)
+    tiff/TileInfo.cpp
+    tiff/Util.cpp)
 
 set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/Codec.h
@@ -121,7 +122,8 @@ set(OME_BIOFORMATS_TIFF_HEADERS
     tiff/Tags.h
     tiff/TIFF.h
     tiff/TileInfo.h
-    tiff/Types.h)
+    tiff/Types.h
+    tiff/Util.h)
 
 set(OME_BIOFORMATS_OUT_SOURCES)
 
