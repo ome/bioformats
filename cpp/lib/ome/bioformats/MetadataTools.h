@@ -226,6 +226,20 @@ namespace ome
                  bool                             doImageName = true);
 
     /**
+     * Fill OME-XML metadata store from core metadata.
+     *
+     * The metadata store is expected to be empty.
+     *
+     * @param store the OME-XML metadata store.
+     * @param seriesList the core metadata to use.
+     * @param doPlane create Plane elements if @c true.
+     */
+    void
+    fillMetadata(::ome::xml::meta::MetadataStore&                          store,
+                 const std::vector<ome::compat::shared_ptr<CoreMetadata> > seriesList,
+                 bool                                                      doPlane = false);
+
+    /**
      * Fill all OME-XML metadata store Pixels elements from reader core metadata.
      *
      * Set Pixels metadata for all series.
@@ -248,6 +262,20 @@ namespace ome
     void
     fillPixels(::ome::xml::meta::MetadataStore& store,
                const FormatReader&              reader);
+
+    /**
+     * Fill an OME-XML metadata store Pixels element from core metadata.
+     *
+     * Set Pixels metadata for the the specified series.
+     *
+     * @param store the OME-XML metadata store.
+     * @param seriesMetadata the seriesMetadata the metadata to use.
+     * @param series the series to set.
+     */
+    void
+    fillPixels(::ome::xml::meta::MetadataStore& store,
+               const CoreMetadata&              seriesMetadata,
+               dimension_size_type              series);
 
     /**
      * Add a MetadataOnly element to Pixels for the specified series.

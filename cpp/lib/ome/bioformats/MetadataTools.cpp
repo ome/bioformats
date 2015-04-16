@@ -41,6 +41,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <ome/bioformats/FormatException.h>
+#include <ome/bioformats/FormatTools.h>
 #include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/XMLTools.h>
 
@@ -408,6 +409,55 @@ namespace ome
     }
 
     void
+    fillMetadata(::ome::xml::meta::MetadataStore&                          store,
+                 const std::vector<ome::compat::shared_ptr<CoreMetadata> > seriesList,
+                 bool                                                      doPlane)
+    {
+      dimension_size_type s = 0U;
+      for (std::vector<ome::compat::shared_ptr<CoreMetadata> >::const_iterator i = seriesList.begin();
+           i != seriesList.end();
+           ++i, ++s)
+        {
+          std::string pixelType = (*i)->pixelType;
+
+          fillPixels(store, **i, s);
+
+          try
+            {
+              OMEXMLMetadata& omexml(dynamic_cast<OMEXMLMetadata&>(store));
+              addMetadataOnly(omexml, s);
+            }
+          catch (const std::bad_cast& e)
+            {
+            }
+
+          if (doPlane)
+            {
+              for (dimension_size_type p = 0; p < (*i)->imageCount; ++p)
+                {
+                  dimension_size_type sizeZT = (*i)->sizeZ * (*i)->sizeT;
+                  dimension_size_type effSizeC = 0;
+                  if (sizeZT)
+                    effSizeC = (*i)->imageCount / sizeZT;
+
+                  ome::compat::array<dimension_size_type, 3> coords =
+                    getZCTCoords((*i)->dimensionOrder,
+                                 (*i)->sizeZ,
+                                 effSizeC,
+                                 (*i)->sizeT,
+                                 (*i)->imageCount,
+                                 p);
+                  // The cast to int here is nasty, but the data model
+                  // isn't using unsigned types…
+                  store.setPlaneTheZ(static_cast<int>(coords[0]), s, p);
+                  store.setPlaneTheC(static_cast<int>(coords[1]), s, p);
+                  store.setPlaneTheT(static_cast<int>(coords[2]), s, p);
+                }
+            }
+        }
+    }
+
+    void
     fillAllPixels(::ome::xml::meta::MetadataStore& store,
                   const FormatReader&              reader)
     {
@@ -446,6 +496,44 @@ namespace ome
         {
           store.setChannelID(createID("Channel", series, c), series, c);
           store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(reader.getRGBChannelCount()), series, c);
+        }
+
+    }
+
+    void
+    fillPixels(::ome::xml::meta::MetadataStore& store,
+               const CoreMetadata&              seriesMetadata,
+               dimension_size_type              series)
+    {
+      store.setPixelsID(createID("Pixels", series), series);
+      store.setPixelsBigEndian(!seriesMetadata.littleEndian, series);
+      store.setPixelsSignificantBits(seriesMetadata.bitsPerPixel, series);
+      store.setPixelsDimensionOrder(seriesMetadata.dimensionOrder, series);
+      store.setPixelsInterleaved(seriesMetadata.interleaved, series);
+      store.setPixelsType(seriesMetadata.pixelType, series);
+
+      // The cast to int here is nasty, but the data model isn't using
+      // unsigned types…
+      store.setPixelsSizeX(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeX), series);
+      store.setPixelsSizeY(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeY), series);
+      store.setPixelsSizeZ(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeZ), series);
+      store.setPixelsSizeT(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeT), series);
+      store.setPixelsSizeC(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeC), series);
+
+      dimension_size_type sizeZT = seriesMetadata.sizeZ * seriesMetadata.sizeT;
+      dimension_size_type effSizeC = 0;
+      if (sizeZT)
+        effSizeC = seriesMetadata.imageCount / sizeZT;
+
+      for (dimension_size_type c = 0; c < effSizeC; ++c)
+        {
+
+          dimension_size_type rgbC = 0;
+          if (effSizeC)
+            rgbC = seriesMetadata.sizeC / effSizeC;
+
+          store.setChannelID(createID("Channel", series, c), series, c);
+          store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(rgbC), series, c);
         }
 
     }
