@@ -921,6 +921,43 @@ namespace ome
         }
       };
 
+      /// Merge a single subchannel into a PixelBuffer.
+      struct MergeSubchannelVisitor : public boost::static_visitor<>
+      {
+        /// Destination pixel buffer.
+        VariantPixelBuffer& dest;
+        /// Subchannel to copy.
+        dimension_size_type subC;
+
+        /**
+         * Constructor.
+         *
+         * @param dest the destination pixel buffer.
+         * @param subC the subchannel to copy.
+         */
+        MergeSubchannelVisitor(VariantPixelBuffer& dest,
+                               dimension_size_type subC):
+          dest(dest),
+          subC(subC)
+        {}
+
+        /**
+         * Merge subchannel.
+         *
+         * @param v the PixelBuffer to use.
+         */
+        template<typename T>
+        void
+        operator()(const T& v)
+        {
+          T& destbuf = boost::get<T>(dest.vbuffer());
+
+          typename boost::multi_array_types::index_gen indices;
+          typedef boost::multi_array_types::index_range range;
+          destbuf->array()[boost::indices[range()][range()][range()][range()][range()][range(subC,subC+1)][range()][range()][range()]] = v->array();
+        }
+      };
+
     }
 
     /// @copydoc VariantPixelBuffer::array()
