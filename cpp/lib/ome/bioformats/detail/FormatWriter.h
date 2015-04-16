@@ -121,6 +121,9 @@ namespace ome
         /// Current series.
         mutable dimension_size_type series;
 
+        /// Current plane.
+        mutable dimension_size_type plane;
+
         /// The compression type to use.
         boost::optional<std::string> compression;
 
@@ -183,6 +186,25 @@ namespace ome
         // Documented in superclass.
         dimension_size_type
         getSeries() const;
+
+        /**
+         * Set the active plane.
+         *
+         * @param no the plane to activate.
+         *
+         * @todo Remove use of stateful API which requires use of
+         * plane switching in const methods.
+         */
+        virtual void
+        setPlane(dimension_size_type no) const;
+
+        /**
+         * Get the active plane.
+         *
+         * @returns the active plane.
+         */
+        virtual dimension_size_type
+        getPlane() const;
 
         // Documented in superclass.
         bool

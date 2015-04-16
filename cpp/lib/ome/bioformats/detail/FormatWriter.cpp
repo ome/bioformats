@@ -81,6 +81,7 @@ namespace ome
         currentId(boost::none),
         out(),
         series(0),
+        plane(0),
         compression(boost::none),
         sequential(false),
         framesPerSecond(0),
@@ -91,6 +92,13 @@ namespace ome
 
       FormatWriter::~FormatWriter()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void
@@ -109,11 +117,16 @@ namespace ome
       FormatWriter::close(bool fileOnly)
       {
         if (out)
-          out = ome::compat::shared_ptr<std::ostream>(); // set to null.
+          out.reset(); // set to null.
         if (!fileOnly)
           {
             currentId = boost::none;
             series = 0;
+            plane = 0;
+            compression = boost::none;
+            sequential = false;
+            framesPerSecond = 0;
+            metadataRetrieve.reset();
           }
       }
 
@@ -146,21 +159,67 @@ namespace ome
       void
       FormatWriter::setSeries(dimension_size_type no) const
       {
+        assertId(currentId, true);
+
         if (no >= metadataRetrieve->getImageCount())
           {
             boost::format fmt("Invalid series: %1%");
             fmt % no;
             throw std::logic_error(fmt.str());
           }
+
+        const dimension_size_type currentSeries = getSeries();
+        if (currentSeries != no &&
+            (no > 0 && currentSeries != no - 1))
+          {
+            boost::format fmt("Series set out of order: %1% (currently %2%)");
+            fmt % no % currentSeries;
+            throw std::logic_error(fmt.str());
+          }
+
         series = no;
+        plane = 0U;
       }
 
       dimension_size_type
       FormatWriter::getSeries() const
       {
+        assertId(currentId, true);
+
         return series;
       }
 
+      void
+      FormatWriter::setPlane(dimension_size_type no) const
+      {
+        assertId(currentId, true);
+
+        if (no >= getImageCount())
+          {
+            boost::format fmt("Invalid plane: %1%");
+            fmt % no;
+            throw std::logic_error(fmt.str());
+          }
+
+        const dimension_size_type currentPlane = getPlane();
+        if (currentPlane != no &&
+            (no > 0 && currentPlane != no - 1))
+          {
+            boost::format fmt("Plane set out of order: %1% (currently %2%)");
+            fmt % no % currentPlane;
+            throw std::logic_error(fmt.str());
+          }
+
+        plane = no;
+      }
+
+      dimension_size_type
+      FormatWriter::getPlane() const
+      {
+        assertId(currentId, true);
+
+        return plane;
+      }
       void
       FormatWriter::setFramesPerSecond(frame_rate_type rate)
       {
