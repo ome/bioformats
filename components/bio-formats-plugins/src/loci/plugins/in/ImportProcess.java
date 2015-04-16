@@ -493,7 +493,17 @@ public class ImportProcess implements StatusReporter {
     BF.status(options.isQuiet(), "Analyzing " + getIdName());
     baseReader.setMetadataFiltered(true);
     baseReader.setGroupFiles(!options.isUngroupFiles());
+    if(options != null && !options.showROIs()){
+        MetadataOptions mo = baseReader.getMetadataOptions();
+        if(mo == null){
+            mo = new DefaultMetadataOptions();
+        }else{
+            mo.setMetadataLevel(MetadataLevel.NO_OVERLAYS);
+        }
+        baseReader.setMetadataOptions(mo);
+    }
     baseReader.setId(options.getId());
+    
   }
 
   /** Performed following ImportStep.STACK notification. */
