@@ -120,7 +120,7 @@ namespace ome
       const ome::compat::shared_ptr<const tiff::IFD>
       MinimalTIFFReader::ifdAtIndex(dimension_size_type no) const
       {
-        dimension_size_type ifdidx = tiff::ifdIndex(seriesIFDRange, getSeries(), no, getSizeC(), isRGB());
+        dimension_size_type ifdidx = tiff::ifdIndex(seriesIFDRange, getSeries(), no);
         const ome::compat::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
 
         return ifd;
@@ -246,14 +246,7 @@ namespace ome
 
         const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
-        if (isRGB())
-          {
-            // Read single subchannel.
-            dimension_size_type subC = no % getSizeC();
-            ifd->readImage(buf, x, y, w, h, subC);
-          }
-        else
-          ifd->readImage(buf, x, y, w, h);
+        ifd->readImage(buf, x, y, w, h);
       }
 
       ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>

@@ -61,6 +61,7 @@
 using boost::filesystem::path;
 using ome::xml::meta::DummyMetadata;
 using ome::xml::meta::FilterMetadata;
+using ome::xml::meta::MetadataException;
 using ome::bioformats::CoreMetadata;
 
 namespace ome
@@ -346,6 +347,12 @@ namespace ome
         return getSizeZ() * getSizeT() * getSizeC();
       }
 
+      bool
+      FormatWriter::isRGB(dimension_size_type channel) const
+      {
+        return getRGBChannelCount(channel) > 1U;
+      }
+
       dimension_size_type
       FormatWriter::getSizeX() const
       {
@@ -408,6 +415,71 @@ namespace ome
       {
         dimension_size_type series = getSeries();
         return metadataRetrieve->getPixelsSignificantBits(series);
+      }
+
+      dimension_size_type
+      FormatWriter::getEffectiveSizeC() const
+      {
+        // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
+        dimension_size_type sizeZT = getSizeZ() * getSizeT();
+        dimension_size_type effC = 0;
+
+        if (sizeZT)
+          effC = getImageCount() / sizeZT;
+
+        return effC;
+      }
+
+      dimension_size_type
+      FormatWriter::getRGBChannelCount(dimension_size_type channel) const
+      {
+        dimension_size_type series = getSeries();
+
+        dimension_size_type samples = 1U;
+
+        try
+          {
+            samples = metadataRetrieve->getChannelSamplesPerPixel(series, channel);
+          }
+        catch (const MetadataException& e)
+          {
+            // No SamplesPerPixel; default to 1.
+          }
+
+        return samples;
+      }
+
+      const std::string&
+      FormatWriter::getDimensionOrder() const
+      {
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getPixelsDimensionOrder(series);
+      }
+
+      dimension_size_type
+      FormatWriter::getIndex(dimension_size_type z,
+                             dimension_size_type c,
+                             dimension_size_type t) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getIndex(getDimensionOrder(),
+                                         getSizeZ(),
+                                         getEffectiveSizeC(),
+                                         getSizeT(),
+                                         getImageCount(),
+                                         z, c, t);
+      }
+
+      ome::compat::array<dimension_size_type, 3>
+      FormatWriter::getZCTCoords(dimension_size_type index) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getZCTCoords(getDimensionOrder(),
+                                             getSizeZ(),
+                                             getEffectiveSizeC(),
+                                             getSizeT(),
+                                             getImageCount(),
+                                             index);
       }
 
       const std::string&

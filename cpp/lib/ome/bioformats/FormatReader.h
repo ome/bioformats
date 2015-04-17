@@ -212,15 +212,16 @@ namespace ome
       getImageCount() const = 0;
 
       /**
-       * Check if the image planes in the file have more than one channel per
-       * openBytes() call.
+       * Check if the image planes for a channel have more than one
+       * subchannel per openBytes() call.
        *
+       * @param channel the channel to use.
        * @returns @c true if and only if getRGBChannelCount() returns
        * a value greater than 1, @c false otherwise.
        */
       virtual
       bool
-      isRGB() const = 0;
+      isRGB(dimension_size_type channel = 0U) const = 0;
 
       /**
        * Get the size of the X dimension.
@@ -305,18 +306,19 @@ namespace ome
       getEffectiveSizeC() const = 0;
 
       /**
-       * Get the number of channels returned with each call to openBytes().
+       * Get the number of channels returned for a call to openBytes().
        *
        * The most common case where this value is greater than 1 is for interleaved
        * RGB data, such as a 24-bit color image plane. However, it is possible for
        * this value to be greater than 1 for non-interleaved data, such as an RGB
        * TIFF with Planar rather than Chunky configuration.
        *
+       * @param channel the channel to use.
        * @returns the number of channels.
        */
       virtual
       dimension_size_type
-      getRGBChannelCount() const = 0;
+      getRGBChannelCount(dimension_size_type channel = 0U) const = 0;
 
       /**
        * Get whether the image planes are indexed color.
@@ -1070,21 +1072,23 @@ namespace ome
        * Get the optimal sub-image width.
        * This is intended for use with openBytes().
        *
+       * @param channel the channel to use.
        * @returns the optimal width.
        **/
       virtual
       dimension_size_type
-      getOptimalTileWidth() const = 0;
+      getOptimalTileWidth(dimension_size_type channel = 0U) const = 0;
 
       /**
        * Get the optimal sub-image height.
        * This is intended for use with openBytes().
        *
+       * @param channel the channel to use.
        * @returns the optimal height.
        **/
       virtual
       dimension_size_type
-      getOptimalTileHeight() const = 0;
+      getOptimalTileHeight(dimension_size_type channel = 0U) const = 0;
 
       // Sub-resolution API methods
 

@@ -136,7 +136,7 @@ protected:
     std::istreambuf_iterator<char> eos;
     std::string in(std::istreambuf_iterator<char>(stream), eos);
 
-    std::cout << "IN: " << in << std::endl;
+    // std::cout << "IN: " << in << std::endl;
 
     return in == "Valid file content";
   }
@@ -149,12 +149,16 @@ protected:
     c->sizeX = 512;
     c->sizeY = 1024;
     c->sizeZ = 20;
-    c->sizeT = 4;
-    c->sizeC = 2;
+    c->sizeT = 5;
+
+    // SizeC is 2 channels each containing 1 and 3 subchannels, respectively.
+    c->sizeC.clear();
+    c->sizeC.push_back(1);
+    c->sizeC.push_back(3);
+
     c->pixelType = test_params.type;
-    c->imageCount = c->sizeZ * c->sizeT * c->sizeC;
+    c->imageCount = c->sizeZ * c->sizeT * c->sizeC.size();
     c->orderCertain = true;
-    c->rgb = false;
     c->littleEndian = test_params.endian == ::ome::bioformats::ENDIAN_LITTLE;
     c->interleaved = false;
     c->indexed = false;
@@ -243,9 +247,10 @@ public:
             dimension_size_type x,
             dimension_size_type y,
             dimension_size_type w,
-            dimension_size_type h)
+            dimension_size_type h,
+            dimension_size_type samples)
   {
-    ::ome::bioformats::detail::FormatReader::readPlane(source, dest, x, y, w, h);
+    ::ome::bioformats::detail::FormatReader::readPlane(source, dest, x, y, w, h, samples);
   }
 
   void
@@ -255,9 +260,10 @@ public:
             dimension_size_type y,
             dimension_size_type w,
             dimension_size_type h,
-            dimension_size_type scanlinePad)
+            dimension_size_type scanlinePad,
+            dimension_size_type samples)
   {
-    ::ome::bioformats::detail::FormatReader::readPlane(source, dest, x, y, w, h, scanlinePad);
+    ::ome::bioformats::detail::FormatReader::readPlane(source, dest, x, y, w, h, scanlinePad, samples);
   }
 
 };
@@ -344,7 +350,8 @@ TEST_P(FormatReaderTest, FlatClose)
 TEST_P(FormatReaderTest, DefaultCoreMetadata)
 {
   EXPECT_THROW(r.getImageCount(), std::logic_error);
-  EXPECT_THROW(r.isRGB(), std::logic_error);
+  EXPECT_THROW(r.isRGB(0), std::logic_error);
+  EXPECT_THROW(r.isRGB(1), std::logic_error);
   EXPECT_THROW(r.getSizeX(), std::logic_error);
   EXPECT_THROW(r.getSizeY(), std::logic_error);
   EXPECT_THROW(r.getSizeZ(), std::logic_error);
@@ -353,7 +360,8 @@ TEST_P(FormatReaderTest, DefaultCoreMetadata)
   EXPECT_THROW(r.getPixelType(), std::logic_error);
   EXPECT_THROW(r.getBitsPerPixel(), std::logic_error);
   EXPECT_THROW(r.getEffectiveSizeC(), std::logic_error);
-  EXPECT_THROW(r.getRGBChannelCount(), std::logic_error);
+  EXPECT_THROW(r.getRGBChannelCount(0), std::logic_error);
+  EXPECT_THROW(r.getRGBChannelCount(1), std::logic_error);
   EXPECT_THROW(r.isIndexed(), std::logic_error);
   EXPECT_THROW(r.isFalseColor(), std::logic_error);
   EXPECT_THROW(r.getModuloZ(), std::logic_error);
@@ -368,8 +376,8 @@ TEST_P(FormatReaderTest, DefaultCoreMetadata)
   EXPECT_THROW(r.isInterleaved(), std::logic_error);
   EXPECT_THROW(r.isInterleaved(0), std::logic_error);
   EXPECT_THROW(r.isMetadataComplete(), std::logic_error);
-  EXPECT_THROW(r.getOptimalTileWidth(), std::logic_error);
-  EXPECT_THROW(r.getOptimalTileHeight(), std::logic_error);
+  EXPECT_THROW(r.getOptimalTileWidth(0), std::logic_error);
+  EXPECT_THROW(r.getOptimalTileHeight(0), std::logic_error);
   EXPECT_THROW(r.getResolutionCount(), std::logic_error);
 }
 
@@ -379,17 +387,19 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
 
   r.setId("flat");
 
-  EXPECT_EQ(160U, r.getImageCount());
-  EXPECT_FALSE(r.isRGB());
+  EXPECT_EQ(200U, r.getImageCount());
+  EXPECT_FALSE(r.isRGB(0));
+  EXPECT_TRUE(r.isRGB(1));
   EXPECT_EQ(512U, r.getSizeX());
   EXPECT_EQ(1024U, r.getSizeY());
   EXPECT_EQ(20U, r.getSizeZ());
-  EXPECT_EQ(4U, r.getSizeT());
-  EXPECT_EQ(2U, r.getSizeC());
+  EXPECT_EQ(5U, r.getSizeT());
+  EXPECT_EQ(4U, r.getSizeC());
   EXPECT_EQ(params.type, r.getPixelType());
   EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
-  EXPECT_EQ(1U, r.getRGBChannelCount());
+  EXPECT_EQ(1U, r.getRGBChannelCount(0));
+  EXPECT_EQ(3U, r.getRGBChannelCount(1));
   EXPECT_FALSE(r.isIndexed());
   EXPECT_TRUE(r.isFalseColor());
   EXPECT_NO_THROW(r.getModuloZ());
@@ -407,10 +417,10 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_FALSE(r.isInterleaved());
   EXPECT_FALSE(r.isInterleaved(0));
   EXPECT_FALSE(r.isMetadataComplete());
-  EXPECT_EQ(512U, r.getOptimalTileWidth());
+  EXPECT_EQ(512U, r.getOptimalTileWidth(0));
   EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
                      1024U),
-            r.getOptimalTileHeight());
+            r.getOptimalTileHeight(0));
   EXPECT_EQ(1U, r.getResolutionCount());
 }
 
@@ -421,17 +431,19 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_NO_THROW(r.setFlattenedResolutions(true));
   r.setId("subres");
 
-  EXPECT_EQ(160U, r.getImageCount());
-  EXPECT_FALSE(r.isRGB());
+  EXPECT_EQ(200U, r.getImageCount());
+  EXPECT_FALSE(r.isRGB(0));
+  EXPECT_TRUE(r.isRGB(1));
   EXPECT_EQ(512U, r.getSizeX());
   EXPECT_EQ(1024U, r.getSizeY());
   EXPECT_EQ(20U, r.getSizeZ());
-  EXPECT_EQ(4U, r.getSizeT());
-  EXPECT_EQ(2U, r.getSizeC());
+  EXPECT_EQ(5U, r.getSizeT());
+  EXPECT_EQ(4U, r.getSizeC());
   EXPECT_EQ(params.type, r.getPixelType());
   EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
-  EXPECT_EQ(1U, r.getRGBChannelCount());
+  EXPECT_EQ(1U, r.getRGBChannelCount(0));
+  EXPECT_EQ(3U, r.getRGBChannelCount(1));
   EXPECT_FALSE(r.isIndexed());
   EXPECT_TRUE(r.isFalseColor());
   EXPECT_NO_THROW(r.getModuloZ());
@@ -449,10 +461,10 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_FALSE(r.isInterleaved());
   EXPECT_FALSE(r.isInterleaved(0));
   EXPECT_FALSE(r.isMetadataComplete());
-  EXPECT_EQ(512U, r.getOptimalTileWidth());
+  EXPECT_EQ(512U, r.getOptimalTileWidth(0));
   EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
                      1024U),
-            r.getOptimalTileHeight());
+            r.getOptimalTileHeight(0));
   EXPECT_EQ(1U, r.getResolutionCount());
 }
 
@@ -463,17 +475,19 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_NO_THROW(r.setFlattenedResolutions(false));
   r.setId("subres");
 
-  EXPECT_EQ(160U, r.getImageCount());
-  EXPECT_FALSE(r.isRGB());
+  EXPECT_EQ(200U, r.getImageCount());
+  EXPECT_FALSE(r.isRGB(0));
+  EXPECT_TRUE(r.isRGB(1));
   EXPECT_EQ(512U, r.getSizeX());
   EXPECT_EQ(1024U, r.getSizeY());
   EXPECT_EQ(20U, r.getSizeZ());
-  EXPECT_EQ(4U, r.getSizeT());
-  EXPECT_EQ(2U, r.getSizeC());
+  EXPECT_EQ(5U, r.getSizeT());
+  EXPECT_EQ(4U, r.getSizeC());
   EXPECT_EQ(params.type, r.getPixelType());
   EXPECT_EQ(::ome::bioformats::bitsPerPixel(params.type), r.getBitsPerPixel());
   EXPECT_EQ(2U, r.getEffectiveSizeC());
-  EXPECT_EQ(1U, r.getRGBChannelCount());
+  EXPECT_EQ(1U, r.getRGBChannelCount(0));
+  EXPECT_EQ(3U, r.getRGBChannelCount(1));
   EXPECT_FALSE(r.isIndexed());
   EXPECT_TRUE(r.isFalseColor());
   EXPECT_NO_THROW(r.getModuloZ());
@@ -491,10 +505,10 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_FALSE(r.isInterleaved());
   EXPECT_FALSE(r.isInterleaved(0));
   EXPECT_FALSE(r.isMetadataComplete());
-  EXPECT_EQ(512U, r.getOptimalTileWidth());
+  EXPECT_EQ(512U, r.getOptimalTileWidth(0));
   EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
                      1024U),
-            r.getOptimalTileHeight());
+            r.getOptimalTileHeight(0));
   EXPECT_EQ(3U, r.getResolutionCount());
 }
 
@@ -612,7 +626,7 @@ TEST_P(FormatReaderTest, FlatSeries)
       dims(3,  2, 1),
       dims(12, 3, 0),
       dims(8,  2, 1),
-      dims(19, 3, 1)
+      dims(19, 4, 1)
     };
 
     moddims modcoords[] =
@@ -628,11 +642,24 @@ TEST_P(FormatReaderTest, FlatSeries)
       moddims(0, 2, 1, 3, 0, 0),
       moddims(2, 3, 0, 2, 0, 0),
       moddims(1, 2, 1, 3, 0, 0),
-      moddims(3, 3, 1, 4, 0, 0)
+      moddims(3, 4, 1, 4, 0, 0)
     };
 
   dimension_size_type indexes[] =
-    { 0, 1, 20, 80, 21, 81, 100, 101, 123, 72, 128, 159 };
+    {
+      0,
+      1,
+      20,
+      100,
+      21,
+      101,
+      120,
+      121,
+      143,
+      72,
+      148,
+      199
+    };
 
   for (unsigned int i = 0;
        i < boost::size(coords);
@@ -942,8 +969,8 @@ TEST_P(FormatReaderTest, DefaultPixels)
   VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1],
                          params.type);
 
-  EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512), std::logic_error);
-  EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0), std::logic_error);
+  EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 1), std::logic_error);
+  EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0, 1), std::logic_error);
 
   EXPECT_THROW(r.openBytes(0, buf), std::logic_error);
   EXPECT_THROW(r.openBytes(0, buf, 0, 0, 512, 512), std::logic_error);
@@ -993,9 +1020,9 @@ namespace
                              reader.getPixelType());
 
       ss.seekg(0, std::ios::beg);
-      EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512));
+      EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512, 1));
       ss.seekg(0, std::ios::beg);
-      EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512, 0));
+      EXPECT_NO_THROW(reader.readPlane(ss, buf, 0, 0, 512, 512, 0, 1));
 
       ASSERT_EQ(expected.size(), buf.num_elements());
       for (uint32_t i = 0; i < expected.size(); ++i)

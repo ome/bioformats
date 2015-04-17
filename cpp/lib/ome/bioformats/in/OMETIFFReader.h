@@ -196,11 +196,11 @@ namespace ome
 
         // Documented in superclass.
         dimension_size_type
-        getOptimalTileWidth() const;
+        getOptimalTileWidth(dimension_size_type channel) const;
 
         // Documented in superclass.
         dimension_size_type
-        getOptimalTileHeight() const;
+        getOptimalTileHeight(dimension_size_type channel) const;
 
         // Documented in superclass.
         void

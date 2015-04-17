@@ -221,8 +221,22 @@ namespace info
           }
 
         stream << "\tImage count = " << reader->getImageCount() << '\n'
-               << "\tRGB = " << (reader->isRGB() ? "true" : "false")
-               << " (" << reader->getRGBChannelCount() << ") "
+               << "\tRGB = [";
+        dimension_size_type effC = reader->getEffectiveSizeC();
+        for (dimension_size_type c = 0; c < effC; ++c)
+          {
+            stream << (reader->isRGB() ? "true" : "false");
+            if (c + 1 != effC)
+              stream << ", ";
+          }
+        stream << "] ([";
+        for (dimension_size_type c = 0; c < effC; ++c)
+          {
+            stream << reader->getRGBChannelCount(c);
+            if (c + 1 != effC)
+              stream << ", ";
+          }
+        stream << "]) "
                << (opts.merge ? "merged" : opts.separate ? "separated" : "") << '\n'
                << "\tInterleaved = " << (reader->isInterleaved() ? "true" : "false") << '\n'
                << "\tIndexed = " << (reader->isIndexed() ? "true" : "false") << '\n'

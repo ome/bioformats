@@ -235,6 +235,20 @@ namespace ome
         getImageCount() const;
 
         /**
+         * Does a channel contain subchannels?
+         *
+         * Check if the image planes in the file have more than one subchannel per
+         * openBytes() call for the specified channel.
+         *
+         * @param channel the channel to use.
+         * @returns @c true if and only if @c getRGBChannelCount(channel) returns
+         * a value greater than 1, @c false otherwise.
+         */
+        virtual
+        bool
+        isRGB(dimension_size_type channel) const;
+
+        /**
          * Get the size of the X dimension.
          *
          * @returns the X dimension size.
@@ -300,6 +314,59 @@ namespace ome
         virtual
         pixel_size_type
         getBitsPerPixel() const;
+
+        /**
+         * Get the effective size of the C dimension
+         *
+         * This guarantees that
+         * \code{.cpp}
+         * getEffectiveSizeC() * getSizeZ() * getSizeT() == getImageCount()
+         * \endcode
+         * regardless of the result of isRGB().
+         *
+         * @returns the effective C dimension size.
+         */
+        virtual
+        dimension_size_type
+        getEffectiveSizeC() const;
+
+        /**
+         * Get the number of channels required for a call to saveBytes().
+         *
+         * The most common case where this value is greater than 1 is for interleaved
+         * RGB data, such as a 24-bit color image plane. However, it is possible for
+         * this value to be greater than 1 for non-interleaved data, such as an RGB
+         * TIFF with Planar rather than Chunky configuration.
+         *
+         * @param channel the channel to use.
+         * @returns the number of channels.
+         */
+        virtual
+        dimension_size_type
+        getRGBChannelCount(dimension_size_type channel) const;
+
+        /**
+         * @copydoc ome::bioformats::FormatReader::getDimensionOrder() const
+         */
+        virtual
+        const std::string&
+        getDimensionOrder() const;
+
+        /**
+         * @copydoc ome::bioformats::FormatReader::getIndex(dimension_size_type,dimension_size_type,dimension_size_type) const
+         */
+        virtual
+        dimension_size_type
+        getIndex(dimension_size_type z,
+                 dimension_size_type c,
+                 dimension_size_type t) const;
+
+        /**
+         * @copydoc ome::bioformats::FormatReader::getZCTCoords(dimension_size_type) const
+         */
+        virtual
+        ome::compat::array<dimension_size_type, 3>
+        getZCTCoords(dimension_size_type index) const;
 
         // Documented in superclass.
         void

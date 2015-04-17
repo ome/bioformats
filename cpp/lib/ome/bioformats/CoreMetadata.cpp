@@ -46,7 +46,7 @@ namespace ome
       sizeX(1),
       sizeY(1),
       sizeZ(1),
-      sizeC(1),
+      sizeC(),
       sizeT(1),
       thumbSizeX(0),
       thumbSizeY(0),
@@ -58,7 +58,6 @@ namespace ome
       moduloC("C"),
       dimensionOrder(ome::xml::model::enums::DimensionOrder::XYZTC),
       orderCertain(true),
-      rgb(false),
       littleEndian(false),
       interleaved(false),
       indexed(false),
@@ -68,6 +67,7 @@ namespace ome
       thumbnail(false),
       resolutionCount(1)
     {
+      sizeC.push_back(1U);
     }
 
     CoreMetadata::CoreMetadata(const CoreMetadata &copy):
@@ -86,7 +86,6 @@ namespace ome
       moduloC(copy.moduloC),
       dimensionOrder(copy.dimensionOrder),
       orderCertain(copy.orderCertain),
-      rgb(copy.rgb),
       littleEndian(copy.littleEndian),
       interleaved(copy.interleaved),
       indexed(copy.indexed),

@@ -147,6 +147,7 @@ TEST_P(TIFFWriterTest, setId)
   ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> retrieve(ome::compat::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(meta));
 
   tiffwriter.setMetadataRetrieve(retrieve);
+  tiffwriter.setInterleaved(true);
 
   ASSERT_NO_THROW(tiffwriter.setId(testfile));
 
@@ -156,23 +157,23 @@ TEST_P(TIFFWriterTest, setId)
     {
       ome::compat::shared_ptr<IFD> ifd = tiff->getDirectoryByIndex(i);
       ASSERT_TRUE(static_cast<bool>(ifd));
+      ifd->readImage(buf);
 
-      dimension_size_type samples = ifd->getSamplesPerPixel();
-      if (samples == 1)
-        {
-          ifd->readImage(buf);
-          tiffwriter.setSeries(currentSeries);
-          tiffwriter.saveBytes(0, buf);
-        }
-      else
-        {
-          tiffwriter.setSeries(currentSeries);
-          for (dimension_size_type channel = 0U; channel < samples; ++channel)
-            {
-              ifd->readImage(buf, channel);
-              tiffwriter.saveBytes(channel, buf);
-            }
-        }
+      // Make a second buffer to ensure correct ordering for saveBytes.
+      ome::compat::array<VariantPixelBuffer::size_type, 9> shape;
+      shape[ome::bioformats::DIM_SPATIAL_X] = ifd->getImageWidth();
+      shape[ome::bioformats::DIM_SPATIAL_Y] = ifd->getImageHeight();
+      shape[ome::bioformats::DIM_SUBCHANNEL] = ifd->getSamplesPerPixel();
+      shape[ome::bioformats::DIM_SPATIAL_Z] = shape[ome::bioformats::DIM_TEMPORAL_T] = shape[ome::bioformats::DIM_CHANNEL] =
+        shape[ome::bioformats::DIM_MODULO_Z] = shape[ome::bioformats::DIM_MODULO_T] = shape[ome::bioformats::DIM_MODULO_C] = 1;
+
+      ome::bioformats::PixelBufferBase::storage_order_type order(ome::bioformats::PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, ifd->getSamplesPerPixel() > 1 ? true : false));
+
+      VariantPixelBuffer src(shape, ifd->getPixelType(), order);
+      src = buf;
+
+      tiffwriter.setSeries(currentSeries);
+      tiffwriter.saveBytes(0, src);
       ++currentSeries;
     }
   tiffwriter.close();

@@ -496,7 +496,7 @@ namespace ome
       for (dimension_size_type c = 0; c < effSizeC; ++c)
         {
           store.setChannelID(createID("Channel", series, c), series, c);
-          store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(reader.getRGBChannelCount()), series, c);
+          store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(reader.getRGBChannelCount(c)), series, c);
         }
 
     }
@@ -519,19 +519,15 @@ namespace ome
       store.setPixelsSizeY(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeY), series);
       store.setPixelsSizeZ(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeZ), series);
       store.setPixelsSizeT(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeT), series);
-      store.setPixelsSizeC(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeC), series);
+      store.setPixelsSizeC(static_cast<PositiveInteger::value_type>
+                           (std::accumulate(seriesMetadata.sizeC.begin(), seriesMetadata.sizeC.end(),
+                                            dimension_size_type(0))), series);
 
-      dimension_size_type sizeZT = seriesMetadata.sizeZ * seriesMetadata.sizeT;
-      dimension_size_type effSizeC = 0;
-      if (sizeZT)
-        effSizeC = seriesMetadata.imageCount / sizeZT;
+      dimension_size_type effSizeC = seriesMetadata.sizeC.size();
 
       for (dimension_size_type c = 0; c < effSizeC; ++c)
         {
-
-          dimension_size_type rgbC = 0;
-          if (effSizeC)
-            rgbC = seriesMetadata.sizeC / effSizeC;
+          dimension_size_type rgbC = seriesMetadata.sizeC.at(c);
 
           store.setChannelID(createID("Channel", series, c), series, c);
           store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(rgbC), series, c);

@@ -207,9 +207,10 @@ namespace ome
                               dimension_size_type x,
                               dimension_size_type y,
                               dimension_size_type w,
-                              dimension_size_type h)
+                              dimension_size_type h,
+                              dimension_size_type samples)
       {
-        return readPlane(source, dest, x, y, w, h, 0);
+        return readPlane(source, dest, x, y, w, h, 0, samples);
       }
 
       namespace
@@ -223,7 +224,7 @@ namespace ome
           dimension_size_type y;
           dimension_size_type w;
           dimension_size_type h;
-          dimension_size_type c;
+          dimension_size_type samples;
           dimension_size_type scanlinePad;
 
           PlaneVisitor(std::istream&       source,
@@ -232,7 +233,7 @@ namespace ome
                        dimension_size_type y,
                        dimension_size_type w,
                        dimension_size_type h,
-                       dimension_size_type c,
+                       dimension_size_type samples,
                        dimension_size_type scanlinePad):
             source(source),
             reader(reader),
@@ -240,7 +241,7 @@ namespace ome
             y(y),
             w(w),
             h(h),
-            c(c),
+            samples(samples),
             scanlinePad(scanlinePad)
           {}
 
@@ -270,21 +271,21 @@ namespace ome
               {
                 if (interleaved)
                   {
-                    source.seekg(static_cast<std::istream::off_type>(y * w * bpp * c), std::ios::cur);
+                    source.seekg(static_cast<std::istream::off_type>(y * w * bpp * samples), std::ios::cur);
                     source.read(reinterpret_cast<char *>(v->data()),
                                 static_cast<std::streamsize>(v->num_elements() * bpp));
                   }
                 else
                   {
                     dimension_size_type rowLen = w * bpp;
-                    for (dimension_size_type channel = 0; channel < c; ++channel)
+                    for (dimension_size_type sample = 0; sample < samples; ++sample)
                       {
                         source.seekg(static_cast<std::istream::off_type>(y * rowLen), std::ios::cur);
                         source.read(reinterpret_cast<char *>(v->data())
-                                    + (channel * h * rowLen),
+                                    + (sample * h * rowLen),
                                     static_cast<std::streamsize>(h * rowLen));
-                        // no need to skip bytes after reading final channel
-                        if (channel < c - 1)
+                        // no need to skip bytes after reading final sample
+                        if (sample < samples - 1)
                           source.seekg(static_cast<std::istream::off_type>((sizeY - y - h) * rowLen), std::ios::cur);
                       }
                   }
@@ -294,35 +295,35 @@ namespace ome
                 dimension_size_type scanlineWidth = sizeX + scanlinePad;
                 if (interleaved)
                   {
-                    source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp * c), std::ios::cur);
+                    source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp * samples), std::ios::cur);
                     for (dimension_size_type row = 0; row < h; ++row)
                       {
-                        source.seekg(static_cast<std::istream::off_type>(x * bpp * c), std::ios::cur);
+                        source.seekg(static_cast<std::istream::off_type>(x * bpp * samples), std::ios::cur);
                         source.read(reinterpret_cast<char *>(v->data())
-                                    + (row * w * bpp * c),
-                                    static_cast<std::streamsize>(w * bpp * c));
+                                    + (row * w * bpp * samples),
+                                    static_cast<std::streamsize>(w * bpp * samples));
                         // no need to skip bytes after reading final row
                         if (row < h - 1)
-                          source.seekg(static_cast<std::istream::off_type>(bpp * c * (scanlineWidth - w - x)), std::ios::cur);
+                          source.seekg(static_cast<std::istream::off_type>(bpp * samples * (scanlineWidth - w - x)), std::ios::cur);
                       }
                   }
                 else
                   {
-                    for (dimension_size_type channel = 0; channel < c; ++channel)
+                    for (dimension_size_type sample = 0; sample < samples; ++sample)
                       {
                         source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp), std::ios::cur);
                         for (dimension_size_type row = 0; row < h; ++row)
                           {
                             source.seekg(static_cast<std::istream::off_type>(x * bpp), std::ios::cur);
                             source.read(reinterpret_cast<char *>(v->data())
-                                        + (channel * w * h * bpp + row * w * bpp),
+                                        + (sample * w * h * bpp + row * w * bpp),
                                         static_cast<std::streamsize>(w * bpp));
-                            // no need to skip bytes after reading final row of final channel
-                            if (row < h - 1 || channel < c - 1)
+                            // no need to skip bytes after reading final row of final sample
+                            if (row < h - 1 || sample < samples - 1)
                               source.seekg(static_cast<std::istream::off_type>(bpp * (scanlineWidth - w - x)), std::ios::cur);
                           }
-                        if (channel < c - 1)
-                          // no need to skip bytes after reading final channel
+                        if (sample < samples - 1)
+                          // no need to skip bytes after reading final sample
                           source.seekg(static_cast<std::istream::off_type>(scanlineWidth * bpp * (sizeY - y - h)), std::ios::cur);
                       }
                   }
@@ -354,14 +355,13 @@ namespace ome
                               dimension_size_type y,
                               dimension_size_type w,
                               dimension_size_type h,
-                              dimension_size_type scanlinePad)
+                              dimension_size_type scanlinePad,
+                              dimension_size_type samples)
       {
-        // Get reader and buffer size, order and type.
-        const dimension_size_type c(getRGBChannelCount());
         ome::compat::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
-        shape[DIM_SUBCHANNEL] = c;
+        shape[DIM_SUBCHANNEL] = samples;
         shape[DIM_SPATIAL_Z] = shape[DIM_TEMPORAL_T] = shape[DIM_CHANNEL] =
           shape[DIM_MODULO_Z] = shape[DIM_MODULO_T] = shape[DIM_MODULO_C] = 1;
         const VariantPixelBuffer::size_type *dest_shape_ptr(dest.shape());
@@ -384,7 +384,7 @@ namespace ome
 
         // Fill the buffer according to its type.
         PlaneVisitor v(source, *this,
-                       x, y, w, h, c, scanlinePad);
+                       x, y, w, h, samples, scanlinePad);
         boost::apply_visitor(v, dest.vbuffer());
       }
 
@@ -488,10 +488,10 @@ namespace ome
       }
 
       bool
-      FormatReader::isRGB() const
+      FormatReader::isRGB(dimension_size_type channel) const
       {
         assertId(currentId, true);
-        return getCoreMetadata(getCoreIndex()).rgb;
+        return getRGBChannelCount(channel) > 1U;
       }
 
       dimension_size_type
@@ -526,7 +526,10 @@ namespace ome
       FormatReader::getSizeC() const
       {
         assertId(currentId, true);
-        return getCoreMetadata(getCoreIndex()).sizeC;
+
+        const std::vector<dimension_size_type>& c(getCoreMetadata(getCoreIndex()).sizeC);
+
+        return std::accumulate(c.begin(), c.end(), dimension_size_type(0));
       }
 
       ome::xml::model::enums::PixelType
@@ -556,26 +559,13 @@ namespace ome
       dimension_size_type
       FormatReader::getEffectiveSizeC() const
       {
-        // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
-        dimension_size_type sizeZT = getSizeZ() * getSizeT();
-        dimension_size_type effC = 0;
-
-        if (sizeZT)
-          effC = getImageCount() / sizeZT;
-
-        return effC;
+        return getCoreMetadata(getCoreIndex()).sizeC.size();
       }
 
       dimension_size_type
-      FormatReader::getRGBChannelCount() const
+      FormatReader::getRGBChannelCount(dimension_size_type channel) const
       {
-        dimension_size_type effC = getEffectiveSizeC();
-        dimension_size_type rgbC = 0;
-
-        if (effC)
-          rgbC = getSizeC() / effC;
-
-        return rgbC;
+        return getCoreMetadata(getCoreIndex()).sizeC.at(channel);
       }
 
       bool
@@ -1119,18 +1109,18 @@ namespace ome
       }
 
       dimension_size_type
-      FormatReader::getOptimalTileWidth() const
+      FormatReader::getOptimalTileWidth(dimension_size_type /* channel */) const
       {
         assertId(currentId, true);
         return getSizeX();
       }
 
       dimension_size_type
-      FormatReader::getOptimalTileHeight() const
+      FormatReader::getOptimalTileHeight(dimension_size_type channel) const
       {
         assertId(currentId, true);
         uint32_t bpp = bytesPerPixel(getPixelType());
-        dimension_size_type maxHeight = (1024 * 1024) / (getSizeX() * getRGBChannelCount() * bpp);
+        dimension_size_type maxHeight = (1024U * 1024U) / (getSizeX() * getRGBChannelCount(channel) * bpp);
         return std::min(maxHeight, getSizeY());
       }
 

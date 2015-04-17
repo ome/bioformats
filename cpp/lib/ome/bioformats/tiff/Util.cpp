@@ -157,16 +157,8 @@ namespace ome
         uint16_t samples = ifd.getSamplesPerPixel();
         tiff::PhotometricInterpretation photometric = ifd.getPhotometricInterpretation();
 
-        // Note that RGB does not mean photometric interpretation is
-        // RGB.  It's a way to force the subchannels into sizeC as
-        // addressable channels in the absence of an nD API.
-        core.rgb = false;
-        core.sizeC = 1U;
-        if (samples > 1 || photometric == tiff::RGB)
-          {
-            core.rgb = true;
-            core.sizeC = samples;
-          }
+        core.sizeC.clear();
+        core.sizeC.push_back(samples);
         core.sizeZ = core.sizeT = core.imageCount = 1U;
 
         // libtiff does any needed endian conversion
@@ -190,7 +182,6 @@ namespace ome
                 ome::compat::array<std::vector<uint16_t>, 3> cmap;
                 ifd.getField(tiff::COLORMAP).get(cmap);
                 core.indexed = true;
-                core.rgb = false;
               }
             catch (...)
               {
@@ -207,7 +198,6 @@ namespace ome
                 if (indexed)
                   {
                     core.indexed = true;
-                    core.rgb = false;
                   }
               }
             catch (...)
@@ -370,49 +360,10 @@ namespace ome
         core.seriesMetadata.set("BitsPerSample", bitsPerPixel(ifd.getPixelType()));
       }
 
-      void
-      setCoreMetadata(IFD&                ifd,
-                      const CoreMetadata& core)
-      {
-        ifd.setImageWidth(core.sizeX);
-        ifd.setImageHeight(core.sizeY);
-        ifd.setPixelType(core.pixelType);
-
-        pixel_size_type psize = significantBitsPerPixel(core.pixelType);
-        if (core.bitsPerPixel < psize)
-          psize = core.bitsPerPixel;
-        ifd.setBitsPerSample(psize);
-
-        // Note that RGB does not mean photometric interpretation is
-        // RGB.  It's a way to force the subchannels into sizeC as
-        // addressable channels in the absence of an nD API.
-        uint16_t samples = 1;
-        if (core.rgb)
-          samples = core.sizeC;
-
-        tiff::PhotometricInterpretation photometric = tiff::MIN_IS_BLACK;
-        if (core.rgb && core.sizeC == 3)
-          photometric = tiff::RGB;
-        else if (!core.rgb && core.indexed && samples == 1)
-          photometric = tiff::PALETTE;
-        ifd.setPhotometricInterpretation(photometric);
-
-        // libtiff does any needed endian conversion automatically, so
-        // the data is always in the native byte order; don't set
-        // anything here.
-
-        // @todo Consider adding getMetadata equivalent to
-        // setMetadata, to allow setting of Baseline TIFF tags from
-        // original metadata, allowing round-trip of Baseline TIFF
-        // tags through Bio-Formats.
-      }
-
       dimension_size_type
       ifdIndex(const SeriesIFDRange& seriesIFDRange,
                dimension_size_type   series,
-               dimension_size_type   plane,
-               dimension_size_type   sizeC,
-               bool                  isRGB)
+               dimension_size_type   plane)
       {
         if (series >= seriesIFDRange.size())
           {
@@ -420,21 +371,16 @@ namespace ome
             fmt % series;
             throw FormatException(fmt.str());
           }
-        const IFDRange range(seriesIFDRange.at(series));
+        const IFDRange& range(seriesIFDRange.at(series));
 
         // Compute timepoint and subchannel from plane number.
-        dimension_size_type realplane = plane;
-        if (isRGB)
-          {
-            realplane = plane / sizeC;
-          }
-        dimension_size_type ifdidx = range.begin + realplane;
-        assert(range.begin <= realplane && realplane < range.end);
+        dimension_size_type ifdidx = range.begin + plane;
+        assert(range.begin <= plane && plane < range.end);
 
-        if (realplane >= (range.end - range.begin))
+        if (plane >= (range.end - range.begin))
           {
             boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
-            fmt % realplane % series;
+            fmt % plane % series;
             throw FormatException(fmt.str());
           }
 

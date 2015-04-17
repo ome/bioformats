@@ -258,6 +258,7 @@ namespace ome
          * @param y the top edge of the plane.
          * @param w the width of the plane.
          * @param h the height of the plane.
+         * @param samples the number of samples per pixel.
          */
         virtual
         void
@@ -266,7 +267,8 @@ namespace ome
                   dimension_size_type x,
                   dimension_size_type y,
                   dimension_size_type w,
-                  dimension_size_type h);
+                  dimension_size_type h,
+                  dimension_size_type samples);
 
         /**
          * Read a raw plane with scanline padding.
@@ -281,6 +283,7 @@ namespace ome
          * @param w the width of the plane.
          * @param h the height of the plane.
          * @param scanlinePad the scanline padding.
+         * @param samples the number of samples per pixel.
          */
         virtual
         void
@@ -290,7 +293,8 @@ namespace ome
                   dimension_size_type y,
                   dimension_size_type w,
                   dimension_size_type h,
-                  dimension_size_type scanlinePad);
+                  dimension_size_type scanlinePad,
+                  dimension_size_type samples);
 
         /**
          * Create a configured FilterMetadata instance.
@@ -429,7 +433,7 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isRGB() const;
+        isRGB(dimension_size_type channel) const;
 
         // Documented in superclass.
         dimension_size_type
@@ -465,7 +469,7 @@ namespace ome
 
         // Documented in superclass.
         dimension_size_type
-        getRGBChannelCount() const;
+        getRGBChannelCount(dimension_size_type channel) const;
 
         // Documented in superclass.
         bool
@@ -725,11 +729,11 @@ namespace ome
 
         // Documented in superclass.
         dimension_size_type
-        getOptimalTileWidth() const;
+        getOptimalTileWidth(dimension_size_type channel) const;
 
         // Documented in superclass.
         dimension_size_type
-        getOptimalTileHeight() const;
+        getOptimalTileHeight(dimension_size_type channel) const;
 
         // Documented in superclass.
         dimension_size_type

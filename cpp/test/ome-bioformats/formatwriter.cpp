@@ -246,15 +246,14 @@ private:
     store->setPixelsSizeY(PositiveInteger(core->sizeY), series);
     store->setPixelsSizeZ(PositiveInteger(core->sizeZ), series);
     store->setPixelsSizeT(PositiveInteger(core->sizeT), series);
-    store->setPixelsSizeC(PositiveInteger(core->sizeC), series);
+    store->setPixelsSizeC(PositiveInteger(std::accumulate(core->sizeC.begin(), core->sizeC.end(), dimension_size_type(0))), series);
 
-    dimension_size_type effSizeC = core->imageCount / (core->sizeZ * core->sizeT);
-    dimension_size_type spp = core->sizeC / effSizeC;
+    dimension_size_type effSizeC = core->sizeC.size();
 
     for (dimension_size_type c = 0; c < effSizeC; ++c)
       {
         store->setChannelID(createID("Channel", series, c), series, c);
-        store->setChannelSamplesPerPixel(PositiveInteger(spp), series, c);
+        store->setChannelSamplesPerPixel(PositiveInteger(core->sizeC.at(c)), series, c);
       }
   }
 
@@ -267,11 +266,14 @@ private:
     c->sizeY = 1024;
     c->sizeZ = 20;
     c->sizeT = 4;
-    c->sizeC = 2;
+
+    c->sizeC.clear();
+    c->sizeC.push_back(1);
+    c->sizeC.push_back(1);
+
     c->pixelType = test_params.type;
-    c->imageCount = c->sizeZ * c->sizeT * c->sizeC;
+    c->imageCount = c->sizeZ * c->sizeT * std::accumulate(c->sizeC.begin(), c->sizeC.end(), dimension_size_type(0));
     c->orderCertain = true;
-    c->rgb = false;
     c->littleEndian = test_params.endian == ::ome::bioformats::ENDIAN_LITTLE;
     c->interleaved = false;
     c->indexed = false;

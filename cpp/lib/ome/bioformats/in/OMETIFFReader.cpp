@@ -173,9 +173,9 @@ namespace ome
         {
         public:
           /// Tile width.
-          dimension_size_type tileWidth;
+          std::vector<dimension_size_type> tileWidth;
           /// Tile width.
-          dimension_size_type tileHeight;
+          std::vector<dimension_size_type> tileHeight;
           /// Per-plane data.
           std::vector<OMETIFFPlane> tiffPlanes;
 
@@ -402,23 +402,23 @@ namespace ome
       }
 
       dimension_size_type
-      OMETIFFReader::getOptimalTileWidth() const
+      OMETIFFReader::getOptimalTileWidth(dimension_size_type channel) const
       {
         assertId(currentId, true);
 
         const OMETIFFMetadata& ometa(dynamic_cast<const OMETIFFMetadata&>(getCoreMetadata(getCoreIndex())));
 
-        return ometa.tileWidth;
+        return ometa.tileWidth.at(channel);
       }
 
       dimension_size_type
-      OMETIFFReader::getOptimalTileHeight() const
+      OMETIFFReader::getOptimalTileHeight(dimension_size_type channel) const
       {
         assertId(currentId, true);
 
         const OMETIFFMetadata& ometa(dynamic_cast<const OMETIFFMetadata&>(getCoreMetadata(getCoreIndex())));
 
-        return ometa.tileHeight;
+        return ometa.tileHeight.at(channel);
       }
 
       void
@@ -521,38 +521,35 @@ namespace ome
 
             DimensionOrder order(meta->getPixelsDimensionOrder(series));
 
-            boost::optional<dimension_size_type> samples;
+            dimension_size_type channelCount = meta->getChannelCount(series);
             if (meta->getChannelCount(series) > 0)
               {
-                try
+                coreMeta->sizeC.clear();
+                for (dimension_size_type channel = 0; channel < channelCount; ++channel)
                   {
-                    PositiveInteger samplesPerPixel = meta->getChannelSamplesPerPixel(series, 0);
-                    samples = samplesPerPixel;
+                    dimension_size_type samplesPerPixel = 1U;
+                    try
+                      {
+                        samplesPerPixel = static_cast<dimension_size_type>(meta->getChannelSamplesPerPixel(series, 0));
+                      }
+                    catch (const std::exception& /* e */)
+                      {
+                      }
+                    coreMeta->sizeC.push_back(samplesPerPixel);
                   }
-                catch (const std::exception& /* e */)
-                  {
-                  }
+                // At this stage, assume that the OME-XML
+                // channel/samples per pixel data is correct; we'll
+                // check this matches reality below.
               }
-            dimension_size_type tiffSamples = seriesFileSamplesPerPixel(*meta, series);
-
-            bool adjustedSamples = false;
-            if (!samples || *samples != tiffSamples)
+            else // No Channels specified
               {
-                boost::format fmt("SamplesPerPixel mismatch: OME=%1%, TIFF=%2%");
-                fmt % (samples ? *samples : 0) % tiffSamples;
-                BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
-
-                samples = tiffSamples;
-                adjustedSamples = true;
+                dimension_size_type channels = meta->getPixelsSizeC(series);
+                coreMeta->sizeC.clear();
+                for (dimension_size_type channel = 0; channel < channels; ++channel)
+                  coreMeta->sizeC.push_back(1U);
               }
 
-            if (adjustedSamples && meta->getChannelCount(series) <= 1)
-              adjustedSamples = false;
-
-            PositiveInteger effSizeC = meta->getPixelsSizeC(series);
-            if (!adjustedSamples && !(effSizeC % *samples))
-              effSizeC /= static_cast<PositiveInteger::value_type>(*samples);
-
+            PositiveInteger effSizeC = coreMeta->sizeC.size();
             PositiveInteger sizeT = meta->getPixelsSizeT(series);
             PositiveInteger sizeZ = meta->getPixelsSizeZ(series);
             PositiveInteger num = effSizeC * sizeT * sizeZ;
@@ -645,8 +642,8 @@ namespace ome
                 else
                   {
                     // All the other cases will already have a canonical path.
-                    if (fs::exists(*filename))
-                      filename = canonical(*filename, dir);
+                    if (fs::exists(dir / *filename))
+                      filename = canonical(dir / *filename, dir);
                     else
                       {
                         invalid_file_map::const_iterator invalid = invalidFiles.find(*filename);
@@ -786,32 +783,20 @@ namespace ome
             // Fill CoreMetadata.
             try
               {
-
-                for (std::vector<OMETIFFPlane>::iterator i = coreMeta->tiffPlanes.begin();
-                     i != coreMeta->tiffPlanes.end();
-                     ++i)
-                  {
-                    // What exactly are we checking for here?  That
-                    // it's a valid TIFF?  Why the fallback to currentId?
-                  }
-
                 const OMETIFFPlane& plane(coreMeta->tiffPlanes.at(0));
                 const ome::compat::shared_ptr<const tiff::TIFF> ptiff(getTIFF(plane.id));
                 const ome::compat::shared_ptr<const tiff::IFD> pifd(ptiff->getDirectoryByIndex(plane.ifd));
-                const tiff::TileInfo tinfo(pifd->getTileInfo());
 
                 uint32_t tiffWidth = pifd->getImageWidth();
                 uint32_t tiffHeight = pifd->getImageHeight();
                 ome::xml::model::enums::PixelType tiffPixelType = pifd->getPixelType();
                 tiff::PhotometricInterpretation photometric = pifd->getPhotometricInterpretation();
 
-                coreMeta->tileWidth = tinfo.tileWidth();
-                coreMeta->tileHeight = tinfo.tileHeight();
                 coreMeta->sizeX = meta->getPixelsSizeX(series);
                 coreMeta->sizeY = meta->getPixelsSizeY(series);
                 coreMeta->sizeZ = meta->getPixelsSizeZ(series);
                 coreMeta->sizeT = meta->getPixelsSizeT(series);
-                coreMeta->sizeC = meta->getPixelsSizeC(series);
+                // coreMeta->sizeC already set
                 coreMeta->pixelType = meta->getPixelsType(series);
                 coreMeta->imageCount = num;
                 coreMeta->dimensionOrder = meta->getPixelsDimensionOrder(series);
@@ -857,13 +842,38 @@ namespace ome
                 catch (const std::exception&)
                   {
                   }
-                coreMeta->rgb = (*samples > 1) || photometric == tiff::RGB;
-                if ((*samples != coreMeta->sizeC &&
-                     (*samples % coreMeta->sizeC) != 0U &&
-                     (coreMeta->sizeC % *samples) != 0U) ||
-                    coreMeta->sizeC == 1U ||
-                    adjustedSamples)
-                  coreMeta->sizeC *= *samples;
+
+                // Check channel sizes and correct if wrong.
+                for (dimension_size_type channel = 0; channel < coreMeta->sizeC.size(); ++channel)
+                  {
+                    dimension_size_type planeIndex =
+                      ome::bioformats::getIndex(coreMeta->dimensionOrder,
+                                                coreMeta->sizeZ,
+                                                coreMeta->sizeC.size(),
+                                                coreMeta->sizeT,
+                                                coreMeta->imageCount,
+                                                0,
+                                                channel,
+                                                0);
+
+                    const OMETIFFPlane& plane(coreMeta->tiffPlanes.at(planeIndex));
+                    const ome::compat::shared_ptr<const tiff::TIFF> ctiff(getTIFF(plane.id));
+                    const ome::compat::shared_ptr<const tiff::IFD> cifd(ctiff->getDirectoryByIndex(plane.ifd));
+                    const tiff::TileInfo tinfo(cifd->getTileInfo());
+                    const dimension_size_type tiffSamples = cifd->getSamplesPerPixel();
+
+                    if (coreMeta->sizeC.at(channel) != tiffSamples)
+                      {
+                        boost::format fmt("SamplesPerPixel mismatch: OME=%1%, TIFF=%2%");
+                        fmt % coreMeta->sizeC.at(channel) % tiffSamples;
+                        BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+
+                        coreMeta->sizeC.at(channel) = tiffSamples;
+                      }
+
+                    coreMeta->tileWidth.push_back(tinfo.tileWidth());
+                    coreMeta->tileHeight.push_back(tinfo.tileHeight());
+                  }
 
                 if (coreMeta->sizeX != tiffWidth)
                   {
@@ -876,6 +886,14 @@ namespace ome
                   {
                     boost::format fmt("SizeY mismatch: OME=%1%, TIFF=%2%");
                     fmt % coreMeta->sizeY % tiffHeight;
+
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+                  }
+                if (std::accumulate(coreMeta->sizeC.begin(), coreMeta->sizeC.end(), dimension_size_type(0)) != static_cast<dimension_size_type>(meta->getPixelsSizeC(series)))
+                  {
+                    boost::format fmt("SizeC mismatch: Channels=%1%, Pixels=%2%");
+                    fmt % std::accumulate(coreMeta->sizeC.begin(), coreMeta->sizeC.end(), dimension_size_type(0));
+                    fmt % meta->getPixelsSizeC(series);
 
                     BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                   }
@@ -937,8 +955,10 @@ namespace ome
           {
             ome::compat::shared_ptr<CoreMetadata>& ms0 = core.at(0);
             ms0->sizeZ = 1U;
-            if (!ms0->rgb)
-              ms0->sizeC = 1U;
+            // Only one channel, but may contain subchannels.
+            dimension_size_type subchannels = ms0->sizeC.at(0);
+            ms0->sizeC.clear();
+            ms0->sizeC.push_back(subchannels);
             ms0->sizeT = 1U;
           }
 
@@ -1074,56 +1094,6 @@ namespace ome
             PositiveInteger sizeC = meta.getPixelsSizeC(i);
             removeChannels(meta, i, sizeC);
           }
-      }
-
-
-      dimension_size_type
-      OMETIFFReader::seriesFileSamplesPerPixel(const ome::xml::meta::OMEXMLMetadata&    meta,
-                                               ome::xml::meta::BaseMetadata::index_type series)
-      {
-        index_type tiffDataCount = meta.getTiffDataCount(series);
-        index_type td = 0;
-        boost::optional<NonNegativeInteger> ifdIndex = 0;
-        for (td = 0; td < tiffDataCount; ++td)
-          {
-            boost::optional<NonNegativeInteger> tdIFD;
-            try
-              {
-                ifdIndex = meta.getTiffDataIFD(series, td);
-              }
-            catch (const std::exception& e)
-              {
-              }
-            if (ifdIndex)
-              break; // Found an IFD.
-          }
-        if (!ifdIndex)
-          {
-            // Fallback to use the first IFD
-            ifdIndex = 0;
-            td = 0;
-          }
-
-        std::string uuid;
-        try
-          {
-            uuid = meta.getUUIDValue(series, td);
-          }
-        catch (const std::exception& /* e */)
-          {
-          }
-
-        path filename;
-        uuid_file_map::const_iterator i = files.find(uuid);
-        if (i != files.end())
-          filename = i->second;
-        else
-          filename = *currentId;
-
-        const ome::compat::shared_ptr<const tiff::TIFF> tiff(getTIFF(filename));
-        const ome::compat::shared_ptr<const tiff::IFD> ifd(tiff->getDirectoryByIndex(*ifdIndex));
-
-        return ifd->getSamplesPerPixel();
       }
 
       void
@@ -1285,21 +1255,23 @@ namespace ome
         ome::compat::shared_ptr<CoreMetadata> coreMeta(core.at(series));
         if (coreMeta)
           {
-
-            if (coreMeta->sizeZ * coreMeta->sizeT * coreMeta->sizeC > coreMeta->imageCount &&
-                !coreMeta->rgb)
+            dimension_size_type channelCount = std::accumulate(coreMeta->sizeC.begin(), coreMeta->sizeC.end(), dimension_size_type(0));
+            if (coreMeta->sizeZ * coreMeta->sizeT * channelCount > coreMeta->imageCount && // Total image count is greater than imageCount.
+                channelCount == coreMeta->sizeC.size()) // No subchannels, though it's not clear why this matters since they should be accounted for by imageCount.
               {
                 if (coreMeta->sizeZ == coreMeta->imageCount)
                   {
                     coreMeta->sizeT = 1U;
-                    coreMeta->sizeC = 1U;
+                    coreMeta->sizeC.clear();
+                    coreMeta->sizeC.push_back(1U);
                   }
                 else if (coreMeta->sizeT == coreMeta->imageCount)
                   {
                     coreMeta->sizeZ = 1U;
-                    coreMeta->sizeC = 1U;
+                    coreMeta->sizeC.clear();
+                    coreMeta->sizeC.push_back(1U);
                   }
-                else if (coreMeta->sizeC == coreMeta->imageCount)
+                else if (channelCount == coreMeta->imageCount)
                   {
                     coreMeta->sizeZ = 1U;
                     coreMeta->sizeT = 1U;
@@ -1308,7 +1280,8 @@ namespace ome
                   {
                     coreMeta->sizeZ = 1U;
                     coreMeta->sizeT = coreMeta->imageCount;
-                    coreMeta->sizeC = 1U;
+                    coreMeta->sizeC.clear();
+                    coreMeta->sizeC.push_back(1U);
                   }
               }
           }
@@ -1346,18 +1319,7 @@ namespace ome
 
         const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
 
-        if (isRGB())
-          {
-            // Copy the desired subchannel into the destination buffer.
-            VariantPixelBuffer tmp;
-            ifd->readImage(tmp, x, y, w, h);
-
-            dimension_size_type S = no % getSizeC();
-            detail::CopySubchannelVisitor v(buf, S);
-            boost::apply_visitor(v, tmp.vbuffer());
-          }
-        else
-          ifd->readImage(buf, x, y, w, h);
+        ifd->readImage(buf, x, y, w, h);
       }
 
       void

@@ -285,11 +285,24 @@ namespace ome
         ifd->setTileWidth(getSizeX());
         ifd->setTileHeight(1U);
 
+        ome::compat::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
+
+        dimension_size_type channel = coords[1];
+
         ifd->setPixelType(getPixelType());
         ifd->setBitsPerSample(bitsPerPixel(getPixelType()));
-        ifd->setSamplesPerPixel(1U);
-        ifd->setPlanarConfiguration(tiff::SEPARATE);
-        ifd->setPhotometricInterpretation(tiff::MIN_IS_BLACK);
+        ifd->setSamplesPerPixel(getRGBChannelCount(channel));
+
+        const boost::optional<bool> interleaved(getInterleaved());
+        if (isRGB(channel) && interleaved && *interleaved)
+          ifd->setPlanarConfiguration(tiff::CONTIG);
+        else
+          ifd->setPlanarConfiguration(tiff::SEPARATE);
+
+        if (isRGB(channel) && getRGBChannelCount(channel) == 3)
+          ifd->setPhotometricInterpretation(tiff::RGB);
+        else
+          ifd->setPhotometricInterpretation(tiff::MIN_IS_BLACK);
       }
 
       void
@@ -304,9 +317,8 @@ namespace ome
 
         setPlane(no);
 
-        dimension_size_type sizeC = metadataRetrieve->getPixelsSizeC(getSeries());
         dimension_size_type expectedIndex =
-          tiff::ifdIndex(seriesIFDRange, getSeries(), no, sizeC, false);
+          tiff::ifdIndex(seriesIFDRange, getSeries(), no);
 
         if (ifdIndex != expectedIndex)
           {
