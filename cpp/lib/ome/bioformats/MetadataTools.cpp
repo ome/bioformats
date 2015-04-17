@@ -437,7 +437,7 @@ namespace ome
               for (dimension_size_type p = 0; p < (*i)->imageCount; ++p)
                 {
                   dimension_size_type sizeZT = (*i)->sizeZ * (*i)->sizeT;
-                  dimension_size_type effSizeC = 0;
+                  dimension_size_type effSizeC = 1U;
                   if (sizeZT)
                     effSizeC = (*i)->imageCount / sizeZT;
 
