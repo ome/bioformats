@@ -148,7 +148,7 @@ namespace ome
 
             BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
           }
-        else (!getBigTIFF && needBig)
+        else (!getBigTIFF() && needBig)
           {
             boost::format fmt
               ("Pixel data size is %1%, but TIFF with BigTIFF "
