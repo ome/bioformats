@@ -150,7 +150,7 @@ namespace ome
          * support.
          */
         void
-        setBigTIFF(bool big = true);
+        setBigTIFF(boost::optional<bool> big = true);
 
         /**
          * Query use of BigTIFF support.
@@ -164,7 +164,7 @@ namespace ome
          * @returns @c true if BigTIFF support are enabled, or @c
          * false if disabled.
          */
-        bool
+        boost::optional<bool>
         getBigTIFF() const;
       };
 
