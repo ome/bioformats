@@ -313,6 +313,25 @@ namespace ome
       getCompression() const = 0;
 
       /**
+       * Set subchannel interleaving.
+       *
+       * @param interleaved @c true to enable interleaving (chunky) or
+       * @c false to disable interleaving (planar).
+       */
+      virtual
+      void
+      setInterleaved(bool interleaved) = 0;
+
+      /**
+       * Set subchannel interleaving.
+       *
+       * @returns the current interleaving setting; @c false if unset.
+       */
+      virtual
+      const boost::optional<bool>&
+      getInterleaved() const = 0;
+
+      /**
        * Switch the output file for the current dataset.
        *
        * @param id the new file name.

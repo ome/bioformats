@@ -83,6 +83,7 @@ namespace ome
         series(0),
         plane(0),
         compression(boost::none),
+        interleaved(boost::none),
         sequential(false),
         framesPerSecond(0),
         metadataRetrieve(ome::compat::make_shared<DummyMetadata>())
@@ -282,6 +283,18 @@ namespace ome
       FormatWriter::getCompression() const
       {
         return this->compression;
+      }
+
+      void
+      FormatWriter::setInterleaved(bool interleaved)
+      {
+        this->interleaved = interleaved;
+      }
+
+      const boost::optional<bool>&
+      FormatWriter::getInterleaved() const
+      {
+        return interleaved;
       }
 
       void

@@ -127,6 +127,9 @@ namespace ome
         /// The compression type to use.
         boost::optional<std::string> compression;
 
+        /// Subchannel interleaving enabled.
+        boost::optional<bool> interleaved;
+
         /// Planes are written sequentially.
         bool sequential;
 
@@ -334,6 +337,14 @@ namespace ome
         // Documented in superclass.
         const boost::optional<std::string>&
         getCompression() const;
+
+        // Documented in superclass.
+        void
+        setInterleaved(bool interleaved);
+
+        // Documented in superclass.
+        const boost::optional<bool>&
+        getInterleaved() const;
 
         // Documented in superclass.
         void
