@@ -330,7 +330,10 @@ public class NativeQTReader extends FormatReader {
       // (or <filename>/rsrc on a Mac)
 
       String base = null;
-      if (id.indexOf(".") != -1) {
+      // it's not enough to just check the first index of "."
+      // on Windows in particular, the directory name could contain "." while
+      // the file name has no extension
+      if (id.indexOf(".", id.lastIndexOf(File.separator) + 1) != -1) {
         base = id.substring(0, id.lastIndexOf("."));
       }
       else base = id;

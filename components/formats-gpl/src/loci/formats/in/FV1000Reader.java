@@ -652,11 +652,18 @@ public class FV1000Reader extends FormatReader {
           if (!tiffFile.getParentFile().exists()) {
             String realOIFName = new Location(currentId).getName();
             String basePath = tiffFile.getParentFile().getParent();
-            Location newFile = new Location(basePath, realOIFName + ".files");
-            String realDirectory = newFile.getName();
-            ptyFile = new Location(newFile, ptyFile.getName());
-            file = ptyFile.getAbsolutePath();
-            tiffPath = newFile.getAbsolutePath();
+
+            if (mappedOIF) {
+              tiffPath = basePath + File.separator + realOIFName + ".files";
+              ptyFile = new Location(tiffPath, ptyFile.getName());
+              file = ptyFile.getAbsolutePath();
+            }
+            else {
+              Location newFile = new Location(basePath, realOIFName + ".files");
+              ptyFile = new Location(newFile, ptyFile.getName());
+              file = ptyFile.getAbsolutePath();
+              tiffPath = newFile.getAbsolutePath();
+            }
           }
         }
       }
