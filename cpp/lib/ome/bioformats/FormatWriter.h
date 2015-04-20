@@ -129,13 +129,13 @@ namespace ome
        *
        * to the current series in the current file.
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the source pixel buffer.
        * @throws FormatException if any of the parameters are invalid.
        */
       virtual
       void
-      saveBytes(dimension_size_type no,
+      saveBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf) = 0;
 
       /**
@@ -150,7 +150,7 @@ namespace ome
        *
        * to the current series in the current file.
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the source pixel buffer.
        * @param x the @c X coordinate of the upper-left corner of the sub-image.
        * @param y the @c Y coordinate of the upper-left corner of the sub-image.
@@ -160,7 +160,7 @@ namespace ome
        */
       virtual
       void
-      saveBytes(dimension_size_type no,
+      saveBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf,
                 dimension_size_type x,
                 dimension_size_type y,
@@ -170,14 +170,14 @@ namespace ome
       /**
        * Set the active series.
        *
-       * @param no the series to activate.
+       * @param series the series to activate.
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
        */
       virtual
       void
-      setSeries(dimension_size_type no) const = 0;
+      setSeries(dimension_size_type series) const = 0;
 
       /**
        * Get the active series.

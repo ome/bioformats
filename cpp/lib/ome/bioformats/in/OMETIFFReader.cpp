@@ -327,24 +327,24 @@ namespace ome
       }
 
       const ome::compat::shared_ptr<const tiff::IFD>
-      OMETIFFReader::ifdAtIndex(dimension_size_type no) const
+      OMETIFFReader::ifdAtIndex(dimension_size_type plane) const
       {
         ome::compat::shared_ptr<const IFD> ifd;
 
         const OMETIFFMetadata& ometa(dynamic_cast<const OMETIFFMetadata&>(getCoreMetadata(getCoreIndex())));
 
-        if (no < ometa.tiffPlanes.size())
+        if (plane < ometa.tiffPlanes.size())
           {
-            const OMETIFFPlane& plane(ometa.tiffPlanes.at(no));
-            const ome::compat::shared_ptr<const TIFF> tiff(getTIFF(plane.id));
+            const OMETIFFPlane& tiffplane(ometa.tiffPlanes.at(plane));
+            const ome::compat::shared_ptr<const TIFF> tiff(getTIFF(tiffplane.id));
             if (tiff)
-              ifd = ome::compat::shared_ptr<const IFD>(tiff->getDirectoryByIndex(plane.ifd));
+              ifd = ome::compat::shared_ptr<const IFD>(tiff->getDirectoryByIndex(tiffplane.ifd));
           }
 
         if (!ifd)
           {
             boost::format fmt("Failed to open IFD ‘%1%’");
-            fmt % no;
+            fmt % plane;
             throw FormatException(fmt.str());
           }
 
@@ -1289,11 +1289,11 @@ namespace ome
 
       void
       OMETIFFReader::getLookupTable(VariantPixelBuffer& buf,
-                                    dimension_size_type no) const
+                                    dimension_size_type plane) const
       {
         assertId(currentId, true);
 
-        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 
         try
           {
@@ -1308,7 +1308,7 @@ namespace ome
       }
 
       void
-      OMETIFFReader::openBytesImpl(dimension_size_type no,
+      OMETIFFReader::openBytesImpl(dimension_size_type plane,
                                    VariantPixelBuffer& buf,
                                    dimension_size_type x,
                                    dimension_size_type y,
@@ -1317,7 +1317,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 
         ifd->readImage(buf, x, y, w, h);
       }

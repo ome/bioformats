@@ -359,13 +359,13 @@ namespace ome
        * but other sizes are possible.
        *
        * @param buf the destination pixel buffer.
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @throws FormatException if a lookup table could not be obtained.
        */
       virtual
       void
       getLookupTable(VariantPixelBuffer& buf,
-                     dimension_size_type no = 0U) const = 0;
+                     dimension_size_type plane = 0U) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -531,34 +531,34 @@ namespace ome
       /**
        * Obtain an image plane.
        *
-       * Obtain and copy the image plane from the current file into a
-       * VariantPixelBuffer of size
+       * Obtain and copy the image plane from the current series into
+       * a VariantPixelBuffer of size
        *
        * \code{.cpp}
-       * getSizeX * getSizeY * bytesPerPixel * getRGBChannelCount()
+       * getSizeX * getSizeY * bytesPerPixel * getRGBChannelCount(channel)
        * \endcode
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the destination pixel buffer.
        * @throws FormatException if there was a problem parsing the
        *   metadata of the file.
        */
       virtual
       void
-      openBytes(dimension_size_type no,
+      openBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf) const = 0;
 
       /**
        * Obtain a sub-image of an image plane.
        *
        * Obtain and copy the sub-image of an image plane from the
-       * current file into a VariantPixelBuffer of size
+       * current series into a VariantPixelBuffer of size
        *
        * \code{.cpp}
-       * w * h * bytesPerPixel * getRGBChannelCount()
+       * w * h * bytesPerPixel * getRGBChannelCount(channel)
        * \endcode
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the destination pixel buffer.
        * @param x the @c X coordinate of the upper-left corner of the sub-image.
        * @param y the @c Y coordinate of the upper-left corner of the sub-image.
@@ -569,7 +569,7 @@ namespace ome
        */
       virtual
       void
-      openBytes(dimension_size_type no,
+      openBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf,
                 dimension_size_type x,
                 dimension_size_type y,
@@ -580,14 +580,14 @@ namespace ome
        * Obtain a thumbnail of an image plane.
        *
        * Obtail and copy the thumbnail for the specified image plane
-       * from the current file into a VariantPixelBuffer.
+       * from the current series into a VariantPixelBuffer.
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the destination pixel buffer.
        */
       virtual
       void
-      openThumbBytes(dimension_size_type no,
+      openThumbBytes(dimension_size_type plane,
                      VariantPixelBuffer& buf) const = 0;
 
       /**
@@ -607,7 +607,7 @@ namespace ome
        *
        * @note This also resets the resolution to 0.
        *
-       * @param no the series to activate.
+       * @param series the series to activate.
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
@@ -616,7 +616,7 @@ namespace ome
        */
       virtual
       void
-      setSeries(dimension_size_type no) const = 0;
+      setSeries(dimension_size_type series) const = 0;
 
       /**
        * Get the active series.

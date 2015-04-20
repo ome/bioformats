@@ -148,39 +148,39 @@ namespace ome
       }
 
       void
-      FormatWriter::saveBytes(dimension_size_type no,
+      FormatWriter::saveBytes(dimension_size_type plane,
                               VariantPixelBuffer& buf)
       {
         assertId(currentId, true);
 
         dimension_size_type width = metadataRetrieve->getPixelsSizeX(getSeries());
         dimension_size_type height = metadataRetrieve->getPixelsSizeY(getSeries());
-        saveBytes(no, buf, 0, 0, width, height);
+        saveBytes(plane, buf, 0, 0, width, height);
       }
 
       void
-      FormatWriter::setSeries(dimension_size_type no) const
+      FormatWriter::setSeries(dimension_size_type series) const
       {
         assertId(currentId, true);
 
-        if (no >= metadataRetrieve->getImageCount())
+        if (series >= metadataRetrieve->getImageCount())
           {
             boost::format fmt("Invalid series: %1%");
-            fmt % no;
+            fmt % series;
             throw std::logic_error(fmt.str());
           }
 
         const dimension_size_type currentSeries = getSeries();
-        if (currentSeries != no &&
-            (no > 0 && currentSeries != no - 1))
+        if (currentSeries != series &&
+            (series > 0 && currentSeries != series - 1))
           {
             boost::format fmt("Series set out of order: %1% (currently %2%)");
-            fmt % no % currentSeries;
+            fmt % series % currentSeries;
             throw std::logic_error(fmt.str());
           }
 
-        series = no;
-        plane = 0U;
+        this->series = series;
+        this->plane = 0U;
       }
 
       dimension_size_type
@@ -192,27 +192,27 @@ namespace ome
       }
 
       void
-      FormatWriter::setPlane(dimension_size_type no) const
+      FormatWriter::setPlane(dimension_size_type plane) const
       {
         assertId(currentId, true);
 
-        if (no >= getImageCount())
+        if (plane >= getImageCount())
           {
             boost::format fmt("Invalid plane: %1%");
-            fmt % no;
+            fmt % plane;
             throw std::logic_error(fmt.str());
           }
 
         const dimension_size_type currentPlane = getPlane();
-        if (currentPlane != no &&
-            (no > 0 && currentPlane != no - 1))
+        if (currentPlane != plane &&
+            (plane > 0 && currentPlane != plane - 1))
           {
             boost::format fmt("Plane set out of order: %1% (currently %2%)");
-            fmt % no % currentPlane;
+            fmt % plane % currentPlane;
             throw std::logic_error(fmt.str());
           }
 
-        plane = no;
+        this->plane = plane;
       }
 
       dimension_size_type

@@ -482,7 +482,7 @@ namespace ome
         // Documented in superclass.
         void
         getLookupTable(VariantPixelBuffer& buf,
-                       dimension_size_type no) const;
+                       dimension_size_type plane) const;
 
         // Documented in superclass.
         Modulo&
@@ -553,12 +553,12 @@ namespace ome
 
         // Documented in superclass.
         void
-        openBytes(dimension_size_type no,
+        openBytes(dimension_size_type plane,
                   VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         void
-        openBytes(dimension_size_type no,
+        openBytes(dimension_size_type plane,
                   VariantPixelBuffer& buf,
                   dimension_size_type x,
                   dimension_size_type y,
@@ -571,7 +571,7 @@ namespace ome
          */
         virtual
         void
-        openBytesImpl(dimension_size_type no,
+        openBytesImpl(dimension_size_type plane,
                       VariantPixelBuffer& buf,
                       dimension_size_type x,
                       dimension_size_type y,
@@ -581,7 +581,7 @@ namespace ome
       public:
         // Documented in superclass.
         void
-        openThumbBytes(dimension_size_type no,
+        openThumbBytes(dimension_size_type plane,
                        VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
@@ -594,7 +594,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        setSeries(dimension_size_type no) const;
+        setSeries(dimension_size_type series) const;
 
         // Documented in superclass.
         dimension_size_type

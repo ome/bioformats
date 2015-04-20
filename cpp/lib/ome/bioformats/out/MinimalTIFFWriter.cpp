@@ -241,12 +241,12 @@ namespace ome
       }
 
       void
-      MinimalTIFFWriter::setSeries(dimension_size_type no) const
+      MinimalTIFFWriter::setSeries(dimension_size_type series) const
       {
         const dimension_size_type currentSeries = getSeries();
-        detail::FormatWriter::setSeries(no);
+        detail::FormatWriter::setSeries(series);
 
-        if (currentSeries != no)
+        if (currentSeries != series)
           {
             nextIFD();
             setupIFD();
@@ -254,12 +254,12 @@ namespace ome
       }
 
       void
-      MinimalTIFFWriter::setPlane(dimension_size_type no) const
+      MinimalTIFFWriter::setPlane(dimension_size_type plane) const
       {
         const dimension_size_type currentPlane = getPlane();
-        detail::FormatWriter::setPlane(no);
+        detail::FormatWriter::setPlane(plane);
 
-        if (currentPlane != no)
+        if (currentPlane != plane)
           {
             nextIFD();
             setupIFD();
@@ -306,7 +306,7 @@ namespace ome
       }
 
       void
-      MinimalTIFFWriter::saveBytes(dimension_size_type no,
+      MinimalTIFFWriter::saveBytes(dimension_size_type plane,
                                    VariantPixelBuffer& buf,
                                    dimension_size_type x,
                                    dimension_size_type y,
@@ -315,10 +315,10 @@ namespace ome
       {
         assertId(currentId, true);
 
-        setPlane(no);
+        setPlane(plane);
 
         dimension_size_type expectedIndex =
-          tiff::ifdIndex(seriesIFDRange, getSeries(), no);
+          tiff::ifdIndex(seriesIFDRange, getSeries(), plane);
 
         if (ifdIndex != expectedIndex)
           {

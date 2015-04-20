@@ -584,7 +584,7 @@ namespace ome
 
       void
       FormatReader::getLookupTable(VariantPixelBuffer& /* buf */,
-                                   dimension_size_type /* no */) const
+                                   dimension_size_type /* plane */) const
       {
         throw std::runtime_error("Reader does not implement lookup tables");
       }
@@ -723,25 +723,25 @@ namespace ome
       }
 
       void
-      FormatReader::openBytes(dimension_size_type no,
+      FormatReader::openBytes(dimension_size_type plane,
                               VariantPixelBuffer& buf) const
       {
-        openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
+        openBytes(plane, buf, 0, 0, getSizeX(), getSizeY());
       }
 
       void
-      FormatReader::openBytes(dimension_size_type no,
+      FormatReader::openBytes(dimension_size_type plane,
                               VariantPixelBuffer& buf,
                               dimension_size_type x,
                               dimension_size_type y,
                               dimension_size_type w,
                               dimension_size_type h) const
       {
-        openBytesImpl(no, buf, x, y, w, h);
+        openBytesImpl(plane, buf, x, y, w, h);
       }
 
       void
-      FormatReader::openThumbBytes(dimension_size_type /* no */,
+      FormatReader::openThumbBytes(dimension_size_type /* plane */,
                                    VariantPixelBuffer& /* buf */) const
       {
         assertId(currentId, true);
@@ -777,11 +777,11 @@ namespace ome
       }
 
       void
-      FormatReader::setSeries(dimension_size_type no) const
+      FormatReader::setSeries(dimension_size_type series) const
       {
-        coreIndex = seriesToCoreIndex(no);
-        series = no;
-        resolution = 0;
+        this->coreIndex = seriesToCoreIndex(series);
+        this->series = series;
+        this->resolution = 0;
       }
 
       dimension_size_type

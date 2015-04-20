@@ -105,12 +105,12 @@ namespace ome
         /**
          * Get the IFD index for a plane in the current series.
          *
-         * @param no the image index within the file.
+         * @param plane the plane index within the series.
          * @returns the IFD index.
          * @throws FormatException if out of range.
          */
         const ome::compat::shared_ptr<const tiff::IFD>
-        ifdAtIndex(dimension_size_type no) const;
+        ifdAtIndex(dimension_size_type plane) const;
 
       public:
         // Documented in superclass.
@@ -120,12 +120,12 @@ namespace ome
         // Documented in superclass.
         void
         getLookupTable(VariantPixelBuffer& buf,
-                       dimension_size_type no) const;
+                       dimension_size_type plane) const;
 
       protected:
         // Documented in superclass.
         void
-        openBytesImpl(dimension_size_type no,
+        openBytesImpl(dimension_size_type plane,
                       VariantPixelBuffer& buf,
                       dimension_size_type x,
                       dimension_size_type y,

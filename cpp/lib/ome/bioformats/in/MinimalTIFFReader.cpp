@@ -118,9 +118,9 @@ namespace ome
       }
 
       const ome::compat::shared_ptr<const tiff::IFD>
-      MinimalTIFFReader::ifdAtIndex(dimension_size_type no) const
+      MinimalTIFFReader::ifdAtIndex(dimension_size_type plane) const
       {
-        dimension_size_type ifdidx = tiff::ifdIndex(seriesIFDRange, getSeries(), no);
+        dimension_size_type ifdidx = tiff::ifdIndex(seriesIFDRange, getSeries(), plane);
         const ome::compat::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
 
         return ifd;
@@ -216,11 +216,11 @@ namespace ome
 
       void
       MinimalTIFFReader::getLookupTable(VariantPixelBuffer& buf,
-                                        dimension_size_type no) const
+                                        dimension_size_type plane) const
       {
         assertId(currentId, true);
 
-        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 
         try
           {
@@ -235,7 +235,7 @@ namespace ome
       }
 
       void
-      MinimalTIFFReader::openBytesImpl(dimension_size_type no,
+      MinimalTIFFReader::openBytesImpl(dimension_size_type plane,
                                        VariantPixelBuffer& buf,
                                        dimension_size_type x,
                                        dimension_size_type y,
@@ -244,7 +244,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(no));
+        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 
         ifd->readImage(buf, x, y, w, h);
       }
