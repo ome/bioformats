@@ -468,19 +468,19 @@ public class Configuration {
 
       Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
-        seriesTable.put(PHYSICAL_SIZE_X, physicalX.toString());
+        seriesTable.put(PHYSICAL_SIZE_X, physicalX.value(UNITS.MICROM).toString());
       }
       Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
       if (physicalY != null) {
-        seriesTable.put(PHYSICAL_SIZE_Y, physicalY.toString());
+        seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value(UNITS.MICROM).toString());
       }
       Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
       if (physicalZ != null) {
-        seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.toString());
+        seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value(UNITS.MICROM).toString());
       }
       Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
       if (timeIncrement != null) {
-        seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
+        seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
       }
 
       Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
@@ -503,7 +503,7 @@ public class Configuration {
           int plane = reader.getIndex(0, c, 0);
           if (plane < retrieve.getPlaneCount(series)) {
             seriesTable.put(EXPOSURE_TIME + c,
-              retrieve.getPlaneExposureTime(series, plane).toString());
+              retrieve.getPlaneExposureTime(series, plane).value().toString());
           }
         }
         catch (NullPointerException e) { }
