@@ -65,6 +65,8 @@ public class FileStitcher extends ReaderWrapper {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(FileStitcher.class);
 
+  private static final int MAX_READERS = 1000;
+
   // -- Fields --
 
   /**
@@ -181,7 +183,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public DimensionSwapper getReader(int series, int no) {
     if (noStitch) return (DimensionSwapper) reader;
-    DimensionSwapper r = externals[getExternalSeries(series)].getReaders()[no];
+    DimensionSwapper r = externals[getExternalSeries(series)].getReader(no);
     initReader(series, no);
     return r;
   }
@@ -1211,7 +1213,7 @@ public class FileStitcher extends ReaderWrapper {
 
   protected void initReader(int sno, int fno) {
     int external = getExternalSeries(sno);
-    DimensionSwapper r = externals[external].getReaders()[fno];
+    DimensionSwapper r = externals[external].getReader(fno);
     try {
       if (r.getCurrentFile() == null) {
         r.setGroupFiles(false);
@@ -1252,7 +1254,8 @@ public class FileStitcher extends ReaderWrapper {
       this.pattern = pattern;
       files = this.pattern.getFiles();
 
-      readers = new DimensionSwapper[files.length];
+      int nReaders = files.length > MAX_READERS ? 1 : files.length;
+      readers = new DimensionSwapper[nReaders];
       for (int i=0; i<readers.length; i++) {
         if (classList != null) {
           readers[i] = new DimensionSwapper(new ImageReader(classList));
@@ -1271,6 +1274,13 @@ public class FileStitcher extends ReaderWrapper {
 
       originalOrder = readers[0].getDimensionOrder();
       imagesPerFile = readers[0].getImageCount();
+    }
+
+    public DimensionSwapper getReader(int fno) {
+      if (fno < readers.length) {
+        return readers[fno];
+      }
+      return readers[0];
     }
 
     public DimensionSwapper[] getReaders() {
