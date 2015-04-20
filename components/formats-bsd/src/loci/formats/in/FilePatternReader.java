@@ -323,6 +323,18 @@ public class FilePatternReader extends FormatReader {
   }
 
   @Override
+  public String[] getUsedFiles(boolean noPixels) {
+    if (noPixels) {
+      return new String[] {currentId};
+    }
+    String[] helperFiles = helper.getUsedFiles(noPixels);
+    String[] allFiles = new String[helperFiles.length + 1];
+    allFiles[0] = currentId;
+    System.arraycopy(helperFiles, 0, allFiles, 1, helperFiles.length);
+    return allFiles;
+  }
+
+  @Override
   public int getIndex(int z, int c, int t) {
     return helper.getIndex(z, c, t);
   }
