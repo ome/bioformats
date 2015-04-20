@@ -225,7 +225,7 @@ namespace info
         dimension_size_type effC = reader->getEffectiveSizeC();
         for (dimension_size_type c = 0; c < effC; ++c)
           {
-            stream << (reader->isRGB() ? "true" : "false");
+            stream << (reader->isRGB(c) ? "true" : "false");
             if (c + 1 != effC)
               stream << ", ";
           }

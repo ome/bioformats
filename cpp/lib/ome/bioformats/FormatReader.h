@@ -221,7 +221,7 @@ namespace ome
        */
       virtual
       bool
-      isRGB(dimension_size_type channel = 0U) const = 0;
+      isRGB(dimension_size_type channel) const = 0;
 
       /**
        * Get the size of the X dimension.
@@ -318,7 +318,7 @@ namespace ome
        */
       virtual
       dimension_size_type
-      getRGBChannelCount(dimension_size_type channel = 0U) const = 0;
+      getRGBChannelCount(dimension_size_type channel) const = 0;
 
       /**
        * Get whether the image planes are indexed color.
@@ -365,7 +365,7 @@ namespace ome
       virtual
       void
       getLookupTable(VariantPixelBuffer& buf,
-                     dimension_size_type plane = 0U) const = 0;
+                     dimension_size_type plane) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -1077,7 +1077,7 @@ namespace ome
        **/
       virtual
       dimension_size_type
-      getOptimalTileWidth(dimension_size_type channel = 0U) const = 0;
+      getOptimalTileWidth(dimension_size_type channel) const = 0;
 
       /**
        * Get the optimal sub-image height.
@@ -1088,7 +1088,7 @@ namespace ome
        **/
       virtual
       dimension_size_type
-      getOptimalTileHeight(dimension_size_type channel = 0U) const = 0;
+      getOptimalTileHeight(dimension_size_type channel) const = 0;
 
       // Sub-resolution API methods
 
