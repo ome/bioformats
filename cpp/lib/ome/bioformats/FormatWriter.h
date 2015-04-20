@@ -111,11 +111,13 @@ namespace ome
        * If the pixel type of the lookup table is unsupported by the
        * file format, this method will throw an exception.
        *
+       * @param plane the plane index within the series.
        * @param buf the source pixel buffer.
        */
       virtual
       void
-      setLookupTable(const VariantPixelBuffer& buf) = 0;
+      setLookupTable(dimension_size_type       plane,
+                     const VariantPixelBuffer& buf) = 0;
 
       /**
        * Save an image plane.

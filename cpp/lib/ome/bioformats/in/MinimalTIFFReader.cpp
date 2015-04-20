@@ -215,8 +215,8 @@ namespace ome
       }
 
       void
-      MinimalTIFFReader::getLookupTable(VariantPixelBuffer& buf,
-                                        dimension_size_type plane) const
+      MinimalTIFFReader::getLookupTable(dimension_size_type plane,
+                                        VariantPixelBuffer& buf) const
       {
         assertId(currentId, true);
 

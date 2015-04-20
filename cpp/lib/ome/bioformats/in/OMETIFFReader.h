@@ -124,8 +124,8 @@ namespace ome
 
         // Documented in superclass.
         void
-        getLookupTable(VariantPixelBuffer& buf,
-                       dimension_size_type plane) const;
+        getLookupTable(dimension_size_type plane,
+                       VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         void

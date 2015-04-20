@@ -1288,8 +1288,8 @@ namespace ome
       }
 
       void
-      OMETIFFReader::getLookupTable(VariantPixelBuffer& buf,
-                                    dimension_size_type plane) const
+      OMETIFFReader::getLookupTable(dimension_size_type plane,
+                                    VariantPixelBuffer& buf) const
       {
         assertId(currentId, true);
 

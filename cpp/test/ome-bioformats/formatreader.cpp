@@ -515,7 +515,7 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
 TEST_P(FormatReaderTest, DefaultLUT)
 {
   VariantPixelBuffer buf;
-  EXPECT_THROW(r.getLookupTable(buf, 0U), std::runtime_error);
+  EXPECT_THROW(r.getLookupTable(0U, buf), std::logic_error);
 }
 
 TEST_P(FormatReaderTest, FlatLUT)
@@ -523,7 +523,7 @@ TEST_P(FormatReaderTest, FlatLUT)
   r.setId("flat");
 
   VariantPixelBuffer buf;
-  EXPECT_THROW(r.getLookupTable(buf, 0U), std::runtime_error);
+  EXPECT_THROW(r.getLookupTable(0U, buf), std::runtime_error);
 }
 
 TEST_P(FormatReaderTest, DefaultSeries)

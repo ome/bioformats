@@ -364,8 +364,8 @@ namespace ome
        */
       virtual
       void
-      getLookupTable(VariantPixelBuffer& buf,
-                     dimension_size_type plane) const = 0;
+      getLookupTable(dimension_size_type plane,
+                     VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.

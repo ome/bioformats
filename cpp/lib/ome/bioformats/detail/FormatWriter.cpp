@@ -142,9 +142,12 @@ namespace ome
       }
 
       void
-      FormatWriter::setLookupTable(const VariantPixelBuffer& /* buf */)
+      FormatWriter::setLookupTable(dimension_size_type       /* plane */,
+                                   const VariantPixelBuffer& /* buf */)
       {
         assertId(currentId, true);
+
+        throw std::runtime_error("Writer does not implement lookup tables");
       }
 
       void
