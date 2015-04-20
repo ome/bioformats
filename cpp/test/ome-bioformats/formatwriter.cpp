@@ -453,17 +453,20 @@ TEST_P(FormatWriterTest, OutputPixels)
 
 TEST_P(FormatWriterTest, DefaultSeries)
 {
-  EXPECT_THROW(w.setSeries(0U), std::runtime_error);
-  EXPECT_THROW(w.setSeries(2U), std::runtime_error);
-  EXPECT_THROW(w.setSeries(4U), std::runtime_error);
+  EXPECT_THROW(w.setSeries(0U), std::logic_error);
+  EXPECT_THROW(w.setSeries(2U), std::logic_error);
+  EXPECT_THROW(w.setSeries(4U), std::logic_error);
 }
 
 TEST_P(FormatWriterTest, OutputSeries)
 {
   w.setId("output.test");
 
+  // Current series is OK.
   EXPECT_NO_THROW(w.setSeries(0U));
-  EXPECT_NO_THROW(w.setSeries(2U));
+  // Series is valid but skips series 1.
+  EXPECT_THROW(w.setSeries(2U), std::logic_error);
+  // Series is invalid
   EXPECT_THROW(w.setSeries(4U), std::logic_error);
 }
 

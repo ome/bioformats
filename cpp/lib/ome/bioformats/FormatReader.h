@@ -203,7 +203,7 @@ namespace ome
       isThisType(std::istream& stream) const = 0;
 
       /**
-       * Determine the number of image planes in the current file.
+       * Determine the number of image planes in the current series.
        *
        * @returns the number of image planes.
        */

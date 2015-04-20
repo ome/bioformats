@@ -113,7 +113,7 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-bioformats/planeregion planeregion)
 
-  add_executable(tiff tiff.cpp)
+  add_executable(tiff tiff.cpp tiffsamples.cpp)
   target_link_libraries(tiff ome-bioformats)
   target_link_libraries(tiff ome-test ${PNG_LIBRARIES})
   add_dependencies(tiff gentestimages)
@@ -125,6 +125,12 @@ if(BUILD_TESTS)
   target_link_libraries(minimaltiffreader ome-test)
 
   bf_add_test(ome-bioformats/minimaltiffreader minimaltiffreader)
+
+  add_executable(minimaltiffwriter minimaltiffwriter.cpp tiffsamples.cpp)
+  target_link_libraries(minimaltiffwriter ome-bioformats)
+  target_link_libraries(minimaltiffwriter ome-test)
+
+  bf_add_test(ome-bioformats/minimaltiffwriter minimaltiffwriter)
 
   add_executable(tiffreader tiffreader.cpp)
   target_link_libraries(tiffreader ome-bioformats)

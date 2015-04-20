@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -35,12 +35,13 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_IN_MINIMALTIFFREADER_H
-#define OME_BIOFORMATS_IN_MINIMALTIFFREADER_H
+#ifndef OME_BIOFORMATS_OUT_MINIMALTIFFWRITER_H
+#define OME_BIOFORMATS_OUT_MINIMALTIFFWRITER_H
 
-#include <ome/bioformats/detail/FormatReader.h>
-
+#include <ome/bioformats/detail/FormatWriter.h>
 #include <ome/bioformats/tiff/Util.h>
+
+#include <ome/common/log.h>
 
 #include <vector>
 
@@ -56,109 +57,122 @@ namespace ome
 
     }
 
-    /// Reader implementations.
-    namespace in
+    namespace out
     {
 
       /**
-       * Basic TIFF reader.
+       * Basic TIFF writer.
        *
-       * @note Any derived reader which does not implement its own
+       * @note Any derived writer which does not implement its own
        * openBytesImpl() must fill @c seriesIFDRange.
        */
-      class MinimalTIFFReader : public ::ome::bioformats::detail::FormatReader
+      class MinimalTIFFWriter : public ::ome::bioformats::detail::FormatWriter
       {
       protected:
+        /// Message logger.
+        ome::common::Logger logger;
+
         /// Underlying TIFF file.
-        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+        mutable ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+
+        /// Current IFD.
+        mutable ome::compat::shared_ptr<ome::bioformats::tiff::IFD> ifd;
+
+        /// Current plane.
+        mutable dimension_size_type ifdIndex;
 
         /// Mapping between series index and start and end IFD as a half-open range.
         tiff::SeriesIFDRange seriesIFDRange;
 
+      private:
+        /// Write a Big TIFF
+        boost::optional<bool> bigTIFF;
+
       public:
         /// Constructor.
-        MinimalTIFFReader();
+        MinimalTIFFWriter();
 
-        /// Constructor with reader properties (for derived readers).
-        MinimalTIFFReader(const ome::bioformats::detail::ReaderProperties& readerProperties);
+        /// Constructor with writer properties (for derived writers).
+        MinimalTIFFWriter(const ome::bioformats::detail::WriterProperties& writerProperties);
 
         /// Destructor.
         virtual
-        ~MinimalTIFFReader();
-
-      protected:
-        // Documented in superclass.
-        void
-        initFile(const boost::filesystem::path& id);
-
-        /**
-         * Read metadata from IFDs.
-         */
-        virtual
-        void
-        readIFDs();
+        ~MinimalTIFFWriter();
 
         // Documented in superclass.
-        bool
-        isFilenameThisTypeImpl(const boost::filesystem::path& name) const;
+        void
+        setId(const boost::filesystem::path& id);
 
-        /**
-         * Get the IFD index for a plane in the current series.
-         *
-         * @param no the image index within the file.
-         * @returns the IFD index.
-         * @throws FormatException if out of range.
-         */
-        const ome::compat::shared_ptr<const tiff::IFD>
-        ifdAtIndex(dimension_size_type no) const;
-
-      public:
         // Documented in superclass.
         void
         close(bool fileOnly = false);
 
+      public:
         // Documented in superclass.
         void
-        getLookupTable(VariantPixelBuffer& buf,
-                       dimension_size_type no) const;
+        setSeries(dimension_size_type no) const;
+
+        // Documented in superclass.
+        void
+        setPlane(dimension_size_type no) const;
 
       protected:
-        // Documented in superclass.
+        /// Flush current IFD and create new IFD.
         void
-        openBytesImpl(dimension_size_type no,
-                      VariantPixelBuffer& buf,
-                      dimension_size_type x,
-                      dimension_size_type y,
-                      dimension_size_type w,
-                      dimension_size_type h) const;
+        nextIFD() const;
+
+        /// Set IFD parameters for the current series.
+        void
+        setupIFD() const;
 
       public:
-        /**
-         * Get open TIFF file.
-         *
-         * @note This will be null if setId has not been called.
-         *
-         * @returns a reference to the TIFF file.
-         */
-        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
-        getTIFF();
+        using FormatWriter::saveBytes;
+
+        // Documented in superclass.
+        void
+        saveBytes(dimension_size_type no,
+                  VariantPixelBuffer& buf,
+                  dimension_size_type x,
+                  dimension_size_type y,
+                  dimension_size_type w,
+                  dimension_size_type h);
 
         /**
-         * Get open TIFF file.
+         * Set use of BigTIFF support.
          *
-         * @note This will be null if setId has not been called.
+         * Enable or disable use of BigTIFF support for writing files
+         * larger than 4GiB.
          *
-         * @returns a reference to the TIFF file.
+         * @note libtiff must be compiled with BigTIFF support enabled
+         * for this option to have any effect.
+         *
+         * @param big @c true to enable or @c false to disable BigTIFF
+         * support.
          */
-        const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
-        getTIFF() const;
+        void
+        setBigTIFF(boost::optional<bool> big = true);
+
+        /**
+         * Query use of BigTIFF support.
+         *
+         * If setBigTIFF has not been used to enable or disable
+         * BigTIFF explicitly, BigTIFF support will be disabled by
+         * default for data less than 4GiB, unless the data would be
+         * larger than 4GiB, in which case it will be enabled by
+         * default.
+         *
+         * @returns @c true if BigTIFF support are enabled, or @c
+         * false if disabled.
+         */
+        boost::optional<bool>
+        getBigTIFF() const;
       };
 
     }
   }
 }
 
-#endif // OME_BIOFORMATS_IN_MINIMALTIFFREADER_H
+#endif // OME_BIOFORMATS_OUT_MINIMALTIFFWRITER_H
 
 /*
  * Local Variables:

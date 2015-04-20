@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -35,18 +35,11 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_TYPES_H
-#define OME_BIOFORMATS_TYPES_H
+#ifndef OME_BIOFORMATS_TIFF_CODEC_H
+#define OME_BIOFORMATS_TIFF_CODEC_H
 
-#include <algorithm>
-#include <cstddef>
-#include <iterator>
-#include <stdexcept>
 #include <string>
 #include <vector>
-
-#include <boost/format.hpp>
-#include <boost/optional.hpp>
 
 #include <ome/compat/cstdint.h>
 
@@ -54,20 +47,33 @@ namespace ome
 {
   namespace bioformats
   {
+    namespace tiff
+    {
 
-    /// Size type for image dimensions.
-    typedef std::size_t dimension_size_type;
+      // Functions to query TIFF codec support.
 
-    /// Size type for pixel bit depths.
-    typedef uint32_t pixel_size_type;
+      /// A TIFF codec.
+      struct Codec
+      {
+        /// Codec name.
+        std::string name;
+        /// Codec number.
+        uint16_t    scheme;
+      };
 
-    /// Size type for storage size.
-    typedef uint64_t storage_size_type;
+      /**
+       * Get codecs registered with the TIFF library.
+       *
+       * @returns a list of available codecs.
+       */
+      std::vector<Codec>
+      getConfiguredCodecs();
 
+    }
   }
 }
 
-#endif // OME_BIOFORMATS_TYPES_H
+#endif // OME_BIOFORMATS_TIFF_CODEC_H
 
 /*
  * Local Variables:
