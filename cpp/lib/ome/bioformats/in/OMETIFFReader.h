@@ -62,7 +62,7 @@ namespace ome
     {
 
       /**
-       * TIFF reader with support for ImageJ extensions.
+       * TIFF reader with support for OME-XML metadata.
        */
       class OMETIFFReader : public ::ome::bioformats::detail::FormatReader
       {
