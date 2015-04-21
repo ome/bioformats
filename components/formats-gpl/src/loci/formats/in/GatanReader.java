@@ -206,7 +206,9 @@ public class GatanReader extends FormatReader {
     }
     int bytes = numPixelBytes / (getSizeX() * getSizeY());
 
-    m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
+    if (bytes != FormatTools.getBytesPerPixel(getPixelType())) {
+      m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
+    }
     m.sizeZ = 1;
     m.sizeC = 1;
     m.sizeT = 1;
@@ -514,6 +516,35 @@ public class GatanReader extends FormatReader {
         }
         else if (labelString.equals("Sample Time")) {
           sampleTime = Double.parseDouble(value);
+        }
+        else if (labelString.equals("DataType")) {
+          int pixelType = Double.valueOf(value).intValue();
+          switch (pixelType) {
+            case 1:
+              core.get(0).pixelType = FormatTools.INT16;
+              break;
+            case 10:
+              core.get(0).pixelType = FormatTools.UINT16;
+              break;
+            case 2:
+              core.get(0).pixelType = FormatTools.FLOAT;
+              break;
+            case 12:
+              core.get(0).pixelType = FormatTools.DOUBLE;
+              break;
+            case 9:
+              core.get(0).pixelType = FormatTools.INT8;
+              break;
+            case 6:
+              core.get(0).pixelType = FormatTools.UINT8;
+              break;
+            case 7:
+              core.get(0).pixelType = FormatTools.INT32;
+              break;
+            case 11:
+              core.get(0).pixelType = FormatTools.UINT32;
+              break;
+          }
         }
 
         value = null;
