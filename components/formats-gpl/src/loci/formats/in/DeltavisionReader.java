@@ -26,7 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -960,6 +962,9 @@ public class DeltavisionReader extends FormatReader {
 
     int currentImage = 0;
 
+    List<String> channelNames = new ArrayList<String>();
+    List<Double> filters = new ArrayList<Double>();
+
     for (String line : lines) {
       int colon = line.indexOf(":");
       if (colon != -1 && !line.startsWith("Created")) {
@@ -1128,23 +1133,17 @@ public class DeltavisionReader extends FormatReader {
         }
         // Plane properties
         else if (key.equals("EM filter")) {
-          int cIndex = 0;
-          try {
-            cIndex = getZCTCoords(currentImage)[1];
-          }
-          catch (IllegalArgumentException e) {
-            LOGGER.debug("", e);
-          }
-          for (int series=0; series<getSeriesCount(); series++) {
-            store.setChannelName(value, series, cIndex);
+          if (!channelNames.contains(value)) {
+            channelNames.add(value);
           }
         }
         else if (key.equals("ND filter")) {
           value = value.replaceAll("%", "");
           try {
-            int cIndex = getZCTCoords(currentImage)[1];
-            double nd = Double.parseDouble(value);
-            ndFilters[cIndex] = new Double(nd / 100);
+            double nd = Double.parseDouble(value) / 100;
+            if (!filters.contains(nd)) {
+              filters.add(nd);
+            }
           }
           catch (NumberFormatException exc) {
             // "BLANK" is the default (e.g. for deconvolved data),
@@ -1152,6 +1151,7 @@ public class DeltavisionReader extends FormatReader {
             if (!value.equals("BLANK")) {
               LOGGER.warn("Could not parse ND filter '{}'", value);
             }
+            filters.add(null);
           }
           catch (IllegalArgumentException e) {
             LOGGER.debug("", e);
@@ -1202,6 +1202,17 @@ public class DeltavisionReader extends FormatReader {
         }
         else {
           LOGGER.warn("Could not parse date '{}'", line);
+        }
+      }
+    }
+
+    for (int series=0; series<getSeriesCount(); series++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (c < channelNames.size()) {
+          store.setChannelName(channelNames.get(c), series, c);
+        }
+        if (c < filters.size()) {
+          ndFilters[c] = filters.get(c);
         }
       }
     }
