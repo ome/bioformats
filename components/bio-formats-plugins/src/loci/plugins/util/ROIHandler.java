@@ -307,11 +307,6 @@ public class ROIHandler {
                     if (roi != null) {
                         roi.setName(shapeObject.getID());
                         
-                        int c = shapeObject.getTheC().getValue();
-                        int z = shapeObject.getTheZ().getValue();
-                        int t = shapeObject.getTheT().getValue();
-                        roi.setPosition(c, z, t);
-                        
                         if (Prefs.showAllSliceOnly){
                             if(shapeObject.getTheC() != null){
                                 c = shapeObject.getTheC().getValue();
