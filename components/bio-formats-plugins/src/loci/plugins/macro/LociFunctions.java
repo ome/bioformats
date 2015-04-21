@@ -314,9 +314,11 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void setSeries(Double seriesNum) {
-    series = seriesNum.intValue();
-    if (r.getCurrentFile() != null) {
-      r.setSeries(series);
+    if (seriesNum != null && seriesNum >= 0) {
+      series = seriesNum.intValue();
+      if (r.getCurrentFile() != null) {
+        r.setSeries(series);
+      }
     }
   }
 
