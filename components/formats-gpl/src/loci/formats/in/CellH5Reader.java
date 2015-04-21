@@ -390,12 +390,15 @@ public class CellH5Reader extends FormatReader {
     core.clear();
     // read experiment structure and collect coordinates
 
-    String path = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
-    for (String plate : jhdf.getMember(path)) {
-      path += plate + "/" + CellH5Constants.WELL;
-      for (String well : jhdf.getMember(path)) {
-        path += well + "/" + CellH5Constants.SITE;
-        for (String site : jhdf.getMember(path)) {
+    String path_to_plate = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
+    LOGGER.info("Plate :" + path_to_plate );
+    for (String plate : jhdf.getMember(path_to_plate)) {
+      String path_to_well = path_to_plate + plate + CellH5Constants.WELL;
+      LOGGER.info("Well :" + path_to_well );
+      for (String well : jhdf.getMember(path_to_well)) {
+        String path_to_site = path_to_well + well + CellH5Constants.SITE;
+        LOGGER.info("Site :" + path_to_site );
+        for (String site : jhdf.getMember(path_to_site)) {     
           CellH5PositionList.add(new CellH5Coordinate(plate, well, site));
         }
       }
