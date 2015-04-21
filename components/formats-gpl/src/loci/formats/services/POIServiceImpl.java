@@ -131,7 +131,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
   @Override
   public int getFileSize(String file) {
     if (fileSizes.containsKey(file)) {
-      return fileSizes.get(file).intValue();
+      return fileSizes.get(file);
     }
     return -1;
   }
@@ -178,7 +178,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
 
         DocumentInputStream s =
           new DocumentInputStream((DocumentEntry) o, stream);
-        fileSizes.put(path.toString(), new Integer(s.available()));
+        fileSizes.put(path.toString(), s.available());
         files.put(path.toString(), (DocumentEntry) o);
         s.close();
       }

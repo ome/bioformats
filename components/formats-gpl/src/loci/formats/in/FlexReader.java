@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -107,17 +107,17 @@ public class FlexReader extends FormatReader {
   private int wellRows, wellColumns;
 
   private String[] channelNames;
-  private Vector<Double> xPositions, yPositions;
-  private Vector<Double> xSizes, ySizes;
-  private Vector<String> cameraIDs, objectiveIDs, lightSourceIDs;
-  private HashMap<String, Vector<String>> lightSourceCombinationIDs;
-  private Vector<String> cameraRefs, binnings, objectiveRefs;
-  private Vector<String> lightSourceCombinationRefs;
-  private Vector<String> filterSets;
+  private List<Double> xPositions, yPositions;
+  private List<Double> xSizes, ySizes;
+  private List<String> cameraIDs, objectiveIDs, lightSourceIDs;
+  private HashMap<String, List<String>> lightSourceCombinationIDs;
+  private List<String> cameraRefs, binnings, objectiveRefs;
+  private List<String> lightSourceCombinationRefs;
+  private List<String> filterSets;
   private HashMap<String, FilterGroup> filterSetMap;
   private HashMap<Integer, Timestamp> acquisitionDates;
 
-  private Vector<String> measurementFiles;
+  private List<String> measurementFiles;
 
   private String plateName, plateBarcode;
   private int nRows = 0, nCols = 0;
@@ -168,14 +168,14 @@ public class FlexReader extends FormatReader {
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, FLEX_SUFFIX)) return false;
-    return serverMap.size() == 0 || !isGroupFiles();
+    return serverMap.isEmpty() || !isGroupFiles();
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.addAll(measurementFiles);
 
     if (!noPixels) {
@@ -344,7 +344,7 @@ public class FlexReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    measurementFiles = new Vector<String>();
+    measurementFiles = new ArrayList<String>();
     acquisitionDates = new HashMap<Integer, Timestamp>();
 
     if (checkSuffix(id, FLEX_SUFFIX)) {
@@ -408,8 +408,8 @@ public class FlexReader extends FormatReader {
       s.close();
     }
 
-    Vector<String> flex = handler.getFlexFiles();
-    if (flex.size() == 0) {
+    final List<String> flex = handler.getFlexFiles();
+    if (flex.isEmpty()) {
       LOGGER.debug("Could not build .flex list from .mea.");
       LOGGER.info("Building list of valid .flex files");
       String[] files = findFiles(file);
@@ -418,7 +418,7 @@ public class FlexReader extends FormatReader {
           if (checkSuffix(f, FLEX_SUFFIX)) flex.add(f);
         }
       }
-      if (flex.size() == 0) {
+      if (flex.isEmpty()) {
         throw new FormatException(".flex files were not found. " +
           "Did you forget to specify the server names?");
       }
@@ -473,7 +473,7 @@ public class FlexReader extends FormatReader {
       catch (IOException e) {
         LOGGER.debug("", e);
       }
-      if (measurementFiles.size() == 0) {
+      if (measurementFiles.isEmpty()) {
         LOGGER.warn("Measurement files not found.");
       }
       else {
@@ -488,7 +488,7 @@ public class FlexReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
 
     LOGGER.info("Making sure that all .flex files are valid");
-    Vector<String> flex = new Vector<String>();
+    final List<String> flex = new ArrayList<String>();
     if (doGrouping) {
       // group together .flex files that are in the same directory
 
@@ -624,7 +624,7 @@ public class FlexReader extends FormatReader {
 
         if (seriesIndex < lightSourceCombinationRefs.size()) {
           String lightSourceCombo = lightSourceCombinationRefs.get(seriesIndex);
-          Vector<String> lightSources =
+          List<String> lightSources =
             lightSourceCombinationIDs.get(lightSourceCombo);
 
           for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -787,23 +787,23 @@ public class FlexReader extends FormatReader {
 
     int originalFieldCount = fieldCount;
 
-    if (xPositions == null) xPositions = new Vector<Double>();
-    if (yPositions == null) yPositions = new Vector<Double>();
-    if (xSizes == null) xSizes = new Vector<Double>();
-    if (ySizes == null) ySizes = new Vector<Double>();
-    if (cameraIDs == null) cameraIDs = new Vector<String>();
-    if (lightSourceIDs == null) lightSourceIDs = new Vector<String>();
-    if (objectiveIDs == null) objectiveIDs = new Vector<String>();
+    if (xPositions == null) xPositions = new ArrayList<Double>();
+    if (yPositions == null) yPositions = new ArrayList<Double>();
+    if (xSizes == null) xSizes = new ArrayList<Double>();
+    if (ySizes == null) ySizes = new ArrayList<Double>();
+    if (cameraIDs == null) cameraIDs = new ArrayList<String>();
+    if (lightSourceIDs == null) lightSourceIDs = new ArrayList<String>();
+    if (objectiveIDs == null) objectiveIDs = new ArrayList<String>();
     if (lightSourceCombinationIDs == null) {
-      lightSourceCombinationIDs = new HashMap<String, Vector<String>>();
+      lightSourceCombinationIDs = new HashMap<String, List<String>>();
     }
     if (lightSourceCombinationRefs == null) {
-      lightSourceCombinationRefs = new Vector<String>();
+      lightSourceCombinationRefs = new ArrayList<String>();
     }
-    if (cameraRefs == null) cameraRefs = new Vector<String>();
-    if (objectiveRefs == null) objectiveRefs = new Vector<String>();
-    if (binnings == null) binnings = new Vector<String>();
-    if (filterSets == null) filterSets = new Vector<String>();
+    if (cameraRefs == null) cameraRefs = new ArrayList<String>();
+    if (objectiveRefs == null) objectiveRefs = new ArrayList<String>();
+    if (binnings == null) binnings = new ArrayList<String>();
+    if (filterSets == null) filterSets = new ArrayList<String>();
     if (filterSetMap == null) filterSetMap = new HashMap<String, FilterGroup>();
 
     // parse factors from XML
@@ -826,8 +826,8 @@ public class FlexReader extends FormatReader {
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
 
-    Vector<String> n = new Vector<String>();
-    Vector<String> f = new Vector<String>();
+    final List<String> n = new ArrayList<String>();
+    final List<String> f = new ArrayList<String>();
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell, field);
     LOGGER.info("Parsing XML in .flex file");
@@ -915,7 +915,7 @@ public class FlexReader extends FormatReader {
 
   /** Populate core metadata using the given list of image names. */
   private void populateCoreMetadata(int wellRow, int wellCol, int field,
-    Vector<String> imageNames)
+    List<String> imageNames)
     throws FormatException
   {
     LOGGER.info("Populating core metadata for well row " + wellRow +
@@ -926,7 +926,7 @@ public class FlexReader extends FormatReader {
         fieldCount = 1;
       }
 
-      Vector<String> uniqueChannels = new Vector<String>();
+      final List<String> uniqueChannels = new ArrayList<String>();
       for (int i=0; i<imageNames.size(); i++) {
         String name = imageNames.get(i);
         String[] tokens = name.split("_");
@@ -1054,7 +1054,7 @@ public class FlexReader extends FormatReader {
 
     LOGGER.info("Looking for files that are in the same dataset as " +
       baseFile.getAbsolutePath());
-    Vector<String> fileList = new Vector<String>();
+    final List<String> fileList = new ArrayList<String>();
 
     Location plateDir = baseFile.getParentFile();
     String[] files = plateDir.list(true);
@@ -1406,7 +1406,7 @@ public class FlexReader extends FormatReader {
 
   /** SAX handler for parsing XML. */
   public class FlexHandler extends BaseHandler {
-    private Vector<String> names, factors;
+    private final List<String> names, factors;
     private MetadataStore store;
     private int thisField = 0;
 
@@ -1434,7 +1434,7 @@ public class FlexReader extends FormatReader {
 
     private StringBuffer charData = new StringBuffer();
 
-    public FlexHandler(Vector<String> names, Vector<String> factors,
+    public FlexHandler(List<String> names, List<String> factors,
       MetadataStore store, boolean populateCore, int well, int thisField)
     {
       this.names = names;
@@ -1647,11 +1647,11 @@ public class FlexReader extends FormatReader {
         level != MetadataLevel.MINIMUM)
       {
         lightSourceID = attributes.getValue("ID");
-        lightSourceCombinationIDs.put(lightSourceID, new Vector<String>());
+        lightSourceCombinationIDs.put(lightSourceID, new ArrayList<String>());
       }
       else if (qName.equals("LightSourceRef") && level != MetadataLevel.MINIMUM)
       {
-        Vector<String> v = lightSourceCombinationIDs.get(lightSourceID);
+        final List<String> v = lightSourceCombinationIDs.get(lightSourceID);
         if (v != null) {
           int id = lightSourceIDs.indexOf(attributes.getValue("ID"));
           String lightSourceID = MetadataTools.createLSID("LightSource", 0, id);
@@ -1790,12 +1790,12 @@ public class FlexReader extends FormatReader {
 
   /** SAX handler for parsing XML from .mea files. */
   public class MeaHandler extends BaseHandler {
-    private Vector<String> flex = new Vector<String>();
+    private List<String> flex = new ArrayList<String>();
     private String[] hostnames = null;
 
     // -- MeaHandler API methods --
 
-    public Vector<String> getFlexFiles() { return flex; }
+    public List<String> getFlexFiles() { return flex; }
 
     // -- DefaultHandler API methods --
 
@@ -1933,7 +1933,7 @@ public class FlexReader extends FormatReader {
         }
         LOGGER.debug("Base server name is {}", baseName);
 
-        Vector<String> names = new Vector<String>();
+        final List<String> names = new ArrayList<String>();
         names.add(realName);
         Location screening =
           new Location(baseName + File.separator + SCREENING);

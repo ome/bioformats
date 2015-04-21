@@ -28,7 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -61,7 +61,7 @@ public class L2DReader extends FormatReader {
   private String[][] tiffs;
 
   /** List of all metadata files in the dataset. */
-  private Vector[] metadataFiles;
+  private List<String>[] metadataFiles;
 
   private MinimalTiffReader reader;
   private int[] tileWidth, tileHeight;
@@ -142,7 +142,7 @@ public class L2DReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     if (metadataFiles != null && getSeries() < metadataFiles.length) {
       files.addAll(metadataFiles[getSeries()]);
@@ -215,7 +215,7 @@ public class L2DReader extends FormatReader {
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
-      Hashtable globalMetadata = r.getGlobalMetadata();
+      final Hashtable<String, Object> globalMetadata = r.getGlobalMetadata();
       for (Object key : globalMetadata.keySet()) {
         addGlobalMeta(key.toString(), globalMetadata.get(key));
       }
@@ -231,7 +231,7 @@ public class L2DReader extends FormatReader {
 
     // remove scan names that do not correspond to existing directories
 
-    Vector<String> validScans = new Vector<String>();
+    final List<String> validScans = new ArrayList<String>();
     for (String s : scans) {
       Location scanDir = new Location(parent, s);
       if (scanDir.exists() && scanDir.isDirectory()) validScans.add(s);
@@ -241,7 +241,7 @@ public class L2DReader extends FormatReader {
     // read metadata from each scan
 
     tiffs = new String[scans.length][];
-    metadataFiles = new Vector[scans.length];
+    metadataFiles = new List[scans.length];
 
     core = new ArrayList<CoreMetadata>(scans.length);
 
@@ -258,7 +258,7 @@ public class L2DReader extends FormatReader {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
       setSeries(i);
-      metadataFiles[i] = new Vector();
+      metadataFiles[i] = new ArrayList<String>();
       String scanName = scans[i] + ".scn";
       Location scanDir = new Location(parent, scans[i]);
 

@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -165,7 +164,7 @@ public class DeltavisionReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     if (!noPixels) files.add(currentId);
     if (logFile != null) files.add(logFile);
     if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
@@ -389,8 +388,8 @@ public class DeltavisionReader extends FormatReader {
 
     ndFilters = new Double[getSizeC()];
 
-    final Vector<Length> uniqueTileX = new Vector<Length>();
-    final Vector<Length> uniqueTileY = new Vector<Length>();
+    final List<Length> uniqueTileX = new ArrayList<Length>();
+    final List<Length> uniqueTileY = new ArrayList<Length>();
 
     // Run through every image and fill in the
     // Extended Header information array for that image
@@ -1243,10 +1242,10 @@ public class DeltavisionReader extends FormatReader {
 
       if (doStatistics) {
         String[] keys = line.split("  ");
-        Vector<String> realKeys = new Vector<String>();
+        final List<String> realKeys = new ArrayList<String>();
         for (int i=0; i<keys.length; i++) {
           keys[i] = keys[i].trim();
-          if (keys[i].length() > 0) realKeys.add(keys[i]);
+          if (!keys[i].isEmpty()) realKeys.add(keys[i]);
         }
         keys = realKeys.toArray(new String[0]);
 
@@ -1255,10 +1254,10 @@ public class DeltavisionReader extends FormatReader {
         line = s.readLine().trim();
         while (line != null && line.length() != 0) {
           String[] values = line.split(" ");
-          Vector<String> realValues = new Vector<String>();
+          final List<String> realValues = new ArrayList<String>();
           for (int i=0; i<values.length; i++) {
             values[i] = values[i].trim();
-            if (values[i].length() > 0) { realValues.add(values[i]); }
+            if (!values[i].isEmpty()) { realValues.add(values[i]); }
           }
           values = realValues.toArray(new String[0]);
 

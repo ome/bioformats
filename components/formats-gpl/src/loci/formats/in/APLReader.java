@@ -27,7 +27,8 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -64,7 +65,7 @@ public class APLReader extends FormatReader {
   private String[] xmlFiles;
   private transient TiffParser[] parser;
   private IFDList[] ifds;
-  private Vector<String> used;
+  private List<String> used;
 
   // -- Constructor --
 
@@ -112,7 +113,7 @@ public class APLReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.addAll(used);
 
     if (getSeries() < xmlFiles.length) {
@@ -255,7 +256,7 @@ public class APLReader extends FormatReader {
     }
 
     String[] columnNames = null;
-    Vector<String[]> rows = null;
+    List<String[]> rows = null;
     try {
       mdb.initialize(mtb);
       rows = mdb.parseDatabase().get(0);
@@ -280,7 +281,7 @@ public class APLReader extends FormatReader {
       }
     }
 
-    used = new Vector<String>();
+    used = new ArrayList<String>();
     used.add(mtb);
     String tnb = mtb.substring(0, mtb.lastIndexOf("."));
     if (tnb.lastIndexOf("_") > tnb.lastIndexOf(File.separator)) {
@@ -354,7 +355,7 @@ public class APLReader extends FormatReader {
       throw new FormatException("Could not find a directory with TIFF files.");
     }
 
-    Vector<Integer> seriesIndexes = new Vector<Integer>();
+    final List<Integer> seriesIndexes = new ArrayList<Integer>();
 
     for (int i=1; i<rows.size(); i++) {
       String file = rows.get(i)[filename].trim();

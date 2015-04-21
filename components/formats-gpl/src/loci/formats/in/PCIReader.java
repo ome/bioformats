@@ -27,8 +27,9 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -72,7 +73,7 @@ public class PCIReader extends FormatReader {
   private HashMap<Integer, Double> timestamps;
   private String creationDate;
   private int binning;
-  private Vector<Double> uniqueZ;
+  private List<Double> uniqueZ;
 
   // -- Constructor --
 
@@ -206,7 +207,7 @@ public class PCIReader extends FormatReader {
 
     imageFiles = new HashMap<Integer, String>();
     timestamps = new HashMap<Integer, Double>();
-    uniqueZ = new Vector<Double>();
+    uniqueZ = new ArrayList<Double>();
 
     CoreMetadata m = core.get(0);
 
@@ -214,8 +215,8 @@ public class PCIReader extends FormatReader {
 
     double scaleFactor = 1;
 
-    Vector<String> allFiles = poi.getDocumentList();
-    if (allFiles.size() == 0) {
+    final List<String> allFiles = poi.getDocumentList();
+    if (allFiles.isEmpty()) {
       throw new FormatException(
         "No files were found - the .cxd may be corrupt.");
     }
@@ -351,7 +352,7 @@ public class PCIReader extends FormatReader {
     }
 
     if (getSizeZ() <= 1 || (getImageCount() % getSizeZ()) != 0) {
-      m.sizeZ = uniqueZ.size() == 0 ? 1 : uniqueZ.size();
+      m.sizeZ = uniqueZ.isEmpty() ? 1 : uniqueZ.size();
     }
     m.sizeT = getImageCount() / getSizeZ();
 

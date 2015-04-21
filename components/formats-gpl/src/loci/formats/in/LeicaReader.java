@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -116,7 +116,7 @@ public class LeicaReader extends FormatReader {
   protected MinimalTiffReader tiff;
 
   /** Array of image file names. */
-  protected Vector[] files;
+  protected List[] files;
 
   /** Number of series in the file. */
   private int numSeries;
@@ -131,26 +131,26 @@ public class LeicaReader extends FormatReader {
 
   private String[][] timestamps;
 
-  private Vector<String> seriesNames;
-  private Vector<String> seriesDescriptions;
+  private List<String> seriesNames;
+  private List<String> seriesDescriptions;
   private int lastPlane = 0, nameLength = 0;
 
   private double[][] physicalSizes;
   private double[] pinhole, exposureTime;
 
   private int nextDetector = 0, nextChannel = 0;
-  private Vector<Integer> activeChannelIndices = new Vector<Integer>();
+  private List<Integer> activeChannelIndices = new ArrayList<Integer>();
   private boolean sequential = false;
 
-  private Vector[] channelNames;
-  private Vector[] emWaves;
-  private Vector[] exWaves;
+  private List[] channelNames;
+  private List[] emWaves;
+  private List[] exWaves;
 
   private boolean[][] cutInPopulated;
   private boolean[][] cutOutPopulated;
   private boolean[][] filterRefPopulated;
 
-  private Vector<Detector> detectors = new Vector<Detector>();
+  private List<Detector> detectors = new ArrayList<Detector>();
 
   private int[] tileWidth, tileHeight;
 
@@ -292,7 +292,7 @@ public class LeicaReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> v = new Vector<String>();
+    final List<String> v = new ArrayList<String>();
     if (leiFilename != null) v.add(leiFilename);
     if (!noPixels && files != null) {
       for (Object file : files[getSeries()]) {
@@ -381,7 +381,7 @@ public class LeicaReader extends FormatReader {
 
         r.close();
 
-        files = new Vector[] {new Vector()};
+        files = new ArrayList[] {new ArrayList()};
         files[0].add(id);
         tiff = new MinimalTiffReader();
 
@@ -412,7 +412,7 @@ public class LeicaReader extends FormatReader {
 
     MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
 
-    seriesNames = new Vector<String>();
+    seriesNames = new ArrayList<String>();
 
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
@@ -464,19 +464,19 @@ public class LeicaReader extends FormatReader {
       core.add(new CoreMetadata());
     }
 
-    files = new Vector[numSeries];
+    files = new List[numSeries];
 
-    channelNames = new Vector[getSeriesCount()];
-    emWaves = new Vector[getSeriesCount()];
-    exWaves = new Vector[getSeriesCount()];
+    channelNames = new List[getSeriesCount()];
+    emWaves = new List[getSeriesCount()];
+    exWaves = new List[getSeriesCount()];
     cutInPopulated = new boolean[getSeriesCount()][];
     cutOutPopulated = new boolean[getSeriesCount()][];
     filterRefPopulated = new boolean[getSeriesCount()][];
 
     for (int i=0; i<getSeriesCount(); i++) {
-      channelNames[i] = new Vector();
-      emWaves[i] = new Vector();
-      exWaves[i] = new Vector();
+      channelNames[i] = new ArrayList();
+      emWaves[i] = new ArrayList();
+      exWaves[i] = new ArrayList();
     }
 
     // determine the length of a filename
@@ -514,10 +514,10 @@ public class LeicaReader extends FormatReader {
       count[i] = core.get(i).imageCount;
     }
 
-    Vector[] tempFiles = files;
+    final List[] tempFiles = files;
     IFDList tempIFDs = headerIFDs;
     core = new ArrayList<CoreMetadata>(numSeries);
-    files = new Vector[numSeries];
+    files = new List[numSeries];
     headerIFDs = new IFDList();
     int index = 0;
 
@@ -546,7 +546,7 @@ public class LeicaReader extends FormatReader {
 
     if (headerIFDs == null) headerIFDs = ifds;
 
-    seriesDescriptions = new Vector<String>();
+    seriesDescriptions = new ArrayList<String>();
 
     physicalSizes = new double[headerIFDs.size()][5];
     pinhole = new double[headerIFDs.size()];
@@ -855,7 +855,7 @@ public class LeicaReader extends FormatReader {
       listing = Location.getIdMap().keySet().toArray(new String[0]);
     }
 
-    Vector<String> list = new Vector<String>();
+    final List<String> list = new ArrayList<String>();
 
     for (int k=0; k<listing.length; k++) {
       if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
@@ -868,7 +868,7 @@ public class LeicaReader extends FormatReader {
 
   private void parseFilenames(int seriesIndex) throws IOException {
     int maxPlanes = 0;
-    Vector<String> f = new Vector<String>();
+    final List<String> f = new ArrayList<String>();
     int tempImages = in.readInt();
 
     if (((long) tempImages * nameLength) > in.length()) {
@@ -915,7 +915,7 @@ public class LeicaReader extends FormatReader {
       String[] listing = getTIFFList();
 
       // grab the file patterns
-      Vector<String> filePatterns = new Vector<String>();
+      final List<String> filePatterns = new ArrayList<String>();
       for (String q : listing) {
         Location l = new Location(q).getAbsoluteFile();
         if (!l.exists()) {
@@ -929,7 +929,7 @@ public class LeicaReader extends FormatReader {
 
         if (guess.getAxisCountS() >= 1) {
           String pre = pattern.getPrefix(guess.getAxisCountS());
-          Vector<String> fileList = new Vector<String>();
+          final List<String> fileList = new ArrayList<String>();
           for (int n=0; n<listing.length; n++) {
             Location p = new Location(dirPrefix, listing[n]);
             if (p.getAbsolutePath().startsWith(pre)) {
@@ -960,7 +960,7 @@ public class LeicaReader extends FormatReader {
           }
 
           if (validPattern) {
-            files[seriesIndex] = new Vector<String>();
+            files[seriesIndex] = new ArrayList<String>();
             files[seriesIndex].addAll(Arrays.asList(pattern));
           }
         }
@@ -1565,7 +1565,7 @@ public class LeicaReader extends FormatReader {
           if (nextChannel < channelNames[series].size()) {
             String name = (String) channelNames[series].get(nextChannel);
             if (name == null || name.trim().equals("") || name.equals("None")) {
-              channelNames[series].setElementAt(detector.name, nextChannel);
+              channelNames[series].set(nextChannel, detector.name);
             }
           }
           else {

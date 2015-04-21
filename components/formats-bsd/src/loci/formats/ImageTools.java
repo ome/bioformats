@@ -111,7 +111,7 @@ public final class ImageTools {
 
     byte[] b = null;
 
-    if (min == null) min = new Double(0);
+    if (min == null) min = Double.valueOf(0);
     double newRange = 255d;
 
     // adapted from ImageJ's TypeConverter methods

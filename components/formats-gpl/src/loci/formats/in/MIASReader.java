@@ -1165,8 +1165,8 @@ public class MIASReader extends FormatReader {
 
         String maskID = MetadataTools.createLSID("Shape", roi + nOverlays, 0);
         store.setMaskID(maskID, roi + nOverlays, 0);
-        store.setMaskX(new Double(0), roi + nOverlays, 0);
-        store.setMaskY(new Double(0), roi + nOverlays, 0);
+        store.setMaskX(Double.valueOf(0), roi + nOverlays, 0);
+        store.setMaskY(Double.valueOf(0), roi + nOverlays, 0);
         store.setMaskWidth(new Double(getSizeX()), roi + nOverlays, 0);
         store.setMaskHeight(new Double(getSizeY()), roi + nOverlays, 0);
 
