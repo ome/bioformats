@@ -580,7 +580,7 @@ public class CellH5Reader extends FormatReader {
             cellObjectName + " " + objectLabelId, roiManagerRoiIndex);
 
           String shapeID =
-            MetadataTools.createLSID("Shape", roiManagerRoiIndex, 0);
+            MetadataTools.createLSID(cellObjectName, roiManagerRoiIndex, 0);
           store.setRectangleID(shapeID, roiManagerRoiIndex, 0);
 
           store.setRectangleX((double) left, roiManagerRoiIndex, 0);
