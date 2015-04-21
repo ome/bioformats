@@ -43,6 +43,7 @@
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/TIFF.h>
+#include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/tiff/Util.h>
 
 namespace ome
@@ -172,7 +173,7 @@ namespace ome
 
         // This doesn't match the reality, but since subchannels are
         // addressed as planes this is needed.
-        core.interleaved = false;
+        core.interleaved = (ifd.getPlanarConfiguration() == tiff::CONTIG);
 
         // Indexed samples.
         if (samples == 1 && photometric == tiff::PALETTE)
