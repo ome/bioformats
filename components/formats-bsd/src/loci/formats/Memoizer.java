@@ -65,7 +65,24 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
  * delegate (including and other {@link ReaderWrapper} instances)
- * after setId has been called.
+ * after {@link #setId(String)} has been called.
+ *
+ * Initializing a Bio-Formats reader can consume substantial time and memory.
+ * Most of the initialization time is spend in the {@link #setId(String)} call.
+ * Various factors can impact the performance of this step including the file
+ * size, the amount of metadata in the image and also the file format itself.
+ *
+ * With the {@link Memoizer}, if the time required to call
+ * {@link #setId(String)} method is larger than {@link #minimumElapsed}, the
+ * initialized reader including all reader wrappers will be cached in a memo
+ * file via {@link #saveMemo()}.
+ * Any subsequent call to {@link #setId(String)} with a reader decorated by
+ * the Memoizer on the same input file will load the reader from the memo file
+ * using {@link #loadMemo()} instead of performing a full reader
+ * initialization.
+ *
+ * By essence, the speedup gained from memoization will only happen after the
+ * first initialization of the reader for a particular file.
  */
 public class Memoizer extends ReaderWrapper {
 
@@ -311,7 +328,7 @@ public class Memoizer extends ReaderWrapper {
   // -- Constants --
 
   /**
-   * Defines the file format. Bumping this number will invalidate all other
+   * Default file version. Bumping this number will invalidate all other
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
@@ -323,6 +340,9 @@ public class Memoizer extends ReaderWrapper {
    */
   public static final long DEFAULT_MINIMUM_ELAPSED = 100;
 
+  /**
+   * Default {@link org.slf4j.Logger} for the memoizer class
+   */
   private static final Logger LOGGER =
     LoggerFactory.getLogger(Memoizer.class);
 
@@ -330,20 +350,21 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    * Minimum number of milliseconds which must elapse during the call to
-   * {@link #setId} before a memo file will be created.
+   * {@link #setId} before a memo file will be created. Default to
+   * {@link #DEFAULT_MINIMUM_ELAPSED} if not specified via the constructor.
    */
   private final long minimumElapsed;
 
   /**
    * Directory where all memo files should be created. If this value is
    * non-null, then all memo files will be created under it. Can be
-   * overriden by inPlaceCaching.
+   * overriden by {@link #doInPlaceCaching}.
    */
   private final File directory;
 
   /**
-   * If True, then all memo files will be created in the same directory as the
-   * original file.
+   * If <code>true</code>, then all memo files will be created in the same
+   * directory as the original file.
    */
   private boolean doInPlaceCaching = false;
 
@@ -362,9 +383,9 @@ public class Memoizer extends ReaderWrapper {
   private boolean skipSave = false;
 
   /**
-   * Whether to invalidate the memo file based upon mismatched major/minor
-   * version numbers. By default, the Git commit hash is used to invalidate
-   * the memo file.
+   * Boolean specifying whether to invalidate the memo file based upon
+   * mismatched major/minor version numbers. By default, the Git commit hash
+   * is used to invalidate the memo file.
    */
   private boolean versionChecking = false;
 
@@ -496,6 +517,9 @@ public class Memoizer extends ReaderWrapper {
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded
    *  from the memo file during {@link #setId(String)}.
+   *
+   *  @return <code>true</true> if the reader was loaded from the memo file,
+   *  <code>false</true> otherwise.
    */
   public boolean isLoadedFromMemo() {
     return loadedFromMemo;
@@ -504,6 +528,9 @@ public class Memoizer extends ReaderWrapper {
   /**
    *  Returns whether the {@link #reader} instance currently active was saved
    *  to the memo file during {@link #setId(String)}.
+   *
+   *  @return <code>true</true> if the reader was saved to the memo file,
+   *  <code>false</true> otherwise.
    */
   public boolean isSavedToMemo() {
     return savedToMemo;
@@ -512,6 +539,9 @@ public class Memoizer extends ReaderWrapper {
   /**
    * Returns whether or not version checking is done based upon major/minor
    * version numbers.
+   *
+   *  @return <code>true</true> if version checking is done based upon
+   *  major/minor version numbers, <code>false</true> otherwise.
    */
   public boolean isVersionChecking() {
     return versionChecking;
@@ -562,11 +592,19 @@ public class Memoizer extends ReaderWrapper {
   /**
    * Set whether version checking is done based upon major/minor version
    * numbers.
-   * If 'true' is passed in, then a mismatch between the major/minor version
-   * of the calling code (e.g. 4.4) and the major/minor version saved in the
-   * memo file (e.g. 5.0) will result in the memo file being invalidated.
-   * By default, a mismatch in the Git commit hashes will invalidate the memo
-   * file; this method allows for less strict version checking.
+   *
+   * If <code>true</code>, then a mismatch between the major/minor version of
+   * the calling code (e.g. 4.4) and the major/minor version saved in the memo
+   * file (e.g. 5.0) will result in the memo file being invalidated.
+   *
+   * If <code>false</code> (default), a mismatch in the Git commit hashes will
+   * invalidate the memo file.
+   *
+   * This method allows for less strict version checking.
+   *
+   *  @param version a boolean specifying whether version checking is done
+   *  based upon major/minor version numbers to invalidate the memo file
+   *
    */
   public void setVersionChecking(boolean version) {
     this.versionChecking = version;
@@ -867,6 +905,9 @@ public class Memoizer extends ReaderWrapper {
     }
   }
 
+  /**
+   * Save a reader including all reader wrappers inside a memo file.
+   */
   public boolean saveMemo() {
 
     if (skipSave) {
