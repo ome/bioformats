@@ -330,9 +330,9 @@ public class ROIHandler {
                         }
                         if (sc != null) roi.setStrokeColor(sc);
                         manager.add(images[imageNum], roi, nextRoi++);
-                        manager.setAlwaysOnTop(true);
-                        manager.runCommand("Select All");
-                        manager.runCommand("Show All");
+                        //manager.setAlwaysOnTop(true);
+                        //manager.runCommand("Select All");
+                        //manager.runCommand("Show All");
                     }
                 }
             }
