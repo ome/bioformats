@@ -299,6 +299,9 @@ namespace ome
         else
           ifd->setPlanarConfiguration(tiff::SEPARATE);
 
+        // This isn't necessarily always true; we might want to use a
+        // photometric interpretation other than RGB with three
+        // subchannels.
         if (isRGB(channel) && getRGBChannelCount(channel) == 3)
           ifd->setPhotometricInterpretation(tiff::RGB);
         else

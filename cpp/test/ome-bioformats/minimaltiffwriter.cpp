@@ -147,7 +147,10 @@ TEST_P(TIFFWriterTest, setId)
   ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> retrieve(ome::compat::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(meta));
 
   tiffwriter.setMetadataRetrieve(retrieve);
-  tiffwriter.setInterleaved(true);
+
+  bool interleaved = true;
+
+  tiffwriter.setInterleaved(interleaved);
 
   ASSERT_NO_THROW(tiffwriter.setId(testfile));
 
@@ -167,13 +170,13 @@ TEST_P(TIFFWriterTest, setId)
       shape[ome::bioformats::DIM_SPATIAL_Z] = shape[ome::bioformats::DIM_TEMPORAL_T] = shape[ome::bioformats::DIM_CHANNEL] =
         shape[ome::bioformats::DIM_MODULO_Z] = shape[ome::bioformats::DIM_MODULO_T] = shape[ome::bioformats::DIM_MODULO_C] = 1;
 
-      ome::bioformats::PixelBufferBase::storage_order_type order(ome::bioformats::PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, ifd->getSamplesPerPixel() > 1 ? true : false));
+      ome::bioformats::PixelBufferBase::storage_order_type order(ome::bioformats::PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, interleaved));
 
       VariantPixelBuffer src(shape, ifd->getPixelType(), order);
       src = buf;
 
-      tiffwriter.setSeries(currentSeries);
-      tiffwriter.saveBytes(0, src);
+      ASSERT_NO_THROW(tiffwriter.setSeries(currentSeries));
+      ASSERT_NO_THROW(tiffwriter.saveBytes(0, src));
       ++currentSeries;
     }
   tiffwriter.close();
