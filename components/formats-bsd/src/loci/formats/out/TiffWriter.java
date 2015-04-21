@@ -73,6 +73,15 @@ public class TiffWriter extends FormatWriter {
   public static final String COMPRESSION_JPEG =
     CompressionType.JPEG.getCompression();
 
+  private static final String[] BIG_TIFF_SUFFIXES = {"tf2", "tf8", "btf"};
+
+  /**
+   * Number of bytes at which to automatically switch to BigTIFF
+   * This is approximately 3.9 GB instead of 4 GB,
+   * to allow space for the IFDs.
+   */
+  private static final long BIG_TIFF_CUTOFF = 1024 * 1024 * 3990;
+
   // -- Fields --
 
   /** Whether or not the output file is a BigTIFF file. */
@@ -117,7 +126,8 @@ public class TiffWriter extends FormatWriter {
   // -- Constructors --
 
   public TiffWriter() {
-    this("Tagged Image File Format", new String[] {"tif", "tiff"});
+    this("Tagged Image File Format",
+      new String[] {"tif", "tiff", "tf2", "tf8", "btf"});
   }
 
   public TiffWriter(String format, String[] exts) {
@@ -138,6 +148,36 @@ public class TiffWriter extends FormatWriter {
   @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
+
+    // if a BigTIFF extension is used, or we know that
+    // more than 4GB of data will be written, then automatically
+    // switch to BigTIFF
+    if (!isBigTiff) {
+      if (checkSuffix(id, BIG_TIFF_SUFFIXES)) {
+        LOGGER.info("Switching to BigTIFF (by file extension)");
+        isBigTiff = true;
+      }
+      else if (compression == null || compression.equals(COMPRESSION_UNCOMPRESSED)) {
+        MetadataRetrieve retrieve = getMetadataRetrieve();
+        long totalBytes = 0;
+        for (int i=0; i<retrieve.getImageCount(); i++) {
+          int sizeX = retrieve.getPixelsSizeX(i).getValue();
+          int sizeY = retrieve.getPixelsSizeY(i).getValue();
+          int sizeZ = retrieve.getPixelsSizeZ(i).getValue();
+          int sizeC = retrieve.getPixelsSizeC(i).getValue();
+          int sizeT = retrieve.getPixelsSizeT(i).getValue();
+          int type = FormatTools.pixelTypeFromString(
+            retrieve.getPixelsType(i).toString());
+          long bpp = FormatTools.getBytesPerPixel(type);
+          totalBytes += sizeX * sizeY * sizeZ * sizeC * sizeT * bpp;
+        }
+
+        if (totalBytes >= BIG_TIFF_CUTOFF) {
+          LOGGER.info("Switching to BigTIFF (by file size)");
+          isBigTiff = true;
+        }
+      }
+    }
 
     synchronized (this) {
       setupTiffSaver();
