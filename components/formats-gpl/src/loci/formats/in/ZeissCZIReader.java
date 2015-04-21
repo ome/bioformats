@@ -646,9 +646,26 @@ public class ZeissCZIReader extends FormatReader {
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
     {
-      prestitched = false;
-      ms0.sizeX = planes.get(planes.size() - 1).x;
-      ms0.sizeY = planes.get(planes.size() - 1).y;
+      boolean equalTiles = true;
+      for (SubBlock plane : planes) {
+        if (plane.x != planes.get(0).x || plane.y != planes.get(0).y) {
+          equalTiles = false;
+          break;
+        }
+      }
+      if (getSizeX() > planes.get(0).x && !equalTiles) {
+        // image was fused; treat the mosaics as a single image
+        seriesCount = 1;
+        positions = 1;
+        acquisitions = 1;
+        mosaics = 1;
+        angles = 1;
+      }
+      else {
+        prestitched = false;
+        ms0.sizeX = planes.get(planes.size() - 1).x;
+        ms0.sizeY = planes.get(planes.size() - 1).y;
+      }
     }
 
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
