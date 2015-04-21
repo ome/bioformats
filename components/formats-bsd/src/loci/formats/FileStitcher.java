@@ -38,6 +38,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -666,12 +667,12 @@ public class FileStitcher extends ReaderWrapper {
     // have to call initFile on each constituent file; but we can only do so
     // when each constituent file does not itself have multiple used files
 
-    Vector<String> files = new Vector<String>();
+    Set<String> files = new HashSet<String>();
     for (ExternalSeries s : externals) {
       String[] f = s.getFiles();
       for (String file : f) {
         String path = new Location(file).getAbsolutePath();
-        if (!files.contains(path)) files.add(path);
+        files.add(path);
       }
 
       DimensionSwapper[] readers = s.getReaders();
@@ -681,7 +682,7 @@ public class FileStitcher extends ReaderWrapper {
           String[] used = readers[i].getUsedFiles();
           for (String file : used) {
             String path = new Location(file).getAbsolutePath();
-            if (!files.contains(path)) files.add(path);
+            files.add(path);
           }
           readers[i].close();
         }
