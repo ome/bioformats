@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -42,15 +42,15 @@
 
 TEST(Tuple, Create)
 {
-  typedef std::tuple<int,double,std::string> t1;
+  typedef ome::compat::tuple<int,double,std::string> t1;
   t1 i(34, 2342.23, "test");
 }
 
 TEST(Tuple, Get)
 {
-  typedef std::tuple<int,std::string> t2;
+  typedef ome::compat::tuple<int,std::string> t2;
   t2 i(34, "test");
 
-  ASSERT_EQ(std::get<0>(i), 34);
-  ASSERT_EQ(std::get<1>(i), "test");
+  ASSERT_EQ(ome::compat::get<0>(i), 34);
+  ASSERT_EQ(ome::compat::get<1>(i), "test");
 }

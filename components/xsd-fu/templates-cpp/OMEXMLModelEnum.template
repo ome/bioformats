@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -47,10 +47,13 @@
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
-#include <iostream>
 #include <ostream>
 #include <map>
 #include <string>
+
+#include <ome/common/log.h>
+
+#include <ome/xml/model/enums/EnumerationException.h>
 
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -62,7 +65,6 @@
 #include <boost/format.hpp>
 
 #include <ome/xml/model/enums/${klass.langType}.h>
-#include <ome/xml/model/enums/EnumerationException.h>
 
 using boost::trim;
 using boost::format;
@@ -277,7 +279,7 @@ namespace ome
         ${klass.langType}::${klass.langType} (enum_value value):
           value(value)
         {
-          std::map<enum_value,std::string>::const_iterator i = value_map.find(value);
+          value_map_type::const_iterator i = value_map.find(value);
           if (i == value_map.end())
             {
               format fmt("‘%1%’ not a supported value of %2%");
@@ -289,7 +291,7 @@ namespace ome
 
         ${klass.langType}::${klass.langType} (const std::string& name, bool strict)
         {
-          std::map<std::string,enum_value>::const_iterator i = string_map.find(name);
+          string_map_type::const_iterator i = string_map.find(name);
           if (strict == false && i == string_map.end())
             {
               // Trim leading and trailing whitespace and lowercase.
@@ -302,20 +304,22 @@ namespace ome
 {% if 'Other' in klass.possibleValues %}\
               if (i == lowercase_string_map.end())
                 {
+                  ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “Other”");
                   fmt % "${klass.langType}" % name;
-                  std::clog << fmt << std::endl;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
                   i = string_map.find("Other");
                 }
               else
                 {
+                  ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “%3%”");
                   fmt % "${klass.langType}" % name % ${klass.langType}(i->second);
-                  std::clog << fmt << std::endl;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
                 }
 {% end %}\
             }
-          if (i == string_map.end())
+          if (i == string_map.end() || i == lowercase_string_map.end())
             {
               format fmt("‘%1%’ not a supported value of %2%");
               fmt % name % "${klass.langType}";
@@ -323,7 +327,7 @@ namespace ome
             }
           this->value = i->second;
 
-          std::map<enum_value,std::string>::const_iterator i2 = value_map.find(value);
+          value_map_type::const_iterator i2 = value_map.find(value);
           if (i2 == value_map.end())
             {
               format fmt("‘%1%’ not a supported value of %2%");
@@ -495,6 +499,35 @@ namespace ome
                     const ${klass.langType}& enumeration)
         {
           return os << static_cast<const std::string&>(enumeration);
+        }
+
+        /**
+         * Set ${klass.langType} from input stream.
+         *
+         * @param is the input stream.
+         * @param enumeration the ${klass.langType} to input.
+         * @returns the input stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_istream<charT,traits>&
+        operator>> (std::basic_istream<charT,traits>& is,
+                    ${klass.langType}& enumeration)
+        {
+          std::string value;
+          is >> value;
+          if (is)
+            {
+              try
+                {
+                  enumeration = ${klass.langType}(value, false);
+                }
+              catch (const EnumerationException& e)
+                {
+                  is.setstate(std::ios::failbit);
+                }
+            }
+
+          return is;
         }
 {% end %}\
 

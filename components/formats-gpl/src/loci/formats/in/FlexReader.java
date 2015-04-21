@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -53,7 +53,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -403,8 +402,11 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Reading contents of .mea file");
     LOGGER.info("Parsing XML from .mea file");
     RandomAccessInputStream s = new RandomAccessInputStream(id);
-    XMLTools.parseXML(s, handler);
-    s.close();
+    try {
+      XMLTools.parseXML(s, handler);
+    } finally {
+      s.close();
+    }
 
     Vector<String> flex = handler.getFlexFiles();
     if (flex.size() == 0) {
@@ -814,9 +816,13 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(0);
     }
     else {
-      TiffParser parser = new TiffParser(file.file);
-      ifd = parser.getFirstIFD();
-      parser.getStream().close();
+      RandomAccessInputStream ras = new RandomAccessInputStream(file.file);
+      try {
+        TiffParser parser = new TiffParser(ras);
+        ifd = parser.getFirstIFD();
+      } finally {
+        ras.close();
+      }
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
 
@@ -827,8 +833,8 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Parsing XML in .flex file");
 
     xml = xml.trim();
-    // some files have a trailing ">", which needs to be removed
-    if (xml.endsWith(">>")) {
+    // some files have a trailing ">" or "%", which needs to be removed
+    if (xml.endsWith(">>") || xml.endsWith("%")) {
       xml = xml.substring(0, xml.length() - 1);
     }
 
@@ -1201,7 +1207,8 @@ public class FlexReader extends FormatReader {
     Boolean firstCompressed = null;
     int firstIFDCount = 0;
     for (String file : fileList) {
-      RandomAccessInputStream s = new RandomAccessInputStream(file);
+      LOGGER.warn("parsing {}", file);
+      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
       TiffParser parser = new TiffParser(s);
       IFD firstIFD = parser.getFirstIFD();
       int ifdCount = parser.getIFDOffsets().length;
@@ -1354,7 +1361,7 @@ public class FlexReader extends FormatReader {
     if (Location.getMappedFile(flexFile) != null) {
       return Location.getMappedFile(flexFile);
     }
-    return new NIOFileHandle(Location.getMappedId(flexFile), "r");
+    return new NIOFileHandle(new File(Location.getMappedId(flexFile)), "r", 16);
   }
 
   private FlexFile lookupFile(int wellRow, int wellColumn, int field) {

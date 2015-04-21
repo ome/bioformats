@@ -2,7 +2,7 @@
  * #%L
  * OME-INTERNAL C++ headers for internal use only
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -56,6 +56,7 @@
 #endif
 
 // Revision number in version control
+#define OME_VCS_SHORTREVISION "${OME_VCS_SHORTREVISION}"
 #define OME_VCS_REVISION "${OME_VCS_REVISION}"
 
 // Release date (seconds since the UNIX epoch)

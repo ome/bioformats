@@ -1,4 +1,4 @@
-        std::vector<xerces::dom::Element> Value_nodeList = getChildrenByTagName(element, "Value");
+        std::vector<common::xml::dom::Element> Value_nodeList = getChildrenByTagName(element, "Value");
         if (Value_nodeList.size() > 1)
           {
             format fmt("Value node list size %1% != 1");
@@ -7,21 +7,21 @@
           }
         else if (Value_nodeList.size() != 0)
           {
-            xerces::dom::Element elem(Value_nodeList.at(0));
-            xerces::dom::NodeList nodes(elem.getChildNodes());
+            common::xml::dom::Element elem(Value_nodeList.at(0));
+            common::xml::dom::NodeList nodes(elem.getChildNodes());
 
             std::string text;
 
-            for (xerces::dom::NodeList::iterator i = nodes.begin();
+            for (common::xml::dom::NodeList::iterator i = nodes.begin();
                  i != nodes.end();
                  ++i)
               {
                 try
                   {
-                    xerces::dom::Element e(*i);
+                    common::xml::dom::Element e(*i);
 
                     std::string textvalue;
-                    ome::xerces::dom::writeNode(*i, textvalue);
+                    ome::common::xml::dom::writeNode(*i, textvalue);
 
                     // Trim leading and trailing whitespace
                     std::string::size_type start(textvalue.find_first_of('<'));
@@ -47,7 +47,7 @@
                       {
                         if (element->lookupNamespaceURI(0) != 0)
                           {
-                            xerces::String currentNS(element->lookupNamespaceURI(0));
+                            common::xml::String currentNS(element->lookupNamespaceURI(0));
                             if ((*i)->isDefaultNamespace(currentNS))
                               {
                                 std::string stripNS(static_cast<std::string>(currentNS));

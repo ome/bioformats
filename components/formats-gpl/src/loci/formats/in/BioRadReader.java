@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -302,7 +302,7 @@ public class BioRadReader extends FormatReader {
     gain = new Vector<Double>();
 
     used = new Vector<String>();
-    used.add(currentId);
+    used.add(new Location(currentId).getAbsolutePath());
 
     LOGGER.info("Reading image dimensions");
 
@@ -454,7 +454,9 @@ public class BioRadReader extends FormatReader {
         Location f = new Location(file);
         if (f.length() == length) {
           pics.add(file);
-          used.add(file);
+          if (!used.contains(f.getAbsolutePath())) {
+            used.add(f.getAbsolutePath());
+          }
         }
       }
       if (pics.size() == 1) m.sizeC = 1;

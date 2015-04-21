@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -42,12 +42,15 @@ if(BUILD_TESTS)
                  ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
   set(ome_test_static_headers
+      io.h
       test.h)
 
   set(ome_test_generated_headers
-     ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+      ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-  set(ome_test_sources main.cpp)
+  set(ome_test_sources
+      io.cpp
+      main.cpp)
 
   add_library(ome-test STATIC
               ${ome_test_sources}

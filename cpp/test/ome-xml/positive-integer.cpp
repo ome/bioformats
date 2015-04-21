@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -35,6 +35,8 @@
  * policies, either expressed or implied, of any organization.
  * #L%
  */
+
+#include <boost/range/size.hpp>
 
 #include <ome/xml/model/primitives/PositiveInteger.h>
 
@@ -139,12 +141,12 @@ namespace
 template<>
 const std::vector<NumericTest<PositiveInteger>::test_str>
 NumericTest<PositiveInteger>::strings(init_strings,
-                                      init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+                                      init_strings + boost::size(init_strings));
 
 template<>
 const std::vector<NumericTest<PositiveInteger>::test_op>
 NumericTest<PositiveInteger>::ops(init_ops,
-                                  init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+                                  init_ops + boost::size(init_ops));
 
 template<>
 const PositiveInteger::value_type NumericTest<PositiveInteger>::error(0);

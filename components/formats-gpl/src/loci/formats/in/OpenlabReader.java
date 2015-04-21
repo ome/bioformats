@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -399,7 +399,7 @@ public class OpenlabReader extends FormatReader {
         planes[imagesFound].volumeType = in.readShort();
         in.skipBytes(16);
         long pointer = in.getFilePointer();
-        planes[imagesFound].planeName = in.readCString().trim();
+        planes[imagesFound].planeName = readCString().trim();
         in.skipBytes((int) (256 - in.getFilePointer() + pointer));
 
         planes[imagesFound].planeOffset = in.getFilePointer();
@@ -420,7 +420,7 @@ public class OpenlabReader extends FormatReader {
           planes[imagesFound].height = in.readInt();
         }
 
-        for (int i=0; i<representativePlanes.size(); i++) {
+        for (int i=representativePlanes.size()-1; i>=0; i--) {
           PlaneInfo p = representativePlanes.get(i);
           if (planes[imagesFound].width == p.width &&
             planes[imagesFound].height == p.height &&
@@ -469,12 +469,12 @@ public class OpenlabReader extends FormatReader {
           ycal = in.readFloat() * scaling;
         }
         else if (tag == USER) {
-          String className = in.readCString();
+          String className = readCString();
 
           if (className.equals("CVariableList")) {
-            char achar = in.readChar();
+            byte check = in.readByte();
 
-            if (achar == 1) {
+            if (check == 1) {
               int numVars = in.readShort();
               for (int i=0; i<numVars; i++) {
                 readVariable();
@@ -695,7 +695,7 @@ public class OpenlabReader extends FormatReader {
   }
 
   private void readVariable() throws FormatException, IOException {
-    String className = in.readCString();
+    String className = readCString();
 
     String name = "", value = "";
 
@@ -918,6 +918,12 @@ public class OpenlabReader extends FormatReader {
         in.read(buf, 7, buf.length - 7);
       }
     }
+  }
+
+  private String readCString() throws IOException {
+    // long strings are rarely encountered, so using a smaller block size
+    // will be faster than calling in.readCString()
+    return in.findString(true, 64, "\0");
   }
 
   // -- Helper classes --

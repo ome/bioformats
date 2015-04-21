@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -48,14 +48,25 @@
 #ifndef OME_COMPAT_ARRAY_H
 # define OME_COMPAT_ARRAY_H
 
-# include <ome/compat/config.h>
+# include <ome/common/config.h>
 
 # ifdef OME_HAVE_ARRAY
 #  include <array>
+namespace ome
+{
+  namespace compat
+  {
+    using std::array;
+  }
+}
 # elif OME_HAVE_BOOST_ARRAY
 #  include <boost/array.hpp>
-namespace std {
+namespace ome
+{
+  namespace compat
+  {
     using boost::array;
+  }
 }
 # else
 #  error An array implementation is not available

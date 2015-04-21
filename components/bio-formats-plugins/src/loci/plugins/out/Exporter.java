@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -80,6 +80,7 @@ import loci.plugins.util.WindowTools;
 import ome.units.UNITS;
 import ome.units.quantity.Time;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.ROI;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
@@ -103,6 +104,24 @@ public class Exporter {
 
     private LociExporter plugin;
 
+    /**
+     * Removes the extension of the specified name.
+     *
+     * @param name The name to handle.
+     * @return See above.
+     */
+    private String removeExtension(String name)
+    {
+        int index = name.lastIndexOf(".");
+        //check if separator
+        int unixPos = name.lastIndexOf('/');
+        int windowsPos = name.lastIndexOf('\\');
+        int max = Math.max(unixPos, windowsPos);
+        if (max < index) {
+            return name.substring(0, index);
+        }
+        return name;
+    }
     // -- Constructor --
 
     public Exporter(LociExporter plugin, ImagePlus imp) {
@@ -121,6 +140,7 @@ public class Exporter {
         Boolean saveRoi = null;
         String compression = null;
 
+        Boolean windowless = Boolean.FALSE;
         if (plugin.arg != null) {
             outfile = Macro.getValue(plugin.arg, "outfile", null);
 
@@ -143,9 +163,12 @@ public class Exporter {
                     //nothing to do, we use the current imagePlus
                 }
             }
+            String w =  Macro.getValue(plugin.arg, "windowless", null);
+            if (w != null) {
+                windowless = Boolean.valueOf(w);
+            }
             plugin.arg = null;
         }
-
         if (outfile == null) {
             String options = Macro.getOptions();
             if (options != null) {
@@ -153,15 +176,40 @@ public class Exporter {
                 if (save != null) outfile = save;
             }
         }
-
+        //create a temporary file if window less
+        if (windowless && (outfile == null || outfile.length() == 0)) {
+            File tmp = null;
+            try {
+                String name = removeExtension(imp.getTitle());
+                String n = name+ ".ome.tif";
+                tmp = File.createTempFile(name, ".ome.tif");
+                File p = tmp.getParentFile();
+                File[] list = p.listFiles();
+                //make sure we delete a previous tmp file with same name if any
+                if (list != null) {
+                    File toDelete = null;
+                    for (int i = 0; i < list.length; i++) {
+                        if (list[i].getName().equals(n)) {
+                            toDelete = list[i];
+                            break;
+                        }
+                    }
+                    if (toDelete != null) {
+                        toDelete.delete();
+                    }
+                }
+                outfile = new File(p, n).getAbsolutePath();
+                if (Recorder.record) Recorder.recordPath("outputfile", outfile);
+                IJ.log("exporter outputfile "+outfile);
+            } catch (Exception e) {
+                //fall back to window mode.
+            } finally {
+                if (tmp != null) tmp.delete();
+            }
+        }
         File f = null;
         if (outfile == null || outfile.length() == 0) {
             // open a dialog prompting for the filename to save
-
-            //SaveDialog sd = new SaveDialog("Bio-Formats Exporter", "", "");
-            //String dir = sd.getDirectory();
-            //String name = sd.getFileName();
-
             // NB: Copied and adapted from ij.io.SaveDIalog.jSaveDispatchThread,
             // so that the save dialog has a file filter for choosing output format.
 
@@ -245,6 +293,11 @@ public class Exporter {
             if (outfile == null) return;
         }
 
+        if (windowless) {
+            if (splitZ == null) splitZ = Boolean.FALSE;
+            if (splitC == null) splitC = Boolean.FALSE;
+            if (splitT == null) splitT = Boolean.FALSE;
+        }
         if (splitZ == null || splitC == null || splitT == null) {
             // ask if we want to export multiple files
 
@@ -299,14 +352,24 @@ public class Exporter {
             catch (DependencyException de) { }
             catch (ServiceException se) { }
 
+
+
             if (store == null) IJ.error("OME-XML Java library not found.");
+
+            OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
+            if (root.sizeOfROIList()>0){
+                while (root.sizeOfROIList() > 0) {
+                    ROI roi = root.getROI(0);
+                    root.removeROI(roi);
+                }
+                store.setRoot(root);
+            }
             if (xml == null) {
                 store.createRoot();
             }
             else if (store.getImageCount() > 1) {
                 // the original dataset had multiple series
                 // we need to modify the IMetadata to represent the correct series
-
                 ArrayList<Integer> matchingSeries = new ArrayList<Integer>();
                 for (int series=0; series<store.getImageCount(); series++) {
                     String type = store.getPixelsType(series).toString();
@@ -342,7 +405,6 @@ public class Exporter {
                 }
                 else if (matchingSeries.size() == 1) series = matchingSeries.get(0);
 
-                OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
                 ome.xml.model.Image exportImage = root.getImage(series);
                 List<ome.xml.model.Image> allImages = root.copyImageList();
                 for (ome.xml.model.Image img : allImages) {
@@ -410,14 +472,16 @@ public class Exporter {
             if (imp.getImageStackSize() !=
                     imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
             {
-                IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
-                        "The number of planes in the stack (" + imp.getImageStackSize() +
-                        ") does not match the number of expected planes (" +
-                        (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
-                        "\nIf you select 'OK', only " + imp.getImageStackSize() +
-                        " planes will be exported. If you wish to export all of the " +
-                        "planes,\nselect 'Cancel' and convert the Image5D window " +
-                        "to a stack.");
+                if (!windowless) {
+                    IJ.showMessageWithCancel("Bio-Formats Exporter Warning",
+                            "The number of planes in the stack (" + imp.getImageStackSize() +
+                            ") does not match the number of expected planes (" +
+                            (imp.getNChannels() * imp.getNSlices() * imp.getNFrames()) + ")." +
+                            "\nIf you select 'OK', only " + imp.getImageStackSize() +
+                            " planes will be exported. If you wish to export all of the " +
+                            "planes,\nselect 'Cancel' and convert the Image5D window " +
+                            "to a stack.");
+                }
                 store.setPixelsSizeZ(new PositiveInteger(imp.getImageStackSize()), 0);
                 store.setPixelsSizeC(new PositiveInteger(1), 0);
                 store.setPixelsSizeT(new PositiveInteger(1), 0);
@@ -535,7 +599,7 @@ public class Exporter {
                         }
                     }
                 }
-                if (!selected) {
+                if (!selected && !windowless) {
                     GenericDialog gd =
                             new GenericDialog("Bio-Formats Exporter Options");
 
@@ -561,7 +625,7 @@ public class Exporter {
                     }
                 }
             }
-            if (in) {
+            if (in && !windowless) {
                 int ret1 = JOptionPane.showConfirmDialog(null,
                         "Some files already exist. \n" +
                                 "Would you like to replace them?", "Replace?",
@@ -580,7 +644,7 @@ public class Exporter {
                 w.setCompression(compression);
             }
             //Save ROI's
-            if (saveRoi.booleanValue()) {
+            if (saveRoi != null && saveRoi.booleanValue()) {
                 ROIHandler.saveROIs(store);
             }
             w.setMetadataRetrieve(store);

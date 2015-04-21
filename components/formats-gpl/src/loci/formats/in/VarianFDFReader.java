@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -127,9 +127,9 @@ public class VarianFDFReader extends FormatReader {
       pixelSizeX = 0d;
       pixelSizeY = 0d;
       pixelSizeZ = 0d;
-      originX = new Length(0d, UNITS.REFERENCEFRAME);
-      originY = new Length(0d, UNITS.REFERENCEFRAME);
-      originZ = new Length(0d, UNITS.REFERENCEFRAME);
+      originX = null;
+      originY = null;
+      originZ = null;
       units = null;
     }
   }

@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -48,7 +48,7 @@
 #ifndef OME_COMPAT_MEMORY_H
 # define OME_COMPAT_MEMORY_H
 
-# include <ome/compat/config.h>
+# include <ome/common/config.h>
 
 # ifdef OME_HAVE_MEMORY
 #  include <memory>
@@ -104,7 +104,10 @@ namespace boost
 
 } // namespace boost
 # endif
-namespace std {
+namespace ome
+{
+  namespace compat
+  {
     using boost::shared_ptr;
     using boost::weak_ptr;
     using boost::static_pointer_cast;
@@ -113,6 +116,7 @@ namespace std {
     using boost::enable_shared_from_this;
     using boost::make_shared;
     using boost::owner_less;
+  }
 }
 # else
 #  error A shared_ptr implementation is not available

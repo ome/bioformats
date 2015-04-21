@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,8 +37,6 @@ import java.io.DataInput;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -520,6 +518,31 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   public String readCString() throws IOException {
     String line = findString("\0");
     return line.length() == 0 ? null : line;
+  }
+
+  /**
+   * Reads a byte array of the given length byte by byte. Returns a string
+   * using the set encoding.
+   *
+   * @param n The length of the array.
+   * @return See above
+   * @throws IOException Thrown if an error occurred while reading the data.
+   */
+  public String readByteToString(int n) throws IOException {
+    n = (int) Math.min(available(), n);
+    byte[] bytes = new byte[n];
+    readFully(bytes);
+    StringBuffer newString = new StringBuffer();
+    for (byte b : bytes) {
+      int v = b & 0xff;
+      if (v > 0x7f) {
+          newString.append(Character.toChars(v));
+      } else {
+          newString.append((char) b);
+      }
+    }
+    String s = newString.toString();
+    return new String(s.getBytes(encoding), encoding);
   }
 
   /** Read a string of up to length n. */

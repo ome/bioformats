@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,6 +42,7 @@ import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -51,8 +52,9 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.primitives.PrimitiveNumber;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -105,11 +107,14 @@ public final class FormatTools {
   /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
   public static final int DOUBLE = 7;
 
+  /** Identifies the <i>BIT</i> data type used to store pixel values. */
+  public static final int BIT = 8;
+
   /** Human readable pixel type. */
   private static final String[] pixelTypes = makePixelTypes();
 
   static String[] makePixelTypes() {
-    String[] pixelTypes = new String[8];
+    String[] pixelTypes = new String[9];
     pixelTypes[INT8] = "int8";
     pixelTypes[UINT8] = "uint8";
     pixelTypes[INT16] = "int16";
@@ -118,6 +123,7 @@ public final class FormatTools {
     pixelTypes[UINT32] = "uint32";
     pixelTypes[FLOAT] = "float";
     pixelTypes[DOUBLE] = "double";
+    pixelTypes[BIT] = "bit";
     return pixelTypes;
   }
 
@@ -186,6 +192,9 @@ public final class FormatTools {
   public static final String Z_NUM = "%z";
   public static final String T_NUM = "%t";
   public static final String TIMESTAMP = "%A";
+  public static final String TILE_X = "%x";
+  public static final String TILE_Y = "%y";
+  public static final String TILE_NUM = "%m";
 
   // -- Constants - versioning --
 
@@ -194,6 +203,10 @@ public final class FormatTools {
   /** Current VCS revision. */
   public static final String VCS_REVISION =
     VERSION_PROPERTIES.getProperty("vcs.revision");
+
+  /** Current VCS revision (short form). */
+  public static final String VCS_SHORT_REVISION =
+    VERSION_PROPERTIES.getProperty("vcs.shortrevision");
 
   /** Date on which this release was built. */
   public static final String DATE = VERSION_PROPERTIES.getProperty("date");
@@ -305,7 +318,7 @@ public final class FormatTools {
 
   /** URL of OME-TIFF web page. */
   public static final String URL_OME_TIFF =
-    "http://ome-xml.org/wiki/OmeTiff";
+    "http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/";
 
   // -- Constructor --
 
@@ -754,6 +767,7 @@ public final class FormatTools {
     switch (pixelType) {
       case INT8:
       case UINT8:
+      case BIT:
         return 1;
       case INT16:
       case UINT16:
@@ -813,6 +827,7 @@ public final class FormatTools {
       case UINT16:
       case INT32:
       case UINT32:
+      case BIT:
         return false;
       case FLOAT:
       case DOUBLE:
@@ -839,6 +854,7 @@ public final class FormatTools {
       case UINT8:
       case UINT16:
       case UINT32:
+      case BIT:
         return false;
     }
     throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
@@ -987,6 +1003,16 @@ public final class FormatTools {
   }
 
   // -- Utility methods -- export
+
+  public static String getTileFilename(int tileX, int tileY,
+    int tileIndex, String pattern)
+  {
+    String filename = pattern;
+    filename = filename.replaceAll(TILE_X, String.valueOf(tileX));
+    filename = filename.replaceAll(TILE_Y, String.valueOf(tileY));
+    filename = filename.replaceAll(TILE_NUM, String.valueOf(tileIndex));
+    return filename;
+  }
 
   /**
    * @throws FormatException Never actually thrown.
@@ -1340,16 +1366,16 @@ public final class FormatTools {
       max = Integer.MAX_VALUE;
       break;
     case UINT8:
-      min = 0;
       max=(long) Math.pow(2, 8)-1;
       break;
     case UINT16:
-      min = 0;
       max=(long) Math.pow(2, 16)-1;
       break;
     case UINT32:
-      min = 0;
       max=(long) Math.pow(2, 32)-1;
+      break;
+    case BIT:
+      max = 1;
       break;
     default:
       throw new IllegalArgumentException("Invalid pixel type");
@@ -1362,19 +1388,41 @@ public final class FormatTools {
   // -- OME-XML primitive type methods --
 
   public static Length getPhysicalSizeX(Double value) {
+   return getPhysicalSizeX(value, null);
+  }
+  
+  public static Length getPhysicalSizeX(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
+      if (unit != null) {
+        try {
+          UnitsLength ul = UnitsLength.fromString(unit);
+          return UnitsLength.create(value, ul);
+        } catch (EnumerationException e) {
+        }
+      }
       return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
     return null;
   }
-
+  
   public static Length getPhysicalSizeY(Double value) {
+    return getPhysicalSizeY(value, null);
+  }
+  
+  public static Length getPhysicalSizeY(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
+      if (unit != null) {
+        try {
+          UnitsLength ul = UnitsLength.fromString(unit);
+          return UnitsLength.create(value, ul);
+        } catch (EnumerationException e) {
+        }
+      }
       return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);

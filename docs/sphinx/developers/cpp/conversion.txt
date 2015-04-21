@@ -1,0 +1,832 @@
+C++ conversion details
+======================
+
+The C++ codebase has been primarily a conversion of the original Java
+codebase, with some additional helper functions and classes added
+where needed.  The intention is that the basic interfaces and classes
+should be identical between the two languages unless this is prevented
+by fundamental differences between the languages.
+
+This section is intended to be useful for
+
+- Users of the existing Java interface, who wish to understand the
+  differences between the two implementations
+- Developers who wish to work on the C++ interface
+
+In addition to documenting the specific language and class
+compatibility issues, this section also documents the idioms in use in
+the C++ code which might not be immediately clear by looking at the
+API reference, and which may not be familiar to Java developers.
+
+
+C++ and Java type incompatibility
+---------------------------------
+
+While C++ and Java have some basic syntactical similarities, there are
+several basic differences in their type systems.
+
+Java types
+^^^^^^^^^^
+
+Java has primitive types and classes.
+
+.. code-block:: java
+
+    int i;
+    double d;
+
+- No unsigned primitive integer types
+
+.. code-block:: java
+
+    Pixels pixels = new Pixels();
+
+- All classes are derived from root :cpp:class:`Object`
+- Objects are by reference only
+- Objects and arrays are always allocated with :cpp:class:`new`
+- Destruction is non-deterministic
+- All passing is by value (primitives and object references)
+
+.. code-block:: java
+
+    Pixels[] array = new Pixels[5];
+
+- Arrays have an intrinsic size.
+- Arrays are safe to index out of bounds (an exception is thrown).
+
+C++ types
+^^^^^^^^^
+
+C++ has primitive types, structures and classes.
+
+.. code-block:: cpp
+
+    int16_t i1;
+    uint32_t i2;
+    double d;
+
+- Primitive integer types may be signed or unsigned.
+- Integer types are of defined size.
+
+.. code-block:: cpp
+
+    // Allocate on the stack, or as a struct or class member:
+    Pixels         pixels;
+
+    // Allocate on the heap
+    Pixels        *pixelsptr1 = new Pixels();
+
+    // Pointer to existing instance
+    const Pixels  *pixelsptr2 = &pixels;
+
+    // Reference to existing instance
+    Pixels&        pixelsref(pixels);
+
+- Classes have no common root
+- All types may be instances, pointers or references
+- Object construction may be on the stack, on the heap using
+  :cpp:class:`new` or in place using placement :cpp:class:`new`.
+- Pointers and references may refer to :c:type:`const` type
+- Pointers may be :c:type:`const`
+- References are implicitly :c:type:`const` (similar to :c:type:`final`)
+- Destruction is deterministic
+- :c:type:`new` **should never be used** in modern C++ code (see below)
+
+.. code-block:: cpp
+
+    Pixels array[5];
+
+- Arrays “decay” to bare pointers
+- Arrays are not safe to index out of bounds
+- Size information lost at runtime
+- **Never use arrays** outside static initializers
+
+Simplified type names
+^^^^^^^^^^^^^^^^^^^^^
+
+:c:type:`typedef` is used to create an alias for an existing type.
+
+.. code-block:: cpp
+
+    typedef std::vector<std::string> string_list;
+    string_list l;
+    string_list::const_iterator i = l.begin();
+    // NOT std::vector<std::string>::const_iterator
+
+    typedef std::vector<Pixels> plist;
+    plist pl(6);
+    plist::size_type idx = 2;
+    // size_type NOT unsigned int or uint32_t
+    pl.at(idx) = ...;
+
+Used in standard container types e.g. :cpp:type:`size_type`,
+:cpp:type:`value_type` and in classes and class templates in
+Bio-Formats.  Consistency is needed for generic programming—use the
+standard type names to enable interoperability with standard
+algorithms.
+
+Exception handling
+------------------
+
+Java
+^^^^
+
+:c:type:`throws` details which exceptions are thrown by a method.
+Java exceptions are also “checked”, requiring the caller to catch and
+handle all exceptions which might be thrown, aside from
+:cpp:class:`RuntimeException` and its subclasses.
+
+C++
+^^^
+
+C++ has exception specifications like Java, however they are useless
+aside from :c:type:`nothrow`.  This is because if an exception is
+thrown which does not match the specification, it will abort the
+program with a :cpp:class:`bad_exception` which makes them unusable in
+practice.
+
+Exceptions can be thrown at any point with the exception that they
+should **never be thrown in a destructor**.  It is not necessary or
+typical to check exceptions except where needed.  All code must be
+exception-safe given that an exception could be thrown at any point;
+the design considerations for exception safety are covered below.
+
+Interfaces
+----------
+
+Java supports single-inheritance, plus interfaces.  C++ supports true
+multiple-inheritance, which is rather more flexible, at the expense of
+being rather more complicated and dangerous.  However, the Java
+single-inheritance-plus-interfaces model can be implemented in C++
+using a subset of the facilities provided by multiple inheritance.
+Rather than being enforced by the language, it is a set of idioms.
+These must be rigorously followed or else things will fail horribly!
+
+C++ interfaces are classes with:
+
+- No instance variables
+- Pure virtual methods
+- :cpp:type:`protected` default constructor
+- :c:type:`public virtual` destructor
+- Deleted copy constructor and assignment operator
+
+C++ classes implementing interfaces:
+
+- Use :cpp:type:`public` inheritance for parent class
+- Use :c:type:`virtual public` inheritance for implemented interfaces
+- Have a :cpp:type:`virtual` destructor
+
+When compiled with optimization enabled, the interface classes should
+have zero storage overhead.  If implementing classes do not use
+:c:type:`virtual public` inheritance, compilation will fail as soon as
+a second class in the inheritance hierarchy also implements the
+interface.
+
+Reference handling and memory management
+----------------------------------------
+
+Pointer problems
+^^^^^^^^^^^^^^^^
+
+Plain (or “dumb”) C++ pointers can be dangerous if used incorrectly.
+The Bio-Formats API make a point of never using them unless absolutely
+necessary.  For automatic objects allocated on the stack, allocation
+and deallocation is automatic and safe:
+
+.. code-block:: cpp
+
+    {
+      Image i(filename);
+      i.read_plane();
+
+      // Object destroyed when i goes out of scope
+    }
+
+In this case, the object's destructor was run and the memory freed
+automatically.
+
+Looking at the case where a pointer is used to reference
+manually-allocated memory on the heap:
+
+.. code-block:: cpp
+
+    {
+      Image *i = new Image(filename);
+
+      i->read_plane();
+
+      // Memory not freed when pointer i goes out of scope
+    }
+
+In this case :c:type:`new` was not paired with the corresponding
+:c:type:`delete`, resulting in a *memory leak*.  This is the code with
+the “leak” fixed:
+
+.. code-block:: cpp
+
+    {
+    Image *i = new Image(filename);
+
+    i->read_plane(); // throws exception; memory leaked
+
+    delete i; // never called
+  }
+
+:c:type:`new` and :c:type:`delete` are now paired, but the code is not
+exception-safe.  If an exception is thrown, memory will still be
+leaked.  Manual memory management requires correct clean up for every
+exit point in the function, including both all :c:type:`return`
+statements and thrown exceptions.  Here, we handle this correctly:
+
+.. code-block:: cpp
+
+    {
+      Image *i = new Image(filename);
+
+      try {
+        i->read_plane(); // throws exception
+      } catch (const std::runtime_error& e) {
+        delete i; // clean up
+        throw; // rethrow
+      }
+
+      delete i; // never called for exceptions
+    }
+
+However, this does not scale.  This is painful and error prone when
+scaled to an entire codebase.  Even within this simple function, there
+is only a single variable with a single exception and single return to
+deal with.  Imagine the combinatorial explosion when there are several
+variables with different lifetimes and scopes, multiple return points
+and several exceptions to handle--this is easy to get wrong, so a more
+robust approach is needed.
+
+Use of :cpp:class:`new` is not in the general case safe or sensible.
+The Bio-Formats API **never** passes pointers allocated with
+:cpp:class:`new`, nor requires any manual memory management.  Instead,
+“smart” pointers are used throughout to manage memory safely and
+automatically.
+
+:cpp:class:`ome::compat::shared_ptr` as a “smart” pointer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The unsafe example above, has been rewritten to use
+:cpp:class:`ome::compat::shared_ptr`:
+
+.. code-block:: cpp
+
+    // Start of block
+    {
+      ome::compat::shared_ptr<Image> i(ome::compat::make_shared<Image>(filename));
+
+      i->read_plane(); // throws exception
+
+      // Memory freed when i's destructor is
+      // run at exit of block scope
+    }
+
+Rather than managing the memory by hand, responsibility for this is
+delegated to a “smart” pointer, :cpp:class:`ome::compat::shared_ptr`.
+The memory is freed by the :cpp:class:`ome::compat::shared_ptr`
+destructor which is run at the end of the block scope, on explicit
+:c:type:`return`, or when cleaned up by exception stack unwinding.
+
+.. note::
+
+    :cpp:class:`ome::compat::shared_ptr` is either a
+    :cpp:class:`std::shared_ptr` or a :cpp:class:`boost::shared_ptr`,
+    depending upon whether C++11 features are avaiable or not,
+    respectively.
+
+- :cpp:class:`shared_ptr` object lifetime manages the resource
+- :cpp:class:`new` replaced with :cpp:class:`ome::compat::make_shared`
+- May be used as class members; lifetime is tied to class instance
+- Clean up for all exit points is automatic and safe
+- Allows ownership transfer and sharing
+- Allows reference without ownership using :cpp:class:`weak_ptr`
+- :cpp:class:`weak_ptr` references the object but does not prevent it
+  being freed when the last :cpp:class:`shared_ptr` reference is lost;
+  this is useful for cycle breaking and is used by the OME XML model
+  objects for references
+
+Resource Acquisition Is Initialization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Resource Acquisition Is Initialization (RAII) is a programming idiom
+used throughout modern C++ libraries and applications, including the
+Standard Library,
+
+- A class is a proxy for a resource
+- The resource is acquired when object is initialised
+- The resource is released when object is destroyed
+- Any resource may be managed (e.g. memory, files, locks, mutexes)
+- The C++ language and runtime guarantees make resource management
+  deterministic and reliable
+- Safe for use in any scope
+- Exception safe
+- Used throughout modern C++ libraries and applications
+
+Because this relies implicitly upon the deterministic object
+destruction guarantees made by the C++ language, this is not used
+widely in Java APIs which often require manual management of resources
+such as open files.  Used carefully, RAII will prevent resource leaks
+and result in robust, safe code.
+
+The :cpp:class:`FormatReader` API is currently not using RAII due to
+the use of the :cpp:func:`FormatHandler::setId()` interface.
+
+C++ reference variants
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+    //              Non-constant                                 Constant
+    // -------------------------------------  ----------------------------------------------
+    // Pointer
+                                   Image *i;                                 const Image *i;
+                            Image * const i;                          const Image * const i;
+
+    // Reference
+                                   Image& i;                                 const Image& i;
+
+    // Shared pointer
+           ome::compat::shared_ptr<Image> i;         ome::compat::shared_ptr<const Image> i;
+     const ome::compat::shared_ptr<Image> i;   const ome::compat::shared_ptr<const Image> i;
+
+    // Shared pointer reference
+          ome::compat::shared_ptr<Image>& i;        ome::compat::shared_ptr<const Image>& i;
+    const ome::compat::shared_ptr<Image>& i;  const ome::compat::shared_ptr<const Image>& i;
+
+    // Weak pointer
+             ome::compat::weak_ptr<Image> i;           ome::compat::weak_ptr<const Image> i;
+       const ome::compat::weak_ptr<Image> i;     const ome::compat::weak_ptr<const Image> i;
+
+   // Weak pointer reference
+            ome::compat::weak_ptr<Image>& i;          ome::compat::weak_ptr<const Image>& i;
+      const ome::compat::weak_ptr<Image>& i;    const ome::compat::weak_ptr<const Image>& i;
+
+Java has one reference type.  Here, we have **22**.  Clearly, not all
+of these will typically be used.  Below, a subset of these are shown
+for use for particular purposes.
+
+Class member types:
+
+.. code-block:: cpp
+
+  Image i;                             // Concrete instance
+  ome::compat::shared_ptr<Image> i;    // Reference
+  ome::compat::weak_ptr<Image> i;      // Weak reference
+
+Wherever possible, a concrete instance should be preferred.  This is
+not possible for polymorphic types, where a reference is required.  In
+this situation, an :cpp:class:`ome::compat::shared_ptr` is preferred
+if the class owns the member and/or needs control over its lifetime.
+If the class does not have ownership then an
+:cpp:class:`ome::compat::weak_ptr` will allow safe access to the
+object if it still exists.  In circumstances where manual lifetime
+management is required, e.g. for performance, and the member is
+guaranteed to exist for the duration of the object's lifetime, a plain
+pointer or reference may be used.  A pointer will be used if it is
+possible for it to be :cpp:class:`null`, or it may be reassigned more
+than once, or if is assigned after initial construction.  If properly
+using RAII, using references should be possible and preferred over
+bare pointers in all cases.
+
+Argument types:
+
+.. code-block:: cpp
+
+  // Ownership retained
+  void read_plane(const Image& image);
+  // Ownership shared or transferred
+  void read_plane(const ome::compat::shared_ptr<Image>& image);
+
+Passing primitive types by value is acceptable.  However, passing a
+struct or class by value will implicitly copy the object into the
+callee's stack frame, which may be expensive (and requires a copy
+constructor which will not be guaranteed or even possible for
+polymorphic types).  Passing by reference avoids the need for any
+copying, and passing by :c:type:`const` reference will prevent the
+callee from modifying the object, also making it clear that there is
+no transfer of ownership.  Passing using an
+:cpp:class:`ome::compat::shared_ptr` is possible but not
+recommended---the copy will involve reference counting overhead which
+can kill multi-threaded performance since it requires synchronization
+between all threads; use a :c:type:`const` reference to an
+:cpp:class:`ome::compat::shared_ptr` to avoid the overhead.  If
+ownership should be transferred or shared with the callee, use a
+non-:c:type:`const` reference.
+
+To be absolutely clear, plain pointers are never used and are not
+acceptable for ownership transfer.  A plain reference also makes it
+clear there is no ownership transfer.
+
+Return types:
+
+.. code-block:: cpp
+
+                            Image get_image(); // Ownership transferred
+                           Image& get_image(); // Ownership retained
+   ome::compat::shared_ptr<Image> get_image(); // Ownership shared/trans
+  ome::compat::shared_ptr<Image>& get_image(); // Ownership shared
+
+If the callee does not retain a copy of the original object, it can't
+pass by reference since it can't guarantee the object remaining in
+scope after it returns, hence it must create a temporary value and
+pass by value.  If the callee does retain a copy, it has the option of
+passing by reference.  Passing by reference is preferred when
+possible.  Passing by value implies ownership transfer.  Passing by
+reference implies ownership retention.  Passing an
+:cpp:class:`ome::compat::shared_ptr` by value or reference implies
+sharing ownership since the caller can retain a reference; if passing
+by value ownership *may* be transferred since this implies the callee
+is not retaining a reference to it (but this is not guaranteed).
+
+Again, to be absolutely clear, plain pointers are never used and are
+not acceptable for ownership transfer.  A plain reference also makes
+it clear there is no ownership transfer.
+
+- Safety: References cannot be :cpp:class:`null`
+- Storing polymorphic types requires use of a
+  :cpp:class:`shared_ptr`
+- Referencing polymorphic types *may* require use of a
+  :cpp:class:`shared_ptr`
+- Safety: To avoid cyclic dependencies, use :cpp:class:`weak_ptr`
+- Safety: To allow object destruction while maintaining a safe
+  reference, use :cpp:class:`weak_ptr`
+- :cpp:class:`weak_ptr` is not directly usable
+- :cpp:class:`weak_ptr` is convertible back to :cpp:class:`shared_ptr`
+  for use *if the object is still in existence*
+- C++11 *move semantics* (``&&``) improve the performance of ownership
+  transfer
+
+Containers
+----------
+
+Safe array passing
+^^^^^^^^^^^^^^^^^^
+
+C++ arrays are not safe to pass in or out of functions since the size
+is not known unless passed separately.
+
+.. code-block:: cpp
+
+  class Image
+  {
+    // Unsafe; size unknown
+    uint8_t[] getLUT();
+         void setLUT(uint8_t[]& lut);
+  };
+
+C++ arrays “decay” to “bare” pointers, and pointers have no associated
+size information.
+
+:cpp:class:`ome::compat::array` is a safe alternative.  This is either
+a C++11 :cpp:class:`std::array` or :cpp:class:`boost::array` with
+older compilers.
+
+.. code-block:: cpp
+
+  class Image
+  {
+    typedef ome::compat::array<uint8_t, 256> LUT;
+
+    // Safe; size defined
+    const LUT& getLUT() const;
+          void setLUT(const LUT&);
+  };
+
+:cpp:class:`ome::compat::array` is a array-like object (a class which
+behaves like an array).  Its type and size are defined in the
+template, and it may be passed around like any other object.  Its
+:cpp:func:`array::at()` method provides strict bounds checking, while
+its index :cpp:func:`array::operator[]` provides unchecked access.
+
+Storing and passing unrelated types
+-----------------------------------
+
+Types with a common base
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+    std::vector<ome::compat::shared_ptr<Base> > v;
+    v.push_back(ome::compat::make_shared<Derived>());
+
+This can store any type derived from :cpp:class:`Base`.  An
+:cpp:class:`ome::compat::shared_ptr` is **essential**.  Without it,
+bare pointers to the base would be stored, and memory would be leaked
+when elements are removed from the container (unless externally
+managed [generally unsafe]).  The same applies to passing polymorphic
+types.
+
+Java containers can be problematic:
+
+- Java can store root :cpp:class:`Object` in containers
+- Java can pass and return root :cpp:class:`Object` in methods.
+- This is not possible in C++: there is no root object.
+- An alternative approach is needed.
+
+Arbitrary types
+^^^^^^^^^^^^^^^
+
+:cpp:class:`boost::any` may be used to store any type:
+
+.. code-block:: cpp
+
+  std::vector<boost::any> v;
+  v.push_back(Anything);
+
+- Assign and store any type
+- Type erasure (similar to Java generics)
+- Use for containers of arbitrary types
+- Flexible, but need to cast to each type used to extract
+- Code will not be able to handle all possible types meaningfully
+
+This is the most flexible solution, but in order to get a value back
+out, requires casting it to its specific type.  This can mean a
+situation could arise where values are stored of types which cannot be
+handled since it is not possible to write the code to handle every
+single possibility ahead of time.  However, if the open-ended
+flexibility is needed, this is available.
+
+A fixed set of types
+^^^^^^^^^^^^^^^^^^^^
+
+:cpp:class:`boost::variant` may be used to store a limited set of
+different types: This avoids the :cpp:class:`boost::any` problem of
+not being able to handle all possible types, since the scope is
+limited to a set of allowed types, and a :cpp:type:`static_visitor`
+can ensure that all types are supported by the code at compile time.
+
+.. code-block:: cpp
+
+  typedef boost::variant<int, std::string> variants;
+  std::vector<variants> v;
+  v.push_back(43);
+  v.push_back("ATTO 647N");
+
+- Store a set of discriminated types
+- “External polymorphism” via :cpp:type:`static_visitor`
+- Used to store original metadata
+- Used to store nD pixel data of different pixel types
+
+This is not an alternative to a common root object.  Instead, this is
+a discriminated union, which can store one of a defined set of
+“variant” types.  A static visitor pattern may be used to generate
+code to operate on all of the supported types.  The variant type may
+be used as a class member, passed by value, passed by reference or
+stored in a container like any other type.  Due to the way it is
+implemented to store values, it does not necessarily need wrapping in
+an :cpp:class:`ome::compat::shared_ptr` since it can behave as a value
+type (depending upon the context).
+
+
+Java uses polymorphism to store and pass the root :cpp:class:`Object`
+around.  The :cpp:class:`boost::variant` and :cpp:class:`boost::any`
+approaches use templates to (internally) create a common base and
+manage the stored objects.  However, the end user does not need to
+deal with this complexity directly—the use of the types is quite
+transparent.
+
+Variant example: MetadataMap
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example demonstrates the use of variants with a simple expansion
+for two different categories of type (scalars and vectors of scalars).
+
+The :cpp:class:`MetadataMap` class stores key-value pairs, where the
+value can be either a string, Boolean, or several integer and floating
+point types, or vectors of any of these types.  When converting the
+data to other forms, it is necessary to flatten the vector types to a
+set of separate key-value pairs with the key having a numbered suffix,
+one for each element in the vector.
+
+.. code-block:: cpp
+
+    {
+      MetadataMap map;
+      MetadataMap flat_map (map.flatten());
+    }
+
+A flattened map is created using the following method:
+
+.. code-block:: cpp
+
+    MetadataMap MetadataMap::flatten() const {
+      MetadataMap newmap;
+
+      for (MetadataMap::const_iterator i = oldmap.begin();
+           i != oldmap.end(); ++i) {
+        MetadataMapFlattenVisitor v(newmap, i->first);
+        boost::apply_visitor(v, i->second);
+      }
+
+      return newmap;
+    }
+
+The :cpp:class:`MetadataMapFlattenVisitor` is implemented thusly:
+
+.. code-block:: cpp
+
+    // Flatten MetadataMap vector values
+    struct MetadataMapFlattenVisitor : public boost::static_visitor<> {
+      MetadataMap& map; // Map of flattened elements
+      const MetadataMap::key_type& key; // Current key
+
+      MetadataMapFlattenVisitor
+        (MetadataMap&                 map,
+         const MetadataMap::key_type& key):
+        map(map), key(key) {}
+
+      // Output a scalar value of arbitrary type.
+      template <typename T>
+      void operator() (const T& v) const {
+        map.set(key, v);
+      }
+
+      // Output a vector value of arbitrary type.
+      template <typename T>
+      void operator() (const std::vector<T>& c) const {
+        typename std::vector<T>::size_type idx = 1;
+        for (typename std::vector<T>::const_iterator i = c.begin();
+             i != c.end(); ++i, ++idx) {
+          std::ostringstream os;
+          os << key << " #" << idx;
+          map.set(os.str(), *i);
+        }
+      }
+    };
+
+The :cpp:class:`MetadataMapFlattenVisitor` is derived from
+:cpp:class:`boost::static_visitor`, and its templated operator method
+is specialized and expanded once for each type supported by the
+variant type used by the map.  In the above example, two separate
+overloaded operators are provided, one for scalar values which is a
+simple copy, and one for vector values which splits the elements into
+separate keys in the new map.  The important part is the call to
+:cpp:func:`apply_visitor`, which takes as arguments the visitor object
+and the variant to apply it to.
+
+This could be done with a large set of conditionals using
+``boost::get<T>(value)`` for each supported type.  The benefit of the
+:cpp:class:`boost::static_visitor` approach is that it ensures that
+all the types are supported *at compile time*, and in effect results
+in the same code.  If any types are not supported, the code will fail
+to compile.
+
+Variant example: VariantPixelBuffer equality comparison
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example demonstrates the use of variants with a combinatorial
+expansion of types.
+
+The :cpp:class:`VariantPixelBuffer` class can contain
+:cpp:class:`PixelBuffer` classes of various pixel types.  Comparing
+for equality is only performed if the pixel types of the two objects
+are the same:
+
+.. code-block:: cpp
+
+    {
+      VariantPixelBuffer a, b;
+      if (a == b) {
+        // Buffers are the same.
+      }
+    }
+
+This is implemented using an overloaded equality operator:
+
+.. code-block:: cpp
+
+    bool VariantPixelBuffer::operator ==
+        (const VariantPixelBuffer& rhs) const
+    {
+      return boost::apply_visitor(PBCompareVisitor(),
+                                  buffer, rhs.buffer);
+    }
+
+As before, this is implemented in terms of a
+:cpp:class:`boost::static_visitor`, but note that this time it is
+specialized for :cpp:type:`bool`, meaning that the return type of
+:cpp:func:`apply_visitor` will also be :cpp:type:`bool`, and the
+operator methods must also return this type.
+
+.. code-block:: cpp
+
+    struct PBCompareVisitor : public boost::static_visitor<bool> {
+      template <typename T, typename U>
+      bool operator() (const T& /* lhs */,
+                       const U& /* rhs */) const {
+        return false;
+      }
+
+      template <typename T>
+      bool operator() (const T& lhs,
+                       const T& rhs) const {
+        return lhs && rhs && (*lhs == *rhs);
+      }
+    };
+
+Unlike the last example, the operator methods now have two arguments,
+both of which are variant types, and the :cpp:func:`apply_visitor`
+call is passed two variant objects in addition to the visitor object.
+This causes the templates to be expanded for all pairwise combinations
+of the possible types.  When the types are not equal, the first
+templated operator is called, which always returns false.  When the
+types are equal the second operator is called; this checks both
+operands are not null and then performs an equality comparison using
+the buffer contents.  Given that all the operators are inline, we
+would hope that a good compiler would cause all the false cases to be
+optimized out after expansion.
+
+Variant example: VariantPixelBuffer SFINAE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example demonstrates the use of variants with SFINAE.
+
+C++ has a concept known as Substitution Failure Is Not An Error
+(SFINAE), which refers to it not being an error for a candidate
+template to fail argument substitution during overload resolution.
+While this is in and of itself a fairly obscure language detail, it
+enables overloading of a method not just on type, but different
+categories of type, for example integer and floating point types,
+signed and unsigned integer types, simple and complex types, or
+combinations of all of these.  This is particularly useful when
+writing algorithms to process pixel data.
+
+Use of SFINAE has been made accessible through the creation of
+:cpp:class:`boost::enable_if` (:cpp:class:`std::enable_if` in C++11),
+and *type traits* (type category checking classes such as
+:cpp:class:`is_integer`).  The following code is an example of how one
+might write a visitor for adapting an algorithm to separate
+integer, floating point, complex floating point and bitmask cases.
+
+.. code-block:: cpp
+
+    struct TypeCategoryVisitor : public boost::static_visitor<>
+    {
+      typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
+
+      TypeCategoryVisitor()
+      {}
+
+      // Integer pixel types
+      template <typename T>
+      typename boost::enable_if_c<
+        boost::is_integral<T>::value, void
+        >::type
+      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf)
+      {
+        // Integer algorithm.
+      }
+
+      // Floating point pixel types
+      template <typename T>
+      typename boost::enable_if_c<
+        boost::is_floating_point<T>::value, void
+        >::type
+      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf)
+      {
+        // Floating point algorithm.
+      }
+
+      // Complex floating point pixel types
+      template <typename T>
+      typename boost::enable_if_c<
+        boost::is_complex<T>::value, void
+        >::type
+      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf)
+      {
+        // Complex floating point algorithm.
+      }
+
+      // BIT/bool pixel type.  Note this is a simple overload since it is
+      // a simple type, not a category of different types.
+      void
+      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& buf)
+      {
+        // Boolean algorithm.
+      }
+    };
+
+This visitor may be used with :cpp:func:`apply_visitor` in a similar
+manner to the previously demonstrated visitors.
+
+:cpp:class:`enable_if` has two parameters, the first being a
+conditional, the second being the return type (in this example, all
+the methods return :cpp:type:`void`).  If the conditional is true,
+then the type expands to the return type and the template is
+successfully substituted.  If the conditional is false (types do not
+match), then the substitution fails and the template will not be used.
+Note that the conditional is itself a type, which can be confusing,
+since all this logic is driven by conditional template expansion.
+
+Normal templates are specialized for a type.  This approach allows
+specialization for different *categories* of type.  Without this
+approach it would be necessary to write separate overloads for each
+individual type (each integer type, each floating point type, each
+complex type, etc.), even when the logic would be identical for
+e.g. the different integer types.  This approach therefore removes the
+need for unnecessary code duplication, and the type traits checks make
+each type category explicit to the reader.

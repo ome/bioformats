@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2014 Open Microscopy Environment:
+ * Copyright © 2014 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -46,8 +46,8 @@
 #include <ome/test/config.h>
 #include <ome/test/test.h>
 
-#include <ome/xerces/Platform.h>
-#include <ome/xerces/dom/Document.h>
+#include <ome/common/xml/Platform.h>
+#include <ome/common/xml/dom/Document.h>
 
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
@@ -104,9 +104,9 @@ std::vector<ModelTestParameters> tile_params(find_model_tests());
 class ModelTest : public ::testing::TestWithParam<ModelTestParameters>
 {
 public:
-  ome::xerces::Platform xmlplat;
+  ome::common::xml::Platform xmlplat;
   std::string xmltext;
-  ome::xerces::dom::Document doc;
+  ome::common::xml::dom::Document doc;
 
   virtual void SetUp()
   {
@@ -122,7 +122,7 @@ public:
     xmltext.assign(std::istreambuf_iterator<char>(in),
                    std::istreambuf_iterator<char>());
 
-    doc = ome::xerces::dom::createDocument(xmltext);
+    doc = ome::common::xml::dom::createDocument(xmltext);
   }
 };
 
@@ -139,8 +139,8 @@ TEST_P(ModelTest, Update)
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
-  std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta.getRoot()));
-  ome::xerces::dom::Element docroot(doc.getDocumentElement());
+  ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta.getRoot()));
+  ome::common::xml::dom::Element docroot(doc.getDocumentElement());
   root->update(docroot, model);
 }
 
@@ -151,15 +151,15 @@ TEST_P(ModelTest, CreateXML)
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
-  std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta.getRoot()));
-  ome::xerces::dom::Element docroot(doc.getDocumentElement());
+  ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta.getRoot()));
+  ome::common::xml::dom::Element docroot(doc.getDocumentElement());
   root->update(docroot, model);
 
   // Dump as XML string.
   std::string omexml(meta.dumpXML());
 
   // Validate XML.
-  ASSERT_NO_THROW(ome::xerces::dom::createDocument(omexml));
+  ASSERT_NO_THROW(ome::common::xml::dom::createDocument(omexml));
 }
 
 TEST_P(ModelTest, CreateXMLRoundTrip)
@@ -169,31 +169,31 @@ TEST_P(ModelTest, CreateXMLRoundTrip)
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
-  std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta.getRoot()));
-  ome::xerces::dom::Element docroot(doc.getDocumentElement());
+  ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta.getRoot()));
+  ome::common::xml::dom::Element docroot(doc.getDocumentElement());
   root->update(docroot, model);
 
   // Dump as XML string.
   std::string omexml(meta.dumpXML());
 
   // Validate XML.
-  ASSERT_NO_THROW(ome::xerces::dom::createDocument(omexml));
+  ASSERT_NO_THROW(ome::common::xml::dom::createDocument(omexml));
 
   // Repeat read and write.
 
   // Read into OME model objects.
-  ome::xerces::dom::Document doc2(ome::xerces::dom::createDocument(omexml));
+  ome::common::xml::dom::Document doc2(ome::common::xml::dom::createDocument(omexml));
   ome::xml::meta::OMEXMLMetadata meta2;
   ome::xml::model::detail::OMEModel model2;
-  std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root2(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta2.getRoot()));
-  ome::xerces::dom::Element docroot2(doc2.getDocumentElement());
+  ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root2(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta2.getRoot()));
+  ome::common::xml::dom::Element docroot2(doc2.getDocumentElement());
   root2->update(docroot2, model2);
 
   // Dump as XML string.
   std::string omexml2(meta2.dumpXML());
 
   // Validate XML.
-  ASSERT_NO_THROW(ome::xerces::dom::createDocument(omexml2));
+  ASSERT_NO_THROW(ome::common::xml::dom::createDocument(omexml2));
 
   ASSERT_EQ(omexml, omexml2);
 }

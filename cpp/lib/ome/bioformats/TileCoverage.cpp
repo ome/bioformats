@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -35,7 +35,7 @@
  * #L%
  */
 
-#include <ome/compat/config.h>
+#include <ome/common/config.h>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
@@ -194,7 +194,7 @@ namespace ome
     };
 
     TileCoverage::TileCoverage():
-      impl(std::shared_ptr<Impl>(new Impl()))
+      impl(ome::compat::shared_ptr<Impl>(new Impl()))
     {
     }
 

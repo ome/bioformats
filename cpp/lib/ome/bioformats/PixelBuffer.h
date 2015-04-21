@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -48,10 +48,11 @@
 
 #include <ome/bioformats/PixelProperties.h>
 
+#include <ome/common/variant.h>
+
 #include <ome/compat/array.h>
 #include <ome/compat/cstdint.h>
 #include <ome/compat/memory.h>
-#include <ome/compat/variant.h>
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 
@@ -111,7 +112,7 @@ namespace ome
       typedef boost::multi_array_types::index index;
 
       /// Type used to index all dimensions in public interfaces.
-      typedef std::array<boost::multi_array_types::index,
+      typedef ome::compat::array<boost::multi_array_types::index,
                          PixelBufferBase::dimensions> indices_type;
 
       /// Storage ordering type for controlling pixel memory layout.
@@ -257,8 +258,8 @@ namespace ome
        */
       explicit PixelBuffer():
         PixelBufferBase(::ome::xml::model::enums::PixelType::UINT8, ENDIAN_NATIVE),
-        multiarray(std::shared_ptr<array_type>(new array_type(boost::extents[1][1][1][1][1][1][1][1][1],
-                                                              PixelBufferBase::default_storage_order())))
+        multiarray(ome::compat::shared_ptr<array_type>(new array_type(boost::extents[1][1][1][1][1][1][1][1][1],
+                                                                      PixelBufferBase::default_storage_order())))
       {}
 
       /**
@@ -279,7 +280,7 @@ namespace ome
                   EndianType                          endiantype = ENDIAN_NATIVE,
                   const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(std::shared_ptr<array_type>(new array_type(extents, storage)))
+        multiarray(ome::compat::shared_ptr<array_type>(new array_type(extents, storage)))
       {}
 
       /**
@@ -304,7 +305,7 @@ namespace ome
                   EndianType                           endiantype = ENDIAN_NATIVE,
                   const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(std::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, extents, storage)))
+        multiarray(ome::compat::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, extents, storage)))
       {}
 
       /**
@@ -324,7 +325,7 @@ namespace ome
                   EndianType                          endiantype = ENDIAN_NATIVE,
                   const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(std::shared_ptr<array_type>(new array_type(range, storage)))
+        multiarray(ome::compat::shared_ptr<array_type>(new array_type(range, storage)))
       {}
 
       /**
@@ -348,7 +349,7 @@ namespace ome
                   EndianType                           endiantype = ENDIAN_NATIVE,
                   const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
-        multiarray(std::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, range, storage)))
+        multiarray(ome::compat::shared_ptr<array_ref_type>(new array_ref_type(pixeldata, range, storage)))
       {}
 
       /**
@@ -452,7 +453,7 @@ namespace ome
       bool
       managed() const
       {
-        return (boost::get<std::shared_ptr<array_type> >(&multiarray) != 0);
+        return (boost::get<ome::compat::shared_ptr<array_type> >(&multiarray) != 0);
       }
 
       /**
@@ -818,8 +819,8 @@ namespace ome
        * also permits efficient shallow copying in the absence of a
        * C++11 move constructor for @c MultiArray types.
        */
-      boost::variant<std::shared_ptr<array_type>,
-                     std::shared_ptr<array_ref_type> > multiarray;
+      boost::variant<ome::compat::shared_ptr<array_type>,
+                     ome::compat::shared_ptr<array_ref_type> > multiarray;
     };
 
     namespace detail

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -46,10 +46,10 @@
 
 #include <ome/compat/memory.h>
 
-#include <ome/xerces/dom/Document.h>
-#include <ome/xerces/dom/Element.h>
-#include <ome/xerces/dom/Node.h>
-#include <ome/xerces/dom/NodeList.h>
+#include <ome/common/xml/dom/Document.h>
+#include <ome/common/xml/dom/Element.h>
+#include <ome/common/xml/dom/Node.h>
+#include <ome/common/xml/dom/NodeList.h>
 
 #include <ome/xml/model/detail/OMEModelObject.h>
 
@@ -106,7 +106,7 @@ namespace ome
          * @throws EnumerationException if there is an error
          * instantiating an enumeration during model object creation.
          */
-        MapPairs (xerces::dom::Element& element, ::ome::xml::model::OMEModel& model);
+        MapPairs (common::xml::dom::Element& element, ::ome::xml::model::OMEModel& model);
 
         /// Destructor.
         virtual
@@ -122,14 +122,14 @@ namespace ome
 
         /// @copydoc ome::xml::model::OMEModelObject::update
         virtual void
-        update(const xerces::dom::Element&  element,
+        update(const common::xml::dom::Element&  element,
                ::ome::xml::model::OMEModel& model);
 
       public:
         /// @copydoc ome::xml::model::OMEModelObject::link
         bool
-        link (std::shared_ptr<Reference>&                          reference,
-              std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+        link (ome::compat::shared_ptr<Reference>&                          reference,
+              ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
 
         /**
          * Get the key-value pair mappings.
@@ -156,14 +156,14 @@ namespace ome
         setMap (const map_type& map);
 
         /// @copydoc ome::xml::model::OMEModelObject::asXMLElement
-        virtual xerces::dom::Element
-        asXMLElement (xerces::dom::Document& document) const;
+        virtual common::xml::dom::Element
+        asXMLElement (common::xml::dom::Document& document) const;
 
       protected:
         // Documented in base class.
-        virtual xerces::dom::Element
-        asXMLElementInternal (xerces::dom::Document& document,
-                              xerces::dom::Element&  element) const;
+        virtual common::xml::dom::Element
+        asXMLElementInternal (common::xml::dom::Document& document,
+                              common::xml::dom::Element&  element) const;
 
       public:
         // Documented in superclass.

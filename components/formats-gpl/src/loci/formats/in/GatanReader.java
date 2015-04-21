@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,10 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.text.Collator;
 import java.util.Vector;
-
 import loci.common.Constants;
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -37,8 +36,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -147,7 +144,7 @@ public class GatanReader extends FormatReader {
       info = null;
       adjustEndianness = true;
       version = 0;
-      posX = posY = posZ = new Length(0, UNITS.REFERENCEFRAME);
+      posX = posY = posZ = null;
       sampleTime = 0;
       units = null;
     }
@@ -334,7 +331,7 @@ public class GatanReader extends FormatReader {
       String value = null;
 
       if (type == VALUE) {
-        labelString = readString(length);
+        labelString = in.readByteToString(length);
         skipPadding();
         skipPadding();
         int skip = in.readInt(); // equal to '%%%%' / 623191333
@@ -378,7 +375,7 @@ public class GatanReader extends FormatReader {
             }
             else {
               if (dataType == 10) in.skipBytes(length);
-              else value = DataTools.stripString(in.readString(length * 2));
+              else value = in.readByteToString(length * 2);
             }
           }
           else LOGGER.warn("dataType mismatch: {}", dataType);
@@ -457,7 +454,7 @@ public class GatanReader extends FormatReader {
         }
       }
       else if (type == GROUP) {
-        labelString = readString(length);
+        labelString = in.readByteToString(length);
         in.skipBytes(2);
         skipPadding();
         skipPadding();
@@ -579,32 +576,16 @@ public class GatanReader extends FormatReader {
     }
   }
 
-  private String readString(int length) throws IOException {
-    byte[] bytes = new byte[(int) Math.min(in.available(), length)];
-    in.readFully(bytes);
-
-    StringBuffer newString = new StringBuffer();
-    for (byte b : bytes) {
-      int v = b & 0xff;
-      if (v > 0x7f) {
-        newString.append(Character.toChars(v));
-      }
-      else {
-        newString.append((char) b);
-      }
-    }
-    return newString.toString();
-  }
-
   private Double correctForUnits(Double value, String units) {
     Double newValue = value;
-    if ("nm".equals(units)) {
-      newValue /= 1000;
+    Collator c = Collator.getInstance();
+    if (units != null) {
+      if (c.compare("nm", units) == 0) {
+        newValue /= 1000;
+      } else if (c.compare("um", units) != 0 && c.compare("µm", units) != 0) {
+        LOGGER.warn("Not adjusting for unknown units: {}", units);
+      }
     }
-    else if (!"um".equals(units) && !"µm".equals(units) && units != null) {
-      LOGGER.warn("Not adjusting for unknown units: {}", units);
-    }
-
     return newValue;
   }
 

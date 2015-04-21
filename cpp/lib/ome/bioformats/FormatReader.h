@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -833,7 +833,7 @@ namespace ome
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
-      std::array<dimension_size_type, 3>
+      ome::compat::array<dimension_size_type, 3>
       getZCTCoords(dimension_size_type index) const = 0;
 
       /**
@@ -853,7 +853,7 @@ namespace ome
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
-      std::array<dimension_size_type, 6>
+      ome::compat::array<dimension_size_type, 6>
       getZCTModuloCoords(dimension_size_type index) const = 0;
 
       /**
@@ -919,7 +919,7 @@ namespace ome
        * @returns a const reference to the core metadata.
        */
       virtual
-      const std::vector<std::shared_ptr<CoreMetadata> >&
+      const std::vector<ome::compat::shared_ptr<CoreMetadata> >&
       getCoreMetadataList() const = 0;
 
       /**
@@ -953,7 +953,7 @@ namespace ome
        */
       virtual
       void
-      setMetadataStore(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store) = 0;
+      setMetadataStore(ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>& store) = 0;
 
       /**
        * Get the current metadata store for this reader.
@@ -961,7 +961,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      const std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
       getMetadataStore() const = 0;
 
       /**
@@ -970,7 +970,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
       getMetadataStore() = 0;
 
       /**
@@ -982,7 +982,7 @@ namespace ome
        * @returns a list of readers.
        */
       virtual
-      std::vector<std::shared_ptr<FormatReader> >
+      std::vector<ome::compat::shared_ptr<FormatReader> >
       getUnderlyingReaders() const = 0;
 
       /**

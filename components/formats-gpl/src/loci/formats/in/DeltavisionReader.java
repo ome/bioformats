@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,7 +44,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Frequency;
@@ -618,7 +617,7 @@ public class DeltavisionReader extends FormatReader {
     String[] title = new String[10];
     for (int i=0; i<title.length; i++) {
       // Make sure that "null" characters are stripped out
-      title[i] = in.readString(80).replaceAll("\0", "");
+      title[i] = in.readByteToString(80).replaceAll("\0", "");
     }
 
     // --- compute some secondary values ---

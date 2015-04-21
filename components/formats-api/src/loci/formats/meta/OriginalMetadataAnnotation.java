@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,6 +32,8 @@
 
 package loci.formats.meta;
 
+import javax.xml.parsers.DocumentBuilder;
+
 import loci.common.xml.XMLTools;
 import ome.xml.model.XMLAnnotation;
 
@@ -45,6 +47,8 @@ public class OriginalMetadataAnnotation extends XMLAnnotation {
     ORIGINAL_METADATA_NS = "openmicroscopy.org/OriginalMetadata";
   }
 
+  private static final DocumentBuilder BUILDER = XMLTools.createBuilder();
+
   private String key, value;
 
   // -- OriginalMetadataAnnotation methods --
@@ -53,7 +57,7 @@ public class OriginalMetadataAnnotation extends XMLAnnotation {
     setNamespace(ORIGINAL_METADATA_NS);
     this.key = key;
     this.value = value; // Not XML value
-    Document doc = XMLTools.createDocument();
+    Document doc = BUILDER.newDocument();
     Element r = makeOriginalMetadata(doc);
     super.setValue(XMLTools.dumpXML(null,  doc, r, false));
   }

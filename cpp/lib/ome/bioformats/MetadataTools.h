@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -40,7 +40,7 @@
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
 
-#include <ome/compat/filesystem.h>
+#include <ome/common/filesystem.h>
 
 #include <ome/xml/meta/Metadata.h>
 #include <ome/xml/meta/MetadataRoot.h>
@@ -121,8 +121,8 @@ namespace ome
      * @param document the XML document.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
-    createOMEXMLMetadata(ome::xerces::dom::Document& document);
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(ome::common::xml::dom::Document& document);
 
     /**
      * Create OME-XML metadata from XML file.
@@ -130,7 +130,7 @@ namespace ome
      * @param file the XML file.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const boost::filesystem::path& file);
 
     /**
@@ -139,7 +139,7 @@ namespace ome
      * @param text the XML string.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const std::string& text);
 
     /**
@@ -148,7 +148,7 @@ namespace ome
      * @param stream the XML input stream.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(std::istream& stream);
 
     /**
@@ -159,7 +159,7 @@ namespace ome
      * @param doImageName set image name if @c true.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane = false,
                          bool                doImageName = true);
@@ -171,7 +171,7 @@ namespace ome
      * @param document the XML document source.
      * @returns the OME-XML metadata root.
      */
-    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    ome::compat::shared_ptr< ::ome::xml::meta::MetadataRoot>
     createOMEXMLRoot(const std::string& document);
 
     /**
@@ -182,8 +182,8 @@ namespace ome
      * @param retrieve the metadata to use.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
-    getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    getOMEXMLMetadata(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
 
     /**
      * Get OME-XML document from OME-XML metadata.
@@ -351,6 +351,16 @@ namespace ome
     getOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml);
 
     /**
+     * Create OriginalMetadataAnnotations from MetadataMap.
+     *
+     * @param omexml the OME-XML metadata store.
+     * @param metadata the original metadata.
+     */
+    void
+    fillOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml,
+                         const MetadataMap&                metadata);
+
+    /**
      * Check if default creation date is enabled.
      *
      * @returns @c true if enabled, @c false otherwise.
@@ -365,6 +375,15 @@ namespace ome
      */
     std::string
     getModelVersion();
+
+    /**
+     * Get the model version used by an OME-XML document
+     *
+     * @param document the OME-XML document.
+     * @returns the model version.
+     */
+    std::string
+    getModelVersion(ome::common::xml::dom::Document& document);
 
     /**
      * Get the model version used by an OME-XML document

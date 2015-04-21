@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -39,6 +39,7 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
+#include <boost/range/size.hpp>
 
 #include <ome/bioformats/FormatTools.h>
 
@@ -267,7 +268,7 @@ namespace ome
               };
             static const std::vector<std::string> non_graphics_domains
               (domain_strings(non_graphics_enums,
-                              non_graphics_enums + (sizeof(non_graphics_enums) / sizeof(non_graphics_enums[0]))));
+                              non_graphics_enums + boost::size(non_graphics_enums)));
             return non_graphics_domains;
           }
           break;
@@ -288,7 +289,7 @@ namespace ome
               };
             static const std::vector<std::string> non_hcs_domains
               (domain_strings(non_hcs_enums,
-                              non_hcs_enums + (sizeof(non_hcs_enums) / sizeof(non_hcs_enums[0]))));
+                              non_hcs_enums + boost::size(non_hcs_enums)));
             return non_hcs_domains;
           }
           break;
@@ -309,7 +310,7 @@ namespace ome
               };
             static const std::vector<std::string> non_special_domains
               (domain_strings(non_special_enums,
-                              non_special_enums + (sizeof(non_special_enums) / sizeof(non_special_enums[0]))));
+                              non_special_enums + boost::size(non_special_enums)));
             return non_special_domains;
           }
           break;
@@ -332,8 +333,20 @@ namespace ome
               };
             static const std::vector<std::string> all_domains
               (domain_strings(all_enums,
-                              all_enums + (sizeof(all_enums) / sizeof(all_enums[0]))));
+                              all_enums + boost::size(all_enums)));
             return all_domains;
+          }
+          break;
+        case HCS_ONLY_DOMAINS:
+          {
+            const Domain hcs_only_enums[] =
+              {
+                HCS_DOMAIN
+              };
+            static const std::vector<std::string> hcs_only_domains
+              (domain_strings(hcs_only_enums,
+                              hcs_only_enums + boost::size(hcs_only_enums)));
+            return hcs_only_domains;
           }
           break;
         }
@@ -405,7 +418,7 @@ namespace ome
 
     }
 
-    std::array<dimension_size_type, 3>
+    ome::compat::array<dimension_size_type, 3>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,
@@ -423,7 +436,7 @@ namespace ome
       dimension_size_type v1 = index / len0 % len1;
       dimension_size_type v2 = index / len0 / len1;
 
-      std::array<dimension_size_type, 3> ret;
+      ome::compat::array<dimension_size_type, 3> ret;
       ret[0] = iz == 0 ? v0 : (iz == 1 ? v1 : v2); // z
       ret[1] = ic == 0 ? v0 : (ic == 1 ? v1 : v2); // c
       ret[2] = it == 0 ? v0 : (it == 1 ? v1 : v2); // t
@@ -431,7 +444,7 @@ namespace ome
       return ret;
     }
 
-    std::array<dimension_size_type, 6>
+    ome::compat::array<dimension_size_type, 6>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,
@@ -442,7 +455,7 @@ namespace ome
                  dimension_size_type num,
                  dimension_size_type index)
     {
-      std::array<dimension_size_type, 3> coords
+      ome::compat::array<dimension_size_type, 3> coords
         (getZCTCoords(order,
                       zSize,
                       cSize,
@@ -450,7 +463,7 @@ namespace ome
                       num,
                       index));
 
-      std::array<dimension_size_type, 6> ret;
+      ome::compat::array<dimension_size_type, 6> ret;
       ret[0] = coords[0] / moduloZSize;
       ret[1] = coords[1] / moduloCSize;
       ret[2] = coords[2] / moduloTSize;

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -73,7 +73,8 @@ import ome.xml.model.primitives.Timestamp;
 
 /**
  * OMETiffReader is the file format reader for
- * <a href="http://ome-xml.org/wiki/OmeTiff">OME-TIFF</a> files.
+ * <a href="http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/">OME-TIFF</a>
+ * files.
  */
 public class OMETiffReader extends FormatReader {
 
@@ -92,6 +93,9 @@ public class OMETiffReader extends FormatReader {
   private int[] tileHeight;
 
   private OMEXMLService service;
+  private transient OMEXMLMetadata meta;
+  private String metaFile;
+
   private String metadataFile;
 
   // -- Constructor --
@@ -118,7 +122,7 @@ public class OMETiffReader extends FormatReader {
 
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
-    RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
+    RandomAccessInputStream ras = new RandomAccessInputStream(fileName, 16);
     TiffParser tp = new TiffParser(ras);
     IFD ifd = tp.getFirstIFD();
     long[] ifdOffsets = tp.getIFDOffsets();
@@ -129,6 +133,7 @@ public class OMETiffReader extends FormatReader {
     OMEXMLMetadata meta;
     try {
       meta = service.createOMEXMLMetadata(xml);
+      metaFile = new Location(id).getAbsolutePath();
     }
     catch (ServiceException se) {
       throw new FormatException(se);
@@ -156,7 +161,18 @@ public class OMETiffReader extends FormatReader {
       // force the reader to pick up binary-only companion files
       return true;
     }
-    return super.isThisType(name, open);
+    metaFile = new Location(name).getAbsolutePath();
+    boolean valid = super.isThisType(name, open);
+    if (valid && !isGroupFiles()) {
+      try {
+        return isSingleFile(metaFile);
+      }
+      catch (Exception e) {
+        LOGGER.debug("", e);
+        return false;
+      }
+    }
+    return valid;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -196,7 +212,7 @@ public class OMETiffReader extends FormatReader {
 
     try {
       if (service == null) setupService();
-      IMetadata meta = service.createOMEXMLMetadata(comment);
+      meta = service.createOMEXMLMetadata(comment);
 
       try {
         String metadataFile = meta.getBinaryOnlyMetadataFile();
@@ -288,7 +304,7 @@ public class OMETiffReader extends FormatReader {
     r.lastPlane = i;
     IFDList ifdList = r.getIFDs();
     if (i >= ifdList.size()) {
-      LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed.");
+      LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed (IFD #{} missing).", i);
       return buf;
     }
     IFD ifd = ifdList.get(i);
@@ -408,7 +424,7 @@ public class OMETiffReader extends FormatReader {
       companion = true;
     }
     else {
-      RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
+      RandomAccessInputStream ras = new RandomAccessInputStream(fileName, 16);
       try {
         TiffParser tp = new TiffParser(ras);
         firstIFD = tp.getFirstIFD();
@@ -420,9 +436,11 @@ public class OMETiffReader extends FormatReader {
     }
 
     if (service == null) setupService();
-    OMEXMLMetadata meta;
     try {
-      meta = service.createOMEXMLMetadata(xml);
+      if (meta == null || !metaFile.equals(currentId)) {
+        meta = service.createOMEXMLMetadata(xml);
+        metaFile = currentId;
+      }
       if (companion) {
         String firstTIFF = meta.getUUIDFileName(0, 0);
         initFile(new Location(dir, firstTIFF).getAbsolutePath());
@@ -795,13 +813,31 @@ public class OMETiffReader extends FormatReader {
       CoreMetadata m = core.get(s);
       info[s] = planes;
       try {
-        if (!info[s][0].reader.isThisType(info[s][0].id)) {
+        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id);
+        String firstFile = info[s][0].id;
+        if (!info[s][0].reader.isThisType(testFile)) {
+          LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
           info[s][0].id = currentId;
+          info[s][0].exists = false;
         }
-        for (int plane=0; plane<info[s].length; plane++) {
-          if (!info[s][plane].reader.isThisType(info[s][plane].id)) {
-            info[s][plane].id = info[s][0].id;
+        testFile.close();
+        for (int plane=1; plane<info[s].length; plane++) {
+          if (info[s][plane].id.equals(firstFile)) {
+            // don't repeat slow type checking if the files are the same
+            if (!info[s][0].exists) {
+              info[s][plane].id = info[s][0].id;
+              info[s][plane].exists = false;
+            }
+
+            continue;
           }
+          testFile = new RandomAccessInputStream(info[s][plane].id);
+          if (!info[s][plane].reader.isThisType(testFile)) {
+            LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
+            info[s][plane].id = info[s][0].id;
+            info[s][plane].exists = false;
+          }
+          testFile.close();
         }
 
         info[s][0].reader.setId(info[s][0].id);

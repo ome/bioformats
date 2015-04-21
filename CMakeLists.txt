@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,11 +34,14 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
 
-# Default policy is from 2.8.0
-cmake_policy(VERSION 2.8.0)
+# Default policy is from 2.8.12
+cmake_policy(VERSION 2.8.12)
 # Set MacOSX @rpath usage globally.
+if (POLICY CMP0020)
+  cmake_policy(SET CMP0020 NEW)
+endif(POLICY CMP0020)
 if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif(POLICY CMP0042)
@@ -46,6 +49,9 @@ endif(POLICY CMP0042)
 if (POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW)
 endif(POLICY CMP0053)
+if (POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif(POLICY CMP0054)
 
 project(bioformats)
 include(cpp/cmake/Version.cmake)
@@ -65,26 +71,55 @@ include(CheckCXXSourceCompiles)
 
 include(GNUInstallDirs)
 
-set(OME_BIOFORMATS_DATADIR ome/bioformats)
-set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_DATADIR}")
-set(OME_BIOFORMATS_INSTALL_FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_DATADIR}")
+if (NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
+  set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
+      CACHE PATH "Bio-Formats-specific datadir")
+endif()
 
 # Use standard path if using a prefix.
 if(CMAKE_INSTALL_PREFIX)
-  set(OME_BIOFORMATS_ICONDIR icons/hicolor/scalable)
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
+    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
+        CACHE PATH "Bio-Formats-specific libexecdir")
+  endif()
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
+    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable"
+        CACHE PATH "Icon directory")
+  endif()
 else()
-  set(OME_BIOFORMATS_ICONDIR icons)
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
+    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
+        CACHE PATH "Bio-Formats-specific libexecdir")
+  endif()
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
+    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons"
+        CACHE PATH "Icon directory")
+  endif()
 endif()
-set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_ICONDIR}")
-set(OME_BIOFORMATS_INSTALL_FULL_ICONDIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_ICONDIR}")
 
-set(OME_BIOFORMATS_SCHEMADIR xml/ome)
-set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_SCHEMADIR}")
-set(OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_SCHEMADIR}")
+if (NOT DEFINED OME_BIOFORMATS_INSTALL_SCHEMADIR)
+  set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
+      CACHE PATH "Bio-Formats schema directory")
+endif()
+if (NOT DEFINED OME_BIOFORMATS_INSTALL_TRANSFORMDIR)
+  set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
+      CACHE PATH "Bio-Formats transform directory")
+endif()
 
-set(OME_BIOFORMATS_TRANSFORMDIR xsl/ome)
-set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/${OME_BIOFORMATS_TRANSFORMDIR}")
-set(OME_BIOFORMATS_INSTALL_FULL_TRANSFORMDIR "${CMAKE_INSTALL_FULL_DATADIR}/${OME_BIOFORMATS_TRANSFORMDIR}")
+foreach(dir
+    DATADIR
+    LIBEXECDIR
+    ICONDIR
+    SCHEMADIR
+    TRANSFORMDIR
+    )
+  mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
+  if(NOT IS_ABSOLUTE ${OME_BIOFORMATS_INSTALL_${dir}})
+    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${CMAKE_INSTALL_PREFIX}/${OME_BIOFORMATS_INSTALL_${dir}}")
+  else()
+    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${OME_BIOFORMATS_INSTALL_${dir}}")
+  endif()
+endforeach()
 
 include(CompilerChecks)
 include(PlatformChecks)
@@ -93,28 +128,39 @@ include(RegexChecks)
 include(ThreadChecks)
 include(XercesChecks)
 include(ImageLibraries)
+include(QtGLChecks)
 include(XsdFu)
 include(GTest)
 include(Doxygen)
 include(HeaderTest)
 
 add_subdirectory(docs/doxygen)
+add_subdirectory(docs/sphinx)
 add_subdirectory(cpp)
 
 set(LIBRARY_PREFIX OME)
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/bin")
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config)
+               ${PROJECT_BINARY_DIR}/config @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/cmake/bf)
-file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf
+               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
+file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
      DESTINATION ${PROJECT_BINARY_DIR}
      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
      GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 if(WIN32)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config.bat)
+               ${PROJECT_BINARY_DIR}/config.bat @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/bf.bat)
+               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif()
 
 message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")

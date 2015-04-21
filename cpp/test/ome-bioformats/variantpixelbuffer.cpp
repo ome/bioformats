@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -165,7 +165,7 @@ struct RandomAssignTestVisitor : public boost::static_visitor<>
   }
 
   void
-  operator() (const std::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
+  operator() (const ome::compat::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
   {
     typedef PixelProperties<PT::BIT>::std_type value_type;
 
@@ -233,14 +233,14 @@ struct ConstructExtentRefTestVisitor : public boost::static_visitor<>
   {
     typedef typename T::element_type::value_type value_type;
 
-    std::array<typename PixelBuffer<value_type>::size_type, 9> extents;
+    ome::compat::array<typename PixelBuffer<value_type>::size_type, 9> extents;
     extents[0] = 5;
     extents[1] = 2;
     extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;
 
     // VariantPixelBuffer with unmanaged backing store.
     value_type backing[10];
-    std::shared_ptr<PixelBuffer<value_type> > buf
+    ome::compat::shared_ptr<PixelBuffer<value_type> > buf
       (new PixelBuffer<value_type>(&backing[0], extents));
     VariantPixelBuffer mbuf(buf);
 
@@ -264,7 +264,7 @@ struct ConstructRangeRefTestVisitor : public boost::static_visitor<>
 
     // VariantPixelBuffer with unmanaged backing store.
     value_type backing[100];
-    std::shared_ptr<PixelBuffer<value_type> > buf
+    ome::compat::shared_ptr<PixelBuffer<value_type> > buf
       (new PixelBuffer<value_type>(&backing[0],
                                    boost::extents[10][10][1][1][1][1][1][1][1]));
     VariantPixelBuffer mbuf(buf);
@@ -336,7 +336,7 @@ struct ManagedTestVisitor : public boost::static_visitor<>
     {
       // VariantPixelBuffer with unmanaged backing store.
       value_type backing[100];
-      std::shared_ptr<PixelBuffer<value_type> > buf
+      ome::compat::shared_ptr<PixelBuffer<value_type> > buf
         (new PixelBuffer<value_type>(&backing[0],
                                      boost::extents[10][10][1][1][1][1][1][1][1]));
       VariantPixelBuffer mbuf(buf);
@@ -579,7 +579,7 @@ TEST_P(VariantPixelBufferTest, ConstructExtent)
 {
   const VariantPixelBufferTestParameters& params = GetParam();
 
-  std::array<VariantPixelBuffer::size_type, 9> extents;
+  ome::compat::array<VariantPixelBuffer::size_type, 9> extents;
   extents[0] = 5;
   extents[1] = 2;
   extents[2] = extents[3] = extents[4] = extents[5] = extents[6] = extents[7] = extents[8] = 1;

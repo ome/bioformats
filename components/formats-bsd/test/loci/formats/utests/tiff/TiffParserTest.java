@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -180,6 +180,7 @@ public class TiffParserTest {
     tiffParser = mock.getTiffParser();
     assertTrue(tiffParser.checkHeader());
     tiffParser.getFirstIFD().getRowsPerStrip();
+    mock.close();
   }
 
   @Test
@@ -194,6 +195,7 @@ public class TiffParserTest {
     for (int i=0; i<mockBitsPerSample.length; i++) {
       assertEquals(bitsPerSample[i], mockBitsPerSample[i]);
     }
+    mock.close();
   }
 
   // TODO: Test wrong type exceptions

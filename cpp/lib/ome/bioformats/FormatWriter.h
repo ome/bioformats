@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -257,7 +257,7 @@ namespace ome
        */
       virtual
       void
-      setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve) = 0;
+      setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve) = 0;
 
       /**
        * Get the current metadata store for this writer.
@@ -265,7 +265,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       getMetadataRetrieve() const = 0;
 
       /**
@@ -274,7 +274,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       getMetadataRetrieve() = 0;
 
       /**

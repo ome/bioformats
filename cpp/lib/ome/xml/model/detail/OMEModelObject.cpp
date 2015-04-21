@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,8 +36,8 @@
  * #L%
  */
 
-#include <ome/xerces/dom/NodeList.h>
-#include <ome/xerces/String.h>
+#include <ome/common/xml/dom/NodeList.h>
+#include <ome/common/xml/String.h>
 
 #include <ome/xml/model/detail/OMEModelObject.h>
 
@@ -50,8 +50,9 @@ namespace ome
       namespace detail
       {
 
-        OMEModelObject::OMEModelObject ():
-          ::ome::xml::model::OMEModelObject()
+        OMEModelObject::OMEModelObject (const std::string& objectType):
+          ::ome::xml::model::OMEModelObject(),
+          logger(ome::common::createLogger(objectType))
         {
         }
 
@@ -59,8 +60,9 @@ namespace ome
         {
         }
 
-        OMEModelObject::OMEModelObject (const OMEModelObject& /* copy */):
-          ::ome::xml::model::OMEModelObject()
+        OMEModelObject::OMEModelObject (const OMEModelObject& copy):
+          ::ome::xml::model::OMEModelObject(),
+          logger(copy.logger)
         {
           // Nothing to copy.
         }
@@ -71,43 +73,43 @@ namespace ome
           return false;
         }
 
-        xerces::dom::Element
-        OMEModelObject::asXMLElementInternal (xerces::dom::Document& /* document */,
-                                              xerces::dom::Element&  element) const
+        common::xml::dom::Element
+        OMEModelObject::asXMLElementInternal (common::xml::dom::Document& /* document */,
+                                              common::xml::dom::Element&  element) const
         {
           return element;
         }
 
         void
-        OMEModelObject::update (const xerces::dom::Element&  /* element */,
+        OMEModelObject::update (const common::xml::dom::Element&  /* element */,
                                 ::ome::xml::model::OMEModel& /* model */)
         {
         }
 
         bool
-        OMEModelObject::link (std::shared_ptr<Reference>&                          /* reference */,
-                              std::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
+        OMEModelObject::link (ome::compat::shared_ptr<Reference>&                          /* reference */,
+                              ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
         {
           return false;
         }
 
-        std::vector<xerces::dom::Element>
-        OMEModelObject::getChildrenByTagName (const xerces::dom::Element& parent,
+        std::vector<common::xml::dom::Element>
+        OMEModelObject::getChildrenByTagName (const common::xml::dom::Element& parent,
                                               const std::string&          name)
         {
           // TODO: May need to be a shared_ptr<element> if element is not refcounting.
-          std::vector<xerces::dom::Element> ret;
+          std::vector<common::xml::dom::Element> ret;
 
-          xerces::dom::NodeList children(parent->getChildNodes());
+          common::xml::dom::NodeList children(parent->getChildNodes());
           // TODO: correct type for iteration.
-          for (xerces::dom::NodeList::iterator pos = children.begin();
+          for (common::xml::dom::NodeList::iterator pos = children.begin();
                pos != children.end();
                ++pos)
             {
               try
                 {
-                  xerces::dom::Element child(pos->get(), false);
-                  if (child && name == stripNamespacePrefix(xerces::String(child->getNodeName())))
+                  common::xml::dom::Element child(pos->get(), false);
+                  if (child && name == stripNamespacePrefix(common::xml::String(child->getNodeName())))
                     {
                       ret.push_back(child);
                     }

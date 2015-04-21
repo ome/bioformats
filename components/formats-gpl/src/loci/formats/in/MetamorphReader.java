@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -621,7 +621,7 @@ public class MetamorphReader extends BaseTiffReader {
             "Unable to locate at least one valid STK file!");
       }
 
-      RandomAccessInputStream s = new RandomAccessInputStream(file);
+      RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
       TiffParser tp = new TiffParser(s);
       IFD ifd = tp.getFirstIFD();
       CoreMetadata ms0 = core.get(0);
@@ -762,6 +762,13 @@ public class MetamorphReader extends BaseTiffReader {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
       }
 
+      String objectiveID = MetadataTools.createLSID("Objective", i, 0);
+      store.setObjectiveID(objectiveID, i, 0);
+      if (handler.getLensNA() != 0) {
+          store.setObjectiveLensNA(handler.getLensNA(), i, 0);
+      }
+      store.setObjectiveSettingsID(objectiveID, i);
+
       int waveIndex = 0;
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (firstSeriesChannels == null ||
@@ -883,7 +890,7 @@ public class MetamorphReader extends BaseTiffReader {
               if (stream != null) {
                 stream.close();
               }
-              stream = new RandomAccessInputStream(file);
+              stream = new RandomAccessInputStream(file, 16);
               tp = new TiffParser(stream);
               tp.checkHeader();
               lastFile = fileIndex;
@@ -1155,18 +1162,18 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         }
 
-        int colon = line.indexOf(": ");
-
-        String descrValue = null;
+        int colon = line.indexOf(":");
 
         if (colon < 0) {
           // normal line (not a key/value pair)
           if (line.length() > 0) {
             // not a blank line
-            descrValue = line;
+            sb.append(line);
+            sb.append("  ");
           }
         }
         else {
+          String descrValue = null;
           if (i == 0) {
             // first line could be mangled; make a reasonable guess
             int dot = line.lastIndexOf(".", colon);
@@ -1186,7 +1193,7 @@ public class MetamorphReader extends BaseTiffReader {
 
           // add key/value pair embedded in comment as separate metadata
           String key = line.substring(0, colon);
-          String value = line.substring(colon + 2);
+          String value = line.substring(colon + 1).trim();
           addSeriesMeta(key, value);
           if (key.equals("Exposure")) {
             if (value.indexOf("=") != -1) {
@@ -1338,7 +1345,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   private String getComment(int i, int no) throws IOException {
     if (stks != null && stks[i][no] != null) {
-      RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][no]);
+      RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][no], 16);
       TiffParser tp = new TiffParser(stream);
       String comment = tp.getComment();
       stream.close();
@@ -1430,7 +1437,7 @@ public class MetamorphReader extends BaseTiffReader {
    * stage X/Y positions,
    * camera chip offsets,
    * stage labels...
-   * @param long uic4offset: offset of UIC4 table (not tiff-compliant)
+   * @param uic4offset offset of UIC4 table (not tiff-compliant)
    * @throws IOException
    */
   private void parseUIC4Tags(long uic4offset) throws IOException {
@@ -1527,8 +1534,8 @@ public class MetamorphReader extends BaseTiffReader {
   /**
    * UIC1 entry parser
    * @throws IOException
-   * @param long uic1offset : offset as found in the tiff tag 33628 (UIC1Tag)
-   * @param int uic1count : number of entries in UIC1 table (not tiff-compliant)
+   * @param uic1offset offset as found in the tiff tag 33628 (UIC1Tag)
+   * @param uic1count number of entries in UIC1 table (not tiff-compliant)
    */
   private void parseUIC1Tags(long uic1offset, int uic1count) throws IOException
   {

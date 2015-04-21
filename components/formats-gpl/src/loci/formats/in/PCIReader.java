@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -45,6 +46,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.enums.Binning;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -294,12 +296,12 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Position_Z") != -1) {
         double zPos = stream.readDouble();
-        if (!uniqueZ.contains(zPos) && (getImageCount() == 0 || getSizeZ() == 1))
+        if (!uniqueZ.contains(zPos) && getSizeZ() <= 1)
         {
           uniqueZ.add(zPos);
         }
-        if (name.indexOf("Field 1/") != -1) firstZ = zPos;
-        else if (name.indexOf("Field 2/") != -1) secondZ = zPos;
+        if (name.indexOf("Field 1" + File.separator) != -1) firstZ = zPos;
+        else if (name.indexOf("Field 2" + File.separator) != -1) secondZ = zPos;
       }
       else if (relativePath.equals("First Field Date & Time")) {
         long date = (long) stream.readDouble() * 1000;
@@ -341,7 +343,7 @@ public class PCIReader extends FormatReader {
       }
     }
 
-    boolean zFirst = !new Double(firstZ).equals(new Double(secondZ));
+    boolean zFirst = Math.abs(firstZ - secondZ) > Constants.EPSILON;
 
     if (getSizeC() == 0) m.sizeC = 1;
     if (mode == 0) {
@@ -400,16 +402,16 @@ public class PCIReader extends FormatReader {
       }
 
       for (int i=0; i<timestamps.size(); i++) {
-        Double timestamp = new Double(timestamps.get(i).doubleValue());
         if (i >= getImageCount()) {
           break;
         }
+        Double timestamp = timestamps.get(i);
         if (timestamp != null) {
           store.setPlaneDeltaT(new Time(timestamp, UNITS.S), 0, i);
         }
         if (i == 2) {
-          double first = timestamps.get(1).doubleValue();
-          Double increment = new Double(timestamp.doubleValue() - first);
+          Double first = timestamps.get(1);
+          Double increment = timestamp - first;
           if (increment != null) {
             store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
           }
@@ -424,10 +426,10 @@ public class PCIReader extends FormatReader {
         store.setDetectorType(getDetectorType("Other"), 0, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
+        Binning binningEnum = getBinning(binning + "x" + binning);
         for (int c=0; c<getEffectiveSizeC(); c++) {
           store.setDetectorSettingsID(detectorID, 0, c);
-          store.setDetectorSettingsBinning(
-            getBinning(binning + "x" + binning), 0, c);
+          store.setDetectorSettingsBinning(binningEnum, 0, c);
         }
       }
     }

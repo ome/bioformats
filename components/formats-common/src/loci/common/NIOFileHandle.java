@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -263,12 +263,23 @@ public class NIOFileHandle extends AbstractNIOHandle {
   @Override
   public int read(ByteBuffer buf, int off, int len) throws IOException {
     buf.position(off);
-    buf.limit(off + len);
-    int readLength = channel.read(buf, position);
-    buffer(position + readLength, 0);
-    // Return value of NIO channel's is -1 when zero bytes are read at the end
-    // of the file.
-    return readLength == -1? 0 : readLength;
+    int realLength = (int) Math.min(len, length() - position);
+    if (realLength < 0) {
+      return -1;
+    }
+    buf.limit(off + realLength);
+    buffer(position, realLength);
+    position += realLength;
+    while (buf.hasRemaining()) {
+      try {
+        buf.put(buffer.get());
+      } catch (BufferUnderflowException e) {
+        EOFException eof = new EOFException(EOF_ERROR_MSG);
+        eof.initCause(e);
+        throw eof;
+      }
+    }
+    return realLength;
   }
 
   /* @see IRandomAccess.seek(long) */

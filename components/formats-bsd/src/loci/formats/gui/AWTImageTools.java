@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1768,7 +1768,8 @@ public final class AWTImageTools {
     ColorModel sourceModel = source.getColorModel();
     if ((sourceModel instanceof Index16ColorModel) ||
       (sourceModel instanceof IndexColorModel) ||
-      (sourceModel instanceof SignedColorModel))
+      (sourceModel instanceof SignedColorModel) ||
+      FormatTools.isFloatingPoint(pixelType))
     {
       DataBuffer buffer = source.getData().getDataBuffer();
       WritableRaster raster = Raster.createWritableRaster(

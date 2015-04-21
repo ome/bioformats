@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -35,8 +35,9 @@
 # #L%
 
 add_subdirectory(ome/compat)
+add_subdirectory(ome/common)
 add_subdirectory(ome/internal)
-add_subdirectory(ome/xerces)
 add_subdirectory(ome/xml)
 add_subdirectory(ome/bioformats)
+add_subdirectory(ome/qtwidgets)
 add_subdirectory(ome/test)

@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.plugins.in.ImagePlusReader;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LibraryChecker;
@@ -161,6 +162,8 @@ public class Slicer implements PlugInFilter {
         p = new ImagePlus(title, newStacks[i]);
       }
 
+      p.setProperty(ImagePlusReader.PROP_SERIES,
+              imp.getProperty(ImagePlusReader.PROP_SERIES));
       p.setProperty("Info", imp.getProperty("Info"));
       p.setDimensions(realSizeC, realSizeZ, realSizeT);
       p.setCalibration(calibration);

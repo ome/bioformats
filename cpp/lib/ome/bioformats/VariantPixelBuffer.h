@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -40,7 +40,7 @@
 
 #include <ome/bioformats/PixelBuffer.h>
 
-#include <ome/compat/variant.h>
+#include <ome/common/variant.h>
 
 namespace ome
 {
@@ -112,7 +112,7 @@ namespace ome
       struct make_buffer
       {
         /// Buffer type.
-        typedef std::shared_ptr<PixelBuffer<typename T::std_type> > type;
+        typedef ome::compat::shared_ptr<PixelBuffer<typename T::std_type> > type;
       };
 
       /// Aggregate view of all buffer types.
@@ -135,7 +135,7 @@ namespace ome
       typedef boost::multi_array_types::size_type size_type;
 
       /// Type used to index all dimensions in public interfaces.
-      typedef std::array<boost::multi_array_types::index, PixelBufferBase::dimensions> indices_type;
+      typedef ome::compat::array<boost::multi_array_types::index, PixelBufferBase::dimensions> indices_type;
 
       /// Storage ordering type for controlling pixel memory layout.
       typedef PixelBufferBase::storage_order_type storage_order_type;
@@ -212,7 +212,7 @@ namespace ome
        */
       template<typename T>
       explicit
-      VariantPixelBuffer(std::shared_ptr<PixelBuffer<T> >& buffer):
+      VariantPixelBuffer(ome::compat::shared_ptr<PixelBuffer<T> >& buffer):
         buffer(buffer)
       {
       }
@@ -262,7 +262,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage));
+        return ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage));
       }
 
       /**
@@ -282,7 +282,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage));
+        return ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage));
       }
 
       // No switch default to avoid -Wunreachable-code errors.
@@ -706,7 +706,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         PixelBuffer<T>&
-        operator() (std::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (ome::compat::shared_ptr<PixelBuffer<T> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -739,7 +739,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         const PixelBuffer<T>&
-        operator() (const std::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (const ome::compat::shared_ptr<PixelBuffer<T> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -786,7 +786,7 @@ namespace ome
          * @throws if the PixelBuffer is null or the PixelBuffer's data array is null.
          */
         void
-        operator() (std::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
+        operator() (ome::compat::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -897,7 +897,7 @@ namespace ome
         void
         operator()(const T& v)
         {
-          std::array<VariantPixelBuffer::size_type, 9> dest_shape;
+          ome::compat::array<VariantPixelBuffer::size_type, 9> dest_shape;
           const VariantPixelBuffer::size_type *shape_ptr(v->shape());
           std::copy(shape_ptr, shape_ptr + PixelBufferBase::dimensions,
                     dest_shape.begin());

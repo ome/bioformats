@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -303,12 +303,12 @@ public class HSSFWorkbook extends POIDocument
       * contained strings will be written to the Shared String tabel (SSTRecord) within
       * the Workbook.
       *
-      * @param wb sheet's matching low level Workbook structure containing the SSTRecord.
+      * @param records sheet's matching low level Workbook structure containing the SSTRecord.
       * @see loci.poi.hssf.record.LabelRecord
       * @see loci.poi.hssf.record.LabelSSTRecord
       * @see loci.poi.hssf.record.SSTRecord
       */
- 
+
      private void convertLabelRecords(List records, int offset)
      {
          if (log.check( POILogger.DEBUG ))

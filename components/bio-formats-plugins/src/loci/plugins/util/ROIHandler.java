@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -29,9 +29,11 @@ package loci.plugins.util;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.Prefs;
 import ij.gui.EllipseRoi;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
@@ -58,6 +60,7 @@ import ome.xml.model.Polygon;
 import ome.xml.model.Polyline;
 import ome.xml.model.Shape;
 import ome.xml.model.Union;
+import ome.xml.model.primitives.NonNegativeInteger;
 
 
 // TODO: Stored ROIs are not correctly linked to Image.
@@ -78,14 +81,19 @@ public class ROIHandler {
      * them to the given images and display them in the ROI manager.
      */
     public static void openROIs(IMetadata retrieve, ImagePlus[] images) {
+        openROIs(retrieve,images, false);
+    }
+
+    public static void openROIs(IMetadata retrieve, ImagePlus[] images, boolean isOMERO) {
         if (!(retrieve instanceof OMEXMLMetadata)) return;
         int nextRoi = 0;
         RoiManager manager = RoiManager.getInstance();
 
         OME root = (OME) retrieve.getRoot();
-        Color sc = null;
-        Color fc = null;
-        Float sw = null;
+        Roi roi;
+        Float sw;
+        Color sc;
+        Color fc;
 
         int imageCount = images.length;
         for (int imageNum=0; imageNum<imageCount; imageNum++) {
@@ -93,6 +101,7 @@ public class ROIHandler {
             if (roiCount > 0 && manager == null) {
                 manager = new RoiManager();
             }
+
             for (int roiNum=0; roiNum<roiCount; roiNum++) {
                 Union shapeSet = root.getROI(roiNum).getUnion();
                 int shapeCount = shapeSet.sizeOfShapeList();
@@ -100,7 +109,13 @@ public class ROIHandler {
                 for (int shape=0; shape<shapeCount; shape++) {
                     Shape shapeObject = shapeSet.getShape(shape);
 
-                    Roi roi = null;
+                    roi = null;
+                    sw = null;
+                    sc = null;
+                    fc = null;
+                    int c= 0;
+                    int z= 0;
+                    int t= 0;
 
                     if (shapeObject instanceof Ellipse) {
                         Ellipse ellipse = (Ellipse) shapeObject;
@@ -113,10 +128,16 @@ public class ROIHandler {
                         if( ellipse.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = ellipse.getStrokeColor();
                             sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                            if(isOMERO){
+                                sc = new Color(StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha(),StrokeColor.getRed());
+                            }
                         }
                         if(ellipse.getFillColor() != null){
                             ome.xml.model.primitives.Color FillColor = ellipse.getFillColor();
                             fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                            if(isOMERO){
+                                fc = new Color(FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha(),FillColor.getRed());
+                            }
                         }
                         if(ellipse.getStrokeWidth() != null){
                             sw = ellipse.getStrokeWidth().value().floatValue();
@@ -133,10 +154,16 @@ public class ROIHandler {
                         if(line.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = line.getStrokeColor();
                             sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                            if(isOMERO){
+                                sc = new Color(StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha(),StrokeColor.getRed());
+                            }
                         }
                         if(line.getFillColor() != null){
                             ome.xml.model.primitives.Color FillColor = line.getFillColor();
                             fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                            if(isOMERO){
+                                fc = new Color(FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha(),FillColor.getRed());
+                            }
                         }
                         if(line.getStrokeWidth() != null){
                             sw = line.getStrokeWidth().value().floatValue();
@@ -146,15 +173,21 @@ public class ROIHandler {
                         Point point = (Point) shapeObject;
                         int x = point.getX().intValue();
                         int y = point.getY().intValue();
-                        roi = new OvalRoi(x, y, 0, 0);
+                        roi = new PointRoi(x, y);
 
                         if (point.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = point.getStrokeColor();
                             sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                            if(isOMERO){
+                                sc = new Color(StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha(),StrokeColor.getRed());
+                            }
                         }
                         if (point.getFillColor() != null){
                             ome.xml.model.primitives.Color FillColor = point.getFillColor();
                             fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                            if(isOMERO){
+                                fc = new Color(FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha(),FillColor.getRed());
+                            }
                         }
                         if (point.getStrokeWidth() != null){
                             sw = point.getStrokeWidth().value().floatValue();
@@ -170,10 +203,16 @@ public class ROIHandler {
                         if (polyline.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = polyline.getStrokeColor();
                             sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                            if(isOMERO){
+                                sc = new Color(StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha(),StrokeColor.getRed());
+                            }
                         }
                         if (polyline.getFillColor() != null){
                             ome.xml.model.primitives.Color FillColor = polyline.getFillColor();
                             fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                            if(isOMERO){
+                                fc = new Color(FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha(),FillColor.getRed());
+                            }
                         }
                         if (polyline.getStrokeWidth() != null){
                             sw = polyline.getStrokeWidth().value().floatValue();
@@ -189,10 +228,16 @@ public class ROIHandler {
                         if (polygon.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = polygon.getStrokeColor();
                             sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                            if(isOMERO){
+                                sc = new Color(StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha(),StrokeColor.getRed());
+                            }
                         }
                         if (polygon.getFillColor() != null){
                             ome.xml.model.primitives.Color FillColor = polygon.getFillColor();
                             fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                            if(isOMERO){
+                                fc = new Color(FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha(),FillColor.getRed());
+                            }
                         }
                         if (polygon.getStrokeWidth() != null){
                             sw = polygon.getStrokeWidth().value().floatValue();
@@ -213,10 +258,16 @@ public class ROIHandler {
                         if (label.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = label.getStrokeColor();
                             sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                            if(isOMERO){
+                                sc = new Color(StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha(),StrokeColor.getRed());
+                            }
                         }
                         if (label.getFillColor() != null){
                             ome.xml.model.primitives.Color FillColor = label.getFillColor();
                             fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                            if(isOMERO){
+                                fc = new Color(FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha(),FillColor.getRed());
+                            }
                         }
                         if (label.getStrokeWidth() != null){
                             sw = label.getStrokeWidth().value().floatValue();
@@ -236,10 +287,16 @@ public class ROIHandler {
                         if (rectangle.getStrokeColor() != null){
                             ome.xml.model.primitives.Color StrokeColor = rectangle.getStrokeColor();
                             sc = new Color(StrokeColor.getRed(),StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha());
+                            if(isOMERO){
+                                sc = new Color(StrokeColor.getGreen(),StrokeColor.getBlue(),StrokeColor.getAlpha(),StrokeColor.getRed());
+                            }
                         }
                         if (rectangle.getFillColor() != null){
                             ome.xml.model.primitives.Color FillColor = rectangle.getFillColor();
                             fc = new Color(FillColor.getRed(),FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha());
+                            if(isOMERO){
+                                fc = new Color(FillColor.getGreen(),FillColor.getBlue(),FillColor.getAlpha(),FillColor.getRed());
+                            }
                         }
                         if (rectangle.getStrokeWidth() != null){
                             sw = rectangle.getStrokeWidth().value().floatValue();
@@ -255,21 +312,39 @@ public class ROIHandler {
                         int t = shapeObject.getTheT().getValue();
                         roi.setPosition(c, z, t);
                         
+                        if (Prefs.showAllSliceOnly){
+                            if(shapeObject.getTheC() != null){
+                                c = shapeObject.getTheC().getValue();
+                            }
+                            if(shapeObject.getTheZ() != null){
+                                z = shapeObject.getTheZ().getValue();
+                            }
+                            if(shapeObject.getTheT() != null){
+                                t = shapeObject.getTheT().getValue();
+                            }
+                            roi.setPosition(c, z, t);
+                        }
                         roi.setImage(images[imageNum]);
 
+                        if (sw == null){
+                            roi.setStrokeWidth((float) 1);
+                        }
                         if (sw != null) {
-                            if(sw==0) sw=(float) 1; 
+                            if(sw==0) sw=(float) 1;
                             roi.setStrokeWidth(sw);
-
                         }
                         if (sc != null) roi.setStrokeColor(sc);
                         manager.add(images[imageNum], roi, nextRoi++);
-
+                        manager.setAlwaysOnTop(true);
+                        manager.runCommand("Select All");
+                        manager.runCommand("Show All");
                     }
                 }
             }
         }
+
     }
+
 
     public static Roi[] readFromRoiManager(){
 
@@ -279,13 +354,31 @@ public class ROIHandler {
         return rois;
     }
 
+    public static Roi[] readFromOverlays(){
+
+        ImagePlus image = IJ.getImage();
+        Overlay overlay = image.getOverlay();
+        if (overlay == null) return null;
+        return overlay.toArray();
+
+    }
+
     /** Save ROIs in the ROI manager to the given MetadataStore. */
     public static void saveROIs(MetadataStore store) {
-        Roi[] rois = readFromRoiManager();
+
+        Roi[] rois = readFromOverlays();
+        if (rois == null) {
+            rois = readFromRoiManager();
+        }
 
         if (rois == null || rois.length == 0) return;
         List<String> discardList = new ArrayList<String>();
-        String roiID = null;int cntr = 0;
+        String roiID = null;
+
+        OME root = (OME) store.getRoot();
+        int roicount = root.sizeOfROIList();
+        int cntr = roicount;
+
         for (int i=0; i<rois.length; i++) {
 
             String polylineID = MetadataTools.createLSID("Shape", cntr, 0);
@@ -438,6 +531,9 @@ public class ROIHandler {
     }
 
     // -- Helper methods --
+    private static NonNegativeInteger unwrap(int r) {
+        return new NonNegativeInteger(r);
+    }
 
     private static void storeText(TextRoi roi, MetadataStore store, int roiNum, int shape) {
 
@@ -446,7 +542,9 @@ public class ROIHandler {
 
         store.setLabelText(roi.getText().trim(), roiNum, shape);
         store.setLabelFontSize(new Length(roi.getCurrentFont().getSize(), UNITS.PIXEL), roiNum, shape);
-
+        store.setLabelTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setLabelTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setLabelTheT(unwrap(roi.getTPosition()), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
             store.setLabelStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
@@ -471,6 +569,10 @@ public class ROIHandler {
             store.setPointX((double) xCoordinates[cntr], roiNum, shape+cntr);
             store.setPointY((double) yCoordinates[cntr], roiNum, shape+cntr);
             store.setPointText(roi.getName(), roiNum, shape+cntr);
+            store.setPointTheC(unwrap(roi.getCPosition()), roiNum, shape);
+            store.setPointTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+            store.setPointTheT(unwrap(roi.getTPosition()), roiNum, shape);
+            
             if (roi.getStrokeWidth() > 0) {
                 store.setPointStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape+cntr);
             }
@@ -493,6 +595,9 @@ public class ROIHandler {
         store.setLineX2(new Double(roi.x2), roiNum, shape);
         store.setLineY1(new Double(roi.y1), roiNum, shape);
         store.setLineY2(new Double(roi.y2), roiNum, shape);
+        store.setLineTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setLineTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setLineTheT(unwrap(roi.getTPosition()), roiNum, shape);
 
         store.setLineText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
@@ -516,6 +621,9 @@ public class ROIHandler {
         store.setRectangleY(new Double(bounds.y), roiNum, shape);
         store.setRectangleWidth(new Double(bounds.width), roiNum, shape);
         store.setRectangleHeight(new Double(bounds.height), roiNum, shape);
+        store.setRectangleTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setRectangleTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setRectangleTheT(unwrap(roi.getTPosition()), roiNum, shape);
 
         store.setRectangleText(roi.getName(), roiNum, shape);
         if (roi.getStrokeWidth() > 0) {
@@ -534,16 +642,6 @@ public class ROIHandler {
     private static void storePolygon(PolygonRoi roi, MetadataStore store,
             int roiNum, int shape)
     {
-        //        Rectangle bounds = roi.getBounds();
-        //        int[] xCoordinates = roi.getXCoordinates();
-        //        int[] yCoordinates = roi.getYCoordinates();
-        //        StringBuffer points = new StringBuffer();
-        //        for (int i=0; i<xCoordinates.length; i++) {
-        //            points.append(xCoordinates[i] + bounds.x);
-        //            points.append(",");
-        //            points.append(yCoordinates[i] + bounds.y);
-        //            if (i < xCoordinates.length - 1) points.append(" ");
-        //        }
 
         int[] xCoordinates = roi.getPolygon().xpoints;
         int[] yCoordinates = roi.getPolygon().ypoints;
@@ -561,6 +659,9 @@ public class ROIHandler {
         if (st1.matches("Polyline") || st1.matches("Freeline") || st1.matches("Angle")) {
             store.setPolylinePoints(points.toString(), roiNum, shape);
             store.setPolylineText(roi.getName(), roiNum, shape);
+            store.setPolylineTheC(unwrap(roi.getCPosition()), roiNum, shape);
+            store.setPolylineTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+            store.setPolylineTheT(unwrap(roi.getTPosition()), roiNum, shape);
             if (roi.getStrokeWidth() > 0) {
                 store.setPolylineStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
             }
@@ -574,6 +675,10 @@ public class ROIHandler {
         else if (st1.matches("Polygon") || st1.matches("Freehand") || st1.matches("Traced")){
             store.setPolygonPoints(points.toString(), roiNum, shape);
             store.setPolygonText(roi.getName(), roiNum, shape);
+            store.setPolygonTheC(unwrap(roi.getCPosition()), roiNum, shape);
+            store.setPolygonTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+            store.setPolygonTheT(unwrap(roi.getTPosition()), roiNum, shape);
+            
             if (roi.getStrokeWidth() > 0) {
                 store.setPolygonStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
             }
@@ -584,7 +689,6 @@ public class ROIHandler {
                 store.setPolygonFillColor(toOMExmlColor(roi.getFillColor()) , roiNum, shape);
             }
         }
-
     }
 
     /** Store an Oval ROI in the given MetadataStore. */
@@ -603,6 +707,10 @@ public class ROIHandler {
         store.setEllipseRadiusX((double) rx/2, roiNum, shape);
         store.setEllipseRadiusY((double) ry/2, roiNum, shape);
         store.setEllipseText(roi.getName(), roiNum, shape);
+        store.setEllipseTheC(unwrap(roi.getCPosition()), roiNum, shape);
+        store.setEllipseTheZ(unwrap(roi.getZPosition()), roiNum, shape);
+        store.setEllipseTheT(unwrap(roi.getTPosition()), roiNum, shape);
+        
         if (roi.getStrokeWidth() > 0) {
             store.setEllipseStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }
@@ -643,5 +751,6 @@ public class ROIHandler {
         return test ;
 
     }
+
 
 }

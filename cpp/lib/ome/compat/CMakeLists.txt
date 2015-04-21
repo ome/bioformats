@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -35,70 +35,26 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
-                    ${LibDl_INCLUDE_DIRS})
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-
-set(ome_compat_static_headers
-    array.h
-    boolean.h
-    cstdint.h
-    filesystem.h
-    endian.h
-    memory.h
-    module.h
-    mstream.h
-    regex.h
-    string.h
-    thread.h
-    tuple.h
-    variant.h)
-
-set(ome_compat_endian_static_headers
-    endian/conversion.hpp
-    endian/std_pair.hpp
-    endian/types.hpp)
-
-set(ome_compat_endian_detail_static_headers
-    endian/detail/config.hpp
-    endian/detail/cover_operators.hpp
-    endian/detail/disable_warnings.hpp
-    endian/detail/disable_warnings_pop.hpp
-    endian/detail/intrinsic.hpp)
-
-set(ome_compat_generated_headers
-   ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+                    ${Boost_INCLUDE_DIRS})
 
 set(ome_compat_headers
-    ${ome_compat_static_headers}
-    ${ome_compat_generated_headers})
+    array.h
+    cstdint.h
+    memory.h
+    regex.h
+    tuple.h)
 
-set(ome_compat_sources
-    module.cpp)
-
-add_library(ome-compat SHARED ${ome_compat_sources} ${ome_compat_headers})
-target_link_libraries(ome-compat
-                      ${REGEX_LIBRARY}
-                      ${THREAD_LIBRARY}
-                      ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-                      ${Boost_SYSTEM_LIBRARY_RELEASE}
-                      ${LibDl_LIBRARIES})
-set_target_properties(ome-compat PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(ome-compat PROPERTIES VERSION ${OME_VERSION_SHORT})
-
-install(TARGETS ome-compat LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+# Use INTERFACE for cmake 3.0 and later; earlier versions add regex to ome-common.
+if(CMAKE_MAJOR_VERSION GREATER 2)
+  add_library(ome-compat INTERFACE)
+  target_link_libraries(ome-compat INTERFACE
+                        ${REGEX_LIBRARY})
+endif()
 
 set(ome_compat_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/compat")
 
-install(FILES ${ome_compat_static_headers} ${ome_compat_generated_headers}
+install(FILES ${ome_compat_headers}
         DESTINATION ${ome_compat_includedir})
-install(FILES ${ome_compat_endian_static_headers}
-        DESTINATION ${ome_compat_includedir}/endian)
-install(FILES ${ome_compat_endian_detail_static_headers}
-        DESTINATION ${ome_compat_includedir}/endian/detail)
 
 # Dump header list for testing
-header_include_list_write(ome_compat_static_headers ome_compat_generated_headers ome/compat ${PROJECT_BINARY_DIR}/cpp/test/ome-compat)
+header_include_list_write(ome_compat_headers "" ome/compat ${PROJECT_BINARY_DIR}/cpp/test/ome-compat)

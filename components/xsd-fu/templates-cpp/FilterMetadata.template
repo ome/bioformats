@@ -113,7 +113,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -187,7 +187,7 @@ namespace ome
       {
       private:
         /// The wrapped metadata store.
-	std::shared_ptr<MetadataStore> store;
+	ome::compat::shared_ptr<MetadataStore> store;
         /// Is filtering enabled?
 	bool filter;
 
@@ -199,11 +199,11 @@ namespace ome
          * @param filter @c true to enable filtering, @c false to
          * disable.
          */
-        FilterMetadata(std::shared_ptr<MetadataStore>& store,
+        FilterMetadata(ome::compat::shared_ptr<MetadataStore>& store,
                        bool filter);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      FilterMetadata::FilterMetadata(std::shared_ptr<MetadataStore>& store,
+      FilterMetadata::FilterMetadata(ome::compat::shared_ptr<MetadataStore>& store,
                                      bool filter):
         store(store),
         filter(filter)
@@ -237,11 +237,11 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::shared_ptr<MetadataRoot>&
+        ome::compat::shared_ptr<MetadataRoot>&
 	getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::shared_ptr<MetadataRoot>&
+      ome::compat::shared_ptr<MetadataRoot>&
       FilterMetadata::getRoot()
       {
         return store->getRoot();
@@ -251,11 +251,11 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
 	void
-        setRoot(std::shared_ptr<MetadataRoot>& root);
+        setRoot(ome::compat::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
+      FilterMetadata::setRoot(ome::compat::shared_ptr<MetadataRoot>& root)
       {
         store->setRoot(root);
       }

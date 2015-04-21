@@ -187,13 +187,15 @@ your FindBugs installation's lib directory. E.g.:
     </javac>
   </target>
 
-  <target name="docs" depends="compile"
+  <target name="docs" depends="compile, javadoc-properties"
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${component.classpath}:${classes.dir}"
       encoding="UTF-8"
       author="true" version="true" use="true"
-      nodeprecated="false" windowtitle="Bio-Formats API">
+      access="private"
+      nodeprecated="false" windowtitle="Bio-Formats API"
+      additionalparam="${javadoc.doclint}">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
@@ -264,6 +266,7 @@ your FindBugs installation's lib directory. E.g.:
 
     <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
     <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+    <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
     <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
     <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
     <replace dir="${dest.dir}" token="$${vcs.date}_unix" value="${vcs.date_unix}"/>
@@ -297,6 +300,7 @@ your FindBugs installation's lib directory. E.g.:
 
   <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
   <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+  <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
   <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
   <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
   <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>

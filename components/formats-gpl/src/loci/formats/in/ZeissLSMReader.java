@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -53,9 +53,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -425,6 +422,7 @@ public class ZeissLSMReader extends FormatReader {
       throw new FormatException("LSM files were not found.");
     }
 
+    totalROIs = 0;
     timestamps = new Vector<Double>();
     imageNames = new Vector<String>();
     xCoordinates = new Vector<Double>();
@@ -459,41 +457,45 @@ public class ZeissLSMReader extends FormatReader {
 
     int realSeries = 0;
     for (int i=0; i<lsmFilenames.length; i++) {
-      RandomAccessInputStream stream =
-        new RandomAccessInputStream(lsmFilenames[i]);
-      int count = seriesCounts.get(lsmFilenames[i]);
+      RandomAccessInputStream stream = null;
+      try {
+        stream = new RandomAccessInputStream(lsmFilenames[i], 16);
+        int count = seriesCounts.get(lsmFilenames[i]);
+        TiffParser tp = new TiffParser(stream);
+        Boolean littleEndian = tp.checkHeader();
+        long[] ifdOffsets = tp.getIFDOffsets();
+        int ifdsPerSeries = (ifdOffsets.length / 2) / count;
 
-      TiffParser tp = new TiffParser(stream);
-      Boolean littleEndian = tp.checkHeader();
-      long[] ifdOffsets = tp.getIFDOffsets();
-      int ifdsPerSeries = (ifdOffsets.length / 2) / count;
+        int offset = 0;
+        Object zeissTag = null;
+        for (int s=0; s<count; s++, realSeries++) {
+          CoreMetadata ms = core.get(realSeries);
+          ms.littleEndian = littleEndian;
 
-      int offset = 0;
-      Object zeissTag = null;
-      for (int s=0; s<count; s++, realSeries++) {
-        CoreMetadata ms = core.get(realSeries);
-        ms.littleEndian = littleEndian;
-
-        IFDList ifds = new IFDList();
-        while (ifds.size() < ifdsPerSeries) {
-          tp.setDoCaching(offset == 0);
-          IFD ifd = tp.getIFD(ifdOffsets[offset]);
-          if (offset == 0) zeissTag = ifd.get(ZEISS_ID);
-          if (offset > 0 && ifds.size() == 0) {
-            ifd.putIFDValue(ZEISS_ID, zeissTag);
+          IFDList ifds = new IFDList();
+          while (ifds.size() < ifdsPerSeries) {
+            tp.setDoCaching(offset == 0);
+            IFD ifd = tp.getIFD(ifdOffsets[offset]);
+            if (offset == 0) zeissTag = ifd.get(ZEISS_ID);
+            if (offset > 0 && ifds.size() == 0) {
+              ifd.putIFDValue(ZEISS_ID, zeissTag);
+            }
+            ifds.add(ifd);
+            if (zeissTag != null) offset += 2;
+            else offset++;
           }
-          ifds.add(ifd);
-          if (zeissTag != null) offset += 2;
-          else offset++;
-        }
 
-        for (IFD ifd : ifds) {
-          tp.fillInIFD(ifd);
-        }
+          for (IFD ifd : ifds) {
+            tp.fillInIFD(ifd);
+          }
 
-        ifdsList.set(realSeries, ifds);
+          ifdsList.set(realSeries, ifds);
+        }
+      } catch (IOException e) {
+          throw e;
+      } finally {
+        if (stream != null) stream.close();
       }
-      stream.close();
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -521,43 +523,48 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       // fix the offsets for > 4 GB files
-      RandomAccessInputStream s =
-        new RandomAccessInputStream(getLSMFileFromSeries(series));
-      for (int i=0; i<ifds.size(); i++) {
-        long[] stripOffsets = ifds.get(i).getStripOffsets();
+      RandomAccessInputStream s = null;
+      try {
+        s = new RandomAccessInputStream(getLSMFileFromSeries(series));
+        for (int i=0; i<ifds.size(); i++) {
+            long[] stripOffsets = ifds.get(i).getStripOffsets();
 
-        if (stripOffsets == null || (i != 0 && previousStripOffsets == null)) {
-          throw new FormatException(
-            "Strip offsets are missing; this is an invalid file.");
-        }
-        else if (i == 0 && previousStripOffsets == null) {
-          previousStripOffsets = stripOffsets;
-          continue;
-        }
+            if (stripOffsets == null || (i != 0 &&
+                    previousStripOffsets == null)) {
+              throw new FormatException(
+                "Strip offsets are missing; this is an invalid file.");
+            }
+            else if (i == 0 && previousStripOffsets == null) {
+              previousStripOffsets = stripOffsets;
+              continue;
+            }
 
-        boolean neededAdjustment = false;
-        for (int j=0; j<stripOffsets.length; j++) {
-          if (j >= previousStripOffsets.length) break;
-          if (stripOffsets[j] < previousStripOffsets[j]) {
-            stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
-              (stripOffsets[j] & 0xffffffffL);
-            if (stripOffsets[j] < previousStripOffsets[j]) {
-              long newOffset = stripOffsets[j] + 0x100000000L;
-              if (newOffset < s.length()) {
-                stripOffsets[j] = newOffset;
+            boolean neededAdjustment = false;
+            for (int j=0; j<stripOffsets.length; j++) {
+              if (j >= previousStripOffsets.length) break;
+              if (stripOffsets[j] < previousStripOffsets[j]) {
+                stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
+                  (stripOffsets[j] & 0xffffffffL);
+                if (stripOffsets[j] < previousStripOffsets[j]) {
+                  long newOffset = stripOffsets[j] + 0x100000000L;
+                  if (newOffset < s.length()) {
+                    stripOffsets[j] = newOffset;
+                  }
+                }
+                neededAdjustment = true;
+              }
+              if (neededAdjustment) {
+                ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
               }
             }
-            neededAdjustment = true;
+            previousStripOffsets = stripOffsets;
           }
-          if (neededAdjustment) {
-            ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
-          }
-        }
-        previousStripOffsets = stripOffsets;
+        initMetadata(series);
+      } catch (IOException e) {
+        throw e;
+      } finally {
+        if (s != null) s.close();
       }
-      s.close();
-
-      initMetadata(series);
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -622,7 +629,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private int getExtraSeries(String file) throws FormatException, IOException {
     if (in != null) in.close();
-    in = new RandomAccessInputStream(file);
+    in = new RandomAccessInputStream(file, 16);
     boolean littleEndian = in.read() == TiffConstants.LITTLE;
     in.order(littleEndian);
 
@@ -679,7 +686,7 @@ public class ZeissLSMReader extends FormatReader {
     IFD ifd = ifds.get(0);
 
     in.close();
-    in = new RandomAccessInputStream(getLSMFileFromSeries(series));
+    in = new RandomAccessInputStream(getLSMFileFromSeries(series), 16);
     in.order(isLittleEndian());
 
     tiffParser = new TiffParser(in);
@@ -935,8 +942,6 @@ public class ZeissLSMReader extends FormatReader {
           parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
         }
       }
-
-      totalROIs = 0;
 
       addSeriesMeta("ToolbarFlags", ras.readInt());
 
@@ -2137,7 +2142,7 @@ public class ZeissLSMReader extends FormatReader {
       case TYPE_RATIONAL:
         return new Double(in.readDouble());
       case TYPE_ASCII:
-        String s = in.readString(dataSize).trim();
+        String s = in.readByteToString(dataSize).trim();
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<s.length(); i++) {
           if (s.charAt(i) >= 10) sb.append(s.charAt(i));

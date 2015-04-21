@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -54,6 +54,7 @@ namespace ome
 
     }
 
+    /// Reader implementations.
     namespace in
     {
 
@@ -70,7 +71,7 @@ namespace ome
         typedef std::vector<std::pair<dimension_size_type, dimension_size_type> > series_ifd_map_type;
 
         /// Underlying TIFF file.
-        std::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
 
         /// Mapping between series index and start and end IFD as a half-open range.
         series_ifd_map_type series_ifd_map;
@@ -109,7 +110,7 @@ namespace ome
          * @returns the IFD index.
          * @throws FormatException if out of range.
          */
-        const std::shared_ptr<const tiff::IFD>
+        const ome::compat::shared_ptr<const tiff::IFD>
         ifdAtIndex(dimension_size_type no) const;
 
       public:
@@ -140,7 +141,7 @@ namespace ome
          *
          * @returns a reference to the TIFF file.
          */
-        std::shared_ptr<ome::bioformats::tiff::TIFF>
+        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
         getTIFF();
 
         /**
@@ -150,7 +151,7 @@ namespace ome
          *
          * @returns a reference to the TIFF file.
          */
-        const std::shared_ptr<ome::bioformats::tiff::TIFF>
+        const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
         getTIFF() const;
       };
 

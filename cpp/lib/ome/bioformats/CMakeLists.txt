@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -92,10 +92,12 @@ set(OME_BIOFORMATS_DETAIL_HEADERS
 
 set(OME_BIOFORMATS_IN_SOURCES
     in/MinimalTIFFReader.cpp
+    in/OMETIFFReader.cpp
     in/TIFFReader.cpp)
 
 set(OME_BIOFORMATS_IN_HEADERS
     in/MinimalTIFFReader.h
+    in/OMETIFFReader.h
     in/TIFFReader.h)
 
 set(OME_BIOFORMATS_TIFF_SOURCES
@@ -145,7 +147,7 @@ set(BIOFORMATS_HEADERS
 add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-compat ome-xml
+target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
                       ${Boost_FILESYSTEM_LIBRARY_RELEASE}
                       ${Boost_SYSTEM_LIBRARY_RELEASE}
                       ${TIFF_LIBRARIES})

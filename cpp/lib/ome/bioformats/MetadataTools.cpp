@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -44,12 +44,15 @@
 #include <ome/bioformats/MetadataTools.h>
 #include <ome/bioformats/XMLTools.h>
 
+#include <ome/compat/regex.h>
+
 #include <ome/internal/version.h>
 
-#include <ome/xerces/Platform.h>
-#include <ome/xerces/dom/Document.h>
-#include <ome/xerces/dom/Element.h>
-#include <ome/xerces/dom/NodeList.h>
+#include <ome/common/xml/Platform.h>
+#include <ome/common/xml/String.h>
+#include <ome/common/xml/dom/Document.h>
+#include <ome/common/xml/dom/Element.h>
+#include <ome/common/xml/dom/NodeList.h>
 
 #include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
@@ -65,6 +68,12 @@
 #include <ome/xml/model/StructuredAnnotations.h>
 #include <ome/xml/model/XMLAnnotation.h>
 #include <ome/xml/model/primitives/Timestamp.h>
+
+#include <xercesc/framework/MemBufInputSource.hpp>
+#include <xercesc/sax/SAXException.hpp>
+#include <xercesc/sax2/DefaultHandler.hpp>
+#include <xercesc/sax2/SAX2XMLReader.hpp>
+#include <xercesc/sax2/XMLReaderFactory.hpp>
 
 using boost::format;
 
@@ -92,8 +101,8 @@ namespace
   bool defaultCreationDate = false;
 
   template<typename T>
-  void parseNodeValue(::ome::xerces::dom::Node& node,
-                      T&                        value)
+  void parseNodeValue(::ome::common::xml::dom::Node& node,
+                      T&                             value)
   {
     if (node)
       {
@@ -107,6 +116,47 @@ namespace
           }
       }
   }
+
+  const ome::compat::regex schema_match("^http://www.openmicroscopy.org/Schemas/OME/(.*)$");
+
+  class OMEXMLVersionParser : public xercesc::DefaultHandler
+  {
+  public:
+    OMEXMLVersionParser():
+      xercesc::DefaultHandler()
+    {}
+
+    virtual ~OMEXMLVersionParser() {}
+
+    void
+    startElement(const XMLCh* const         uri,
+                 const XMLCh* const         localname,
+                 const XMLCh* const         qname,
+                 const xercesc::Attributes& attrs)
+    {
+      if (ome::common::xml::String(localname) == "OME")
+        {
+          std::string ns = ome::common::xml::String(uri);
+
+          ome::compat::smatch found;
+
+          if (ome::compat::regex_match(ns, found, schema_match))
+            {
+              version = found[1];
+              throw xercesc::SAXException(ome::common::xml::String("Found schema version"));
+            }
+        }
+    }
+
+    std::string
+    getVersion() const
+    {
+      return version;
+    }
+
+  private:
+    std::string version;
+  };
 
 }
 
@@ -161,116 +211,118 @@ namespace ome
       return fmt.str();
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
-    createOMEXMLMetadata(ome::xerces::dom::Document& document)
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    createOMEXMLMetadata(ome::common::xml::dom::Document& document)
     {
-      ome::xerces::dom::Element docroot(document.getDocumentElement());
+      ome::common::xml::dom::Element docroot(document.getDocumentElement());
 
-      std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+      ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(ome::compat::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
       ome::xml::model::detail::OMEModel model;
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta->getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta->getRoot()));
       root->update(docroot, model);
 
       return meta;
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const boost::filesystem::path& file)
     {
       // Parse OME-XML into DOM Document.
-      ome::xerces::Platform xmlplat;
-      ome::xerces::dom::Document doc;
+      ome::common::xml::Platform xmlplat;
+      ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::xerces::dom::createDocument(file);
+          doc = ome::common::xml::dom::createDocument(file);
         }
       catch (const std::runtime_error&)
         {
-          ome::xerces::dom::ParseParameters params;
+          ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::xerces::dom::createDocument(file, params);
+          doc = ome::common::xml::dom::createDocument(file, params);
         }
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const std::string& text)
     {
+      std::cerr << "OMEXML VER: " << getModelVersion(text) << "\n";
+
       // Parse OME-XML into DOM Document.
-      ome::xerces::Platform xmlplat;
-      ome::xerces::dom::Document doc;
+      ome::common::xml::Platform xmlplat;
+      ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::xerces::dom::createDocument(text, ome::xerces::dom::ParseParameters(),
+          doc = ome::common::xml::dom::createDocument(text, ome::common::xml::dom::ParseParameters(),
                                                  "OME-XML");
         }
       catch (const std::runtime_error&)
         {
-          ome::xerces::dom::ParseParameters params;
+          ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::xerces::dom::createDocument(text, params, "Broken OME-XML");
+          doc = ome::common::xml::dom::createDocument(text, params, "Broken OME-XML");
         }
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(std::istream& stream)
     {
       // Parse OME-XML into DOM Document.
-      ome::xerces::Platform xmlplat;
-      ome::xerces::dom::Document doc;
+      ome::common::xml::Platform xmlplat;
+      ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::xerces::dom::createDocument(stream, ome::xerces::dom::ParseParameters(),
+          doc = ome::common::xml::dom::createDocument(stream, ome::common::xml::dom::ParseParameters(),
                                                  "OME-XML");
         }
       catch (const std::runtime_error&)
         {
-          ome::xerces::dom::ParseParameters params;
+          ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::xerces::dom::createDocument(stream, params, "Broken OME-XML");
+          doc = ome::common::xml::dom::createDocument(stream, params, "Broken OME-XML");
         }
       return createOMEXMLMetadata(doc);
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane,
                          bool                doImageName)
     {
-      std::shared_ptr<OMEXMLMetadata> metadata(std::make_shared<OMEXMLMetadata>());
-      std::shared_ptr<MetadataStore> store(std::static_pointer_cast<MetadataStore>(metadata));
+      ome::compat::shared_ptr<OMEXMLMetadata> metadata(ome::compat::make_shared<OMEXMLMetadata>());
+      ome::compat::shared_ptr<MetadataStore> store(ome::compat::static_pointer_cast<MetadataStore>(metadata));
       fillMetadata(*store, reader, doPlane, doImageName);
       return metadata;
     }
 
-    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    ome::compat::shared_ptr< ::ome::xml::meta::MetadataRoot>
     createOMEXMLRoot(const std::string& document)
     {
       /// @todo Implement model transforms.
 
-      std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(createOMEXMLMetadata(document)));
-      return meta ? meta->getRoot() : std::shared_ptr< ::ome::xml::meta::MetadataRoot>();
+      ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(ome::compat::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(createOMEXMLMetadata(document)));
+      return meta ? meta->getRoot() : ome::compat::shared_ptr< ::ome::xml::meta::MetadataRoot>();
     }
 
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
-    getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
+    ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    getOMEXMLMetadata(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
     {
-      std::shared_ptr<OMEXMLMetadata> ret;
+      ome::compat::shared_ptr<OMEXMLMetadata> ret;
 
       if (retrieve)
         {
-          std::shared_ptr<OMEXMLMetadata> omexml(std::dynamic_pointer_cast<OMEXMLMetadata>(retrieve));
+          ome::compat::shared_ptr<OMEXMLMetadata> omexml(ome::compat::dynamic_pointer_cast<OMEXMLMetadata>(retrieve));
           if (omexml)
             {
               ret = omexml;
             }
           else
             {
-              ret = std::shared_ptr<OMEXMLMetadata>(std::make_shared<OMEXMLMetadata>());
+              ret = ome::compat::shared_ptr<OMEXMLMetadata>(ome::compat::make_shared<OMEXMLMetadata>());
               ome::xml::meta::convert(*retrieve, *ret);
             }
         }
@@ -284,7 +336,7 @@ namespace ome
     {
       std::string xml(omexml.dumpXML());
 
-      if (!validateOMEXML(xml))
+      if (validate && !validateOMEXML(xml))
         throw std::runtime_error("Invalid OME-XML");
 
       return xml;
@@ -341,7 +393,7 @@ namespace ome
             {
               for (dimension_size_type p = 0; p < reader.getImageCount(); ++p)
                 {
-                  std::array<dimension_size_type, 3> coords = reader.getZCTCoords(p);
+                  ome::compat::array<dimension_size_type, 3> coords = reader.getZCTCoords(p);
                   // The cast to int here is nasty, but the data model
                   // isn't using unsigned types…
                   store.setPlaneTheZ(static_cast<int>(coords[0]), s, p);
@@ -405,17 +457,17 @@ namespace ome
     {
       if (resolve)
         omexml.resolveReferences();
-      std::shared_ptr<MetadataRoot> root(omexml.getRoot());
-      std::shared_ptr<OMEXMLMetadataRoot> omexmlroot(std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root));
+      ome::compat::shared_ptr<MetadataRoot> root(omexml.getRoot());
+      ome::compat::shared_ptr<OMEXMLMetadataRoot> omexmlroot(ome::compat::dynamic_pointer_cast<OMEXMLMetadataRoot>(root));
       if (omexmlroot)
         {
-          std::shared_ptr<Image> image = omexmlroot->getImage(series);
+          ome::compat::shared_ptr<Image> image = omexmlroot->getImage(series);
           if (image)
             {
-              std::shared_ptr<Pixels> pixels = image->getPixels();
+              ome::compat::shared_ptr<Pixels> pixels = image->getPixels();
               if (pixels)
                 {
-                  std::shared_ptr<MetadataOnly> meta(std::make_shared<MetadataOnly>());
+                  ome::compat::shared_ptr<MetadataOnly> meta(ome::compat::make_shared<MetadataOnly>());
                   pixels->setMetadataOnly(meta);
                 }
             }
@@ -451,12 +503,12 @@ namespace ome
       // @todo Implement Modulo retrieval.
       ::ome::xml::meta::OMEXMLMetadata& momexml(const_cast< ::ome::xml::meta::OMEXMLMetadata&>(omexml));
 
-      std::shared_ptr<OMEXMLMetadataRoot> root =
-        std::dynamic_pointer_cast<OMEXMLMetadataRoot>(momexml.getRoot());
+      ome::compat::shared_ptr<OMEXMLMetadataRoot> root =
+        ome::compat::dynamic_pointer_cast<OMEXMLMetadataRoot>(momexml.getRoot());
       if (!root) // Should never occur
         throw std::logic_error("OMEXMLMetadata does not have an OMEXMLMetadataRoot");
 
-      std::shared_ptr< ::ome::xml::model::Image> mimage(root->getImage(image));
+      ome::compat::shared_ptr< ::ome::xml::model::Image> mimage(root->getImage(image));
       if (!mimage)
         throw std::runtime_error("Image does not exist in OMEXMLMetadata");
 
@@ -464,30 +516,30 @@ namespace ome
            i < mimage->sizeOfLinkedAnnotationList();
            ++i)
         {
-          std::shared_ptr< ::ome::xml::model::Annotation> annotation(mimage->getLinkedAnnotation(i));
-          std::shared_ptr< ::ome::xml::model::XMLAnnotation> xmlannotation(std::dynamic_pointer_cast< ::ome::xml::model::XMLAnnotation>(annotation));
+          ome::compat::shared_ptr< ::ome::xml::model::Annotation> annotation(mimage->getLinkedAnnotation(i));
+          ome::compat::shared_ptr< ::ome::xml::model::XMLAnnotation> xmlannotation(ome::compat::dynamic_pointer_cast< ::ome::xml::model::XMLAnnotation>(annotation));
           if (xmlannotation)
             {
               try
                 {
-                  ome::xerces::Platform xmlplat;
-                  ::ome::xerces::dom::Document xmlroot(::ome::xerces::dom::createDocument(xmlannotation->getValue()));
-                  ::ome::xerces::dom::NodeList nodes(xmlroot.getElementsByTagName(tag));
+                  ome::common::xml::Platform xmlplat;
+                  ::ome::common::xml::dom::Document xmlroot(::ome::common::xml::dom::createDocument(xmlannotation->getValue()));
+                  ::ome::common::xml::dom::NodeList nodes(xmlroot.getElementsByTagName(tag));
 
                   Modulo m(tag.substr(tag.size() ? tag.size() - 1 : 0));
 
                   if (nodes.size() > 0)
                     {
-                      ::ome::xerces::dom::Element modulo(nodes.at(0));
-                      ::ome::xerces::dom::NamedNodeMap attrs(modulo.getAttributes());
+                      ::ome::common::xml::dom::Element modulo(nodes.at(0));
+                      ::ome::common::xml::dom::NamedNodeMap attrs(modulo.getAttributes());
 
 
-                      ::ome::xerces::dom::Node start = attrs.getNamedItem("Start");
-                      ::ome::xerces::dom::Node end = attrs.getNamedItem("End");
-                      ::ome::xerces::dom::Node step = attrs.getNamedItem("Step");
-                      ::ome::xerces::dom::Node type = attrs.getNamedItem("Type");
-                      ::ome::xerces::dom::Node typeDescription = attrs.getNamedItem("TypeDescription");
-                      ::ome::xerces::dom::Node unit = attrs.getNamedItem("Unit");
+                      ::ome::common::xml::dom::Node start = attrs.getNamedItem("Start");
+                      ::ome::common::xml::dom::Node end = attrs.getNamedItem("End");
+                      ::ome::common::xml::dom::Node step = attrs.getNamedItem("Step");
+                      ::ome::common::xml::dom::Node type = attrs.getNamedItem("Type");
+                      ::ome::common::xml::dom::Node typeDescription = attrs.getNamedItem("TypeDescription");
+                      ::ome::common::xml::dom::Node unit = attrs.getNamedItem("Unit");
 
                       parseNodeValue(start, m.start);
                       parseNodeValue(end, m.end);
@@ -496,10 +548,10 @@ namespace ome
                       parseNodeValue(typeDescription, m.typeDescription);
                       parseNodeValue(unit, m.unit);
 
-                      ::ome::xerces::dom::NodeList labels = modulo.getElementsByTagName("Label");
+                      ::ome::common::xml::dom::NodeList labels = modulo.getElementsByTagName("Label");
                       if (labels && !labels.empty())
                         {
-                          for (::ome::xerces::dom::NodeList::iterator i = labels.begin();
+                          for (::ome::common::xml::dom::NodeList::iterator i = labels.begin();
                                i != labels.end();
                                ++i)
                             m.labels.push_back(i->getTextContent());
@@ -570,27 +622,27 @@ namespace ome
     removeBinData(::ome::xml::meta::OMEXMLMetadata& omexml)
     {
       omexml.resolveReferences();
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::vector<std::shared_ptr<ome::xml::model::Image> >& images(root->getImageList());
-          for(std::vector<std::shared_ptr<ome::xml::model::Image> >::const_iterator image = images.begin();
+          std::vector<ome::compat::shared_ptr<ome::xml::model::Image> >& images(root->getImageList());
+          for(std::vector<ome::compat::shared_ptr<ome::xml::model::Image> >::const_iterator image = images.begin();
               image != images.end();
               ++image)
             {
-              std::shared_ptr<ome::xml::model::Pixels> pixels((*image)->getPixels());
+              ome::compat::shared_ptr<ome::xml::model::Pixels> pixels((*image)->getPixels());
               if (pixels)
                 {
                   // Note a copy not a reference to avoid iterator
                   // invalidation during removal.
-                  std::vector<std::shared_ptr<ome::xml::model::BinData> > binData(pixels->getBinDataList());
-                  for (std::vector<std::shared_ptr<ome::xml::model::BinData> >::iterator bin = binData.begin();
+                  std::vector<ome::compat::shared_ptr<ome::xml::model::BinData> > binData(pixels->getBinDataList());
+                  for (std::vector<ome::compat::shared_ptr<ome::xml::model::BinData> >::iterator bin = binData.begin();
                    bin != binData.end();
                        ++bin)
                     {
                       pixels->removeBinData(*bin);
                     }
-                  std::shared_ptr<ome::xml::model::MetadataOnly> metadataOnly;
+                  ome::compat::shared_ptr<ome::xml::model::MetadataOnly> metadataOnly;
                   pixels->setMetadataOnly(metadataOnly);
                 }
             }
@@ -603,19 +655,19 @@ namespace ome
                    dimension_size_type               sizeC)
     {
       omexml.resolveReferences();
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::shared_ptr<ome::xml::model::Image>& imageref(root->getImage(image));
+          ome::compat::shared_ptr<ome::xml::model::Image>& imageref(root->getImage(image));
           if (image)
             {
-              std::shared_ptr<ome::xml::model::Pixels> pixels(imageref->getPixels());
+              ome::compat::shared_ptr<ome::xml::model::Pixels> pixels(imageref->getPixels());
               if (pixels)
                 {
-                  std::vector<std::shared_ptr<ome::xml::model::Channel> > channels(pixels->getChannelList());
+                  std::vector<ome::compat::shared_ptr<ome::xml::model::Channel> > channels(pixels->getChannelList());
                   for (Metadata::index_type c = 0U; c < channels.size(); ++c)
                     {
-                      std::shared_ptr<ome::xml::model::Channel> channel(channels.at(c));
+                      ome::compat::shared_ptr<ome::xml::model::Channel> channel(channels.at(c));
                       if (channel->getID().empty() || c >= sizeC)
                         pixels->removeChannel(channel);
                     }
@@ -629,17 +681,17 @@ namespace ome
     {
       MetadataMap map;
 
-      std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
+          ome::compat::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
           if (sa)
             {
               for (OMEXMLMetadata::index_type i = 0; i < sa->sizeOfXMLAnnotationList(); ++i)
                 {
                   // Check if this is an OriginalMetadataAnnotation object.
-                  std::shared_ptr<XMLAnnotation> annotation(sa->getXMLAnnotation(i));
-                  std::shared_ptr<OriginalMetadataAnnotation> original(std::dynamic_pointer_cast<OriginalMetadataAnnotation>(annotation));
+                  ome::compat::shared_ptr<XMLAnnotation> annotation(sa->getXMLAnnotation(i));
+                  ome::compat::shared_ptr<OriginalMetadataAnnotation> original(ome::compat::dynamic_pointer_cast<OriginalMetadataAnnotation>(annotation));
                   if (original)
                     {
                       const OriginalMetadataAnnotation::metadata_type kv(original->getMetadata());
@@ -650,12 +702,16 @@ namespace ome
                   // Fall back to parsing by hand.
                   try
                     {
-                      xerces::Platform xmlplat;
-                      xerces::dom::ParseParameters params;
-                      params.validationScheme = xercesc::XercesDOMParser::Val_Never;
-                      xerces::dom::Document doc(ome::xerces::dom::createDocument(annotation->getValue()));
+                      std::string wrappedValue("<wrapped>");
+                      wrappedValue += annotation->getValue();
+                      wrappedValue += "</wrapped>";
 
-                      std::vector<xerces::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc, "OriginalMetadata");
+                      common::xml::Platform xmlplat;
+                      common::xml::dom::ParseParameters params;
+                      params.validationScheme = xercesc::XercesDOMParser::Val_Never;
+                      common::xml::dom::Document doc(ome::common::xml::dom::createDocument(wrappedValue));
+
+                      std::vector<common::xml::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc.getDocumentElement(), "OriginalMetadata");
                       if (OriginalMetadataValue_nodeList.size() > 1)
                         {
                           format fmt("Value node list size %1% != 1");
@@ -665,7 +721,7 @@ namespace ome
                       else if (OriginalMetadataValue_nodeList.size() != 0)
                         {
                           OriginalMetadataAnnotation::metadata_type kv;
-                          std::vector<xerces::dom::Element> Key_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Key");
+                          std::vector<common::xml::dom::Element> Key_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Key");
                           if (Key_nodeList.size() > 1)
                             {
                               format fmt("Key node list size %1% != 1");
@@ -676,7 +732,7 @@ namespace ome
                             {
                               kv.first = Key_nodeList.at(0).getTextContent();
                             }
-                          std::vector<xerces::dom::Element> Value_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Value");
+                          std::vector<common::xml::dom::Element> Value_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(OriginalMetadataValue_nodeList.at(0), "Value");
                           if (Value_nodeList.size() > 1)
                             {
                               format fmt("Value node list size %1% != 1");
@@ -702,6 +758,59 @@ namespace ome
       return map;
     }
 
+    void
+    fillOriginalMetadata(::ome::xml::meta::OMEXMLMetadata& omexml,
+                         const MetadataMap&                metadata)
+    {
+      omexml.resolveReferences();
+
+      if (metadata.empty())
+        return;
+
+      MetadataMap flat(metadata.flatten());
+
+      ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
+      if (root)
+        {
+          ome::compat::shared_ptr<StructuredAnnotations> sa(root->getStructuredAnnotations());
+          if (!sa)
+            sa = ome::compat::make_shared<StructuredAnnotations>();
+          OMEXMLMetadata::index_type annotationIndex = sa->sizeOfXMLAnnotationList();
+          OMEXMLMetadata::index_type idIndex = sa->sizeOfXMLAnnotationList();
+
+          std::set<std::string> ids;
+          for (OMEXMLMetadata::index_type i = 0; i < annotationIndex; ++i)
+            {
+              // Already in metadata store
+              ids.insert(omexml.getXMLAnnotationID(i));
+            }
+
+          for (MetadataMap::const_iterator i = flat.begin();
+               i != flat.end();
+               ++i, ++annotationIndex)
+            {
+              std::string id;
+              do
+                {
+                  id = createID("Annotation", idIndex);
+                  ++idIndex;
+                }
+              while (ids.find(id) != ids.end());
+
+              std::ostringstream value;
+              boost::apply_visitor(::ome::bioformats::detail::MetadataMapValueTypeOStreamVisitor(value), i->second);
+
+              ome::compat::shared_ptr<OriginalMetadataAnnotation> orig(ome::compat::make_shared<OriginalMetadataAnnotation>());
+              orig->setID(id);
+              orig->setMetadata(OriginalMetadataAnnotation::metadata_type(i->first, value.str()));
+              ome::compat::shared_ptr<XMLAnnotation> xmlorig(ome::compat::static_pointer_cast<XMLAnnotation>(orig));
+              sa->addXMLAnnotation(xmlorig);
+            }
+
+          root->setStructuredAnnotations(sa);
+        }
+    }
+
     std::string
     getModelVersion()
     {
@@ -709,11 +818,71 @@ namespace ome
     }
 
     std::string
+    getModelVersion(ome::common::xml::dom::Document& document)
+    {
+      ome::common::xml::dom::Element docroot(document.getDocumentElement());
+
+      std::string ns = common::xml::String(docroot->getNamespaceURI());
+
+      ome::compat::smatch found;
+
+      if (ome::compat::regex_match(ns, found, schema_match))
+        {
+          return found[1];
+        }
+      return "";
+    }
+
+    std::string
     getModelVersion(const std::string& document)
     {
-      /// @todo Parse model version.
+      ome::common::xml::Platform xmlplat;
 
-      return getModelVersion();
+      ome::compat::shared_ptr<xercesc::SAX2XMLReader> parser(xercesc::XMLReaderFactory::createXMLReader());
+      // We only want to get the schema version, so disable checking
+      // of schema etc.  If there are problems with the XML, they'll
+      // be picked up when we parse it for real.  Here, we'll only
+      // read the first element if it's a valid OME-XML document.
+      parser->setFeature(xercesc::XMLUni::fgSAX2CoreValidation, false);
+      parser->setFeature(xercesc::XMLUni::fgXercesSchemaFullChecking, false);
+      parser->setFeature(xercesc::XMLUni::fgXercesLoadSchema, false);
+      // Needed to get the schema namespace.
+      parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, true);
+
+      xercesc::MemBufInputSource source(reinterpret_cast<const XMLByte *>(document.c_str()),
+                                        static_cast<XMLSize_t>(document.size()),
+                                        common::xml::String("OME-XML model version"));
+
+      OMEXMLVersionParser handler;
+      parser->setContentHandler(&handler);
+
+      try
+        {
+          parser->parse(source);
+        }
+      catch (const xercesc::XMLException& e)
+        {
+          ome::common::xml::String message(e.getMessage());
+          std::cerr << "XMLException parsing schema version: " << message << '\n';
+          return "";
+        }
+      catch (const xercesc::SAXParseException& e)
+        {
+          ome::common::xml::String message(e.getMessage());
+          std::cerr << "SAXParseException parsing schema version: " << message << '\n';
+          return "";
+        }
+      catch (const xercesc::SAXException& e)
+        {
+          // Early termination (expected).
+        }
+      catch (...)
+        {
+          std::cerr << "Unexpected Exception parsing schema version\n";
+          return "";
+        }
+
+      return handler.getVersion();
     }
 
     std::string

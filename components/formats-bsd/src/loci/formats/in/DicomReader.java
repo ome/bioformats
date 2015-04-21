@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1112,10 +1112,8 @@ public class DicomReader extends FormatReader {
         fileList.get(s).add(currentId);
       }
 
-      // look for matching files in the current directory
       Location currentFile = new Location(currentId).getAbsoluteFile();
       Location directory = currentFile.getParentFile();
-      scanDirectory(directory, false);
 
       // move up a directory and look for other directories that
       // could contain matching files

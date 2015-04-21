@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -438,7 +438,9 @@ public class IMODReader extends FormatReader {
         store.setROIID(roiIDs.get(i), i);
         store.setImageROIRef(roiIDs.get(i), 0, i);
       }
+    }
 
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (physicalX > 0) {
         store.setPixelsPhysicalSizeX(
           FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalX), UNITS.MICROM), 0);

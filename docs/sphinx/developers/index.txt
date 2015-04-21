@@ -40,25 +40,22 @@ Using Bio-Formats as a Java library
     conversion
     matlab-dev
     python-dev
+    non-java-code
 
-Interfacing from non-Java code
-==============================
+Using Bio-Formats as a native C++ library
+=========================================
 
 .. toctree::
     :maxdepth: 1
     :titlesonly:
 
-    non-java-code
-    c-bindings
-    buildBF-CPP
-    BF-CPP-windows
-    BF-CPP-macosx
-    BF-CPP-linux
-    cpp
-    cpp-conversion
-
-.. _bfapplications:
-
+    cpp/overview
+    cpp/conversion
+    cpp/tutorial
+    cpp/bf-env
+    cpp/commands/bf-test
+    cpp/commands/bf-test-info
+    cpp/commands/bf-test-view
 
 Contributing to Bio-Formats
 ===========================
@@ -72,6 +69,7 @@ Contributing to Bio-Formats
     reader-guide
     service
     xsd-fu
+    useful-scripts
 
 See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org.uk/ome/report/44>`_ 
 for information on work currently planned or in progress.

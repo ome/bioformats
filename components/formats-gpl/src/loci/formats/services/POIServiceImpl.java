@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,6 +44,8 @@ import loci.poi.poifs.filesystem.POIFSFileSystem;
  */
 public class POIServiceImpl extends AbstractService implements POIService {
 
+  private static final int MAX_BLOCK_SIZE = 4096;
+
   // -- Fields --
 
   private POIFSFileSystem fileSystem;
@@ -67,7 +69,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
   /* @see POIService#initialize(String) */
   @Override
   public void initialize(String file) throws IOException {
-    initialize(new RandomAccessInputStream(file));
+    initialize(new RandomAccessInputStream(file, MAX_BLOCK_SIZE));
   }
 
   /* @see POIService#initialize(RandomAccessInputStream) */

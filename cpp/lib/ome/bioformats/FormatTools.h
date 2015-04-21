@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -76,7 +76,8 @@ namespace ome
         NON_GRAPHICS_DOMAINS,
         NON_HCS_DOMAINS,
         NON_SPECIAL_DOMAINS,
-        ALL_DOMAINS
+        ALL_DOMAINS,
+        HCS_ONLY_DOMAINS
       };
 
     /**
@@ -178,7 +179,7 @@ namespace ome
      * @param index 1D (rasterized) index to convert to ZCT coordinates.
      * @returns an array containing the ZCT coordinates (real sizes, in that order).
      */
-    std::array<dimension_size_type, 3>
+    ome::compat::array<dimension_size_type, 3>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,
@@ -214,7 +215,7 @@ namespace ome
      * @returns an array containing the ZCTmZmCmT coordinates (effective sizes, in that
      * order).
      */
-    std::array<dimension_size_type, 6>
+    ome::compat::array<dimension_size_type, 6>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -152,6 +153,8 @@ public class FV1000Reader extends FormatReader {
 
   private String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
 
+  private ArrayList<IFDList> ifds = new ArrayList<IFDList>();
+
   // -- Constructor --
 
   /** Constructs a new FV1000 reader. */
@@ -268,6 +271,7 @@ public class FV1000Reader extends FormatReader {
 
     int nFiles = getSeries() == 0 ? tiffs.size() : previewNames.size();
     int image = no % (getImageCount() / nFiles);
+    int file = no / (getImageCount() / nFiles);
 
     int[] coords = getZCTCoords(image);
     lastChannel = coords[1];
@@ -276,10 +280,11 @@ public class FV1000Reader extends FormatReader {
 
     if (plane == null) return buf;
     TiffParser tp = new TiffParser(plane);
-    IFDList ifds = tp.getIFDs();
-    if (image >= ifds.size()) return buf;
+    int index = getSeries() == 0 ? file : tiffs.size() + file;
+    IFDList ifdList = ifds.get(index);
+    if (image >= ifdList.size()) return buf;
 
-    IFD ifd = ifds.get(image);
+    IFD ifd = ifdList.get(image);
     if (getSizeY() != ifd.getImageLength()) {
       tp.getSamples(ifd, buf, x,
         getIndex(coords[0], 0, coords[2]), w, 1);
@@ -332,8 +337,8 @@ public class FV1000Reader extends FormatReader {
 
     if (!fileOnly) {
       tiffs = usedFiles = null;
-      filenames = new Hashtable<Integer, String>();
-      roiFilenames = new Hashtable<Integer, String>();
+      filenames.clear();
+      roiFilenames.clear();
       thumbReader = null;
       thumbId = null;
       isOIB = false;
@@ -358,6 +363,7 @@ public class FV1000Reader extends FormatReader {
       if (lutNames != null) {
         lutNames.clear();
       }
+      ifds.clear();
     }
   }
 
@@ -458,7 +464,19 @@ public class FV1000Reader extends FormatReader {
         lutNames.add(path + value);
       }
       else if (isPreviewName(value)) {
-        previewNames.add(path + value.trim());
+        try {
+          RandomAccessInputStream s = getFile(path + value.trim());
+          if (s != null) {
+            s.close();
+            previewNames.add(path + value.trim());
+          }
+        }
+        catch (FormatException e) {
+          LOGGER.debug("Preview file not found", e);
+        }
+        catch (IOException e) {
+          LOGGER.debug("Preview file not found", e);
+        }
       }
     }
 
@@ -515,9 +533,11 @@ public class FV1000Reader extends FormatReader {
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
         channel.emissionFilter = guiChannel.get("EmissionDM Name");
-        channel.emWave = new Double(guiChannel.get("EmissionWavelength"));
+        String emWave = guiChannel.get("EmissionWavelength");
+        if (emWave != null) channel.emWave = new Double(emWave);
         channel.excitationFilter = guiChannel.get("ExcitationDM Name");
-        channel.exWave = new Double(guiChannel.get("ExcitationWavelength"));
+        String exWave = guiChannel.get("ExcitationWavelength");
+        if (emWave != null) channel.exWave = new Double(exWave);
         channels.add(channel);
         index++;
         guiChannel = f.getTable("GUI Channel " + index + " Parameters");
@@ -622,10 +642,10 @@ public class FV1000Reader extends FormatReader {
       if (!isOIB && !ptyFile.exists()) {
         LOGGER.warn("Could not find .pty file ({}); guessing at the " +
           "corresponding TIFF file.", file);
-        String tiff = replaceExtension(file, ".pty", ".tif");
+        String tiff = replaceExtension(file, "pty", "tif");
         Location tiffFile = new Location(tiff);
         if (tiffFile.exists()) {
-          tiffs.add(ii, tiff);
+          tiffs.add(ii, tiffFile.getAbsolutePath());
           continue;
         }
         else {
@@ -652,12 +672,11 @@ public class FV1000Reader extends FormatReader {
         while (file.indexOf("GST") != -1) {
           file = removeGST(file);
         }
-        if (!mappedOIF) {
-          if (isOIB) {
-            file = tiffPath + File.separator + file;
-          }
-          else file = new Location(tiffPath, file).getAbsolutePath();
+        if (isOIB) {
+          file = tiffPath + File.separator + file;
         }
+        else file = new Location(tiffPath, file).getAbsolutePath();
+        file = replaceExtension(file, "pty", "tif");
         tiffs.add(ii, file);
       }
 
@@ -916,6 +935,24 @@ public class FV1000Reader extends FormatReader {
       ms.metadataComplete = true;
       ms.indexed = lut != null;
       ms.falseColor = true;
+
+      int nFiles = i == 0 ? tiffs.size() : previewNames.size();
+      for (int file=0; file<nFiles; file++) {
+        RandomAccessInputStream plane =
+          getFile(i == 0 ? tiffs.get(file) : previewNames.get(file));
+        if (plane == null) {
+          ifds.add(null);
+          continue;
+        }
+        try {
+          TiffParser tp = new TiffParser(plane);
+          IFDList ifd = tp.getIFDs();
+          ifds.add(ifd);
+        }
+        finally {
+          plane.close();
+        }
+      }
     }
 
     // populate MetadataStore
@@ -1364,13 +1401,19 @@ public class FV1000Reader extends FormatReader {
   }
 
   private void addPtyFiles() throws FormatException {
-    if (ptyStart != null && ptyEnd != null && ptyPattern != null) {
+    if (ptyStart != null && ptyEnd != null) {
       // FV1000 version 2 gives the first .pty file, the last .pty and
       // the file name pattern.  Version 1 lists each .pty file individually.
 
       // pattern is typically 's_C%03dT%03d.pty'
 
       // build list of block indexes
+
+      if (ptyPattern == null) {
+        String dir =
+          ptyStart.substring(0, ptyStart.indexOf(File.separator) + 1);
+        ptyPattern = dir + "s_C%03dT%03d.pty";
+      }
 
       String[] prefixes = ptyPattern.split("%03d");
 
@@ -1536,6 +1579,9 @@ public class FV1000Reader extends FormatReader {
   private String sanitizeFile(String file, String path) {
     String f = sanitizeValue(file);
     if (path.equals("")) return f;
+    if (path.endsWith(File.separator)) {
+      return path + f;
+    }
     return path + File.separator + f;
   }
 
@@ -1578,9 +1624,7 @@ public class FV1000Reader extends FormatReader {
       }
       return poi.getDocumentStream(realName);
     }
-    else {
-      return new RandomAccessInputStream(name);
-    }
+    return new RandomAccessInputStream(name, 16);
   }
 
   private RandomAccessInputStream getPlane(int seriesIndex, int planeIndex) {

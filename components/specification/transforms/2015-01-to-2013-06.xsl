@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2009 - 2014 Open Microscopy Environment
+# Copyright (C) 2009 - 2015 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,
@@ -56,13 +56,26 @@
 	<xsl:preserve-space elements="*"/>
 
 	<!-- Actual schema changes -->
-	
+
 	<!-- strip EmissionWavelength and ExcitationWavelength ONLY if it is not an integer -->
 	<xsl:template match="OME:Channel">
 		<xsl:element name="OME:Channel" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'EmissionWavelength' or name() = 'ExcitationWavelength')]">
+			<xsl:for-each select="@* [not(name() = 'EmissionWavelength' or name() = 'ExcitationWavelength' or name() = 'EmissionWavelengthUnit' or name() = 'ExcitationWavelengthUnit' or name() = 'PinholeSize' or name() = 'PinholeSizeUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValuePinhole">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@PinholeSize"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@PinholeSizeUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">PinholeSize</xsl:with-param>
+					<xsl:with-param name="theElementName">Channel</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'PinholeSize']">
+				<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="$theConvertedValuePinhole"/>
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValueEm">
@@ -74,11 +87,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'EmissionWavelength']">
-				<xsl:if test="$theConvertedValueEm=round($theConvertedValueEm)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueEm)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueEm)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValueEx">
 				<xsl:call-template name="ConvertValueToDefault">
@@ -89,11 +100,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'ExcitationWavelength']">
-				<xsl:if test="$theConvertedValueEx=round($theConvertedValueEx)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValueEx)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueEx)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
@@ -116,11 +125,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValue)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValue)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
@@ -129,9 +136,22 @@
 	<!-- strip Wavelength from Laser ONLY if it is not an integer -->
 	<xsl:template match="OME:Laser">
 		<xsl:element name="OME:Laser" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit')]">
+			<xsl:for-each select="@* [not(name() = 'Wavelength' or name() = 'WavelengthUnit' or name() = 'RepetitionRate' or name() = 'RepetitionRateUnit')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueRepetitionRate">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@RepetitionRate"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@RepetitionRateUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">RepetitionRate</xsl:with-param>
+					<xsl:with-param name="theElementName">Laser</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'RepetitionRate']">
+				<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="$theConvertedValueRepetitionRate"/>
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:variable name="theConvertedValue">
@@ -143,11 +163,9 @@
 				</xsl:call-template>
 			</xsl:variable>
 			<xsl:for-each select="@* [name() = 'Wavelength']">
-				<xsl:if test="$theConvertedValue=round($theConvertedValue)">
-					<xsl:attribute name="{local-name(.)}">
-						<xsl:value-of select="round($theConvertedValue)"/>
-					</xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValue)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
@@ -176,19 +194,111 @@
 	<!-- strip AnnotationRef on Objective -->
 	<xsl:template match="OME:Objective">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-				<xsl:apply-templates select="."/>
+			<xsl:for-each select="@* [not(name() = 'WorkingDistance' or name() = 'WorkingDistanceUnit' or name() = 'AnnotationRef')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueWorkingDistance">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@WorkingDistance"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@WorkingDistanceUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">WorkingDistance</xsl:with-param>
+					<xsl:with-param name="theElementName">Objective</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'WorkingDistance']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="$theConvertedValueWorkingDistance"/>
+				</xsl:attribute>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
 
-	<!-- strip AnnotationRef on Detector -->
+	<!-- strip AnnotationRef on Detector and voltage unit-->
 	<xsl:template match="OME:Detector">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-				<xsl:apply-templates select="."/>
+			<xsl:for-each select="@* [not(name() = 'Voltage' or name() = 'VoltageUnit' or name() = 'AnnotationRef')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueVoltage">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Voltage"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@VoltageUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Voltage</xsl:with-param>
+					<xsl:with-param name="theElementName">Detector</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'Voltage']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="$theConvertedValueVoltage"/>
+				</xsl:attribute>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+
+	<!-- strip AnnotationRef on Filter -->
+	<xsl:template match="OME:TransmittanceRange">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'CutIn' or name() = 'CutInUnit' or name() = 'CutOut' or name() = 'CutOutUnit' or name() = 'CutInTolerance' or name() = 'CutInToleranceUnit' or name() = 'CutOutTolerance' or name() = 'CutOutToleranceUnit')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutIn">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutIn"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutInUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutIn</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutIn']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutIn)"/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutOut">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutOut"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutOutUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutOut</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutOut']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutOut)"/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutInTolerance">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutInTolerance"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutInToleranceUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutInTolerance</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutInTolerance']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutInTolerance)"/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theConvertedValueCutOutTolerance">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@CutOutTolerance"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@CutOutToleranceUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">CutOutTolerance</xsl:with-param>
+					<xsl:with-param name="theElementName">TransmittanceRange</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'CutOutTolerance']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="round($theConvertedValueCutOutTolerance)"/>
+				</xsl:attribute>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
@@ -197,7 +307,7 @@
 	<xsl:template match="OME:Filter">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+			<xsl:for-each select="* [not(name() = 'AnnotationRef')]">
 				<xsl:apply-templates select="."/>
 			</xsl:for-each>
 		</xsl:element>
@@ -226,23 +336,48 @@
 	<!-- strip AnnotationRef on LightSource -->
 	<xsl:template match="OME:LightSource">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-				<xsl:apply-templates select="."/>
+			<xsl:for-each select="@* [not(name() = 'Power' or name() = 'PowerUnit' or name() = 'AnnotationRef')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
 			</xsl:for-each>
+			<xsl:variable name="theConvertedValuePower">
+				<xsl:call-template name="ConvertValueToDefault">
+					<xsl:with-param name="theValue"><xsl:value-of select="@Power"/></xsl:with-param>
+					<xsl:with-param name="theCurrentUnit"><xsl:value-of select="@PowerUnit"/></xsl:with-param>
+					<xsl:with-param name="theAttributeName">Power</xsl:with-param>
+					<xsl:with-param name="theElementName">LightSource</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:for-each select="@* [name() = 'Power']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="$theConvertedValuePower"/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 
 	<!-- strip GenericExcitationSource and terminate -->
 	<xsl:template match="OME:GenericExcitationSource">
 		<xsl:comment>GenericExcitationSource elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
-		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - GenericExcitationSource elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+		<xsl:message terminate="yes">OME-XSLT: 2015-01-to-2013-06.xsl - ERROR - GenericExcitationSource elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
 	</xsl:template>
 
-	<!-- strip GenericExcitationSource and terminate -->
+	<!-- strip MapAnnotation and terminate -->
 	<xsl:template match="SA:MapAnnotation">
 		<xsl:comment>MapAnnotation elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
-		<xsl:message terminate="yes">OME-XSLT: 2013-10-dev-5-to-2013-06.xsl - ERROR - MapAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+		<xsl:message terminate="yes">OME-XSLT: 2015-01-to-2013-06.xsl - ERROR - MapAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
+	</xsl:template>
+
+	<!-- strip child nodes from ImagingEnvironment and warn about Map -->
+	<xsl:template match="OME:ImagingEnvironment">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:call-template name="attribute-units-conversion"/>
+		</xsl:element>
+		<xsl:for-each select="* [(local-name() = 'Map')]">
+			<xsl:comment>ImagingEnvironment:Map elements cannot be converted to 2013-06 Schema, they are not supported.</xsl:comment>
+		</xsl:for-each>
 	</xsl:template>
 
 	<!-- Rewriting all namespaces -->

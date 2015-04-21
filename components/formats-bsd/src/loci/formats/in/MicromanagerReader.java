@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -125,6 +125,12 @@ public class MicromanagerReader extends FormatReader {
       catch (IOException e) {
         return false;
       }
+    }
+    else if (!isGroupFiles()) {
+      // if file grouping was disabled, allow each of the TIFFs to be
+      // read separately; this will have no effect if the metadata file
+      // is chosen
+      return false;
     }
     try {
       Location parent = new Location(name).getAbsoluteFile().getParentFile();
@@ -809,11 +815,13 @@ public class MicromanagerReader extends FormatReader {
   /** Initialize the TIFF reader with the first file in the current series. */
   private void setupReader() {
     try {
-      String file = positions.get(getSeries()).getFile(0);
+      String file = positions.get(getSeries()).getFile(
+        getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+        getImageCount(), 0);
       tiffReader.setId(file);
     }
     catch (Exception e) {
-      LOGGER.debug("", e);
+      LOGGER.warn("", e);
     }
   }
 

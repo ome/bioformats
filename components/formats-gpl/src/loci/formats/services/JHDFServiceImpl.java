@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -141,9 +141,8 @@ public class JHDFServiceImpl extends AbstractService
             longOffset[k] = (long) offset[k];
         }
         return this.hdfReader.int32().readMDArrayBlockWithOffset(path, size, longOffset);
-        //return this.hdfReader.int32().readMDArrayBlockWithOffset(path, new int[]{1,1,1,h,w}, new long[]{c,t,z,0,0});
     }
-    
+
     /* (non-Javadoc)
      * @see loci.formats.JHDFService#readIntBlockArray()
      */
@@ -153,9 +152,8 @@ public class JHDFServiceImpl extends AbstractService
             longOffset[k] = (long) offset[k];
         }
         return this.hdfReader.int8().readMDArrayBlockWithOffset(path, size, longOffset);
-        //return this.hdfReader.int32().readMDArrayBlockWithOffset(path, new int[]{1,1,1,h,w}, new long[]{c,t,z,0,0});
     }
-    
+
      /* (non-Javadoc)
      * @see loci.formats.JHDFService#readIntBlockArray()
      */
@@ -165,7 +163,6 @@ public class JHDFServiceImpl extends AbstractService
             longOffset[k] = (long) offset[k];
         }
         return this.hdfReader.int16().readMDArrayBlockWithOffset(path, size, longOffset);
-        //return this.hdfReader.int32().readMDArrayBlockWithOffset(path, new int[]{1,1,1,h,w}, new long[]{c,t,z,0,0});
     }
 
     /* (non-Javadoc)
@@ -188,7 +185,7 @@ public class JHDFServiceImpl extends AbstractService
     public int getElementSize(String path) {
         return this.hdfReader.getDataSetInformation(path).getTypeInformation().getElementSize();
     }
-    
+
     /* (non-Javadoc)
      * @see loci.formats.JHDFService#exists()
      */

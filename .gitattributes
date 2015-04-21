@@ -7,4 +7,6 @@
 *.zip binary
 *.jar binary
 *.dll binary
+*.so binary
+*.dylib binary
 *.h5 binary

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1753,9 +1753,11 @@ public class NativeND2Reader extends FormatReader {
     String filename = new Location(getCurrentFile()).getName();
     if (handler != null) {
       ArrayList<String> posNames = handler.getPositionNames();
+      int nameWidth = String.valueOf(getSeriesCount()).length();
       for (int i=0; i<getSeriesCount(); i++) {
-        String suffix =
-          (i < posNames.size() && !posNames.get(i).equals("")) ? posNames.get(i) : "(series " + (i + 1) + ")";
+        String seriesSuffix = String.format("(series %0" + nameWidth + "d)", i + 1);
+        String suffix = (i < posNames.size() && !posNames.get(i).equals("")) ?
+          posNames.get(i) : seriesSuffix;
         String name = filename + " " + suffix;
         store.setImageName(name.trim(), i);
       }
@@ -1887,10 +1889,10 @@ public class NativeND2Reader extends FormatReader {
 
       String pos = "for position";
       for (int n=0; n<getImageCount(); n++) {
-        int index = i * getImageCount() + n;
+        int index = n * getSeriesCount() + i;
         if (split) {
           int planes = getImageCount() / getSizeC();
-          index = i * planes + (n % planes);
+          index = (n / getSizeC()) * getSeriesCount() + i;
         }
         if (posX != null) {
           if (index >= posX.size()) index = i;

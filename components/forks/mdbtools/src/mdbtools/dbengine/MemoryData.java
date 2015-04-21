@@ -2,7 +2,7 @@
  * #%L
  * Fork of MDB Tools (Java port).
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -151,7 +151,7 @@ public class MemoryData implements Data
   /**
    * sort the data by the given column using only the given rows
    * insertion sort is used for the sort
-   * @todo replace with a better sorting algorithm
+   * todo: replace with a better sorting algorithm
    * @param columnToSort the column to sort
    * @param startAt the row to start sorting at
    * @param endAt the row to end sorting at

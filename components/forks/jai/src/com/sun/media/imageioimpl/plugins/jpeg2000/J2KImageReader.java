@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -600,6 +600,21 @@ public class J2KImageReader extends ImageReader implements MsgLogger {
                                           readState.getSampleModel());
         }
         return null;
+    }
+
+    //Implemented to fix Memory Leak in JAI Sun Impl
+    @Override
+    public void dispose(){
+        if(iis != null){
+            try {
+                iis.close();
+            } catch (IOException e) {
+                // XXX Ignore
+            }
+        }
+        imageMetadata = null;
+        hd = null;
+        readState = null;
     }
 
     // --- Begin jj2000.j2k.util.MsgLogger implementation ---

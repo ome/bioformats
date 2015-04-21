@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -48,16 +48,17 @@
 #define ${fu.GUARD}
 
 #include <algorithm>
-#include <iostream>
 #include <list>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-#include <ome/xerces/dom/Document.h>
-#include <ome/xerces/dom/Element.h>
-#include <ome/xerces/dom/Node.h>
-#include <ome/xerces/dom/NodeList.h>
+#include <ome/common/log.h>
+
+#include <ome/common/xml/dom/Document.h>
+#include <ome/common/xml/dom/Element.h>
+#include <ome/common/xml/dom/Node.h>
+#include <ome/common/xml/dom/NodeList.h>
 
 {% for include in klass.header_dependencies %}\
 #include <${include}>
@@ -66,7 +67,7 @@
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <sstream>
 
-#include <ome/xerces/String.h>
+#include <ome/common/xml/String.h>
 
 #include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/detail/Parse.h>
@@ -155,8 +156,8 @@ namespace ome
 
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-{% if len(klass.instanceVariables) > 0 %}\
       private:
+{% if len(klass.instanceVariables) > 0 %}\
 {% for prop in klass.instanceVariables %}\
 {% if prop[3] is not None %}\
         /// ${prop[3]}
@@ -207,6 +208,11 @@ namespace ome
 {% end has instance type %}\
 {% end for %}\
       {
+#ifdef OME_HAVE_BOOST_LOG
+        logger.add_attribute("ClassName", logging::attributes::constant<std::string>("${klass.name}"));
+#else // ! OME_HAVE_BOOST_LOG
+        logger.className("${klass.name}");
+#endif // OME_HAVE_BOOST_LOG
       }
 {% end source %}\
 
@@ -282,16 +288,16 @@ namespace ome
          *
          * @returns a new model object.
          */
-        static std::shared_ptr< ${klass.name}>
-        create(const xerces::dom::Element& element,
+        static ome::compat::shared_ptr< ${klass.name}>
+        create(const common::xml::dom::Element& element,
                ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::shared_ptr< ${klass.name}>
-      ${klass.name}::create(const xerces::dom::Element& element,
+      ome::compat::shared_ptr< ${klass.name}>
+      ${klass.name}::create(const common::xml::dom::Element& element,
                               ${lang.omexml_model_package}::OMEModel& model)
       {
-        std::shared_ptr< ${klass.name}> newinstance(std::make_shared< ${klass.name}>());
+        ome::compat::shared_ptr< ${klass.name}> newinstance(ome::compat::make_shared< ${klass.name}>());
         newinstance->update(element, model);
         return newinstance;
       }
@@ -346,13 +352,13 @@ ${customContent}\
 
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::update
         virtual void
-        update(const xerces::dom::Element&  element,
+        update(const common::xml::dom::Element&  element,
                ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 
       void
-      ${klass.name}::update(const xerces::dom::Element&  element,
+      ${klass.name}::update(const common::xml::dom::Element&  element,
                             ${lang.omexml_model_package}::OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
@@ -377,7 +383,8 @@ ${customContent}\
         const std::string tagName(stripNamespacePrefix(element.getTagName()));
         if (!validElementName(tagName))
           {
-            std::clog << tagName << " is an invalid element name for ${klass.name}" << std::endl;
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+              << tagName << " is an invalid element name for ${klass.name}";
           }
 {% for prop in klass.properties.values() %}\
 {% choose %}\
@@ -392,15 +399,15 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.isReference %}\
         // Element reference ${prop.name}
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.name}> rcptr(std::make_shared< ${prop.name}>());
+            ome::compat::shared_ptr<${prop.name}> rcptr(ome::compat::make_shared< ${prop.name}>());
             rcptr->setID(elem->getAttribute("ID"));
-            std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
-            std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(std::static_pointer_cast<${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
+            ome::compat::shared_ptr<Reference> rptr(ome::compat::static_pointer_cast<Reference>(rcptr));
+            ome::compat::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(ome::compat::static_pointer_cast<${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
             model.addReference(optr, rptr);
           }
 {% end %}\
@@ -426,7 +433,7 @@ ${customUpdatePropertyContent[prop.name]}
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
-             std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(std::dynamic_pointer_cast<  ${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
+             ome::compat::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(ome::compat::dynamic_pointer_cast<  ${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
              model.addModelObject(getID(), thisptr);
            }
 {% end %}\
@@ -437,7 +444,7 @@ ${customUpdatePropertyContent[prop.name]}
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
             std::string text(element.getAttribute("${prop.name}"));
-            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(text));
+            ${prop.instanceVariableType} nattr(ome::compat::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(nattr);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -460,7 +467,7 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         if (${prop.name}_nodeList.size() > 1)
           {
             format fmt("${prop.name} node list size %1% != 1");
@@ -472,8 +479,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
 {% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %}\
-            xerces::dom::Element elem(${prop.name}_nodeList.at(0));
-            // While std::make_shared<> works, here,
+            common::xml::dom::Element elem(${prop.name}_nodeList.at(0));
+            // While ome::compat::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
             ${prop.instanceVariableType} p(${prop.langTypeNS}::create(elem, model));
 {% end %}\
@@ -487,7 +494,7 @@ ${customUpdatePropertyContent[prop.name]}
             // sub-elements)
             std::string text(${prop.name}_nodeList.at(0).getTextContent());
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(text));
+            ${prop.instanceVariableType} ns(ome::compat::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -509,22 +516,22 @@ ${customUpdatePropertyContent[prop.name]}
         // sub-elements) and occurs more than once. The element's model
         // object type is also abstract so we need to have a handler for
         // each "subclass".
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
 {% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
-            std::vector<xerces::dom::Element> ${inner_prop.name}_nodeList(getChildrenByTagName(*elem, "${inner_prop.name}"));
-                 for (std::vector<xerces::dom::Element>::iterator inner_elem = ${inner_prop.name}_nodeList.begin();
+            std::vector<common::xml::dom::Element> ${inner_prop.name}_nodeList(getChildrenByTagName(*elem, "${inner_prop.name}"));
+                 for (std::vector<common::xml::dom::Element>::iterator inner_elem = ${inner_prop.name}_nodeList.begin();
                  inner_elem != ${inner_prop.name}_nodeList.end();
                  ++inner_elem)
                    {
-                     // While std::make_shared<> works, here,
+                     // While ome::compat::make_shared<> works, here,
                      // boost::make_shared<> does not, so use new
                      // directly.
-                     std::shared_ptr<${prop.methodName}> object(${inner_prop.langTypeNS}::create(*elem, model));
+                     ome::compat::shared_ptr<${prop.methodName}> object(${inner_prop.langTypeNS}::create(*elem, model));
                      object->update(*inner_elem, model);
                      add${prop.methodName}(object);
                    }
@@ -535,14 +542,14 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isAbstractProprietary %}\
         // Element property ${prop.name} which is complex (has
         // sub-elements) and occurs more than once
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            // While std::make_shared<> works, here,
+            // While ome::compat::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
-            std::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(*elem, model));
+            ome::compat::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(*elem, model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -550,13 +557,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.maxOccurs > 1 %}\
         // Element property ${prop.name} which is not complex (has no
         // sub-elements) which occurs more than once
-        std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
-        for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
+        std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
+        for (std::vector<common::xml::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
             std::string text(element.getTextContent());
-            std::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(text, model));
+            ome::compat::shared_ptr<${prop.methodName}> object(${prop.langTypeNS}::create(text, model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -576,13 +583,13 @@ ${customUpdatePropertyContent[prop.name]}
 
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::link
         bool
-        link (std::shared_ptr<Reference>& reference,
-              std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object);
+        link (ome::compat::shared_ptr<Reference>& reference,
+              ome::compat::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link (std::shared_ptr<Reference>& reference,
-                           std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object)
+      ${klass.name}::link (ome::compat::shared_ptr<Reference>& reference,
+                           ome::compat::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object)
       {
         if (${klass.parentName}::link(reference, object))
           {
@@ -590,18 +597,18 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% for prop in klass.properties.values() %}\
 {% if prop.isReference %}\
-        if (std::dynamic_pointer_cast<${prop.name}>(reference))
+        if (ome::compat::dynamic_pointer_cast<${prop.name}>(reference))
           {
             /// @todo This bit is silly; why do we have two dynamic_casts here.
-            std::shared_ptr<${prop.langTypeNS}> o_casted = std::dynamic_pointer_cast<${prop.langTypeNS}>(object);
+            ome::compat::shared_ptr<${prop.langTypeNS}> o_casted = ome::compat::dynamic_pointer_cast<${prop.langTypeNS}>(object);
             if (o_casted)
               {
 {% if not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.type}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
+                o_casted->link${klass.type}(ome::compat::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
+                o_casted->link${klass.name}${prop.methodName}(ome::compat::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
@@ -612,7 +619,7 @@ ${customUpdatePropertyContent[prop.name]}
                   }
 {% end %}\
 {% if prop.isReference or prop.isBackReference %}\
-                typedef OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::nth_index<1>::type container_set_type;
+                typedef OMEModelObject::indexed_container<${prop.langTypeNS}, ome::compat::weak_ptr>::type::nth_index<1>::type container_set_type;
                 container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(o_casted));
                 if (it != this->${prop.instanceVariableName}.get<1>().end())
                   {
@@ -628,7 +635,9 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% end %}\
-        std::clog << "Unable to handle reference of type: " << typeid(reference).name() << std::endl;
+        BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+          << "Unable to handle reference of type: "
+          << typeid(reference).name();
         return false;
       }
 {% end source %}\
@@ -715,11 +724,11 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns a weak pointer to the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
          */
-        const std::weak_ptr<${prop.langTypeNS}>&
+        const ome::compat::weak_ptr<${prop.langTypeNS}>&
         getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const std::weak_ptr<${prop.langTypeNS}>&
+      const ome::compat::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const
       {
         return ${prop.instanceVariableName}.at(index);
@@ -737,21 +746,21 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns a weak pointer to the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
          */
-        const std::weak_ptr<${prop.langTypeNS}>&
+        const ome::compat::weak_ptr<${prop.langTypeNS}>&
         setLinked${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                                     const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
+                                     const ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const std::weak_ptr<${prop.langTypeNS}>&
+      const ome::compat::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::setLinked${prop.methodName}(${prop.instanceVariableType}::size_type index,
-                                                 const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
+                                                 const ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isReference and not prop.isBackReference %}\
         return this->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
 {% end %}\
 {% if prop.isReference or prop.isBackReference %}\
         ${prop.instanceVariableType}::iterator it(${prop.instanceVariableName}.iterator_to(${prop.instanceVariableName}.at(index)));
-        const std::weak_ptr<${prop.langTypeNS}> wp(${prop.argumentName});
+        const ome::compat::weak_ptr<${prop.langTypeNS}> wp(${prop.argumentName});
         ${prop.instanceVariableName}.replace(it, wp);
         return *it;
 {% end %}\
@@ -770,18 +779,18 @@ ${customUpdatePropertyContent[prop.name]}
          * Is this an artifact of the Java API?
          */
         bool
-        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
+        link${prop.methodName} (const ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
+      ${klass.name}::link${prop.methodName} (const ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->link${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
+        ${prop.argumentName}->link${klass.type}(ome::compat::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
+        ${prop.argumentName}->link${klass.name}${prop.methodName}(ome::compat::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
 {% if not prop.isReference and not prop.isBackReference %}\
@@ -792,11 +801,11 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% if prop.isReference or prop.isBackReference %}\
-        typedef OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::nth_index<1>::type container_set_type;
+        typedef OMEModelObject::indexed_container<${prop.langTypeNS}, ome::compat::weak_ptr>::type::nth_index<1>::type container_set_type;
         container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(${prop.argumentName}));
         if (it == this->${prop.instanceVariableName}.get<1>().end())
           {
-            std::pair<OMEModelObject::indexed_container<${prop.langTypeNS}, std::weak_ptr>::type::iterator, bool> res(this->${prop.instanceVariableName}.push_back(std::weak_ptr<${prop.langTypeNS}>(${prop.argumentName})));
+            std::pair<OMEModelObject::indexed_container<${prop.langTypeNS}, ome::compat::weak_ptr>::type::iterator, bool> res(this->${prop.instanceVariableName}.push_back(ome::compat::weak_ptr<${prop.langTypeNS}>(${prop.argumentName})));
             return res.second;
           }
 {% end %}\
@@ -821,18 +830,18 @@ ${customUpdatePropertyContent[prop.name]}
          * aren't preventing duplicates on insertion.
          */
         bool
-        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
+        unlink${prop.methodName} (const ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
+      ${klass.name}::unlink${prop.methodName} (const ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->unlink${klass.type}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
+        ${prop.argumentName}->unlink${klass.type}(ome::compat::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
+        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(ome::compat::dynamic_pointer_cast<${klass.name}>(shared_from_this()));
 {% end %}\
 {% end %}\
         bool found = false;
@@ -878,11 +887,11 @@ ${customUpdatePropertyContent[prop.name]}
          * @param ${prop.argumentName} the ${prop.methodName} to link.
          */
         void
-        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
+        link${prop.methodName} (ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
+      ${klass.name}::link${prop.methodName} (ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
         this->${prop.instanceVariableName} = ${prop.argumentName};
       }
@@ -899,15 +908,15 @@ ${customUpdatePropertyContent[prop.name]}
          * internally.
          */
         void
-        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
+        unlink${prop.methodName} (ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
+      ${klass.name}::unlink${prop.methodName} (ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        if (std::shared_ptr<${prop.langTypeNS}>(this->${prop.instanceVariableName}) == ${prop.argumentName})
+        if (ome::compat::shared_ptr<${prop.langTypeNS}>(this->${prop.instanceVariableName}) == ${prop.argumentName})
           {
-            this->${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
+            this->${prop.instanceVariableName} = ome::compat::shared_ptr<${prop.langTypeNS}>();
           }
       }
 {% end source %}\
@@ -1029,7 +1038,7 @@ ${customUpdatePropertyContent[prop.name]}
                                             ${prop.elementArgType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
+        ome::compat::weak_ptr<${klass.type}> self(ome::compat::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
 {% if not prop.isReference and not prop.isBackReference %}\
@@ -1059,7 +1068,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${klass.name}::add${prop.methodName} (${prop.elementArgType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        std::weak_ptr<${klass.type}> self(std::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
+        ome::compat::weak_ptr<${klass.type}> self(ome::compat::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
         ${prop.instanceVariableName}.push_back(${prop.argumentName});
@@ -1153,18 +1162,18 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
-        virtual xerces::dom::Element
-        asXMLElement (xerces::dom::Document& document) const;
+        virtual common::xml::dom::Element
+        asXMLElement (common::xml::dom::Document& document) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element
-      ${klass.name}::asXMLElement (xerces::dom::Document& document) const
+      common::xml::dom::Element
+      ${klass.name}::asXMLElement (common::xml::dom::Document& document) const
       {
 {% if klass.name != "OME" %}\
-        xerces::dom::Element element(document.createElementNS(NAMESPACE, "${klass.name}"));
+        common::xml::dom::Element element(document.createElementNS(NAMESPACE, "${klass.name}"));
 {% end if %}\
 {% if klass.name == "OME" %}\
-        xerces::dom::Element element(document.getDocumentElement());
+        common::xml::dom::Element element(document.getDocumentElement());
 {% end if %}\
         return asXMLElementInternal(document, element);
       }
@@ -1175,14 +1184,14 @@ ${customUpdatePropertyContent[prop.name]}
 
       protected:
         // Documented in base class.
-        virtual xerces::dom::Element
-        asXMLElementInternal (xerces::dom::Document& document,
-                              xerces::dom::Element&  element) const;
+        virtual common::xml::dom::Element
+        asXMLElementInternal (common::xml::dom::Document& document,
+                              common::xml::dom::Element&  element) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      xerces::dom::Element
-      ${klass.name}::asXMLElementInternal (xerces::dom::Document& document,
-                                           xerces::dom::Element&  element) const
+      common::xml::dom::Element
+      ${klass.name}::asXMLElementInternal (common::xml::dom::Document& document,
+                                           common::xml::dom::Element&  element) const
       {
         // Create XML block for ${klass.name}
 
@@ -1195,7 +1204,7 @@ ${customUpdatePropertyContent[prop.name]}
         // Class is abstract so we may need to create its "container" element
         if (std::string(element.getTagName()) != "${klass.name}")
           {
-            xerces::dom::Element abstractElement =
+            common::xml::dom::Element abstractElement =
               document.createElementNS(NAMESPACE, "${klass.name}");
             abstractElement.appendChild(element);
             element = abstractElement;
@@ -1203,7 +1212,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
         if (!element)
           {
-            xerces::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
+            common::xml::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
             element = newElement;
           }
 
@@ -1255,12 +1264,12 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 // shared_ptr, but keep compatible with the rest of
                 // the API to allow consistency for future
                 // refactoring.
-                std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
-                std::shared_ptr<${prop.langTypeNS}> is(i->lock());
+                ome::compat::shared_ptr<${prop.name}> o(ome::compat::make_shared< ${prop.name}>());
+                ome::compat::shared_ptr<${prop.langTypeNS}> is(i->lock());
                 if (is)
                   {
                     o->setID(is->getID());
-                    xerces::dom::Element child(o->asXMLElement(document));
+                    common::xml::dom::Element child(o->asXMLElement(document));
                     element.appendChild(child);
                   }
               }
@@ -1272,12 +1281,12 @@ ${customAsXMLElementPropertyContent[prop.name]}
             // Note that this doesn't strictly need to be a
             // shared_ptr, but keep compatible with the rest of the
             // API to allow consistency for future refactoring.
-            std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
-            std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName}.lock());
+            ome::compat::shared_ptr<${prop.name}> o(ome::compat::make_shared< ${prop.name}>());
+            ome::compat::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName}.lock());
             if (sv)
               {
                 o->setID(sv->getID());
-                xerces::dom::Element child(o->asXMLElement(document));
+                common::xml::dom::Element child(o->asXMLElement(document));
                 element.appendChild(child);
               }
           }
@@ -1320,7 +1329,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // sub-elements)
           if (${prop.instanceVariableName})
             {
-              xerces::dom::Element child(${prop.instanceVariableName}->asXMLElement(document));
+              common::xml::dom::Element child(${prop.instanceVariableName}->asXMLElement(document));
               element.appendChild(child);
             }
 {% end %}\
@@ -1329,7 +1338,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // sub-elements)
           {
 {% if prop.minOccurs == 1 %}\
-            xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+            common::xml::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
             std::ostringstream os;
             os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
@@ -1344,7 +1353,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% if prop.minOccurs == 0 %}\
             if (${prop.instanceVariableName})
               {
-                xerces::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+                common::xml::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
                 std::ostringstream os;
                 os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
@@ -1369,7 +1378,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
               {
                 if (*i)
                   {
-                    xerces::dom::Element child((*i)->asXMLElement(document));
+                    common::xml::dom::Element child((*i)->asXMLElement(document));
                     element.appendChild(child);
                   }
               }
@@ -1383,7 +1392,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                  i != ${prop.instanceVariableName}.end();
                  ++i)
               {
-                xerces::dom::Element ${prop.instanceVariableName}_element =
+                common::xml::dom::Element ${prop.instanceVariableName}_element =
                                                                    document.createElementNS(NAMESPACE, "${prop.name}");
                 std::ostringstream os;
                 os.imbue(std::locale::classic());
@@ -1394,7 +1403,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 os << std::boolalpha << *i;
 {% end %}\
                 ${prop.instanceVariableName}_element.setTextContent(os.str());
-                xerces::dom::Element child(${prop.instanceVariableName}_element);
+                common::xml::dom::Element child(${prop.instanceVariableName}_element);
                 element.appendChild(child);
               }
           }

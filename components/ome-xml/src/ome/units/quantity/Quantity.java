@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2014 Open Microscopy Environment:
+ * Copyright (C) 2014 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,6 +31,8 @@
 
 package ome.units.quantity;
 
+import ome.units.unit.Unit;
+
 /**
  * A wrapper for the Quantity class from the units implimintation.
  *
@@ -44,4 +46,6 @@ package ome.units.quantity;
  */
 public abstract class Quantity
 {
+  public abstract Number value();
+  public abstract Unit<? extends Quantity> unit();
 }

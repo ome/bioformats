@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -39,6 +39,8 @@
 #ifndef OME_XML_MODEL_DETAIL_OMEMODELOBJECT_H
 #define OME_XML_MODEL_DETAIL_OMEMODELOBJECT_H
 
+#include <ome/common/log.h>
+
 #include <ome/xml/model/OMEModelObject.h>
 
 namespace ome
@@ -61,14 +63,16 @@ namespace ome
          */
         class OMEModelObject : virtual public ::ome::xml::model::OMEModelObject
         {
-        public:
+        protected:
           /// Constructor.
-          OMEModelObject ();
+          OMEModelObject (const std::string& objectType = "OMEModelObject");
 
+        public:
           /// Destructor.
           virtual
           ~OMEModelObject ();
 
+        protected:
           /**
            * Copy constructor.
            *
@@ -76,6 +80,7 @@ namespace ome
            */
           OMEModelObject (const OMEModelObject& copy);
 
+        public:
           /// @copydoc ome::xml::model::OMEModelObject::validElementName
           bool
           validElementName(const std::string& name) const = 0;
@@ -91,20 +96,20 @@ namespace ome
            * @param element XML element for setting model data.
            * @returns an XML DOM tree root element for this model object.
            */
-          virtual xerces::dom::Element
-          asXMLElementInternal (xerces::dom::Document& document,
-                                xerces::dom::Element&  element) const = 0;
+          virtual common::xml::dom::Element
+          asXMLElementInternal (common::xml::dom::Document& document,
+                                common::xml::dom::Element&  element) const = 0;
 
         public:
           /// @copydoc ome::xml::model::OMEModelObject::update
           virtual void
-          update (const xerces::dom::Element&  element,
+          update (const common::xml::dom::Element&  element,
                   ::ome::xml::model::OMEModel& model);
 
           /// @copydoc ome::xml::model::OMEModelObject::link
           virtual bool
-          link (std::shared_ptr<Reference>&                          reference,
-                std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+          link (ome::compat::shared_ptr<Reference>&                          reference,
+                ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
 
           /**
            * Retrieve all the children of an element that have a given
@@ -115,8 +120,8 @@ namespace ome
            * @param name name of the tags to retrieve.
            * @return list of elements which have the tag <code>name</code>.
            */
-          static std::vector<xerces::dom::Element>
-          getChildrenByTagName (const xerces::dom::Element& parent,
+          static std::vector<common::xml::dom::Element>
+          getChildrenByTagName (const common::xml::dom::Element& parent,
                                 const std::string&          name);
 
           /**
@@ -144,7 +149,7 @@ namespace ome
           {
           private:
             /// The element to compare other elements with.
-            const std::shared_ptr<const T>& cmp;
+            const ome::compat::shared_ptr<const T>& cmp;
 
           public:
             /**
@@ -152,7 +157,7 @@ namespace ome
              *
              * @param cmp the element to compare other elements with.
              */
-            compare_element(const std::shared_ptr<const T>& cmp):
+            compare_element(const ome::compat::shared_ptr<const T>& cmp):
               cmp(cmp)
             {}
 
@@ -164,7 +169,7 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const std::shared_ptr<T>& element)
+            operator () (const ome::compat::shared_ptr<T>& element)
             {
               return cmp && element && cmp == element;
             }
@@ -176,7 +181,7 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const std::shared_ptr<const T>& element)
+            operator () (const ome::compat::shared_ptr<const T>& element)
             {
               return cmp && element && cmp == element;
             }
@@ -188,9 +193,9 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const std::weak_ptr<T>& element)
+            operator () (const ome::compat::weak_ptr<T>& element)
             {
-              std::shared_ptr<const T> shared_element(element);
+              ome::compat::shared_ptr<const T> shared_element(element);
               return cmp && shared_element && cmp == shared_element;
             }
 
@@ -201,9 +206,9 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const std::weak_ptr<const T>& element)
+            operator () (const ome::compat::weak_ptr<const T>& element)
             {
-              std::shared_ptr<const T> shared_element(element);
+              ome::compat::shared_ptr<const T> shared_element(element);
               return cmp && shared_element && cmp == shared_element;
             }
           };
@@ -221,13 +226,15 @@ namespace ome
           template<class C, typename T>
           bool
           contains(const C&                  container,
-                   const std::shared_ptr<T>& element)
+                   const ome::compat::shared_ptr<T>& element)
           {
             return (std::find_if(container.begin(),
                                  container.end(),
                                  compare_element<T>(element)) != container.end());
           }
 
+          /// Message logger.
+          ome::common::Logger logger;
         };
 
       }

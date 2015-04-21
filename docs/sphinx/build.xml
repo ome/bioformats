@@ -9,34 +9,76 @@ Type "ant -p" for a list of targets.
 <project name="sphinx" default="html" basedir=".">
   <description>Build file for sphinx documentation</description>
   <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/ant/version.xml"/>
   <import file="${root.dir}/ant/global.xml"/>
 
   <property name="sphinx.build" value="sphinx-build"/>
+  <property name="sphinx.warnopts" value=""/>
   <property name="sphinx.opts" value=""/>
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
-  <property name="source.branch" value=""/>
-  <property name="source.user" value="openmicroscopy"/>
-  <property name="jenkins.job" value=""/>
-  <property name="jenkins.cpp.job" value=""/>
-  <property name="omerodoc.uri" value=""/>
 
-  <target name="init"/>
+  <target name="init" depends="release-version">
+    <property name="sphinx.release" value="${release.shortversion}"/>
+    <property name="sphinx.version" value="${release.major}.${release.minor}"/>
+    <property name="sphinx.source.branch" value="develop"/>
+    <property name="sphinx.source.user" value="openmicroscopy"/>
+    <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
 
-  <target name="html">
-    <exec executable="${sphinx.build}" failonerror="true">
-      <env key="SOURCE_BRANCH" value="${source.branch}"/>
-      <env key="SOURCE_USER" value="${source.user}"/>
-      <env key="BF_RELEASE" value="${bf.release}"/>
-      <env key="JENKINS_JOB" value="${jenkins.job}"/>
-      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
-      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
-      <arg value="-b"/>
-      <arg value="html"/>
-      <arg line="${sphinx.opts}"/>
-      <arg value="."/>
-      <arg value="${sphinx.builddir}/html"/>
-    </exec>
+    <copy file="conf.py.in" tofile="conf.py" overwrite="true"/>
+    <replace file="conf.py" token="@sphinx_srcdir@" value="."/>
+    <replace file="conf.py" token="@sphinx_builddir@" value="."/>
+    <replace file="conf.py" token="@sphinx_source_branch@" value="${sphinx.source.branch}"/>
+    <replace file="conf.py" token="@sphinx_source_user@" value="${sphinx.source.user}"/>
+    <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
+  </target>
+
+  <macrodef name="sphinx" description="Run sphinx-build">
+    <attribute name="buildtype" default="html"/>
+    <attribute name="srcdir" default="."/>
+    <attribute name="destdir" default=""/>
+    <attribute name="opts" default=""/>
+    <attribute name="warnopts" default=""/>
+    <sequential>
+      <exec executable="${sphinx.build}" failonerror="true">
+        <arg value="-D"/>
+        <arg value="release=${sphinx.release}"/>
+        <arg value="-D"/>
+        <arg value="version=${sphinx.version}"/>
+        <arg value="-b"/>
+        <arg value="@{buildtype}"/>
+        <arg line="@{opts}"/>
+        <arg line="@{warnopts}"/>
+        <arg value="@{srcdir}"/>
+        <arg value="@{destdir}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <target name="html" depends="init">
+    <sphinx buildtype="html"
+            srcdir="."
+            destdir="${sphinx.builddir}/html"
+            opts="${sphinx.opts}"
+            warnopts="${sphinx.warnopts}"/>
+    <delete dir="${artifact.dir}/bio-formats-doc-${sphinx.release}"/>
+    <copy todir="${artifact.dir}/bio-formats-doc-${sphinx.release}">
+      <!--
+        include (none) to prevent problems if component.resources-bin is empty
+      -->
+      <fileset dir="_build/html"/>
+    </copy>
+    <zip destfile="${artifact.dir}/bio-formats-doc-${sphinx.release}.zip">
+      <zipfileset dir="_build/html" includes="**/*" prefix="bio-formats-doc-${sphinx.release}"/>
+    </zip>
+    <delete dir="${artifact.dir}/bio-formats-doc-${sphinx.release}"/>
+  </target>
+
+  <target name="man" depends="init">
+    <sphinx buildtype="man"
+            srcdir="."
+            destdir="${sphinx.builddir}/man"
+            opts="${sphinx.opts}"/>
   </target>
 
   <macrodef name="xelatex" description="Run XeLaTeX">
@@ -57,7 +99,6 @@ Type "ant -p" for a list of targets.
       <basename property="file.basename" file="@{file}"/>
       <dirname property="file.dirname" file="@{file}"/>
       <propertyregex property="file.index" input="${file.basename}" regexp="(.*)\.tex" select="\1.idx"/>
-      <echo message="BN: ${file.basename}  IN: ${file.index}"/>
       <exec executable="makeindex" failonerror="true" dir="${file.dirname}">
         <arg value="-s"/>
         <arg value="python.ist"/>
@@ -79,20 +120,13 @@ Type "ant -p" for a list of targets.
     </sequential>
   </macrodef>
 
-  <target name="latexpdf">
-    <exec executable="${sphinx.build}" failonerror="true">
-      <env key="SOURCE_BRANCH" value="${source.branch}"/>
-      <env key="SOURCE_USER" value="${source.user}"/>
-      <env key="BF_RELEASE" value="${bf.release}"/>
-      <env key="JENKINS_JOB" value="${jenkins.job}"/>
-      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
-      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
-      <arg value="-b"/>
-      <arg value="latex"/>
-      <arg line="${sphinx.opts}"/>
-      <arg value="."/>
-      <arg value="${sphinx.builddir}/latex"/>
-    </exec>
+  <target name="latexpdf" depends="init">
+    <sphinx buildtype="latex"
+            srcdir="."
+            destdir="${sphinx.builddir}/latex"
+            opts="${sphinx.opts}"
+            warnopts="${sphinx.warnopts}"/>
+    <copy file="preamble.tex" todir="${sphinx.builddir}/latex"/>
 
     <for param="file">
       <path>
@@ -102,28 +136,21 @@ Type "ant -p" for a list of targets.
         <runlatex file="@{file}"/>
       </sequential>
     </for>
+    <copy file="_build/latex/Bio-Formats.pdf" tofile="${artifact.dir}/Bio-Formats-${sphinx.release}.pdf"/>
   </target>
 
   <target name="pdf" depends="latexpdf"/>
 
-  <target name="linkcheck">
-    <exec executable="${sphinx.build}" failonerror="true">
-      <env key="SOURCE_BRANCH" value="${source.branch}"/>
-      <env key="SOURCE_USER" value="${source.user}"/>
-      <env key="BF_RELEASE" value="${bf.release}"/>
-      <env key="JENKINS_JOB" value="${jenkins.job}"/>
-      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
-      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
-      <arg value="-b"/>
-      <arg value="linkcheck"/>
-      <arg line="${sphinx.opts}"/>
-      <arg value="."/>
-      <arg value="${sphinx.builddir}/linkcheck"/>
-    </exec>
+  <target name="linkcheck" depends="init">
+    <sphinx buildtype="linkcheck" srcdir="."
+            destdir="${sphinx.builddir}/linkcheck"
+            opts="${sphinx.opts}"
+            warnopts="${sphinx.warnopts}"/>
   </target>
 
   <target name="clean">
     <delete dir="${sphinx.builddir}"/>
+    <delete file="conf.py"/>
   </target>
 
 </project>

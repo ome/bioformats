@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -62,7 +62,7 @@ namespace ome
       /// Tile index type.
       typedef dimension_size_type key_type;
       /// Tile buffer type.
-      typedef std::shared_ptr<TileBuffer> value_type;
+      typedef ome::compat::shared_ptr<TileBuffer> value_type;
 
       /// Constructor.
       TileCache();

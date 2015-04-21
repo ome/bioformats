@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -52,6 +52,7 @@ foreach(hdr ${model_headers})
 endforeach(hdr)
 
 set(OME_XML_STATIC_SOURCES
+  meta/MetadataException.cpp
   meta/OMEXMLMetadataRoot.cpp
   meta/Convert.cpp
   model/Catalog.cpp
@@ -77,6 +78,7 @@ set(OME_XML_META_PRIVATE_STATIC_HEADERS
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
     meta/Metadata.h
+    meta/MetadataException.h
     meta/MetadataRoot.h
     meta/OMEXMLMetadataRoot.h)
 
@@ -132,7 +134,7 @@ set(OME_XML_SOURCES
 add_library(ome-xml SHARED
             ${OME_XML_SOURCES}
             ${OME_XML_HEADERS})
-target_link_libraries(ome-xml ome-compat ome-xerces)
+target_link_libraries(ome-xml ome-compat ome-common)
 target_link_libraries(ome-xml ${Boost_DATE_TIME_LIBRARY_RELEASE})
 set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -148,7 +148,9 @@ public class JAIIIOServiceImpl extends AbstractService
     if (options.resolution != null) {
       param.setResolution(options.resolution.intValue());
     }
-    return reader.read(0, param);
+    BufferedImage image = reader.read(0, param);
+    reader.dispose();
+    return image;
   }
 
   /* @see JAIIIOService#readImage(InputStream) */
@@ -171,7 +173,9 @@ public class JAIIIOServiceImpl extends AbstractService
     if (options.resolution != null) {
       param.setResolution(options.resolution.intValue());
     }
-    return reader.readRaster(0, param);
+    Raster raster = reader.readRaster(0, param);
+    reader.dispose();
+    return raster;
   }
 
   /* @see JAIIIOService#readRaster(InputStream) */

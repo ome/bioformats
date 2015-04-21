@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.1.0-SNAPSHOT</version>
+    <version>5.1.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -16,7 +16,7 @@
 
   <name>OME-XML Java library</name>
   <description>A library for working with OME-XML metadata structures.</description>
-  <url>http://ome-xml.org/wiki/OmeXmlJava</url>
+  <url>http://www.openmicroscopy.org/site/support/ome-model/ome-xml/java-library.html</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>

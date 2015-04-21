@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -35,6 +35,13 @@
 # #L%
 
 cmake_policy(SET CMP0007 NEW)
+# Use new variable expansion policy.
+if (POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW)
+endif(POLICY CMP0053)
+if (POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif(POLICY CMP0054)
 
 # Dump headers
 function(header_include_list_write source_headers binary_headers source_prefix test_dir)

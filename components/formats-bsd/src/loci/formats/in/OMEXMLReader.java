@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,6 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.CBZip2InputStream;
@@ -63,7 +62,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.DefaultHandler;
 import com.google.common.io.BaseEncoding;
-import com.google.common.io.ByteStreams;
 
 
 /**
@@ -127,6 +125,7 @@ public class OMEXMLReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (binDataOffsets.size() == 0) return buf;
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int index = no;
@@ -253,10 +252,6 @@ public class OMEXMLReader extends FormatReader {
       binDataOffsets.add(in.getFilePointer() + col - 1);
     }
 
-    if (binDataOffsets.size() == 0) {
-      throw new FormatException("Pixel data not found");
-    }
-
     LOGGER.info("Populating metadata");
 
     OMEXMLMetadata omexmlMeta;
@@ -299,7 +294,10 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Image dimensions not found");
       }
 
-      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+      Boolean endian = null;
+      if (binData.size() > 0) {
+        endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+      }
       String pixType = omexmlMeta.getPixelsType(i).toString();
       ms.dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
       ms.sizeX = w.intValue();

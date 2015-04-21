@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -884,9 +884,8 @@ public abstract class FormatReader extends FormatHandler
       throw new FormatException("Image plane too large. Only 2GB of data can " +
         "be extracted at one time. You can workaround the problem by opening " +
         "the plane in tiles; for further details, see: " +
-        "http://www.openmicroscopy.org/site/support/faq/bio-formats/" +
-        "i-see-an-outofmemory-or-negativearraysize-error-message-when-" +
-        "attempting-to-open-an-svs-or-jpeg-2000-file.-what-does-this-mean", e);
+        "http://www.openmicroscopy.org/site/support/bio-formats/about/" +
+        "bug-reporting.html#common-issues-to-check", e);
     }
     return openBytes(no, newBuffer, x, y, w, h);
   }
@@ -1389,7 +1388,10 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public void setId(String id) throws FormatException, IOException {
     LOGGER.debug("{} initializing {}", this.getClass().getSimpleName(), id);
-    if (!id.equals(currentId)) {
+
+    if (currentId == null || !new Location(id).getAbsolutePath().equals(
+      new Location(currentId).getAbsolutePath()))
+    {
       initFile(id);
 
       MetadataStore store = getMetadataStore();
@@ -1437,7 +1439,7 @@ public abstract class FormatReader extends FormatHandler
     }
   }
 
-  /** Initialize the OMEXMLService needed by {@link setId(String)} */
+  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
   private void setupService() {
     try {
       if (factory == null) factory = new ServiceFactory();

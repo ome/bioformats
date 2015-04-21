@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2014 Open Microscopy Environment:
+ * Copyright (C) 2014 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,9 +31,7 @@
 
 package ome.units.quantity;
 
-import ome.units.quantity.Quantity;
 import ome.units.unit.Unit;
-import ome.units.UNITS;
 
 /**
  * A wrapper for the Frequency class from the units implementation.
@@ -68,6 +66,7 @@ public class Frequency extends Quantity implements Comparable<Frequency>
     hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
 
+  @Override
   public Number value()
   {
     return value;
@@ -86,6 +85,7 @@ public class Frequency extends Quantity implements Comparable<Frequency>
     return null;
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if (other == null)
@@ -140,6 +140,7 @@ public class Frequency extends Quantity implements Comparable<Frequency>
     return result.toString();
   }
 
+  @Override
   public Unit<ome.units.quantity.Frequency> unit()
   {
     return unit;

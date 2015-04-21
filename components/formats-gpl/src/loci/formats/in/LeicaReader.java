@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -83,7 +83,7 @@ public class LeicaReader extends FormatReader {
   private static final int LEICA_MAGIC_TAG = 33923;
 
   /** Format for dates. */
-  private static final String DATE_FORMAT = "yyyy:MM:dd,HH:mm:ss:SSS";
+  private static final String DATE_FORMAT = "yyyy:MM:dd,HH:mm:ss";
 
   /** IFD tags. */
   private static final Integer SERIES = new Integer(10);
@@ -603,7 +603,7 @@ public class LeicaReader extends FormatReader {
       String filename = (String) files[i].get(0);
 
       if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
-        RandomAccessInputStream s = new RandomAccessInputStream(filename);
+        RandomAccessInputStream s = new RandomAccessInputStream(filename, 16);
         try {
           TiffParser parser = new TiffParser(s);
           parser.setDoCaching(false);
@@ -670,7 +670,7 @@ public class LeicaReader extends FormatReader {
       if (i < timestamps.length && timestamps[i] != null &&
         timestamps[i].length > 0)
       {
-        firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT);
+        firstPlane = getTime(timestamps[i][0]);
         String date = DateTools.formatDate(timestamps[i][0], DATE_FORMAT);
         if (date != null) {
           store.setImageAcquisitionDate(new Timestamp(date), i);
@@ -735,7 +735,7 @@ public class LeicaReader extends FormatReader {
 
       for (int j=0; j<ms.imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
-          long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
+          long time = getTime(timestamps[i][j]);
           double elapsedTime = (double) (time - firstPlane) / 1000;
           store.setPlaneDeltaT(new Time(elapsedTime, UNITS.S), i, j);
           if (exposureTime[i] > 0) {
@@ -761,7 +761,7 @@ public class LeicaReader extends FormatReader {
       // need to find the associated .lei file
       if (ifds == null) super.initFile(baseFile);
 
-      in = new RandomAccessInputStream(baseFile);
+      in = new RandomAccessInputStream(baseFile, 16);
       TiffParser tp = new TiffParser(in);
       in.order(tp.checkHeader().booleanValue());
 
@@ -1152,7 +1152,8 @@ public class LeicaReader extends FormatReader {
     addSeriesMeta("Number of time-stamps", numStamps);
     timestamps[seriesIndex] = new String[numStamps];
     for (int j=0; j<numStamps; j++) {
-      timestamps[seriesIndex][j] = getString(64);
+      timestamps[seriesIndex][j] = DateTools.convertDate(
+        getTime(getString(64)), DateTools.UNIX, DATE_FORMAT + ":SSS");
       addSeriesMetaList("Timestamp", timestamps[seriesIndex][j]);
     }
 
@@ -1670,6 +1671,13 @@ public class LeicaReader extends FormatReader {
     table.put(new Integer(5832782), "logical y-wide");
     table.put(new Integer(5898318), "logical z-wide");
     return table;
+  }
+
+  private long getTime(String stamp) {
+    int msSeparator = stamp.lastIndexOf(":");
+    String newStamp = stamp.substring(0, msSeparator);
+    long ms = Long.parseLong(stamp.substring(msSeparator + 1));
+    return DateTools.getTime(newStamp, DATE_FORMAT) + ms;
   }
 
   // -- Helper class --

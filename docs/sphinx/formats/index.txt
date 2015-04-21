@@ -1,7 +1,7 @@
 Formats
 =======
 
-Bio-Formats supports over 120 different file formats. The :doc:`dataset-table` 
+Bio-Formats supports over 140 different file formats. The :doc:`dataset-table`
 explains the file extension you should choose to open/import a dataset in any 
 of these formats, while the :doc:`/supported-formats` table lists all of the 
 formats and gives an indication of how well they are supported and whether 
@@ -29,5 +29,5 @@ would be useful to us.
     dataset-table
     /supported-formats
     /metadata-summary
-
+    pattern-file
 

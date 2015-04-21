@@ -519,6 +519,39 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
+[CellH5Reader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Image.ROIRef = Yes
+Pixels.BigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.Interleaved = Yes
+Pixels.SignificantBits = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+ROI.ID = Yes
+ROI.Name = Yes
+Rectangle.Height = Yes
+Rectangle.ID = Yes
+Rectangle.StrokeColor = Yes
+Rectangle.TheC = Yes
+Rectangle.TheT = Yes
+Rectangle.TheZ = Yes
+Rectangle.Width = Yes
+Rectangle.X = Yes
+Rectangle.Y = Yes
+
 [CellomicsReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
@@ -3803,6 +3836,27 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
+[VeecoReader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Pixels.BigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.Interleaved = Yes
+Pixels.SignificantBits = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
 [VGSAMReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
@@ -4117,6 +4171,31 @@ TransmittanceRange.CutInTolerance = Yes
 TransmittanceRange.CutOut = Yes
 TransmittanceRange.CutOutTolerance = Yes
 TransmittanceRange.Transmittance = Yes
+
+[ZeissLMSReader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Objective.ID = Yes
+Objective.NominalMagnification = Yes
+ObjectiveSettings.ID = Yes
+Pixels.BigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.Interleaved = Yes
+Pixels.SignificantBits = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
 
 [ZeissLSMReader]
 Channel.Color = Yes

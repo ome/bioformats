@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2014 Open Microscopy Environment:
+ * Copyright (C) 2014 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,9 +31,7 @@
 
 package ome.units.quantity;
 
-import ome.units.quantity.Quantity;
 import ome.units.unit.Unit;
-import ome.units.UNITS;
 
 /**
  * A wrapper for the ElectricPotential class from the units implementation.
@@ -68,6 +66,7 @@ public class ElectricPotential extends Quantity implements Comparable<ElectricPo
     hashCodeValue = SEED2 * hashCodeValue + unit.getSymbol().hashCode();
   }
 
+  @Override
   public Number value()
   {
     return value;
@@ -86,6 +85,7 @@ public class ElectricPotential extends Quantity implements Comparable<ElectricPo
     return null;
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if (other == null)
@@ -140,6 +140,7 @@ public class ElectricPotential extends Quantity implements Comparable<ElectricPo
     return result.toString();
   }
 
+  @Override
   public Unit<ome.units.quantity.ElectricPotential> unit()
   {
     return unit;
