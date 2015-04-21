@@ -66,7 +66,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
   // -- Constants --
 
-  private static final String DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";
+  private static final String DATE_FORMAT = "yyyyMMdd HH:mm:ss";
 
   // -- Fields --
 
@@ -401,7 +401,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
         Vector<Double> exposures = handler.getExposures();
 
         for (int i=0; i<timestamps.size(); i++) {
-          long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT);
+          long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT, ".");
           addSeriesMetaList("timestamp", timestamp);
         }
         for (int i=0; i<exposures.size(); i++) {
@@ -411,7 +411,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
         long startDate = 0;
         if (timestamps.size() > 0) {
-          startDate = DateTools.getTime(timestamps.get(0), DATE_FORMAT);
+          startDate = DateTools.getTime(timestamps.get(0), DATE_FORMAT, ".");
         }
 
         store.setImageDescription("", s);
@@ -425,7 +425,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
             if (t < timestamps.size()) {
               String stamp = timestamps.get(t);
-              long ms = DateTools.getTime(stamp, DATE_FORMAT);
+              long ms = DateTools.getTime(stamp, DATE_FORMAT, ".");
               store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.S), s, image);
             }
             if (image < exposures.size() && exposures.get(image) != null) {

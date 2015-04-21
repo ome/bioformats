@@ -203,6 +203,11 @@
         <class name="loci.common.utests.DataToolsTest"/>
       </classes>
     </test>
+    <test name="DateTools">
+      <classes>
+        <class name="loci.common.utests.DateToolsTest"/>
+      </classes>
+    </test>
     <!--
     <test name="Encoding">
       <classes>
