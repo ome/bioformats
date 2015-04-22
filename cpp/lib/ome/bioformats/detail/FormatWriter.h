@@ -241,7 +241,7 @@ namespace ome
          * Check if the image planes in the file have more than one subchannel per
          * openBytes() call for the specified channel.
          *
-         * @param channel the channel to use.
+         * @param channel the channel to use, range [0, EffectiveSizeC).
          * @returns @c true if and only if @c getRGBChannelCount(channel) returns
          * a value greater than 1, @c false otherwise.
          */
@@ -339,7 +339,7 @@ namespace ome
          * this value to be greater than 1 for non-interleaved data, such as an RGB
          * TIFF with Planar rather than Chunky configuration.
          *
-         * @param channel the channel to use.
+         * @param channel the channel to use, range [0, EffectiveSizeC).
          * @returns the number of channels.
          */
         virtual
