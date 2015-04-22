@@ -68,11 +68,11 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
  * after {@link #setId(String)} has been called.
  *
  * Initializing a Bio-Formats reader can consume substantial time and memory.
- * Most of the initialization time is spend in the {@link #setId(String)} call.
+ * Most of the initialization time is spent in the {@link #setId(String)} call.
  * Various factors can impact the performance of this step including the file
  * size, the amount of metadata in the image and also the file format itself.
  *
- * With the {@link Memoizer}, if the time required to call
+ * With the {@link Memoizer} reader wrapper, if the time required to call the
  * {@link #setId(String)} method is larger than {@link #minimumElapsed}, the
  * initialized reader including all reader wrappers will be cached in a memo
  * file via {@link #saveMemo()}.
@@ -81,7 +81,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
  * using {@link #loadMemo()} instead of performing a full reader
  * initialization.
  *
- * By essence, the speedup gained from memoization will only happen after the
+ * In essence, the speed-up gained from memoization will happen only after the
  * first initialization of the reader for a particular file.
  */
 public class Memoizer extends ReaderWrapper {
@@ -363,7 +363,7 @@ public class Memoizer extends ReaderWrapper {
   private final File directory;
 
   /**
-   * If <code>true</code>, then all memo files will be created in the same
+   * If {@code true}, then all memo files will be created in the same
    * directory as the original file.
    */
   private boolean doInPlaceCaching = false;
@@ -518,8 +518,8 @@ public class Memoizer extends ReaderWrapper {
    *  Returns whether the {@link #reader} instance currently active was loaded
    *  from the memo file during {@link #setId(String)}.
    *
-   *  @return <code>true</true> if the reader was loaded from the memo file,
-   *  <code>false</true> otherwise.
+   *  @return {@code true} if the reader was loaded from the memo file,
+   *  {@code false} otherwise.
    */
   public boolean isLoadedFromMemo() {
     return loadedFromMemo;
@@ -529,8 +529,8 @@ public class Memoizer extends ReaderWrapper {
    *  Returns whether the {@link #reader} instance currently active was saved
    *  to the memo file during {@link #setId(String)}.
    *
-   *  @return <code>true</true> if the reader was saved to the memo file,
-   *  <code>false</true> otherwise.
+   *  @return {@code true} if the reader was saved to the memo file,
+   *  {@code false} otherwise.
    */
   public boolean isSavedToMemo() {
     return savedToMemo;
@@ -548,7 +548,7 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   * Returns true if the version of the memo file as returned by
+   * Returns {@code true} if the version of the memo file as returned by
    * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
    * do not match the current version as specified by {@link FormatTools#VERSION}
    * and {@link FormatTools#VCS_REVISION}, respectively.
@@ -593,11 +593,11 @@ public class Memoizer extends ReaderWrapper {
    * Set whether version checking is done based upon major/minor version
    * numbers.
    *
-   * If <code>true</code>, then a mismatch between the major/minor version of
-   * the calling code (e.g. 4.4) and the major/minor version saved in the memo
+   * If {@code true}, then a mismatch between the major/minor version of the
+   * calling code (e.g. 4.4) and the major/minor version saved in the memo
    * file (e.g. 5.0) will result in the memo file being invalidated.
    *
-   * If <code>false</code> (default), a mismatch in the Git commit hashes will
+   * If {@code false} (default), a mismatch in the Git commit hashes will
    * invalidate the memo file.
    *
    * This method allows for less strict version checking.
@@ -703,8 +703,8 @@ public class Memoizer extends ReaderWrapper {
    * warn if the deletion returns false or at error
    * if an exception is thrown.
    *
-   * @return the result from {@link java.io.File#delete}
-   *   or <code>false</code> if an exception is thrown.
+   * @return the result from {@link java.io.File#delete} or {@code false} if
+   * an exception is thrown.
    */
   protected boolean deleteQuietly(File file) {
     try {
@@ -752,7 +752,7 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   * Constructs a {@link File} object from <code>id</code> string. This method
+   * Constructs a {@link File} object from {@code id} string. This method
    * can be modified by consumers, but then existing memo files will not be
    * found.
    *
