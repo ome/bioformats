@@ -1,6 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
+ * %%
  * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -35,39 +36,51 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_TYPES_H
-#define OME_BIOFORMATS_TYPES_H
+#ifndef TEST_TIFFSAMPLES_H
+#define TEST_TIFFSAMPLES_H
 
-#include <algorithm>
-#include <cstddef>
-#include <iterator>
-#include <stdexcept>
-#include <string>
+#include <boost/filesystem.hpp>
+
+#include <ome/bioformats/Types.h>
+
+#include <ome/compat/regex.h>
+
+#include <ome/internal/config.h>
+
+#include <ome/test/config.h>
+#include <ome/test/test.h>
+
 #include <vector>
 
-#include <boost/format.hpp>
-#include <boost/optional.hpp>
-
-#include <ome/compat/cstdint.h>
-
-namespace ome
+struct TileTestParameters
 {
-  namespace bioformats
-  {
+  bool tile;
+  std::string file;
+  std::string wfile;
+  bool imageplanar;
+  ome::bioformats::dimension_size_type imagewidth;
+  ome::bioformats::dimension_size_type imagelength;
+  ome::bioformats::dimension_size_type tilewidth;
+  ome::bioformats::dimension_size_type tilelength;
+};
 
-    /// Size type for image dimensions.
-    typedef std::size_t dimension_size_type;
-
-    /// Size type for pixel bit depths.
-    typedef uint32_t pixel_size_type;
-
-    /// Size type for storage size.
-    typedef uint64_t storage_size_type;
-
-  }
+template<class charT, class traits>
+inline std::basic_ostream<charT,traits>&
+operator<< (std::basic_ostream<charT,traits>& os,
+            const TileTestParameters& p)
+{
+  return os << p.file << " [" << p.wfile << "] ("
+            << p.imagewidth << "x" << p.imagelength
+            << (p.imageplanar ? " planar" : " chunky")
+            << (p.tile ? " tiled " : " strips ")
+            << p.tilewidth << "x" << p.tilelength
+            << ")";
 }
 
-#endif // OME_BIOFORMATS_TYPES_H
+extern std::vector<TileTestParameters>
+find_tile_tests();
+
+#endif // TEST_TIFFSAMPLES_H
 
 /*
  * Local Variables:

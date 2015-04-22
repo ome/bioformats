@@ -912,9 +912,9 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
-      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
+      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
 
-      if (!(expectedSize == null && realSize == null) &&
+      if (!(expectedSize == null && size == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -937,9 +937,9 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
-      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
+      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
 
-      if (!(expectedSize == null && realSize == null) &&
+      if (!(expectedSize == null && size == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -963,9 +963,9 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
+      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
 
-      if (!(expectedSize == null && realSize == null) &&
+      if (!(expectedSize == null && size == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -1651,6 +1651,9 @@ public class FormatReaderTest {
 
           for (int j=0; j<comp.length && success; j++) {
             if (!comp[j].equals(base[j])) {
+              if (base[j].equals(new Location(comp[j]).getCanonicalPath())) {
+                continue;
+              }
               success = false;
               msg = base[i] + "(file @ " + j + " was '" + comp[j] +
                 "', expected '" + base[j] + "')";

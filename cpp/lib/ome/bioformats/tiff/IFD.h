@@ -370,6 +370,22 @@ namespace ome
         setPixelType(::ome::xml::model::enums::PixelType type);
 
         /**
+         * Get bits per sample.
+         *
+         * @returns the number of bits per sample.
+         */
+        uint16_t
+        getBitsPerSample() const;
+
+        /**
+         * Set bits per sample.
+         *
+         * @param samples the number of bits per sample.
+         */
+        void
+        setBitsPerSample(uint16_t samples);
+
+        /**
          * Get samples per pixel.
          *
          * @returns the number of samples per pixel.
@@ -426,6 +442,14 @@ namespace ome
         readImage(VariantPixelBuffer& buf) const;
 
         /**
+         * @copydoc IFD::readImage(VariantPixelBuffer&) const
+         * @param subC the subchannel to read.
+         */
+        void
+        readImage(VariantPixelBuffer& buf,
+                  dimension_size_type subC) const;
+
+        /**
          * Read a region of an image plane into a pixel buffer.
          *
          * If the destination pixel buffer is of a different size to
@@ -447,6 +471,18 @@ namespace ome
                   dimension_size_type h) const;
 
         /**
+         * @copydoc IFD::readImage(VariantPixelBuffer&,dimension_size_type,dimension_size_type,dimension_size_type,dimension_size_type) const
+         * @param subC the subchannel to read.
+         */
+        void
+        readImage(VariantPixelBuffer& dest,
+                  dimension_size_type x,
+                  dimension_size_type y,
+                  dimension_size_type w,
+                  dimension_size_type h,
+                  dimension_size_type subC) const;
+
+        /**
          * Read a lookup table into a pixel buffer.
          *
          * @param buf the destination pixel buffer.
@@ -461,6 +497,14 @@ namespace ome
          */
         void
         writeImage(const VariantPixelBuffer& buf);
+
+        /**
+         * @copydoc IFD::writeImage(const VariantPixelBuffer&)
+         * @param subC the subchannel to write.
+         */
+        void
+        writeImage(const VariantPixelBuffer& buf,
+                   dimension_size_type       subC);
 
         /**
          * Write a whole image plane from a pixel buffer.
@@ -483,6 +527,18 @@ namespace ome
                    dimension_size_type       h);
 
         /**
+         * @copydoc IFD::writeImage(const VariantPixelBuffer&,dimension_size_type,dimension_size_type,dimension_size_type,dimension_size_type)
+         * @param subC the subchannel to write.
+         */
+        void
+        writeImage(const VariantPixelBuffer& source,
+                   dimension_size_type       x,
+                   dimension_size_type       y,
+                   dimension_size_type       w,
+                   dimension_size_type       h,
+                   dimension_size_type       subC);
+
+        /**
          * Get next directory.
          *
          * @returns the next directory, or null if this is the last directory.
@@ -498,15 +554,6 @@ namespace ome
         bool
         last() const;
       };
-
-      /**
-       * Create CoreMetadata from an IFD.
-       *
-       * @param ifd the IFD to use.
-       * @returns the CoreMetadata.
-       */
-      ome::compat::shared_ptr<CoreMetadata>
-      makeCoreMetadata(const IFD& ifd);
 
     }
   }

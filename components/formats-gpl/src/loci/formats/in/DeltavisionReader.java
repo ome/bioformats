@@ -26,9 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -163,7 +164,7 @@ public class DeltavisionReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     if (!noPixels) files.add(currentId);
     if (logFile != null) files.add(logFile);
     if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
@@ -387,8 +388,8 @@ public class DeltavisionReader extends FormatReader {
 
     ndFilters = new Double[getSizeC()];
 
-    final Vector<Length> uniqueTileX = new Vector<Length>();
-    final Vector<Length> uniqueTileY = new Vector<Length>();
+    final List<Length> uniqueTileX = new ArrayList<Length>();
+    final List<Length> uniqueTileY = new ArrayList<Length>();
 
     // Run through every image and fill in the
     // Extended Header information array for that image
@@ -960,6 +961,9 @@ public class DeltavisionReader extends FormatReader {
 
     int currentImage = 0;
 
+    List<String> channelNames = new ArrayList<String>();
+    List<Double> filters = new ArrayList<Double>();
+
     for (String line : lines) {
       int colon = line.indexOf(":");
       if (colon != -1 && !line.startsWith("Created")) {
@@ -1128,23 +1132,17 @@ public class DeltavisionReader extends FormatReader {
         }
         // Plane properties
         else if (key.equals("EM filter")) {
-          int cIndex = 0;
-          try {
-            cIndex = getZCTCoords(currentImage)[1];
-          }
-          catch (IllegalArgumentException e) {
-            LOGGER.debug("", e);
-          }
-          for (int series=0; series<getSeriesCount(); series++) {
-            store.setChannelName(value, series, cIndex);
+          if (!channelNames.contains(value)) {
+            channelNames.add(value);
           }
         }
         else if (key.equals("ND filter")) {
           value = value.replaceAll("%", "");
           try {
-            int cIndex = getZCTCoords(currentImage)[1];
-            double nd = Double.parseDouble(value);
-            ndFilters[cIndex] = new Double(nd / 100);
+            double nd = Double.parseDouble(value) / 100;
+            if (!filters.contains(nd)) {
+              filters.add(nd);
+            }
           }
           catch (NumberFormatException exc) {
             // "BLANK" is the default (e.g. for deconvolved data),
@@ -1152,6 +1150,7 @@ public class DeltavisionReader extends FormatReader {
             if (!value.equals("BLANK")) {
               LOGGER.warn("Could not parse ND filter '{}'", value);
             }
+            filters.add(null);
           }
           catch (IllegalArgumentException e) {
             LOGGER.debug("", e);
@@ -1206,6 +1205,17 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
+    for (int series=0; series<getSeriesCount(); series++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (c < channelNames.size()) {
+          store.setChannelName(channelNames.get(c), series, c);
+        }
+        if (c < filters.size()) {
+          ndFilters[c] = filters.get(c);
+        }
+      }
+    }
+
     return true;
   }
 
@@ -1232,10 +1242,10 @@ public class DeltavisionReader extends FormatReader {
 
       if (doStatistics) {
         String[] keys = line.split("  ");
-        Vector<String> realKeys = new Vector<String>();
+        final List<String> realKeys = new ArrayList<String>();
         for (int i=0; i<keys.length; i++) {
           keys[i] = keys[i].trim();
-          if (keys[i].length() > 0) realKeys.add(keys[i]);
+          if (!keys[i].isEmpty()) realKeys.add(keys[i]);
         }
         keys = realKeys.toArray(new String[0]);
 
@@ -1244,10 +1254,10 @@ public class DeltavisionReader extends FormatReader {
         line = s.readLine().trim();
         while (line != null && line.length() != 0) {
           String[] values = line.split(" ");
-          Vector<String> realValues = new Vector<String>();
+          final List<String> realValues = new ArrayList<String>();
           for (int i=0; i<values.length; i++) {
             values[i] = values[i].trim();
-            if (values[i].length() > 0) { realValues.add(values[i]); }
+            if (!values[i].isEmpty()) { realValues.add(values[i]); }
           }
           values = realValues.toArray(new String[0]);
 

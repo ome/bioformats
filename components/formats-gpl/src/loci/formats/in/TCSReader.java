@@ -61,7 +61,7 @@ public class TCSReader extends FormatReader {
 
   // -- Constants --
 
-  public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss.SSS";
+  public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
   public static final String PREFIX =
     "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>";
   public static final String SUFFIX = "</LEICA>";
@@ -345,7 +345,7 @@ public class TCSReader extends FormatReader {
       idx[i] = Integer.parseInt(n);
 
       date = document.substring(space, document.indexOf("FORMAT")).trim();
-      stamp[i] = DateTools.getTime(date, DATE_FORMAT);
+      stamp[i] = DateTools.getTime(date, DATE_FORMAT, ".");
       addGlobalMetaList("Timestamp for plane", stamp[i]);
     }
 

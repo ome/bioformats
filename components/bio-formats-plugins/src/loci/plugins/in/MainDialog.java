@@ -45,9 +45,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
@@ -219,17 +220,17 @@ public class MainDialog extends ImporterDialog
   /** Fancies up the importer dialog to look much nicer. */
   private void rebuildDialog(GenericDialog gd) {
     // extract GUI components from dialog and add listeners
-    Vector<Checkbox> boxes = null;
-    Vector<Choice> choices = null;
-    Vector<Label> labels = null;
+    List<Checkbox> boxes = null;
+    List<Choice> choices = null;
+    List<Label> labels = null;
     Label colorModeLabel = null;
     Label stackFormatLabel = null;
     Label stackOrderLabel = null;
     Component[] c = gd.getComponents();
     if (c != null) {
-      boxes = new Vector<Checkbox>();
-      choices = new Vector<Choice>();
-      labels = new Vector<Label>();
+      boxes = new ArrayList<Checkbox>();
+      choices = new ArrayList<Choice>();
+      labels = new ArrayList<Label>();
       for (int i=0; i<c.length; i++) {
         if (c[i] instanceof Checkbox) {
           Checkbox item = (Checkbox) c[i];

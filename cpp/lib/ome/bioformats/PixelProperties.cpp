@@ -142,6 +142,51 @@ namespace ome
       return size;
     }
 
+    pixel_size_type
+    significantBitsPerPixel(::ome::xml::model::enums::PixelType pixeltype)
+    {
+      pixel_size_type size = 0;
+
+      switch(pixeltype)
+        {
+        case ::ome::xml::model::enums::PixelType::INT8:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::INT16:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::INT32:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT8:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT16:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT32:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::FLOAT:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLE:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::BIT:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::COMPLEX:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_significant_bit_size();
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_significant_bit_size();
+          break;
+        }
+
+      return size;
+    }
+
     bool
     isSigned(::ome::xml::model::enums::PixelType pixeltype)
     {

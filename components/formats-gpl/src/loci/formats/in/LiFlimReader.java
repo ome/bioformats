@@ -448,7 +448,7 @@ public class LiFlimReader extends FormatReader {
           store.setImageAcquisitionDate(new Timestamp(date), 0);
         }
         firstStamp = stamp;
-        deltaT = new Double(0);
+        deltaT = Double.valueOf(0);
       }
       else {
         long ms = stamp - firstStamp;

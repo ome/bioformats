@@ -33,9 +33,15 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -74,7 +80,7 @@ public class DicomReader extends FormatReader {
     "dic", "dcm", "dicom", "j2ki", "j2kr"
   };
 
-  private static final Hashtable<Integer, String> TYPES = buildTypes();
+  private static final ImmutableMap<Integer, String> TYPES = buildTypes();
 
   private static final int PIXEL_REPRESENTATION = 0x00280103;
   private static final int PIXEL_SIGN = 0x00281041;
@@ -136,7 +142,7 @@ public class DicomReader extends FormatReader {
   private String pixelSizeX, pixelSizeY;
   private Double pixelSizeZ;
 
-  private Hashtable<Integer, Vector<String>> fileList;
+  private Map<Integer, List<String>> fileList;
   private int imagesPerFile;
 
   private String originalDate, originalTime, originalInstance;
@@ -144,7 +150,7 @@ public class DicomReader extends FormatReader {
 
   private DicomReader helper;
 
-  private Vector<String> companionFiles = new Vector<String>();
+  private List<String> companionFiles = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -182,7 +188,7 @@ public class DicomReader extends FormatReader {
 
     try {
       int tag = getNextTag(stream);
-      return TYPES.get(new Integer(tag)) != null;
+      return TYPES.containsKey(tag);
     }
     catch (NullPointerException e) { }
     catch (FormatException e) { }
@@ -220,11 +226,11 @@ public class DicomReader extends FormatReader {
     if (noPixels || fileList == null) return null;
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
-    Vector<String> files = fileList.get(keys[getSeries()]);
+    final List<String> files = fileList.get(keys[getSeries()]);
     if (files == null) {
       return null;
     }
-    Vector<String> uniqueFiles = new Vector<String>();
+    final List<String> uniqueFiles = new ArrayList<String>();
     for (String f : files) {
       if (!uniqueFiles.contains(f)) {
         uniqueFiles.add(f);
@@ -882,7 +888,7 @@ public class DicomReader extends FormatReader {
       inSequence = false;
     }
 
-    String id = TYPES.get(new Integer(tag));
+    String id = TYPES.get(tag);
 
     if (id != null) {
       if (vr == IMPLICIT_VR && id != null) {
@@ -1099,9 +1105,9 @@ public class DicomReader extends FormatReader {
       originalTime != null && isGroupFiles())
     {
       currentId = new Location(currentId).getAbsolutePath();
-      fileList = new Hashtable<Integer, Vector<String>>();
-      Integer s = new Integer(originalSeries);
-      fileList.put(s, new Vector<String>());
+      fileList = new HashMap<Integer, List<String>>();
+      final Integer s = originalSeries;
+      fileList.put(s, new ArrayList<String>());
 
       int instanceNumber = Integer.parseInt(originalInstance) - 1;
       if (instanceNumber == 0) fileList.get(s).add(currentId);
@@ -1128,20 +1134,18 @@ public class DicomReader extends FormatReader {
         }
       }
 
-      Integer[] keys = fileList.keySet().toArray(new Integer[0]);
-      Arrays.sort(keys);
-      for (Integer key : keys) {
-        for (int j=0; j<fileList.get(key).size(); j++) {
-          if (fileList.get(key).get(j) == null) {
-            fileList.get(key).remove(j);
-            j--;
+      for (final List<String> files : fileList.values()) {
+        final Iterator<String> fileIterator = files.iterator();
+        while (fileIterator.hasNext()) {
+          if (fileIterator.next() == null) {
+            fileIterator.remove();
           }
         }
       }
     }
     else if (fileList == null || !isGroupFiles()) {
-      fileList = new Hashtable<Integer, Vector<String>>();
-      fileList.put(new Integer(0), new Vector<String>());
+      fileList = new HashMap<Integer, List<String>>();
+      fileList.put(0, new ArrayList<String>());
       fileList.get(0).add(currentId);
     }
   }
@@ -1207,7 +1211,7 @@ public class DicomReader extends FormatReader {
       long fp = stream.getFilePointer();
       if (fp + 4 >= stream.length() || fp < 0) break;
       int tag = getNextTag(stream);
-      String key = TYPES.get(new Integer(tag));
+      final String key = TYPES.get(tag);
       if ("Instance Number".equals(key)) {
         instance = stream.readString(elementLength).trim();
         if (instance.length() == 0) instance = null;
@@ -1247,7 +1251,7 @@ public class DicomReader extends FormatReader {
       int position = Integer.parseInt(instance) - 1;
       if (position < 0) position = 0;
       if (fileList.get(fileSeries) == null) {
-        fileList.put(new Integer(fileSeries), new Vector<String>());
+        fileList.put(fileSeries, new ArrayList<String>());
       }
       if (position < fileList.get(fileSeries).size()) {
         while (position < fileList.get(fileSeries).size() &&
@@ -1256,7 +1260,7 @@ public class DicomReader extends FormatReader {
           position++;
         }
         if (position < fileList.get(fileSeries).size()) {
-          fileList.get(fileSeries).setElementAt(file, position);
+          fileList.get(fileSeries).set(position, file);
         }
         else if (!fileList.get(fileSeries).contains(file)) {
           fileList.get(fileSeries).add(file);
@@ -1307,8 +1311,8 @@ public class DicomReader extends FormatReader {
    * This is incomplete at best, since there are literally thousands of
    * fields defined by the DICOM specifications.
    */
-  private static Hashtable<Integer, String> buildTypes() {
-    Hashtable<Integer, String> dict = new Hashtable<Integer, String>();
+  private static ImmutableMap<Integer, String> buildTypes() {
+    final Builder<Integer, String> dict = ImmutableMap.builder();
 
     dict.put(new Integer(0x00020002), "Media Storage SOP Class UID");
     dict.put(new Integer(0x00020003), "Media Storage SOP Instance UID");
@@ -1923,7 +1927,7 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00540400), "Image ID");
     dict.put(new Integer(0x20100100), "Border Density");
 
-    return dict;
+    return dict.build();
   }
 
 }

@@ -260,7 +260,7 @@ public class InveonReader extends FormatReader {
         }
         else if (key.equals("file_name")) {
           // remove path from stored file name, if present
-          value = value.replaceAll("/", File.separator);
+          value = value.replace('/', File.separatorChar);
           value = value.replace('\\', File.separatorChar);
           value = value.substring(value.lastIndexOf(File.separator) + 1);
 

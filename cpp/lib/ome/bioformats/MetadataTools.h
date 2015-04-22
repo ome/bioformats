@@ -226,6 +226,20 @@ namespace ome
                  bool                             doImageName = true);
 
     /**
+     * Fill OME-XML metadata store from core metadata.
+     *
+     * The metadata store is expected to be empty.
+     *
+     * @param store the OME-XML metadata store.
+     * @param seriesList the core metadata to use.
+     * @param doPlane create Plane elements if @c true.
+     */
+    void
+    fillMetadata(::ome::xml::meta::MetadataStore&                          store,
+                 const std::vector<ome::compat::shared_ptr<CoreMetadata> > seriesList,
+                 bool                                                      doPlane = false);
+
+    /**
      * Fill all OME-XML metadata store Pixels elements from reader core metadata.
      *
      * Set Pixels metadata for all series.
@@ -248,6 +262,20 @@ namespace ome
     void
     fillPixels(::ome::xml::meta::MetadataStore& store,
                const FormatReader&              reader);
+
+    /**
+     * Fill an OME-XML metadata store Pixels element from core metadata.
+     *
+     * Set Pixels metadata for the the specified series.
+     *
+     * @param store the OME-XML metadata store.
+     * @param seriesMetadata the seriesMetadata the metadata to use.
+     * @param series the series to set.
+     */
+    void
+    fillPixels(::ome::xml::meta::MetadataStore& store,
+               const CoreMetadata&              seriesMetadata,
+               dimension_size_type              series);
 
     /**
      * Add a MetadataOnly element to Pixels for the specified series.
@@ -450,6 +478,59 @@ namespace ome
      */
     ome::xml::model::enums::DimensionOrder
     createDimensionOrder(const std::string& order);
+
+    /**
+     * Get the total size of pixel data in a series.
+     *
+     * The size for the pixel type is rounded up to the nearest byte
+     * before multiplying by the dimension sizes.
+     *
+     * @param meta the metadata to use.
+     * @param series the image series to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+              dimension_size_type                       series);
+
+    /**
+     * Get the total size of pixel data for all series.
+     *
+     * The size for the pixel type is rounded up to the nearest byte
+     * before multiplying by the dimension sizes.
+     *
+     * @param meta the metadata to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta);
+
+
+    /**
+     * Get the total significant size of pixel data in a series.
+     *
+     * The significant size for the pixel type (in bits) is multiplied
+     * by the dimension sizes before converting to bytes.
+     *
+     * @param meta the metadata to use.
+     * @param series the image series to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+                         dimension_size_type                       series);
+
+    /**
+     * Get the total significant size of pixel data for all series.
+     *
+     * The significant size for the pixel type (in bits) is multiplied
+     * by the dimension sizes before converting to bytes.
+     *
+     * @param meta the metadata to use.
+     * @returns the size (in bytes).
+     */
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta);
 
   }
 }

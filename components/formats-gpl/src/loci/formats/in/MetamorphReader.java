@@ -79,8 +79,7 @@ public class MetamorphReader extends BaseTiffReader {
     LoggerFactory.getLogger(MetamorphReader.class);
 
   public static final String SHORT_DATE_FORMAT = "yyyyMMdd HH:mm:ss";
-  public static final String MEDIUM_DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";
-  public static final String LONG_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss:SSS";
+  public static final String LONG_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
   public static final String[] ND_SUFFIX = {"nd"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
@@ -830,13 +829,15 @@ public class MetamorphReader extends BaseTiffReader {
       timestamps = handler.getTimestamps();
 
       for (int t=0; t<timestamps.size(); t++) {
-        addSeriesMetaList("timestamp", DateTools.formatDate(timestamps.get(t),
-          MEDIUM_DATE_FORMAT));
+        String date = DateTools.convertDate(DateTools.getTime(
+          timestamps.get(t), SHORT_DATE_FORMAT, "."), DateTools.UNIX,
+          SHORT_DATE_FORMAT + ".SSS");
+        addSeriesMetaList("timestamp", date);
       }
 
       long startDate = 0;
       if (timestamps.size() > 0) {
-        startDate = DateTools.getTime(timestamps.get(0), MEDIUM_DATE_FORMAT);
+        startDate = DateTools.getTime(timestamps.get(0), SHORT_DATE_FORMAT, ".");
       }
 
       final Length positionX = handler.getStagePositionX();
@@ -878,7 +879,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
-        Double deltaT = new Double(0);
+        Double deltaT = Double.valueOf(0);
         Double expTime = exposureTime;
         Double xmlZPosition = null;
 
@@ -940,7 +941,7 @@ public class MetamorphReader extends BaseTiffReader {
         if (timestamps.size() > 0) {
           if (coords[2] < timestamps.size()) index = coords[2];
           String stamp = timestamps.get(index);
-          long ms = DateTools.getTime(stamp, MEDIUM_DATE_FORMAT);
+          long ms = DateTools.getTime(stamp, SHORT_DATE_FORMAT, ".");
           deltaT = new Double((ms - startDate) / 1000.0);
         }
         else if (internalStamps != null && p < internalStamps.length) {
@@ -1418,7 +1419,7 @@ public class MetamorphReader extends BaseTiffReader {
       cTime = decodeTime(in.readInt());
 
       internalStamps[i] = DateTools.getTime(cDate + " " + cTime,
-        LONG_DATE_FORMAT);
+        LONG_DATE_FORMAT, ":");
 
       addSeriesMeta("creationDate[" + iAsString + "]", cDate);
       addSeriesMeta("creationTime[" + iAsString + "]", cTime);

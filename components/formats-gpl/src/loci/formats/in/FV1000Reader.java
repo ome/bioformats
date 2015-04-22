@@ -32,8 +32,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -107,7 +107,7 @@ public class FV1000Reader extends FormatReader {
   private IniParser parser = new IniParser();
 
   /** Names of every TIFF file to open. */
-  private Vector<String> tiffs;
+  private List<String> tiffs;
 
   /** Name of thumbnail file. */
   private String thumbId;
@@ -116,34 +116,34 @@ public class FV1000Reader extends FormatReader {
   private BMPReader thumbReader;
 
   /** Used file list. */
-  private Vector<String> usedFiles;
+  private List<String> usedFiles;
 
   /** Flag indicating this is an OIB dataset. */
   private boolean isOIB;
 
   /** File mappings for OIB file. */
-  private Hashtable<String, String> oibMapping;
+  private Map<String, String> oibMapping;
 
   private String[] code, size;
   private Double[] pixelSize;
   private int imageDepth;
-  private Vector<String> previewNames;
+  private List<String> previewNames;
 
   private String pixelSizeX, pixelSizeY;
   private int validBits;
-  private Vector<String> illuminations;
-  private Vector<Double> wavelengths;
+  private List<String> illuminations;
+  private List<Double> wavelengths;
   private String pinholeSize;
   private String magnification, lensNA, objectiveName, workingDistance;
   private String creationDate;
 
-  private Vector<ChannelData> channels;
-  private Vector<String> lutNames = new Vector<String>();
-  private Hashtable<Integer, String> filenames =
-    new Hashtable<Integer, String>();
-  private Hashtable<Integer, String> roiFilenames =
-    new Hashtable<Integer, String>();
-  private Vector<PlaneData> planes;
+  private List<ChannelData> channels;
+  private List<String> lutNames = new ArrayList<String>();
+  private Map<Integer, String> filenames =
+    new HashMap<Integer, String>();
+  private Map<Integer, String> roiFilenames =
+    new HashMap<Integer, String>();
+  private List<PlaneData> planes;
 
   private transient POIService poi;
 
@@ -305,7 +305,7 @@ public class FV1000Reader extends FormatReader {
       return noPixels ? null : new String[] {currentId};
     }
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     if (usedFiles != null) {
       for (String file : usedFiles) {
         String f = file.toLowerCase();
@@ -390,10 +390,10 @@ public class FV1000Reader extends FormatReader {
     // list of associated files.
     boolean mappedOIF = !isOIB && !new File(id).getAbsoluteFile().exists();
 
-    wavelengths = new Vector<Double>();
-    illuminations = new Vector<String>();
-    channels = new Vector<ChannelData>();
-    planes = new Vector<PlaneData>();
+    wavelengths = new ArrayList<Double>();
+    illuminations = new ArrayList<String>();
+    channels = new ArrayList<ChannelData>();
+    planes = new ArrayList<PlaneData>();
 
     String oifName = null;
 
@@ -430,7 +430,7 @@ public class FV1000Reader extends FormatReader {
     size = new String[NUM_DIMENSIONS];
     pixelSize = new Double[NUM_DIMENSIONS];
 
-    previewNames = new Vector<String>();
+    previewNames = new ArrayList<String>();
     boolean laserEnabled = true;
 
     IniList f = getIniFile(oifName);
@@ -480,7 +480,7 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
-    if (filenames.size() == 0) addPtyFiles();
+    if (filenames.isEmpty()) addPtyFiles();
 
     for (int i=0; i<NUM_DIMENSIONS; i++) {
       IniTable commonParams = f.getTable("Axis " + i + " Parameters Common");
@@ -572,7 +572,7 @@ public class FV1000Reader extends FormatReader {
     // populate core metadata for preview series
 
     if (previewNames.size() > 0) {
-      Vector<String> v = new Vector<String>();
+      final List<String> v = new ArrayList<String>();
       for (int i=0; i<previewNames.size(); i++) {
         String ss = previewNames.get(i);
         ss = replaceExtension(ss, "pty", "tif");
@@ -609,7 +609,7 @@ public class FV1000Reader extends FormatReader {
     }
     CoreMetadata ms0 = core.get(0);
     ms0.imageCount = filenames.size();
-    tiffs = new Vector<String>(getImageCount());
+    tiffs = new ArrayList<String>(getImageCount());
 
     thumbReader = new BMPReader();
     if (thumbId != null) {
@@ -625,8 +625,8 @@ public class FV1000Reader extends FormatReader {
 
     ms0.dimensionOrder = "XY";
 
-    Hashtable<String, String> values = new Hashtable<String, String>();
-    Vector<String> baseKeys = new Vector<String>();
+    final Map<String, String> values = new HashMap<String, String>();
+    final List<String> baseKeys = new ArrayList<String>();
 
     for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
       String file = filenames.get(new Integer(i));
@@ -652,11 +652,18 @@ public class FV1000Reader extends FormatReader {
           if (!tiffFile.getParentFile().exists()) {
             String realOIFName = new Location(currentId).getName();
             String basePath = tiffFile.getParentFile().getParent();
-            Location newFile = new Location(basePath, realOIFName + ".files");
-            String realDirectory = newFile.getName();
-            ptyFile = new Location(newFile, ptyFile.getName());
-            file = ptyFile.getAbsolutePath();
-            tiffPath = newFile.getAbsolutePath();
+
+            if (mappedOIF) {
+              tiffPath = basePath + File.separator + realOIFName + ".files";
+              ptyFile = new Location(tiffPath, ptyFile.getName());
+              file = ptyFile.getAbsolutePath();
+            }
+            else {
+              Location newFile = new Location(basePath, realOIFName + ".files");
+              ptyFile = new Location(newFile, ptyFile.getName());
+              file = ptyFile.getAbsolutePath();
+              tiffPath = newFile.getAbsolutePath();
+            }
           }
         }
       }
@@ -777,7 +784,7 @@ public class FV1000Reader extends FormatReader {
       ms0.imageCount = tiffs.size();
     }
 
-    usedFiles = new Vector<String>();
+    usedFiles = new ArrayList<String>();
 
     if (tiffPath != null) {
       usedFiles.add(isOIB ? id : oifName);
@@ -1508,7 +1515,7 @@ public class FV1000Reader extends FormatReader {
   private String mapOIBFiles() throws FormatException, IOException {
     String oifName = null;
     String infoFile = null;
-    Vector<String> list = poi.getDocumentList();
+    final List<String> list = poi.getDocumentList();
     for (String name : list) {
       if (name.endsWith("OibInfo.txt")) {
         infoFile = name;
@@ -1520,7 +1527,7 @@ public class FV1000Reader extends FormatReader {
     }
     RandomAccessInputStream ras = poi.getDocumentStream(infoFile);
 
-    oibMapping = new Hashtable<String, String>();
+    oibMapping = new HashMap<String, String>();
 
     // set up file name mappings
 
@@ -1662,7 +1669,7 @@ public class FV1000Reader extends FormatReader {
   private static int[] scanFormat(String pattern, String string)
     throws FormatException
   {
-    Vector<Integer> percentOffsets = new Vector<Integer>();
+    final List<Integer> percentOffsets = new ArrayList<Integer>();
     int offset = -1;
     for (;;) {
       offset = pattern.indexOf('%', offset + 1);

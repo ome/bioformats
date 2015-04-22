@@ -81,6 +81,7 @@ namespace ome
         currentId(boost::none),
         out(),
         series(0),
+        plane(0),
         compression(boost::none),
         sequential(false),
         framesPerSecond(0),
@@ -91,6 +92,13 @@ namespace ome
 
       FormatWriter::~FormatWriter()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void
@@ -101,22 +109,6 @@ namespace ome
             if (out)
               out = ome::compat::shared_ptr<std::ostream>();
 
-            SaveSeries sentry(*this);
-
-            ome::compat::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
-
-            for (dimension_size_type  s = 0;
-                 s < mr->getImageCount();
-                 ++s)
-              {
-                setSeries(s);
-
-                dimension_size_type z = mr->getPixelsSizeZ(s);
-                dimension_size_type t = mr->getPixelsSizeT(s);
-                dimension_size_type c = mr->getPixelsSizeC(s);
-                c /= mr->getChannelSamplesPerPixel(s, 0);
-              }
-
             currentId = id;
           }
       }
@@ -125,11 +117,16 @@ namespace ome
       FormatWriter::close(bool fileOnly)
       {
         if (out)
-          out = ome::compat::shared_ptr<std::ostream>(); // set to null.
+          out.reset(); // set to null.
         if (!fileOnly)
           {
             currentId = boost::none;
             series = 0;
+            plane = 0;
+            compression = boost::none;
+            sequential = false;
+            framesPerSecond = 0;
+            metadataRetrieve.reset();
           }
       }
 
@@ -162,21 +159,67 @@ namespace ome
       void
       FormatWriter::setSeries(dimension_size_type no) const
       {
+        assertId(currentId, true);
+
         if (no >= metadataRetrieve->getImageCount())
           {
             boost::format fmt("Invalid series: %1%");
             fmt % no;
             throw std::logic_error(fmt.str());
           }
+
+        const dimension_size_type currentSeries = getSeries();
+        if (currentSeries != no &&
+            (no > 0 && currentSeries != no - 1))
+          {
+            boost::format fmt("Series set out of order: %1% (currently %2%)");
+            fmt % no % currentSeries;
+            throw std::logic_error(fmt.str());
+          }
+
         series = no;
+        plane = 0U;
       }
 
       dimension_size_type
       FormatWriter::getSeries() const
       {
+        assertId(currentId, true);
+
         return series;
       }
 
+      void
+      FormatWriter::setPlane(dimension_size_type no) const
+      {
+        assertId(currentId, true);
+
+        if (no >= getImageCount())
+          {
+            boost::format fmt("Invalid plane: %1%");
+            fmt % no;
+            throw std::logic_error(fmt.str());
+          }
+
+        const dimension_size_type currentPlane = getPlane();
+        if (currentPlane != no &&
+            (no > 0 && currentPlane != no - 1))
+          {
+            boost::format fmt("Plane set out of order: %1% (currently %2%)");
+            fmt % no % currentPlane;
+            throw std::logic_error(fmt.str());
+          }
+
+        plane = no;
+      }
+
+      dimension_size_type
+      FormatWriter::getPlane() const
+      {
+        assertId(currentId, true);
+
+        return plane;
+      }
       void
       FormatWriter::setFramesPerSecond(frame_rate_type rate)
       {
@@ -282,6 +325,76 @@ namespace ome
       FormatWriter::getMetadataRetrieve()
       {
         return metadataRetrieve;
+      }
+
+      dimension_size_type
+      FormatWriter::getImageCount() const
+      {
+        return getSizeZ() * getSizeT() * getSizeC();
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeX() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeX = metadataRetrieve->getPixelsSizeX(series);
+        if (sizeX == 0U)
+          sizeX = 1U;
+        return sizeX;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeY() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeY = metadataRetrieve->getPixelsSizeY(series);
+        if (sizeY == 0U)
+          sizeY = 1U;
+        return sizeY;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeZ() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeZ = metadataRetrieve->getPixelsSizeZ(series);
+        if (sizeZ == 0U)
+          sizeZ = 1U;
+        return sizeZ;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeT() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeT = metadataRetrieve->getPixelsSizeT(series);
+        if (sizeT == 0U)
+          sizeT = 1U;
+        return sizeT;
+      }
+
+      dimension_size_type
+      FormatWriter::getSizeC() const
+      {
+        dimension_size_type series = getSeries();
+        dimension_size_type sizeC = metadataRetrieve->getPixelsSizeC(series);
+        if (sizeC == 0U)
+          sizeC = 1U;
+        return sizeC;
+      }
+
+      ome::xml::model::enums::PixelType
+      FormatWriter::getPixelType() const
+      {
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getPixelsType(series);
+      }
+
+      pixel_size_type
+      FormatWriter::getBitsPerPixel() const
+      {
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getPixelsSignificantBits(series);
       }
 
       const std::string&

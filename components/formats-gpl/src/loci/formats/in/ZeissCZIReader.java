@@ -28,10 +28,11 @@ package loci.formats.in;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
 
 import loci.common.ByteArrayHandle;
@@ -645,9 +646,26 @@ public class ZeissCZIReader extends FormatReader {
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
     {
-      prestitched = false;
-      ms0.sizeX = planes.get(planes.size() - 1).x;
-      ms0.sizeY = planes.get(planes.size() - 1).y;
+      boolean equalTiles = true;
+      for (SubBlock plane : planes) {
+        if (plane.x != planes.get(0).x || plane.y != planes.get(0).y) {
+          equalTiles = false;
+          break;
+        }
+      }
+      if (getSizeX() > planes.get(0).x && !equalTiles) {
+        // image was fused; treat the mosaics as a single image
+        seriesCount = 1;
+        positions = 1;
+        acquisitions = 1;
+        mosaics = 1;
+        angles = 1;
+      }
+      else {
+        prestitched = false;
+        ms0.sizeX = planes.get(planes.size() - 1).x;
+        ms0.sizeY = planes.get(planes.size() - 1).y;
+      }
     }
 
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
@@ -1301,7 +1319,7 @@ public class ZeissCZIReader extends FormatReader {
     translateLayers(realRoot);
     translateHardwareSettings(realRoot);
 
-    Stack<String> nameStack = new Stack<String>();
+    final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(realRoot, nameStack);
   }
 
@@ -2428,7 +2446,7 @@ public class ZeissCZIReader extends FormatReader {
     return null;
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
     String name = root.getNodeName();
     if (name.equals("DisplaySetting")) {
       return;
