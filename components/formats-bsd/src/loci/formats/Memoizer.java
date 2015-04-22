@@ -434,8 +434,7 @@ public class Memoizer extends ReaderWrapper {
   /**
    *  Constructs a memoizer around a new {@link ImageReader} creating memo
    *  files under the same directory as the original file only if the call to
-   *  {@link #setId} takes longer than <code>minimumElapsed</code> in
-   *  milliseconds.
+   *  {@link #setId} takes longer than {@code minimumElapsed} in milliseconds.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
@@ -447,17 +446,16 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   *  Constructs a memoizer around a new {@link ImageReader} creating memo
-   *  files under the <code>directory</code> argument including the full
-   *  path of the original file only if the call to {@link #setId} takes
-   *  longer than <code>minimumElapsed</code> in milliseconds.
+   *  Constructs a memoizer around a new {@link ImageReader} creating memo file
+   *  files under the {@code directory} argument including the full path of the
+   *  original file only if the call to {@link #setId} takes longer than
+   *  {@code minimumElapsed} in milliseconds.
    *
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
    *  @param directory a {@link File} specifying the directory where all memo
-   *         files should be created. If <code>null</code>, disable
-   *         memoization.
+   *         files should be created. If {@code null}, disable memoization.
    */
   public Memoizer(long minimumElapsed, File directory) {
     super();
@@ -480,8 +478,8 @@ public class Memoizer extends ReaderWrapper {
   /**
    *  Constructs a memoizer around the given {@link IFormatReader} creating
    *  memo files under the same directory as the original file only if the
-   *  call to {@link #setId} takes longer than <code>minimumElapsed</code>
-   *  in milliseconds.
+   *  call to {@link #setId} takes longer than {@code minimumElapsed} in
+   *  milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
    *  @param minimumElapsed a long specifying the number of milliseconds which
@@ -495,17 +493,16 @@ public class Memoizer extends ReaderWrapper {
 
   /**
    *  Constructs a memoizer around the given {@link IFormatReader} creating
-   *  memo files under the <code>directory</code> argument including the full
-   *  path of the original file only if the call to {@link #setId} takes
-   *  longer than <code>minimumElapsed</code> in milliseconds.
+   *  memo files under the {@code directory} argument including the full path
+   *  of the original file only if the call to {@link #setId} takes longer than
+   *  {@code minimumElapsed} in milliseconds.
    *
    *  @param r an {@link IFormatReader} instance
    *  @param minimumElapsed a long specifying the number of milliseconds which
    *         must elapse during the call to {@link #setId} before a memo file
    *         will be created.
    *  @param directory a {@link File} specifying the directory where all memo
-   *         files should be created. If <code>null</code>, disable
-   *         memoization.
+   *         files should be created. If {@code null}, disable memoization.
    */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
@@ -540,8 +537,8 @@ public class Memoizer extends ReaderWrapper {
    * Returns whether or not version checking is done based upon major/minor
    * version numbers.
    *
-   *  @return <code>true</true> if version checking is done based upon
-   *  major/minor version numbers, <code>false</true> otherwise.
+   *  @return {@code true} if version checking is done based upon
+   *  major/minor version numbers, {@code false} otherwise.
    */
   public boolean isVersionChecking() {
     return versionChecking;
