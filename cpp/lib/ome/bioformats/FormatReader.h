@@ -213,9 +213,9 @@ namespace ome
 
       /**
        * Check if the image planes for a channel have more than one
-       * subchannel per openBytes() call.
+       * sub-channel per openBytes() call.
        *
-       * @param channel the channel to use.
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns @c true if and only if getRGBChannelCount() returns
        * a value greater than 1, @c false otherwise.
        */
@@ -313,7 +313,7 @@ namespace ome
        * this value to be greater than 1 for non-interleaved data, such as an RGB
        * TIFF with Planar rather than Chunky configuration.
        *
-       * @param channel the channel to use.
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns the number of channels.
        */
       virtual
@@ -353,7 +353,7 @@ namespace ome
        * returns @c false, then this may throw an exception.
        *
        * The VariantPixelBuffer will use the X dimension for the value
-       * index and the subchannel dimension for the color samples
+       * index and the sub-channel dimension for the color samples
        * (order is RGB).  Depending upon the image type, the size of
        * the X dimension may vary.  It will typically be 2^8 or 2^16,
        * but other sizes are possible.
@@ -512,21 +512,21 @@ namespace ome
       isInterleaved() const = 0;
 
       /**
-       * Get whether or not the given sub-channel is interleaved.
+       * Get whether or not the given channel is interleaved.
        *
-       * This method exists because some data with multiple rasterized
-       * sub-dimensions within @c C have one sub-dimension
-       * interleaved, and the other not.  For example, @c SDTReader
-       * handles spectral-lifetime data with interleaved lifetime bins
-       * and non-interleaved spectral channels.
+       * Some data with multiple channels within @c C have the
+       * sub-channels of one sub-dimension interleaved, and the other
+       * not.  For example, @c SDTReader handles spectral-lifetime
+       * data with interleaved lifetime bins and non-interleaved
+       * spectral channels.
        *
-       * @param subC the subchannel index.
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns @c true if the sub-channel is interleaved, @c false
        * otherwise.
        */
       virtual
       bool
-      isInterleaved(dimension_size_type subC) const = 0;
+      isInterleaved(dimension_size_type channel) const = 0;
 
       /**
        * Obtain an image plane.
@@ -594,7 +594,7 @@ namespace ome
        * Get the number of image series in this file.
        *
        * @returns the number of image series.
-       * @throws std::logic_error if the subresolution metadata (if
+       * @throws std::logic_error if the sub-resolution metadata (if
        * any) is invalid; this will only occur if the reader sets
        * invalid metadata.
        */
@@ -1072,7 +1072,7 @@ namespace ome
        * Get the optimal sub-image width.
        * This is intended for use with openBytes().
        *
-       * @param channel the channel to use.
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns the optimal width.
        **/
       virtual
@@ -1083,7 +1083,7 @@ namespace ome
        * Get the optimal sub-image height.
        * This is intended for use with openBytes().
        *
-       * @param channel the channel to use.
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns the optimal height.
        **/
       virtual
@@ -1122,7 +1122,7 @@ namespace ome
       getCoreIndex() const = 0;
 
       /**
-       * Set the current resolution/series (ignoring subresolutions).
+       * Set the current resolution/series (ignoring sub-resolutions).
        *
        * Equivalent to setSeries(), but with flattened resolutions always
        * set to @c false.
