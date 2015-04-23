@@ -1123,7 +1123,36 @@ namespace ome
         assertId(currentId, true);
         uint32_t bpp = bytesPerPixel(getPixelType());
         dimension_size_type maxHeight = (1024U * 1024U) / (getSizeX() * getRGBChannelCount(channel) * bpp);
+        if (!maxHeight)
+          maxHeight = 1U;
+
         return std::min(maxHeight, getSizeY());
+      }
+
+      dimension_size_type
+      FormatReader::getOptimalTileWidth() const
+      {
+        assertId(currentId, true);
+
+        dimension_size_type csize = getEffectiveSizeC();
+        std::vector<dimension_size_type> widths;
+        widths.reserve(csize);
+        for (dimension_size_type c = 0; c < csize; ++c)
+          widths.push_back(getOptimalTileWidth(c));
+        return *std::min_element(widths.begin(), widths.end());
+      }
+
+      dimension_size_type
+      FormatReader::getOptimalTileHeight() const
+      {
+        assertId(currentId, true);
+
+        dimension_size_type csize = getEffectiveSizeC();
+        std::vector<dimension_size_type> heights;
+        heights.reserve(csize);
+        for (dimension_size_type c = 0; c < csize; ++c)
+          heights.push_back(getOptimalTileHeight(c));
+        return *std::min_element(heights.begin(), heights.end());
       }
 
       dimension_size_type

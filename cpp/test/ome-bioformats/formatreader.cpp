@@ -378,6 +378,10 @@ TEST_P(FormatReaderTest, DefaultCoreMetadata)
   EXPECT_THROW(r.isMetadataComplete(), std::logic_error);
   EXPECT_THROW(r.getOptimalTileWidth(0), std::logic_error);
   EXPECT_THROW(r.getOptimalTileHeight(0), std::logic_error);
+  EXPECT_THROW(r.getOptimalTileWidth(1), std::logic_error);
+  EXPECT_THROW(r.getOptimalTileHeight(1), std::logic_error);
+  EXPECT_THROW(r.getOptimalTileWidth(), std::logic_error);
+  EXPECT_THROW(r.getOptimalTileHeight(), std::logic_error);
   EXPECT_THROW(r.getResolutionCount(), std::logic_error);
 }
 
@@ -418,9 +422,17 @@ TEST_P(FormatReaderTest, FlatCoreMetadata)
   EXPECT_FALSE(r.isInterleaved(0));
   EXPECT_FALSE(r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth(0));
-  EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
-                     1024U),
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(0) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
             r.getOptimalTileHeight(0));
+  EXPECT_EQ(512U, r.getOptimalTileWidth(1));
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(1) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
+            r.getOptimalTileHeight(1));
+  EXPECT_EQ(512U, r.getOptimalTileWidth());
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(1) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
+            r.getOptimalTileHeight());
   EXPECT_EQ(1U, r.getResolutionCount());
 }
 
@@ -462,9 +474,17 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedCoreMetadata)
   EXPECT_FALSE(r.isInterleaved(0));
   EXPECT_FALSE(r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth(0));
-  EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
-                     1024U),
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(0) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
             r.getOptimalTileHeight(0));
+  EXPECT_EQ(512U, r.getOptimalTileWidth(1));
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(1) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
+            r.getOptimalTileHeight(1));
+  EXPECT_EQ(512U, r.getOptimalTileWidth());
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(1) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
+            r.getOptimalTileHeight());
   EXPECT_EQ(1U, r.getResolutionCount());
 }
 
@@ -506,9 +526,17 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
   EXPECT_FALSE(r.isInterleaved(0));
   EXPECT_FALSE(r.isMetadataComplete());
   EXPECT_EQ(512U, r.getOptimalTileWidth(0));
-  EXPECT_EQ(std::min((1024U * 1024U) / (512U * ::ome::bioformats::bytesPerPixel(params.type)),
-                     1024U),
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(0) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
             r.getOptimalTileHeight(0));
+  EXPECT_EQ(512U, r.getOptimalTileWidth(1));
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(1) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
+            r.getOptimalTileHeight(1));
+  EXPECT_EQ(512U, r.getOptimalTileWidth());
+  EXPECT_EQ(std::min((1024U * 1024U) / (512U * r.getRGBChannelCount(1) * ::ome::bioformats::bytesPerPixel(params.type)),
+                     dimension_size_type(1024U)),
+            r.getOptimalTileHeight());
   EXPECT_EQ(3U, r.getResolutionCount());
 }
 

@@ -1070,6 +1070,7 @@ namespace ome
 
       /**
        * Get the optimal sub-image width.
+       *
        * This is intended for use with openBytes().
        *
        * @param channel the channel to use, range [0, EffectiveSizeC).
@@ -1081,6 +1082,7 @@ namespace ome
 
       /**
        * Get the optimal sub-image height.
+       *
        * This is intended for use with openBytes().
        *
        * @param channel the channel to use, range [0, EffectiveSizeC).
@@ -1089,6 +1091,40 @@ namespace ome
       virtual
       dimension_size_type
       getOptimalTileHeight(dimension_size_type channel) const = 0;
+
+      /**
+       * Get the optimal sub-image width.
+       *
+       * This is intended for use with openBytes().  Note that this
+       * overload does not have a channel argument, and so the value
+       * returned is the smallest width for all channels for
+       * convienience and compatibility with the Java implementation.
+       * If the optimal width varies widely between channels, this may
+       * result in suboptimal performance; specify the channel to get
+       * the optimal width for each channel.
+       *
+       * @returns the optimal width.
+       **/
+      virtual
+      dimension_size_type
+      getOptimalTileWidth() const = 0;
+
+      /**
+       * Get the optimal sub-image height.
+       *
+       * This is intended for use with openBytes().  Note that this
+       * overload does not have a channel argument, and so the value
+       * returned is the smallest height for all channels for
+       * convienience and compatibility with the Java implementation.
+       * If the optimal height varies widely between channels, this
+       * may result in suboptimal performance; specify the channel to
+       * get the optimal height for each channel.
+       *
+       * @returns the optimal height.
+       **/
+      virtual
+      dimension_size_type
+      getOptimalTileHeight() const = 0;
 
       // Sub-resolution API methods
 

@@ -737,6 +737,14 @@ namespace ome
 
         // Documented in superclass.
         dimension_size_type
+        getOptimalTileWidth() const;
+
+        // Documented in superclass.
+        dimension_size_type
+        getOptimalTileHeight() const;
+
+        // Documented in superclass.
+        dimension_size_type
         seriesToCoreIndex(dimension_size_type series) const;
 
         // Documented in superclass.
