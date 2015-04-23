@@ -39,6 +39,7 @@
 #define OME_BIOFORMATS_COREMETADATA_H
 
 #include <map>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -87,7 +88,7 @@ namespace ome
       dimension_size_type sizeZ;
 
       /// Number of channels.
-      dimension_size_type sizeC;
+      std::vector<dimension_size_type> sizeC;
 
       /// Number of timepoints.
       dimension_size_type sizeT;
@@ -121,9 +122,6 @@ namespace ome
 
       /// Are we confident that the dimension order is correct?
       bool orderCertain;
-
-      /// Are images are stored as RGB (multiple channels per plane)?
-      bool rgb;
 
       /// Is the pixel byte order little endian?
       bool littleEndian;
@@ -187,8 +185,21 @@ namespace ome
       os << "sizeX = " << core.sizeX << '\n'
          << "sizeY = " << core.sizeY << '\n'
          << "sizeZ = " << core.sizeZ << '\n'
-         << "sizeC = " << core.sizeC << '\n'
-         << "sizeT = " << core.sizeT << '\n'
+         << "sizeC = " << std::accumulate(core.sizeC.begin(), core.sizeC.end(), dimension_size_type(0));
+      if (core.sizeC.size() > 1U)
+        {
+          os << " [";
+          for (std::vector<dimension_size_type>::const_iterator i = core.sizeC.begin();
+               i != core.sizeC.end();
+               ++i)
+            {
+              os << *i;
+              if (i + 1 != core.sizeC.end())
+                os << ", ";
+            }
+          os << ']';
+        }
+      os << "\nsizeT = " << core.sizeT << '\n'
          << "thumbSizeX = " << core.thumbSizeX << '\n'
          << "thumbSizeY = " << core.thumbSizeY << '\n'
          << "pixelType = " << core.pixelType << '\n'
@@ -198,9 +209,18 @@ namespace ome
          << "}\nmoduloT = {\n" << core.moduloT
          << "}\nmoduloC = {\n" << core.moduloC
          << "}\ndimensionOrder = " << core.dimensionOrder << '\n'
-         << "orderCertain = " << core.orderCertain << '\n'
-         << "rgb = " << core.rgb << '\n'
-         << "littleEndian = " << core.littleEndian << '\n'
+         << "orderCertain = " << core.orderCertain << '\n';
+      os << "rgb = [";
+      for (std::vector<dimension_size_type>::const_iterator i = core.sizeC.begin();
+           i != core.sizeC.end();
+           ++i)
+        {
+          os << (*i > 1);
+          if (i + 1 != core.sizeC.end())
+            os << ", ";
+        }
+      os << ']';
+      os << "\nlittleEndian = " << core.littleEndian << '\n'
          << "interleaved = " << core.interleaved << '\n'
          << "indexed = " << core.indexed << '\n'
          << "falseColor = " << core.falseColor << '\n'

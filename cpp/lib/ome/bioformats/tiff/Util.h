@@ -83,16 +83,6 @@ namespace ome
                       CoreMetadata& core);
 
       /**
-       * Set CoreMetadata for an IFD.
-       *
-       * @param ifd the IFD to set.
-       * @param core the CoreMetadata to use.
-       */
-      void
-      setCoreMetadata(IFD&                ifd,
-                      const CoreMetadata& core);
-
-      /**
        * Range of IFDs for an image series.
        *
        * Note the range is half-open, with the end index being one
@@ -117,16 +107,12 @@ namespace ome
        * @param seriesIFDRange the series--IFD range mapping.
        * @param series the series to use.
        * @param plane the plane within the series to use.
-       * @param sizeC the number of channels in the series.
-       * @param isRGB the number of subchannels in the series.
        * @returns the IFD index.
        */
       dimension_size_type
       ifdIndex(const SeriesIFDRange& seriesIFDRange,
                dimension_size_type   series,
-               dimension_size_type   plane,
-               dimension_size_type   sizeC,
-               bool                  isRGB);
+               dimension_size_type   plane);
 
     }
   }

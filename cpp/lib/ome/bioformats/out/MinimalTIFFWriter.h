@@ -110,11 +110,11 @@ namespace ome
       public:
         // Documented in superclass.
         void
-        setSeries(dimension_size_type no) const;
+        setSeries(dimension_size_type series) const;
 
         // Documented in superclass.
         void
-        setPlane(dimension_size_type no) const;
+        setPlane(dimension_size_type plane) const;
 
       protected:
         /// Flush current IFD and create new IFD.
@@ -130,7 +130,7 @@ namespace ome
 
         // Documented in superclass.
         void
-        saveBytes(dimension_size_type no,
+        saveBytes(dimension_size_type plane,
                   VariantPixelBuffer& buf,
                   dimension_size_type x,
                   dimension_size_type y,

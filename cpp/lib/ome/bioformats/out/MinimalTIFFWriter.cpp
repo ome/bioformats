@@ -241,12 +241,12 @@ namespace ome
       }
 
       void
-      MinimalTIFFWriter::setSeries(dimension_size_type no) const
+      MinimalTIFFWriter::setSeries(dimension_size_type series) const
       {
         const dimension_size_type currentSeries = getSeries();
-        detail::FormatWriter::setSeries(no);
+        detail::FormatWriter::setSeries(series);
 
-        if (currentSeries != no)
+        if (currentSeries != series)
           {
             nextIFD();
             setupIFD();
@@ -254,12 +254,12 @@ namespace ome
       }
 
       void
-      MinimalTIFFWriter::setPlane(dimension_size_type no) const
+      MinimalTIFFWriter::setPlane(dimension_size_type plane) const
       {
         const dimension_size_type currentPlane = getPlane();
-        detail::FormatWriter::setPlane(no);
+        detail::FormatWriter::setPlane(plane);
 
-        if (currentPlane != no)
+        if (currentPlane != plane)
           {
             nextIFD();
             setupIFD();
@@ -285,15 +285,31 @@ namespace ome
         ifd->setTileWidth(getSizeX());
         ifd->setTileHeight(1U);
 
+        ome::compat::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
+
+        dimension_size_type channel = coords[1];
+
         ifd->setPixelType(getPixelType());
         ifd->setBitsPerSample(bitsPerPixel(getPixelType()));
-        ifd->setSamplesPerPixel(1U);
-        ifd->setPlanarConfiguration(tiff::SEPARATE);
-        ifd->setPhotometricInterpretation(tiff::MIN_IS_BLACK);
+        ifd->setSamplesPerPixel(getRGBChannelCount(channel));
+
+        const boost::optional<bool> interleaved(getInterleaved());
+        if (isRGB(channel) && interleaved && *interleaved)
+          ifd->setPlanarConfiguration(tiff::CONTIG);
+        else
+          ifd->setPlanarConfiguration(tiff::SEPARATE);
+
+        // This isn't necessarily always true; we might want to use a
+        // photometric interpretation other than RGB with three
+        // subchannels.
+        if (isRGB(channel) && getRGBChannelCount(channel) == 3)
+          ifd->setPhotometricInterpretation(tiff::RGB);
+        else
+          ifd->setPhotometricInterpretation(tiff::MIN_IS_BLACK);
       }
 
       void
-      MinimalTIFFWriter::saveBytes(dimension_size_type no,
+      MinimalTIFFWriter::saveBytes(dimension_size_type plane,
                                    VariantPixelBuffer& buf,
                                    dimension_size_type x,
                                    dimension_size_type y,
@@ -302,11 +318,10 @@ namespace ome
       {
         assertId(currentId, true);
 
-        setPlane(no);
+        setPlane(plane);
 
-        dimension_size_type sizeC = metadataRetrieve->getPixelsSizeC(getSeries());
         dimension_size_type expectedIndex =
-          tiff::ifdIndex(seriesIFDRange, getSeries(), no, sizeC, false);
+          tiff::ifdIndex(seriesIFDRange, getSeries(), plane);
 
         if (ifdIndex != expectedIndex)
           {
