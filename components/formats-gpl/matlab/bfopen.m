@@ -153,14 +153,14 @@ for s = 1:numSeries
         else
             colorMaps{s, i} = r.get16BitLookupTable()';
         end
-        
-        warning off
+
+        warning_state = warning ('off');
         if ~isempty(colorMaps{s, i})
             newMap = single(colorMaps{s, i});
             newMap(newMap < 0) = newMap(newMap < 0) + bppMax;
             colorMaps{s, i} = newMap / (bppMax - 1);
         end
-        warning on
+        warning (warning_state);
 
 
         % build an informative title for our figure
