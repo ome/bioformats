@@ -106,12 +106,22 @@ namespace ome
       void
       FormatWriter::setId(const boost::filesystem::path& id)
       {
-        if (!currentId || id != currentId.get())
+        // Attempt to canonicalize the path.
+        path canonicalpath = id;
+        try
+          {
+            canonicalpath = ome::common::canonical(id);
+          }
+        catch (const std::exception& /* e */)
+          {
+          }
+
+        if (!currentId || canonicalpath != currentId.get())
           {
             if (out)
               out = ome::compat::shared_ptr<std::ostream>();
 
-            currentId = id;
+            currentId = canonicalpath;
           }
       }
 
