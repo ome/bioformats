@@ -388,6 +388,80 @@ namespace ome
         return ifdidx;
       }
 
+      bool
+      enableBigTIFF(const boost::optional<bool>&   wantBig,
+                    storage_size_type              pixelSize,
+                    const boost::filesystem::path& filename,
+                    ome::common::Logger&           logger)
+      {
+        bool enable = false;
+
+        // File extension in use.
+        boost::filesystem::path ext = filename.extension();
+
+        // Enable BigTIFF if using a "big" file extension.
+        bool extBig =
+          (ext == boost::filesystem::path(".tf2") ||
+           ext == boost::filesystem::path(".tf8") ||
+           ext == boost::filesystem::path(".btf"));
+
+        // Enable BigTIFF if the pixel size is sufficiently large.
+        // Multiply by 5% to allow for alignment and TIFF metadata
+        // overhead.
+        bool needBig = (pixelSize + pixelSize/20) > storage_size_type(std::numeric_limits<uint32_t>::max());
+
+#if TIFF_HAVE_BIGTIFF
+        if ((wantBig && *wantBig)     // BigTIFF explicitly requested.
+            || extBig                 // BigTIFF file extension used
+            || (!wantBig && needBig)) // BigTIFF unspecified but needed.
+          {
+            enable = true;
+
+            if (!wantBig && !extBig) // Not set manually
+              {
+                boost::format fmt
+                  ("Pixel data size is %1%, but TIFF without BigTIFF "
+                   "support enabled has a maximum size of %2%; "
+                   "automatically enabling BigTIFF support to prevent potential failure");
+                fmt % pixelSize % std::numeric_limits<uint32_t>::max();
+
+                BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+              }
+          }
+        else if (wantBig && !*wantBig && needBig) // BigTIFF explicitly disabled but needed.
+          {
+            boost::format fmt
+              ("Pixel data size is %1%, but TIFF with BigTIFF "
+               "support disabled has a maximum size of %2%; "
+               "TIFF writing may fail if the limit is exceeded");
+            fmt % pixelSize % std::numeric_limits<uint32_t>::max();
+
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+          }
+#else // ! TIFF_HAVE_BIGTIFF
+        if (needBig) // BigTIFF needed (but unsupported)
+          {
+            boost::format fmt
+              ("Unable to enable BigTIFF support since libtiff support "
+               " for BigTIFF is unavailable.  "
+               "Pixel data size is %1%, but TIFF without BigTIFF "
+               "support enabled has a maximum size of %2%; "
+               "TIFF writing may fail if the limit is exceeded; ");
+            fmt % pixelSize % std::numeric_limits<uint32_t>::max();
+
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+          }
+        else if ((wantBig && *wantBig) || extBig) // BigTIFF explicitly requested (but unsupported)
+          {
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+              << "Unable to enable BigTIFF support since libtiff support "
+              " for BigTIFF is unavailable";
+          }
+#endif // TIFF_HAVE_BIGTIFF
+
+        return enable;
+      }
+
     }
   }
 }
