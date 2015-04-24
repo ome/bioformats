@@ -176,6 +176,28 @@ public final class DateTools {
   }
 
   /**
+   * Parse the given date as a Joda timestamp
+   *
+   * @param date The date to format as ISO 8601.
+   * @param format The date's input format.
+   */
+  protected static Instant getTimestamp(String date, String format) {
+      final DateTimeFormatter parser =
+        DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
+      Instant timestamp = null;
+      try {
+        timestamp = Instant.parse(date, parser);
+      }
+      catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", date);
+      }
+      catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", date, e);
+      }
+      return timestamp;
+  }
+
+  /**
    * Formats the given date as an ISO 8601 date.
    * Delegates to {@link #formatDate(String, String, boolean)}, with the
    * 'lenient' flag set to false.
@@ -196,19 +218,8 @@ public final class DateTools {
    */
   public static String formatDate(String date, String format, boolean lenient) {
     if (date == null) return null;
-    final DateTimeFormatter parser =
-      DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
-    Instant timestamp = null;
 
-    try {
-      timestamp = Instant.parse(date, parser);
-    }
-    catch (IllegalArgumentException e) {
-      LOGGER.debug("Invalid timestamp '{}'", date);
-    }
-    catch (UnsupportedOperationException e) {
-      LOGGER.debug("Error parsing timestamp '{}'", date, e);
-    }
+    Instant timestamp = getTimestamp(date, format);
 
     if (timestamp == null) {
       return null;
@@ -263,18 +274,7 @@ public final class DateTools {
    * @return       The date in milliseconds
    */
   public static long getTime(String date, String format) {
-    final DateTimeFormatter parser =
-      DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
-    Instant timestamp = null;
-    try {
-      timestamp = Instant.parse(date, parser);
-    }
-    catch (IllegalArgumentException e) {
-      LOGGER.debug("Invalid timestamp '{}'", date);
-    }
-    catch (UnsupportedOperationException e) {
-      LOGGER.debug("Error parsing timestamp '{}'", date, e);
-    }
+    Instant timestamp = getTimestamp(date, format);
     if (timestamp == null) return -1;
     return timestamp.getMillis();
   }
