@@ -44,14 +44,16 @@ import loci.common.DateTools;
 public class DateToolsTest {
 
   String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  String DATE_FORMAT_MS = "yyyy-MM-dd HH:mm:ss:SSS";
+  String REFERENCE_DATE = "1970-01-01 00:00:00";
 
   @DataProvider(name = "times_no_ms")
   public Object[][] createTimes() {
     return new Object[][] {
-      {"1970-01-01 00:00:01", 1000L},
-      {"1970-01-01 00:01:00", 60000L},
-      {"1970-01-01 01:00:00", 3600000L},
-      {"1970-01-02 00:00:00", 86400000L},
+      {"1970-01-01 00:00:01", 1000L, "1970-01-01T00:00:01"},
+      {"1970-01-01 00:01:00", 60000L, "1970-01-01T00:01:00"},
+      {"1970-01-01 01:00:00", 3600000L, "1970-01-01T01:00:00"},
+      {"1970-01-02 00:00:00", 86400000L, "1970-01-02T00:00:00"},
     };
   }
 
@@ -76,19 +78,21 @@ public class DateToolsTest {
   }
 
   @Test(dataProvider = "times_no_ms")
-  public void testGetTime(String date, long ms) {
+  public void testNoMilliseconds(String date, long ms, String date2) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT));
   }
 
   @Test()
-  public void testGetTimeInvalid() {
+  public void testInvalidTime() {
     assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT));
   }
 
   @Test(dataProvider = "times_with_ms")
   public void testGetTimeMs(String date, long ms1, long ms2) {
     assertEquals(ms1, DateTools.getTime(date, DATE_FORMAT, ":"));
-    assertEquals(ms2, DateTools.getTime(date, DATE_FORMAT + ":SSS"));
+    assertEquals(ms2, DateTools.getTime(date, DATE_FORMAT_MS));
   }
 
   @Test(dataProvider = "times_ms_separators")
@@ -98,13 +102,11 @@ public class DateToolsTest {
 
   @Test
   public void testGetTimeSeparatorNoMs() {
-    assertEquals(0L, DateTools.getTime(
-      "1970-01-01 00:00:00", DATE_FORMAT, "."));
+    assertEquals(0L, DateTools.getTime(REFERENCE_DATE, DATE_FORMAT, "."));
   }
 
   @Test
   public void testGetTimeConflictingSeparator() {
-    assertEquals(-1, DateTools.getTime(
-      "1970-01-01 00:00:00", DATE_FORMAT, ":"));
+    assertEquals(-1, DateTools.getTime(REFERENCE_DATE, DATE_FORMAT, ":"));
   }
 }
