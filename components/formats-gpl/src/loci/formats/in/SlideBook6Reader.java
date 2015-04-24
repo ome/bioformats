@@ -129,10 +129,7 @@ public class SlideBook6Reader  extends FormatReader {
 	 * @see IFormatReader#isThisType(String, boolean)
 	 */
 	public boolean isThisType(String file, boolean open) {
-		// Check the first few bytes of a file to determine if the file can be read by this reader.
-		// You can assume that index 0 in the stream corresponds to the index 0 in the file.
-		// Return true if the file can be read; false if not (or if there is no way of checking).
-
+		// Check the first few bytes to determine if the file can be read by this reader.
 		return libraryFound && super.isThisType(file, open);
 	}
 
@@ -142,16 +139,6 @@ public class SlideBook6Reader  extends FormatReader {
 	public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
 			throws FormatException, IOException
 	{
-		// Returns a byte array containing the pixel data for a subimage specified image from the given file.
-		// The dimensions of the subimage (upper left X coordinate, upper left Y coordinate, width, and height) are
-		// specified in the final four int parameters. This should throw a FormatException if the image number is
-		// invalid (less than 0 or >= the number of images). The ordering of the array returned by openBytes should
-		// correspond to the values returned by isLittleEndian() and isInterleaved(). Also, the length of the byte array
-		// should be [image width * image height * bytes per pixel]. Extra bytes will generally be truncated. It is
-		// recommended that the first line of this method be:
-		//    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h) - this ensures that all of the parameters
-		// are valid.
-
 		FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
 		int[] zct = FormatTools.getZCTCoords(this, no);
@@ -186,12 +173,7 @@ public class SlideBook6Reader  extends FormatReader {
 
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
-		// Cleans up any resources used by the reader. Global variables should be reset to their initial state, and any
-		// open files or delegate readers should be closed.
 		super.close(fileOnly);
-
-		// Cleans up any resources used by the reader. Global variables should be reset to their initial state, and any
-		// open files or delegate readers should be closed.
 		closeFile();
 	}
 
@@ -199,30 +181,37 @@ public class SlideBook6Reader  extends FormatReader {
 	protected void initFile(String id) throws FormatException, IOException {
 		super.initFile(id);
 
-		// The majority of the file parsing logic should be placed in this method. The idea is to call this method
-		// once (and only once!) when the file is first opened. Generally, you will want to start by calling
-		// super.initFile(String). You will also need to set up the stream for reading the file, as well as initializing
-		// any dimension information and metadata. Most of this logic is up to you; however, you should populate the 'core'
-		// variable (see loci.formats.CoreMetadata).
-
-		// Note that each variable is initialized to 0 or null when super.initFile(String) is called. Also,
-		// super.initFile(String) constructs a Hashtable called "metadata" where you should store any relevant metadata.
-
 		try {
 			openFile(id);
-			int numSeries = getNumCaptures();
+
+			// read basic meta data
+			int numCaptures = getNumCaptures();
+			int[] numPositions = new int[numCaptures];
+			int[] numTimepoints = new int[numCaptures];
+			int[] numZPlanes = new int[numCaptures];
+			int[] numChannels = new int[numCaptures];
+			int[] numImages = new int[numCaptures];
+			for (int capture=0; capture < numCaptures; capture++) {
+				numPositions[capture] = getNumPositions(capture);
+				numTimepoints[capture] = getNumTimepoints(capture);
+				numZPlanes[capture] = getNumZPlanes(capture);
+				numChannels[capture] = getNumChannels(capture);
+			}
 
 			core.clear();
-			for (int i=0; i<numSeries; i++) {
+
+			// set up basic meta data
+			for (int capture=0; capture < numCaptures; capture++) {
 				CoreMetadata ms = new CoreMetadata();
 				core.add(ms);
-				ms.sizeX = getNumXColumns(i);
+				setSeries(capture);
+				ms.sizeX = getNumXColumns(capture);
 				if (ms.sizeX % 2 != 0) ms.sizeX++;
-				ms.sizeY = getNumYRows(i);
-				ms.sizeZ = getNumZPlanes(i);
-				ms.sizeT = getNumTimepoints(i);
-				ms.sizeC = getNumChannels(i);
-				int bytes = getBytesPerPixel(i);
+				ms.sizeY = getNumYRows(capture);
+				ms.sizeZ = numZPlanes[capture];
+				ms.sizeT = numTimepoints[capture] * numPositions[capture]; // montage if numPositions[capture] > 1
+				ms.sizeC = numChannels[capture];
+				int bytes = getBytesPerPixel(capture);
 				if (bytes % 3 == 0) {
 					ms.sizeC *= 3;
 					bytes /= 3;
@@ -232,12 +221,127 @@ public class SlideBook6Reader  extends FormatReader {
 
 				ms.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, true);
 				ms.imageCount = ms.sizeZ * ms.sizeT;
-				if (!ms.rgb) ms.imageCount *= ms.sizeC;
+				if (!ms.rgb) 
+					ms.imageCount *= ms.sizeC;
 				ms.interleaved = true;
 				ms.littleEndian = true;
 				ms.dimensionOrder = "XYCZT";
 				ms.indexed = false;
 				ms.falseColor = false;
+			}
+			setSeries(0);
+
+			// fill in meta data
+			MetadataStore store = makeFilterMetadata();
+			MetadataTools.populatePixels(store, this);
+
+			// add extended meta data
+			if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+				
+				// set instrument information
+				String instrumentID = MetadataTools.createLSID("Instrument", 0);
+				store.setInstrumentID(instrumentID, 0);
+
+				// set up extended meta data
+				for (int capture=0; capture < numCaptures; capture++) {
+					// link Instrument and Image
+					store.setImageInstrumentRef(instrumentID, capture);
+
+					// set image name
+					String imageName = getImageName(capture);
+					store.setImageName(imageName, capture);
+					// store.setImageName("Image " + (capture + 1), capture);
+
+					// set description
+					String imageDescription = getImageComments(capture);
+					store.setImageDescription(imageDescription, capture);
+
+					// set voxel size per image (microns)
+					double voxelsize = getVoxelSize(capture);
+					Length physicalSizeX = FormatTools.getPhysicalSizeX(voxelsize);
+					Length physicalSizeY = FormatTools.getPhysicalSizeY(voxelsize);
+					if (physicalSizeX != null) {
+						store.setPixelsPhysicalSizeX(physicalSizeX, capture);
+					}
+					if (physicalSizeY != null) {
+						store.setPixelsPhysicalSizeY(physicalSizeY, capture);
+					}
+					double stepSize = 0;
+					if (numZPlanes[capture] > 1) {
+						double plane0 = getZPosition(capture, 0, 0);
+						double plane1 = getZPosition(capture, 0, getNumChannels(capture));
+						// distance between plane 0 and 1 is step size, assume constant for all planes
+						stepSize = plane1 - plane0;
+					}
+
+					Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
+					if (physicalSizeZ != null) {
+						store.setPixelsPhysicalSizeZ(physicalSizeZ, capture);
+					}
+
+					int imageIndex = 0;
+					for (int timepoint = 0; timepoint < numTimepoints[capture]; timepoint++) {
+						int deltaT = getElapsedTime(capture, timepoint);
+						for (int position = 0; position < numPositions[capture]; position++) {
+							for (int zplane = 0; zplane < numZPlanes[capture]; zplane++) {
+								for (int channel = 0; channel < numChannels[capture]; channel++, imageIndex++) {
+									// set elapsed time
+									store.setPlaneDeltaT(new Time(deltaT, UNITS.MS), capture, imageIndex);
+
+									// set exposure time
+									int expTime = getExposureTime(capture, channel);
+									store.setPlaneExposureTime(new Time(expTime, UNITS.MS), capture, imageIndex);
+
+									// set tile xy position
+									double numberX = getXPosition(capture, position);
+									Length positionX = new Length(numberX, UNITS.MICROM);
+									store.setPlanePositionX(positionX, capture, imageIndex);
+									double numberY = getYPosition(capture, position);
+									Length positionY = new Length(numberY, UNITS.MICROM);
+									store.setPlanePositionY(positionY, capture, imageIndex);
+
+									// set tile z position
+									double positionZ = getZPosition(capture, position, zplane);
+									Length zPos = new Length(positionZ, UNITS.MICROM);
+									store.setPlanePositionZ(zPos, capture, imageIndex);
+								}
+							}
+						}
+					}
+
+					// set channel names
+					for (int channel = 0; channel < numChannels[capture]; channel++) {
+						String theChannelName = getChannelName(capture, channel);
+						store.setChannelName(theChannelName.trim(), capture, channel);
+					}
+				}
+
+				// populate Objective data
+				int objectiveIndex = 0;
+				for (int capture = 0; capture < numCaptures; capture++) {
+					String objective = getLensName(capture);
+					if (objective != null) {
+						store.setObjectiveModel(objective, 0, objectiveIndex);
+						store.setObjectiveCorrection(
+								getCorrection("Other"), 0, objectiveIndex);
+						store.setObjectiveImmersion(getImmersion("Other"), 0, objectiveIndex);
+						double magnification = getMagnification(capture);
+						if (magnification > 0) {
+							store.setObjectiveNominalMagnification(
+									magnification, 0, objectiveIndex);
+						}
+					}
+
+					// link Objective to Image
+					String objectiveID =
+							MetadataTools.createLSID("Objective", 0, objectiveIndex);
+					store.setObjectiveID(objectiveID, 0, objectiveIndex);
+					if (capture < getSeriesCount()) {
+						store.setObjectiveSettingsID(objectiveID, capture);
+					}
+
+					objectiveIndex++;
+				}
 			}
 		}
 		catch (UnsatisfiedLinkError e) {
@@ -246,157 +350,43 @@ public class SlideBook6Reader  extends FormatReader {
 		catch (Exception e) {
 			throw new MissingLibraryException(GENERAL_3I_MSG, e);
 		}
-
-		// fill in meta data
-		MetadataStore store = makeFilterMetadata();
-		MetadataTools.populatePixels(store, this);
-		int numCaptures = getNumCaptures();
-		if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-			for (int capture=0; capture<numCaptures; capture++) {
-				String imageName = getImageName(capture);
-				store.setImageName(imageName, capture);
-				String imageDescription = getImageComments(capture);
-				store.setImageDescription(imageDescription, capture);
-			}
-		}
-
-		// link Instrument and Image
-		String instrumentID = MetadataTools.createLSID("Instrument", 0);
-		store.setInstrumentID(instrumentID, 0);
-		for (int capture=0; capture < numCaptures; capture++) {
-			store.setImageInstrumentRef(instrumentID, capture);
-		}
-
-		// set voxel size per image (microns)
-		for (int capture=0; capture < numCaptures; capture++) {
-			double voxelsize = getVoxelSize(capture);
-			Length physicalSizeX = FormatTools.getPhysicalSizeX(voxelsize);
-			Length physicalSizeY = FormatTools.getPhysicalSizeY(voxelsize);
-			if (physicalSizeX != null) {
-				store.setPixelsPhysicalSizeX(physicalSizeX, capture);
-			}
-			if (physicalSizeY != null) {
-				store.setPixelsPhysicalSizeY(physicalSizeY, capture);
-			}
-			double stepSize = 0;
-			if (getNumZPlanes(capture) > 1) {
-				double plane0 = getZPosition(capture, 0, 0);
-				double plane1 = getZPosition(capture, 0, getNumChannels(capture));
-				// distance between plane 0 and 1 is step size, assume constant for all planes
-				stepSize = plane1 - plane0;
-			}
-
-			Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
-			if (physicalSizeZ != null) {
-				store.setPixelsPhysicalSizeZ(physicalSizeZ, capture);
-			}
-
-			// link other meta data to images
-			int numPositions = getNumPositions(capture);
-			int numTimepoints = getNumTimepoints(capture);
-			int numChannels = getNumChannels(capture);
-			int numZPlanes = getNumZPlanes(capture);
-
-			int imageIndex = 0;
-			for (int timepoint = 0; timepoint < numTimepoints; timepoint++) {
-				int deltaT = getElapsedTime(capture, timepoint);
-				for (int position = 0; position < numPositions; position++) {
-					for (int zplane = 0; zplane < numZPlanes; zplane++) {
-						for (int channel = 0; channel < numChannels; channel++, imageIndex++) {
-							// set elapsed time
-							store.setPlaneDeltaT(new Time(deltaT, UNITS.MS), capture, imageIndex);
-
-							// set exposure time
-							int expTime = getExposureTime(capture, channel);
-							store.setPlaneExposureTime(new Time(expTime, UNITS.MS), capture, imageIndex);
-
-							// set xy position
-							double numberX = getXPosition(capture, position);
-							Length positionX = new Length(numberX, UNITS.MICROM);
-							store.setPlanePositionX(positionX, capture, imageIndex);
-							double numberY = getYPosition(capture, position);
-							Length positionY = new Length(numberY, UNITS.MICROM);
-							store.setPlanePositionY(positionY, capture, imageIndex);
-
-							// set z position
-							double positionZ = getZPosition(capture, position, zplane);
-							Length zPos = new Length(positionZ, UNITS.MICROM);
-							store.setPlanePositionZ(zPos, capture, imageIndex);
-						}
-					}
-				}
-			}
-
-			// set channel names
-			for (int channel = 0; channel < numChannels; channel++) {
-				String theChannelName = getChannelName(capture, channel);
-				store.setChannelName(theChannelName.trim(), capture, channel);
-			}
-		}
-
-		// populate Objective data
-		int objectiveIndex = 0;
-		for (int capture = 0; capture < numCaptures; capture++) {
-			String objective = getLensName(capture);
-			if (objective != null) {
-				store.setObjectiveModel(objective, 0, objectiveIndex);
-				store.setObjectiveCorrection(
-						getCorrection("Other"), 0, objectiveIndex);
-				store.setObjectiveImmersion(getImmersion("Other"), 0, objectiveIndex);
-				double magnification = getMagnification(capture);
-				if (magnification > 0) {
-					store.setObjectiveNominalMagnification(
-							magnification, 0, objectiveIndex);
-				}
-			}
-
-			// link Objective to Image
-			String objectiveID =
-					MetadataTools.createLSID("Objective", 0, objectiveIndex);
-			store.setObjectiveID(objectiveID, 0, objectiveIndex);
-			if (capture < getSeriesCount()) {
-				store.setObjectiveSettingsID(objectiveID, capture);
-			}
-
-			objectiveIndex++;
-		}
 	}
 
-// -- Native methods --
-public native boolean openFile(String path);
-public native void closeFile();
-public native int getNumCaptures();
-public native int getNumPositions(int inCapture);
-public native int getNumTimepoints(int inCapture);
-public native int getNumChannels(int inCapture);
-public native int getNumXColumns(int inCapture);
-public native int getNumYRows(int inCapture);
-public native int getNumZPlanes(int inCapture);
-public native int getElapsedTime(int inCapture, int inTimepoint);
+	// -- Native methods --
+	public native boolean openFile(String path);
+	public native void closeFile();
+	public native int getNumCaptures();
+	public native int getNumPositions(int inCapture);
+	public native int getNumTimepoints(int inCapture);
+	public native int getNumChannels(int inCapture);
+	public native int getNumXColumns(int inCapture);
+	public native int getNumYRows(int inCapture);
+	public native int getNumZPlanes(int inCapture);
+	public native int getElapsedTime(int inCapture, int inTimepoint);
 
-public native int getExposureTime(int inCapture, int inChannel);
-public native float getVoxelSize(int inCapture);
+	public native int getExposureTime(int inCapture, int inChannel);
+	public native float getVoxelSize(int inCapture);
 
-public native double getXPosition(int inCapture, int inPosition);
-public native double getYPosition(int inCapture, int inPosition);
-public native double getZPosition(int inCapture, int inPosition, int inZPlane);
+	public native double getXPosition(int inCapture, int inPosition);
+	public native double getYPosition(int inCapture, int inPosition);
+	public native double getZPosition(int inCapture, int inPosition, int inZPlane);
 
-public native int getMontageRow(int inCapture, int inPosition);
-public native int getMontageColumn(int inCapture, int inPosition);
+	public native int getMontageRow(int inCapture, int inPosition);
+	public native int getMontageColumn(int inCapture, int inPosition);
 
-public native String getChannelName(int inCapture, int inChannel);
-public native String getLensName(int inCapture);
-public native double getMagnification(int inCapture);
-public native String getImageName(int inCapture);
-public native String getImageComments(int inCapture);
+	public native String getChannelName(int inCapture, int inChannel);
+	public native String getLensName(int inCapture);
+	public native double getMagnification(int inCapture);
+	public native String getImageName(int inCapture);
+	public native String getImageComments(int inCapture);
 
-public native int getBytesPerPixel(int inCapture);
+	public native int getBytesPerPixel(int inCapture);
 
-public native boolean readImagePlaneBuf( byte outPlaneBuffer[],
-		int inCapture,
-		int inPosition,
-		int inTimepoint,
-		int inZ,
-		int inChannel );
+	public native boolean readImagePlaneBuf( byte outPlaneBuffer[],
+			int inCapture,
+			int inPosition,
+			int inTimepoint,
+			int inZ,
+			int inChannel );
 
 }
