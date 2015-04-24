@@ -202,8 +202,8 @@ public final class DateTools {
    * Delegates to {@link #formatDate(String, String, boolean)}, with the
    * 'lenient' flag set to false.
    *
-   * @param date The date to format as ISO 8601.
-   * @param format The date's input format.
+   * @param date   The date to format as ISO 8601
+   * @param format The date format to parse the string date
    */
   public static String formatDate(String date, String format) {
     return formatDate(date, format, false);
@@ -211,12 +211,44 @@ public final class DateTools {
 
   /**
    * Formats the given date as an ISO 8601 date.
+   * Delegates to {@link #formatDate(String, String, boolean, Long)}, with the
+   * 'lenient' flag set to false.
    *
-   * @param date The date to format as ISO 8601.
-   * @param format The date's input format.
+   * @param date      The date to format as ISO 8601
+   * @param format    The date format to parse the string date
+   * @param separator The separator for milliseconds
+   */
+  public static String formatDate(String date, String format, String separator) {
+    int msSeparator = date.lastIndexOf(separator);
+    long ms = 0;
+    String newDate = date;
+    if (msSeparator > 0) {
+      newDate = date.substring(0, msSeparator);
+      ms = Long.parseLong(date.substring(msSeparator + 1));
+    }
+    return formatDate(newDate, format, false, ms);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date    The date to format as ISO 8601.
+   * @param format  The date format to parse the string date
    * @param lenient Whether or not to leniently parse the date.
    */
   public static String formatDate(String date, String format, boolean lenient) {
+   return formatDate(date, format, false, 0L);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date    The date to format as ISO 8601
+   * @param format  The date format to parse the string date
+   * @param lenient Whether or not to leniently parse the date.
+   * @param offset  A long specifying the offset in milliseconds
+   */
+  public static String formatDate(String date, String format, boolean lenient, Long offset) {
     if (date == null) return null;
 
     Instant timestamp = getTimestamp(date, format);
@@ -225,6 +257,7 @@ public final class DateTools {
       return null;
     }
 
+    timestamp = timestamp.plus(offset);
     final DateTimeFormatter isoformat;
     if ((timestamp.getMillis() % 1000) != 0) {
       isoformat = ISO8601_FORMATTER_MS;
