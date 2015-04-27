@@ -305,7 +305,11 @@ public class ROIHandler {
 
 
                     if (roi != null) {
-                        roi.setName(shapeObject.getID());
+                        String roiLabel = shapeObject.getText();
+                        if (roiLabel == null) {
+                            roiLabel = shapeObject.getID();
+                        }
+                        roi.setName(roiLabel);
                         
                         if (Prefs.showAllSliceOnly){
                             if(shapeObject.getTheC() != null){
