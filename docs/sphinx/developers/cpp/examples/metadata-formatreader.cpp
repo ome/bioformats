@@ -78,10 +78,16 @@ namespace
                << "\n\tZ = " << reader.getSizeZ()
                << "\n\tT = " << reader.getSizeT()
                << "\n\tC = " << reader.getSizeC()
-               << "\n\tEffectiveC = " << reader.getEffectiveSizeC()
-               << "\n\tRGB = " << (reader.isRGB() ? "true" : "false")
-               << "\n\tRGBC = " << reader.getRGBChannelCount()
-               << '\n';
+               << "\n\tEffectiveC = " << reader.getEffectiveSizeC();
+        for (dimension_size_type channel = 0;
+             channel < reader.getEffectiveSizeC();
+             ++channel)
+          {
+            stream << "\n\tChannel " << channel << ':'
+                   << "\n\t\tRGB = " << (reader.isRGB(channel) ? "true" : "false")
+                   << "\n\t\tRGBC = " << reader.getRGBChannelCount(channel);
+          }
+        stream << '\n';
 
         // Get total number of planes (for this image index)
         dimension_size_type pc = reader.getImageCount();

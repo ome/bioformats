@@ -116,7 +116,9 @@ namespace ome
 
                 ijm->sizeZ = ijmeta.slices;
                 ijm->sizeT = ijmeta.frames;
-                ijm->sizeC = ijmeta.channels;
+                ijm->sizeC.clear();
+                for (dimension_size_type c = 0; c < ijmeta.channels; ++c)
+                  ijm->sizeC.push_back(1U);
 
                 core.clear();
                 core.push_back(ijm);
