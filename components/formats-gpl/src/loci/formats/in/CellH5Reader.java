@@ -616,11 +616,11 @@ public class CellH5Reader extends FormatReader {
           store.setRectangleText(cellObjectName, roiManagerRoiIndex, 0);
                   
           store.setRectangleTheT(
-            new NonNegativeInteger(roiTime + 1), roiManagerRoiIndex, 0);
+            new NonNegativeInteger(roiTime), roiManagerRoiIndex, 0);
           store.setRectangleTheC(
-            new NonNegativeInteger(roiChannel + 1), roiManagerRoiIndex, 0);
+            new NonNegativeInteger(roiChannel), roiManagerRoiIndex, 0);
           store.setRectangleTheZ(
-            new NonNegativeInteger(roiZSlice + 1), roiManagerRoiIndex, 0);
+            new NonNegativeInteger(roiZSlice), roiManagerRoiIndex, 0);
 
           Color strokeColor;
           if (hasClassification) {
