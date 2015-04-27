@@ -613,6 +613,8 @@ public class CellH5Reader extends FormatReader {
           store.setRectangleWidth((double) width, roiManagerRoiIndex, 0);
           store.setRectangleHeight((double) height, roiManagerRoiIndex, 0);
 
+          store.setRectangleText(cellObjectName, roiManagerRoiIndex, 0);
+                  
           store.setRectangleTheT(
             new NonNegativeInteger(roiTime + 1), roiManagerRoiIndex, 0);
           store.setRectangleTheC(
