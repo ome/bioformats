@@ -321,7 +321,9 @@ public class ROIHandler {
                             if(shapeObject.getTheT() != null){
                                 t = shapeObject.getTheT().getValue();
                             }
-                            roi.setPosition(c, z, t);
+                            // ImageJ expects 1-based indexing, opposed to 
+                            // 0-based indexing in OME
+                            roi.setPosition(c+1, z+1, t+1);
                         }
                         roi.setImage(images[imageNum]);
 
@@ -532,6 +534,7 @@ public class ROIHandler {
     // -- Helper methods --
     private static NonNegativeInteger unwrap(int r) {
         return new NonNegativeInteger(r);
+        
     }
 
     private static void storeText(TextRoi roi, MetadataStore store, int roiNum, int shape) {
