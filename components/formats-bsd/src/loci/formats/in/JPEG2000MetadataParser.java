@@ -213,6 +213,7 @@ public class JPEG2000MetadataParser {
               headerPixelType = convertPixelType(type);
             }
             parseBoxes();
+            nextPos = in.getFilePointer();
             break;
           }
           case PALETTE:
