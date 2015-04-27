@@ -1,7 +1,7 @@
 Version history
 ===============
 
-5.1.1 (2015 April 30)
+5.1.1 (2015 April 28)
 ---------------------
 
 * Add TIFF writing support to the native C++ implementation
