@@ -51,12 +51,15 @@ end
 imagesc(series1_plane1);
 % displaying-images-end
 
+% animated-movie-start
 v = linspace(0, 1, 256)';
 cmap = [v v v];
 for p = 1 : size(series1, 1)
   M(p) = im2frame(uint8(series1{p, 1}), cmap);
 end
 movie(M);
+% animated-movie-end
+
 
 % read-original-metadata-by-key-start
 % Query some metadata fields (keys are format-dependent)
@@ -113,6 +116,7 @@ bfsave(plane, 'metadata.ome.tiff', 'metadata', metadata);
 % bfsave-metadata-end
 delete('metadata.ome.tiff');
 
+% memoizer-start
 % Construct an empty Bio-Formats reader
 r = bfGetReader();
 % Decorate the reader with the Memoizer wrapper
@@ -137,7 +141,9 @@ r.setId(pathToFile);
 
 % Close the reader
 r.close()
+% memoizer-end
 
+% memoizer-parfor-start
 % Construct a Bio-Formats reader decorated with the Memoizer wrapper
 r = loci.formats.Memoizer(bfGetReader(), 0);
 % Initialize the reader with an input file to cache the reader
@@ -160,3 +166,4 @@ for i = 1 : nWorkers
     % Close the reader
     r2.close()
 end
+% memoizer-parfor-end
