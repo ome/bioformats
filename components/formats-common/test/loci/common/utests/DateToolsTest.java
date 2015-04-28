@@ -59,7 +59,7 @@ public class DateToolsTest {
     };
   }
 
-  @DataProvider(name = "times_with_ms_1")
+  @DataProvider(name = "times_ms_1")
   public Object[][] createTimesMs1() {
     return new Object[][] {
       {"1970-01-01 00:00:00:1", 100L, "1970-01-01T00:00:00.100"},
@@ -70,7 +70,7 @@ public class DateToolsTest {
     };
   }
 
-  @DataProvider(name = "times_with_ms_2")
+  @DataProvider(name = "times_ms_2")
   public Object[][] createTimesMs2() {
     return new Object[][] {
       {"1970-01-01 00:00:00:1", 1L, "1970-01-01T00:00:00.001"},
@@ -81,7 +81,15 @@ public class DateToolsTest {
     };
   }
 
-  @DataProvider(name = "times_with_ms_aa_1")
+  @DataProvider(name = "times_aa")
+  public Object[][] createTimesAA() {
+    return new Object[][] {
+      {"1970-01-01 01:00:00 AM", 3600000L, "1970-01-01T01:00:00"},
+      {"1970-01-01 01:00:00 PM", 46800000L, "1970-01-01T13:00:00"},
+    };
+  }
+
+  @DataProvider(name = "times_ms_aa_1")
   public Object[][] createTimesMsAA1() {
     return new Object[][] {
       {"1970-01-01 01:00:00:10 AM", 3600100L, "1970-01-01T01:00:00.100"},
@@ -89,7 +97,7 @@ public class DateToolsTest {
     };
   }
 
-  @DataProvider(name = "times_with_ms_aa_2")
+  @DataProvider(name = "times_ms_aa_2")
   public Object[][] createTimesMsAA2() {
     return new Object[][] {
       {"1970-01-01 01:00:00:10 AM", 3600010L,  "1970-01-01T01:00:00.010"},
@@ -123,36 +131,43 @@ public class DateToolsTest {
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, "."));
   }
 
-  @Test(dataProvider = "times_with_ms_1")
-  public void testTimeWithMsNoSeparator(String date, long ms, String date2) {
+  @Test(dataProvider = "times_ms_1")
+  public void testTimeMsNoSeparator(String date, long ms, String date2) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, false));
   }
 
-  @Test(dataProvider = "times_with_ms_2")
-  public void testTimeWithMsSeparator(String date, long ms, String date2) {
+  @Test(dataProvider = "times_ms_2")
+  public void testTimeMsSeparator(String date, long ms, String date2) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, ":"));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, ":"));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, ":"));
   }
 
-  @Test(dataProvider = "times_with_ms_aa_1")
-  public void testTimeWithMsAaNoSeparator(String date, long ms, String date2) {
-      assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS_AA));
-      assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA));
-      assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, false));
+  @Test(dataProvider = "times_aa")
+  public void testTimeAaNoSeparator(String date, long ms, String date2) {
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false));
   }
 
-  @Test(dataProvider = "times_with_ms_aa_2")
-  public void testTimeWithMsAaSeparator(String date, long ms, String date2) {
-      assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA, ":"));
-      assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, ":"));
-      assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false, ":"));
+  @Test(dataProvider = "times_ms_aa_1")
+  public void testTimeMsAaNoSeparator(String date, long ms, String date2) {
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS_AA));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, false));
+  }
+
+  @Test(dataProvider = "times_ms_aa_2")
+  public void testTimeMsAaSeparator(String date, long ms, String date2) {
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA, ":"));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, ":"));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false, ":"));
   }
 
   @Test(dataProvider = "times_ms_separators")
-  public void testTimeWithMsSeparators(String date, long ms, String separator, String date2) {
+  public void testTimeMsSeparators(String date, long ms, String separator, String date2) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, separator));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, separator));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, separator));
