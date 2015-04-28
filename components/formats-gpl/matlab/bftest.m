@@ -1,5 +1,20 @@
-clear all;close all;
-pathToFile = '/Users/bramalingam/Downloads/data_repo_good/leica-lif/Beta Catenin.lif';
+
+bfCheckJavaPath();
+
+% Create local file for testing
+java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
+uuid = char(java.util.UUID.randomUUID());
+self.tmpdir = fullfile(java_tmpdir, uuid);
+
+pathToFile = fullfile(tmpdir, 'test.fake');
+pathToIniFile = fullfile(tmpdir, 'test.fake.ini');
+fid = fopen(pathToFile, 'w');
+fwrite(fid, '');
+fclose(fid);
+fid = fopen(pathToIniFile, 'w');
+fwrite(fid, sprintf('physicalSizeX=.1\nphysicalSizeY=.1\nphysicalSizeZ=.1'));
+fclose(fid);
+
 %Reading Images
 data = bfopen(pathToFile);
 seriesCount = size(data, 1);
@@ -102,7 +117,7 @@ nWorkers = 4;
 % Enter parallel loop
 for i = 1 : nWorkers
     % Initialize a new reader per worker as Bio-Formats is not thread safe
-    r2 = loci.formats.Memoizer(bfGetReader(), 0)
+    r2 = loci.formats.Memoizer(bfGetReader(), 0);
     % Initialization should use the memo file cached before entering the
     % parallel loop
     r2.setId(pathToFile);
