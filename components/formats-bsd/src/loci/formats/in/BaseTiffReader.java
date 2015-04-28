@@ -74,9 +74,9 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   public static final String[] DATE_FORMATS = {
     "yyyy:MM:dd HH:mm:ss",
-    "dd/MM/yyyy HH:mm:ss.SS",
-    "MM/dd/yyyy hh:mm:ss.SSS aa",
-    "yyyyMMdd HH:mm:ss.SSS",
+    "dd/MM/yyyy HH:mm:ss",
+    "MM/dd/yyyy hh:mm:ss aa",
+    "yyyyMMdd HH:mm:ss",
     "yyyy/MM/dd HH:mm:ss"
   };
 
@@ -426,7 +426,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // format the creation date to ISO 8601
 
     String creationDate = getImageCreationDate();
-    String date = DateTools.formatDate(creationDate, DATE_FORMATS);
+    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
     if (creationDate != null && date == null) {
       LOGGER.warn("unknown creation date format: {}", creationDate);
     }
