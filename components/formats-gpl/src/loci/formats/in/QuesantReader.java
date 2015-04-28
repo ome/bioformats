@@ -121,7 +121,14 @@ public class QuesantReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     if (date != null) {
-      date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ssSSS");
+      // Insert fake separator between seconds and milliseconds to use
+      // DateTools.formatDate()
+      int separator = date.lastIndexOf(":");
+      if (separator > 0 && date.length() > (separator + 5)) {
+        date = date.substring(0, separator + 3) + "." +
+          date.substring(separator + 5);
+      }
+      date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ss", ".");
       if (date != null) {
         store.setImageAcquisitionDate(new Timestamp(date), 0);
       }
