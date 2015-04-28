@@ -176,13 +176,13 @@ public final class DateTools {
   }
 
   /**
-   * Parse the given date as a Joda timestamp
+   * Parse the given date as a Joda instant
    *
    * @param date      The date to parse as a Joda timestamp
    * @param format    The date format to parse the string date
    * @param separator The separator for milliseconds
    */
-  protected static Instant getTimestamp(String date, String format, String separator) {
+  protected static Instant parseDate(String date, String format, String separator) {
 
       long ms = 0L;
       int msSeparator = 0;
@@ -259,7 +259,7 @@ public final class DateTools {
   public static String formatDate(String date, String format, boolean lenient, String separator) {
     if (date == null) return null;
 
-    Instant timestamp = getTimestamp(date, format, separator);
+    Instant timestamp = parseDate(date, format, separator);
 
     if (timestamp == null) {
       return null;
@@ -328,7 +328,7 @@ public final class DateTools {
    * @return           The date in milliseconds
    */
   public static long getTime(String date, String format, String separator) {
-    Instant timestamp = getTimestamp(date, format, separator);
+    Instant timestamp = parseDate(date, format, separator);
     if (timestamp == null) {
       return -1;
     }
