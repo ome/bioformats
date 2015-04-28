@@ -1,4 +1,3 @@
-
 bfCheckJavaPath();
 
 % Create local file for testing
@@ -12,18 +11,36 @@ fid = fopen(pathToFile, 'w');
 fwrite(fid, '');
 fclose(fid);
 fid = fopen(pathToIniFile, 'w');
-fwrite(fid, sprintf('physicalSizeX=.1\nphysicalSizeY=.1\nphysicalSizeZ=.1'));
+fwrite(fid, sprintf('physicalSizeX=.1\n'));
+fwrite(fid, sprintf('physicalSizeY=.1\n'));
+fwrite(fid, sprintf('physicalSizeZ=.2\n'));
+fwrite(fid, sprintf('series=3\n'));
+fwrite(fid, sprintf('sizeT=3\n'));
 fclose(fid);
 
-%Reading Images
+% bfopen-start
 data = bfopen(pathToFile);
+% bfopen-end
+
+% Reading Images
+% accessing-planes-start
 seriesCount = size(data, 1);
 series1 = data{1, 1};
+series2 = data{2, 1};
+series3 = data{3, 1};
+metadataList = data{1, 2};
+% etc
 series1_planeCount = size(series1, 1);
-
-%Displaying images
 series1_plane1 = series1{1, 1};
 series1_label1 = series1{1, 2};
+series1_plane2 = series1{2, 1};
+series1_label2 = series1{2, 2};
+series1_plane3 = series1{3, 1};
+series1_label3 = series1{3, 2};
+% accessing-planes-end
+
+%Displaying images
+% displaying-images-start
 series1_colorMaps = data{1, 3};
 figure('Name', series1_label1);
 if (isempty(series1_colorMaps{1}))
@@ -32,6 +49,7 @@ else
   colormap(series1_colorMaps{1}(1,:));
 end
 imagesc(series1_plane1);
+% displaying-images-end
 
 v = linspace(0, 1, 256)';
 cmap = [v v v];
@@ -40,17 +58,21 @@ for p = 1 : size(series1, 1)
 end
 movie(M);
 
+% read-original-metadata-by-key-start
 % Query some metadata fields (keys are format-dependent)
 metadata = data{1, 2};
 subject = metadata.get('Subject');
 title = metadata.get('Title');
+% read-original-metadata-by-key-end
 
+% read-original-metadata-start
 metadataKeys = metadata.keySet().iterator();
 for i=1:metadata.size()
   key = metadataKeys.nextElement();
   value = metadata.get(key);
   fprintf('%s = %s\n', key, value)
 end
+% read-original-metadata-end
 
 % read-ome-metadata-start
 omeMeta = data{1, 4};
@@ -63,24 +85,33 @@ voxelSizeXdefaultUnit = omeMeta.getPixelsPhysicalSizeX(0).unit().getSymbol(); % 
 voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in µm
 voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in µm
 voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in µm
-
 % read-ome-metadata-end
+
 omeXML = char(omeMeta.dumpXML());
 
+% bfsave-plane-start
 plane = zeros(64, 64, 'uint8');
-bfsave(plane, 'my-file.ome.tiff');
+bfsave(plane, 'single-plane.ome.tiff');
+% bfsave-plane-end
+delete('single-plane.ome.tiff');
 
+% bfsave-multiple-planes-start
 plane = zeros(64, 64, 1, 2, 2, 'uint8');
-bfsave(plane, 'my-file.ome.tiff');
+bfsave(plane, 'multiple-planes.ome.tiff');
+% bfsave-multiple-planes-end
+delete('multiple-planes.ome.tiff');
 
+% bfsave-metadata-start
 plane = zeros(64, 64, 1, 2, 2, 'uint8');
 metadata = createMinimalOMEXMLMetadata(plane);
-pixelSize = ome.xml.model.primitives.PositiveFloat(java.lang.Double(.05));
+pixelSize = ome.units.quantity.Length(java.lang.Double(.05), ome.units.UNITS.MICROM);
 metadata.setPixelsPhysicalSizeX(pixelSize, 0);
 metadata.setPixelsPhysicalSizeY(pixelSize, 0);
-pixelSizeZ = ome.xml.model.primitives.PositiveFloat(java.lang.Double(.2));
+pixelSizeZ = ome.units.quantity.Length(java.lang.Double(.2), ome.units.UNITS.MICROM);
 metadata.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
-bfsave(plane, 'my-file.ome.tiff', 'metadata', metadata);
+bfsave(plane, 'metadata.ome.tiff', 'metadata', metadata);
+% bfsave-metadata-end
+delete('metadata.ome.tiff');
 
 % Construct an empty Bio-Formats reader
 r = bfGetReader();
