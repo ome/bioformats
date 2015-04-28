@@ -178,15 +178,30 @@ public final class DateTools {
   /**
    * Parse the given date as a Joda timestamp
    *
-   * @param date The date to format as ISO 8601.
-   * @param format The date's input format.
+   * @param date      The date to parse as a Joda timestamp
+   * @param format    The date format to parse the string date
+   * @param separator The separator for milliseconds
    */
-  protected static Instant getTimestamp(String date, String format) {
+  protected static Instant getTimestamp(String date, String format, String separator) {
+
+      long ms = 0L;
+      int msSeparator = 0;
+      String newDate = date;
+
+      if (separator != null) {
+          msSeparator = date.lastIndexOf(separator);
+      }
+      if (msSeparator > 0) {
+          newDate = date.substring(0, msSeparator);
+          ms = Long.parseLong(date.substring(msSeparator + 1));
+      }
+
       final DateTimeFormatter parser =
         DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
       Instant timestamp = null;
       try {
-        timestamp = Instant.parse(date, parser);
+        timestamp = Instant.parse(newDate, parser);
+        timestamp = timestamp.plus(ms);
       }
       catch (IllegalArgumentException e) {
         LOGGER.debug("Invalid timestamp '{}'", date);
@@ -219,14 +234,7 @@ public final class DateTools {
    * @param separator The separator for milliseconds
    */
   public static String formatDate(String date, String format, String separator) {
-    int msSeparator = date.lastIndexOf(separator);
-    long ms = 0;
-    String newDate = date;
-    if (msSeparator > 0) {
-      newDate = date.substring(0, msSeparator);
-      ms = Long.parseLong(date.substring(msSeparator + 1));
-    }
-    return formatDate(newDate, format, false, ms);
+    return formatDate(date, format, false, separator);
   }
 
   /**
@@ -237,27 +245,26 @@ public final class DateTools {
    * @param lenient Whether or not to leniently parse the date.
    */
   public static String formatDate(String date, String format, boolean lenient) {
-   return formatDate(date, format, false, 0L);
+   return formatDate(date, format, false, null);
   }
 
   /**
    * Formats the given date as an ISO 8601 date.
    *
-   * @param date    The date to format as ISO 8601
-   * @param format  The date format to parse the string date
-   * @param lenient Whether or not to leniently parse the date.
-   * @param offset  A long specifying the offset in milliseconds
+   * @param date      The date to format as ISO 8601
+   * @param format    The date format to parse the string date
+   * @param lenient   Whether or not to leniently parse the date.
+   * @param separator The separator for milliseconds
    */
-  public static String formatDate(String date, String format, boolean lenient, Long offset) {
+  public static String formatDate(String date, String format, boolean lenient, String separator) {
     if (date == null) return null;
 
-    Instant timestamp = getTimestamp(date, format);
+    Instant timestamp = getTimestamp(date, format, separator);
 
     if (timestamp == null) {
       return null;
     }
 
-    timestamp = timestamp.plus(offset);
     final DateTimeFormatter isoformat;
     if ((timestamp.getMillis() % 1000) != 0) {
       isoformat = ISO8601_FORMATTER_MS;
@@ -307,9 +314,7 @@ public final class DateTools {
    * @return       The date in milliseconds
    */
   public static long getTime(String date, String format) {
-    Instant timestamp = getTimestamp(date, format);
-    if (timestamp == null) return -1;
-    return timestamp.getMillis();
+    return getTime(date, format, null);
   }
 
   /**
@@ -323,14 +328,13 @@ public final class DateTools {
    * @return           The date in milliseconds
    */
   public static long getTime(String date, String format, String separator) {
-    int msSeparator = date.lastIndexOf(separator);
-    long ms = 0;
-    String newStamp = date;
-    if (msSeparator > 0) {
-        newStamp = date.substring(0, msSeparator);
-        ms = Long.parseLong(date.substring(msSeparator + 1));
+    Instant timestamp = getTimestamp(date, format, separator);
+    if (timestamp == null) {
+      return -1;
     }
-    return getTime(newStamp, format) + ms;
+    else {
+      return timestamp.getMillis();
+    }
   }
 
   /**
