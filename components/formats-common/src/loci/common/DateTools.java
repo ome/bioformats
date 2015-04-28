@@ -201,7 +201,7 @@ public final class DateTools {
           newDate = newDate + msString.substring(spaceSeparator);
         }
         else {
-          ms = Long.parseLong(msString);
+          ms = Long.parseLong(msString.trim());
         }
       }
 
