@@ -224,7 +224,7 @@ public final class DateTools {
   /**
    * Formats the given date as an ISO 8601 date.
    * Delegates to {@link #formatDate(String, String, boolean)}, with the
-   * 'lenient' flag set to false.
+   * {@code lenient} flag set to false.
    *
    * @param date   The date to format as ISO 8601
    * @param format The date format to parse the string date
@@ -235,8 +235,8 @@ public final class DateTools {
 
   /**
    * Formats the given date as an ISO 8601 date.
-   * Delegates to {@link #formatDate(String, String, boolean, Long)}, with the
-   * 'lenient' flag set to false.
+   * Delegates to {@link #formatDate(String, String, boolean, String)} with the
+   * {@code lenient} flag set to false.
    *
    * @param date      The date to format as ISO 8601
    * @param format    The date format to parse the string date
@@ -287,18 +287,22 @@ public final class DateTools {
 
   /**
    * Formats the given date as an ISO 8601 date.
-   * Delegates to {@link #formatDate(String, String[], boolean)}, with the
-   * 'lenient' flag set to false.
+   *
+   * Delegates to {@link #formatDate(String, String[], boolean, String)} with
+   * {@code lenient} set to false and {@code separator} set to null.
    *
    * @param date    The date to format as ISO 8601
    * @param formats The date possible formats to parse the string date
    */
   public static String formatDate(String date, String[] formats) {
-    return formatDate(date, formats, false);
+    return formatDate(date, formats, false, null);
   }
 
   /**
    * Formats the given date as an ISO 8601 date.
+   *
+   * Delegates to {@link #formatDate(String, String[], boolean, String)} with
+   * {@code separator} set to null.
    *
    * @param date    The date to format as ISO 8601.
    * @param formats The date possible formats to parse the string date
@@ -307,8 +311,35 @@ public final class DateTools {
   public static String formatDate(String date, String[] formats,
     boolean lenient)
   {
+    return formatDate(date, formats, lenient, null);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   * Delegates to {@link #formatDate(String, String[], boolean, String)} with
+   * {@code lenient} set to false.
+   *
+   * @param date    The date to format as ISO 8601
+   * @param formats The date possible formats to parse the string date
+   * @param separator  The separator for milliseconds
+   */
+  public static String formatDate(String date, String[] formats, String separator) {
+    return formatDate(date, formats, false, separator);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date       The date to format as ISO 8601.
+   * @param formats    The date possible formats to parse the string date
+   * @param lenient    Whether or not to leniently parse the date.
+   * @param separator  The separator for milliseconds
+   */
+  public static String formatDate(String date, String[] formats,
+    boolean lenient, String separator)
+  {
     for (int i=0; i<formats.length; i++) {
-      String result = formatDate(date, formats[i], lenient);
+      String result = formatDate(date, formats[i], lenient, separator);
       if (result != null) return result;
     }
     return null;
