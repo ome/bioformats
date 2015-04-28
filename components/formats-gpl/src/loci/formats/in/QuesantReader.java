@@ -126,7 +126,7 @@ public class QuesantReader extends FormatReader {
       int separator = date.lastIndexOf(":");
       if (separator > 0 && date.length() > (separator + 5)) {
         date = date.substring(0, separator + 3) + "." +
-          date.substring(separator + 5);
+          date.substring(separator + 3);
       }
       date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ss", ".");
       if (date != null) {
