@@ -49,6 +49,18 @@ public class DateToolsTest {
   String DATE_FORMAT_MS_AA = "yyyy-MM-dd hh:mm:ss:SSS aa";
   String REFERENCE_DATE = "1970-01-01 00:00:00";
 
+  String[] DATE_FORMATS = {
+    "yyyy:MM:dd HH:mm:ss",
+    "yyyy-MM-dd HH:mm:ss",
+    "yyyy-MM-dd hh:mm:ss aa"
+  };
+
+  String[] DATE_FORMATS_MS = {
+    "yyyy:MM:dd HH:mm:ss:SSS",
+    "yyyy-MM-dd HH:mm:ss:SSS",
+    "yyyy-MM-dd hh:mm:ss:SSS aa"
+  };
+
   @DataProvider(name = "times_no_ms")
   public Object[][] createTimes() {
     return new Object[][] {
@@ -128,6 +140,13 @@ public class DateToolsTest {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, "."));
+    // Test with multiple date formats
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false, "."));
   }
 
   @Test()
@@ -139,6 +158,12 @@ public class DateToolsTest {
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, false));
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, "."));
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, null));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMATS));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMATS, false));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMATS, null));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMATS, "."));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMATS, false, null));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMATS, false, "."));
   }
 
   @Test(dataProvider = "times_ms_1")
@@ -155,6 +180,13 @@ public class DateToolsTest {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, false, "."));
+    // Test with multiple date formats
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, false));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, false, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, false, "."));
   }
 
   @Test(dataProvider = "times_ms_2")
@@ -171,6 +203,15 @@ public class DateToolsTest {
     assertEquals(-1, DateTools.getTime(date, DATE_FORMAT, "."));
     assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, "."));
     assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, false, "."));
+    // Test with multiple date formats
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, false));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, ":"));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, false, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false, ":"));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, false, "."));
   }
 
   @Test(dataProvider = "times_aa")
@@ -187,6 +228,13 @@ public class DateToolsTest {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false, "."));
+    // Test with multiple date formats
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false, "."));
   }
 
   @Test(dataProvider = "times_ms_aa_1")
@@ -203,6 +251,13 @@ public class DateToolsTest {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS_AA, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, "."));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, false, "."));
+    // Test with multiple date formats
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, false));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, false, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS_MS, false, "."));
   }
 
   @Test(dataProvider = "times_ms_aa_2")
@@ -219,6 +274,15 @@ public class DateToolsTest {
     assertEquals(-1, DateTools.getTime(date, DATE_FORMAT_AA, "."));
     assertEquals(null, DateTools.formatDate(date, DATE_FORMAT_AA, "."));
     assertEquals(null, DateTools.formatDate(date, DATE_FORMAT_AA, false, "."));
+    // Test with multiple date formats
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, false));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, ":"));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, false, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMATS, false, ":"));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMATS, false, "."));
   }
 
   @Test(dataProvider = "times_ms_separators")
