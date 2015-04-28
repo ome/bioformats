@@ -99,25 +99,31 @@ public class DateToolsTest {
   @Test()
   public void testInvalidTime() {
     assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT));
+    assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT, "."));
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, false));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, "."));
   }
 
   @Test(dataProvider = "times_with_ms_1")
   public void testTimeWithMsNoSeparator(String date, long ms, String date2) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, false));
   }
 
   @Test(dataProvider = "times_with_ms_2")
   public void testTimeWithMsSeparator(String date, long ms, String date2) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, ":"));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, ":"));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, ":"));
   }
 
   @Test(dataProvider = "times_ms_separators")
   public void testTimeWithMsSeparators(String date, long ms, String separator, String date2) {
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, separator));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, separator));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, separator));
   }
 
   @Test
