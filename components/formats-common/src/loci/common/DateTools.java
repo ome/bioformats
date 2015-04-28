@@ -189,11 +189,20 @@ public final class DateTools {
       String newDate = date;
 
       if (separator != null) {
-          msSeparator = date.lastIndexOf(separator);
+        msSeparator = date.lastIndexOf(separator);
       }
       if (msSeparator > 0) {
-          newDate = date.substring(0, msSeparator);
-          ms = Long.parseLong(date.substring(msSeparator + 1));
+        newDate = date.substring(0, msSeparator);
+        String msString = date.substring(msSeparator + 1);
+        // Handle date format ending with "SSS aa"
+        int spaceSeparator = msString.lastIndexOf(" ");
+        if (spaceSeparator > 0) {
+          ms = Long.parseLong(msString.substring(0, spaceSeparator));
+          newDate = newDate + msString.substring(spaceSeparator);
+        }
+        else {
+          ms = Long.parseLong(msString);
+        }
       }
 
       final DateTimeFormatter parser =
