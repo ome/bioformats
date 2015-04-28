@@ -43,6 +43,7 @@ import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.base.mdarray.MDShortArray;
 import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
+import ch.systemsx.cisd.hdf5.HDF5IntStorageFeatures;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
 
 import ch.systemsx.cisd.hdf5.IHDF5Writer;
@@ -208,13 +209,16 @@ public class JHDFServiceImpl extends AbstractService
     public void initIntArray(String path, long[] dimensions, long bpp) {
         if (bpp == 1) {
             this.hdfWriter.uint8().createMDArray(path, dimensions, 
-                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]});
+                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]}, 
+                        HDF5IntStorageFeatures.createDeflationKeep(1));
         } else if (bpp == 2) {
             this.hdfWriter.uint16().createMDArray(path, dimensions, 
-                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]});
+                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]}, 
+                        HDF5IntStorageFeatures.createDeflationKeep(1));
         } else if (bpp == 4) {
             this.hdfWriter.int32().createMDArray(path, dimensions, 
-                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]});
+                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]}, 
+                        HDF5IntStorageFeatures.createDeflationKeep(1));
         }
     }
     
