@@ -504,13 +504,35 @@ public class CellH5Reader extends FormatReader {
       String well_id =  MetadataTools.createLSID("Well", 0);
       
       store.setWellID(well_id, 0, 0);
-      store.setWellExternalIdentifier(seriesWell.get(s), 0, 0);
+      
+      String cellh5WellCoord = seriesWell.get(s); 
+      String wellRowLetter = cellh5WellCoord.substring(0, 1);
+      String wellColNumber = cellh5WellCoord.substring(1);
+      
+      int wellRowLetterIndex = "ABCDEFGHIJKLMNOP".indexOf(wellRowLetter);
+      int wellColNumberIndex = -1;
+      try {
+          wellColNumberIndex = Integer.parseInt(wellColNumber);
+      } catch (NumberFormatException e){
+          //
+      }
+     
+      if (wellRowLetterIndex > -1 && wellColNumberIndex > 0) {
+          store.setWellRow(new NonNegativeInteger(wellRowLetterIndex), 0, 0);
+          store.setWellColumn(new NonNegativeInteger(wellColNumberIndex - 1), 0, 0);
+      } else {
+          store.setWellRow(new NonNegativeInteger(0), 0, 0);
+          store.setWellColumn(new NonNegativeInteger(0), 0, 0);
+      }
+   
+      store.setWellExternalIdentifier(cellh5WellCoord, 0, 0);
       
       String site_id = MetadataTools.createLSID("WellSample", 0);
       store.setWellSampleID(site_id, 0, 0, 0);
       store.setWellSampleIndex(NonNegativeInteger.valueOf(seriesSite.get(s)), 0, 0, 0);
+      store.setWellSampleImageRef(getCurrentFile(), 0, 0, 0);   
     }
-    setSeries(0);
+    setSeries(0); 
     parseCellObjects();
   }
 
