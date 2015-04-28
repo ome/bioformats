@@ -116,54 +116,109 @@ public class DateToolsTest {
 
   @Test(dataProvider = "times_no_ms")
   public void testNoMilliseconds(String date, long ms, String date2) {
+    // Test without separator argument
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false));
+    // Test with null separator argument
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, null));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, null));
+    // Test with unfound separator argument
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, "."));
   }
 
   @Test()
   public void testInvalidTime() {
     assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT));
     assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT, "."));
+    assertEquals(-1, DateTools.getTime("wrongdate", DATE_FORMAT, null));
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT));
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, false));
     assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate("wrongdate", DATE_FORMAT, null));
   }
 
   @Test(dataProvider = "times_ms_1")
   public void testTimeMsNoSeparator(String date, long ms, String date2) {
+    // Test without separator argument
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, false));
+    // Test with null separator argument
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, false, null));
+    // Test with unfound separator argument
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS, false, "."));
   }
 
   @Test(dataProvider = "times_ms_2")
   public void testTimeMsSeparator(String date, long ms, String date2) {
+    // Test with correct separator argument
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT, ":"));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, ":"));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT, false, ":"));
+    // Test with null separator argument
+    assertEquals(-1, DateTools.getTime(date, DATE_FORMAT, null));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, null));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, false, null));
+    // Test with unfound separator argument
+    assertEquals(-1, DateTools.getTime(date, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, false, "."));
   }
 
   @Test(dataProvider = "times_aa")
-  public void testTimeAaNoSeparator(String date, long ms, String date2) {
+  public void testTimeAa(String date, long ms, String date2) {
+    // Test without separator argument
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false));
+    // Test with null separator argument
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false, null));
+    // Test with unfound separator argument
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false, "."));
   }
 
   @Test(dataProvider = "times_ms_aa_1")
   public void testTimeMsAaNoSeparator(String date, long ms, String date2) {
+    // Test without separator argument
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS_AA));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, false));
+    // Test with null separator argument
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS_AA, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, null));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, false, null));
+    // Test with unfound separator argument
+    assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_MS_AA, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, "."));
+    assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_MS_AA, false, "."));
   }
 
   @Test(dataProvider = "times_ms_aa_2")
   public void testTimeMsAaSeparator(String date, long ms, String date2) {
+    // Test with correct milliseconds separator
     assertEquals(ms, DateTools.getTime(date, DATE_FORMAT_AA, ":"));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, ":"));
     assertEquals(date2, DateTools.formatDate(date, DATE_FORMAT_AA, false, ":"));
+    // Test with null separator argument
+    assertEquals(-1, DateTools.getTime(date, DATE_FORMAT_AA, null));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT_AA, null));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT_AA, false, null));
+    // Test with unfound milliseconds separator
+    assertEquals(-1, DateTools.getTime(date, DATE_FORMAT_AA, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT_AA, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT_AA, false, "."));
   }
 
   @Test(dataProvider = "times_ms_separators")
