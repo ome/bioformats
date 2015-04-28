@@ -52,6 +52,7 @@ for i=1:metadata.size()
   fprintf('%s = %s\n', key, value)
 end
 
+% read-ome-metadata-start
 omeMeta = data{1, 4};
 stackSizeX = omeMeta.getPixelsSizeX(0).getValue(); % image width, pixels
 stackSizeY = omeMeta.getPixelsSizeY(0).getValue(); % image height, pixels
@@ -59,10 +60,11 @@ stackSizeZ = omeMeta.getPixelsSizeZ(0).getValue(); % number of Z slices
 
 voxelSizeXdefaultValue = omeMeta.getPixelsPhysicalSizeX(0).value();           % returns value in default unit
 voxelSizeXdefaultUnit = omeMeta.getPixelsPhysicalSizeX(0).unit().getSymbol(); % returns the default unit type
-voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in µm
-voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in µm
-voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in Âµm
+voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in Âµm
+voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in Âµm
 
+% read-ome-metadata-end
 omeXML = char(omeMeta.dumpXML());
 
 plane = zeros(64, 64, 'uint8');

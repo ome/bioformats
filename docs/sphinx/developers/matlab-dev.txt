@@ -180,22 +180,10 @@ file format.
 
 To access physical voxel and stack sizes of the data:
 
-::
-
-      data = bfopen('/path/to/data/file');
-      omeMeta = data{1, 4};
-      stackSizeX = omeMeta.getPixelsSizeX(0).getValue(); % image width, pixels
-      stackSizeY = omeMeta.getPixelsSizeY(0).getValue(); % image height, pixels
-      stackSizeZ = omeMeta.getPixelsSizeZ(0).getValue(); % number of Z slices
-
-      voxelSizeXdefaultValue = omeMeta.getPixelsPhysicalSizeX(0).value();           % returns value in default unit
-      voxelSizeXdefaultUnit = omeMeta.getPixelsPhysicalSizeX(0).unit().getSymbol(); % returns the default unit type
-      voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in µm
-      voxelSizeXdouble = voxelSizeX.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-      voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in µm
-      voxelSizeYdouble = voxelSizeY.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-      voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in µm
-      voxelSizeZdouble = voxelSizeZ.doubleValue();                                  % The numeric value represented by this object after conversion to type double
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: read-ome-metadata-start
+  :end-before: read-ome-metadata-end
 
 For more information about the methods to retrieve the metadata, see the
 :javadoc:`MetadataRetrieve <loci/formats/meta/MetadataRetrieve.html>` Javadoc
