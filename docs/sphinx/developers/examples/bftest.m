@@ -3,7 +3,7 @@ bfCheckJavaPath();
 % Create local file for testing
 java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
 uuid = char(java.util.UUID.randomUUID());
-self.tmpdir = fullfile(java_tmpdir, uuid);
+tmpdir = fullfile(java_tmpdir, uuid);
 
 pathToFile = fullfile(tmpdir, 'test.fake');
 pathToIniFile = fullfile(tmpdir, 'test.fake.ini');
