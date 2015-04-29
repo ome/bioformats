@@ -151,6 +151,12 @@ namespace ome
                            writerProperties.compression_suffixes);
       }
 
+      dimension_size_type
+      FormatWriter::getSeriesCount() const
+      {
+        return metadataRetrieve->getImageCount();
+      }
+
       void
       FormatWriter::setLookupTable(dimension_size_type       /* plane */,
                                    const VariantPixelBuffer& /* buf */)
@@ -176,7 +182,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        if (series >= metadataRetrieve->getImageCount())
+        if (series >= getSeriesCount())
           {
             boost::format fmt("Invalid series: %1%");
             fmt % series;
