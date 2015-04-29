@@ -67,6 +67,8 @@ namespace ome
       class OMETIFFReader : public ::ome::bioformats::detail::FormatReader
       {
         using detail::FormatReader::isThisType;
+        using ::ome::bioformats::FormatReader::getOptimalTileWidth;
+        using ::ome::bioformats::FormatReader::getOptimalTileHeight;
 
       protected:
         /// Message logger.
