@@ -177,7 +177,7 @@ public class JPEG2000MetadataParser {
         length -= 8;
       }
       if (boxType == null) {
-        LOGGER.warn("Unknown JPEG 2000 box 0x{} at {}",
+        LOGGER.info("Unknown JPEG 2000 box 0x{} at {}",
             Integer.toHexString(boxCode), pos);
         if (pos == originalPos) {
           in.seek(originalPos);
