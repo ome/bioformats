@@ -80,7 +80,7 @@ public class TiffWriter extends FormatWriter {
    * This is approximately 3.9 GB instead of 4 GB,
    * to allow space for the IFDs.
    */
-  private static final long BIG_TIFF_CUTOFF = 1024 * 1024 * 3990;
+  private static final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
 
   // -- Fields --
 
