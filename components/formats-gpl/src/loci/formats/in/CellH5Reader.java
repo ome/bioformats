@@ -70,6 +70,7 @@ public class CellH5Reader extends FormatReader {
       public final static String DEFINITION = "/definition/";
       public final static String OBJECT = "object/";
       public final static String FEATURE = "feature/";
+      public final static String IMAGE = "image/";
       public final static String BBOX = "bounding_box/";
       public final static String CLASS_LABELS = "object_classification/class_labels/";
       public final static String PREDICTED_CLASS_LABELS = "object_classification/prediction";
@@ -390,12 +391,15 @@ public class CellH5Reader extends FormatReader {
     core.clear();
     // read experiment structure and collect coordinates
 
-    String path = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
-    for (String plate : jhdf.getMember(path)) {
-      path += plate + "/" + CellH5Constants.WELL;
-      for (String well : jhdf.getMember(path)) {
-        path += well + "/" + CellH5Constants.SITE;
-        for (String site : jhdf.getMember(path)) {
+    String path_to_plate = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
+    LOGGER.info("Plate :" + path_to_plate );
+    for (String plate : jhdf.getMember(path_to_plate)) {
+      String path_to_well = path_to_plate + plate + CellH5Constants.WELL;
+      LOGGER.info("Well :" + path_to_well );
+      for (String well : jhdf.getMember(path_to_well)) {
+        String path_to_site = path_to_well + well + CellH5Constants.SITE;
+        LOGGER.info("Site :" + path_to_site );
+        for (String site : jhdf.getMember(path_to_site)) {     
           CellH5PositionList.add(new CellH5Coordinate(plate, well, site));
         }
       }
@@ -406,6 +410,10 @@ public class CellH5Reader extends FormatReader {
     }
 
     List<String> seriesNames = new ArrayList<String>();
+    List<String> seriesPlate = new ArrayList<String>();
+    List<String> seriesWell = new ArrayList<String>();
+    List<String> seriesSite = new ArrayList<String>();
+    
 
     for (CellH5Coordinate coord : CellH5PositionList) {
       if (jhdf.exists(coord.pathToImageData)) {
@@ -434,6 +442,9 @@ public class CellH5Reader extends FormatReader {
         m.pixelType = FormatTools.UINT8;
 
         seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
+        seriesPlate.add(coord.plate);
+        seriesWell.add(coord.well);
+        seriesSite.add(coord.site);
         CellH5PathsToImageData.add(coord.pathToImageData);
         seriesCount++;
       }
@@ -467,6 +478,9 @@ public class CellH5Reader extends FormatReader {
 
         seriesNames.add(String.format("P_%s, W_%s_%s label image",
           coord.plate, coord.well, coord.site));
+        seriesPlate.add(coord.plate);
+        seriesWell.add(coord.well);
+        seriesSite.add(coord.site);
         CellH5PathsToImageData.add(coord.pathToSegmentationData);
         seriesCount++;
       }
@@ -481,6 +495,20 @@ public class CellH5Reader extends FormatReader {
 
     for (int s=0; s<seriesNames.size(); s++) {
       store.setImageName(seriesNames.get(s), s);
+      
+      String plate_id =  MetadataTools.createLSID("Plate", 0);
+     
+      store.setPlateID(plate_id, 0);
+      store.setPlateName(seriesPlate.get(s), 0);
+      
+      String well_id =  MetadataTools.createLSID("Well", 0);
+      
+      store.setWellID(well_id, 0, 0);
+      store.setWellExternalIdentifier(seriesWell.get(s), 0, 0);
+      
+      String site_id = MetadataTools.createLSID("WellSample", 0);
+      store.setWellSampleID(site_id, 0, 0, 0);
+      store.setWellSampleIndex(NonNegativeInteger.valueOf(seriesSite.get(s)), 0, 0, 0);
     }
     setSeries(0);
     parseCellObjects();
@@ -585,6 +613,8 @@ public class CellH5Reader extends FormatReader {
           store.setRectangleWidth((double) width, roiManagerRoiIndex, 0);
           store.setRectangleHeight((double) height, roiManagerRoiIndex, 0);
 
+          store.setRectangleText(cellObjectName, roiManagerRoiIndex, 0);
+                  
           store.setRectangleTheT(
             new NonNegativeInteger(roiTime), roiManagerRoiIndex, 0);
           store.setRectangleTheC(

@@ -305,8 +305,12 @@ public class ROIHandler {
 
 
                     if (roi != null) {
-                        roi.setName(shapeObject.getID());
-
+                        String roiLabel = shapeObject.getText();
+                        if (roiLabel == null) {
+                            roiLabel = shapeObject.getID();
+                        }
+                        roi.setName(roiLabel);
+                        
                         if (Prefs.showAllSliceOnly){
                             if(shapeObject.getTheC() != null){
                                 c = shapeObject.getTheC().getValue();
@@ -317,7 +321,9 @@ public class ROIHandler {
                             if(shapeObject.getTheT() != null){
                                 t = shapeObject.getTheT().getValue();
                             }
-                            roi.setPosition(c, z, t);
+                            // ImageJ expects 1-based indexing, opposed to 
+                            // 0-based indexing in OME
+                            roi.setPosition(c+1, z+1, t+1);
                         }
                         roi.setImage(images[imageNum]);
 
@@ -330,9 +336,9 @@ public class ROIHandler {
                         }
                         if (sc != null) roi.setStrokeColor(sc);
                         manager.add(images[imageNum], roi, nextRoi++);
-                        manager.setAlwaysOnTop(true);
-                        manager.runCommand("Select All");
-                        manager.runCommand("Show All");
+                        //manager.setAlwaysOnTop(true);
+                        //manager.runCommand("Select All");
+                        //manager.runCommand("Show All");
                     }
                 }
             }
@@ -528,6 +534,7 @@ public class ROIHandler {
     // -- Helper methods --
     private static NonNegativeInteger unwrap(int r) {
         return new NonNegativeInteger(r);
+        
     }
 
     private static void storeText(TextRoi roi, MetadataStore store, int roiNum, int shape) {
