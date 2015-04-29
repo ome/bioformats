@@ -102,10 +102,12 @@ set(OME_BIOFORMATS_IN_HEADERS
     in/TIFFReader.h)
 
 set(OME_BIOFORMATS_OUT_SOURCES
-    out/MinimalTIFFWriter.cpp)
+    out/MinimalTIFFWriter.cpp
+    out/OMETIFFWriter.cpp)
 
 set(OME_BIOFORMATS_OUT_HEADERS
-    out/MinimalTIFFWriter.h)
+    out/MinimalTIFFWriter.h
+    out/OMETIFFWriter.h)
 
 set(OME_BIOFORMATS_TIFF_SOURCES
     tiff/Codec.cpp
@@ -155,6 +157,7 @@ add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
 target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
+                      ${Boost_IOSTREAMS_LIBRARY_RELEASE}
                       ${Boost_FILESYSTEM_LIBRARY_RELEASE}
                       ${Boost_SYSTEM_LIBRARY_RELEASE}
                       ${TIFF_LIBRARIES})
