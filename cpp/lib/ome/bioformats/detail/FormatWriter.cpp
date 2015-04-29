@@ -363,7 +363,7 @@ namespace ome
       dimension_size_type
       FormatWriter::getImageCount() const
       {
-        return getSizeZ() * getSizeT() * getSizeC();
+        return getSizeZ() * getSizeT() * getEffectiveSizeC();
       }
 
       bool
@@ -439,14 +439,8 @@ namespace ome
       dimension_size_type
       FormatWriter::getEffectiveSizeC() const
       {
-        // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
-        dimension_size_type sizeZT = getSizeZ() * getSizeT();
-        dimension_size_type effC = 0;
-
-        if (sizeZT)
-          effC = getImageCount() / sizeZT;
-
-        return effC;
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getChannelCount(series);
       }
 
       dimension_size_type
