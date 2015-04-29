@@ -363,12 +363,9 @@ public class TiffWriter extends FormatWriter {
     ifd.putIFDValue(IFD.SAMPLE_FORMAT, sampleFormat);
 
     int index = no;
-    int realSeries = getSeries();
-    for (int i=0; i<realSeries; i++) {
-      setSeries(i);
-      index += getPlaneCount();
+    for (int i=0; i<getSeries(); i++) {
+      index += getPlaneCount(i);
     }
-    setSeries(realSeries);
     return index;
   }
 
@@ -391,16 +388,21 @@ public class TiffWriter extends FormatWriter {
   /* @see loci.formats.FormatWriter#getPlaneCount() */
   @Override
   public int getPlaneCount() {
+    return getPlaneCount(series);
+  }
+  
+  @Override
+  protected int getPlaneCount(int series) {
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    int c = getSamplesPerPixel();
+    int c = getSamplesPerPixel(series);
     int type = FormatTools.pixelTypeFromString(
       retrieve.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
 
     if (bytesPerPixel > 1 && c != 1 && c != 3) {
-      return super.getPlaneCount() * c;
+      return super.getPlaneCount(series) * c;
     }
-    return super.getPlaneCount();
+    return super.getPlaneCount(series);
   }
 
   // -- IFormatWriter API methods --
