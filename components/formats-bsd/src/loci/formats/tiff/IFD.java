@@ -853,8 +853,9 @@ public class IFD extends HashMap<Integer, Object> {
   public long[] getRowsPerStrip() throws FormatException {
     long[] rowsPerStrip = getIFDLongArray(ROWS_PER_STRIP);
     if (rowsPerStrip == null) {
-      // create a fake RowsPerStrip entry if one is not present
-      return new long[] {getImageLength()};
+      // create a fake RowsPerStrip entry if one is not present 
+      long tileLength = getIFDLongValue(TILE_LENGTH, 0);
+      return new long[] {tileLength == 0 ? getImageLength() : tileLength};
     }
 
     // rowsPerStrip should never be more than the total number of rows
