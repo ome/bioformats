@@ -1,6 +1,9 @@
 Testing code changes
 ====================
 
+Automated tests
+---------------
+
 At the bottom of many commit messages in
 https://github.com/openmicroscopy/bioformats, you will find a few lines
 similar to this:
@@ -98,3 +101,29 @@ If Ant reports that the build was successful, then there is nothing that
 you need to do. Otherwise, it is helpful if you can provide the command,
 branch name, number of failures at the bottom of the Ant output, and the
 :file:`bio-formats-software-test-\*.log` file.
+
+MATLAB tests
+------------
+.. _MATLAB xUnit Test Framework: http://uk.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+
+Tests for the Bio-Formats MATLAB toolbox are written using the
+`MATLAB xUnit Test Framework`_ and located under
+:sourcedir:`components/formats-gpl/test/matlab`.
+
+To run these tests, you will need to download the xUnit Framework using the
+link above from the MATLAB Central File Exchange. After adding the xUnit
+framework and the MATLAB toolbox to your MATLAB path, you can run the tests
+using:
+
+.. code-block:: matlab
+
+  runtests components/formats-gpl/test/matlab
+
+Alternatively, you can download `matlab-xunit <https://github.com/psexton/matlab-xunit>`_ which is based on the MATLAB xUnit
+Test Framework and adds JUnit compatible XML output. After adding it to your
+MATLAB path,  you can run the tests using:
+
+.. code-block:: matlab
+
+  runxunit components/formats-gpl/test/matlab
+  runxunit components/formats-gpl/test/matlab -xmlfile test-output.xml
