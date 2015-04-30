@@ -4,7 +4,9 @@ bfCheckJavaPath();
 java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
 uuid = char(java.util.UUID.randomUUID());
 tmpdir = fullfile(java_tmpdir, uuid);
+mkdir(tmpdir);
 
+% Create fake file for testing purposes
 pathToFile = fullfile(tmpdir, 'test.fake');
 pathToIniFile = fullfile(tmpdir, 'test.fake.ini');
 fid = fopen(pathToFile, 'w');
