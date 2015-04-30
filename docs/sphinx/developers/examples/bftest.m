@@ -88,8 +88,11 @@ stackSizeZ = omeMeta.getPixelsSizeZ(0).getValue(); % number of Z slices
 voxelSizeXdefaultValue = omeMeta.getPixelsPhysicalSizeX(0).value();           % returns value in default unit
 voxelSizeXdefaultUnit = omeMeta.getPixelsPhysicalSizeX(0).unit().getSymbol(); % returns the default unit type
 voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeXdouble = voxelSizeX.doubleValue();                                  % The numeric value represented by this object after conversion to type double
 voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeYdouble = voxelSizeY.doubleValue();                                  % The numeric value represented by this object after conversion to type double
 voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeZdouble = voxelSizeZ.doubleValue();                                  % The numeric value represented by this object after conversion to type double
 % read-ome-metadata-end
 
 omeXML = char(omeMeta.dumpXML());
@@ -156,7 +159,7 @@ r.close()
 nWorkers = 4;
 
 % Enter parallel loop
-for i = 1 : nWorkers
+parfor i = 1 : nWorkers
     % Initialize a new reader per worker as Bio-Formats is not thread safe
     r2 = loci.formats.Memoizer(bfGetReader(), 0);
     % Initialization should use the memo file cached before entering the
