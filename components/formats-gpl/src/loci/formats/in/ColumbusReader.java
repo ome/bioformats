@@ -232,7 +232,7 @@ public class ColumbusReader extends FormatReader {
     for (int i=0; i<metadataFiles.size(); i++) {
       String path = new Location(parent + File.separator + metadataFiles.get(i)).getAbsolutePath();
       metadataFiles.set(i, path);
-      if (checkSuffix(path, "xml")) {
+      if (checkSuffix(path, "ColumbusIDX.xml")) {
         parseImageXML(path);
       }
     }
@@ -416,12 +416,24 @@ public class ColumbusReader extends FormatReader {
     }
 
     NodeList plates = root.getElementsByTagName("Plates");
+    if (plates == null) {
+      return;
+    }
     plates = ((Element) plates.item(0)).getElementsByTagName("Plate");
+    if (plates == null) {
+      return;
+    }
     NodeList timestamps = ((Element) plates.item(0)).getElementsByTagName("MeasurementStartTime");
     acquisitionDate = ((Element) timestamps.item(0)).getTextContent();
 
     NodeList images = root.getElementsByTagName("Images");
+    if (images == null) {
+      return;
+    }
     images = ((Element) images.item(0)).getElementsByTagName("Image");
+    if (images == null) {
+      return;
+    }
 
     for (int i=0; i<images.getLength(); i++) {
       Element image = (Element) images.item(i);
