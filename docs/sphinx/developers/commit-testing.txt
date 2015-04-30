@@ -120,8 +120,8 @@ using:
   runtests components/formats-gpl/test/matlab
 
 Alternatively, you can download `matlab-xunit <https://github.com/psexton/matlab-xunit>`_ which is based on the MATLAB xUnit
-Test Framework and adds JUnit compatible XML output. After adding it to your
-MATLAB path,  you can run the tests using:
+Test Framework and adds JUnit-compatible XML output. After adding it to your
+MATLAB path, you can run the tests using:
 
 .. code-block:: matlab
 
