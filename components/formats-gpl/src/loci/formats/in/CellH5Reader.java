@@ -494,6 +494,9 @@ public class CellH5Reader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int s=0; s<seriesNames.size(); s++) {
+        
+      String image_id = MetadataTools.createLSID("Image", s);  
+        
       store.setImageName(seriesNames.get(s), s);
       
       String plate_id =  MetadataTools.createLSID("Plate", 0);
@@ -530,7 +533,7 @@ public class CellH5Reader extends FormatReader {
       String site_id = MetadataTools.createLSID("WellSample", 0);
       store.setWellSampleID(site_id, 0, 0, 0);
       store.setWellSampleIndex(NonNegativeInteger.valueOf(seriesSite.get(s)), 0, 0, 0);
-      store.setWellSampleImageRef(getCurrentFile(), 0, 0, 0);   
+      store.setWellSampleImageRef(image_id, 0, 0, 0);   
     }
     setSeries(0); 
     parseCellObjects();
