@@ -59,7 +59,7 @@ cmap = [v v v];
 for p = 1 : size(series1, 1)
   M(p) = im2frame(uint8(series1{p, 1}), cmap);
 end
-movie(M);
+% movie(M);
 % animated-movie-end
 
 
