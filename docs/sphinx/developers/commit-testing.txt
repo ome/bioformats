@@ -126,4 +126,22 @@ MATLAB path,  you can run the tests using:
 .. code-block:: matlab
 
   runxunit components/formats-gpl/test/matlab
+
+You can run individual test class by passing the name of the class:
+
+.. code-block:: matlab
+
+  runxunit components/formats-gpl/test/matlab TestBfsave
+
+Or run individual test methods by passing the name of the class and the name
+of the method:
+
+.. code-block:: matlab
+
+  runxunit components/formats-gpl/test/matlab TestBfsave:testLZW
+
+Finally to output the test results under XML format, you can use the :option:`-xmlfile` option:
+
+.. code-block:: matlab
+
   runxunit components/formats-gpl/test/matlab -xmlfile test-output.xml
