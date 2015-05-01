@@ -163,7 +163,7 @@ nWorkers = 4;
 % Enter parallel loop
 parfor i = 1 : nWorkers
     % Initialize a new reader per worker as Bio-Formats is not thread safe
-    r2 = loci.formats.Memoizer(bfGetReader(), 0);
+    r2 = javaObject('loci.formats.Memoizer', bfGetReader(), 0);
     % Initialization should use the memo file cached before entering the
     % parallel loop
     r2.setId(pathToFile);
