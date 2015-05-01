@@ -658,8 +658,9 @@ public class LIFReader extends FormatReader {
         int size = lasers.size();
         int jj;
         Set<Integer> toRemove = new HashSet<Integer>();
+        int as = active.size();
         for (int j = 0; j < s; j++) {
-          if (!(Boolean) active.get(j)) {
+          if (j < as && !(Boolean) active.get(j)) {
             toRemove.add(validIntensities.get(j));
           }
           jj = j+1;
