@@ -1167,7 +1167,7 @@ public class LIFReader extends FormatReader {
 
         boolean active = "1".equals(detector.getAttribute("IsActive"));
         String c = detector.getAttribute("Channel");
-        int channel = c == null || c.trim().isEmpty() ? 0 : Integer.parseInt(c);
+        int channel = (c == null || c.trim().length() == 0) ? 0 : Integer.parseInt(c);
         if (active) {
           if (detectorIndexes[image] != null && detectorModels[image] != null) {
             detectorModels[image].add(detectorIndexes[image].get(channel));
