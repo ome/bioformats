@@ -110,38 +110,43 @@ Tests for the Bio-Formats MATLAB toolbox are written using the
 `MATLAB xUnit Test Framework`_ and located under
 :sourcedir:`components/formats-gpl/test/matlab`.
 
-To run these tests, you will need to download the xUnit Framework using the
-link above from the MATLAB Central File Exchange. After adding the xUnit
-framework and the MATLAB toolbox to your MATLAB path, you can run the tests
-using:
+To run these tests, you will need to download `matlab-xunit <https://github.com/psexton/matlab-xunit>`_ which is based on the xUnit
+Framework and adds JUnit-compatible XML output. First add this package together
+with the Bio-Formats MATLAB to your MATLAB path:
 
 .. code-block:: matlab
 
-  runtests components/formats-gpl/test/matlab
+  % Add the xUnit toolbox to the MATLAB path
+  addpath('/path/to/matlab-xunit');
+  % Add the Bio-Formats dependencies from the source code
+  addpath('components/formats-gpl/matlab');
+  addpath('components/artifacts');
 
-Alternatively, you can download `matlab-xunit <https://github.com/psexton/matlab-xunit>`_ which is based on the MATLAB xUnit
-Test Framework and adds JUnit-compatible XML output. After adding it to your
-MATLAB path, you can run the tests using:
-
-.. code-block:: matlab
-
-  runxunit components/formats-gpl/test/matlab
-
-You can run individual test class by passing the name of the class:
+You can run all the MATLAB tests using :command:`runxunit`:
 
 .. code-block:: matlab
 
-  runxunit components/formats-gpl/test/matlab TestBfsave
+  cd components/formats-gpl/test/matlab
+  runxunit
 
-Or run individual test methods by passing the name of the class and the name
-of the method:
+Individual test classes can be run by passing the name of the class:
 
 .. code-block:: matlab
 
-  runxunit components/formats-gpl/test/matlab TestBfsave:testLZW
+  cd components/formats-gpl/test/matlab
+  runxunit TestBfsave
+
+Individual test methods can be run by passing the name of the class and the
+name of the method:
+
+.. code-block:: matlab
+
+  cd components/formats-gpl/test/matlab
+  runxunit TestBfsave:testLZW
 
 Finally to output the test results under XML format, you can use the :option:`-xmlfile` option:
 
 .. code-block:: matlab
 
-  runxunit components/formats-gpl/test/matlab -xmlfile test-output.xml
+  cd components/formats-gpl/test/matlab
+  runxunit -xmlfile test-output.xml
