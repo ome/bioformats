@@ -335,6 +335,8 @@ public class MemoizerTest {
     memoizer = new Memoizer(reader, 0);
     memoizer.setId(id);
     memoizer.close();
+    assertFalse(memoizer.isLoadedFromMemo());
+    assertTrue(memoizer.isSavedToMemo());
 
     // Rename the directory (including the file and the memo file)
     String uuid = UUID.randomUUID().toString();
@@ -346,6 +348,8 @@ public class MemoizerTest {
     // Try to reopen the file with the Memoizer
     memoizer.setId(newid);
     memoizer.close();
+    assertFalse(memoizer.isLoadedFromMemo());
+    assertTrue(memoizer.isSavedToMemo());
   }
 
   public static void main(String[] args) throws Exception {
