@@ -119,21 +119,23 @@ with the Bio-Formats MATLAB to your MATLAB path:
   % Add the xUnit toolbox to the MATLAB path
   addpath('/path/to/matlab-xunit');
   % Add the Bio-Formats dependencies from the source code
-  addpath('components/formats-gpl/matlab');
-  addpath('components/artifacts');
+  addpath('/path/to/bioformats/components/formats-gpl/matlab');
+  addpath('/path/to/bioformats/components/artifacts');
+  % Alternatively add the Bio-Formats MATLAB toolbox
+  % addpath('/path/to/bfmatlab');
 
 You can run all the MATLAB tests using :command:`runxunit`:
 
 .. code-block:: matlab
 
-  cd components/formats-gpl/test/matlab
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
   runxunit
 
 Individual test classes can be run by passing the name of the class:
 
 .. code-block:: matlab
 
-  cd components/formats-gpl/test/matlab
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
   runxunit TestBfsave
 
 Individual test methods can be run by passing the name of the class and the
@@ -141,12 +143,12 @@ name of the method:
 
 .. code-block:: matlab
 
-  cd components/formats-gpl/test/matlab
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
   runxunit TestBfsave:testLZW
 
 Finally to output the test results under XML format, you can use the :option:`-xmlfile` option:
 
 .. code-block:: matlab
 
-  cd components/formats-gpl/test/matlab
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
   runxunit -xmlfile test-output.xml
