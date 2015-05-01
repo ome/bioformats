@@ -120,7 +120,7 @@ with the Bio-Formats MATLAB to your MATLAB path:
   addpath('/path/to/matlab-xunit');
   % Add the Bio-Formats dependencies from the source code
   addpath('/path/to/bioformats/components/formats-gpl/matlab');
-  addpath('/path/to/bioformats/components/artifacts');
+  addpath('/path/to/bioformats/artifacts');
   % Alternatively add the Bio-Formats MATLAB toolbox
   % addpath('/path/to/bfmatlab');
 
