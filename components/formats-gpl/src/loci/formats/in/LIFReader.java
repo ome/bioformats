@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -647,7 +649,27 @@ public class LIFReader extends FormatReader {
           }
         }
 
-
+        //remove entries if channel has 2 wavelength
+        //e.g. 30% 458 70% 633
+        int s = validIntensities.size();
+        int size = lasers.size();
+        int jj;
+        Set<Integer> toRemove = new HashSet<Integer>();
+        for (int j = 0; j < s; j++) {
+          jj = j+1;
+          if (jj < s) {
+            int v = validIntensities.get(j)/size;
+            int vv = validIntensities.get(jj)/size;
+            if (vv == v) {
+              toRemove.add(validIntensities.get(j));
+              toRemove.add(validIntensities.get(jj));
+            }
+          }
+        }
+        if (toRemove.size() > 0) {
+          validIntensities.removeAll(toRemove);
+        }
+        
         int start = validIntensities.size() - getEffectiveSizeC();
         if (start < 0) {
           start = 0;
