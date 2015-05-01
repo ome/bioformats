@@ -168,7 +168,8 @@ namespace ome
       {
         if (tiff)
           {
-            tiff->writeCurrentDirectory();
+            // Flush last IFD.
+            nextIFD();
             tiff->close();
             ifd.reset();
             tiff.reset();
