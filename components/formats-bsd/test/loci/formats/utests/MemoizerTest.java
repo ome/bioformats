@@ -329,13 +329,32 @@ public class MemoizerTest {
         memoFile.getAbsolutePath());
   }
 
+  @Test
+  public void testRelocate() throws Exception {
+    // Create an in-place memo file
+    memoizer = new Memoizer(reader, 0);
+    memoizer.setId(id);
+    memoizer.close();
+
+    // Rename the directory (including the file and the memo file)
+    String uuid = UUID.randomUUID().toString();
+    File newidDir = new File(System.getProperty("java.io.tmpdir"), uuid);
+    idDir.renameTo(newidDir);
+    File newtempFile = new File(newidDir, TEST_FILE);
+    String newid = newtempFile.getAbsolutePath();
+
+    // Try to reopen the file with the Memoizer
+    memoizer.setId(newid);
+    memoizer.close();
+  }
+
   public static void main(String[] args) throws Exception {
-      MemoizerTest t = new MemoizerTest();
-      t.setUp();
-      try {
-        t.testSimple();
-      } finally {
-        t.tearDown();
-      }
+    MemoizerTest t = new MemoizerTest();
+    t.setUp();
+    try {
+      t.testSimple();
+    } finally {
+      t.tearDown();
+    }
   }
 }
