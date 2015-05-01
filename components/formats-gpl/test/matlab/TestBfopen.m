@@ -30,6 +30,12 @@ classdef TestBfopen < ReaderTest
         filepath
         data
         nSeries = 1
+        flag = 1
+        width = 10;
+        height = 10;
+        x = 10;
+        y = 10;
+        DefaultSize = [512,512];
     end
     
     methods
@@ -50,19 +56,37 @@ classdef TestBfopen < ReaderTest
             fid = fopen(self.filepath, 'w+');
             fclose(fid);
             
-            % Read fake file using bfopen
-            self.data = bfopen(self.filepath);
-            
-            % Test dimensions of bfopen output and core metadata
-            nPlanes = self.sizeZ * self.sizeC * self.sizeT;
-            assertEqual(size(self.data), [self.nSeries 4]);
-            for i = 1 : self.nSeries
-                assertEqual(size(self.data{i, 1}), [nPlanes 2]);
-                m = self.data{i,4};
-                assertEqual(m.getImageCount(), self.nSeries);
-                assertEqual(m.getPixelsSizeZ(i-1).getValue(), self.sizeZ);
-                assertEqual(m.getPixelsSizeC(i-1).getValue(), self.sizeC);
-                assertEqual(m.getPixelsSizeT(i-1).getValue(), self.sizeT);
+            for flag = 1:2
+                self.flag = flag;
+                % Read fake file using bfopen
+                if (self.flag == 1)
+                    self.data = bfopen(self.filepath);
+                    self.x = 512;
+                    self.y = 512;
+                elseif (self.flag == 2)
+                    self.data = bfopen(self.filepath,self.x,self.y,self.width,self.height);
+                end
+                
+                % Test dimensions of bfopen output and core metadata
+                nPlanes = self.sizeZ * self.sizeC * self.sizeT;
+                assertEqual(size(self.data), [self.nSeries 4]);
+                for i = 1 : self.nSeries
+                    assertEqual(size(self.data{i, 1}), [nPlanes 2]);
+                    m = self.data{i,4};
+                    TileSize = size(self.data{1,1}{1,1});
+                    assertEqual(m.getImageCount(), self.nSeries);
+                    assertEqual(m.getPixelsSizeZ(i-1).getValue(), self.sizeZ);
+                    assertEqual(m.getPixelsSizeC(i-1).getValue(), self.sizeC);
+                    assertEqual(m.getPixelsSizeT(i-1).getValue(), self.sizeT);
+                    assertEqual(m.getPixelsSizeX(i-1).getValue(), self.DefaultSize(1));
+                    assertEqual(m.getPixelsSizeY(i-1).getValue(), self.DefaultSize(2));
+                    assertEqual(TileSize(1), self.x);
+                    assertEqual(TileSize(2), self.y);
+                    
+                end
+                
+                self.x = 10;
+                self.y = 10;
             end
         end
         
@@ -89,5 +113,6 @@ classdef TestBfopen < ReaderTest
             self.sizeT = 3;
             self.checkFake(['test&sizeT=' num2str(self.sizeT) '.fake'])
         end
+        
     end
 end
