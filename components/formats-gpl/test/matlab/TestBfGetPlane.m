@@ -35,7 +35,6 @@ classdef TestBfGetPlane < ReaderTest
         bpp
         sgn
         fp
-        little
     end
     
     methods
