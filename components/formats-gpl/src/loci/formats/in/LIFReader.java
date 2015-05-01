@@ -692,6 +692,7 @@ public class LIFReader extends FormatReader {
         }
 
         int nextFilter = 0;
+        start = 0;
         //int nextFilter = cutIns[i].size() - getEffectiveSizeC();
         for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
           int laserArrayIndex = validIntensities.get(k);
@@ -1390,7 +1391,14 @@ public class LIFReader extends FormatReader {
   private void translateLaserLines(Element imageNode, int image)
     throws FormatException
   {
-    NodeList aotfLists = getNodes(imageNode, "AotfList");
+    //NodeList aotfLists = getNodes(imageNode, "AotfList");
+    NodeList root = getNodes(imageNode, "LDM_Block_Sequential_List");
+    NodeList aotfLists;
+    if (root == null || root.getLength() != 1) {
+      aotfLists = getNodes(imageNode, "AotfList");
+    } else {
+      aotfLists = getNodes((Element) root.item(0), "AotfList");
+    }
     if (aotfLists == null) return;
 
     laserWavelength[image] = new ArrayList<Double>();
@@ -1416,7 +1424,10 @@ public class LIFReader extends FormatReader {
           Integer.parseInt(qual.trim());
 
         index += (2 - (qualifier / 10));
-        if (index < 0) index = 0;
+        if (index < 0) {
+            continue;
+            //index = 0;
+        }
 
         String v = laserLine.getAttribute("LaserLine");
         Double wavelength = 0d;
