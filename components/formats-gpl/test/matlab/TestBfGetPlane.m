@@ -263,41 +263,7 @@ classdef TestBfGetPlane < ReaderTest
             self.height = 100;
             self.checkTile()
         end
-        
-        function OctaveCompatibleBfGetPlane(self)
-            plane = self.reader.openBytes(...
-                self.iPlane - 1, self.x - 1, self.y - 1, ...
-                self.width, self.height);
-            
-            if self.sgn
-                % can get the data directly to a matrix
-                I = javaMethod('makeDataArray2D', 'loci.common.DataTools', plane, ...
-                    self.bpp, self.fp, self.little, ip.Results.height);
-            else
-                % get the data as a vector, either because makeDataArray2D
-                % is not available, or we need a vector for typecast
-                I = javaMethod('makeDataArray', 'loci.common.DataTools', plane, ...
-                    self.bpp, self.fp, self.little);
-            end
-            
-            I1 = bfGetPlane(self.reader, self.iPlane,self.x, self.y,...
-                self.width, self.height);
-            if ~self.sgn
-                % NB: arr will always be a vector here
-                switch class(I)
-                    case 'int8'
-                        I = typecast(I, 'uint8');
-                    case 'int16'
-                        I = typecast(I, 'uint16');
-                    case 'int32'
-                        I = typecast(I, 'uint32');
-                    case 'int64'
-                        I = typecast(I, 'uint64');
-                end
-            end
-            assertEqual(I,I1);
-        end
-        
+               
         function testJavaMethod(self)
             pixelType = self.reader.getPixelType();
             
@@ -314,22 +280,7 @@ classdef TestBfGetPlane < ReaderTest
             assertEqual(self.sgn,sgn);
             
         end
-        
-        function testOctaveCompatibility(self)
-            pixelType = self.reader.getPixelType();
-            self.bpp = javaMethod('getBytesPerPixel', 'loci.formats.FormatTools', pixelType);
-            self.fp = javaMethod('isFloatingPoint', 'loci.formats.FormatTools', pixelType);
-            self.sgn = javaMethod('isSigned', 'loci.formats.FormatTools', pixelType);
-            self.reader.setId(['test&sizeY=' num2str(self.sizeY) '.fake']);
-            self.x = 101;
-            self.y = 101;
-            self.width = 1;
-            self.height = 100;
-            self.little = self.reader.isLittleEndian();
-            
-            self.OctaveCompatibleBfGetPlane();
-        end
-        
+
         
     end
 end
