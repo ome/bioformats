@@ -39,11 +39,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
-set(ome_internal_static_headers)
+set(ome_internal_static_headers
+    url.h)
 
 set(ome_internal_generated_headers
-   ${CMAKE_CURRENT_BINARY_DIR}/config.h
-   ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+    ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 # Dump header list for testing
 header_include_list_write(ome_internal_static_headers ome_internal_generated_headers ome/internal ${PROJECT_BINARY_DIR}/cpp/test/ome-internal)
