@@ -140,7 +140,8 @@ public class LIFReader extends FormatReader {
   private Double[] refractiveIndex;
   private List[] cutIns, cutOuts, filterModels;
   private double[][] timestamps;
-  private List[] laserWavelength, laserIntensity;
+  private List[] laserWavelength, laserIntensity, laserActive;
+
   private ROI[][] imageROIs;
   private boolean alternateCenter = false;
   private String[] imageNames;
@@ -370,7 +371,7 @@ public class LIFReader extends FormatReader {
       refractiveIndex = null;
       cutIns = cutOuts = filterModels = null;
       timestamps = null;
-      laserWavelength = laserIntensity = null;
+      laserWavelength = laserIntensity = laserActive = null;
       imageROIs = null;
       alternateCenter = false;
       imageNames = null;
@@ -616,6 +617,8 @@ public class LIFReader extends FormatReader {
 
       final List<Double> lasers = laserWavelength[index];
       final List<Double> laserIntensities = laserIntensity[index];
+
+      final List active = laserActive[index];
       int nextChannel = 0;
 
       if (lasers != null) {
@@ -656,6 +659,9 @@ public class LIFReader extends FormatReader {
         int jj;
         Set<Integer> toRemove = new HashSet<Integer>();
         for (int j = 0; j < s; j++) {
+          if (!(Boolean) active.get(j)) {
+            toRemove.add(validIntensities.get(j));
+          }
           jj = j+1;
           if (jj < s) {
             int v = validIntensities.get(j)/size;
@@ -669,7 +675,6 @@ public class LIFReader extends FormatReader {
         if (toRemove.size() > 0) {
           validIntensities.removeAll(toRemove);
         }
-        
         int start = validIntensities.size() - getEffectiveSizeC();
         if (start < 0) {
           start = 0;
@@ -990,6 +995,7 @@ public class LIFReader extends FormatReader {
     descriptions = new String[imageNodes.getLength()];
     laserWavelength = new List[imageNodes.getLength()];
     laserIntensity = new List[imageNodes.getLength()];
+    laserActive = new List[imageNodes.getLength()];
     timestamps = new double[imageNodes.getLength()][];
     activeDetector = new List[imageNodes.getLength()];
     serialNumber = new String[imageNodes.getLength()];
@@ -1137,6 +1143,7 @@ public class LIFReader extends FormatReader {
     if (definitions == null) return;
 
     final List<String> channels = new ArrayList<String>();
+    laserActive[image] = new ArrayList<Boolean>();
     int nextChannel = 0;
     for (int definition=0; definition<definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
@@ -1144,7 +1151,7 @@ public class LIFReader extends FormatReader {
       boolean isMaster = parentName.endsWith("Master");
       NodeList detectors = getNodes(definitionNode, "Detector");
       if (detectors == null) return;
-
+      int count = 0;
       for (int d=0; d<detectors.getLength(); d++) {
         Element detector = (Element) detectors.item(d);
         NodeList multibands = getNodes(definitionNode, "MultiBand");
@@ -1157,12 +1164,9 @@ public class LIFReader extends FormatReader {
           v == null || v.trim().isEmpty() ? null : new Double(v.trim());
 
         boolean active = "1".equals(detector.getAttribute("IsActive"));
-
+        String c = detector.getAttribute("Channel");
+        int channel = c == null || c.trim().isEmpty() ? 0 : Integer.parseInt(c);
         if (active) {
-          String c = detector.getAttribute("Channel");
-          int channel = 
-            c == null || c.trim().isEmpty() ? 0 : Integer.parseInt(c.trim());
-
           if (detectorIndexes[image] != null && detectorModels[image] != null) {
             detectorModels[image].add(detectorIndexes[image].get(channel));
           }
@@ -1212,6 +1216,7 @@ public class LIFReader extends FormatReader {
             channels.add("");
           }
 
+          
           if (!isMaster) {
             if (channel < nextChannel) {
               nextChannel = 0;
@@ -1228,12 +1233,15 @@ public class LIFReader extends FormatReader {
 
             nextChannel++;
           }
+        } else {
+          count++;
         }
-
         if (active && activeDetector[image] != null) {
           activeDetector[image].add(active);
         }
       }
+      //Store values to check if actually it is active.
+      laserActive[image].add(count < detectors.getLength());
     }
 
     if (channels != null && channelNames[image] != null) {
