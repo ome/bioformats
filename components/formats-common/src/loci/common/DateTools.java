@@ -194,11 +194,17 @@ public final class DateTools {
       if (msSeparator > 0) {
         newDate = date.substring(0, msSeparator);
         String msString = date.substring(msSeparator + 1);
-        // Handle date format ending with "SSS aa"
-        int spaceSeparator = msString.lastIndexOf(" ");
-        if (spaceSeparator > 0) {
-          ms = Long.parseLong(msString.substring(0, spaceSeparator));
-          newDate = newDate + msString.substring(spaceSeparator);
+        // Handle formats ending with another pattern, e.g. "SSS aa" or "SSSZ"
+        int postmsSeparator = 0;
+        for (int pos=0; pos<msString.length(); pos++) {
+          if (!Character.isDigit(msString.charAt(pos))) {
+            postmsSeparator = pos;
+            break;
+          }
+        }
+        if (postmsSeparator > 0) {
+          ms = Long.parseLong(msString.substring(0, postmsSeparator));
+          newDate = newDate + msString.substring(postmsSeparator);
         }
         else {
           ms = Long.parseLong(msString.trim());
