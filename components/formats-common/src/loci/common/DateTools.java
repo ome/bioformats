@@ -186,7 +186,7 @@ public final class DateTools {
 
       long ms = 0L;
       int msSeparator = 0;
-      String newDate = date;
+      String newDate = date.trim();
 
       if (separator != null) {
         msSeparator = date.lastIndexOf(separator);
@@ -207,7 +207,7 @@ public final class DateTools {
           newDate = newDate + msString.substring(postmsSeparator);
         }
         else {
-          ms = Long.parseLong(msString.trim());
+          ms = Long.parseLong(msString);
         }
       }
 
