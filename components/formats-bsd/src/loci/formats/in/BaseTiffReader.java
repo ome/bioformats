@@ -77,7 +77,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     "dd/MM/yyyy HH:mm:ss",
     "MM/dd/yyyy hh:mm:ss aa",
     "yyyyMMdd HH:mm:ss",
-    "yyyy/MM/dd HH:mm:ss"
+    "yyyy/MM/dd HH:mm:ss",
+    "yyyy-MM-dd'T'HH:mm:ssZ"
   };
 
   // -- Constructors --
