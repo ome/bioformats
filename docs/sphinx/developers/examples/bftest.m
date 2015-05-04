@@ -174,3 +174,6 @@ parfor i = 1 : nWorkers
     r2.close()
 end
 % memoizer-parfor-end
+
+% Clean directory
+rmdir(tmpdir, 's');
