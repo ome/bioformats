@@ -762,6 +762,7 @@ public class CellSensReader extends FormatReader {
 
     int nextPyramid = 0;
     for (int i=0; i<core.size();) {
+      setCoreIndex(i);
       Pyramid pyramid = null;
       if (nextPyramid < pyramids.size()) {
         pyramid = pyramids.get(nextPyramid++);
@@ -864,6 +865,7 @@ public class CellSensReader extends FormatReader {
 
       i += core.get(i).resolutionCount;
     }
+    setCoreIndex(0);
   }
 
   // -- Helper methods --
@@ -1105,6 +1107,14 @@ public class CellSensReader extends FormatReader {
       int tIndex = tv == null ? -1 : tv + 2;
       int zIndex = zv == null ? -1 : zv + 2;
       int cIndex = cv == null ? -1 : cv + 2;
+
+      if ((tIndex < 0 || tIndex > 2) && (zIndex < 0 || zIndex > 2 ) ||
+        (cIndex < 0 || cIndex > 2))
+      {
+        tIndex--;
+        zIndex--;
+        cIndex--;
+      }
 
       if (tv == null && zv == null) {
         if (t.coordinate.length > 4 && cv == null) {
