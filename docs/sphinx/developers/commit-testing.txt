@@ -104,24 +104,24 @@ branch name, number of failures at the bottom of the Ant output, and the
 
 MATLAB tests
 ------------
-.. _MATLAB xUnit Test Framework: http://uk.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+.. _matlab-xunit: https://github.com/psexton/matlab-xunit
 
-Tests for the Bio-Formats MATLAB toolbox are written using the
-`MATLAB xUnit Test Framework`_ and located under
-:sourcedir:`components/formats-gpl/test/matlab`.
+Tests for the Bio-Formats MATLAB toolbox are written using the xunit framework
+and located under :sourcedir:`components/formats-gpl/test/matlab`.
 
-To run these tests, you will need to download `matlab-xunit <https://github.com/psexton/matlab-xunit>`_ which is based on the xUnit
-Framework and adds JUnit-compatible XML output. First add this package together
-with the Bio-Formats MATLAB to your MATLAB path:
+To run these tests, you will need to download or clone `matlab-xunit`_, a
+xUnit framework with JUnit-compatible XML output. Then add this package
+together with the Bio-Formats MATLAB to your MATLAB path:
 
 .. code-block:: matlab
 
-  % Add the xUnit toolbox to the MATLAB path
+  % Add the matlab-xunit toolbox to the MATLAB path
   addpath('/path/to/matlab-xunit');
-  % Add the Bio-Formats dependencies from the source code
+  % Add the Bio-Formats MATLAB source to the MATLAB path
+  % For developers working against the source code
   addpath('/path/to/bioformats/components/formats-gpl/matlab');
   addpath('/path/to/bioformats/artifacts');
-  % Alternatively add the Bio-Formats MATLAB toolbox
+  % For developers working against a built artifact, e.g. a release
   % addpath('/path/to/bfmatlab');
 
 You can run all the MATLAB tests using :command:`runxunit`:
