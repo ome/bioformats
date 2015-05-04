@@ -114,5 +114,12 @@ classdef TestBfopen < ReaderTest
             self.checkFake(['test&sizeT=' num2str(self.sizeT) '.fake'])
         end
         
+        function testJavaMethod(self)
+            logLevel = loci.common.DebugTools.enableLogging('INFO');
+            logLevel1 = javaMethod('enableLogging', 'loci.common.DebugTools', 'INFO');
+            
+            assertEqual(logLevel,logLevel1);                     
+        end
+        
     end
 end
