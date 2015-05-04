@@ -676,10 +676,6 @@ public class LIFReader extends FormatReader {
         if (toRemove.size() > 0) {
           validIntensities.removeAll(toRemove);
         }
-        int start = validIntensities.size() - getEffectiveSizeC();
-        if (start < 0) {
-          start = 0;
-        }
 
         boolean noNames = true;
         if (channelNames[index] != null) {
@@ -692,9 +688,8 @@ public class LIFReader extends FormatReader {
         }
 
         int nextFilter = 0;
-        start = 0;
         //int nextFilter = cutIns[i].size() - getEffectiveSizeC();
-        for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
+        for (int k=0; k<validIntensities.size(); k++, nextChannel++) {
           int laserArrayIndex = validIntensities.get(k);
           double intensity = (Double) laserIntensities.get(laserArrayIndex);
           int laser = laserArrayIndex % lasers.size();
