@@ -36,6 +36,7 @@ classdef TestBfopen < ReaderTest
         x = 10;
         y = 10;
         DefaultSize = [512,512];
+        bpp
     end
     
     methods
@@ -118,7 +119,25 @@ classdef TestBfopen < ReaderTest
             logLevel = loci.common.DebugTools.enableLogging('INFO');
             logLevel1 = javaMethod('enableLogging', 'loci.common.DebugTools', 'INFO');
             
-            assertEqual(logLevel,logLevel1);                     
+            assertEqual(logLevel,logLevel1);
+            
+            self.reader = bfGetReader('test.fake', 0);
+            pixelType = self.reader.getPixelType();
+            self.bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
+            bpp = javaMethod('getBytesPerPixel', 'loci.formats.FormatTools', ...
+                pixelType);
+            
+            assertEqual(self.bpp,bpp);
+            
+            seriesMetadata = self.reader.getSeriesMetadata();
+            globalMetadata = self.reader.getGlobalMetadata();
+
+            metadata1 = loci.formats.MetadataTools.merge(globalMetadata, seriesMetadata, 'Global ');
+            metadata2 = javaMethod('merge', 'loci.formats.MetadataTools', ...
+                globalMetadata, seriesMetadata, 'Global ');
+            
+            assertEqual(metadata1,metadata2);
+            
         end
         
     end
