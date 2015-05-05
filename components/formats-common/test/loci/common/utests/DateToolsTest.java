@@ -304,12 +304,25 @@ public class DateToolsTest {
   }
 
   @Test
-  public void testTrailingPattern() {
-    // NumberFormatException should be catched internally but the method should
-    // not fail
+  public void testUnrecognizedTrailingPattern() {
+    // Date parsing should fail but the method should still return
     String date = REFERENCE_DATE + ".111 wrong";
     assertEquals(-1, DateTools.getTime(date, DATE_FORMAT, "."));
     assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, "."));
     assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, false, "."));
+  }
+
+  @Test
+  public void testParseLongException() {
+    // NumberFormatException should be catched internally when parsing
+    // milliseconds but the method should still return
+    String date1 = REFERENCE_DATE + ".a11";
+    assertEquals(-1, DateTools.getTime(date1, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date1, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date1, DATE_FORMAT, false, "."));
+    String date2 = REFERENCE_DATE + ".a11 aa";
+    assertEquals(-1, DateTools.getTime(date2, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date2, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date2, DATE_FORMAT, false, "."));
   }
 }
