@@ -1238,7 +1238,9 @@ public class LIFReader extends FormatReader {
         }
       }
       //Store values to check if actually it is active.
-      laserActive[image].add(count < detectors.getLength());
+      if (!isMaster) {
+        laserActive[image].add(count < detectors.getLength());
+      }
     }
 
     if (channels != null && channelNames[image] != null) {
