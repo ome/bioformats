@@ -300,5 +300,16 @@ public class DateToolsTest {
   @Test
   public void testGetTimeConflictingSeparator() {
     assertEquals(-1, DateTools.getTime(REFERENCE_DATE, DATE_FORMAT, ":"));
+    assertEquals(null, DateTools.formatDate(REFERENCE_DATE, DATE_FORMAT, ":"));
+  }
+
+  @Test
+  public void testTrailingPattern() {
+    // NumberFormatException should be catched internally but the method should
+    // not fail
+    String date = REFERENCE_DATE + ".111 wrong";
+    assertEquals(-1, DateTools.getTime(date, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, false, "."));
   }
 }
