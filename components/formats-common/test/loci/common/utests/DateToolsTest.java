@@ -315,14 +315,15 @@ public class DateToolsTest {
   @Test
   public void testParseLongException() {
     // NumberFormatException should be catched internally when parsing
-    // milliseconds but the method should still return
+    // milliseconds but the method should still return 
     String date1 = REFERENCE_DATE + ".a11";
-    assertEquals(-1, DateTools.getTime(date1, DATE_FORMAT, "."));
-    assertEquals(null, DateTools.formatDate(date1, DATE_FORMAT, "."));
-    assertEquals(null, DateTools.formatDate(date1, DATE_FORMAT, false, "."));
+    String referenceDateISO8601 = "1970-01-01T00:00:00";
+    assertEquals(0L, DateTools.getTime(date1, DATE_FORMAT, "."));
+    assertEquals(referenceDateISO8601, DateTools.formatDate(date1, DATE_FORMAT, "."));
+    assertEquals(referenceDateISO8601, DateTools.formatDate(date1, DATE_FORMAT, false, "."));
     String date2 = REFERENCE_DATE + ".a11 aa";
-    assertEquals(-1, DateTools.getTime(date2, DATE_FORMAT, "."));
-    assertEquals(null, DateTools.formatDate(date2, DATE_FORMAT, "."));
-    assertEquals(null, DateTools.formatDate(date2, DATE_FORMAT, false, "."));
+    assertEquals(0L, DateTools.getTime(date2, DATE_FORMAT, "."));
+    assertEquals(referenceDateISO8601, DateTools.formatDate(date2, DATE_FORMAT, "."));
+    assertEquals(referenceDateISO8601, DateTools.formatDate(date2, DATE_FORMAT, false, "."));
   }
 }

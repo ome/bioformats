@@ -203,11 +203,21 @@ public final class DateTools {
           }
         }
         if (postmsSeparator > 0) {
-          ms = Long.parseLong(msString.substring(0, postmsSeparator));
+          try {
+            ms = Long.parseLong(msString.substring(0, postmsSeparator));
+          }
+          catch (NumberFormatException e) {
+            LOGGER.debug("Failed to parse milliseconds from '{}'", ms);
+          }
           newDate = newDate + msString.substring(postmsSeparator);
         }
         else {
-          ms = Long.parseLong(msString);
+          try {
+            ms = Long.parseLong(msString);
+          }
+          catch (NumberFormatException e) {
+            LOGGER.debug("Failed to parse milliseconds from '{}'", ms);
+          }
         }
       }
 
