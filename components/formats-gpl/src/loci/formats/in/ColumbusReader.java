@@ -398,6 +398,7 @@ public class ColumbusReader extends FormatReader {
   // -- Helper methods --
 
   private void parseImageXML(String filename) throws FormatException, IOException {
+    LOGGER.info("Parsing image data from {}", filename);
     String xml = DataTools.readFile(filename);
     Location parent = new Location(filename).getParentFile();
 
@@ -417,10 +418,12 @@ public class ColumbusReader extends FormatReader {
 
     NodeList plates = root.getElementsByTagName("Plates");
     if (plates == null) {
+      LOGGER.debug("Plates node not found");
       return;
     }
     plates = ((Element) plates.item(0)).getElementsByTagName("Plate");
     if (plates == null) {
+      LOGGER.debug("Plate nodes not found");
       return;
     }
     NodeList timestamps = ((Element) plates.item(0)).getElementsByTagName("MeasurementStartTime");
@@ -428,13 +431,16 @@ public class ColumbusReader extends FormatReader {
 
     NodeList images = root.getElementsByTagName("Images");
     if (images == null) {
+      LOGGER.debug("Images node not found");
       return;
     }
     images = ((Element) images.item(0)).getElementsByTagName("Image");
     if (images == null) {
+      LOGGER.debug("Image nodes not found");
       return;
     }
 
+    LOGGER.debug("Found {} image definitions", images.getLength());
     for (int i=0; i<images.getLength(); i++) {
       Element image = (Element) images.item(i);
       Plane p = new Plane();
