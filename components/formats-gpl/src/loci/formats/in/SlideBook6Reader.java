@@ -193,7 +193,7 @@ public class SlideBook6Reader  extends FormatReader {
 			int[] numImages = new int[numCaptures];
 			for (int capture=0; capture < numCaptures; capture++) {
 				numPositions[capture] = getNumPositions(capture);
-				numTimepoints[capture] = getNumTimepoints(capture);
+				numTimepoints[capture] = getNumTimepoints(capture) / numPositions[capture];
 				numZPlanes[capture] = getNumZPlanes(capture);
 				numChannels[capture] = getNumChannels(capture);
 			}
@@ -209,7 +209,7 @@ public class SlideBook6Reader  extends FormatReader {
 				if (ms.sizeX % 2 != 0) ms.sizeX++;
 				ms.sizeY = getNumYRows(capture);
 				ms.sizeZ = numZPlanes[capture];
-				ms.sizeT = numTimepoints[capture] * numPositions[capture]; // montage if numPositions[capture] > 1
+				ms.sizeT = numTimepoints[capture] * numPositions[capture]; 
 				ms.sizeC = numChannels[capture];
 				int bytes = getBytesPerPixel(capture);
 				if (bytes % 3 == 0) {
@@ -280,6 +280,7 @@ public class SlideBook6Reader  extends FormatReader {
 					}
 
 					int imageIndex = 0;
+					// if numPositions[capture] > 1 then we have a montage
 					for (int timepoint = 0; timepoint < numTimepoints[capture]; timepoint++) {
 						int deltaT = getElapsedTime(capture, timepoint);
 						for (int position = 0; position < numPositions[capture]; position++) {
