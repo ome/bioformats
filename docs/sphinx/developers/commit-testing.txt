@@ -107,7 +107,7 @@ MATLAB tests
 .. _matlab-xunit: https://github.com/psexton/matlab-xunit
 
 Tests for the Bio-Formats MATLAB toolbox are written using the xunit framework
-and located under :sourcedir:`components/formats-gpl/test/matlab`.
+and are located under :sourcedir:`components/formats-gpl/test/matlab`.
 
 To run these tests, you will need to download or clone `matlab-xunit`_, a
 xUnit framework with JUnit-compatible XML output. Then add this package
