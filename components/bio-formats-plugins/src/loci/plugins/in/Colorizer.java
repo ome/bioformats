@@ -189,7 +189,7 @@ public class Colorizer {
                 setDisplayRange(min, max);
               }
               reset();
-              setPositionWithoutUpdate(channel, getSlice(), getFrame());
+              setPosition(channel, getSlice(), getFrame());
             }
           }
 
