@@ -232,7 +232,7 @@ public class ColumbusReader extends FormatReader {
     for (int i=0; i<metadataFiles.size(); i++) {
       String path = new Location(parent + File.separator + metadataFiles.get(i)).getAbsolutePath();
       metadataFiles.set(i, path);
-      if (checkSuffix(path, "ColumbusIDX.xml")) {
+      if (checkSuffix(path, "columbusidx.xml")) {
         parseImageXML(path);
       }
     }
