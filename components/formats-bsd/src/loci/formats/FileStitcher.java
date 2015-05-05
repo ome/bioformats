@@ -38,7 +38,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -667,7 +667,7 @@ public class FileStitcher extends ReaderWrapper {
     // have to call initFile on each constituent file; but we can only do so
     // when each constituent file does not itself have multiple used files
 
-    Set<String> files = new HashSet<String>();
+    Set<String> files = new LinkedHashSet<String>();
     for (ExternalSeries s : externals) {
       String[] f = s.getFiles();
       for (String file : f) {
