@@ -333,4 +333,15 @@ public class DateToolsTest {
     assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date2, DATE_FORMAT, "."));
     assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date2, DATE_FORMAT, false, "."));
   }
+
+  @Test
+  public void testTrim() {
+      String date1 = " " + REFERENCE_DATE;
+      assertEquals(0L, DateTools.getTime(date1, DATE_FORMAT));
+      assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date1, DATE_FORMAT));
+
+    String date2 = REFERENCE_DATE + " ";
+    assertEquals(0L, DateTools.getTime(date2, DATE_FORMAT));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date2, DATE_FORMAT));
+  }
 }
