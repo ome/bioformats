@@ -437,10 +437,10 @@ Full example source: :download:`pixeldata.cpp <examples/pixeldata.cpp>`
   - :doxygen:`PixelType <classome_1_1xml_1_1model_1_1enums_1_1PixelType.html>`
   - :doxygen:`PixelBuffer <classome_1_1bioformats_1_1PixelBuffer.html>`
   - :doxygen:`VariantPixelBuffer <classome_1_1bioformats_1_1VariantPixelBuffer.html>`
-  - :doxygen:`FormatReader::getLookupTable <classome_1_1bioformats_1_1FormatReader.html#a416742287de02c29d68147e7965316c4>`
-  - :doxygen:`FormatReader::openBytes <classome_1_1bioformats_1_1FormatReader.html#a91184deaf16c42b51eb564ee11e76fe2>`
-  - :doxygen:`FormatWriter::setLookupTable <classome_1_1bioformats_1_1FormatWriter.html#a7ee8eaab7b440be78f3707d1f34ec372>`
-  - :doxygen:`FormatWriter::saveBytes <classome_1_1bioformats_1_1FormatWriter.html#a3f75d001c244c06883c986df988d31b5>`
+  - :doxygen:`FormatReader::getLookupTable <classome_1_1bioformats_1_1FormatReader.html#a75ad99e400c31ccb9e52da8aeb991b73>`
+  - :doxygen:`FormatReader::openBytes <classome_1_1bioformats_1_1FormatReader.html#aae4d2b9475b078f7ba2378ed505e864c>`
+  - :doxygen:`FormatWriter::setLookupTable <classome_1_1bioformats_1_1FormatWriter.html#a00ae3dc46c205e64f782c7b6f47bd5ab>`
+  - :doxygen:`FormatWriter::saveBytes <classome_1_1bioformats_1_1FormatWriter.html#ad1e8b427214f7cfd19ce2251d38e24f5>`
 
 Reading images
 --------------
