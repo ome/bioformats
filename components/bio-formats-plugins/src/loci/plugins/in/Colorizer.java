@@ -171,6 +171,28 @@ public class Colorizer {
             super.close();
             toClose.close();
           }
+
+          @Override
+          public void show(String message) {
+            super.show(message);
+
+            // ensure that the display settings are consistent across channels
+            // autoscaling takes care of this for non-virtual stacks
+            // see ticket #12267
+            if (toClose instanceof VirtualImagePlus) {
+              int channel = getChannel();
+              double min = getDisplayRangeMin();
+              double max = getDisplayRangeMax();
+
+              for (int c=0; c<cSize; c++) {
+                setPositionWithoutUpdate(c + 1, getSlice(), getFrame());
+                setDisplayRange(min, max);
+              }
+              reset();
+              setPosition(channel, getSlice(), getFrame());
+            }
+          }
+
         };
         compImage.setProperty(ImagePlusReader.PROP_SERIES, series);
         if (luts != null) compImage.setLuts(luts);
