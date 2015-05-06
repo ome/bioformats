@@ -49,15 +49,15 @@ then
   java $BF_FLAGS $BF_PROG "$@"
 else
   # Developer environment variable unset; add JAR libraries to classpath.
-  if [ -e "$BF_JAR_DIR/formats-gpl.jar" ]
-  then
-    BF_CP="$BF_JAR_DIR/formats-gpl.jar:$BF_JAR_DIR/bio-formats-tools.jar:$BF_CP"
-  elif [ -e "$BF_JAR_DIR/bioformats_package.jar" ]
+  if [ -e "$BF_JAR_DIR/bioformats_package.jar" ]
   then
     BF_CP="$BF_JAR_DIR/bioformats_package.jar:$BF_CP"
   elif [ -e "$BF_JAR_DIR/loci_tools.jar" ]
   then
     BF_CP="$BF_JAR_DIR/loci_tools.jar:$BF_CP"
+  elif [ -e "$BF_JAR_DIR/formats-gpl.jar" ]
+  then
+    BF_CP="$BF_JAR_DIR/formats-gpl.jar:$BF_JAR_DIR/bio-formats-tools.jar:$BF_CP"
   else
     # Libraries not found; issue an error.
     echo "Required JAR libraries not found. Please download:"
