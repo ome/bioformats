@@ -2,6 +2,7 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -29,7 +30,8 @@ classdef TestBfCheckJavaPath < TestBfMatlab
     
     properties
         status
-        maxTime = .1
+        version
+        maxTime = .1        
     end
     
     methods
@@ -77,6 +79,12 @@ classdef TestBfCheckJavaPath < TestBfMatlab
             % From the third call and onwards, javaclasspath and thus
             % bfCheckJavaPath should return fast
             assertTrue(mean(times(3:end)) < self.maxTime);
+        end
+        
+        function testJavaMethod(self)
+            self.version = char(loci.formats.FormatTools.VERSION);
+            version = char(java_get('loci.formats.FormatTools', 'VERSION'));
+            assertEqual( self.version, version);
         end
     end
 end
