@@ -174,7 +174,9 @@ public class SlideBook6Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-		closeFile();
+		if (libraryFound) {
+			closeFile();
+		}
 	}
 
 	/* @see loci.formats.FormatReader#initFile(String) */
