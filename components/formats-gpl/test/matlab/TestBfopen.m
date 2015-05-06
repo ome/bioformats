@@ -66,6 +66,7 @@ classdef TestBfopen < ReaderTest
             end
         end
         
+        % Dimension tests
         function testDefault(self)
             self.checkFake('test.fake')
         end
@@ -88,6 +89,23 @@ classdef TestBfopen < ReaderTest
         function testSizeT(self)
             self.sizeT = 3;
             self.checkFake(['test&sizeT=' num2str(self.sizeT) '.fake'])
+        end
+
+        % Colormap tests
+        function testNoColormap(self)
+            self.sizeC = 3;
+            self.checkFake('test&indexed=true&falseColor=false.fake');
+            assertTrue(isempty(self.data{3}{1}));
+        end
+
+        function test8BitColormap(self)
+            self.checkFake('test&indexed=true&falseColor=true&pixelType=uint8.fake');
+            assertTrue(isa(self.data{3}{1}, 'single'));
+        end
+
+        function test16BitColormap(self)
+            self.checkFake('test&indexed=true&falseColor=true&pixelType=uint16.fake');
+            assertTrue(isa(self.data{3}{1}, 'single'));
         end
     end
 end

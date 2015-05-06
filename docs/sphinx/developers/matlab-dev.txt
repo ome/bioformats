@@ -78,44 +78,20 @@ Accessing planes
 
 Here is an example of how to unwrap specific image planes for easy access:
 
-::
-
-      data = bfopen('/path/to/data/file');
-      seriesCount = size(data, 1);
-      series1 = data{1, 1};
-      series2 = data{2, 1};
-      series3 = data{3, 1};
-      metadataList = data{1, 2};
-      % …etc.
-      series1_planeCount = size(series1, 1);
-      series1_plane1 = series1{1, 1};
-      series1_label1 = series1{1, 2};
-      series1_plane2 = series1{2, 1};
-      series1_label2 = series1{2, 2};
-      series1_plane3 = series1{3, 1};
-      series1_label3 = series1{3, 2};
-      % …etc.
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: accessing-planes-start
+  :end-before: accessing-planes-end
 
 Displaying images
 ^^^^^^^^^^^^^^^^^
 
 If you want to display one of the images, you can do so as follows:
 
-::
-
-      data = bfopen('/path/to/data/file');
-      % plot the 1st series's 1st image plane in a new figure
-      series1 = data{1, 1};
-      series1_plane1 = series1{1, 1};
-      series1_label1 = series1{1, 2};
-      series1_colorMaps = data{1, 3};
-      figure('Name', series1_label1);
-      if (isempty(series1_colorMaps{1}))
-        colormap(gray);
-      else
-        colormap(series1_colorMaps{1});
-      end
-      imagesc(series1_plane1);
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: displaying-images-start
+  :end-before: displaying-images-end
 
 This will display the first image of the first series with its associated
 color map (if present). If you would prefer not to apply the color maps
@@ -130,14 +106,10 @@ If you have the image processing toolbox, you could instead use:
 
 You can also create an animated movie (assumes 8-bit unsigned data):
 
-::
-
-      v = linspace(0, 1, 256)';
-      cmap = [v v v];
-      for p = 1 : size(series1, 1)
-        M(p) = im2frame(uint8(series1{p, 1}), cmap);
-      end
-      movie(M);
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: animated-movie-start
+  :end-before: animated-movie-end
 
 Retrieving metadata
 ^^^^^^^^^^^^^^^^^^^
@@ -160,26 +132,17 @@ Original metadata
 
 To retrieve the metadata value for specific keys:
 
-::
-
-      data = bfopen('/path/to/data/file');
-      % Query some metadata fields (keys are format-dependent)
-      metadata = data{1, 2};
-      subject = metadata.get('Subject');
-      title = metadata.get('Title');
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: read-original-metadata-by-key-start
+  :end-before: read-original-metadata-by-key-end
 
 To print out all of the metadata key/value pairs for the first series:
 
-::
-
-      data = bfopen('/path/to/data/file');
-      metadata = data{1, 2};
-      metadataKeys = metadata.keySet().iterator();
-      for i=1:metadata.size()
-        key = metadataKeys.nextElement();
-        value = metadata.get(key);
-        fprintf('%s = %s\n', key, value)
-      end
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: read-original-metadata-start
+  :end-before: read-original-metadata-end
 
 .. _ome-metadata:
 
@@ -192,22 +155,10 @@ file format.
 
 To access physical voxel and stack sizes of the data:
 
-::
-
-      data = bfopen('/path/to/data/file');
-      omeMeta = data{1, 4};
-      stackSizeX = omeMeta.getPixelsSizeX(0).getValue(); % image width, pixels
-      stackSizeY = omeMeta.getPixelsSizeY(0).getValue(); % image height, pixels
-      stackSizeZ = omeMeta.getPixelsSizeZ(0).getValue(); % number of Z slices
-
-      voxelSizeXdefaultValue = omeMeta.getPixelsPhysicalSizeX(0).value();           % returns value in default unit
-      voxelSizeXdefaultUnit = omeMeta.getPixelsPhysicalSizeX(0).unit().getSymbol(); % returns the default unit type
-      voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in µm
-      voxelSizeXdouble = voxelSizeX.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-      voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in µm
-      voxelSizeYdouble = voxelSizeY.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-      voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in µm
-      voxelSizeZdouble = voxelSizeZ.doubleValue();                                  % The numeric value represented by this object after conversion to type double
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: read-ome-metadata-start
+  :end-before: read-ome-metadata-end
 
 For more information about the methods to retrieve the metadata, see the
 :javadoc:`MetadataRetrieve <loci/formats/meta/MetadataRetrieve.html>` Javadoc
@@ -270,35 +221,30 @@ The basic code for saving a 5D array into an OME-TIFF file is located in the
 For instance, the following code will save a single image of 64 pixels by 64
 pixels with 8 unsigned bits per pixels:
 
-::
-
-    plane = zeros(64, 64, 'uint8');
-    bfsave(plane, 'my-file.ome.tiff');
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: bfsave-plane-start
+  :end-before: bfsave-plane-end
 
 And the following code snippet will produce an image of 64 pixels by
 64 pixels with 2 channels and 2 timepoints:
 
-::
-
-    plane = zeros(64, 64, 1, 2, 2, 'uint8');
-    bfsave(plane, 'my-file.ome.tiff');
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: bfsave-multiple-planes-start
+  :end-before: bfsave-multiple-planes-end
 
 By default, ``bfsave`` will create a minimal OME-XML metadata object
 containing basic information such as the pixel dimensions, the dimension order
 and the pixel type.
 To customize the OME metadata, it is possible to create a metadata object
-from the input array using :source:`createMinimalOMEXMLMetadata.m <components/formats-gpl/matlab/createMinimalOMEXMLMetadata.m>`, add custom metadata
-and pass this object directly to ``bfsave``::
+from the input array using :source:`createMinimalOMEXMLMetadata.m <components/formats-gpl/matlab/createMinimalOMEXMLMetadata.m>`, add custom 
+metadata and pass this object directly to ``bfsave``:
 
-    plane = zeros(64, 64, 1, 2, 2, 'uint8');
-    metadata = createMinimalOMEXMLMetadata(plane);
-    pixelSize = ome.xml.model.primitives.PositiveFloat(java.lang.Double(.05));
-    metadata.setPixelsPhysicalSizeX(pixelSize, 0);
-    metadata.setPixelsPhysicalSizeY(pixelSize, 0);
-    pixelSizeZ = ome.xml.model.primitives.PositiveFloat(java.lang.Double(.2));
-    metadata.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
-    ...
-    bfsave(plane, 'my-file.ome.tiff', 'metadata', metadata);
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: bfsave-metadata-start
+  :end-before: bfsave-metadata-end
 
 For more information about the methods to store the metadata, see the
 :javadoc:`MetadataStore <loci/formats/meta/MetadataStore.html>` Javadoc page.
@@ -321,32 +267,12 @@ By essence, the speedup gained from memoization will only happen after the
 first initialization of the reader for a particular file.
 
 The simplest way to make use the ``Memoizer`` functionalities in MATLAB is
-illustrated by the following example::
+illustrated by the following example:
 
-    % Construct an empty Bio-Formats reader
-    r = bfGetReader();
-    % Decorate the reader with the Memoizer wrapper
-    r = loci.formats.Memoizer(r)
-    % Initialize the reader with an input file
-    % If the call is longer than a minimal time, the initialized reader will
-    % be cached in a file under the same directory as the initial file
-    % name .large_file.bfmemo
-    r.setId('/path/to/large_file');
-
-    % Perform work using the reader
-
-    % Close the reader
-    r.close()
-
-    % If the reader has been cached in the call above, re-initializing the
-    % reader will use the memo file and complete much faster especially for
-    % large data
-    r.setId('/path/to/large_file');
-
-    % Perform additional work
-
-    % Close the reader
-    r.close()
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: memoizer-start
+  :end-before: memoizer-end
 
 If the time required to call :javadoc:`setId(java.lang.String) <loci/formats/Memoizer.html#setId(java.lang.String)>` method is larger
 than :javadoc:`DEFAULT_MINIMUM_ELAPSED <loci/formats/Memoizer.html#DEFAULT_MINIMUM_ELAPSED>` or the minimum value
@@ -364,25 +290,9 @@ define a root directory under which the reader should be cached.
 As Bio-Formats is not thread-safe, reader memoization offers a new solution to
 increase reading performance when doing parallel work. For instance, the
 following example shows how to combine memoization and MATLAB parfor to do
-work on a single file in a parallel loop::
+work on a single file in a parallel loop:
 
-    % Construct a Bio-Formats reader decorated with the Memoizer wrapper
-    r = loci.formats.Memoizer(bfGetReader(r, 0))
-    % Initialize the reader with an input file to cache the reader
-    r.setId('/path/to/large_file');
-    % Close reader
-    r.close()
-
-    % Enter parallel loop
-    parfor i = 1 : nWorkers
-        % Initialize a new reader per worker as Bio-Formats is not thread safe
-        r2 = loci.formats.Memoizer(bfGetReader(r, 0))
-        % Initialization should use the memo file cached before entering the
-        % parallel loop
-        r2.setId('/path/to/large_file');
-
-        % Perform work
-
-        % Close the reader
-        r2.close()
-    end
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: memoizer-parfor-start
+  :end-before: memoizer-parfor-end
