@@ -48,7 +48,7 @@ if not "%BF_DEVEL%" == "" (
 )
 
 rem Developer environment variable unset; add JAR libraries to classpath.
-else if exist "%BF_JAR_DIR%\bioformats_package.jar" (
+if exist "%BF_JAR_DIR%\bioformats_package.jar" (
     set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bioformats_package.jar"  
 ) else  if exist "%BF_JAR_DIR%\loci_tools.jar"(  
     set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_tools.jar"
