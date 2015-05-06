@@ -662,7 +662,7 @@ public class Memoizer extends ReaderWrapper {
           reader = memo;
           reader.reopenFile();
         } catch (FileNotFoundException e) {
-          LOGGER.warn("could not reopen file - deleting invalid memo file: {}", memoFile);
+          LOGGER.info("could not reopen file - deleting invalid memo file: {}", memoFile);
           deleteQuietly(memoFile);
           memo = null;
           reader.close();
