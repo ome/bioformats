@@ -208,15 +208,15 @@ classdef TestBfGetReader < ReaderTest
         
         function testJavaMethod(self)
             self.reader = loci.formats.ChannelFiller();
-            self.reader = loci.formats.ChannelSeparator(r);
+            self.reader = loci.formats.ChannelSeparator(self.reader);
             
-            r = javaObject('loci.formats.ChannelSeparator', ...
+            reader = javaObject('loci.formats.ChannelSeparator', ...
                 javaObject('loci.formats.ChannelFiller'));
-            assertEqual(self.reader,r);
+            assertEqual(self.reader.getClass(),reader.getClass());
             
             OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
             OMEXMLService1 = javaObject('loci.formats.services.OMEXMLServiceImpl');
-            assertEqual(OMEXMLService,OMEXMLService1);
+            assertEqual(OMEXMLService.getClass(),OMEXMLService1.getClass());
             
             self.reader.setMetadataStore(OMEXMLService1.createOMEXMLMetadata());
         end
