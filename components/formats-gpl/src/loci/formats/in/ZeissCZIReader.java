@@ -298,9 +298,6 @@ public class ZeissCZIReader extends FormatReader {
 
     Region image = new Region(x, y, w, h);
 
-    int currentX = 0;
-    int currentY = 0;
-
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = getRGBChannelCount() * bpp;
     int outputRowLen = w * pixel;
@@ -312,7 +309,6 @@ public class ZeissCZIReader extends FormatReader {
     if (planes.size() == getImageCount()) {
       validScanDim = false;
     }
-    int previousHeight = 0;
 
     Arrays.fill(buf, (byte) 0);
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
@@ -321,15 +317,9 @@ public class ZeissCZIReader extends FormatReader {
         if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
           (plane.planeIndex == previousChannel && validScanDim))
         {
-          byte[] rawData = new SubBlock(plane).readPixelData();
-
           if ((prestitched != null && prestitched) || validScanDim) {
             int realX = plane.x;
             int realY = plane.y;
-
-            if (prestitched == null) {
-              currentY = 0;
-            }
 
             Region tile = new Region(plane.col, plane.row, realX, realY);
             if (validScanDim) {
@@ -338,6 +328,7 @@ public class ZeissCZIReader extends FormatReader {
             }
 
             if (tile.intersects(image)) {
+              byte[] rawData = new SubBlock(plane).readPixelData();
               Region intersection = tile.intersection(image);
               int intersectionX = 0;
 
@@ -345,10 +336,8 @@ public class ZeissCZIReader extends FormatReader {
                 intersectionX = image.x - tile.x;
               }
 
-              if (tile.x == 0 && outputCol > 0) {
-                outputCol = 0;
-                outputRow += previousHeight;
-              }
+              outputCol = (intersection.x - x) * pixel;
+              outputRow = intersection.y - y;
 
               int rowLen = pixel * (int) Math.min(intersection.width, realX);
               int outputOffset = outputRow * outputRowLen + outputCol;
@@ -362,22 +351,10 @@ public class ZeissCZIReader extends FormatReader {
                   rawData, inputOffset, buf, outputOffset, rowLen);
                 outputOffset += outputRowLen;
               }
-
-              outputCol += rowLen;
-              if (outputCol >= w * pixel) {
-                outputCol = 0;
-                outputRow += intersection.height;
-              }
-              previousHeight = intersection.height;
-            }
-
-            currentX += realX;
-            if (currentX >= getSizeX()) {
-              currentX = 0;
-              currentY += realY;
             }
           }
           else {
+            byte[] rawData = new SubBlock(plane).readPixelData();
             RandomAccessInputStream s = new RandomAccessInputStream(rawData);
             try {
               readPlane(s, x, y, w, h, buf);
