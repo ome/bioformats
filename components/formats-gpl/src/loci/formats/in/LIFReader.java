@@ -658,10 +658,12 @@ public class LIFReader extends FormatReader {
         int size = lasers.size();
         int jj;
         Set<Integer> toRemove = new HashSet<Integer>();
+        Set<Integer> ignoredChannels = new HashSet<Integer>();
         int as = active.size();
         for (int j = 0; j < s; j++) {
           if (j < as && !(Boolean) active.get(j)) {
             toRemove.add(validIntensities.get(j));
+            ignoredChannels.add(j);
           }
           jj = j+1;
           if (jj < s) {
@@ -670,7 +672,7 @@ public class LIFReader extends FormatReader {
             if (vv == v) {//do not consider that channel.
               toRemove.add(validIntensities.get(j));
               toRemove.add(validIntensities.get(jj));
-              nextChannel++;
+              ignoredChannels.add(j);
             }
           }
         }
@@ -696,6 +698,9 @@ public class LIFReader extends FormatReader {
           int laser = laserArrayIndex % lasers.size();
           Double wavelength = (Double) lasers.get(laser);
           if (wavelength != 0) {
+            while (ignoredChannels.contains(nextChannel)) {
+              nextChannel++;
+            }
             while (channelNames != null && nextChannel < getEffectiveSizeC() &&
               channelNames[index] != null &&
               ((channelNames[index][nextChannel] == null ||
