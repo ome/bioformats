@@ -1389,11 +1389,7 @@ public class LIFReader extends FormatReader {
   private void translateLaserLines(Element imageNode, int image)
     throws FormatException
   {
-    NodeList root = getNodes(imageNode, "LDM_Block_Sequential_List");
-    NodeList aotfLists = null;
-    if (root != null && root.getLength() >= 1) {
-      aotfLists = getNodes((Element) root.item(0), "AotfList");
-    }
+    NodeList aotfLists = getNodes(imageNode, "AotfList");
     if (aotfLists == null || aotfLists.getLength() == 0) return;
 
     laserWavelength[image] = new ArrayList<Double>();
@@ -1408,7 +1404,13 @@ public class LIFReader extends FormatReader {
 
       for (int laser=0; laser<laserLines.getLength(); laser++) {
         Element laserLine = (Element) laserLines.item(laser);
-
+        String gpName = aotf.getParentNode().getParentNode().getNodeName();
+        //might need parent for attachment
+        boolean isMaster = gpName.endsWith("Sequential_Master") ||
+                gpName.endsWith("Attachment");
+        if (isMaster) {
+          continue;
+        }
         String lineIndex = laserLine.getAttribute("LineIndex");
         String qual = laserLine.getAttribute("Qualifier");
         int index =
