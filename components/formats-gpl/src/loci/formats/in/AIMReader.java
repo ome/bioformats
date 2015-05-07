@@ -145,7 +145,7 @@ public class AIMReader extends FormatReader {
         addGlobalMeta(key, value);
 
         if (key.equals("Original Creation-Date")) {
-          date = DateTools.formatDate(value, "dd-MMM-yyyy HH:mm:ss.SS");
+          date = DateTools.formatDate(value, "dd-MMM-yyyy HH:mm:ss", ".");
         }
         else if (key.equals("Orig-ISQ-Dim-p")) {
           String[] tokens = value.split(" ");
