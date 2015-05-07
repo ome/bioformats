@@ -374,18 +374,22 @@ public class ColumbusReader extends FormatReader {
 
             for (int c=0; c<getSizeC(); c++) {
               p = lookupPlane(row, col, field, 0, c);
-              p.series = wellSample;
-              store.setChannelName(p.channelName, p.series, p.channel);
-              store.setChannelEmissionWavelength(
-                new PositiveInteger((int) p.emWavelength), p.series, p.channel);
-              store.setChannelExcitationWavelength(
-                new PositiveInteger((int) p.exWavelength), p.series, p.channel);
-              store.setChannelColor(p.channelColor, p.series, p.channel);
+              if (p != null) {
+                p.series = wellSample;
+                store.setChannelName(p.channelName, p.series, p.channel);
+                store.setChannelEmissionWavelength(
+                  new PositiveInteger((int) p.emWavelength), p.series, p.channel);
+                store.setChannelExcitationWavelength(
+                  new PositiveInteger((int) p.exWavelength), p.series, p.channel);
+                store.setChannelColor(p.channelColor, p.series, p.channel);
+              }
 
               for (int t=0; t<getSizeT(); t++) {
                 p = lookupPlane(row, col, field, t, c);
-                p.series = wellSample;
-                store.setPlaneDeltaT(p.deltaT - timestampSeconds, p.series, getIndex(0, c, t));
+                if (p != null) {
+                  p.series = wellSample;
+                  store.setPlaneDeltaT(p.deltaT - timestampSeconds, p.series, getIndex(0, c, t));
+                }
               }
             }
           }
@@ -548,6 +552,8 @@ public class ColumbusReader extends FormatReader {
         return p;
       }
     }
+    LOGGER.warn("Could not find plane for row={}, column={}, field={}, t={}, c={}",
+      new Object[] {row, col, field, t, c});
     return null;
   }
 
