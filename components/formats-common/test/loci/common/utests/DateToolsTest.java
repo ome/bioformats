@@ -48,6 +48,7 @@ public class DateToolsTest {
   String DATE_FORMAT_MS = "yyyy-MM-dd HH:mm:ss:SSS";
   String DATE_FORMAT_MS_AA = "yyyy-MM-dd hh:mm:ss:SSS aa";
   String REFERENCE_DATE = "1970-01-01 00:00:00";
+  String REFERENCE_ISO8601 = "1970-01-01T00:00:00";
 
   String[] DATE_FORMATS = {
     "yyyy:MM:dd HH:mm:ss",
@@ -293,8 +294,11 @@ public class DateToolsTest {
   }
 
   @Test
-  public void testGetTimeSeparatorNoMs() {
+  public void testDateNoMsWithSeparator() {
+    // Test that parsing times with no milliseconds with a separator passes
     assertEquals(0L, DateTools.getTime(REFERENCE_DATE, DATE_FORMAT, "."));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(REFERENCE_DATE, DATE_FORMAT, "."));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(REFERENCE_DATE, DATE_FORMAT, false, "."));
   }
 
   @Test
@@ -306,10 +310,14 @@ public class DateToolsTest {
   @Test
   public void testUnrecognizedTrailingPattern() {
     // Date parsing should fail but the method should still return
-    String date = REFERENCE_DATE + ".111 wrong";
-    assertEquals(-1, DateTools.getTime(date, DATE_FORMAT, "."));
-    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, "."));
-    assertEquals(null, DateTools.formatDate(date, DATE_FORMAT, false, "."));
+    String date1 = REFERENCE_DATE + ".000 AM";  // space separated
+    assertEquals(-1, DateTools.getTime(date1, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date1, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date1, DATE_FORMAT, false, "."));
+    String date2 = REFERENCE_DATE + ".000Z";  // non-digit character
+    assertEquals(-1, DateTools.getTime(date2, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date2, DATE_FORMAT, "."));
+    assertEquals(null, DateTools.formatDate(date2, DATE_FORMAT, false, "."));
   }
 
   @Test
@@ -317,13 +325,23 @@ public class DateToolsTest {
     // NumberFormatException should be catched internally when parsing
     // milliseconds but the method should still return 
     String date1 = REFERENCE_DATE + ".a11";
-    String referenceDateISO8601 = "1970-01-01T00:00:00";
     assertEquals(0L, DateTools.getTime(date1, DATE_FORMAT, "."));
-    assertEquals(referenceDateISO8601, DateTools.formatDate(date1, DATE_FORMAT, "."));
-    assertEquals(referenceDateISO8601, DateTools.formatDate(date1, DATE_FORMAT, false, "."));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date1, DATE_FORMAT, "."));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date1, DATE_FORMAT, false, "."));
     String date2 = REFERENCE_DATE + ".a11 aa";
     assertEquals(0L, DateTools.getTime(date2, DATE_FORMAT, "."));
-    assertEquals(referenceDateISO8601, DateTools.formatDate(date2, DATE_FORMAT, "."));
-    assertEquals(referenceDateISO8601, DateTools.formatDate(date2, DATE_FORMAT, false, "."));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date2, DATE_FORMAT, "."));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date2, DATE_FORMAT, false, "."));
+  }
+
+  @Test
+  public void testTrim() {
+    String date1 = " " + REFERENCE_DATE;
+    assertEquals(0L, DateTools.getTime(date1, DATE_FORMAT));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date1, DATE_FORMAT));
+
+    String date2 = REFERENCE_DATE + " ";
+    assertEquals(0L, DateTools.getTime(date2, DATE_FORMAT));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date2, DATE_FORMAT));
   }
 }
