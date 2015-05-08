@@ -192,7 +192,6 @@ public class SlideBook6Reader  extends FormatReader {
 			int[] numTimepoints = new int[numCaptures];
 			int[] numZPlanes = new int[numCaptures];
 			int[] numChannels = new int[numCaptures];
-			int[] numImages = new int[numCaptures];
 			for (int capture=0; capture < numCaptures; capture++) {
 				numPositions[capture] = getNumPositions(capture);
 				numTimepoints[capture] = getNumTimepoints(capture) / numPositions[capture];
@@ -322,27 +321,21 @@ public class SlideBook6Reader  extends FormatReader {
 				// populate Objective data
 				int objectiveIndex = 0;
 				for (int capture = 0; capture < numCaptures; capture++) {
+					// link Objective to Image
+					String objectiveID = MetadataTools.createLSID("Objective", 0, objectiveIndex);
+					store.setObjectiveID(objectiveID, 0, objectiveIndex);
+					store.setObjectiveSettingsID(objectiveID, capture);
+
 					String objective = getLensName(capture);
 					if (objective != null) {
 						store.setObjectiveModel(objective, 0, objectiveIndex);
-						store.setObjectiveCorrection(
-								getCorrection("Other"), 0, objectiveIndex);
-						store.setObjectiveImmersion(getImmersion("Other"), 0, objectiveIndex);
-						double magnification = getMagnification(capture);
-						if (magnification > 0) {
-							store.setObjectiveNominalMagnification(
-									magnification, 0, objectiveIndex);
-						}
 					}
-
-					// link Objective to Image
-					String objectiveID =
-							MetadataTools.createLSID("Objective", 0, objectiveIndex);
-					store.setObjectiveID(objectiveID, 0, objectiveIndex);
-					if (capture < getSeriesCount()) {
-						store.setObjectiveSettingsID(objectiveID, capture);
+					store.setObjectiveCorrection(getCorrection("Other"), 0, objectiveIndex);
+					store.setObjectiveImmersion(getImmersion("Other"), 0, objectiveIndex);
+					double magnification = getMagnification(capture);
+					if (magnification > 0) {
+						store.setObjectiveNominalMagnification(magnification, 0, objectiveIndex);
 					}
-
 					objectiveIndex++;
 				}
 			}
