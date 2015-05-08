@@ -663,7 +663,6 @@ public class LIFReader extends FormatReader {
         for (int j = 0; j < s; j++) {
           if (j < as && !(Boolean) active.get(j)) {
             toRemove.add(validIntensities.get(j));
-            ignoredChannels.add(j);
           }
           jj = j+1;
           if (jj < s) {
