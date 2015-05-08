@@ -298,7 +298,7 @@ public class DateToolsTest {
     // Test that parsing times with no milliseconds with a separator passes
     assertEquals(0L, DateTools.getTime(REFERENCE_DATE, DATE_FORMAT, "."));
     assertEquals(REFERENCE_ISO8601, DateTools.formatDate(REFERENCE_DATE, DATE_FORMAT, "."));
-        assertEquals(REFERENCE_ISO8601, DateTools.formatDate(REFERENCE_DATE, DATE_FORMAT, false, "."));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(REFERENCE_DATE, DATE_FORMAT, false, "."));
   }
 
   @Test
@@ -336,9 +336,9 @@ public class DateToolsTest {
 
   @Test
   public void testTrim() {
-      String date1 = " " + REFERENCE_DATE;
-      assertEquals(0L, DateTools.getTime(date1, DATE_FORMAT));
-      assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date1, DATE_FORMAT));
+    String date1 = " " + REFERENCE_DATE;
+    assertEquals(0L, DateTools.getTime(date1, DATE_FORMAT));
+    assertEquals(REFERENCE_ISO8601, DateTools.formatDate(date1, DATE_FORMAT));
 
     String date2 = REFERENCE_DATE + " ";
     assertEquals(0L, DateTools.getTime(date2, DATE_FORMAT));
