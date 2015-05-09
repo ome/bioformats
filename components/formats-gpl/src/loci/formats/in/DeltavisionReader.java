@@ -154,15 +154,19 @@ public class DeltavisionReader extends FormatReader {
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 98;
-    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    if (!FormatTools.validStream(stream, blockLen, true)) return false;
+    stream.seek(96);
+    int magic = stream.readShort() & 0xffff;
+    boolean valid = magic == DV_MAGIC_BYTES_1 || magic == DV_MAGIC_BYTES_2;
+    if (!valid) {
+      return false;
+    }
+    stream.order(magic == (LITTLE_ENDIAN & 0xffff));
     stream.seek(0);
     int x = stream.readInt();
     int y = stream.readInt();
     int count = stream.readInt();
-    stream.seek(96);
-    int magic = stream.readShort() & 0xffff;
-    return x > 0 && y > 0 && count > 0 &&
-      magic == DV_MAGIC_BYTES_1 || magic == DV_MAGIC_BYTES_2;
+    return x > 0 && y > 0 && count > 0;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
