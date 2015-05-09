@@ -57,6 +57,7 @@
 #include <ome/common/xml/dom/NodeList.h>
 
 #include <ome/xml/meta/Convert.h>
+#include <ome/xml/meta/MetadataException.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
 
 #include <ome/xml/model/Annotation.h>
@@ -80,6 +81,7 @@
 using boost::format;
 
 using ome::xml::meta::Metadata;
+using ome::xml::meta::MetadataException;
 using ome::xml::meta::MetadataStore;
 using ome::xml::meta::MetadataRoot;
 using ome::xml::meta::OMEXMLMetadata;
@@ -249,8 +251,6 @@ namespace ome
     ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const std::string& text)
     {
-      std::cerr << "OMEXML VER: " << getModelVersion(text) << "\n";
-
       // Parse OME-XML into DOM Document.
       ome::common::xml::Platform xmlplat;
       ome::common::xml::dom::Document doc;
@@ -348,6 +348,127 @@ namespace ome
     validateOMEXML(const std::string& document)
     {
       return validateXML(document, "OME-XML");
+    }
+
+    bool
+    validateModel(::ome::xml::meta::Metadata& meta,
+                  bool                        correct)
+    {
+      bool valid = true;
+
+      const dimension_size_type seriesCount = meta.getImageCount();
+
+      for (dimension_size_type series = 0U; series < seriesCount; ++series)
+        {
+          const dimension_size_type sizeX = meta.getPixelsSizeX(series);
+          const dimension_size_type sizeY = meta.getPixelsSizeY(series);
+          const dimension_size_type sizeZ = meta.getPixelsSizeZ(series);
+          const dimension_size_type sizeT = meta.getPixelsSizeT(series);
+          const dimension_size_type sizeC = meta.getPixelsSizeC(series);
+          if (!sizeX || !sizeY || !sizeZ || !sizeT)
+            {
+              valid = false;
+              if (!correct)
+                break;
+
+              boost::format fmt("Invalid image dimensionality for Image %1%: SizeX=%2%, SizeY=%3%, SizeZ=%4%, SizeT=%5%, SizeC=%6%");
+              fmt % series % sizeX % sizeY % sizeZ % sizeT % sizeC;
+              throw FormatException(fmt.str());
+            }
+          
+          // If no Channel objects are defined, create with 1
+          // SamplePerPixel.
+          if (meta.getChannelCount(series) == 0 && sizeC)
+            {
+              valid = false;
+              if (!correct)
+                {
+                  break;
+                }
+              else
+                {
+                  for (dimension_size_type c = 0; c < sizeC; ++c)
+                    meta.setChannelSamplesPerPixel(1U, series, c);
+                }
+            }
+
+          const dimension_size_type effC = meta.getChannelCount(series);
+          // Sum of all set SamplesPerPixel
+          dimension_size_type realSizeC = 0U;
+          std::vector<dimension_size_type> badChannels;
+          for (dimension_size_type c = 0; c < effC; ++c)
+            {
+              dimension_size_type samples = 1U;
+
+              try
+                {
+                  samples = meta.getChannelSamplesPerPixel(series, c);
+                  realSizeC += samples;
+                }
+              catch (const MetadataException& e)
+                {
+                  badChannels.push_back(c);
+                }
+            }
+
+          // If all subchannels add up to SizeC then the Channel
+          // metadata is correct; do nothing.
+          if (sizeC && realSizeC &&
+              sizeC == realSizeC &&
+              badChannels.empty())
+            continue;          
+
+          valid = false;
+          if (!correct)
+            break;
+
+          if (sizeC == 0 && realSizeC == 0)
+            {
+              // No channels or subchannels defined; default to one
+              // subchannel per channel.
+              meta.setPixelsSizeC(effC, series);
+              for (dimension_size_type c = 0; c < effC; ++c)
+                meta.setChannelSamplesPerPixel(1U, series, c);
+            }
+          else if (realSizeC > 0 &&
+                   badChannels.empty())
+            {
+              // All subchannels set and no bad channels; update SizeC
+              // to reflect the subchannel total.
+              meta.setPixelsSizeC(realSizeC, series);
+            }
+          else if (sizeC > 0 &&
+                   sizeC >= realSizeC &&
+                   !badChannels.empty())
+            {
+              // Some or all channels are unset.  If the unallocated
+              // subchannels are evenly divisible between the unset
+              // channels, assign.
+              const dimension_size_type allocSamples = realSizeC;
+              const dimension_size_type unallocSamples = sizeC >= realSizeC ? sizeC - allocSamples : 0U;
+              const dimension_size_type splitSamples = unallocSamples / badChannels.size();
+              const dimension_size_type badSamples = unallocSamples % badChannels.size();
+
+              // No point guessing since we can't make a sensible
+              // subchannel allocation; bail out now.
+              if (!splitSamples || badSamples || sizeC < realSizeC)
+                {
+                  boost::format fmt("Unable to correct invalid ChannelSamplesPerPixel in Image #%1%; %2% channel(s) set, %3% channel(s) unset, %4% subchannel(s) unallocated");
+                  fmt % series;
+                  fmt % (effC - badChannels.size());
+                  fmt % badChannels.size();
+                  fmt % (sizeC - realSizeC);
+                  throw FormatException(fmt.str());
+                }
+
+              for (std::vector<dimension_size_type>::const_iterator i = badChannels.begin();
+                   i != badChannels.end();
+                   ++i)
+                meta.setChannelSamplesPerPixel(splitSamples, series, *i);
+            }
+        }
+
+      return valid;
     }
 
     void
@@ -895,6 +1016,8 @@ namespace ome
           root->setStructuredAnnotations(sa);
         }
     }
+
+    
 
     std::string
     getModelVersion()

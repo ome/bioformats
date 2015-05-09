@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+     xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+     xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+     xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06 http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
+  <Image ID="Image:0" Name="valid-grey1"><!-- Valid 1-channel greyscale -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:0:0" Type="uint8" SizeC="1" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:0" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:1" Name="valid-grey2"><!-- Valid 4-channel greyscale -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:1:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:1" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:2" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:3" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:4" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:2" Name="valid-rgb1"><!-- Valid 1-channel RGB -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:2:0" Type="uint8" SizeC="3" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:5" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:3" Name="valid-rgb2"><!-- Valid 2-channel RGB -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:3:0" Type="uint8" SizeC="6" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:6" SamplesPerPixel="3"/>
+      <OME:Channel Color="-2147483648" ID="Channel:7" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:4" Name="valid-mixed1"><!-- Valid mixed greyscale and RGB -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:4:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:8" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:9" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+
+</OME>

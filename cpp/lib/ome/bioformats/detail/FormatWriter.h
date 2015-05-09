@@ -164,6 +164,18 @@ namespace ome
         isThisType(const boost::filesystem::path& name,
                    bool                           open = true) const;
 
+        /**
+         * Get the number of image series in this file.
+         *
+         * @returns the number of image series.
+         * @throws std::logic_error if the sub-resolution metadata (if
+         * any) is invalid; this will only occur if the reader sets
+         * invalid metadata.
+         */
+        virtual
+        dimension_size_type
+        getSeriesCount() const;
+
         // Documented in superclass.
         void
         setLookupTable(dimension_size_type       plane,

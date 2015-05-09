@@ -51,6 +51,8 @@
 #include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
 
+#include <ome/common/log.h>
+
 #include <ome/xml/model/enums/PixelType.h>
 
 namespace ome
@@ -113,6 +115,33 @@ namespace ome
       ifdIndex(const SeriesIFDRange& seriesIFDRange,
                dimension_size_type   series,
                dimension_size_type   plane);
+
+      /**
+       * Check if BigTIFF should be enabled.
+       *
+       * A number of factors determine if BigTIFF support should be
+       * enabled:
+       * - Does the system libtiff support BigTIFF
+       * - Did the user request it
+       * - Is the pixel data over the size limit for non-BigTIFF and
+       *   the user did not explicitly disable BigTIFF
+       * - Was a BigTIFF file extension used?
+       *
+       * If BigTIFF could not be enabled when requested or needed then
+       * an appropriate warning will be logged.
+       *
+       * @param wantBig user requirement (@c true to enable, @c false
+       * to disable, unset if unspecified).
+       * @param pixelSize the total size of pixel data to be written
+       * @param filename the name of the TIFF file to write (if a
+       * known BigTIFF extension is used, BigTIFF will be enabled).
+       * @returns @c true to enable BigTIFF or @c false to disable.
+       */
+      bool
+      enableBigTIFF(const boost::optional<bool>&   wantBig,
+                    storage_size_type              pixelSize,
+                    const boost::filesystem::path& filename,
+                    ome::common::Logger&           logger);
 
     }
   }
