@@ -57,6 +57,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageTools;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
@@ -106,6 +107,7 @@ public class ImageInfo {
   private boolean separate = false;
   private boolean expand = false;
   private boolean omexml = false;
+  private boolean memoize = false;
   private boolean originalMetadata = true;
   private boolean normalize = false;
   private boolean fastBlit = false;
@@ -155,6 +157,7 @@ public class ImageInfo {
     separate = false;
     expand = false;
     omexml = false;
+    memoize = false;
     originalMetadata = true;
     normalize = false;
     fastBlit = false;
@@ -192,6 +195,7 @@ public class ImageInfo {
         else if (args[i].equals("-nogroup")) group = false;
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
+        else if (args[i].equals("-memoize")) memoize = true;
         else if (args[i].equals("-omexml")) omexml = true;
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
@@ -277,6 +281,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
+      "    [-memoize]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -314,6 +319,7 @@ public class ImageInfo {
       "     -no-sas: do not output OME-XML StructuredAnnotation elements",
       " -no-upgrade: do not perform the upgrade check",
       "     -format: read file with a particular reader (e.g., ZeissZVI)",
+      "    -memoize: cache the initialized reader",
       "",
       "* = may result in loss of precision",
       ""
@@ -421,6 +427,7 @@ public class ImageInfo {
     if (expand) reader = new ChannelFiller(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
+    if (memoize) reader = new Memoizer(reader, 0);
     minMaxCalc = null;
     if (minmax || autoscale) reader = minMaxCalc = new MinMaxCalculator(reader);
     dimSwapper = null;
