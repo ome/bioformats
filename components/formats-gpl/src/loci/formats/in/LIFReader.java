@@ -1156,7 +1156,10 @@ public class LIFReader extends FormatReader {
       int count = 0;
       for (int d=0; d<detectors.getLength(); d++) {
         Element detector = (Element) detectors.item(d);
-        NodeList multibands = getNodes(definitionNode, "MultiBand");
+        NodeList multibands = null;
+        if (!isMaster) {
+          multibands = getNodes(definitionNode, "MultiBand");
+        }
 
         String v = detector.getAttribute("Gain");
         Double gain =
