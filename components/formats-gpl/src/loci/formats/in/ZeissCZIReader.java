@@ -338,6 +338,9 @@ public class ZeissCZIReader extends FormatReader {
 
               outputCol = (intersection.x - x) * pixel;
               outputRow = intersection.y - y;
+              if (validScanDim) {
+                outputRow -= tile.y;
+              }
 
               int rowLen = pixel * (int) Math.min(intersection.width, realX);
               int outputOffset = outputRow * outputRowLen + outputCol;
