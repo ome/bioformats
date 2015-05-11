@@ -64,6 +64,14 @@ namespace ome
     /// Size type for storage size.
     typedef uint64_t storage_size_type;
 
+    /// Endianness.
+    enum EndianType
+      {
+        ENDIAN_BIG,    ///< Big endian.
+        ENDIAN_LITTLE, ///< Little endian.
+        ENDIAN_NATIVE  ///< Native endian.
+      };
+
   }
 }
 
