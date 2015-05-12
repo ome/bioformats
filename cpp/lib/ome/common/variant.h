@@ -69,6 +69,11 @@
 #include <boost/mpl/transform_view.hpp>
 #include <boost/mpl/vector.hpp>
 
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 105800
+# include <boost/type_traits/remove_cv.hpp>
+#endif
+
 #include <boost/variant/apply_visitor.hpp>
 //#include <boost/variant/multivisitors.hpp>
 #include <boost/variant/get.hpp>
