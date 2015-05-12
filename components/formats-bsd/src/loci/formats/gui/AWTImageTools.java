@@ -786,7 +786,7 @@ public final class AWTImageTools {
 
     if (indexed && rgbChanCount == 1) {
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
-        byte[][] table = r.get8BitLookupTable();
+        byte[][] table = r.get8BitLookupTable(0);
         if (table != null && table.length > 0 && table[0] != null) {
           int len = table[0].length;
           byte[] dummy = table.length < 3 ? new byte[len] : null;
@@ -799,7 +799,7 @@ public final class AWTImageTools {
       else if (pixelType == FormatTools.UINT16 ||
         pixelType == FormatTools.INT16)
       {
-        short[][] table = r.get16BitLookupTable();
+        short[][] table = r.get16BitLookupTable(0);
         if (table != null && table.length > 0 && table[0] != null) {
           model = new Index16ColorModel(16, table[0].length, table,
             r.isLittleEndian());

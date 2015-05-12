@@ -779,16 +779,28 @@ public abstract class FormatReader extends FormatHandler
     return core.get(getCoreIndex()).falseColor;
   }
 
+  /* @see IFormatReader#get8BitLookupTable(int) */
+  @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    return null;
+  }
+
+  /* @see IFormatReader#get16BitLookupTable(int) */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    return null;
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    return null;
+    return get8BitLookupTable(getPlane());
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
-    return null;
+    return get16BitLookupTable(getPlane());
   }
 
   /* @see IFormatReader#getModuloZ() */

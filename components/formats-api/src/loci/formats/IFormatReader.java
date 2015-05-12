@@ -143,11 +143,39 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /**
    * Gets the 8-bit color lookup table associated with
+   * the most recently opened image plane.
+   * If {@link #isIndexed()} returns false, then this may return
+   * null. Also, if {@link #getPixelType()} returns anything other
+   * than {@link FormatTools#INT8} or {@link FormatTools#UINT8}, this
+   * method will return null.
+   *
+   * @param no the image index within the file.
+   * @return the 8-bit LUT.
+   */
+  byte[][] get8BitLookupTable(int no) throws FormatException, IOException;
+
+  /**
+   * Gets the 16-bit color lookup table associated with
+   * the most recently opened image plane.
+   * If {@link #isIndexed()} returns false, then this may return
+   * null. Also, if {@link #getPixelType()} returns anything other
+   * than {@link FormatTools#INT16} or {@link FormatTools#UINT16},
+   * this method will return null.
+   *
+   * @param no the image index within the file.
+   * @return the 16-bit LUT.
+   */
+  short[][] get16BitLookupTable(int no) throws FormatException, IOException;
+
+  /**
+   * Gets the 8-bit color lookup table associated with
    * the most recently opened image.
    * If no image planes have been opened, or if {@link #isIndexed()} returns
    * false, then this may return null. Also, if {@link #getPixelType()} returns
    * anything other than {@link FormatTools#INT8} or {@link FormatTools#UINT8},
    * this method will return null.
+   *
+   * @deprecated Superseded by stateless get8BitLookupTable(int).
    */
   byte[][] get8BitLookupTable() throws FormatException, IOException;
 
@@ -158,6 +186,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    * false, then this may return null. Also, if {@link #getPixelType()} returns
    * anything other than {@link FormatTools#INT16} or {@link
    * FormatTools#UINT16}, this method will return null.
+   *
+   * @deprecated Superseded by stateless get16BitLookupTable(int).
    */
   short[][] get16BitLookupTable() throws FormatException, IOException;
 

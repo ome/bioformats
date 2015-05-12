@@ -78,9 +78,9 @@ public class PSDReader extends FormatReader {
     return stream.readString(blockLen).startsWith(PSD_MAGIC_STRING);
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     return lut;
   }

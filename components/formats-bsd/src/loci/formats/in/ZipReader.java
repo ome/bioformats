@@ -67,16 +67,16 @@ public class ZipReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    return reader.get8BitLookupTable();
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    return reader.get8BitLookupTable(no);
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
-    return reader.get16BitLookupTable();
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    return reader.get16BitLookupTable(no);
   }
 
   /* @see loci.formats.IFormatReader#setGroupFiles(boolean) */

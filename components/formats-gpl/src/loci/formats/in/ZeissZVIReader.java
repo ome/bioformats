@@ -92,7 +92,6 @@ public class ZeissZVIReader extends BaseZeissReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    lastPlane = no;
 
     if (poi == null) {
       initPOIService();

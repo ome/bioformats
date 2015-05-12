@@ -107,7 +107,6 @@ public class OpenlabReader extends FormatReader {
   private int[][] planeOffsets;
 
   private Vector<byte[][]> luts;
-  private int lastPlane = 0;
 
   private String gain, detectorOffset, xPos, yPos, zPos;
   private boolean specialPlateNames = false;
@@ -138,17 +137,19 @@ public class OpenlabReader extends FormatReader {
     return stream.readLong() == LIFF_MAGIC_BYTES;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     if (luts != null) {
+
+      openBytes(no);
+
       if (getSeries() < planeOffsets.length &&
-        lastPlane < planeOffsets[getSeries()].length)
-      {
-        return luts.get(planeOffsets[getSeries()][lastPlane]);
+          no < planeOffsets[getSeries()].length) {
+        return luts.get(planeOffsets[getSeries()][no]);
       }
-      else if (lastPlane < luts.size()) {
-        return luts.get(lastPlane);
+      else if (no < luts.size()) {
+        return luts.get(no);
       }
     }
     return null;
@@ -162,8 +163,6 @@ public class OpenlabReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    lastPlane = no;
 
     PlaneInfo planeInfo = null;
     if (specialPlateNames) {
@@ -246,9 +245,9 @@ public class OpenlabReader extends FormatReader {
           if (isIndexed()) {
             int index = no;
             if (getSeries() < planeOffsets.length) {
-              index = planeOffsets[getSeries()][lastPlane];
+              index = planeOffsets[getSeries()][no];
             }
-            luts.setElementAt(pict.get8BitLookupTable(), index);
+            luts.setElementAt(pict.get8BitLookupTable(0), index);
           }
 
           r.openBytes(0, buf, x, y, w, h);
@@ -319,7 +318,6 @@ public class OpenlabReader extends FormatReader {
     if (!fileOnly) {
       planes = null;
       luts = null;
-      lastPlane = 0;
       version = 0;
       numSeries = 0;
       xcal = ycal = 0f;

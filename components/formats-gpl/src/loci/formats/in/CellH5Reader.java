@@ -107,7 +107,6 @@ public class CellH5Reader extends FormatReader {
   private transient JHDFService jhdf;
 
   private MetadataStore store;
-  private int lastChannel = 0;
 
   private List<CellH5Coordinate> CellH5PositionList = new ArrayList<CellH5Coordinate>();
   private List<String> CellH5PathsToImageData = new ArrayList<String>();
@@ -161,17 +160,15 @@ public class CellH5Reader extends FormatReader {
     return stream.readString(blockLen).contains(HDF_MAGIC_STRING);
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT8 || !isIndexed()) {
       return null;
     }
 
-    if (lastChannel < 0) {
-      return null;
-    }
+    int lastChannel = getZCTCoords(no)[1];
 
     byte[][] lut = new byte[3][256];
     for (int i = 0; i < 256; i++) {
@@ -221,7 +218,6 @@ public class CellH5Reader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    lastChannel = getZCTCoords(no)[1];
 
     // pixel data is stored in XYZ blocks
     Object image = getImageData(no, y, h);
@@ -280,7 +276,6 @@ public class CellH5Reader extends FormatReader {
         jhdf.close();
       }
       jhdf = null;
-      lastChannel = 0;
     }
   }
 

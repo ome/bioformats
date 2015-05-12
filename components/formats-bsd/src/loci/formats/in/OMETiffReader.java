@@ -86,7 +86,6 @@ public class OMETiffReader extends FormatReader {
   /** List of used files. */
   protected String[] used;
 
-  private int lastPlane = 0;
   private boolean hasSPW;
 
   private int[] tileWidth;
@@ -276,32 +275,33 @@ public class OMETiffReader extends FormatReader {
       FormatTools.NON_SPECIAL_DOMAINS;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     int series = getSeries();
-    if (info[series][lastPlane] == null ||
-      info[series][lastPlane].reader == null ||
-      info[series][lastPlane].id == null)
+    if (info[series][no] == null ||
+      info[series][no].reader == null ||
+      info[series][no].id == null)
     {
       return null;
     }
-    info[series][lastPlane].reader.setId(info[series][lastPlane].id);
-    return info[series][lastPlane].reader.get8BitLookupTable();
+    info[series][no].reader.setId(info[series][no].id);
+    return info[series][no].reader.get8BitLookupTable(0);
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     int series = getSeries();
-    if (info[series][lastPlane] == null ||
-      info[series][lastPlane].reader == null ||
-      info[series][lastPlane].id == null)
+    if (info[series][no] == null ||
+      info[series][no].reader == null ||
+      info[series][no].id == null)
     {
       return null;
     }
-    info[series][lastPlane].reader.setId(info[series][lastPlane].id);
-    return info[series][lastPlane].reader.get16BitLookupTable();
+    info[series][no].reader.setId(info[series][no].id);
+    info[series][no].reader.setPlane(info[series][no].ifd);
+    return info[series][no].reader.get16BitLookupTable(0);
   }
 
   /* @see loci.formats.IFormatReader#reopenFile() */
@@ -329,7 +329,6 @@ public class OMETiffReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     int series = getSeries();
-    lastPlane = no;
     int i = info[series][no].ifd;
 
     if (!info[series][no].exists) {
@@ -341,7 +340,6 @@ public class OMETiffReader extends FormatReader {
     if (r.getCurrentFile() == null) {
       r.setId(info[series][no].id);
     }
-    r.lastPlane = i;
     IFDList ifdList = r.getIFDs();
     if (i >= ifdList.size()) {
       LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed (IFD #{} missing).", i);
@@ -420,7 +418,6 @@ public class OMETiffReader extends FormatReader {
     if (!fileOnly) {
       info = null;
       used = null;
-      lastPlane = 0;
       tileWidth = null;
       tileHeight = null;
       metadataFile = null;

@@ -563,8 +563,8 @@ public class ImageInfo {
       int rgbChanCount = reader.getRGBChannelCount();
       boolean indexed = reader.isIndexed();
       boolean falseColor = reader.isFalseColor();
-      byte[][] table8 = reader.get8BitLookupTable();
-      short[][] table16 = reader.get16BitLookupTable();
+      byte[][] table8 = reader.get8BitLookupTable(0);
+      short[][] table16 = reader.get16BitLookupTable(0);
       Modulo moduloZ = reader.getModuloZ();
       Modulo moduloC = reader.getModuloC();
       Modulo moduloT = reader.getModuloT();
@@ -859,8 +859,8 @@ public class ImageInfo {
       if (images[i - start] == null) {
         LOGGER.warn("\t************ Failed to read plane #{} ************", i);
       }
-      if (reader.isIndexed() && reader.get8BitLookupTable() == null &&
-        reader.get16BitLookupTable() == null)
+      if (reader.isIndexed() && reader.get8BitLookupTable(0) == null &&
+        reader.get16BitLookupTable(0) == null)
       {
         LOGGER.warn("\t************ no LUT for plane #{} ************", i);
       }

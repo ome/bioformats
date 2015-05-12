@@ -61,9 +61,9 @@ public class TargaReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return isRGB() ? null : colorMap;
   }

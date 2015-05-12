@@ -371,6 +371,22 @@ public class FileStitcher extends ReaderWrapper {
     return noStitch ? reader.isFalseColor() : core.get(getCoreIndex()).falseColor;
   }
 
+  /* @see IFormatReader#get8BitLookupTable(int) */
+  @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return noStitch ? reader.get8BitLookupTable(no) :
+      getReader(getCoreIndex(), 0).get8BitLookupTable(getAdjustedIndex(no));
+  }
+
+  /* @see IFormatReader#get16BitLookupTable(int) */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return noStitch ? reader.get16BitLookupTable(no) :
+      getReader(getCoreIndex(), 0).get16BitLookupTable(getAdjustedIndex(no));
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
@@ -507,6 +523,8 @@ public class FileStitcher extends ReaderWrapper {
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
+
+    setPlane(no);
 
     IFormatReader r = getReader(no);
     int ino = getAdjustedIndex(no);

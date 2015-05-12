@@ -78,7 +78,6 @@ public class TCSReader extends FormatReader {
 
   private TiffParser tiffParser;
 
-  private int lastPlane = 0;
   private long datestamp;
   private String xmlFile;
 
@@ -164,18 +163,52 @@ public class TCSReader extends FormatReader {
     return document.startsWith("CHANNEL") || software.startsWith("TCS");
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[lastPlane].get8BitLookupTable();
+
+    int n = no;
+    for (int i=0; i<getSeries(); i++) {
+      n += core.get(i).imageCount;
+    }
+
+    if (tiffReaders.length == 1) {
+      return tiffReaders[0].get8BitLookupTable(0);
+    }
+    int plane = 0;
+    if (tiffReaders[0].getImageCount() > 1) {
+      n /= tiffReaders.length;
+      plane = n % tiffReaders.length;
+    }
+    tiffReaders[n].setId(tiffs.get(n));
+    tiffReaders[n].setPlane(plane);
+
+    return tiffReaders[n].get8BitLookupTable(0);
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[lastPlane].get16BitLookupTable();
+
+    int n = no;
+    for (int i=0; i<getSeries(); i++) {
+      n += core.get(i).imageCount;
+    }
+
+    if (tiffReaders.length == 1) {
+      return tiffReaders[0].get16BitLookupTable(0);
+    }
+    int plane = 0;
+    if (tiffReaders[0].getImageCount() > 1) {
+      n /= tiffReaders.length;
+      plane = n % tiffReaders.length;
+    }
+    tiffReaders[n].setId(tiffs.get(n));
+    tiffReaders[n].setPlane(plane);
+
+    return tiffReaders[n].get16BitLookupTable(0);
   }
 
   /**
@@ -185,6 +218,8 @@ public class TCSReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    int lastPlane = getPlane();
+
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int n = no;
@@ -203,7 +238,6 @@ public class TCSReader extends FormatReader {
     if (lastPlane != 0) {
       tiffReaders[lastPlane].close();
     }
-    lastPlane = n;
     tiffReaders[n].setId(tiffs.get(n));
     return tiffReaders[n].openBytes(plane, buf, x, y, w, h);
   }
@@ -236,7 +270,6 @@ public class TCSReader extends FormatReader {
       tiffParser = null;
       datestamp = 0;
       xmlFile = null;
-      lastPlane = 0;
     }
   }
 

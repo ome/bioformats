@@ -197,6 +197,24 @@ public abstract class DelegateReader extends FormatReader {
     legacyReader.setMetadataStore(store);
   }
 
+  /* @see IFormatReader#get8BitLookupTable(int) */
+  @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
+      return legacyReader.get8BitLookupTable(no);
+    }
+    return nativeReader.get8BitLookupTable(no);
+  }
+
+  /* @see IFormatReader#get16BitLookupTable(int) */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
+      return legacyReader.get16BitLookupTable(no);
+    }
+    return nativeReader.get16BitLookupTable(no);
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {

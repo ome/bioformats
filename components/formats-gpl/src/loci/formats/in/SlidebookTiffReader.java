@@ -60,7 +60,6 @@ public class SlidebookTiffReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private int lastFile = 0;
   private MinimalTiffReader[] readers;
   private String[] files;
   private ArrayList<String> channelNames = new ArrayList<String>();
@@ -102,7 +101,6 @@ public class SlidebookTiffReader extends BaseTiffReader {
           }
         }
       }
-      lastFile = 0;
       readers = null;
       files = null;
       channelNames.clear();
@@ -116,26 +114,30 @@ public class SlidebookTiffReader extends BaseTiffReader {
     return noPixels ? null : files;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || lastFile < 0 || lastFile >= readers.length ||
+    int lastFile = no / getSizeT();
+
+    if (readers == null || lastFile >= readers.length ||
       readers[lastFile] == null)
     {
-      return super.get8BitLookupTable();
+      return super.get8BitLookupTable(no);
     }
-    return readers[lastFile].get8BitLookupTable();
+    return readers[lastFile].get8BitLookupTable(0);
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || lastFile < 0 || lastFile >= readers.length ||
+    int lastFile = no / getSizeT();
+
+    if (readers == null || lastFile >= readers.length ||
       readers[lastFile] == null)
     {
-      return super.get16BitLookupTable();
+      return super.get16BitLookupTable(0);
     }
     return readers[lastFile].get16BitLookupTable();
   }
@@ -151,8 +153,6 @@ public class SlidebookTiffReader extends BaseTiffReader {
 
     int file = no / getSizeT();
     int plane = no % getSizeT();
-
-    lastFile = file;
 
     return readers[file].openBytes(plane, buf, x, y, w, h);
   }

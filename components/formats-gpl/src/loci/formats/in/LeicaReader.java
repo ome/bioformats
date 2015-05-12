@@ -136,7 +136,7 @@ public class LeicaReader extends FormatReader {
 
   private List<String> seriesNames;
   private List<String> seriesDescriptions;
-  private int lastPlane = 0, nameLength = 0;
+  private int nameLength = 0;
 
   private double[][] physicalSizes;
   private double[] pinhole, exposureTime;
@@ -216,14 +216,14 @@ public class LeicaReader extends FormatReader {
     return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int index = (int) Math.min(lastPlane, files[getSeries()].size() - 1);
+      int index = (int) Math.min(no, files[getSeries()].size() - 1);
       tiff.setId(files[getSeries()].get(index));
-      return tiff.get8BitLookupTable();
+      return tiff.get8BitLookupTable(0);
     }
     catch (FormatException e) {
       LOGGER.debug("Failed to retrieve lookup table", e);
@@ -234,14 +234,14 @@ public class LeicaReader extends FormatReader {
     return null;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int index = (int) Math.min(lastPlane, files[getSeries()].size() - 1);
+      int index = (int) Math.min(no, files[getSeries()].size() - 1);
       tiff.setId(files[getSeries()].get(index));
-      return tiff.get16BitLookupTable();
+      return tiff.get16BitLookupTable(0);
     }
     catch (FormatException e) {
       LOGGER.debug("Failed to retrieve lookup table", e);
@@ -266,8 +266,6 @@ public class LeicaReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    lastPlane = no;
 
     int fileIndex = no < files[getSeries()].size() ? no : 0;
     int planeIndex = no < files[getSeries()].size() ? 0 : no;
@@ -319,7 +317,6 @@ public class LeicaReader extends FormatReader {
       tiff = null;
       seriesNames = null;
       numSeries = 0;
-      lastPlane = 0;
       physicalSizes = null;
       seriesDescriptions = null;
       pinhole = exposureTime = null;

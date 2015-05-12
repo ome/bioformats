@@ -92,9 +92,9 @@ public class PDSReader extends FormatReader {
     return stream.readString(blockLen).equals(PDS_MAGIC_STRING);
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lutIndex < 0 || lutIndex >= 3) return null;
     short[][] lut = new short[3][65536];

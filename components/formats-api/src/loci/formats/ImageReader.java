@@ -347,6 +347,18 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    return getReader().get8BitLookupTable(no);
+  }
+
+  /* @see IFormatReader#get16BitLookupTable() */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    return getReader().get16BitLookupTable(no);
+  }
+
+  /* @see IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return getReader().get8BitLookupTable();
   }

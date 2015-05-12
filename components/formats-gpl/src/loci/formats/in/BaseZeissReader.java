@@ -82,7 +82,6 @@ public abstract class BaseZeissReader extends FormatReader {
   protected int timepoint = 0;
 
   protected int[] channelColors;
-  protected int lastPlane = 0;
   protected final Map<Integer, Integer> tiles =
       new HashMap<Integer, Integer>();
 
@@ -684,9 +683,9 @@ public abstract class BaseZeissReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     int pixelType = getPixelType();
     if ((pixelType != FormatTools.INT8 && pixelType != FormatTools.UINT8) ||
         !isIndexed())
@@ -694,7 +693,7 @@ public abstract class BaseZeissReader extends FormatReader {
       return null;
     }
     byte[][] lut = new byte[3][256];
-    int channel = getZCTCoords(lastPlane)[1];
+    int channel = getZCTCoords(no)[1];
     if (channel >= channelColors.length) return null;
     int color = channelColors[channel];
 
@@ -711,9 +710,9 @@ public abstract class BaseZeissReader extends FormatReader {
     return lut;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     int pixelType = getPixelType();
     if ((pixelType != FormatTools.INT16 && pixelType != FormatTools.UINT16) ||
         !isIndexed())
@@ -721,7 +720,7 @@ public abstract class BaseZeissReader extends FormatReader {
       return null;
     }
     short[][] lut = new short[3][65536];
-    int channel = getZCTCoords(lastPlane)[1];
+    int channel = getZCTCoords(no)[1];
     if (channel >= channelColors.length) return null;
     int color = channelColors[channel];
 
@@ -756,7 +755,6 @@ public abstract class BaseZeissReader extends FormatReader {
       stageX.clear();
       stageY.clear();
       channelColors = null;
-      lastPlane = 0;
       tiles.clear();
       detectorGain.clear();
       detectorOffset.clear();

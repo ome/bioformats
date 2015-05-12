@@ -259,6 +259,16 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    return reader.get8BitLookupTable(no);
+  }
+
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    return reader.get16BitLookupTable(no);
+  }
+
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return reader.get8BitLookupTable();
   }

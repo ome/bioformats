@@ -110,6 +110,20 @@ public class ChannelFiller extends ReaderWrapper {
     return false;
   }
 
+  /* @see IFormatReader#get8BitLookupTable(int) */
+  @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    if (!isFilled()) return reader.get8BitLookupTable(no);
+    return null;
+  }
+
+  /* @see IFormatReader#get16BitLookupTable(int) */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    if (!isFilled()) return reader.get16BitLookupTable(no);
+    return null;
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
@@ -165,7 +179,7 @@ public class ChannelFiller extends ReaderWrapper {
 
     byte[] pix = reader.openBytes(no, x, y, w, h);
     if (getPixelType() == FormatTools.UINT8) {
-      byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(), pix);
+      byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(no), pix);
       if (isInterleaved()) {
         int pt = 0;
         for (int i=0; i<b[0].length; i++) {
@@ -181,7 +195,7 @@ public class ChannelFiller extends ReaderWrapper {
       }
       return buf;
     }
-    short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
+    short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(no),
       pix, isLittleEndian());
 
     if (isInterleaved()) {
@@ -233,13 +247,13 @@ public class ChannelFiller extends ReaderWrapper {
   private int getLookupTableComponentCount()
     throws FormatException, IOException
   {
-    byte[][] lut8 = reader.get8BitLookupTable();
+    byte[][] lut8 = reader.get8BitLookupTable(0);
     if (lut8 != null) return lut8.length;
-    short[][] lut16 = reader.get16BitLookupTable();
+    short[][] lut16 = reader.get16BitLookupTable(0);
     if (lut16 != null) return lut16.length;
-    lut8 = reader.get8BitLookupTable();
+    lut8 = reader.get8BitLookupTable(0);
     if (lut8 != null) return lut8.length;
-    lut16 = reader.get16BitLookupTable();
+    lut16 = reader.get16BitLookupTable(0);
     if (lut16 != null) return lut16.length;
     return 0; // LUTs are missing
   }

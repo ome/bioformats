@@ -149,19 +149,19 @@ public class FilePatternReader extends FormatReader {
   }
 
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     if (getCurrentFile() == null) {
       return null;
     }
-    return helper.get8BitLookupTable();
+    return helper.get8BitLookupTable(no);
   }
 
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     if (getCurrentFile() == null) {
       return null;
     }
-    return helper.get16BitLookupTable();
+    return helper.get16BitLookupTable(no);
   }
 
   @Override

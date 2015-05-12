@@ -105,9 +105,9 @@ public class JPEG2000Reader extends FormatReader {
     return validStart && validEnd;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || FormatTools.getBytesPerPixel(getPixelType()) != 1) {
       return null;
@@ -122,9 +122,9 @@ public class JPEG2000Reader extends FormatReader {
     return byteLut;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() {
+  public short[][] get16BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || FormatTools.getBytesPerPixel(getPixelType()) != 2) {
       return null;

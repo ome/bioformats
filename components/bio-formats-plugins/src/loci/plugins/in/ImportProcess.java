@@ -527,7 +527,7 @@ public class ImportProcess implements StatusReporter {
       options.setId(fileStitcher.getFilePattern().getPattern());
     }
 
-    final byte[][] lut8 = r.get8BitLookupTable();
+    final byte[][] lut8 = r.get8BitLookupTable(0);
     final int sizeC = r.getSizeC();
     r = channelFiller = new ChannelFiller(r);
     if (channelFiller.isFilled()) {

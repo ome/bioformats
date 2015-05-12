@@ -212,24 +212,24 @@ public class MIASReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0][0].getCurrentFile() == null) {
       return null;
     }
-    return readers[0][0].get8BitLookupTable();
+    return readers[0][0].get8BitLookupTable(0);
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0][0].getCurrentFile() == null) {
       return null;
     }
-    return readers[0][0].get16BitLookupTable();
+    return readers[0][0].get16BitLookupTable(0);
   }
 
   /**
@@ -1210,7 +1210,7 @@ public class MIASReader extends FormatReader {
     byte[][] planes = null;
 
     if (r.isIndexed()) {
-      planes = ImageTools.indexedToRGB(r.get8BitLookupTable(), plane);
+      planes = ImageTools.indexedToRGB(r.get8BitLookupTable(0), plane);
     }
     else {
       int bpp = FormatTools.getBytesPerPixel(r.getPixelType());

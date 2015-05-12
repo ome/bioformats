@@ -90,9 +90,9 @@ public class IPWReader extends FormatReader {
     return stream.readInt() == IPW_MAGIC_BYTES;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(0));
     TiffParser tp = new TiffParser(stream);
