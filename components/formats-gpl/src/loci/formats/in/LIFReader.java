@@ -670,7 +670,6 @@ public class LIFReader extends FormatReader {
         Set<Integer> toRemove = new HashSet<Integer>();
        
         int as = active.size();
-        System.err.println(validIntensities);
         for (int j = 0; j < s; j++) {
           if (j < as && !(Boolean) active.get(j)) {
             toRemove.add(validIntensities.get(j));
