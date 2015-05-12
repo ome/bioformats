@@ -645,22 +645,32 @@ public class LIFReader extends FormatReader {
           }
         }
 
+        Set<Integer> ignoredChannels = new HashSet<Integer>();
         final List<Integer> validIntensities = new ArrayList<Integer>();
+        int size = lasers.size();
+        int channel = 0;
+        Set<Integer> channels = new HashSet<Integer>();
+
         for (int laser=0; laser<laserIntensities.size(); laser++) {
           double intensity = (Double) laserIntensities.get(laser);
+          channel = laser/size;
           if (intensity < 100) {
             validIntensities.add(laser);
+            channels.add(channel);
           }
+          ignoredChannels.add(channel);
         }
-
+        //remove channels w/o valid intensities
+        ignoredChannels.removeAll(channels);
         //remove entries if channel has 2 wavelengths
         //e.g. 30% 458 70% 633
         int s = validIntensities.size();
-        int size = lasers.size();
+        
         int jj;
         Set<Integer> toRemove = new HashSet<Integer>();
-        Set<Integer> ignoredChannels = new HashSet<Integer>();
+       
         int as = active.size();
+        System.err.println(validIntensities);
         for (int j = 0; j < s; j++) {
           if (j < as && !(Boolean) active.get(j)) {
             toRemove.add(validIntensities.get(j));
@@ -679,6 +689,7 @@ public class LIFReader extends FormatReader {
         if (toRemove.size() > 0) {
           validIntensities.removeAll(toRemove);
         }
+
         boolean noNames = true;
         if (channelNames[index] != null) {
           for (String name : channelNames[index]) {
@@ -696,6 +707,7 @@ public class LIFReader extends FormatReader {
             }
           }
         }
+
         int nextFilter = 0;
         //int nextFilter = cutIns[i].size() - getEffectiveSizeC();
         for (int k=0; k<validIntensities.size(); k++, nextChannel++) {
