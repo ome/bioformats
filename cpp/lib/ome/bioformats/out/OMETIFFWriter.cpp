@@ -518,7 +518,7 @@ namespace ome
         if (i == tiffs.end())
           {
             detail::FormatWriter::setId(canonicalpath);
-            ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff(TIFF::open(canonicalpath, flags));
+            ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff(ome::bioformats::tiff::TIFF::open(canonicalpath, flags));
             std::pair<tiff_map::iterator,bool> result =
               tiffs.insert(tiff_map::value_type(*currentId, TIFFState(tiff)));
             if (result.second) // should always be true
