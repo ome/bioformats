@@ -93,6 +93,9 @@ public class FileStitcher extends ReaderWrapper {
   /** The number of the current series (non flat). */
   private int series;
 
+  /** The number of the current plane. */
+  private int plane;
+
   private boolean noStitch;
   private boolean group = true;
 
@@ -478,6 +481,8 @@ public class FileStitcher extends ReaderWrapper {
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
+    setPlane(no);
+
     int[] pos = computeIndices(no);
     IFormatReader r = getReader(getCoreIndex(), pos[0]);
     int ino = pos[1];
@@ -551,6 +556,7 @@ public class FileStitcher extends ReaderWrapper {
       core.clear();
       coreIndex = 0;
       series = 0;
+      plane = 0;
       store = null;
     }
   }
@@ -571,6 +577,7 @@ public class FileStitcher extends ReaderWrapper {
     else {
       coreIndex = no;
       series = no;
+      plane = no;
     }
   }
 
@@ -579,6 +586,24 @@ public class FileStitcher extends ReaderWrapper {
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.getSeries() > 0 ? reader.getSeries() : series;
+  }
+
+  /* @see IFormatReader#setPlane(int) */
+  @Override
+  public void setPlane(int no) {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) reader.setPlane(no);
+    else {
+      plane = no;
+    }
+  }
+
+  /* @see IFormatReader#getPlane() */
+  @Override
+  public int getPlane() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return reader.getPlane() > 0 ? reader.getPlane() : plane;
   }
 
   /* @see IFormatReader#seriesToCoreIndex(int) */

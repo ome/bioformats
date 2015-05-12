@@ -302,11 +302,21 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Gets the number of series in this file. */
   int getSeriesCount();
 
-  /** Activates the specified series. This also resets the resolution to 0. */
+  /** Activates the specified series. This also resets the resolution
+   * and current plane to 0.
+   */
   void setSeries(int no);
 
   /** Gets the currently active series. */
   int getSeries();
+
+  /** Activates the specified plane. This also resets the resolution
+   * to 0.
+   */
+  void setPlane(int no);
+
+  /** Gets the currently active plane. */
+  int getPlane();
 
   /** Specifies whether or not to normalize float data. */
   void setNormalized(boolean normalize);

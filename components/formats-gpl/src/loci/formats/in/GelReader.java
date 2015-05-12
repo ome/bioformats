@@ -103,6 +103,8 @@ public class GelReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    setPlane(no);
+
     IFD ifd = ifds.get(no);
 
     if (fmt == SQUARE_ROOT) {

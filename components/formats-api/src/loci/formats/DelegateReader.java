@@ -125,6 +125,14 @@ public abstract class DelegateReader extends FormatReader {
     if (legacyReaderInitialized) legacyReader.setSeries(no);
   }
 
+  /* @see IFormatReader#setPlane(int) */
+  @Override
+  public void setPlane(int no) {
+    super.setPlane(no);
+    if (nativeReaderInitialized) nativeReader.setPlane(no);
+    if (legacyReaderInitialized) legacyReader.setPlane(no);
+  }
+
   /* @see IFormatReader#setCoreIndex(int) */
   @Override
   public void setCoreIndex(int no) {
@@ -221,6 +229,7 @@ public abstract class DelegateReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    setPlane(no);
     if (callLegacyReader()) {
       return legacyReader.openBytes(no, buf, x, y, w, h);
     }

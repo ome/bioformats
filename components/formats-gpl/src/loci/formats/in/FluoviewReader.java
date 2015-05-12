@@ -158,6 +158,8 @@ public class FluoviewReader extends BaseTiffReader {
   {
     int image = getImageIndex(no);
 
+    setPlane(no);
+
     if (tiffParser == null) {
       initTiffParser();
     }

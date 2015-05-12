@@ -933,7 +933,7 @@ public final class FormatTools {
     int bufLength, int x, int y, int w, int h) throws FormatException
   {
     assertId(r.getCurrentFile(), true, 2);
-    checkPlaneNumber(r, no);
+    r.setPlane(no);
     checkTileSize(r, x, y, w, h);
     if (bufLength >= 0) checkBufferSize(r, bufLength, w, h);
   }

@@ -382,6 +382,16 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   @Override
+  public void setPlane(int no) {
+    reader.setPlane(no);
+  }
+
+  @Override
+  public int getPlane() {
+    return reader.getPlane();
+  }
+
+  @Override
   public void setGroupFiles(boolean group) {
     reader.setGroupFiles(group);
   }

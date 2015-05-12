@@ -127,6 +127,8 @@ public class TileStitcher extends ReaderWrapper {
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
+    setPlane(no);
+
     if (tileX == 1 && tileY == 1) {
       return super.openBytes(no, buf, x, y, w, h);
     }
