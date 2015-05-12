@@ -605,7 +605,8 @@ namespace ome
       /**
        * Set the active series.
        *
-       * @note This also resets the resolution to 0.
+       * @note This also resets the resolution to 0 and the current
+       * plane to 0.
        *
        * @param series the series to activate.
        *
@@ -626,6 +627,25 @@ namespace ome
       virtual
       dimension_size_type
       getSeries() const = 0;
+
+      /**
+       * Set the active plane.
+       *
+       * @param plane the plane to activate.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * plane switching in const methods.
+       */
+      virtual void
+      setPlane(dimension_size_type plane) const = 0;
+
+      /**
+       * Get the active plane.
+       *
+       * @returns the active plane.
+       */
+      virtual dimension_size_type
+      getPlane() const = 0;
 
       /**
        * Set float normalization.
@@ -1189,6 +1209,8 @@ namespace ome
 
       /**
        * Set the active resolution level.
+       *
+       * @note This also resets the current plane to 0.
        *
        * @param resolution the resolution to set.
        *

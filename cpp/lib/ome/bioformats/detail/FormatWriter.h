@@ -196,23 +196,12 @@ namespace ome
         dimension_size_type
         getSeries() const;
 
-        /**
-         * Set the active plane.
-         *
-         * @param plane the plane to activate.
-         *
-         * @todo Remove use of stateful API which requires use of
-         * plane switching in const methods.
-         */
-        virtual void
+        // Documented in superclass.
+        void
         setPlane(dimension_size_type plane) const;
 
-        /**
-         * Get the active plane.
-         *
-         * @returns the active plane.
-         */
-        virtual dimension_size_type
+        // Documented in superclass.
+        dimension_size_type
         getPlane() const;
 
         // Documented in superclass.

@@ -84,6 +84,7 @@ namespace ome
         metadata(),
         coreIndex(0),
         series(0),
+        plane(0),
         core(),
         resolution(0),
         flattenedResolutions(true),
@@ -739,6 +740,7 @@ namespace ome
                               dimension_size_type w,
                               dimension_size_type h) const
       {
+        setPlane(plane);
         openBytesImpl(plane, buf, x, y, w, h);
       }
 
@@ -762,7 +764,7 @@ namespace ome
         if (!fileOnly)
           {
             currentId = boost::none;
-            coreIndex = series = resolution = 0;
+            coreIndex = series = resolution = plane = 0;
             core.clear();
           }
       }
@@ -784,12 +786,36 @@ namespace ome
         this->coreIndex = seriesToCoreIndex(series);
         this->series = series;
         this->resolution = 0;
+        this->plane = 0;
       }
 
       dimension_size_type
       FormatReader::getSeries() const
       {
         return series;
+      }
+
+      void
+      FormatReader::setPlane(dimension_size_type plane) const
+      {
+        assertId(currentId, true);
+
+        if (plane >= getImageCount())
+          {
+            boost::format fmt("Invalid plane: %1%");
+            fmt % plane;
+            throw std::logic_error(fmt.str());
+          }
+
+        this->plane = plane;
+      }
+
+      dimension_size_type
+      FormatReader::getPlane() const
+      {
+        assertId(currentId, true);
+
+        return plane;
       }
 
       void
@@ -1286,6 +1312,7 @@ namespace ome
         this->coreIndex = seriesToCoreIndex(getSeries()) + resolution;
         // this->series unchanged.
         this->resolution = resolution;
+        this->plane = 0;
       }
 
       dimension_size_type
@@ -1325,6 +1352,7 @@ namespace ome
         this->series = coreIndexToSeries(index);
         this->coreIndex = index;
         this->resolution = index - seriesToCoreIndex(this->series);
+        this->plane = 0;
       }
 
       void
