@@ -84,7 +84,8 @@ public class OMETiffWriter extends TiffWriter {
   // -- Constructor --
 
   public OMETiffWriter() {
-    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
+    super("OME-TIFF",
+      new String[] {"ome.tif", "ome.tiff", "ome.tf2", "ome.tf8", "ome.btf"});
   }
 
   // -- IFormatHandler API methods --
