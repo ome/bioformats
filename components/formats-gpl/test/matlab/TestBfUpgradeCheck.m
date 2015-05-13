@@ -25,7 +25,7 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfUpgradeCheck < TestBfMatlab
+classdef TestBfUpgradeCheck < ReaderTest
     
     properties
         upgrader
@@ -34,14 +34,18 @@ classdef TestBfUpgradeCheck < TestBfMatlab
     methods
         
         function self = TestBfUpgradeCheck(name)
-            self = self@TestBfMatlab(name);
+            self = self@ReaderTest(name);
+        end
+        
+        function tearDown(self)
+            tearDown@ReaderTest(self);
         end
         
         function testJavaMethod(self)
             self.upgrader = javaObject('loci.formats.UpgradeChecker');
             upgrader = loci.formats.UpgradeChecker();
             assertEqual( self.upgrader.getClass, upgrader.getClass);
-        end
+        end     
         
     end
     
