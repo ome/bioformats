@@ -15,6 +15,13 @@ if "%BF_PROG%" == "" (
   goto end
 )
 
+rem Set the JVM flag.
+if "%BF_OOM_FLAGS%" == "" (
+  rem Set a reasonable default max heap size.
+  set BF_OOM_FLAGS=-XX:+UseConcMarkSweepGC
+)
+set BF_FLAGS=%BF_OOM_FLAGS%
+
 rem Set the max heap size.
 if "%BF_MAX_MEM%" == "" (
   rem Set a reasonable default max heap size.
