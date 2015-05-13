@@ -31,7 +31,7 @@ classdef TestBfCheckJavaPath < TestBfMatlab
     properties
         status
         version
-        maxTime = .1        
+        maxTime = .1
     end
     
     methods
@@ -82,9 +82,14 @@ classdef TestBfCheckJavaPath < TestBfMatlab
         end
         
         function testJavaMethod(self)
-            self.version = char(loci.formats.FormatTools.VERSION);
-            version = char(java_get('loci.formats.FormatTools', 'VERSION'));
-            assertEqual( self.version, version);
+            self.status = bfCheckJavaPath(true);
+            version = char(loci.formats.FormatTools.VERSION);
+            [self.status self.version]= bfCheckJavaPath(false);
+            assertEqual(self.version,version);
+            if (exist ('OCTAVE_VERSION', 'builtin'))
+                version = char(java_get('loci.formats.FormatTools', 'VERSION'));
+                assertEqual( self.version, version);
+            end
         end
     end
 end
