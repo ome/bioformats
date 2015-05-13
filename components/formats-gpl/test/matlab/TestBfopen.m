@@ -36,7 +36,6 @@ classdef TestBfopen < ReaderTest
         height = 10;
         x = 10;
         y = 10;
-        DefaultSize = [512,512];
         bpp
     end
     
@@ -63,14 +62,15 @@ classdef TestBfopen < ReaderTest
                 % Read fake file using bfopen
                 if (self.flag == 1)
                     self.data = bfopen(self.filepath);
-                    self.x = 512;
-                    self.y = 512;
+                    self.x = self.sizeY;
+                    self.y = self.sizeX;
                 elseif (self.flag == 2)
                     self.data = bfopen(self.filepath,self.x,self.y,self.width,self.height);
                 end
                 
                 % Test dimensions of bfopen output and core metadata
                 nPlanes = self.sizeZ * self.sizeC * self.sizeT;
+                keyboard
                 assertEqual(size(self.data), [self.nSeries 4]);
                 for i = 1 : self.nSeries
                     assertEqual(size(self.data{i, 1}), [nPlanes 2]);
@@ -80,8 +80,8 @@ classdef TestBfopen < ReaderTest
                     assertEqual(m.getPixelsSizeZ(i-1).getValue(), self.sizeZ);
                     assertEqual(m.getPixelsSizeC(i-1).getValue(), self.sizeC);
                     assertEqual(m.getPixelsSizeT(i-1).getValue(), self.sizeT);
-                    assertEqual(m.getPixelsSizeX(i-1).getValue(), self.DefaultSize(1));
-                    assertEqual(m.getPixelsSizeY(i-1).getValue(), self.DefaultSize(2));
+                    assertEqual(m.getPixelsSizeX(i-1).getValue(), self.sizeX);
+                    assertEqual(m.getPixelsSizeY(i-1).getValue(), self.sizeY);
                     assertEqual(TileSize(1), self.x);
                     assertEqual(TileSize(2), self.y);
                     
