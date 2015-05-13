@@ -1,6 +1,9 @@
 Testing code changes
 ====================
 
+Automated tests
+---------------
+
 At the bottom of many commit messages in
 https://github.com/openmicroscopy/bioformats, you will find a few lines
 similar to this:
@@ -98,3 +101,54 @@ If Ant reports that the build was successful, then there is nothing that
 you need to do. Otherwise, it is helpful if you can provide the command,
 branch name, number of failures at the bottom of the Ant output, and the
 :file:`bio-formats-software-test-\*.log` file.
+
+MATLAB tests
+------------
+.. _matlab-xunit: https://github.com/psexton/matlab-xunit
+
+Tests for the Bio-Formats MATLAB toolbox are written using the xunit framework
+and are located under :sourcedir:`components/formats-gpl/test/matlab`.
+
+To run these tests, you will need to download or clone `matlab-xunit`_, a
+xUnit framework with JUnit-compatible XML output. Then add this package
+together with the Bio-Formats MATLAB to your MATLAB path:
+
+.. code-block:: matlab
+
+  % Add the matlab-xunit toolbox to the MATLAB path
+  addpath('/path/to/matlab-xunit');
+  % Add the Bio-Formats MATLAB source to the MATLAB path
+  % For developers working against the source code
+  addpath('/path/to/bioformats/components/formats-gpl/matlab');
+  addpath('/path/to/bioformats/artifacts');
+  % For developers working against a built artifact, e.g. a release
+  % addpath('/path/to/bfmatlab');
+
+You can run all the MATLAB tests using :command:`runxunit`:
+
+.. code-block:: matlab
+
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
+  runxunit
+
+Individual test classes can be run by passing the name of the class:
+
+.. code-block:: matlab
+
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
+  runxunit TestBfsave
+
+Individual test methods can be run by passing the name of the class and the
+name of the method:
+
+.. code-block:: matlab
+
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
+  runxunit TestBfsave:testLZW
+
+Finally to output the test results under XML format, you can use the :option:`-xmlfile` option:
+
+.. code-block:: matlab
+
+  cd /path/to/bioformats/components/formats-gpl/test/matlab
+  runxunit -xmlfile test-output.xml

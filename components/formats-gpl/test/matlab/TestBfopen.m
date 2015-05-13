@@ -92,6 +92,7 @@ classdef TestBfopen < ReaderTest
             end
         end
         
+        % Dimension tests
         function testDefault(self)
             self.checkFake('test.fake')
         end
@@ -116,6 +117,7 @@ classdef TestBfopen < ReaderTest
             self.checkFake(['test&sizeT=' num2str(self.sizeT) '.fake'])
         end
         
+        
         function testJavaMethod(self)
             logLevel = loci.common.DebugTools.enableLogging('INFO');
             logLevel1 = javaMethod('enableLogging', 'loci.common.DebugTools', 'INFO');
@@ -131,6 +133,23 @@ classdef TestBfopen < ReaderTest
             assertEqual(self.bpp,bpp);
             
         end
-               
+        
+        % Colormap tests
+        function testNoColormap(self)
+            self.sizeC = 3;
+            self.checkFake('test&indexed=true&falseColor=false.fake');
+            assertTrue(isempty(self.data{3}{1}));
+        end
+        
+        function test8BitColormap(self)
+            self.checkFake('test&indexed=true&falseColor=true&pixelType=uint8.fake');
+            assertTrue(isa(self.data{3}{1}, 'single'));
+        end
+        
+        function test16BitColormap(self)
+            self.checkFake('test&indexed=true&falseColor=true&pixelType=uint16.fake');
+            assertTrue(isa(self.data{3}{1}, 'single'));
+        end
+        
     end
 end

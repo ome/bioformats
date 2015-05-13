@@ -655,6 +655,21 @@ public class Memoizer extends ReaderWrapper {
       loadedFromMemo = false;
       savedToMemo = false;
 
+      if (memo != null) {
+        // loadMemo has already called handleMetadataStore with non-null
+        try {
+          loadedFromMemo = true;
+          reader = memo;
+          reader.reopenFile();
+        } catch (FileNotFoundException e) {
+          LOGGER.info("could not reopen file - deleting invalid memo file: {}", memoFile);
+          deleteQuietly(memoFile);
+          memo = null;
+          reader.close();
+          loadedFromMemo = false;
+        }
+      }
+
       if (memo == null) {
         OMEXMLService service = getService();
         super.setMetadataStore(service.createOMEXMLMetadata());
@@ -667,11 +682,6 @@ public class Memoizer extends ReaderWrapper {
           return; // EARLY EXIT!
         }
         savedToMemo = saveMemo(); // Should never throw.
-      } else {
-        // loadMemo has already called handleMetadataStore with non-null
-        loadedFromMemo = true;
-        reader = memo;
-        reader.reopenFile();
       }
     } catch (ServiceException e) {
       LOGGER.error("Could not create OMEXMLMetadata", e);

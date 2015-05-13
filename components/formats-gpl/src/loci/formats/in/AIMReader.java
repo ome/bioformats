@@ -67,8 +67,13 @@ public class AIMReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset + FormatTools.getPlaneSize(this) * (long) no);
-    readPlane(in, x, y, w, h, buf);
+    int planeSize = FormatTools.getPlaneSize(this);
+    long offset = pixelOffset + planeSize * (long) no;
+
+    if (offset < in.length()) {
+      in.seek(offset);
+      readPlane(in, x, y, w, h, buf);
+    }
     return buf;
   }
 
@@ -140,7 +145,7 @@ public class AIMReader extends FormatReader {
         addGlobalMeta(key, value);
 
         if (key.equals("Original Creation-Date")) {
-          date = DateTools.formatDate(value, "dd-MMM-yyyy HH:mm:ss.SS");
+          date = DateTools.formatDate(value, "dd-MMM-yyyy HH:mm:ss", ".");
         }
         else if (key.equals("Orig-ISQ-Dim-p")) {
           String[] tokens = value.split(" ");
