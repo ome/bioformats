@@ -15,11 +15,11 @@ then
 fi
 
 # Prepare the flags.
-if [ -z "$BF_OOM_FLAGS" ]
+if [ -z "$BF_FLAGS" ]
 then
-   BF_OOM_FLAGS="-XX:+UseConcMarkSweepGC"
+   BF_FLAGS=""
 fi
-BF_FLAGS="$BF_OOM_FLAGS"
+BF_FLAGS="$BF_FLAGS"
 
 # Set the max heap size.
 if [ -z "$BF_MAX_MEM" ]
