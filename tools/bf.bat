@@ -27,7 +27,7 @@ if "%BF_MAX_MEM%" == "" (
   rem Set a reasonable default max heap size.
   set BF_MAX_MEM=512m
 )
-set BF_FLAGS=-Xmx%BF_MAX_MEM%
+set BF_FLAGS=%BF_FLAGS% -Xmx%BF_MAX_MEM%
 
 rem Skip the update check if the NO_UPDATE_CHECK flag is set.
 if not "%NO_UPDATE_CHECK%" == "" (

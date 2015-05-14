@@ -27,7 +27,7 @@ then
   # Set a reasonable default max heap size.
   BF_MAX_MEM="512m"
 fi
-BF_FLAGS="-Xmx$BF_MAX_MEM"
+BF_FLAGS="$BF_FLAGS -Xmx$BF_MAX_MEM"
 
 # Skip the update check if the NO_UPDATE_CHECK flag is set.
 if [ -n "$NO_UPDATE_CHECK" ]
