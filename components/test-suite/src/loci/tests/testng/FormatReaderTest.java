@@ -1132,6 +1132,88 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"all", "fast", "automated"})
+  public void testPlanePositions() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "PlanePositions";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      for (int p=0; p<reader.getImageCount(); p++) {
+        Length posX = null;
+        Length posY = null;
+        Length posZ = null;
+        try {
+          posX = retrieve.getPlanePositionX(i, p);
+        }
+        catch (IndexOutOfBoundsException e) { }
+        try {
+          posY = retrieve.getPlanePositionY(i, p);
+        }
+        catch (IndexOutOfBoundsException e) { }
+        try {
+          posZ = retrieve.getPlanePositionZ(i, p);
+        }
+        catch (IndexOutOfBoundsException e) { }
+
+        Double expectedX = config.getPositionX(p);
+        Double expectedY = config.getPositionY(p);
+        Double expectedZ = config.getPositionZ(p);
+
+        if (posX == null && expectedX == null) {
+        }
+        else if (posX == null) {
+          result(testName, false, "missing X position for series " + i + ", plane " + p);
+          return;
+        }
+        else if (expectedX != null) {
+          Double x = posX.value(UNITS.REFERENCEFRAME).doubleValue();
+          if (Math.abs(x - expectedX) > Constants.EPSILON) {
+            result(testName, false, "X position series " + i + ", plane " + p +
+              " (expected " + expectedX + ", actual " + x + ")");
+            return;
+          }
+        }
+
+        if (posY == null && expectedY == null) {
+        }
+        else if (posY == null) {
+          result(testName, false, "missing Y position for series " + i + ", plane " + p);
+          return;
+        }
+        else if (expectedY != null) {
+          Double y = posY.value(UNITS.REFERENCEFRAME).doubleValue();
+          if (Math.abs(y - expectedY) > Constants.EPSILON) {
+            result(testName, false, "Y position series " + i + ", plane " + p +
+              " (expected " + expectedY + ", actual " + y + ")");
+            return;
+          }
+        }
+
+        if (posZ == null && expectedZ == null) {
+        }
+        else if (posZ == null) {
+          result(testName, false, "missing Z position for series " + i + ", plane " + p);
+          return;
+        }
+        else if (expectedZ != null) {
+          Double z = posZ.value(UNITS.REFERENCEFRAME).doubleValue();
+          if (Math.abs(z - expectedZ) > Constants.EPSILON) {
+            result(testName, false, "Z position series " + i + ", plane " + p +
+              " (expected " + expectedZ + ", actual " + z + ")");
+            return;
+          }
+        }
+      }
+    }
+    result(testName, true);
+  }
+
+
+
+  @Test(groups = {"all", "fast", "automated"})
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";

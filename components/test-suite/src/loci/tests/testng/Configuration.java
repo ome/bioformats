@@ -297,13 +297,24 @@ public class Configuration {
     return exposure == null ? null : new Time(new Double(exposure), UNITS.S);
   }
 
-  public boolean hasDeltaT(int plane) {
-    return currentTable.containsKey(DELTA_T + plane);
-  }
-
   public Double getDeltaT(int plane) {
     String deltaT = currentTable.get(DELTA_T + plane);
     return deltaT == null ? null : new Double(deltaT);
+  }
+
+  public Double getPositionX(int plane) {
+    String pos = currentTable.get(X_POSITION + plane);
+    return pos == null ? null : new Double(pos);
+  }
+
+  public Double getPositionY(int plane) {
+    String pos = currentTable.get(Y_POSITION + plane);
+    return pos == null ? null : new Double(pos);
+  }
+
+  public Double getPositionZ(int plane) {
+    String pos = currentTable.get(Z_POSITION + plane);
+    return pos == null ? null : new Double(pos);
   }
 
   public Double getEmissionWavelength(int channel) {
