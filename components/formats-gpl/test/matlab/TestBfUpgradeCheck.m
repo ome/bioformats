@@ -47,7 +47,7 @@ classdef TestBfUpgradeCheck < ReaderTest
             self.upgrader = javaObject('loci.formats.UpgradeChecker');
             upgrader = loci.formats.UpgradeChecker();
             assertEqual( self.upgrader.getClass, upgrader.getClass);
-        end        
+        end
         
     end
     
