@@ -70,7 +70,6 @@ classdef TestBfopen < ReaderTest
                 
                 % Test dimensions of bfopen output and core metadata
                 nPlanes = self.sizeZ * self.sizeC * self.sizeT;
-                keyboard
                 assertEqual(size(self.data), [self.nSeries 4]);
                 for i = 1 : self.nSeries
                     assertEqual(size(self.data{i, 1}), [nPlanes 2]);
