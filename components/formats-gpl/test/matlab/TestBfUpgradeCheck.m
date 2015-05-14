@@ -38,6 +38,8 @@ classdef TestBfUpgradeCheck < ReaderTest
         end
         
         function tearDown(self)
+            self.upgrader = [];
+            upgrader = [];
             tearDown@ReaderTest(self);
         end
         
@@ -45,7 +47,7 @@ classdef TestBfUpgradeCheck < ReaderTest
             self.upgrader = javaObject('loci.formats.UpgradeChecker');
             upgrader = loci.formats.UpgradeChecker();
             assertEqual( self.upgrader.getClass, upgrader.getClass);
-        end     
+        end        
         
     end
     
