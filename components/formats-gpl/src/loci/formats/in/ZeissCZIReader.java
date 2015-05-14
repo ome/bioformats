@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.xml.parsers.DocumentBuilder;
 
 import loci.common.ByteArrayHandle;
@@ -2454,7 +2455,10 @@ public class ZeissCZIReader extends FormatReader {
     nameStack.push(name);
 
     StringBuffer key = new StringBuffer();
-    for (String k : nameStack) {
+    String k = null;
+    Iterator<String> keys = nameStack.descendingIterator();
+    while (keys.hasNext()) {
+      k = keys.next();
       if (!k.equals("Metadata") && (!k.endsWith("s") || k.equals(name))) {
         key.append(k);
         key.append("|");

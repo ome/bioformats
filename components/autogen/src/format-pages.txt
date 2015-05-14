@@ -1763,14 +1763,14 @@ developer = ZSoft Corporation
 bsd = yes
 export = no
 weHave = * several .pcx files \n
-* the ability to generate additional .pcx filse
+* the ability to generate additional .pcx files
 pixelsRating = Very good
 metadataRating = Poor
 opennessRating = Fair
 presenceRating = Poor
 utilityRating = Fair
 reader = PCXReader.java
-notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com.au/microscopy/en_au/downloads/lsm-5-series.html>`_.
+notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_.
 
 [PCORAW]
 extensions = .pcoraw, .rec

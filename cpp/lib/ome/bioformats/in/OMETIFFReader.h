@@ -62,11 +62,13 @@ namespace ome
     {
 
       /**
-       * TIFF reader with support for ImageJ extensions.
+       * TIFF reader with support for OME-XML metadata.
        */
       class OMETIFFReader : public ::ome::bioformats::detail::FormatReader
       {
         using detail::FormatReader::isThisType;
+        using ::ome::bioformats::FormatReader::getOptimalTileWidth;
+        using ::ome::bioformats::FormatReader::getOptimalTileHeight;
 
       protected:
         /// Message logger.

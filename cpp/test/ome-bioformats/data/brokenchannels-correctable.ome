@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+     xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+     xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+     xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06 http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
+  <Image ID="Image:0" Name="valid-grey1"><!-- Valid 1-channel greyscale -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:0:0" Type="uint8" SizeC="1" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:0" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:1" Name="invalid-grey1a"><!-- Missing channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:1:0" Type="uint8" SizeC="1" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:2" Name="invalid-grey1b"><!-- Incorrect channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:2:0" Type="uint8" SizeC="1" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:1" SamplesPerPixel="2"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:3" Name="invalid-grey1c"><!-- Incorrect C -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:3:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:2" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:4" Name="invalid-grey1d"><!-- Missing SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:4:0" Type="uint8" SizeC="1" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+
+  <Image ID="Image:5" Name="valid-grey2"><!-- Valid 4-channel greyscale -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:5:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:4" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:5" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:6" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:7" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:6" Name="invalid-grey2a"><!-- Missing channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:6:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:8" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:9" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:10" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:7" Name="invalid-grey2b"><!-- Missing channels -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:7:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:8" Name="invalid-grey2c"><!-- Incorrect channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:8:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:11" SamplesPerPixel="2"/>
+      <OME:Channel Color="-2147483648" ID="Channel:12" SamplesPerPixel="2"/>
+      <OME:Channel Color="-2147483648" ID="Channel:13" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:14" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:9" Name="invalid-grey2d"><!-- Incorrect C -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:9:0" Type="uint8" SizeC="7" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:15" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:16" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:17" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:18" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:10" Name="invalid-grey2e"><!-- Missing SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:10:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:19"/>
+      <OME:Channel Color="-2147483648" ID="Channel:20" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:21"/>
+      <OME:Channel Color="-2147483648" ID="Channel:22" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:11" Name="invalid-grey2f"><!-- Missing all SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:11:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:23"/>
+      <OME:Channel Color="-2147483648" ID="Channel:24"/>
+      <OME:Channel Color="-2147483648" ID="Channel:25"/>
+      <OME:Channel Color="-2147483648" ID="Channel:26"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+
+  <Image ID="Image:12" Name="valid-rgb1"><!-- Valid 1-channel RGB -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:12:0" Type="uint8" SizeC="3" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:27" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:13" Name="invalid-rgb1a"><!-- Missing channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:13:0" Type="uint8" SizeC="3" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:14" Name="invalid-rgb1b"><!-- Incorrect channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:14:0" Type="uint8" SizeC="3" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:28" SamplesPerPixel="5"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:15" Name="invalid-rgb1c"><!-- Incorrect C -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:15:0" Type="uint8" SizeC="2" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:29" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:16" Name="invalid-rgb1d"><!-- Missing SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:16:0" Type="uint8" SizeC="3" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:30"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+
+  <Image ID="Image:17" Name="valid-rgb2"><!-- Valid 2-channel RGB -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:17:0" Type="uint8" SizeC="6" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:31" SamplesPerPixel="3"/>
+      <OME:Channel Color="-2147483648" ID="Channel:32" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:18" Name="invalid-rgb2a"><!-- Missing channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:18:0" Type="uint8" SizeC="6" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:33" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:19" Name="invalid-rgb2b"><!-- Missing channels -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:19s:0" Type="uint8" SizeC="6" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>  
+  <Image ID="Image:20" Name="invalid-rgb2c"><!-- Incorrect channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:20:0" Type="uint8" SizeC="6" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:34" SamplesPerPixel="5"/>
+      <OME:Channel Color="-2147483648" ID="Channel:35" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:21" Name="invalid-rgb2d"><!-- Incorrect C -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:21:0" Type="uint8" SizeC="9" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:36" SamplesPerPixel="3"/>
+      <OME:Channel Color="-2147483648" ID="Channel:37" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:22" Name="invalid-rgb2e"><!-- Missing SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:22:0" Type="uint8" SizeC="6" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:38" SamplesPerPixel="3"/>
+      <OME:Channel Color="-2147483648" ID="Channel:39"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:23" Name="invalid-rgb2f"><!-- Missing all SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:23:0" Type="uint8" SizeC="6" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:40"/>
+      <OME:Channel Color="-2147483648" ID="Channel:41"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+
+  <Image ID="Image:24" Name="valid-mixed1"><!-- Valid mixed greyscale and RGB -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:24:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:42" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:43" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:25" Name="invalid-mixed1a"><!-- Missing channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:25:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:44" SamplesPerPixel="1"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:26" Name="invalid-mixed1b"><!-- Missing channels -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:26:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:27" Name="invalid-mixed1c"><!-- Incorrect channel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:27:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:45" SamplesPerPixel="5"/>
+      <OME:Channel Color="-2147483648" ID="Channel:46" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:28" Name="invalid-mixed1d"><!-- Incorrect C -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:28:0" Type="uint8" SizeC="2" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:47" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:48" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:29" Name="invalid-mixed1e"><!-- Missing SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:29:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:49" SamplesPerPixel="1"/>
+      <OME:Channel Color="-2147483648" ID="Channel:50"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:30" Name="invalid-mixed1f"><!-- Missing SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:30:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:51"/>
+      <OME:Channel Color="-2147483648" ID="Channel:52" SamplesPerPixel="3"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:31" Name="invalid-mixed1g"><!-- Missing all SamplesPerPixel -->
+    <OME:AcquisitionDate>2015-04-28T11:05:15</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYZTC" ID="Pixels:31:0" Type="uint8" SizeC="4" SizeT="10" SizeX="10" SizeY="10" SizeZ="10">
+      <OME:Channel Color="-2147483648" ID="Channel:53"/>
+      <OME:Channel Color="-2147483648" ID="Channel:54"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+
+</OME>

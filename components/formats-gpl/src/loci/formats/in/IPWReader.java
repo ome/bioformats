@@ -263,7 +263,7 @@ public class IPWReader extends FormatReader {
             timestamp = timestamp.substring(timestamp.length() - 26);
           }
           creationDate =
-            DateTools.formatDate(timestamp, "MM/dd/yyyy HH:mm:ss.SSS aa");
+            DateTools.formatDate(timestamp, "MM/dd/yyyy HH:mm:ss aa", ".");
         }
       }
       else if (relativePath.equals("ImageTIFF")) {

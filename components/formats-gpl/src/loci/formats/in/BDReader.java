@@ -800,7 +800,7 @@ public class BDReader extends FormatReader {
       if (timestamp != null) {
         String stamp = parser.getIFDValue(timestamp).toString();
         s.close();
-        stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS);
+        stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS, ".");
         Timestamp t = Timestamp.valueOf(stamp);
         return t.asInstant().getMillis(); // NPE if invalid input.
       }

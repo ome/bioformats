@@ -210,6 +210,24 @@ namespace ome
     validateOMEXML(const std::string& document);
 
     /**
+     * Validate a metadata store.
+     *
+     * Note that unlike validateOMEXML(const std::string&) this does
+     * not perform XML validation.  It will look for missing or
+     * inconsistent metadata and (if specified) attempt to correct the
+     * metadata to make it valid.
+     *
+     * @param meta the metadata store.
+     * @param correct @c true to attempt correction, @c false to leave
+     * unmodified.
+     * @returns @c true if valid, @c false if invalid.
+     * @throws FormatException if correction of invalid metadata fails.
+     */
+    bool
+    validateModel(::ome::xml::meta::Metadata& meta,
+                  bool                        correct);
+
+    /**
      * Fill OME-XML metadata store from reader core metadata.
      *
      * The metadata store is expected to be empty.
