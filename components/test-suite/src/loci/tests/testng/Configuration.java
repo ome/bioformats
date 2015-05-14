@@ -100,6 +100,10 @@ public class Configuration {
   private static final String SERIES_COUNT = "series_count";
   private static final String CHANNEL_COUNT = "channel_count";
   private static final String DATE = "Date";
+  private static final String DELTA_T = "DeltaT_";
+  private static final String X_POSITION = "PositionX_";
+  private static final String Y_POSITION = "PositionY_";
+  private static final String Z_POSITION = "PositionZ_";
 
   // -- Fields --
 
@@ -291,6 +295,15 @@ public class Configuration {
   public Time getExposureTime(int channel) {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
     return exposure == null ? null : new Time(new Double(exposure), UNITS.S);
+  }
+
+  public boolean hasDeltaT(int plane) {
+    return currentTable.containsKey(DELTA_T + plane);
+  }
+
+  public Double getDeltaT(int plane) {
+    String deltaT = currentTable.get(DELTA_T + plane);
+    return deltaT == null ? null : new Double(deltaT);
   }
 
   public Double getEmissionWavelength(int channel) {
@@ -522,6 +535,25 @@ public class Configuration {
             retrieve.getDetectorSettingsID(series, c));
         }
         catch (NullPointerException e) { }
+      }
+
+      for (int p=0; p<reader.getImageCount(); p++) {
+        Time deltaT = retrieve.getPlaneDeltaT(series, p);
+        if (deltaT != null) {
+          seriesTable.put(DELTA_T + p, deltaT.value(UNITS.S).toString());
+        }
+        Length xPos = retrieve.getPlanePositionX(series, p);
+        if (xPos != null) {
+          seriesTable.put(X_POSITION + p, xPos.value(UNITS.REFERENCEFRAME).toString());
+        }
+        Length yPos = retrieve.getPlanePositionY(series, p);
+        if (yPos != null) {
+          seriesTable.put(Y_POSITION + p, yPos.value(UNITS.REFERENCEFRAME).toString());
+        }
+        Length zPos = retrieve.getPlanePositionZ(series, p);
+        if (zPos != null) {
+          seriesTable.put(Z_POSITION + p, zPos.value(UNITS.REFERENCEFRAME).toString());
+        }
       }
 
       ini.add(seriesTable);

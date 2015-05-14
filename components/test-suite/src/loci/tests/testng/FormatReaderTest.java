@@ -1093,6 +1093,40 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"all", "fast", "automated"})
+  public void testDeltaT() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "DeltaT";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      for (int p=0; p<reader.getImageCount(); p++) {
+        Time deltaT = retrieve.getPlaneDeltaT(i, p);
+        Double expectedDeltaT = config.getDeltaT(p);
+
+        if (deltaT == null && expectedDeltaT == null) {
+          continue;
+        }
+
+        if (deltaT == null) {
+          result(testName, false, "missing series " + i + ", plane " + p);
+          return;
+        }
+
+        Double seconds = deltaT.value(UNITS.S).doubleValue();
+        if (Math.abs(seconds - expectedDeltaT) > Constants.EPSILON) {
+          result(testName, false, "series " + i + ", plane " + p +
+            " (expected " + expectedDeltaT + ", actual " + seconds + ")");
+          return;
+        }
+      }
+    }
+    result(testName, true);
+  }
+
+  @Test(groups = {"all", "fast", "automated"})
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";
