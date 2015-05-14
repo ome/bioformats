@@ -19,7 +19,6 @@ if [ -z "$BF_FLAGS" ]
 then
    BF_FLAGS=""
 fi
-BF_FLAGS="$BF_FLAGS"
 
 # Set the max heap size.
 if [ -z "$BF_MAX_MEM" ]
