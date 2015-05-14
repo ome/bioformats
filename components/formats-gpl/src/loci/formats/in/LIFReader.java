@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -1054,7 +1055,9 @@ public class LIFReader extends FormatReader {
         suffix = root.getAttribute("Description");
       }
       StringBuffer key = new StringBuffer();
-      for (String k : nameStack) {
+      final Iterator<String> nameStackIterator = nameStack.descendingIterator();
+      while (nameStackIterator.hasNext()) {
+        final String k = nameStackIterator.next();
         key.append(k);
         key.append("|");
       }
