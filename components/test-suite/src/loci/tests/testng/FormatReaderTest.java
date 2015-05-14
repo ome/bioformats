@@ -1103,7 +1103,11 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int p=0; p<reader.getImageCount(); p++) {
-        Time deltaT = retrieve.getPlaneDeltaT(i, p);
+        Time deltaT = null;
+        try {
+          deltaT = retrieve.getPlaneDeltaT(i, p);
+        }
+        catch (IndexOutOfBoundsException e) { }
         Double expectedDeltaT = config.getDeltaT(p);
 
         if (deltaT == null && expectedDeltaT == null) {
@@ -1114,12 +1118,13 @@ public class FormatReaderTest {
           result(testName, false, "missing series " + i + ", plane " + p);
           return;
         }
-
-        Double seconds = deltaT.value(UNITS.S).doubleValue();
-        if (Math.abs(seconds - expectedDeltaT) > Constants.EPSILON) {
-          result(testName, false, "series " + i + ", plane " + p +
-            " (expected " + expectedDeltaT + ", actual " + seconds + ")");
-          return;
+        if (expectedDeltaT != null) {
+          Double seconds = deltaT.value(UNITS.S).doubleValue();
+          if (Math.abs(seconds - expectedDeltaT) > Constants.EPSILON) {
+            result(testName, false, "series " + i + ", plane " + p +
+              " (expected " + expectedDeltaT + ", actual " + seconds + ")");
+            return;
+          }
         }
       }
     }
