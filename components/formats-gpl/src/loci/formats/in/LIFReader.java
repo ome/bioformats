@@ -665,10 +665,10 @@ public class LIFReader extends FormatReader {
         //remove entries if channel has 2 wavelengths
         //e.g. 30% 458 70% 633
         int s = validIntensities.size();
-        
+
         int jj;
         Set<Integer> toRemove = new HashSet<Integer>();
-       
+
         int as = active.size();
         for (int j = 0; j < s; j++) {
           if (j < as && !(Boolean) active.get(j)) {
