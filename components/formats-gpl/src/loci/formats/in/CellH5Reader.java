@@ -494,9 +494,7 @@ public class CellH5Reader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int s=0; s<seriesNames.size(); s++) {
-        
       String image_id = MetadataTools.createLSID("Image", s);  
-        
       store.setImageName(seriesNames.get(s), s);
       
       String plate_id =  MetadataTools.createLSID("Plate", 0);

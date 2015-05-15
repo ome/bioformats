@@ -321,9 +321,17 @@ public class ROIHandler {
                             if(shapeObject.getTheT() != null){
                                 t = shapeObject.getTheT().getValue();
                             }
+                            
                             // ImageJ expects 1-based indexing, opposed to 
-                            // 0-based indexing in OME
-                            roi.setPosition(c+1, z+1, t+1);
+                            // 0-based indexing in OME  
+                            if (images[imageNum].getNChannels()== 1 &&
+                                    images[imageNum].getNSlices()== 1) {
+                                roi.setPosition(t+1);
+                            }
+                            else {
+                                roi.setPosition(c+1, z+1, t+1);
+                            }
+                            
                         }
                         roi.setImage(images[imageNum]);
 
