@@ -135,6 +135,11 @@ public class MetamorphReader extends BaseTiffReader {
 
   private int openFiles = 0;
 
+  private boolean hasStagePositions = false;
+  private boolean hasChipOffsets = false;
+  private boolean hasAbsoluteZ = false;
+  private boolean hasAbsoluteZValid = false;
+
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
@@ -326,6 +331,10 @@ public class MetamorphReader extends BaseTiffReader {
       gain = null;
       bizarreMultichannelAcquisition = false;
       openFiles = 0;
+      hasStagePositions = false;
+      hasChipOffsets = false;
+      hasAbsoluteZ = false;
+      hasAbsoluteZValid = false;
     }
   }
 
@@ -1457,19 +1466,23 @@ public class MetamorphReader extends BaseTiffReader {
       switch (id) {
         case 28:
           readStagePositions();
+          hasStagePositions = true;
           break;
         case 29:
           readRationals(
             new String[] {"cameraXChipOffset", "cameraYChipOffset"});
+          hasChipOffsets = true;
           break;
         case 37:
           readStageLabels();
           break;
         case 40:
           readRationals(new String[] {"UIC4 absoluteZ"});
+          hasAbsoluteZ = true;
           break;
         case 41:
           readAbsoluteZValid();
+          hasAbsoluteZValid = true;
           break;
         case 46:
           in.skipBytes(mmPlanes * 8); // TODO
@@ -1656,16 +1669,20 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         case 28:
           if (valOrOffset < in.length()) {
-            in.seek(valOrOffset);
-            readStagePositions();
+            if (!hasStagePositions) {
+              in.seek(valOrOffset);
+              readStagePositions();
+            }
             skipKey = true;
           }
           break;
         case 29:
           if (valOrOffset < in.length()) {
-            in.seek(valOrOffset);
-            readRationals(
-              new String[] {"cameraXChipOffset", "cameraYChipOffset"});
+            if (!hasChipOffsets) {
+              in.seek(valOrOffset);
+              readRationals(
+                new String[] {"cameraXChipOffset", "cameraYChipOffset"});
+            }
             skipKey = true;
           }
           break;
@@ -1689,15 +1706,19 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         case 40:
           if (valOrOffset != 0 && valOrOffset < in.length()) {
-            in.seek(valOrOffset);
-            readRationals(new String[] {"UIC1 absoluteZ"});
+            if (!hasAbsoluteZ) {
+              in.seek(valOrOffset);
+              readRationals(new String[] {"UIC1 absoluteZ"});
+            }
             skipKey = true;
           }
           break;
         case 41:
           if (valOrOffset != 0 && valOrOffset < in.length()) {
-            in.seek(valOrOffset);
-            readAbsoluteZValid();
+            if (!hasAbsoluteZValid) {
+              in.seek(valOrOffset);
+              readAbsoluteZValid();
+            }
             skipKey = true;
           }
           break;
