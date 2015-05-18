@@ -1322,8 +1322,8 @@ namespace ome
             fmt % index;
             throw std::logic_error(fmt.str());
           }
-        this->coreIndex = index;
         this->series = coreIndexToSeries(index);
+        this->coreIndex = index;
         this->resolution = index - seriesToCoreIndex(this->series);
       }
 
