@@ -234,7 +234,7 @@ public class SlideBook6Reader  extends FormatReader {
 
 			// fill in meta data
 			MetadataStore store = makeFilterMetadata();
-			MetadataTools.populatePixels(store, this);
+			MetadataTools.populatePixels(store, this, true);
 
 			// add extended meta data
 			if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
