@@ -1364,6 +1364,7 @@ public abstract class FormatReader extends FormatHandler
     }
     series = coreIndexToSeries(no);
     coreIndex = no;
+    resolution = no - seriesToCoreIndex(series);
   }
 
   // -- IFormatHandler API methods --
