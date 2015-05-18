@@ -1007,67 +1007,88 @@ public class LIFReader extends FormatReader {
       }
     }
 
-    NodeList imageNodes = getNodes(realRoot, "Image");
+    NodeList images = getNodes(realRoot, "Image");
+    List<Element> imageNodes = new ArrayList<Element>();
+    Long[] oldOffsets = offsets.toArray(new Long[offsets.size()]);
+    offsets.clear();
 
-    tileCount = new int[imageNodes.getLength()];
+    int nextOffset = 0;
+    for (int i=0; i<images.getLength(); i++) {
+      Element image = (Element) images.item(i);
+      Element grandparent = (Element) image.getParentNode();
+      grandparent = (Element) grandparent.getParentNode();
+      if (!grandparent.getNodeName().equals("ProcessingHistory")) {
+        // image is being referenced from an event list
+        imageNodes.add(image);
+        offsets.add(oldOffsets[nextOffset]);
+      }
+      grandparent = (Element) grandparent.getParentNode();
+      grandparent = (Element) grandparent.getParentNode();
+      if (!grandparent.getNodeName().equals("Image")) {
+        nextOffset++;
+      }
+    }
+
+    tileCount = new int[imageNodes.size()];
     Arrays.fill(tileCount, 1);
-    core = new ArrayList<CoreMetadata>(imageNodes.getLength());
-    acquiredDate = new double[imageNodes.getLength()];
-    descriptions = new String[imageNodes.getLength()];
-    laserWavelength = new List[imageNodes.getLength()];
-    laserIntensity = new List[imageNodes.getLength()];
-    laserActive = new List[imageNodes.getLength()];
-    laserFrap = new List[imageNodes.getLength()];
-    timestamps = new double[imageNodes.getLength()][];
-    activeDetector = new List[imageNodes.getLength()];
-    serialNumber = new String[imageNodes.getLength()];
-    lensNA = new Double[imageNodes.getLength()];
-    magnification = new Double[imageNodes.getLength()];
-    immersions = new String[imageNodes.getLength()];
-    corrections = new String[imageNodes.getLength()];
-    objectiveModels = new String[imageNodes.getLength()];
-    posX = new Length[imageNodes.getLength()];
-    posY = new Length[imageNodes.getLength()];
-    posZ = new Length[imageNodes.getLength()];
-    refractiveIndex = new Double[imageNodes.getLength()];
-    cutIns = new List[imageNodes.getLength()];
-    cutOuts = new List[imageNodes.getLength()];
-    filterModels = new List[imageNodes.getLength()];
-    microscopeModels = new String[imageNodes.getLength()];
-    detectorModels = new List[imageNodes.getLength()];
-    detectorIndexes = new HashMap[imageNodes.getLength()];
-    zSteps = new Double[imageNodes.getLength()];
-    tSteps = new Double[imageNodes.getLength()];
-    pinholes = new Double[imageNodes.getLength()];
-    zooms = new Double[imageNodes.getLength()];
+    core = new ArrayList<CoreMetadata>(imageNodes.size());
+    acquiredDate = new double[imageNodes.size()];
+    descriptions = new String[imageNodes.size()];
+    laserWavelength = new List[imageNodes.size()];
+    laserIntensity = new List[imageNodes.size()];
+    laserActive = new List[imageNodes.size()];
+    laserFrap = new List[imageNodes.size()];
+    timestamps = new double[imageNodes.size()][];
+    activeDetector = new List[imageNodes.size()];
+    serialNumber = new String[imageNodes.size()];
+    lensNA = new Double[imageNodes.size()];
+    magnification = new Double[imageNodes.size()];
+    immersions = new String[imageNodes.size()];
+    corrections = new String[imageNodes.size()];
+    objectiveModels = new String[imageNodes.size()];
+    posX = new Length[imageNodes.size()];
+    posY = new Length[imageNodes.size()];
+    posZ = new Length[imageNodes.size()];
+    refractiveIndex = new Double[imageNodes.size()];
+    cutIns = new List[imageNodes.size()];
+    cutOuts = new List[imageNodes.size()];
+    filterModels = new List[imageNodes.size()];
+    microscopeModels = new String[imageNodes.size()];
+    detectorModels = new List[imageNodes.size()];
+    detectorIndexes = new HashMap[imageNodes.size()];
+    zSteps = new Double[imageNodes.size()];
+    tSteps = new Double[imageNodes.size()];
+    pinholes = new Double[imageNodes.size()];
+    zooms = new Double[imageNodes.size()];
 
-    expTimes = new Double[imageNodes.getLength()][];
-    gains = new Double[imageNodes.getLength()][];
-    detectorOffsets = new Double[imageNodes.getLength()][];
-    channelNames = new String[imageNodes.getLength()][];
-    exWaves = new Double[imageNodes.getLength()][];
-    imageROIs = new ROI[imageNodes.getLength()][];
-    imageNames = new String[imageNodes.getLength()];
+    expTimes = new Double[imageNodes.size()][];
+    gains = new Double[imageNodes.size()][];
+    detectorOffsets = new Double[imageNodes.size()][];
+    channelNames = new String[imageNodes.size()][];
+    exWaves = new Double[imageNodes.size()][];
+    imageROIs = new ROI[imageNodes.size()][];
+    imageNames = new String[imageNodes.size()];
 
     core.clear();
-    for (int i=0; i<imageNodes.getLength(); i++) {
-      Element image = (Element) imageNodes.item(i);
+    for (int i=0; i<imageNodes.size(); i++) {
+      Element image = imageNodes.get(i);
 
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
 
-      setSeries(i);
+      int index = core.size() - 1;
+      setSeries(index);
 
-      translateImageNames(image, i);
-      translateImageNodes(image, i);
-      translateAttachmentNodes(image, i);
-      translateScannerSettings(image, i);
-      translateFilterSettings(image, i);
-      translateTimestamps(image, i);
-      translateLaserLines(image, i);
-      translateROIs(image, i);
-      translateSingleROIs(image, i);
-      translateDetectors(image, i);
+      translateImageNames(image, index);
+      translateImageNodes(image, index);
+      translateAttachmentNodes(image, index);
+      translateScannerSettings(image, index);
+      translateFilterSettings(image, index);
+      translateTimestamps(image, index);
+      translateLaserLines(image, index);
+      translateROIs(image, index);
+      translateSingleROIs(image, index);
+      translateDetectors(image, index);
 
       final Deque<String> nameStack = new ArrayDeque<String>();
       populateOriginalMetadata(image, nameStack);
