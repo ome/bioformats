@@ -50,6 +50,7 @@ set(ome_common_static_headers
     module.h
     mstream.h
     string.h
+    units.h
     variant.h)
 
 set(ome_common_endian_static_headers

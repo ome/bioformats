@@ -47,6 +47,7 @@
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wvariadic-macros"
 #  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
+#  pragma GCC diagnostic ignored "-Wvariadic-macros"
 #endif
 
 #include <gtest/gtest.h>
