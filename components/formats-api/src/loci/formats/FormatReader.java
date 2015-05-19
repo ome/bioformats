@@ -1362,8 +1362,9 @@ public abstract class FormatReader extends FormatHandler
     if (no < 0 || no >= core.size()) {
       throw new IllegalArgumentException("Invalid series: " + no);
     }
-    coreIndex = no;
     series = coreIndexToSeries(no);
+    coreIndex = no;
+    resolution = no - seriesToCoreIndex(series);
   }
 
   // -- IFormatHandler API methods --
