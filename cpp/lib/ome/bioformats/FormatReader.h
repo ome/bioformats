@@ -99,8 +99,10 @@ namespace ome
       private:
         /// Reader for which the state will be saved and restored.
         const FormatReader& reader;
-        /// Saved state.
+        /// Saved core index.
         dimension_size_type coreIndex;
+        /// Saved plane index.
+        dimension_size_type plane;
 
       public:
         /**
@@ -110,7 +112,8 @@ namespace ome
          */
         SaveSeries(const FormatReader& reader):
           reader(reader),
-          coreIndex(reader.getCoreIndex())
+          coreIndex(reader.getCoreIndex()),
+          plane(reader.getPlane())
         {}
 
         /**
@@ -124,6 +127,8 @@ namespace ome
             {
               if (coreIndex != reader.getCoreIndex())
                 reader.setCoreIndex(coreIndex);
+              if (plane != reader.getPlane())
+                reader.setCoreIndex(plane);
             }
           catch (...)
             {
