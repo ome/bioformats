@@ -7,6 +7,10 @@ This section assumes that you have installed the MATLAB toolbox as instructed
 in the :doc:`MATLAB user information page </users/matlab/index>`. Note the
 minimum supported MATLAB version is R2007b (7.5).
 
+As described in `Using Java Libraries <http://uk.mathworks.com/help/matlab/matlab_external/product-overview.html>`_,
+every installation of MATLAB includes a Java Virtual Machine allowing to use
+the Java API and third-party Java libraries.
+
 Increasing JVM memory settings
 ------------------------------
 
