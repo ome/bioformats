@@ -1114,13 +1114,13 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("Speed")) {
           value = value.replaceAll("KHz", "");
           try {
-            double mhz = Double.parseDouble(value) / 1000;
+            double khz = Double.parseDouble(value);
             String detectorID = MetadataTools.createLSID("Detector", 0, 0);
             store.setDetectorID(detectorID, 0, 0);
             for (int series=0; series<getSeriesCount(); series++) {
               for (int c=0; c<getSizeC(); c++) {
                 store.setDetectorSettingsReadOutRate(
-                        new Frequency(mhz, UNITS.HZ), series, c);
+                        new Frequency(khz, UNITS.KHZ), series, c);
                 store.setDetectorSettingsID(detectorID, series, c);
               }
             }
