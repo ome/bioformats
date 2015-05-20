@@ -135,6 +135,7 @@ namespace ome
        * @param pixelSize the total size of pixel data to be written
        * @param filename the name of the TIFF file to write (if a
        * known BigTIFF extension is used, BigTIFF will be enabled).
+       * @param logger the logger to use to log errors.
        * @returns @c true to enable BigTIFF or @c false to disable.
        */
       bool

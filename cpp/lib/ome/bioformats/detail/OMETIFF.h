@@ -1,8 +1,7 @@
 /*
  * #%L
- * OME-INTERNAL C++ headers for internal use only
- * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * OME-BIOFORMATS C++ library for image IO.
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,34 +35,82 @@
  * #L%
  */
 
-#ifndef OME_TEST_TEST_H
-#define OME_TEST_TEST_H
+#ifndef OME_BIOFORMATS_DETAIL_OMETIFF_H
+#define OME_BIOFORMATS_DETAIL_OMETIFF_H
 
-// Google Test has a problem with the protection of its
-// testing::internal::ImplicitlyConvertible<From, To> class
-// constructor; suppress these warnings.  It also misses declaration
-// for INSTANTIATE_TEST_CASE_P.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#endif
+#include <ome/bioformats/Types.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+#include <ome/common/filesystem.h>
 
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
+namespace ome
+{
+  namespace bioformats
+  {
+    namespace detail
+    {
 
-#include <ome/test/config.h>
+      /**
+       * Metadata for a single plane within an OME-TIFF file set.
+       */
+      class OMETIFFPlane
+      {
+      public:
+        /// Status of the file associated with this plane.
+        enum Status
+          {
+            UNKNOWN, ///< Not known.
+            PRESENT, ///< File exists.
+            ABSENT   ///< File is missing.
+          };
 
-/**
- * Tests issue verbose output.
- *
- * @returns @c true if verbose, @c false if quiet.
+        /// File containing this plane.
+        boost::filesystem::path id;
+        /// IFD index.
+        dimension_size_type ifd;
+        /// Certainty flag, for dealing with unspecified NumPlanes.
+        bool certain;
+        /// File status.
+        Status status;
+
+        /**
+         * Default constructor.
+         *
+         * File and IFD are default constructed; order is uncertain;
+         * status is unknown.
+         */
+        OMETIFFPlane():
+          id(),
+          ifd(),
+          certain(false),
+          status(UNKNOWN)
+        {
+        }
+
+        /**
+         * Construct with filename.
+         *
+         * @param id the TIFF file containing this plane.
+         *
+         * IFD is default constructed; order is uncertain; status is
+         * unknown.
+         */
+        OMETIFFPlane(const boost::filesystem::path& id):
+          id(id),
+          ifd(),
+          certain(false),
+          status(UNKNOWN)
+        {
+        }
+      };
+
+    }
+  }
+}
+
+#endif // OME_BIOFORMATS_DETAIL_OMETIFF_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
  */
-bool
-verbose();
-
-#endif // OME_TEST_TEST_H

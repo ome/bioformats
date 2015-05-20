@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-INTERNAL C++ headers for internal use only
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,34 +36,27 @@
  * #L%
  */
 
-#ifndef OME_TEST_TEST_H
-#define OME_TEST_TEST_H
+#include <ome/common/filesystem.h>
 
-// Google Test has a problem with the protection of its
-// testing::internal::ImplicitlyConvertible<From, To> class
-// constructor; suppress these warnings.  It also misses declaration
-// for INSTANTIATE_TEST_CASE_P.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#endif
+#include <ome/test/test.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+using boost::filesystem::path;
 
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
+using ome::common::make_relative;
 
-#include <ome/test/config.h>
+TEST(Filesystem, Relative)
+{
+  path basepath(PROJECT_BINARY_DIR "/cpp/test/ome-common/data");
+  boost::filesystem::create_directories(basepath / "testdir1/lib");
+  boost::filesystem::create_directories(basepath / "testdir1/include");
+  boost::filesystem::create_directories(basepath / "testdir2/share");
 
-/**
- * Tests issue verbose output.
- *
- * @returns @c true if verbose, @c false if quiet.
- */
-bool
-verbose();
+  path a(basepath / "testdir1" / "include");
+  path b(basepath / "testdir1" / "lib");
+  path c(basepath / "testdir1");
+  path d(basepath / "testdir2");
 
-#endif // OME_TEST_TEST_H
+  ASSERT_TRUE(path("../lib")          == make_relative(a, b));
+  ASSERT_TRUE(path("lib")             == make_relative(c, b));
+  ASSERT_TRUE(path("../testdir1/lib") == make_relative(d, b));
+}

@@ -542,6 +542,8 @@ namespace ome
         {
           std::string pixelType = (*i)->pixelType;
 
+          store.setImageID(createID("Image", s), s);
+
           fillPixels(store, **i, s);
 
           try

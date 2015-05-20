@@ -2,7 +2,7 @@
  * #%L
  * OME-INTERNAL C++ headers for internal use only
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,34 +36,18 @@
  * #L%
  */
 
-#ifndef OME_TEST_TEST_H
-#define OME_TEST_TEST_H
+#ifndef OME_INTERNAL_URL_H
+#define OME_INTERNAL_URL_H
 
-// Google Test has a problem with the protection of its
-// testing::internal::ImplicitlyConvertible<From, To> class
-// constructor; suppress these warnings.  It also misses declaration
-// for INSTANTIATE_TEST_CASE_P.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#endif
+// Public URLs for embedding in messages, metadata, etc.
+ 
+/// URL of Bio-Formats web page.
+#define URL_BIO_FORMATS "http://www.openmicroscopy.org/site/products/bio-formats"
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+/// URL of 'Bio-Formats C++ overview' web page.
+#define URL_BIO_FORMATS_LIBRARIES "http://www.openmicroscopy.org/site/support/bio-formats/developers/cpp/overview.html"
 
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
+/// URL of OME-TIFF web page.
+#define URL_OME_TIFF "http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/"
 
-#include <ome/test/config.h>
-
-/**
- * Tests issue verbose output.
- *
- * @returns @c true if verbose, @c false if quiet.
- */
-bool
-verbose();
-
-#endif // OME_TEST_TEST_H
+#endif // OME_INTERNAL_URL_H

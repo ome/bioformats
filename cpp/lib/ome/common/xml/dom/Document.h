@@ -46,7 +46,9 @@
 #include <string>
 #include <ostream>
 
+#include <xercesc/dom/DOMComment.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMNode.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #include <ome/common/filesystem.h>
@@ -154,6 +156,7 @@ namespace ome
             return *this;
           }
 
+          
           /**
            * Create Element with namespace.
            *
@@ -169,6 +172,21 @@ namespace ome
             common::xml::String xname(name);
 
             return Element((*this)->createElementNS(xns, xname), false);
+          }
+
+          /**
+           * Create Comment.
+           *
+           * @param comment the comment text.
+           * @returns the created Node.
+           */
+          Node
+          createComment(const std::string& comment)
+          {
+            common::xml::String text(comment);
+
+            xercesc::DOMNode *node = dynamic_cast<xercesc::DOMNode *>((*this)->createComment(text));
+            return Node(node, false);
           }
 
           /**

@@ -133,6 +133,47 @@ namespace ome
         }
     }
 # endif // OME_HAVE_BOOST_FILESYSTEM_CANONICAL
+
+    /**
+     * Make a relative path.
+     *
+     * @param from the start (reference) path.
+     * @param to the end path (to make relative to the start path).
+     * @returns the relative path.
+     */
+    inline
+    boost::filesystem::path
+    make_relative(boost::filesystem::path from,
+                  boost::filesystem::path to)
+    {
+      from = absolute(from);
+      to = absolute(to);
+      boost::filesystem::path ret;
+      boost::filesystem::path::const_iterator itrFrom(from.begin());
+      boost::filesystem::path::const_iterator itrTo(to.begin());
+
+      // Find common base
+      for(boost::filesystem::path::const_iterator toEnd(to.end()), fromEnd(from.end());
+          itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo;
+          ++itrFrom, ++itrTo);
+
+      // Navigate backwards in directory to reach previously found base
+      for(boost::filesystem::path::const_iterator fromEnd(from.end());
+          itrFrom != fromEnd;
+          ++itrFrom )
+        {
+          if((*itrFrom) != ".")
+            ret /= "..";
+        }
+      // Now navigate down the directory branch
+      for (boost::filesystem::path::iterator begin = itrTo;
+           begin != to.end();
+           ++begin)
+        ret /= *begin;
+
+      return ret;
+    }
+
   }
 }
 

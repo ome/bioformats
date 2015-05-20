@@ -73,7 +73,6 @@ public class OMETiffWriter extends TiffWriter {
 
   // -- Fields --
 
-  private List<Integer> seriesMap;
   private String[][] imageLocations;
   private OMEXMLMetadata omeMeta;
   private OMEXMLService service;
@@ -157,7 +156,6 @@ public class OMETiffWriter extends TiffWriter {
       }
 
       if (canReallyClose) {
-        seriesMap = null;
         imageLocations = null;
         omeMeta = null;
         service = null;
@@ -189,11 +187,6 @@ public class OMETiffWriter extends TiffWriter {
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (seriesMap == null) seriesMap = new ArrayList<Integer>();
-    if (!seriesMap.contains(series)) {
-      seriesMap.add(new Integer(series));
-    }
-
     super.saveBytes(no, buf, ifd, x, y, w, h);
 
     int index = no;
@@ -311,7 +304,6 @@ public class OMETiffWriter extends TiffWriter {
     int sizeT = omeMeta.getPixelsSizeT(series).getValue().intValue();
 
     int imageCount = getPlaneCount();
-    int ifdCount = seriesMap.size();
 
     if (imageCount == 0) {
       omeMeta.setTiffDataPlaneCount(new NonNegativeInteger(0), series, 0);
