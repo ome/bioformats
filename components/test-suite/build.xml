@@ -181,6 +181,7 @@ Type "ant -p" for a list of targets.
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
+      <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
