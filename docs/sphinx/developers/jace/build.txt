@@ -35,7 +35,7 @@ required:
     At runtime, only the Java Runtime Environment (JRE) is necessary to 
     execute the Bio-Formats code. However, the full J2SE development kit is 
     required at compile time on some platforms (Windows in particular), since 
-    it comes bundled with the JVM shared library (jvm.lib) necessary to link 
+    it comes bundled with the |JVM| shared library (jvm.lib) necessary to link 
     with Java.
 
 For information on installing these dependencies, refer to the page for your

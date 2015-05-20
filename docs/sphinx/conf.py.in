@@ -188,6 +188,7 @@ rst_epilog = """
 .. _Hibernate: http://www.hibernate.org
 .. _ZeroC: http://www.zeroc.com
 .. _Ice: http://www.zeroc.com
+.. |JVM| replace:: :abbr:`JVM (Java Virtual Machine)`
 
 .. |Poor| image:: /images/crystal-1.png
            :alt: 1 - Poor
