@@ -452,7 +452,9 @@ public class TiffParser {
     }
 
     for (TiffIFDEntry entry : entries) {
-      if (entry.getValueCount() < 10 * 1024 * 1024 || entry.getTag() < 32768) {
+      if ((entry.getValueCount() < 10 * 1024 * 1024 || entry.getTag() < 32768) &&
+        entry.getTag() != IFD.COLOR_MAP)
+      {
         ifd.put(new Integer(entry.getTag()), getIFDValue(entry));
       }
     }
