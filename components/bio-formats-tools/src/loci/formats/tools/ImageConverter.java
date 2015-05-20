@@ -120,6 +120,11 @@ public final class ImageConverter {
 
   private ImageConverter() { }
 
+  /**
+   * Parse the given argument list to determine how to perform file conversion.
+   * @param args the list of command line arguments
+   * @return whether or not the argument list is valid
+   */
   private boolean parseArgs(String[] args) {
     if (args == null) {
       return true;
@@ -205,6 +210,9 @@ public final class ImageConverter {
     return true;
   }
 
+  /**
+   * Output usage information, using log4j.
+   */
   private void printUsage() {
     String[] s = {
       "To convert a file between formats, run:",
@@ -582,6 +590,16 @@ public final class ImageConverter {
 
   // -- Helper methods --
 
+  /**
+   * Convert the specified plane using the given writer.
+   * @param writer the loci.formats.IFormatWriter to use for writing the plane
+   * @param index the index of the plane to convert in the input file
+   * @param outputIndex the index of the plane to convert in the output file
+   * @param currentFile the file name or pattern being written to
+   * @return the time at which conversion started, in milliseconds
+   * @throws FormatException
+   * @throws IOException
+   */
   private long convertPlane(IFormatWriter writer, int index, int outputIndex,
     String currentFile)
     throws FormatException, IOException
@@ -610,6 +628,16 @@ public final class ImageConverter {
     return m;
   }
 
+ /**
+   * Convert the specified plane as a set of tiles, using the specified writer.
+   * @param writer the loci.formats.IFormatWriter to use for writing the plane
+   * @param index the index of the plane to convert in the input file
+   * @param outputIndex the index of the plane to convert in the output file
+   * @param currentFile the file name or pattern being written to
+   * @return the time at which conversion started, in milliseconds
+   * @throws FormatException
+   * @throws IOException
+   */
   private long convertTilePlane(IFormatWriter writer, int index, int outputIndex,
     String currentFile)
     throws FormatException, IOException
@@ -709,6 +737,11 @@ public final class ImageConverter {
     return m;
   }
 
+  /**
+   * Calculate the number of vertical tiles represented by the given file name pattern.
+   * @param outputName the output file name pattern
+   * @return the number of vertical tiles (rows)
+   */
   private int getTileRows(String outputName) {
     if (outputName.indexOf(FormatTools.TILE_Y) >= 0 ||
       outputName.indexOf(FormatTools.TILE_NUM) >= 0)
@@ -726,6 +759,11 @@ public final class ImageConverter {
     return 1;
   }
 
+  /**
+   * Calculate the number of horizontal tiles represented by the given file name pattern.
+   * @param outputName the output file name pattern
+   * @return the number of horizontal tiles (columns)
+   */
   public int getTileColumns(String outputName) {
     if (outputName.indexOf(FormatTools.TILE_X) >= 0 ||
       outputName.indexOf(FormatTools.TILE_NUM) >= 0)
@@ -744,6 +782,13 @@ public final class ImageConverter {
     return 1;
   }
 
+  /**
+   * Perform in-place autoscaling on the given plane data.
+   * @param buf the raw pixel data for the plane
+   * @param index the index of the plane in the input file
+   * @throws FormatException
+   * @throws IOException
+   */
   private void autoscalePlane(byte[] buf, int index)
     throws FormatException, IOException
   {
@@ -786,6 +831,13 @@ public final class ImageConverter {
     }
   }
 
+  /**
+   * Use the lookup table from the reader (if present) to set
+   * the color model in the given writer
+   * @param writer the loci.formats.IFormatWriter on which to set a color model
+   * @throws FormatException
+   * @throws IOException
+   */
   private void applyLUT(IFormatWriter writer)
     throws FormatException, IOException
   {
