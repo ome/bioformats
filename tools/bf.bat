@@ -15,12 +15,6 @@ if "%BF_PROG%" == "" (
   goto end
 )
 
-rem Set the JVM flag.
-if "%BF_FLAGS%" == "" (
-  rem Set to default Garbage Collection.
-  set BF_FLAGS=""
-)
-
 rem Set the max heap size.
 if "%BF_MAX_MEM%" == "" (
   rem Set a reasonable default max heap size.
