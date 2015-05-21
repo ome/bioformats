@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ArrayIndexOutOfBoundsException;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -898,6 +899,10 @@ public class Memoizer extends ReaderWrapper {
         memoFile, memoFile.length());
       return copy;
     } catch (KryoException e) {
+      LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      deleteQuietly(memoFile);
+      return null;
+    } catch (ArrayIndexOutOfBoundsException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
       deleteQuietly(memoFile);
       return null;
