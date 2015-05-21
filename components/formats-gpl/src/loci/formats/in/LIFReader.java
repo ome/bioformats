@@ -1019,8 +1019,14 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<images.getLength(); i++) {
       Element image = (Element) images.item(i);
       Element grandparent = (Element) image.getParentNode();
+      if (grandparent == null) {
+        continue;
+      }
       grandparent = (Element) grandparent.getParentNode();
-      if (!grandparent.getNodeName().equals("ProcessingHistory")) {
+      if (grandparent == null) {
+        continue;
+      }
+      if (!"ProcessingHistory".equals(grandparent.getNodeName())) {
         // image is being referenced from an event list
         imageNodes.add(image);
         if (oldOffsets != null && nextOffset < oldOffsets.length) {
@@ -1028,9 +1034,14 @@ public class LIFReader extends FormatReader {
         }
       }
       grandparent = (Element) grandparent.getParentNode();
+      if (grandparent == null) {
+        continue;
+      }
       grandparent = (Element) grandparent.getParentNode();
-      if (!grandparent.getNodeName().equals("Image")) {
-        nextOffset++;
+      if (grandparent != null) {
+        if (!"Image".equals(grandparent.getNodeName())) {
+          nextOffset++;
+        }
       }
     }
 
