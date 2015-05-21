@@ -9,7 +9,9 @@ minimum supported MATLAB version is R2007b (7.5).
 
 As described in `Using Java Libraries <http://uk.mathworks.com/help/matlab/matlab_external/product-overview.html>`_,
 every installation of MATLAB includes a |JVM| allowing to use the Java API and
-third-party Java libraries.
+third-party Java libraries. All the helper functions included in the MATLAB
+toolbox make use of the Bio-Formats Java API. Please refer to the
+:javadoc:`Javadocs <>` for more information.
 
 Increasing |JVM| memory settings
 --------------------------------
