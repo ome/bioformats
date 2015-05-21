@@ -148,17 +148,16 @@ public class MinimalTiffReader extends FormatReader {
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 8) {
-      TiffIFDEntry map = (TiffIFDEntry) lastIFD.get(IFD.COLOR_MAP);
-      if (map == null) {
+      int[] colorMap = tiffParser.getColorMap(lastIFD);
+      if (colorMap == null) {
         // it's possible that the LUT is only present in the first IFD
         if (lastPlane != 0) {
           lastIFD = ifds.get(0);
-          map = (TiffIFDEntry) lastIFD.get(IFD.COLOR_MAP);
-          if (map == null) return null;
+          colorMap = tiffParser.getColorMap(lastIFD);
+          if (colorMap == null) return null;
         }
         else return null;
       }
-      int[] colorMap = (int[]) tiffParser.getIFDValue(map);
 
       byte[][] table = new byte[3][colorMap.length / 3];
       int next = 0;
@@ -186,17 +185,16 @@ public class MinimalTiffReader extends FormatReader {
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 16 && bits[0] > 8) {
-      TiffIFDEntry map = (TiffIFDEntry) lastIFD.get(IFD.COLOR_MAP);
-      if (map == null || map.getValueCount() < 65536 * 3) {
+      int[] colorMap = tiffParser.getColorMap(lastIFD);
+      if (colorMap == null || colorMap.length < 65536 * 3) {
         // it's possible that the LUT is only present in the first IFD
         if (lastPlane != 0) {
           lastIFD = ifds.get(0);
-          map = (TiffIFDEntry) lastIFD.get(IFD.COLOR_MAP);
-          if (map == null || map.getValueCount() < 65536 * 3) return null;
+          colorMap = tiffParser.getColorMap(lastIFD);
+          if (colorMap == null || colorMap.length < 65536 * 3) return null;
         }
         else return null;
       }
-      int[] colorMap = (int[]) tiffParser.getIFDValue(map);
 
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;

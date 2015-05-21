@@ -630,6 +630,24 @@ public class TiffParser {
     return firstIFD.getComment();
   }
 
+  /**
+   * Retrieve the color map associated with the given IFD.
+   */
+  public int[] getColorMap(IFD ifd) throws IOException {
+    Object map = ifd.get(IFD.COLOR_MAP);
+    if (map == null) {
+      return null;
+    }
+    int[] colorMap = null;
+    if (map instanceof TiffIFDEntry) {
+      colorMap = (int[]) getIFDValue((TiffIFDEntry) map);
+    }
+    else if (map instanceof int[]) {
+      colorMap = (int[]) map;
+    }
+    return colorMap;
+  }
+
   // -- TiffParser methods - image reading --
 
   public byte[] getTile(IFD ifd, byte[] buf, int row, int col)

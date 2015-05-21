@@ -944,7 +944,7 @@ public class MIASReader extends FormatReader {
     IFD ifd = tp.getFirstIFD();
     s.close();
     if (ifd == null) return null;
-    int[] colorMap = ifd.getIFDIntArray(IFD.COLOR_MAP);
+    int[] colorMap = tp.getColorMap(ifd);
     if (colorMap == null) return null;
 
     int nEntries = colorMap.length / 3;
