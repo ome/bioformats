@@ -258,7 +258,10 @@ public class ImageInfo {
         }
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-format")) format = args[++i];
-        else if (args[i].equals("-cachedir")) cachedir = args[++i];
+        else if (args[i].equals("-cachedir")) {
+            cache = true;
+            cachedir = args[++i];
+        }
         else if (!args[i].equals(NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
