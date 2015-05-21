@@ -184,7 +184,6 @@ public class SimplePCITiffReader extends BaseTiffReader {
       if (captureTable.get("c_Filter" + index) != null) {
         exposureTimes.add(new Double(captureTable.get("c_Expos" + index)));
       }
-      else i--;
       index++;
     }
 
