@@ -370,6 +370,14 @@ public abstract class FormatReader extends FormatHandler
     return metadata.get(key);
   }
 
+  /**
+   * Add the given key/value pair to the given hashtable.
+   * If the key already exists, a list will be stored in the hashtable
+   * and the value will be appended to the list.
+   * @param key the key to store in the hashtable
+   * @param value the value to store in the hashtable or list
+   * @param meta the hashtable in which to store the key/value
+   */
   protected void addMetaList(String key, Object value,
     Hashtable<String, Object> meta)
   {
@@ -391,14 +399,30 @@ public abstract class FormatReader extends FormatHandler
     }
   }
 
+  /**
+   * Add the given key/value pair to the global metadata hashtable.
+   * If the key already exists, a list will be stored in the hashtable
+   * and the value will be appended to the list.
+   * @param key the key to store in the hashtable
+   * @param value the value to store in the hashtable or list
+   */
   protected void addGlobalMetaList(String key, Object value) {
     addMetaList(key, value, metadata);
   }
 
+  /**
+   * Add the given key/value pair to the current series metadata hashtable.
+   * If the key already exists, a list will be stored in the hashtable
+   * and the value will be appended to the list.
+   */
   protected void addSeriesMetaList(String key, Object value) {
     addMetaList(key, value, core.get(getCoreIndex()).seriesMetadata);
   }
 
+  /**
+   * Call {@link #updateMetadataLists(Hashtable<String, Object>)} on
+   * all metadata hashtables.
+   */
   protected void flattenHashtables() {
     updateMetadataLists(metadata);
 
@@ -409,6 +433,12 @@ public abstract class FormatReader extends FormatHandler
     }
   }
 
+  /**
+   * For the given metadata hashtable, replace any value that is
+   * a list with one key/value pair per list entry.  The new keys
+   * will be the origianl key with the list index appended.
+   * @param meta the hashtable from which to remove lists
+   */
   private void updateMetadataLists(Hashtable<String, Object> meta) {
     String[] keys = meta.keySet().toArray(new String[meta.size()]);
     for (String key : keys) {
@@ -416,7 +446,7 @@ public abstract class FormatReader extends FormatHandler
       if (v instanceof Vector) {
         Vector list = (Vector) v;
         int digits = String.valueOf(list.size()).length();
-        
+
         for (int i=0; i<list.size(); i++) {
           String index = String.valueOf(i + 1);
           while (index.length() < digits) {
@@ -425,7 +455,7 @@ public abstract class FormatReader extends FormatHandler
           meta.put(key + " #" + index, list.get(i));
         }
 
-        meta.remove(key); 
+        meta.remove(key);
       }
     }
   }
@@ -1897,6 +1927,11 @@ public abstract class FormatReader extends FormatHandler
     }
   }
 
+  /**
+   * Construct an {@link ome.xml.model.AffineTransform} corresponding to
+   * the given angle.
+   * @param theta the angle of rotation
+   */
   protected AffineTransform getRotationTransform(double theta) {
     AffineTransform transform = new AffineTransform();
     transform.setA02(0.0);

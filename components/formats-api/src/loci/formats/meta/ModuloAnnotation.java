@@ -49,6 +49,11 @@ public class ModuloAnnotation extends XMLAnnotation {
 
   private Modulo modulo;
 
+  /**
+   * Set the value of this annotation using the given Modulo object
+   * @param meta the associated OMEXMLMetadata
+   * @param m the Modulo object from which to retrieve dimension information
+   */
   public void setModulo(OMEXMLMetadata meta, Modulo m) {
     modulo = m;
     setNamespace(MODULO_NS);
@@ -57,6 +62,11 @@ public class ModuloAnnotation extends XMLAnnotation {
     setValue(XMLTools.dumpXML(null, doc, r, false));
   }
 
+  /**
+   * Construct a DOM element for this annotation using
+   * the given Document as the root.
+   * @param document the root document node
+   */
   protected Element makeModuloElement(Document document) {
     Element mtop = document.createElement("Modulo");
     mtop.setAttribute("namespace", "http://www.openmicroscopy.org/Schemas/Additions/2011-09");
