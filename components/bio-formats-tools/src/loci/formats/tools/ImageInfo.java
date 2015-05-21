@@ -258,7 +258,7 @@ public class ImageInfo {
         }
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-format")) format = args[++i];
-        else if (args[i].equals("-cachedir")) {
+        else if (args[i].equals("-cache-dir")) {
             cache = true;
             cachedir = args[++i];
         }
@@ -288,7 +288,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
-      "    [-cache] [-cachedir dir]",
+      "    [-cache] [-cache-dir dir]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -327,7 +327,7 @@ public class ImageInfo {
       " -no-upgrade: do not perform the upgrade check",
       "     -format: read file with a particular reader (e.g., ZeissZVI)",
       "      -cache: cache the initialized reader",
-      "   -cachedir: use the specified directory to store the cached",
+      "  -cache-dir: use the specified directory to store the cached",
       "              initialized reader. If unspecified, the cached reader",
       "              will be stored under the same folder as the image file",
       "",
