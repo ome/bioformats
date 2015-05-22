@@ -175,6 +175,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
@@ -204,6 +205,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
@@ -233,6 +235,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
@@ -262,6 +265,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
@@ -291,6 +295,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>

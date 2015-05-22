@@ -134,14 +134,15 @@ public class FormatReaderTestFactory {
 
     final String toplevelConfig = "testng.toplevel-config";
     String configFile = System.getProperty(toplevelConfig);
-    LOGGER.info("testng.toplevel-config = {}", configFile);
+    if (configFile != null) {
+      LOGGER.info("testng.toplevel-config = {}", configFile);
+    }
 
-    // check for an alternate top level configuration file
-
+    // check for an alternate configuration directory
     final String configDirProperty = "testng.configDirectory";
     String configDir = System.getProperty(configDirProperty);
     if (configDir != null) {
-        LOGGER.info("testng.configDirectory = {}", configDir);
+      LOGGER.info("testng.configDirectory = {}", configDir);
     }
     // check for a configuration file suffix
 
