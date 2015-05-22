@@ -96,3 +96,24 @@ Debugging output can also be enabled if more information is needed:
 ::
 
   showinf -debug /path/to/file
+
+Image display can be done as quickly as possible using::
+
+  showinf -fast /path/to/file
+
+Note that this command results in a loss of precision.
+
+In combination with the :option:`-fast` option, the display range can be
+adjusted to the minimum and maximum pixel values::
+
+  showinf -fast -autoscale /path/to/file
+
+After initialization, the reader can be cached under the same directory as the
+input file::
+
+  showinf -cache /path/to/file
+
+It is also possible to specify the base directory under which the reader
+should be cached::
+
+  showinf -cache-dir /tmp/cachedir /path/to/file
