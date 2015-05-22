@@ -195,6 +195,14 @@ public class TestTools {
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
     String configFileSuffix)
   {
+      getFiles(root, files, config, toplevelConfig, subdirs, configFileSuffix, null);
+  }
+
+  /** Recursively generate a list of files to test. */
+  public static void getFiles(String root, List files,
+    final ConfigurationTree config, String toplevelConfig, String[] subdirs,
+    String configFileSuffix, String configRoot)
+  {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
@@ -210,21 +218,33 @@ public class TestTools {
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(root, subs[i]);
-      subs[i] = file.getAbsolutePath();
 
       if ((!isToplevel && isConfigFile(file, configFileSuffix)) ||
           (isToplevel && subs[i].equals(toplevelConfig)))
       {
         String tmp = subs[0];
-        subs[0] = subs[i];
-        subs[i] = tmp;
+        if (configRoot != null) {
+            Location configFile = new Location(configRoot, subs[i]);
+            LOGGER.debug("config file: {}", configFile.getAbsolutePath());
+            if (configFile.exists()) {
+                subs[0] = configFile.getAbsolutePath();
+            } else {
+                subs[0] = file.getAbsolutePath();
+            }
+        } else {
+            subs[0] = file.getAbsolutePath();
+        }
+        if (i > 0) {subs[i] = tmp;}
+      } else {
+        subs[i] = file.getAbsolutePath();
       }
     }
 
     // special config file for the test suite
     LOGGER.debug("\tconfig file");
     try {
-      config.parseConfigFile(subs[0]);
+      LOGGER.debug("Parsing {}:", subs[0]);
+      config.parseConfigFile(subs[0], configRoot, root);
     }
     catch (IOException exc) {
       LOGGER.debug("", exc);

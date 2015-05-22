@@ -89,10 +89,21 @@ public class ConfigurationTree {
   }
 
   public void parseConfigFile(String configFile) throws IOException {
+      parseConfigFile(configFile, null, null);
+  }
+
+  public void parseConfigFile(String configFile, String configDir, String rootDir) throws IOException {
     File file = new File(configFile);
     if (file.isDirectory()) {
       return;
     }
+    String root = file.getParent();
+    if (rootDir != null && configDir != null) {
+        configDir = configDir.substring(0,configDir.length()-1);
+        rootDir = rootDir.substring(0,rootDir.length()-1);
+        root = root.replaceAll(configDir, rootDir);
+    }
+
     configFile = file.getAbsolutePath();
     String dir = file.getParentFile().getAbsolutePath();
 

@@ -136,6 +136,13 @@ public class FormatReaderTestFactory {
     String configFile = System.getProperty(toplevelConfig);
     LOGGER.info("testng.toplevel-config = {}", configFile);
 
+    // check for an alternate top level configuration file
+
+    final String configDirProperty = "testng.configDirectory";
+    String configDir = System.getProperty(configDirProperty);
+    if (configDir != null) {
+        LOGGER.info("testng.configDirectory = {}", configDir);
+    }
     // check for a configuration file suffix
 
     final String configSuffixProperty = "testng.configSuffix";
@@ -158,7 +165,7 @@ public class FormatReaderTestFactory {
       long start = System.currentTimeMillis();
       try {
         TestTools.getFiles(baseDir, files, FormatReaderTest.configTree,
-          configFile, validSubdirs, configSuffix);
+          configFile, validSubdirs, configSuffix, configDir);
       }
       catch (Exception e) {
         LOGGER.info("Failed to retrieve complete list of files", e);
