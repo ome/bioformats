@@ -244,7 +244,7 @@ public class TestTools {
     LOGGER.debug("\tconfig file");
     try {
       LOGGER.debug("Parsing {}:", subs[0]);
-      config.parseConfigFile(subs[0], configRoot, root);
+      config.parseConfigFile(subs[0]);
     }
     catch (IOException exc) {
       LOGGER.debug("", exc);

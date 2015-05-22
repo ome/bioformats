@@ -61,6 +61,9 @@ public class ConfigurationTree {
   /** Directory on the file system associated with the tree root. */
   private String rootDir;
 
+  /** Directory on the file system associated with the tree root. */
+  private String configDir;
+
   /**
    * Root of tree structure containing configuration data.
    * Each node's user object is a hashtable of key/value pairs.
@@ -74,7 +77,18 @@ public class ConfigurationTree {
    * the given directory in the file system.
    */
   public ConfigurationTree(String rootDir) {
+    this(rootDir, null);
+  }
+
+  /**
+   * Creates a new configuration tree rooted at
+   * the given directory in the file system.
+   */
+  public ConfigurationTree(String rootDir, String configDir) {
     this.rootDir = new File(rootDir).getAbsolutePath();
+    if (configDir != null) {
+        this.configDir = new File(configDir).getAbsolutePath();
+    }
     root = new DefaultMutableTreeNode();
   }
 
@@ -89,19 +103,13 @@ public class ConfigurationTree {
   }
 
   public void parseConfigFile(String configFile) throws IOException {
-      parseConfigFile(configFile, null, null);
-  }
-
-  public void parseConfigFile(String configFile, String configDir, String rootDir) throws IOException {
     File file = new File(configFile);
     if (file.isDirectory()) {
       return;
     }
-    String root = file.getParent();
-    if (rootDir != null && configDir != null) {
-        configDir = configDir.substring(0,configDir.length()-1);
-        rootDir = rootDir.substring(0,rootDir.length()-1);
-        root = root.replaceAll(configDir, rootDir);
+    String parent = file.getParent();
+    if (configDir != null) {
+        parent = parent.replaceAll(configDir, rootDir);
     }
 
     configFile = file.getAbsolutePath();
@@ -117,7 +125,7 @@ public class ConfigurationTree {
       String id = table.get(IniTable.HEADER_KEY);
       id = id.substring(0, id.lastIndexOf(" "));
 
-      id = new File(file.getParent(), id).getAbsolutePath();
+      id = new File(parent, id).getAbsolutePath();
 
       DefaultMutableTreeNode node = findNode(id, true, configFile);
       if (node == null) {
