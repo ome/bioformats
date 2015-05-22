@@ -61,7 +61,9 @@ public class ConfigurationTree {
   /** Directory on the file system associated with the tree root. */
   private String rootDir;
 
-  /** Directory on the file system associated with the tree root. */
+  /** Base directory on the file system associated with the configuration
+   * files.
+   */
   private String configDir;
 
   /**
@@ -73,23 +75,24 @@ public class ConfigurationTree {
   // -- Constructor --
 
   /**
-   * Creates a new configuration tree rooted at
-   * the given directory in the file system.
+   *  Constructs a new configuration tree rooted at the given directory in the
+   *  file system.
+   *
+   *  @param rootDir a string specifying the root directory
+   *
    */
   public ConfigurationTree(String rootDir) {
     this(rootDir, null);
   }
 
   /**
-   * Returns the configuration directory
-   */
-  public String getConfigDirectory() {
-    return this.configDir;
-  }
-
-  /**
-   * Creates a new configuration tree rooted at
-   * the given directory in the file system.
+   *  Constructs a new configuration tree rooted at the given directory in the
+   *  file system with a custom configuration directory.
+   *
+   *  @param rootDir a string specifying the root directory
+   *
+   *  @param configDir a string specifying the base configuration directory
+   *
    */
   public ConfigurationTree(String rootDir, String configDir) {
     this.rootDir = new File(rootDir).getAbsolutePath();
@@ -100,6 +103,13 @@ public class ConfigurationTree {
   }
 
   // -- ConfigurationTree API methods --
+
+  /**
+   *  Returns the base directory holding the configuration files
+   */
+  public String getConfigDirectory() {
+    return this.configDir;
+  }
 
   /** Retrieves the Configuration object corresponding to the given file. */
   public Configuration get(String id) throws IOException {
