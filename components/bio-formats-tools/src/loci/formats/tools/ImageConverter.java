@@ -592,7 +592,7 @@ public final class ImageConverter {
 
   /**
    * Convert the specified plane using the given writer.
-   * @param writer the loci.formats.IFormatWriter to use for writing the plane
+   * @param writer the {@link loci.formats.IFormatWriter} to use for writing the plane
    * @param index the index of the plane to convert in the input file
    * @param outputIndex the index of the plane to convert in the output file
    * @param currentFile the file name or pattern being written to
@@ -630,7 +630,7 @@ public final class ImageConverter {
 
  /**
    * Convert the specified plane as a set of tiles, using the specified writer.
-   * @param writer the loci.formats.IFormatWriter to use for writing the plane
+   * @param writer the {@link loci.formats.IFormatWriter} to use for writing the plane
    * @param index the index of the plane to convert in the input file
    * @param outputIndex the index of the plane to convert in the output file
    * @param currentFile the file name or pattern being written to
@@ -834,7 +834,7 @@ public final class ImageConverter {
   /**
    * Use the lookup table from the reader (if present) to set
    * the color model in the given writer
-   * @param writer the loci.formats.IFormatWriter on which to set a color model
+   * @param writer the {@link loci.formats.IFormatWriter} on which to set a color model
    * @throws FormatException
    * @throws IOException
    */

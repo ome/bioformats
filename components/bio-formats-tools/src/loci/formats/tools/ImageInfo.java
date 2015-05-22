@@ -1022,7 +1022,7 @@ public class ImageInfo {
    * @param dim the name of the dimension to log
    * @param size the total size of the dimension
    * @param effectiveSize the effective size of the dimension (e.g. 1 for RGB channels)
-   * @param modulo the loci.formats.Modulo object associated with this dimension
+   * @param modulo the {@link loci.formats.Modulo} object associated with this dimension
    */
   private void printDimension(String dim, int size, int effectiveSize,
     Modulo modulo)

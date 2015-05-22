@@ -420,7 +420,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /**
-   * Call {@link #updateMetadataLists(Hashtable<String, Object>)} on
+   * Call {@link #updateMetadataLists(Hashtable)} on
    * all metadata hashtables.
    */
   protected void flattenHashtables() {
@@ -436,7 +436,7 @@ public abstract class FormatReader extends FormatHandler
   /**
    * For the given metadata hashtable, replace any value that is
    * a list with one key/value pair per list entry.  The new keys
-   * will be the origianl key with the list index appended.
+   * will be the original key with the list index appended.
    * @param meta the hashtable from which to remove lists
    */
   private void updateMetadataLists(Hashtable<String, Object> meta) {
@@ -1930,7 +1930,7 @@ public abstract class FormatReader extends FormatHandler
   /**
    * Construct an {@link ome.xml.model.AffineTransform} corresponding to
    * the given angle.
-   * @param theta the angle of rotation
+   * @param theta the angle of rotation in radians
    */
   protected AffineTransform getRotationTransform(double theta) {
     AffineTransform transform = new AffineTransform();

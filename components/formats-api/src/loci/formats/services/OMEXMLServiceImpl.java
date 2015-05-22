@@ -550,7 +550,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   }
 
   /**
-   * Create a loci.formats.Modulo corresponding to the given ModuloAlong* tag.
+   * Create a {@link loci.formats.Modulo} corresponding to the given ModuloAlong* tag.
    * @param omexml the OMEXMLMetadata from which to retrieve the ModuloAlong* tag
    * @param tag the tag name (e.g. "ModuloAlongC")
    * @param image the Image index within the OMEXMLMetadata
@@ -1013,7 +1013,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /**
    * Create a ModuloAlong* annotation corresponding to the given
-   * loci.formats.Modulo.
+   * {@link loci.formats.Modulo}.
    * @param meta the OMEXMLMetadata in which to create the annotation
    * @param modulo the Modulo object that contains the annotation data
    * @param annotations the list of existing annotations

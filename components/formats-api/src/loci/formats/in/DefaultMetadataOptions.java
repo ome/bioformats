@@ -42,7 +42,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
 
   /**
    * Construct a new DefaultMetadataOptions.
-   * The underlying MetadataLevel will be set to ALL.
+   * The underlying MetadataLevel will be set to {@link loci.formats.in.MetadataLevel#ALL}.
    */
   public DefaultMetadataOptions() {
     this.level = MetadataLevel.ALL;
@@ -50,7 +50,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
 
   /**
    * Construct a new DefaultMetadataOptions.
-   * @parm level the MetadataLevel to use
+   * @param level the MetadataLevel to use
    */
   public DefaultMetadataOptions(MetadataLevel level) {
     this.level = level;
