@@ -89,7 +89,7 @@ public class FormatReaderTestFactory {
       baseDir = getProperty(baseDirProp);
 
       if (baseDir == null) {
-        baseDir = System.getProperty("testng.directory-prefix");
+        baseDir = getProperty("testng.directory-prefix");
         String dirList = System.getProperty("testng.directory-list");
         try {
           validSubdirs = DataTools.readFile(dirList).split("\n");
@@ -99,27 +99,30 @@ public class FormatReaderTestFactory {
         }
       }
 
+      // Return early if no base directory is supplied
+      if (baseDir == null) {
+        LOGGER.error("No base directory specified.");
+        LOGGER.error("Please specify a directory containing files to test:");
+        LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
+        return new Object[0];
+      }
+
+      // Test base directory validity
       File baseDirFile = new File(baseDir);
       if (!baseDirFile.isDirectory()) {
         LOGGER.info("Directory: {}", baseDir);
         LOGGER.info("  exists?: {}", baseDirFile.exists());
         LOGGER.info("  readable?: {}", baseDirFile.canRead());
         LOGGER.info("  is a directory?: {}", baseDirFile.isDirectory());
-
-        if (baseDir == null || baseDir.equals("${" + baseDirProp + "}")) {
-          LOGGER.error("No base directory specified.");
-        }
-        else LOGGER.error("Invalid base directory: {}", baseDir);
         LOGGER.error("Please specify a directory containing files to test:");
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
 
-      LOGGER.info("testng.directory = {}", baseDir);
-
       // check for an alternate configuration directory
       final String configDirProperty = "testng.configDirectory";
       String configDir = getProperty(configDirProperty);
+      LOGGER.info("testng.directory = {}", baseDir);
       if (configDir != null) {
         LOGGER.info("testng.configDirectory = {}", configDir);
       }
@@ -129,9 +132,9 @@ public class FormatReaderTestFactory {
 
     // parse multiplier
     final String multProp = "testng.multiplier";
-    String mult = System.getProperty(multProp);
+    String mult = getProperty(multProp);
     float multiplier = 1;
-    if (mult != null && !mult.equals("${" + multProp + "}")) {
+    if (mult != null) {
       try {
         multiplier = Float.parseFloat(mult);
       }
