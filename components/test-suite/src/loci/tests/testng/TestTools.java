@@ -64,6 +64,8 @@ public class TestTools {
   public static final String DIVIDER =
     "----------------------------------------";
 
+  public static final String baseConfigName = ".bioformats";
+
   /** Calculate the SHA-1 of a byte array. */
   public static String sha1(byte[] b, int offset, int len) {
     try {
@@ -162,6 +164,19 @@ public class TestTools {
   }
 
   /** Recursively generate a list of files to test. */
+  public static boolean isConfigFile(Location file, String configFileSuffix)
+  {
+    String configName = baseConfigName;
+    if (configFileSuffix.length() > 0) {
+      configName += ".";
+      configName += configFileSuffix;
+    }
+
+    String filename = file.getName();
+    return (filename.equals(configName) || filename.equals(baseConfigName));
+  }
+
+  /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig)
   {
@@ -175,19 +190,11 @@ public class TestTools {
     getFiles(root, files, config, toplevelConfig, subdirs, "");
   }
 
-
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
     String configFileSuffix)
   {
-    String configName = ".bioformats";
-    String baseConfigName = configName;
-    if (configFileSuffix.length() > 0) {
-      configName += ".";
-      configName += configFileSuffix;
-    }
-
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
@@ -205,11 +212,8 @@ public class TestTools {
       Location file = new Location(root, subs[i]);
       subs[i] = file.getAbsolutePath();
 
-      String filename = file.getName();
-
-      if ((!isToplevel && (filename.equals(configName) ||
-        filename.equals(baseConfigName))) ||
-        (isToplevel && subs[i].equals(toplevelConfig)))
+      if ((!isToplevel && isConfigFile(file, configFileSuffix)) ||
+          (isToplevel && subs[i].equals(toplevelConfig)))
       {
         String tmp = subs[0];
         subs[0] = subs[i];
@@ -262,9 +266,7 @@ public class TestTools {
       Location file = new Location(subs[i]);
       LOGGER.debug("Checking {}:", subs[i]);
 
-      String filename = file.getName();
-
-      if (filename.equals(configName) || filename.equals(baseConfigName)) {
+      if (isConfigFile(file, configFileSuffix)) {
         continue;
       }
       else if (isIgnoredFile(subs[i], config)) {
