@@ -174,6 +174,10 @@ public class ClassList<T> {
 
   // -- Helper methods --
 
+  /**
+   * Cast the given class to something that extends the base class.
+   * @param rawClass the class to be cast
+   */
   @SuppressWarnings("unchecked")
   private Class<? extends T> cast(Class<?> rawClass) {
     if (!base.isAssignableFrom(rawClass)) return null;
