@@ -146,7 +146,7 @@ public class FormatReaderTestFactory {
 
     // detect whether or not the map the files into memory
     final String inMemoryProp = "testng.in-memory";
-    String inMemoryValue = System.getProperty(inMemoryProp);
+    String inMemoryValue = getProperty(inMemoryProp);
     boolean inMemory = Boolean.parseBoolean(inMemoryValue);
     LOGGER.info("testng.in-memory = {}", inMemory);
 
@@ -161,7 +161,7 @@ public class FormatReaderTestFactory {
     // check for a configuration file suffix
 
     final String configSuffixProperty = "testng.configSuffix";
-    String configSuffix = System.getProperty(configSuffixProperty);
+    String configSuffix = getProperty(configSuffixProperty);
     if (configSuffix == null) {
       configSuffix = "";
     }
