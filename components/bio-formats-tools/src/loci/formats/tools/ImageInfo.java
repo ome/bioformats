@@ -34,6 +34,7 @@ package loci.formats.tools;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.File;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -57,6 +58,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageTools;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
@@ -106,6 +108,7 @@ public class ImageInfo {
   private boolean separate = false;
   private boolean expand = false;
   private boolean omexml = false;
+  private boolean cache = false;
   private boolean originalMetadata = true;
   private boolean normalize = false;
   private boolean fastBlit = false;
@@ -125,6 +128,7 @@ public class ImageInfo {
   private String swapOrder = null, shuffleOrder = null;
   private String map = null;
   private String format = null;
+  private String cachedir = null;
   private int xmlSpaces = 3;
 
   private IFormatReader reader;
@@ -155,6 +159,7 @@ public class ImageInfo {
     separate = false;
     expand = false;
     omexml = false;
+    cache = false;
     originalMetadata = true;
     normalize = false;
     fastBlit = false;
@@ -177,6 +182,7 @@ public class ImageInfo {
     swapOrder = null;
     shuffleOrder = null;
     map = null;
+    cachedir = null;
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
@@ -192,6 +198,7 @@ public class ImageInfo {
         else if (args[i].equals("-nogroup")) group = false;
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
+        else if (args[i].equals("-cache")) cache = true;
         else if (args[i].equals("-omexml")) omexml = true;
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
@@ -251,6 +258,10 @@ public class ImageInfo {
         }
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-format")) format = args[++i];
+        else if (args[i].equals("-cache-dir")) {
+            cache = true;
+            cachedir = args[++i];
+        }
         else if (!args[i].equals(NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -277,6 +288,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
+      "    [-cache] [-cache-dir dir]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -314,6 +326,10 @@ public class ImageInfo {
       "     -no-sas: do not output OME-XML StructuredAnnotation elements",
       " -no-upgrade: do not perform the upgrade check",
       "     -format: read file with a particular reader (e.g., ZeissZVI)",
+      "      -cache: cache the initialized reader",
+      "  -cache-dir: use the specified directory to store the cached",
+      "              initialized reader. If unspecified, the cached reader",
+      "              will be stored under the same folder as the image file",
       "",
       "* = may result in loss of precision",
       ""
@@ -421,6 +437,13 @@ public class ImageInfo {
     if (expand) reader = new ChannelFiller(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
+    if (cache) {
+      if (cachedir != null) {
+        reader  = new Memoizer(reader, 0, new File(cachedir));
+      } else {
+        reader = new Memoizer(reader, 0);
+      }
+    }
     minMaxCalc = null;
     if (minmax || autoscale) reader = minMaxCalc = new MinMaxCalculator(reader);
     dimSwapper = null;
@@ -469,7 +492,7 @@ public class ImageInfo {
     // read basic metadata
     LOGGER.info("");
     LOGGER.info("Reading core metadata");
-    LOGGER.info("{} = {}", stitch ? "File pattern" : "Filename",
+    LOGGER.info("{} = {}", stitch ? "File pattern" : "filename",
       stitch ? id : reader.getCurrentFile());
     if (map != null) LOGGER.info("Mapped filename = {}", map);
     if (usedFiles) {
