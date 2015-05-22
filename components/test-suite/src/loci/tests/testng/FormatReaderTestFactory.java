@@ -57,16 +57,25 @@ public class FormatReaderTestFactory {
 
   // -- TestNG factory methods --
 
+  /**
+   * Safely return a system property by key excluding default Ant values
+   */
+  public String getProperty(String key) {
+    String value = System.getProperty(key);
+    if (value.equals("${" + key + "}")) {
+      return null;
+    };
+    return value;
+  }
+
   @Factory
   public Object[] createInstances() {
     List files = new ArrayList();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
-    String filename = System.getProperty(nameProp);
-    if (filename != null && filename.equals("${" + nameProp + "}")) {
-      filename = null;
-    }
+    String filename = getProperty(nameProp);
+
     if (filename != null && !new File(filename).exists()) {
       LOGGER.error("Invalid filename: {}", filename);
       return new Object[0];
@@ -77,9 +86,9 @@ public class FormatReaderTestFactory {
     if (filename == null) {
       // parse base directory
       final String baseDirProp = "testng.directory";
-      baseDir = System.getProperty(baseDirProp);
+      baseDir = getProperty(baseDirProp);
 
-      if (baseDir == null || baseDir.equals("${" + baseDirProp + "}")) {
+      if (baseDir == null) {
         baseDir = System.getProperty("testng.directory-prefix");
         String dirList = System.getProperty("testng.directory-list");
         try {
@@ -105,9 +114,17 @@ public class FormatReaderTestFactory {
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
-      FormatReaderTest.configTree = new ConfigurationTree(baseDir);
 
       LOGGER.info("testng.directory = {}", baseDir);
+
+      // check for an alternate configuration directory
+      final String configDirProperty = "testng.configDirectory";
+      String configDir = getProperty(configDirProperty);
+      if (configDir != null) {
+        LOGGER.info("testng.configDirectory = {}", configDir);
+      }
+
+      FormatReaderTest.configTree = new ConfigurationTree(baseDir, configDir);
     }
 
     // parse multiplier
@@ -133,17 +150,11 @@ public class FormatReaderTestFactory {
     // check for an alternate top level configuration file
 
     final String toplevelConfig = "testng.toplevel-config";
-    String configFile = System.getProperty(toplevelConfig);
+    String configFile = getProperty(toplevelConfig);
     if (configFile != null) {
       LOGGER.info("testng.toplevel-config = {}", configFile);
     }
 
-    // check for an alternate configuration directory
-    final String configDirProperty = "testng.configDirectory";
-    String configDir = System.getProperty(configDirProperty);
-    if (configDir != null) {
-      LOGGER.info("testng.configDirectory = {}", configDir);
-    }
     // check for a configuration file suffix
 
     final String configSuffixProperty = "testng.configSuffix";
@@ -166,7 +177,7 @@ public class FormatReaderTestFactory {
       long start = System.currentTimeMillis();
       try {
         TestTools.getFiles(baseDir, files, FormatReaderTest.configTree,
-          configFile, validSubdirs, configSuffix, configDir);
+          configFile, validSubdirs, configSuffix);
       }
       catch (Exception e) {
         LOGGER.info("Failed to retrieve complete list of files", e);

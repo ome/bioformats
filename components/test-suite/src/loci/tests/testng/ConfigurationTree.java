@@ -81,6 +81,13 @@ public class ConfigurationTree {
   }
 
   /**
+   * Returns the configuration directory
+   */
+  public String getConfigDirectory() {
+    return this.configDir;
+  }
+
+  /**
    * Creates a new configuration tree rooted at
    * the given directory in the file system.
    */

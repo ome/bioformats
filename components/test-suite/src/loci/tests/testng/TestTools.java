@@ -195,14 +195,6 @@ public class TestTools {
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
     String configFileSuffix)
   {
-      getFiles(root, files, config, toplevelConfig, subdirs, configFileSuffix, null);
-  }
-
-  /** Recursively generate a list of files to test. */
-  public static void getFiles(String root, List files,
-    final ConfigurationTree config, String toplevelConfig, String[] subdirs,
-    String configFileSuffix, String configRoot)
-  {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
@@ -212,7 +204,7 @@ public class TestTools {
 
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();
-
+    String configDir = config.getConfigDirectory();
     Arrays.sort(subs);
 
     // make sure that if a config file exists, it is first on the list
@@ -223,8 +215,8 @@ public class TestTools {
           (isToplevel && subs[i].equals(toplevelConfig)))
       {
         String tmp = subs[0];
-        if (configRoot != null) {
-            Location configFile = new Location(configRoot, subs[i]);
+        if (configDir != null) {
+            Location configFile = new Location(configDir, subs[i]);
             LOGGER.debug("config file: {}", configFile.getAbsolutePath());
             if (configFile.exists()) {
                 subs[0] = configFile.getAbsolutePath();
