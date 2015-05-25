@@ -20,7 +20,7 @@ if "%BF_MAX_MEM%" == "" (
   rem Set a reasonable default max heap size.
   set BF_MAX_MEM=512m
 )
-set BF_FLAGS=-Xmx%BF_MAX_MEM%
+set BF_FLAGS=%BF_FLAGS% -Xmx%BF_MAX_MEM%
 
 rem Skip the update check if the NO_UPDATE_CHECK flag is set.
 if not "%NO_UPDATE_CHECK%" == "" (
@@ -48,12 +48,12 @@ if not "%BF_DEVEL%" == "" (
 )
 
 rem Developer environment variable unset; add JAR libraries to classpath.
-if exist "%BF_JAR_DIR%\formats-gpl.jar" (
-  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\formats-gpl.jar";"%BF_JAR_DIR%\bio-formats-tools.jar"
-) else if exist "%BF_JAR_DIR%\bioformats_package.jar" (
-  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bioformats_package.jar"
+if exist "%BF_JAR_DIR%\bioformats_package.jar" (
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bioformats_package.jar"
 ) else if exist "%BF_JAR_DIR%\loci_tools.jar" (
-  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_tools.jar"
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_tools.jar"
+) else if exist "%BF_JAR_DIR%\formats-gpl.jar" (
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\formats-gpl.jar";"%BF_JAR_DIR%\bio-formats-tools.jar"
 ) else (
   rem Libraries not found; issue an error.
   echo Required JAR libraries not found. Please download:
