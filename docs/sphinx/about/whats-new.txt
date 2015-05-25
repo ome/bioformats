@@ -1,6 +1,33 @@
 Version history
 ===============
 
+5.1.2 (2015 May 28)
+-------------------
+
+* Added OME-TIFF writing support to the native C++ implementation
+* OME-TIFF export: switch to BigTIFF if .ome.tf2, .ome.tf8, or .ome.btf
+  extensions are used
+* Improved to MATLAB developer documentation
+* Added SlideBook reader that uses the SDK from 3I (thanks to Richard Myers)
+* Preliminary work to make MATLAB toolbox work with Octave
+* Many bug fixes, including:
+    - ImageJ
+        - fixed regression in getPlanePosition* macro extension methods
+        - fixed display of composite color virtual stacks
+    - Nikon ND2
+        - improved parsing of plane position and timestamp data
+    - TIFF
+        - reduced memory required to read color lookup tables
+    - Zeiss LSM
+        - improved parsing of 16-bit color lookup tables
+    - Zeiss CZI
+        - fixed ordering of original metadata table
+        - fixed reading of large pre-stitched tiled images
+    - AIM
+        - fixed handling of truncated files
+    - Metamorph/MetaXpress TIFF
+        - improved UIC1 metadata tag parsing
+
 5.1.1 (2015 April 28)
 ---------------------
 
