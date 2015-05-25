@@ -165,7 +165,9 @@ typedef ::testing::Types<
   UnitConversion<light_year_quantity, terametre_quantity>,
   UnitConversion<petametre_quantity, light_year_quantity>,
   UnitConversion<parsec_quantity, petametre_quantity>,
-  UnitConversion<exametre_quantity, parsec_quantity>
+  UnitConversion<exametre_quantity, parsec_quantity>,
+  UnitConversion<pixel_quantity, pixel_quantity>,
+  UnitConversion<reference_frame_quantity, reference_frame_quantity>
   > NonstandardLengthTestTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(LengthTest, UnitConv, LengthTestTypes);

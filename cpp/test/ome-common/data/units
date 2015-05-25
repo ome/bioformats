@@ -314,7 +314,7 @@ parsec	petameter	12.9	398.052408009268	398.1 Pm
 exameter	parsec	2.4	77.7787029472741	77.78 psc
 
 # Reference frame has no conversions (undefined scale)
-reference_frame	reference_frame	10.0	10.0	10.0 r.f.
+reference frame	reference frame	10.0	10.0	10 r.f.
 
 # Pixel has no conversions (undefined scale)
 pixel	pixel	512.0	512.0	512 px
