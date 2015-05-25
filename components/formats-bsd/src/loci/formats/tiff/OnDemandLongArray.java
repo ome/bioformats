@@ -54,6 +54,14 @@ public class OnDemandLongArray {
     this.size = size;
   }
 
+  public RandomAccessInputStream getStream() {
+    return stream;
+  }
+
+  public void setStream(RandomAccessInputStream in) {
+    stream = in;
+  }
+
   public long get(int index) throws IOException {
     long fp = stream.getFilePointer();
     stream.seek(start + index * 8);
@@ -66,8 +74,18 @@ public class OnDemandLongArray {
     return size;
   }
 
+  public long[] toArray() throws IOException {
+    long[] arr = new long[size];
+    for (int i=0; i<arr.length; i++) {
+      arr[i] = get(i);
+    }
+    return arr;
+  }
+
   public void close() throws IOException {
-    stream.close();
+    if (stream != null) {
+      stream.close();
+    }
     stream = null;
     size = 0;
     start = 0;

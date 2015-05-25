@@ -403,6 +403,14 @@ public class IFD extends HashMap<Integer, Object> {
       results = new long[integers.length];
       for (int i=0; i<integers.length; i++) results[i] = integers[i];
     }
+    else if (value instanceof OnDemandLongArray) {
+      try {
+        results = ((OnDemandLongArray) value).toArray();
+      }
+      catch (IOException e) {
+        throw new FormatException(e);
+      }
+    }
     else if (value != null) {
       throw new FormatException(getIFDTagName(tag) +
         " directory entry is the wrong type (got " +
