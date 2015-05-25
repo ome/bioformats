@@ -86,17 +86,33 @@ public final class MetadataTools {
   // -- Utility methods - OME-XML --
 
   /**
-   * Populates the 'pixels' element of the given metadata store, using core
+   * Populates the Pixels element of the given metadata store, using core
    * metadata from the given reader.
+   *
+   * Delegate to
+   * {@link #populatePixels(MetadataStore, IFormatReader, boolean, boolean)}
+   * with {@code doPlane} set to {@code false} and {@code doImageName} set to
+   * {@code true}.
+   *
+   * @param store The metadata store which Pixels should be populated
+   * @param r     The format reader which core metadata should be used
    */
   public static void populatePixels(MetadataStore store, IFormatReader r) {
     populatePixels(store, r, false, true);
   }
 
   /**
-   * Populates the 'pixels' element of the given metadata store, using core
-   * metadata from the given reader.  If the 'doPlane' flag is set,
-   * then the 'plane' elements will be populated as well.
+   * Populates the Pixels element of the given metadata store, using core
+   * metadata from the given reader.  If the {@code doPlane} flag is set,
+   * then the Plane elements will be populated as well.
+   *
+   * Delegates to
+   * {@link #populatePixels(MetadataStore, IFormatReader, boolean, boolean)}
+   * with {@code doImageName} set to {@code true}.
+   *
+   * @param store   The metadata store which Pixels should be populated
+   * @param r       The format reader which core metadata should be used
+   * @param doPlane Specifies whether Plane elements should be populatedZZ
    */
   public static void populatePixels(MetadataStore store, IFormatReader r,
     boolean doPlane)
@@ -105,11 +121,16 @@ public final class MetadataTools {
   }
 
   /**
-   * Populates the 'pixels' element of the given metadata store, using core
-   * metadata from the given reader.  If the 'doPlane' flag is set,
-   * then the 'plane' elements will be populated as well.
-   * If the 'doImageName' flag is set, then the image name will be populated
-   * as well.  By default, 'doImageName' is true.
+   * Populates the Pixels element of the given metadata store, using core
+   * metadata from the given reader.  If the {@code doPlane} flag is set,
+   * then the Plane elements will be populated as well. If the
+   * {@code doImageName} flag is set, then the image name will be populated as
+   * well.
+   *
+   * @param store       The metadata store which Pixels should be populated
+   * @param r           The format reader which core metadata should be used
+   * @param doPlane     Specifies whether Plane elements should be populated
+   * @param doImageName Specifies whether the Image name should be populated
    */
   public static void populatePixels(MetadataStore store, IFormatReader r,
     boolean doPlane, boolean doImageName)
