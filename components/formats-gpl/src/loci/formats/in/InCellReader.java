@@ -66,6 +66,7 @@ public class InCellReader extends FormatReader {
   // -- Constants --
 
   public static final String INCELL_MAGIC_STRING = "IN Cell Analyzer";
+  public static final String CYTELL_MAGIC_STRING = "Cytell";
 
   private static final String[] PIXELS_SUFFIXES =
     new String[] {"tif", "tiff", "im"};
@@ -140,7 +141,8 @@ public class InCellReader extends FormatReader {
     final int blockLen = 2048;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String check = stream.readString(blockLen);
-    return check.indexOf(INCELL_MAGIC_STRING) >= 0;
+    return check.indexOf(INCELL_MAGIC_STRING) >= 0 ||
+      check.indexOf(CYTELL_MAGIC_STRING) >= 0;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
