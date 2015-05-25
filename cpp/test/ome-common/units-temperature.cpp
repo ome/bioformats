@@ -38,7 +38,7 @@
 
 #include "units.h"
 
-#include <ome/common/units.h>
+#include <ome/common/units/temperature.h>
 
 typedef ::testing::Types<
   UnitConversion<celsius_absolute_quantity, kelvin_absolute_quantity>,

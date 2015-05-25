@@ -38,7 +38,7 @@
 
 #include "units.h"
 
-#include <ome/common/units.h>
+#include <ome/common/units/time.h>
 
 typedef ::testing::Types<
   // All conversions to base unit.

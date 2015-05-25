@@ -38,7 +38,7 @@
 
 #include "units.h"
 
-#include <ome/common/units.h>
+#include <ome/common/units/angle.h>
 
 typedef ::testing::Types<
   UnitConversion<radian_quantity, gradian_quantity>,

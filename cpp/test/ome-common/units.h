@@ -52,7 +52,7 @@
 #include <boost/units/io.hpp>
 #include <boost/units/systems/si/io.hpp>
 
-#include <ome/common/units.h>
+#include <ome/common/units/types.h>
 #include <ome/common/filesystem.h>
 
 #include <ome/test/test.h>

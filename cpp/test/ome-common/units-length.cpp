@@ -38,7 +38,7 @@
 
 #include "units.h"
 
-#include <ome/common/units.h>
+#include <ome/common/units/length.h>
 
 typedef ::testing::Types<
   // All conversions to base unit.

@@ -37,26 +37,41 @@
  */
 
 /**
- * @file ome/common/units.h Units of measurement.
+ * @file ome/common/units/angle.h Common units of measurement types.
  *
- * This header contains unit definition types, unit constants and
- * measured quantity types for SI and other standard units of
- * measurement.
+ * This header contains types used by all units of measurement.
  */
 
-#ifndef OME_COMMON_UNITS_H
-#define OME_COMMON_UNITS_H
+#ifndef OME_COMMON_UNITS_COMMON_H
+#define OME_COMMON_UNITS_COMMON_H
 
-#include <ome/common/units/angle.h>
-#include <ome/common/units/electric-potential.h>
-#include <ome/common/units/frequency.h>
-#include <ome/common/units/length.h>
-#include <ome/common/units/power.h>
-#include <ome/common/units/pressure.h>
-#include <ome/common/units/temperature.h>
-#include <ome/common/units/time.h>
+#include <ome/common/config.h>
 
-#endif // OME_COMMON_UNITS_H
+#include <boost/units/unit.hpp>
+#include <boost/units/make_scaled_unit.hpp>
+#include <boost/units/quantity.hpp>
+#include <boost/units/systems/si.hpp>
+
+namespace ome
+{
+  namespace common
+  {
+    namespace units
+    {
+
+      using boost::units::quantity;
+      using boost::units::quantity_cast;
+      using boost::units::make_scaled_unit;
+      using boost::units::scaled_base_unit;
+      using boost::units::scale;
+      using boost::units::static_rational;
+      namespace si = boost::units::si;
+
+    }
+  }
+}
+
+#endif // OME_COMMON_UNITS_COMMON_H
 
 /*
  * Local Variables:
