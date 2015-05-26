@@ -354,7 +354,7 @@ public class Configuration {
 
   public void saveToFile() throws IOException {
     IniWriter writer = new IniWriter();
-    writer.saveINI(ini, configFile);
+    writer.saveINI(ini, configFile, false);
   }
 
   public IniList getINI() {
