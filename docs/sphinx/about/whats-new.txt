@@ -7,7 +7,7 @@ Version history
 * Added OME-TIFF writing support to the native C++ implementation
 * OME-TIFF export: switch to BigTIFF if .ome.tf2, .ome.tf8, or .ome.btf
   extensions are used
-* Improved to MATLAB developer documentation
+* Improved MATLAB developer documentation
 * Added SlideBook reader that uses the SDK from 3I (thanks to Richard Myers)
 * Preliminary work to make MATLAB toolbox work with Octave
 * Many bug fixes, including:
