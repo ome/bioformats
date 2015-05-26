@@ -2388,7 +2388,13 @@ public class FormatReaderTest {
     String file = reader.getCurrentFile();
     LOGGER.info("Generating configuration: {}", file);
     try {
-      File f = new File(new Location(file).getParent(), ".bioformats");
+      String parent = new Location(file).getParent();
+      String configDir = configTree.getConfigDirectory();
+      String rootDir = configTree.getRootDirectory();
+      if (configDir != null) {
+        parent = parent.replaceAll(rootDir, configDir);
+      }
+      File f = new File(parent, ".bioformats");
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
       reader.close();
