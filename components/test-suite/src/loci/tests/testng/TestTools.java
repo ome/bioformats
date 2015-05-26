@@ -35,6 +35,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -204,8 +205,21 @@ public class TestTools {
 
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();
-    String configDir = config.getConfigDirectory();
     Arrays.sort(subs);
+
+    String rootDir = config.getRootDirectory();
+    String configDir = config.getConfigDirectory();
+    ArrayList<String> subsList = new ArrayList<String>();
+
+    if (configDir != null) {
+      // Look for a configuration file under the configuration directory
+      String configRoot = root.replaceAll(rootDir, configDir);
+      Location configFile = new Location(configRoot, baseConfigName);
+      if (configFile.exists()) {
+        LOGGER.debug("found config file: {}", configFile.getAbsolutePath());
+        subsList.add(configFile.getAbsolutePath());
+      }
+    }
 
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
@@ -214,29 +228,20 @@ public class TestTools {
       if ((!isToplevel && isConfigFile(file, configFileSuffix)) ||
           (isToplevel && subs[i].equals(toplevelConfig)))
       {
-        String tmp = subs[0];
-        if (configDir != null) {
-            Location configFile = new Location(configDir, subs[i]);
-            LOGGER.debug("config file: {}", configFile.getAbsolutePath());
-            if (configFile.exists()) {
-                subs[0] = configFile.getAbsolutePath();
-            } else {
-                subs[0] = file.getAbsolutePath();
-            }
-        } else {
-            subs[0] = file.getAbsolutePath();
+        if (configDir == null) {
+          LOGGER.debug("adding config file: {}", file.getAbsolutePath());
+          subsList.add(0, file.getAbsolutePath());
         }
-        if (i > 0) {subs[i] = tmp;}
       } else {
-        subs[i] = file.getAbsolutePath();
+        subsList.add(file.getAbsolutePath());
       }
     }
 
     // special config file for the test suite
     LOGGER.debug("\tconfig file");
     try {
-      LOGGER.debug("Parsing {}:", subs[0]);
-      config.parseConfigFile(subs[0]);
+      LOGGER.debug("Parsing {}:", subsList.get(0));
+      config.parseConfigFile(subsList.get(0));
     }
     catch (IOException exc) {
       LOGGER.debug("", exc);
@@ -274,23 +279,23 @@ public class TestTools {
 
     ImageReader typeTester = new ImageReader();
 
-    for (int i=0; i<subs.length; i++) {
-      Location file = new Location(subs[i]);
-      LOGGER.debug("Checking {}:", subs[i]);
+    for (int i=0; i<subsList.size(); i++) {
+      Location file = new Location(subsList.get(i));
+      LOGGER.debug("Checking {}:", subsList.get(i));
 
       if (isConfigFile(file, configFileSuffix)) {
         continue;
       }
-      else if (isIgnoredFile(subs[i], config)) {
+      else if (isIgnoredFile(subsList.get(i), config)) {
         LOGGER.debug("\tignored");
         continue;
       }
       else if (file.isDirectory()) {
         LOGGER.debug("\tdirectory");
-        getFiles(subs[i], files, config, null, null, configFileSuffix);
+        getFiles(subsList.get(i), files, config, null, null, configFileSuffix);
       }
-      else if (!subs[i].endsWith("readme.txt")) {
-        if (typeTester.isThisType(subs[i])) {
+      else if (!subsList.get(i).endsWith("readme.txt")) {
+        if (typeTester.isThisType(subsList.get(i))) {
           LOGGER.debug("\tOK");
           files.add(file.getAbsolutePath());
         }

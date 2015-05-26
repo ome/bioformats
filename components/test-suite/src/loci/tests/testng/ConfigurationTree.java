@@ -105,6 +105,13 @@ public class ConfigurationTree {
   // -- ConfigurationTree API methods --
 
   /**
+   *  Returns the toot directory holding the data
+   */
+  public String getRootDirectory() {
+    return this.rootDir;
+  }
+
+  /**
    *  Returns the base directory holding the configuration files
    */
   public String getConfigDirectory() {
