@@ -42,6 +42,7 @@
 
 #include <ome/internal/config.h>
 
+#include <boost/format.hpp>
 #include <boost/thread.hpp>
 
 #include <ome/bioformats/PlaneRegion.h>
@@ -749,10 +750,18 @@ namespace ome
         va_start(ap, tag);
 
         if (!tag)
-          throw Exception("Error getting field: Tag is not valid");
+          {
+            boost::format fmt("Error getting field: Tag %1% is not valid");
+            fmt % tag;
+            throw Exception(fmt.str());
+          }
 
         if (!TIFFVGetField(tiffraw, tag, ap))
-          sentry.error("Error getting field: Tag was not found");
+          {
+            boost::format fmt("Error getting field: Tag %1% was not found");
+            fmt % tag;
+            sentry.error();
+          }
       }
 
       void
@@ -770,7 +779,11 @@ namespace ome
         va_start(ap, tag);
 
         if (!tag)
-          throw Exception("Error getting field: Tag is not valid");
+          {
+            boost::format fmt("Error getting field: Tag %1% is not valid");
+            fmt % tag;
+            throw Exception(fmt.str());
+          }
 
         if (!TIFFVSetField(tiffraw, tag, ap))
           sentry.error();
@@ -957,20 +970,20 @@ namespace ome
           }
         else
           {
-            SampleFormat fmt;
+            SampleFormat sampleformat;
             try
               {
-                getField(SAMPLEFORMAT).get(fmt);
+                getField(SAMPLEFORMAT).get(sampleformat);
               }
             catch(const Exception& e)
               {
                 // Default to unsigned integer.
-                fmt = UNSIGNED_INT;
+                sampleformat = UNSIGNED_INT;
               }
 
             uint16_t bits = getBitsPerSample();
 
-            switch(fmt)
+            switch(sampleformat)
               {
               case UNSIGNED_INT:
                 {
@@ -983,7 +996,11 @@ namespace ome
                   else if (bits == 32)
                     pt = PixelType::UINT32;
                   else
-                    throw Exception("Unsupported bit depth for unsigned integer pixel type");
+                    {
+                      boost::format fmt("Bit depth %1% unsupported for unsigned integer pixel type");
+                      fmt % bits;
+                      throw Exception(fmt.str());
+                    }
                 }
                 break;
               case SIGNED_INT:
@@ -995,7 +1012,11 @@ namespace ome
                   else if (bits == 32)
                 pt = PixelType::INT32;
                   else
-                    throw Exception("Unsupported bit depth for signed integer pixel type");
+                    {
+                      boost::format fmt("Bit depth %1% unsupported for signed integer pixel type");
+                      fmt % bits;
+                      throw Exception(fmt.str());
+                    }
                 }
                 break;
               case FLOAT:
@@ -1005,7 +1026,11 @@ namespace ome
                   else if (bits == 64)
                     pt = PixelType::DOUBLE;
                   else
-                    throw Exception("Unsupported bit depth for floating point pixel type");
+                    {
+                      boost::format fmt("Bit depth %1% unsupported for floating point pixel type");
+                      fmt % bits;
+                      throw Exception(fmt.str());
+                    }
                 }
                 break;
               case COMPLEX_FLOAT:
@@ -1015,11 +1040,19 @@ namespace ome
                   else if (bits == 128)
                     pt = PixelType::DOUBLECOMPLEX;
                   else
-                    throw Exception("Unsupported bit depth for complex floating point pixel type");
+                    {
+                      boost::format fmt("Bit depth %1% unsupported for complex floating point pixel type");
+                      fmt % bits;
+                      throw Exception(fmt.str());
+                    }
                 }
                 break;
               default:
-                throw Exception("TIFF SampleFormat unsupported by OME data model PixelType");
+                {
+                  boost::format fmt("TIFF SampleFormat %1% unsupported by OME data model PixelType");
+                  fmt % sampleformat;
+                  throw Exception(fmt.str());
+                }
                 break;
               }
           }
@@ -1057,7 +1090,11 @@ namespace ome
             break;
 
           default:
-            throw Exception("Unsupported OME data model PixelType");
+            {
+              boost::format fmt("Unsupported OME data model PixelType %1%");
+              fmt % type;
+              throw Exception(fmt.str());
+            }
             break;
           }
 
@@ -1287,15 +1324,49 @@ namespace ome
                   source_shape.begin());
 
         PixelBufferBase::storage_order_type order(PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, planarconfig == SEPARATE ? false : true));
+        PixelBufferBase::storage_order_type source_order(source.storage_order());
 
         if (type != source.pixelType())
-          throw Exception("VariantPixelBuffer pixel type is incompatible with TIFF sample format and bit depth");
+          {
+            boost::format fmt("VariantPixelBuffer %1% pixel type is incompatible with TIFF %2% sample format and bit depth");
+            fmt % source.pixelType() % type;
+            throw Exception(fmt.str());
+          }
 
         if (shape != source_shape)
-          throw Exception("VariantPixelBuffer dimensions incompatible with TIFF image size");
+          {
+            if (shape[DIM_SPATIAL_X] != source_shape[DIM_SPATIAL_X] ||
+                shape[DIM_SPATIAL_Y] != source_shape[DIM_SPATIAL_Y] ||
+                shape[DIM_SUBCHANNEL] != source_shape[DIM_SUBCHANNEL])
+              {
+                boost::format fmt("VariantPixelBuffer dimensions (%1%×%2%, %3% samples) incompatible with TIFF image size (%4%×%5%, %6% samples)");
+                fmt % source_shape[DIM_SPATIAL_X] % source_shape[DIM_SPATIAL_Y] % source_shape[DIM_SUBCHANNEL];
+                fmt % shape[DIM_SPATIAL_X] % shape[DIM_SPATIAL_Y] % shape[DIM_SUBCHANNEL];
+                throw Exception(fmt.str());
+              }
+            else
+              {
+                boost::format fmt("VariantPixelBuffer dimensions (%1%×%2%×%3%, %4%t, %5%c, %6% samples, %7%mz, %8%mt, %9%mc) incompatible with TIFF image size (%10%×%11%, %12% samples)");
+                fmt % source_shape[DIM_SPATIAL_X] % source_shape[DIM_SPATIAL_Y] % source_shape[DIM_SPATIAL_Z];
+                fmt % source_shape[DIM_TEMPORAL_T] % source_shape[DIM_CHANNEL] % source_shape[DIM_SUBCHANNEL];
+                fmt % source_shape[DIM_MODULO_Z] % source_shape[DIM_MODULO_T] % source_shape[DIM_MODULO_C];
+                fmt % shape[DIM_SPATIAL_X] % shape[DIM_SPATIAL_Y] % shape[DIM_SUBCHANNEL];
+                throw Exception(fmt.str());
+              }
+          }
 
-        if (!(order == source.storage_order()))
-          throw Exception("VariantPixelBuffer storage order incompatible with TIFF planar configuration");
+        if (!(order == source_order))
+          {
+            boost::format fmt("VariantPixelBuffer storage order (%1%%2%%3%%4%%5%%6%%7%%8%%9%) incompatible with %10% TIFF planar configuration (%11%%12%%13%%14%%15%%16%%17%%18%%19%");
+            fmt % source_order.ordering(0) % source_order.ordering(1) % source_order.ordering(2);
+            fmt % source_order.ordering(3) % source_order.ordering(4) % source_order.ordering(5);
+            fmt % source_order.ordering(6) % source_order.ordering(7) % source_order.ordering(8);
+            fmt % (planarconfig == SEPARATE ? "separate" : "contiguous");
+            fmt % order.ordering(0) % order.ordering(1) % order.ordering(2);
+            fmt % order.ordering(3) % order.ordering(4) % order.ordering(5);
+            fmt % order.ordering(6) % order.ordering(7) % order.ordering(8);
+            throw Exception(fmt.str());
+          }
 
         TileInfo info = getTileInfo();
 
