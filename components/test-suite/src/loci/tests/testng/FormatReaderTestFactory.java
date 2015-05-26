@@ -62,7 +62,7 @@ public class FormatReaderTestFactory {
    */
   public String getProperty(String key) {
     String value = System.getProperty(key);
-    if (value.equals("${" + key + "}")) {
+    if (value == null || value.equals("${" + key + "}")) {
       return null;
     };
     return value;
