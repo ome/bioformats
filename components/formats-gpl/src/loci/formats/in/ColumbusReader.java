@@ -143,13 +143,17 @@ public class ColumbusReader extends FormatReader {
     ArrayList<String> files = new ArrayList<String>();
     files.add(currentId);
     for (String file : metadataFiles) {
-      files.add(file);
+      if (new Location(file).exists()) {
+        files.add(file);
+      }
     }
 
     if (!noPixels) {
       for (Plane p : planes) {
         if (p.series == getSeries() && !files.contains(p.file)) {
-          files.add(p.file);
+          if (new Location(p.file).exists()) {
+            files.add(p.file);
+          }
         }
       }
     }
@@ -229,11 +233,29 @@ public class ColumbusReader extends FormatReader {
     MeasurementHandler handler = new MeasurementHandler();
     XMLTools.parseXML(xmlData, handler);
 
+    String[] parentDirectories = parent.list(true);
+    Arrays.sort(parentDirectories);
+    for (String file : parentDirectories) {
+      Location absFile = new Location(parent, file);
+      if (absFile.isDirectory()) {
+        for (String f : absFile.list(true)) {
+          if (!checkSuffix(f, "tif")) {
+            if (!metadataFiles.contains(file + File.separator + f)) {
+              metadataFiles.add(file + File.separator + f);
+            }
+          }
+        }
+      }
+    }
+
     for (int i=0; i<metadataFiles.size(); i++) {
-      String path = new Location(parent + File.separator + metadataFiles.get(i)).getAbsolutePath();
+      String metadataFile = metadataFiles.get(i);
+      int end = metadataFile.indexOf(File.separator);
+      String timepointPath = end < 0 ? "" : metadataFile.substring(0, end);
+      String path = new Location(parent + File.separator + metadataFile).getAbsolutePath();
       metadataFiles.set(i, path);
       if (checkSuffix(path, "columbusidx.xml")) {
-        parseImageXML(path);
+        parseImageXML(path, DataTools.indexOf(parentDirectories, timepointPath));
       }
     }
 
@@ -401,8 +423,8 @@ public class ColumbusReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void parseImageXML(String filename) throws FormatException, IOException {
-    LOGGER.info("Parsing image data from {}", filename);
+  private void parseImageXML(String filename, int externalTime) throws FormatException, IOException {
+    LOGGER.info("Parsing image data from {} with timepoint {}", filename, externalTime);
     String xml = DataTools.readFile(filename);
     Location parent = new Location(filename).getParentFile();
 
@@ -431,7 +453,9 @@ public class ColumbusReader extends FormatReader {
       return;
     }
     NodeList timestamps = ((Element) plates.item(0)).getElementsByTagName("MeasurementStartTime");
-    acquisitionDate = ((Element) timestamps.item(0)).getTextContent();
+    if (externalTime <= 0) {
+      acquisitionDate = ((Element) timestamps.item(0)).getTextContent();
+    }
 
     NodeList images = root.getElementsByTagName("Images");
     if (images == null) {
@@ -472,6 +496,9 @@ public class ColumbusReader extends FormatReader {
         }
         else if (name.equals("TimepointID")) {
           p.timepoint = Integer.parseInt(value) - 1;
+          if (p.timepoint == 0) {
+            p.timepoint = externalTime;
+          }
         }
         else if (name.equals("ChannelID")) {
           p.channel = Integer.parseInt(value) - 1;
@@ -493,6 +520,9 @@ public class ColumbusReader extends FormatReader {
         }
         else if (name.equals("MeasurementTimeOffset")) {
           p.deltaT = new Double(value);
+        }
+        else if (name.equals("AbsTime")) {
+          p.deltaT = new Timestamp(value).asInstant().getMillis() / 1000d;
         }
         else if (name.equals("MainEmissionWavelength")) {
           p.emWavelength = new Double(value);
