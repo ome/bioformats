@@ -183,6 +183,13 @@ namespace ome
 
       OMETIFFReader::~OMETIFFReader()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void

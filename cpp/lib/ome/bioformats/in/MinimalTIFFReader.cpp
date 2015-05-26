@@ -109,6 +109,13 @@ namespace ome
 
       MinimalTIFFReader::~MinimalTIFFReader()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       bool
