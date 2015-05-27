@@ -47,6 +47,9 @@ public interface OMEXMLMetadata extends IMetadata {
    */
   String dumpXML();
 
+  /**
+   * Resolve model object cross-references.
+   */
   int resolveReferences();
 
 }
