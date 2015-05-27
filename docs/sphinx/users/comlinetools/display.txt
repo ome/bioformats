@@ -101,7 +101,7 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -omexml-only
 
-    and to display the OME-XML alone:
+    This option allows to display the OME-XML alone:
 
     ::
 
@@ -120,18 +120,25 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -fast
 
-    Image display can be done as quickly as possible using::
+    This option allows to display an image as quickly as possible. This is
+    achieved by converting the raw data into a 8 bit RGB image::
 
       showinf -fast /path/to/file
 
+    .. note::
+       Due to the data conversion to a RGB image, using this option results in
+       a loss of precision.
+
 .. option:: -autoscale
 
-    Note that this command results in a loss of precision.
+    This option allows to adjust the display range to the minimum and maximum
+    pixel values::
 
-    In combination with the :option:`-fast` option, the display range can be
-    adjusted to the minimum and maximum pixel values::
+      showinf -autoscale /path/to/file
 
-      showinf -fast -autoscale /path/to/file
+    .. note::
+       This option automatically sets the :option:`-fast` option and suffers
+       from the same limitations.
 
 .. option:: -cache
 
