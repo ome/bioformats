@@ -93,4 +93,15 @@ typedef ::testing::Types<
   UnitConversion<microsecond_quantity, millisecond_quantity>
   > TimeTestTypes;
 
+typedef ::testing::Types<
+  // Other
+  UnitConversion<minute_quantity, second_quantity>,
+  UnitConversion<dekasecond_quantity, minute_quantity>,
+  UnitConversion<hour_quantity, decasecond_quantity>,
+  UnitConversion<hectosecond_quantity, hour_quantity>,
+  UnitConversion<day_quantity, kilosecond_quantity>,
+  UnitConversion<centisecond_quantity, day_quantity>
+  > NonstandardTimeTestTypes;
+
 INSTANTIATE_TYPED_TEST_CASE_P(TimeTest, UnitConv, TimeTestTypes);
+INSTANTIATE_TYPED_TEST_CASE_P(NonstandardTimeTest, UnitConv, NonstandardTimeTestTypes);

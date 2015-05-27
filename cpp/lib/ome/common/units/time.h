@@ -51,6 +51,9 @@
 #include <ome/common/units/types.h>
 
 #include <boost/units/unit.hpp>
+#include <boost/units/base_units/metric/minute.hpp>
+#include <boost/units/base_units/metric/hour.hpp>
+#include <boost/units/base_units/metric/day.hpp>
 #include <boost/units/quantity.hpp>
 #include <boost/units/systems/si.hpp>
 
@@ -248,6 +251,32 @@ namespace ome
       /// Measured quantity in yottaseconds.
       typedef quantity<yottasecond_unit> yottasecond_quantity;
 
+      /// Unit definition for minute time.
+      typedef boost::units::metric::minute_base_unit::unit_type minute_unit;
+      /// Numeric constant for minute.
+      BOOST_UNITS_STATIC_CONSTANT(minute, minute_unit);
+      /// Numeric constant for minute.
+      BOOST_UNITS_STATIC_CONSTANT(minutes, minute_unit);
+      /// Measured quantity in minutes.
+      typedef quantity<minute_unit> minute_quantity;
+
+      /// Unit definition for hour time.
+      typedef boost::units::metric::hour_base_unit::unit_type hour_unit;
+      /// Numeric constant for hour.
+      BOOST_UNITS_STATIC_CONSTANT(hour, hour_unit);
+      /// Numeric constant for hour.
+      BOOST_UNITS_STATIC_CONSTANT(hours, hour_unit);
+      /// Measured quantity in hours.
+      typedef quantity<hour_unit> hour_quantity;
+
+      /// Unit definition for day time.
+      typedef boost::units::metric::day_base_unit::unit_type day_unit;
+      /// Numeric constant for day.
+      BOOST_UNITS_STATIC_CONSTANT(day, day_unit);
+      /// Numeric constant for day.
+      BOOST_UNITS_STATIC_CONSTANT(days, day_unit);
+      /// Measured quantity in days.
+      typedef quantity<day_unit> day_quantity;
     }
   }
 }

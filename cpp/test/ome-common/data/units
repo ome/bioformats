@@ -795,6 +795,15 @@ nanosecond	microsecond	4.272	4.272e-3	0.004272 us
 millisecond	centisecond	9.282	9.282e-1	0.9282 cs
 microsecond	millisecond	5	5e-3	0.005 ms
 
+# Time conversions between standard and non-standard units
+
+minute	second	2.0	120.0	120 s
+dekasecond	minute	20	3.3333333333333	3.333 min
+hour	dekasecond	1.5	540.0	540 das
+hectosecond	hour	15.2	0.42222222222	0.4222 h
+day	kilosecond	1.0	86.4	86.4 ks
+centisecond	day	10000000.0	1.1574074074	1.157 d
+
 ## ELECTRIC POTENTIAL
 
 # Electric Potential conversions to base unit (V)
