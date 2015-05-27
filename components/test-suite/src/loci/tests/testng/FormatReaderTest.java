@@ -2393,6 +2393,10 @@ public class FormatReaderTest {
       String rootDir = configTree.getRootDirectory();
       if (configDir != null) {
         parent = parent.replaceAll(rootDir, configDir);
+        File parentDir = new File(parent);
+        if (!parentDir.exists()) {
+          parentDir.mkdirs();
+        }
       }
       File f = new File(parent, ".bioformats");
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
