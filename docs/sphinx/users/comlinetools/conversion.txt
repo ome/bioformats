@@ -20,60 +20,48 @@ The output file format is determined by the extension of the output file, e.g.
 .. option:: -series SERIES
 
     All images in the input file are converted by default.  To convert only one
-    series:
-
-    ::
+    series::
 
       bfconvert -series 0 /path/to/input output-first-series.tiff
 
 .. option:: -timepoint TIMEPOINT
 
-    To convert only one timepoint:
-
-    ::
+    To convert only one timepoint::
 
       bfconvert -timepoint 0 /path/to/input output-first-timepoint.tiff
 
 .. option:: -channel CHANNEL
 
-    To convert only one channel:
-
-    ::
+    To convert only one channel::
 
       bfconvert -channel 0 /path/to/input output-first-channel.tiff
 
 .. option:: -z Z
 
-    To convert only one Z section:
-
-    ::
+    To convert only one Z section::
 
       bfconvert -z 0 /path/to/input output-first-z.tiff
 
 .. option:: -range START END
 
-    To convert images between certain indices (inclusive):
-
-    ::
+    To convert images between certain indices (inclusive)::
 
       bfconvert -range 0 2 /path/to/input output-first-3-images.tiff
 
-.. option:: -tilex TILEX
-.. option:: -tiley TILEY
+.. option:: -tilex TILEX, -tiley TILEY
 
     All images larger than 4096x4096 will be saved as a set of tiles if the
     output format supports doing so.  The default tile size is determined by
-    the input format, and can be overridden like this:
-
-    ::
+    the input format, and can be overridden like this::
 
       bfconvert -tilex 512 -tiley 512 /path/to/input output-512x512-tiles.tiff
 
-    ``-tilex`` is the width in pixel of each tile; ``-tiley`` is the height in
-    pixels of each tile.  The last row and column of tiles may be slightly
-    smaller if the image width and height are not multiples of the specified
-    tile width and height.  Note that specifying ``-tilex`` and ``-tiley``
-    will cause tiles to be written even if the image is smaller than 4096x4096.
+    :option:`-tilex` is the width in pixel of each tile; :option:`-tiley` is
+    the height in pixels of each tile.  The last row and column of tiles may
+    be slightly smaller if the image width and height are not multiples of the
+    specified tile width and height.  Note that specifying :option:`-tilex`
+    and :option:`-tiley` will cause tiles to be written even if the image is
+    smaller than 4096x4096.
 
     Also note that the specified tile size will affect performance.  If large
     amounts of data are being processed, it is a good idea to try converting a
@@ -82,9 +70,7 @@ The output file format is determined by the extension of the output file, e.g.
 
 Images can also be written to multiple files by specifying a pattern string
 in the output file.  For example, to write one series, timepoint, channel, and
-Z section per file:
-
-::
+Z section per file::
 
   bfconvert /path/to/input output_series_%s_Z%z_C%c_T%t.tiff
 
@@ -92,9 +78,7 @@ Z section per file:
 channel index, and ``%t`` is the timepoint index (all indices begin at 0).
 
 For large images in particular, it can also be useful to write each tile to
-a separate file:
-
-::
+a separate file::
 
   bfconvert -tilex 512 -tiley 512 /path/to/input output_tile_%x_%y_%m.jpg
 
@@ -108,10 +92,8 @@ name pattern, then the other must be included too.  The only exception is if
 
     By default, all images will be written uncompressed.  Supported compression
     modes vary based upon the output format, but when multiple modes are
-    available the compression can be changed using the ``-compression``
-    option. For example, to use LZW compression in a TIFF file:
-
-    ::
+    available the compression can be changed using the :option:`-compression`
+    option. For example, to use LZW compression in a TIFF file::
 
       bfconvert -compression LZW /path/to/input output-lzw.tiff
 
@@ -120,16 +102,12 @@ name pattern, then the other must be included too.  The only exception is if
     If the specified output file already exists, :program:`bfconvert` will
     prompt to overwrite the file.  When running :program:`bfconvert`
     non-interactively, it may be useful to always allow :program:`bfconvert` to
-    overwrite the output file:
-
-    ::
+    overwrite the output file::
 
       bfconvert -overwrite /path/to/input /path/to/output
 
 .. option:: -nooverwrite
 
-    To always exit without overwriting:
-
-    ::
+    To always exit without overwriting::
 
       bfconvert -nooverwrite /path/to/input /path/to/output

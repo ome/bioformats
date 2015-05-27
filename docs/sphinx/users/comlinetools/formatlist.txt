@@ -2,34 +2,35 @@ List supported file formats
 ===========================
 
 A detailed list of supported formats can be displayed using the
-:command:`formatlist` command.
+:program:`formatlist` command.
 
-Current usage information can be shown by running:
+.. program:: formatlist
 
-::
-
-    formatlist -help
-
-The default behavior is to print a plain-text list of formats:
-
-::
+The default behavior is to print a plain-text list of formats::
 
     formatlist
 
-This can also be accomplished using by specifying the ``-txt`` argument:
+.. option:: -txt
 
-::
+    This can also be accomplished using by specifying the :option:`-txt`
+    argument::
 
-    formatlist -txt
+        formatlist -txt
 
-The same information also be formatted as HTML:
+.. option:: -html
 
-::
+    This option allows to print the list of formats as HTML::
 
-    formatlist -html
+        formatlist -html
 
-or XML:
+.. option:: -xml
 
-::
+    This option allows to print the list of formats as XML::
 
-    formatlist -xml
+        formatlist -xml
+
+.. option:: -help
+
+    Current usage information can be shown by running::
+
+        formatlist -help
