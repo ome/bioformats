@@ -31,16 +31,15 @@ currentDir = os.path.dirname(__file__)
 outputFile = os.path.join(currentDir, 'meta-support.txt')
 componentsDir = os.path.abspath(os.path.join(currentDir, '..', '..'))
 commonClasses = os.path.join(
-    componentsDir, 'formats-api' , 'src' , 'loci', 'formats',
+    componentsDir, 'formats-api', 'src', 'loci', 'formats',
     'MetadataTools.java')
-
-modelDir = os.path.join(
-    componentsDir, 'ome-xml', 'build' , 'src' ,'ome', 'xml' ,'model')
 
 
 def get_xml_elements():
-
+    """List all XML elements from the model"""
     elements = []
+    modelDir = os.path.join(
+        componentsDir, 'ome-xml', 'build', 'src', 'ome', 'xml', 'model')
     for f in os.listdir(modelDir):
         if not os.path.isfile(os.path.join(modelDir, f)):
             continue
@@ -48,23 +47,20 @@ def get_xml_elements():
     return elements
 xml_elements = get_xml_elements()
 
-# readers=`ls $baseDir/formats-gpl/**/src/loci/formats/in/*Reader.java | sort -f && ls $baseDir/formats-bsd/**/src/loci/formats/in/*Reader.java | sort -f`
-
-formats_gplDir = os.path.join(
-    componentsDir, 'formats-gpl', 'src' ,'loci', 'formats' ,'in')
-formats_bsdDir = os.path.join(
-    componentsDir, 'formats-bsd', 'src' ,'loci', 'formats' ,'in')
 
 def get_readers():
-
+    """List all GPL and BSD readers"""
     readers = []
-    for d in [formats_gplDir, formats_bsdDir]:
-        for f in os.listdir(d):
-            if (not os.path.isfile(os.path.join(d, f)) or
+    for ftype in ['formats-gpl', 'formats-bsd']:
+        formatsDir = os.path.join(
+            componentsDir, ftype, 'src', 'loci', 'formats', 'in')
+        for f in os.listdir(formatsDir):
+            if (not os.path.isfile(os.path.join(formatsDir, f)) or
                     not f.endswith('Reader.java')):
                 continue
-            readers.append(os.path.join(d, f))
+            readers.append(os.path.join(formatsDir, f))
     return readers
+
 readers = get_readers()
 
 HEADER = """
@@ -96,8 +92,8 @@ HEADER = """
 
 """
 
-def find_xml_match(element):
 
+def find_xml_match(element):
     candidates = []
     for xml_element in xml_elements:
         if not element.startswith(xml_element):
@@ -107,11 +103,10 @@ def find_xml_match(element):
     if len(candidates) == 0:
         return
 
-    if len(candidates) == 3:
-        raise Exception('3 solutions')
+    if len(candidates) > 2:
+        raise Exception('Found more than 2 matching XML elements')
 
     return max(candidates, key=len)
-
 
 import re
 pattern = re.compile('store\.set(\w+)')
