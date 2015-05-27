@@ -235,9 +235,11 @@ public class ColumbusReader extends FormatReader {
 
     String[] parentDirectories = parent.list(true);
     Arrays.sort(parentDirectories);
+    ArrayList<String> timepointDirs = new ArrayList<String>();
     for (String file : parentDirectories) {
       Location absFile = new Location(parent, file);
       if (absFile.isDirectory()) {
+        timepointDirs.add(absFile.getAbsolutePath());
         for (String f : absFile.list(true)) {
           if (!checkSuffix(f, "tif")) {
             if (!metadataFiles.contains(file + File.separator + f)) {
@@ -251,11 +253,12 @@ public class ColumbusReader extends FormatReader {
     for (int i=0; i<metadataFiles.size(); i++) {
       String metadataFile = metadataFiles.get(i);
       int end = metadataFile.indexOf(File.separator);
-      String timepointPath = end < 0 ? "" : metadataFile.substring(0, end);
+      String timepointPath =
+        end < 0 ? "" : parent + File.separator + metadataFile.substring(0, end);
       String path = new Location(parent + File.separator + metadataFile).getAbsolutePath();
       metadataFiles.set(i, path);
       if (checkSuffix(path, "columbusidx.xml")) {
-        parseImageXML(path, DataTools.indexOf(parentDirectories, timepointPath));
+        parseImageXML(path, timepointDirs.indexOf(timepointPath));
       }
     }
 
