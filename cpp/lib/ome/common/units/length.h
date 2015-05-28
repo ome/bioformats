@@ -502,13 +502,13 @@ namespace ome
       typedef quantity<mile_unit> mile_quantity;
 
       /// Unit definition for astronomical unit length.
-      typedef boost::units::astronomical::astronomical_unit_base_unit::unit_type astronomical_unit_type;
+      typedef boost::units::astronomical::astronomical_unit_base_unit::unit_type astronomical_unit_unit;
       /// Numeric constant for astronomical unit.
-      BOOST_UNITS_STATIC_CONSTANT(astronomical_unit, astronomical_unit_type);
+      BOOST_UNITS_STATIC_CONSTANT(astronomical_unit, astronomical_unit_unit);
       /// Numeric constant for astronomical unit.
-      BOOST_UNITS_STATIC_CONSTANT(astronomical_units, astronomical_unit_type);
+      BOOST_UNITS_STATIC_CONSTANT(astronomical_units, astronomical_unit_unit);
       /// Measured quantity in astronomical_unit.
-      typedef quantity<astronomical_unit_type> astronomical_unit_quantity;
+      typedef quantity<astronomical_unit_unit> astronomical_unit_quantity;
 
       /// Unit definition for light year length.
       typedef boost::units::astronomical::light_year_base_unit::unit_type light_year_unit;
