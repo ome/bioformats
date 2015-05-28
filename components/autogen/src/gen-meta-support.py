@@ -25,43 +25,9 @@
 # #L%
 ###
 
-import os
-
-currentDir = os.path.dirname(__file__)
-outputFile = os.path.join(currentDir, 'meta-support.txt')
-componentsDir = os.path.abspath(os.path.join(currentDir, '..', '..'))
-commonClasses = os.path.join(
-    componentsDir, 'formats-api', 'src', 'loci', 'formats',
-    'MetadataTools.java')
-
-
-def get_xml_elements():
-    """List all XML elements from the model"""
-    elements = []
-    modelDir = os.path.join(
-        componentsDir, 'ome-xml', 'build', 'src', 'ome', 'xml', 'model')
-    for f in os.listdir(modelDir):
-        if not os.path.isfile(os.path.join(modelDir, f)):
-            continue
-        elements.append(os.path.basename(f).rstrip('.java'))
-    return elements
-xml_elements = get_xml_elements()
-
-
-def get_readers():
-    """List all GPL and BSD readers"""
-    readers = []
-    for ftype in ['formats-gpl', 'formats-bsd']:
-        formatsDir = os.path.join(
-            componentsDir, ftype, 'src', 'loci', 'formats', 'in')
-        for f in os.listdir(formatsDir):
-            if (not os.path.isfile(os.path.join(formatsDir, f)) or
-                    not f.endswith('Reader.java')):
-                continue
-            readers.append(os.path.join(formatsDir, f))
-    return readers
-
-readers = get_readers()
+from os import listdir
+import re
+from os.path import basename, dirname, join, abspath, isfile
 
 HEADER = """# This file documents the metadata support for each file format that
 # Bio-Formats can handle. Default value for unlisted properties is Missing,
@@ -91,13 +57,47 @@ HEADER = """# This file documents the metadata support for each file format that
 
 """
 
+currentDir = dirname(__file__)
+outputFile = join(currentDir, 'meta-support.txt')
+componentsDir = abspath(join(currentDir, '..', '..'))
 
-def find_xml_match(element):
-    candidates = []
-    for xml_element in xml_elements:
-        if not element.startswith(xml_element):
+
+def is_file(f, ftype=".java"):
+
+    return isfile(f) and f.endswith(ftype)
+
+
+def get_xml_elements():
+    """List all XML elements from the model"""
+    elements = []
+    modelDir = join(
+        componentsDir, 'ome-xml', 'build', 'src', 'ome', 'xml', 'model')
+    for f in listdir(modelDir):
+        if not is_file(join(modelDir, f)):
             continue
-        candidates.append(xml_element)
+        elements.append(basename(f).rstrip('.java'))
+    return elements
+
+
+def get_readers():
+    """List all GPL and BSD readers"""
+    readers = []
+    for ftype in ['formats-gpl', 'formats-bsd']:
+        formatsDir = join(componentsDir, ftype, 'src', 'loci', 'formats', 'in')
+        for f in listdir(formatsDir):
+            if not is_file(join(formatsDir, f), ftype="Reader.java"):
+                continue
+            readers.append(join(formatsDir, f))
+    return readers
+
+
+def split_element(s, elements):
+    """Split a string using a list of starting elements"""
+    candidates = []
+    for element in elements:
+        if not s.startswith(element):
+            continue
+        candidates.append(element)
 
     if len(candidates) == 0:
         return
@@ -105,30 +105,45 @@ def find_xml_match(element):
     if len(candidates) > 2:
         raise Exception('Found more than 2 matching XML elements')
 
-    return max(candidates, key=len)
+    # If more than 1 element is found, use the longest one
+    found_element = max(candidates, key=len)
+    return "%s.%s" % (s[0:len(found_element)], s[len(found_element):])
 
-import re
+# Look for Metadatastore setter metthods
 pattern = re.compile('store\.set(\w+)')
 
-with open(commonClasses) as f:
+# Register Metadatastore setter calls in MetadataTools
+metadatatools = join(componentsDir, 'formats-api', 'src', 'loci', 'formats',
+                     'MetadataTools.java')
+commonElements = []
+with open(metadatatools) as f:
     commonElements = pattern.findall(f.read())
+
+# Read XML elements from the model
+xml_elements = get_xml_elements()
 
 with open(outputFile, 'w') as f:
     f.write(HEADER)
 
-    for reader in readers:
-        readername = os.path.basename(reader).rstrip('.java')
+    for reader in get_readers():
+        # Open the reader for parsing
+        readername = basename(reader).rstrip('.java')
         print "Parsing %s" % readername
         f.write("[%s]\n" % readername)
         text = open(reader).read()
+
+        # Find Metadatastore setter calls
         r = pattern.findall(text)
         r.extend(commonElements)
 
-        if r:
-            r = set(r)
-            for element in sorted(r):
-                xml = find_xml_match(element)
-                if xml:
-                    f.write("%s.%s = Yes\n" % (
-                        element[0:len(xml)], element[len(xml):]))
+        if not r:
+            f.write("\n")
+            continue
+
+        # Enforce unique elements
+        r = set(r)
+        for metadata_element in sorted(r):
+            split_metadata = split_element(metadata_element, xml_elements)
+            if split_metadata:
+                f.write("%s = Yes\n" % split_metadata)
         f.write("\n")
