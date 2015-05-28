@@ -74,6 +74,32 @@ Methods to override
   Also, ``super.initFile(String)`` constructs a Hashtable called "metadata"
   where you should store any relevant metadata.
 
+  The most common way to set up the OME-XML metadata for the reader is to
+  initialize the MetadataStore using the
+  :javadoc:`makeFilterMetadata() <loci/formats/FormatReader.html#makeFilterMetadata()>` method and populate the
+  Pixels elements of the metadata store from the ``core`` variable using the
+  :javadoc:`MetadataTools.populatePixels(MetadataStore, FormatReader) <loci/formats/MetadataTools.html#populatePixels(loci.formats.meta.MetadataStore, loci.formats.IFormatReader)>` method::
+
+    # Initialize the OME-XML metadata from the core variable
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this);
+
+  If the reader includes metadata at the plane level, you can initialize the
+  Plane elements under the Pixels using
+  :javadoc:`MetadataTools.populatePixels(MetadataStore, FormatReader, doPlane) <loci/formats/MetadataTools.html#populatePixels(loci.formats.meta.MetadataStore, loci.formats.IFormatReader, boolean)>`::
+
+    MetadataTools.populatePixels(store, this, true);
+
+  Once the metadatastore has been initialized with the core properties,
+  additional metadata can be added to it using the setter methods. Note that
+  for each of the model components, the ``setObjectID()`` method should be
+  called before any of the ``setObjectProperty()``, e.g.::
+
+    # Add an oil immersion objective with achromat
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveImmersion(getImmersion("Oil"), 0, 0);
+
 - :javadoc:`close(boolean) <loci/formats/IFormatReader.html#close(boolean)>`
   Cleans up any resources used by the reader.  Global variables should be
   reset to their initial state, and any open files or delegate readers should
