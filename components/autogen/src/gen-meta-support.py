@@ -63,8 +63,7 @@ def get_readers():
 
 readers = get_readers()
 
-HEADER = """
-# This file documents the metadata support for each file format that
+HEADER = """# This file documents the metadata support for each file format that
 # Bio-Formats can handle. Default value for unlisted properties is Missing,
 # indicating that the property cannot be represented in the format, or our
 # knowledge regarding the property regarding this format is incomplete.
