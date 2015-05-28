@@ -72,7 +72,7 @@ def get_xml_elements():
     elements = []
     modelDir = join(
         componentsDir, 'ome-xml', 'build', 'src', 'ome', 'xml', 'model')
-    for f in listdir(modelDir):
+    for f in sorted(listdir(modelDir)):
         if not is_file(join(modelDir, f)):
             continue
         elements.append(basename(f).rstrip('.java'))
