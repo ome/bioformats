@@ -100,7 +100,7 @@ Methods to override
   Once the metadatastore has been initialized with the core properties,
   additional metadata can be added to it using the setter methods. Note that
   for each of the model components, the ``setObjectID()`` method should be
-  called before any of the ``setObjectProperty()``, e.g.::
+  called before any of the ``setObjectProperty()`` methods, e.g.::
 
     # Add an oil immersion objective with achromat
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
