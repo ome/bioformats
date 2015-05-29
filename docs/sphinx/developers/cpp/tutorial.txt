@@ -579,5 +579,5 @@ Full example source: :download:`metadata-formatwriter.cpp <examples/metadata-for
 .. seealso::
 
   - :doxygen:`FormatWriter <classome_1_1bioformats_1_1FormatWriter.html>`
-  - :doxygen:`TIFFWriter <classome_1_1bioformats_1_1in_1_1TIFFWriter.html>`
-  - :doxygen:`OMETIFFWriter <classome_1_1bioformats_1_1in_1_1OMETIFFWriter.html>`
+  - :doxygen:`TIFFWriter <classome_1_1bioformats_1_1out_1_1MinimalTIFFWriter.html>`
+  - :doxygen:`OMETIFFWriter <classome_1_1bioformats_1_1out_1_1OMETIFFWriter.html>`
