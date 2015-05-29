@@ -211,7 +211,7 @@ public class TestTools {
     String configDir = config.getConfigDirectory();
     boolean useConfigDir = (configDir != null);
 
-    ArrayList<String> subsList = new ArrayList<String>();
+    List<String> subsList = new ArrayList<String>();
 
     if (useConfigDir) {
       // Look for a configuration file under the configuration directory
