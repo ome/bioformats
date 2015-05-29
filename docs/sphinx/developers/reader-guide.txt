@@ -25,10 +25,12 @@ Methods to override
   can be handled individually.  The return value should be one of the
   following:
 
-  * ``FormatTools.MUST_GROUP``: the files cannot be handled separately
-  * ``FormatTools.CAN_GROUP``: the files may be handled separately or as a single
-    unit
-  * ``FormatTools.CANNOT_GROUP``: the files must be handled separately
+  * :javadoc:`FormatTools.MUST_GROUP <loci/formats/FormatTools.html#MUST_GROUP>`:
+    the files cannot be handled separately
+  * :javadoc:`FormatTools.CAN_GROUP <loci/formats/FormatTools.html#CAN_GROUP>`:
+    the files may be handled separately or as a single unit
+  * :javadoc:`FormatTools.CANNOT_GROUP <loci/formats/FormatTools.html#CANNOT_GROUP>`:
+    the files must be handled separately
 
   This method only needs to be overridden for formats whose datasets can
   contain more than one file.
@@ -42,21 +44,25 @@ Methods to override
   For an example of how this works, see
   :bfreader:`loci.formats.in.PerkinElmerReader <PerkinElmerReader.java>`. It
   is recommended that the first line of this method be
-  ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file name
-  is non-null.
+  ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file
+  name is non-null.
 
 - :javadoc:`openBytes(int, byte[], int, int, int, int) <loci/formats/IFormatReader.html#openBytes(int, byte[], int, int, int, int)>`
   Returns a byte array containing the pixel data for a subimage specified
   image from the given file.  The dimensions of the subimage (upper left X
   coordinate, upper left Y coordinate, width, and height) are specified in the
-  final four int parameters.  This should throw a ``FormatException`` if the image
+  final four int parameters.  This should throw a
+  :javadoc:`FormatException <loci/formats/FormatException.html>` if the image
   number is invalid (less than 0 or >= the number of images).  The ordering of
   the array returned by openBytes should correspond to the values returned by
-  ``isLittleEndian()`` and ``isInterleaved()``.  Also, the length of the
-  byte array should be [image width * image height * bytes per pixel].  Extra
-  bytes will generally be truncated. It is recommended that the first line of
-  this method be ``FormatTools.checkPlaneParameters(this, no, buf.length, x, y,
-  w, h)`` - this ensures that all of the parameters are valid.
+  :javadoc:`isLittleEndian <loci/formats/IFormatReader.html#isLittleEndian()>`
+  and
+  :javadoc:`isInterleaved <loci/formats/IFormatReader.html#isInterleaved()>`.
+  Also, the length of the byte array should be [image width * image height *
+  bytes per pixel].  Extra bytes will generally be truncated. It is recommended
+  that the first line of this method be
+  ``FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h)`` -
+  this ensures that all of the parameters are valid.
 
 - :javadoc:`initFile(java.lang.String) <loci/formats/FormatReader.html#initFile(java.lang.String)>`
   The majority of the file parsing logic should be placed in this method.  The
@@ -65,13 +71,14 @@ Methods to override
   ``super.initFile(String)``.  You will also need to set up the stream for
   reading the file, as well as initializing any dimension information and
   metadata.
-  Most of this logic is up to you; however, you should populate the 'core'
-  variable (see
+  Most of this logic is up to you; however, you should populate the
+  :javadoc:`core <loci/formats/FormatReader.html#core>` variable (see
   :javadoc:`loci.formats.CoreMetadata <loci/formats/CoreMetadata.html>`).
 
   Note that each variable is initialized to 0 or null when
   ``super.initFile(String)`` is called.
-  Also, ``super.initFile(String)`` constructs a Hashtable called "metadata"
+  Also, ``super.initFile(String)`` constructs a Hashtable called
+  :javadoc:`metadata <loci/formats/FormatReader.html#metadata>`
   where you should store any relevant metadata.
 
   The most common way to set up the OME-XML metadata for the reader is to
