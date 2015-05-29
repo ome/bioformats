@@ -95,6 +95,9 @@ public class ConfigurationTree {
    *
    */
   public ConfigurationTree(String rootDir, String configDir) {
+    if (rootDir == null) {
+      throw new IllegalArgumentException("rootDir cannot be null.");
+    }
     this.rootDir = new File(rootDir).getAbsolutePath();
     if (configDir != null) {
         this.configDir = new File(configDir).getAbsolutePath();
