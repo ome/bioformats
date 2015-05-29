@@ -84,7 +84,7 @@ def get_readers():
     readers = []
     for ftype in ['formats-gpl', 'formats-bsd']:
         formatsDir = join(componentsDir, ftype, 'src', 'loci', 'formats', 'in')
-        for f in listdir(formatsDir):
+        for f in sorted(listdir(formatsDir)):
             if not is_file(join(formatsDir, f), ftype="Reader.java"):
                 continue
             readers.append(join(formatsDir, f))
