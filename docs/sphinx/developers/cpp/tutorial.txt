@@ -488,10 +488,11 @@ with OME-XML metadata).
 
 Using a reader involves these steps:
 
-#. Create a reader instance
-#. Set options to control reader behavior
-#. Call :cpp:func:`setId` to specify the image file to read
-#. Retrieve desired metadata and pixel data
+#. Create a reader instance.
+#. Set options to control reader behavior.
+#. Call :cpp:func:`setId` to specify the image file to read.
+#. Retrieve desired metadata and pixel data.
+#. Close the reader.
 
 These steps are illustrated in this example:
 
@@ -539,12 +540,13 @@ OME-TIFF (TIFF with OME-XML metadata).
 
 Using a writer involves these steps:
 
-#. Create a writer instance
-#. Set metadata store to use
-#. Set options to control writer behavior
-#. Call :cpp:func:`setId` to specify the image file to write
+#. Create a writer instance.
+#. Set metadata store to use.
+#. Set options to control writer behavior.
+#. Call :cpp:func:`setId` to specify the image file to write.
 #. Store pixel data for each plane of each image in the specified
-   dimension order
+   dimension order.
+#. Close the writer.
 
 These steps are illustrated in this example:
 
