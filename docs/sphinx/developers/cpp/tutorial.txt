@@ -50,10 +50,10 @@ certain modifications to the data model may only be made via direct
 access to the model objects, otherwise the higher-level metadata store
 interface should be preferred.
 
-The header :file:`ome/bioformats/MetadataTools.h` provides several
-convenience functions to work with and manipulate the various forms of
-metadata, including conversion of Core metadata to and from a metadata
-store.
+The header file :doxygen:`ome/bioformats/MetadataTools.h
+<MetadataTools_8h_source.html>` provides several convenience functions
+to work with and manipulate the various forms of metadata, including
+conversion of Core metadata to and from a metadata store.
 
 Core metadata
 ^^^^^^^^^^^^^
@@ -74,8 +74,9 @@ themselves are more of an implementation detail at present.
 If implementing a reader, it is fairly typical to set the basic image
 metadata in :cpp:class:`CoreMetadata` objects, and then use the
 :cpp:func:`fillMetadata` function in
-:file:`ome/bioformats/MetadataTools.h` to fill the reader's metadata
-store with this information, before filling the metadata store with
+:doxygen:`ome/bioformats/MetadataTools.h
+<MetadataTools_8h_source.html>` to fill the reader's metadata store
+with this information, before filling the metadata store with
 additional (non-core) metadata as required.  When writing an image, a
 metadata store is required in order to provide the writer with all the
 metadata needed to write an image.  If the metadata store was not
