@@ -172,6 +172,11 @@ public class NDPIReader extends BaseTiffReader {
       try {
         service.close();
         long[] markers = ifd.getIFDLongArray(MARKER_TAG);
+        if (!use64Bit) {
+          for (int i=0; i<markers.length; i++) {
+            markers[i] = markers[i] & 0xffffffffL;
+          }
+        }
         if (markers != null) {
           service.setRestartMarkers(markers);
         }

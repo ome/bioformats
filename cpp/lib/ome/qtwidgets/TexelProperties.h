@@ -35,8 +35,8 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_TEXELPROPERTIES_H
-#define OME_BIOFORMATS_TEXELPROPERTIES_H
+#ifndef OME_QTWIDGETS_TEXELPROPERTIES_H
+#define OME_QTWIDGETS_TEXELPROPERTIES_H
 
 #include <ome/bioformats/PixelProperties.h>
 
@@ -46,7 +46,7 @@
 
 namespace ome
 {
-  namespace bioformats
+  namespace qtwidgets
   {
 
     /**
@@ -442,7 +442,7 @@ namespace ome
   }
 }
 
-#endif // OME_BIOFORMATS_TEXELPROPERTIES_H
+#endif // OME_QTWIDGETS_TEXELPROPERTIES_H
 
 /*
  * Local Variables:

@@ -64,6 +64,10 @@ public final class MetadataConverter {
 
   // -- Constructor --
 
+  /**
+   * Private constructor; all methods in MetadataConverter
+   * are static, so this should not be called.
+   */
   private MetadataConverter() { }
 
   // -- MetadataConverter API methods --
@@ -101,6 +105,11 @@ public final class MetadataConverter {
 
   // -- Helper methods --
 
+  /**
+   * Convert all BooleanAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertBooleanAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -157,6 +166,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all CommentAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertCommentAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -213,6 +227,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Dataset attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertDatasets(MetadataRetrieve src, MetadataStore dest)
   {
     int datasets = 0;
@@ -279,6 +298,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all DoubleAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertDoubleAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -335,6 +359,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Experiment attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertExperiments(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -442,6 +471,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Experimenter attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertExperimenters(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -510,6 +544,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all ExperimenterGroup attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertExperimenterGroups(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -580,6 +619,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all FileAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertFileAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -648,6 +692,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Image attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertImages(MetadataRetrieve src, MetadataStore dest) {
     int imageCount = 0;
     try {
@@ -1278,6 +1327,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Instrument attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertInstruments(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -1742,6 +1796,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all ListAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertListAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -1792,6 +1851,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all LongAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertLongAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -1848,6 +1912,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all MapAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertMapAnnotations(MetadataRetrieve src, MetadataStore dest)
   {
     int mapAnnotationCount = 0;
@@ -1903,6 +1972,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Plate attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertPlates(MetadataRetrieve src, MetadataStore dest) {
     int plateCount = 0;
     try {
@@ -2191,6 +2265,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Project attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertProjects(MetadataRetrieve src, MetadataStore dest)
   {
     int projectCount = 0;
@@ -2259,6 +2338,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all ROI attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertROIs(MetadataRetrieve src, MetadataStore dest) {
     int roiCount = 0;
     try {
@@ -3417,6 +3501,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all Screen attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertScreens(MetadataRetrieve src, MetadataStore dest) {
     int screenCount = 0;
     try {
@@ -3554,6 +3643,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all TagAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertTagAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -3610,6 +3704,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all TermAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertTermAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -3666,6 +3765,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all TimestampAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertTimestampAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -3722,6 +3826,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all XMLAnnotation attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertXMLAnnotations(MetadataRetrieve src,
     MetadataStore dest)
   {
@@ -3778,6 +3887,12 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all LightSource attributes for the given instrument.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   * @param instrumentIndex the index of the Instrument to convert
+   */
   private static void convertLightSources(MetadataRetrieve src,
     MetadataStore dest, int instrumentIndex)
   {
@@ -4230,6 +4345,11 @@ public final class MetadataConverter {
     }
   }
 
+  /**
+   * Convert all top-level attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
   private static void convertRootAttributes(MetadataRetrieve src, MetadataStore dest)
   {
     try {

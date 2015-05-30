@@ -1096,7 +1096,7 @@ public class FileStitcher extends ReaderWrapper {
     lenC[sno] = new int[numC + 1];
     lenT[sno] = new int[numT + 1];
     lenZ[sno][0] = sizeZ[sno];
-    lenC[sno][0] = sizeC[sno];
+    lenC[sno][0] = sizeC[sno] / reader.getRGBChannelCount();
     lenT[sno][0] = sizeT[sno];
 
     for (int i=0, z=1, c=1, t=1; i<count.length; i++) {
@@ -1121,10 +1121,7 @@ public class FileStitcher extends ReaderWrapper {
       }
     }
     ms.imageCount = ms.sizeZ * ms.sizeT;
-    if (!isRGB()) {
-      ms.imageCount *= ms.sizeC;
-    }
-    else ms.imageCount *= reader.getEffectiveSizeC();
+    ms.imageCount *= (ms.sizeC / reader.getRGBChannelCount());
 
     ms.moduloC = reader.getModuloC();
     ms.moduloZ = reader.getModuloZ();

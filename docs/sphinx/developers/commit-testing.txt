@@ -44,7 +44,7 @@ On Windows, the arguments to the test command must be quoted:
 
     > ant "-Dtestng.directory=$DATA\metamorph" test-automated
 
-By default, 512 MB of memory are allocated to the JVM. You can increase
+By default, 512 MB of memory are allocated to the |JVM|. You can increase
 this by adding the '-Dtestng.memory=XXXm' option. You should now see
 output similar to this:
 

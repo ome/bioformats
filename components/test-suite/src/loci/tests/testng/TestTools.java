@@ -296,7 +296,8 @@ public class TestTools {
         LOGGER.debug("\tdirectory");
         getFiles(subsList.get(i), files, config, null, null, configFileSuffix);
       }
-      else if (!subsList.get(i).endsWith("readme.txt")) {
+      else if (!subsList.get(i).endsWith("readme.txt") &&
+               !subsList.get(i).endsWith("test_setup.ini")) {
         if (typeTester.isThisType(subsList.get(i))) {
           LOGGER.debug("\tOK");
           files.add(file.getAbsolutePath());
