@@ -196,7 +196,7 @@ public interface MetadataStore extends BaseMetadata
         /**
          * Set the BigEndian property of Pixels.
          *
-         * @param bigEndian @c true if big endian, or @c false if little endian.
+         * @param bigEndian true if big endian, or false if little endian.
          * @param imageIndex the Image index.
          * @param binDataIndex BinData index (unused).
          */
