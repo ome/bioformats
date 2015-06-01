@@ -128,7 +128,7 @@ namespace ome
               if (coreIndex != reader.getCoreIndex())
                 reader.setCoreIndex(coreIndex);
               if (plane != reader.getPlane())
-                reader.setCoreIndex(plane);
+                reader.setPlane(plane);
             }
           catch (...)
             {
