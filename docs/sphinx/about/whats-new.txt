@@ -8,7 +8,8 @@ Version history
 * OME-TIFF export: switch to BigTIFF if .ome.tf2, .ome.tf8, or .ome.btf
   extensions are used
 * Improved MATLAB developer documentation
-* Added SlideBook reader that uses the SDK from 3I (thanks to Richard Myers)
+* Added SlideBook reader that uses the SDK from 3I (thanks to Richard Myers
+  and `3I - Intelligent Imaging Innovations <https://www.intelligent-imaging.com>`_)
 * Preliminary work to make MATLAB toolbox work with Octave
 * Many bug fixes, including:
     - ImageJ
