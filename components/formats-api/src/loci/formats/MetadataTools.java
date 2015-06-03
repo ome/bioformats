@@ -94,8 +94,8 @@ public final class MetadataTools {
    * with {@code doPlane} set to {@code false} and {@code doImageName} set to
    * {@code true}.
    *
-   * @param store The metadata store which Pixels should be populated
-   * @param r     The format reader which core metadata should be used
+   * @param store The metadata store whose Pixels should be populated
+   * @param r     The format reader whose core metadata should be used
    */
   public static void populatePixels(MetadataStore store, IFormatReader r) {
     populatePixels(store, r, false, true);
@@ -110,9 +110,9 @@ public final class MetadataTools {
    * {@link #populatePixels(MetadataStore, IFormatReader, boolean, boolean)}
    * with {@code doImageName} set to {@code true}.
    *
-   * @param store   The metadata store which Pixels should be populated
-   * @param r       The format reader which core metadata should be used
-   * @param doPlane Specifies whether Plane elements should be populatedZZ
+   * @param store   The metadata store whose Pixels should be populated
+   * @param r       The format reader whose core metadata should be used
+   * @param doPlane Specifies whether Plane elements should be populated
    */
   public static void populatePixels(MetadataStore store, IFormatReader r,
     boolean doPlane)
@@ -127,8 +127,8 @@ public final class MetadataTools {
    * {@code doImageName} flag is set, then the image name will be populated as
    * well.
    *
-   * @param store       The metadata store which Pixels should be populated
-   * @param r           The format reader which core metadata should be used
+   * @param store       The metadata store whose Pixels should be populated
+   * @param r           The format reader whose core metadata should be used
    * @param doPlane     Specifies whether Plane elements should be populated
    * @param doImageName Specifies whether the Image name should be populated
    */
