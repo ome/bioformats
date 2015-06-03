@@ -41,12 +41,32 @@
 #include <ome/common/units/angle.h>
 
 typedef ::testing::Types<
-  UnitConversion<radian_quantity, gradian_quantity>,
-  UnitConversion<radian_quantity, degree_quantity>,
-  UnitConversion<gradian_quantity, radian_quantity>,
-  UnitConversion<gradian_quantity, degree_quantity>,
-  UnitConversion<degree_quantity, radian_quantity>,
-  UnitConversion<degree_quantity, gradian_quantity>
+  UnitConversion<radian_quantity,  gradian_quantity, -10>,
+  UnitConversion<radian_quantity,  degree_quantity,  -10>,
+  UnitConversion<gradian_quantity, radian_quantity,  -10>,
+  UnitConversion<gradian_quantity, degree_quantity,  -10>,
+  UnitConversion<degree_quantity,  radian_quantity,  -10>,
+  UnitConversion<degree_quantity,  gradian_quantity, -10>
   > AngleTestTypes;
 
+typedef ::testing::Types<
+  UnitTypeConversion<radian_unit,  gradian_unit, float, -7>,
+  UnitTypeConversion<radian_unit,  degree_unit,  float, -7>,
+  UnitTypeConversion<gradian_unit, radian_unit,  float, -7>,
+  UnitTypeConversion<gradian_unit, degree_unit,  float, -7>,
+  UnitTypeConversion<degree_unit,  radian_unit,  float, -7>,
+  UnitTypeConversion<degree_unit,  gradian_unit, float, -7>
+  > AngleFloatTestTypes;
+
+typedef ::testing::Types<
+  UnitTypeConversion<radian_unit,  gradian_unit, long double, -10>,
+  UnitTypeConversion<radian_unit,  degree_unit,  long double, -10>,
+  UnitTypeConversion<gradian_unit, radian_unit,  long double, -10>,
+  UnitTypeConversion<gradian_unit, degree_unit,  long double, -10>,
+  UnitTypeConversion<degree_unit,  radian_unit,  long double, -10>,
+  UnitTypeConversion<degree_unit,  gradian_unit, long double, -10>
+  > AngleLongDoubleTestTypes;
+
 INSTANTIATE_TYPED_TEST_CASE_P(AngleTest, UnitConv, AngleTestTypes);
+INSTANTIATE_TYPED_TEST_CASE_P(AngleFloatTest, UnitConv, AngleFloatTestTypes);
+INSTANTIATE_TYPED_TEST_CASE_P(AngleLongDoubleTest, UnitConv, AngleLongDoubleTestTypes);

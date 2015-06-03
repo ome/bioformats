@@ -39,6 +39,7 @@
 #ifndef TEST_UNITS_H
 #define TEST_UNITS_H
 
+#include <cmath>
 #include <iomanip>
 #include <map>
 #include <string>
@@ -91,6 +92,7 @@ public:
   std::string from_name;
   std::string to_name;
   std::vector<test_op> ops;
+  typename T::value_type precision;
 
   void
   SetUp()
@@ -105,6 +107,8 @@ public:
     ASSERT_TRUE(i != test_data.end());
 
     ops = i->second;
+
+    precision = T::getPrecision();
   }
 };
 
@@ -118,7 +122,7 @@ TYPED_TEST_P(UnitConv, DefaultConstruct)
 
 TYPED_TEST_P(UnitConv, Conversion)
 {
-  std::cerr << "Testing unit conversion from " << this->from_name << " to " << this->to_name << " (" << this->ops.size() << " tests)\n";
+  std::cerr << "Testing unit conversion from " << this->from_name << " to " << this->to_name << " (" << this->ops.size() << " tests, precision=" << this->precision << ")\n";
 
   for (typename std::vector<test_op>::const_iterator i = this->ops.begin();
        i != this->ops.end();
@@ -131,7 +135,7 @@ TYPED_TEST_P(UnitConv, Conversion)
       // conversions between imperial and metric, and the worst
       // culprits are torr and mmHg conversion to Pa (in the mmHg
       // case, the constant used is of low precision)
-      EXPECT_NEAR(i->expected, quantity_cast<double>(obs), 1.0e-4);
+      EXPECT_NEAR(i->expected, quantity_cast<typename TypeParam::value_type>(obs), this->precision);
     }
 }
 
@@ -160,11 +164,36 @@ REGISTER_TYPED_TEST_CASE_P(UnitConv,
                            Conversion,
                            StreamOutput);
 
-template<typename From, typename To>
+// Test conversion using the custom _quantity typedefs,
+// i.e. defaulting to double-precision float.  The tests default to
+// 10e-10 precision.
+
+template<typename From, typename To, int Precision>
 struct UnitConversion
 {
   typedef From from_type;
   typedef To to_type;
+  typedef double value_type;
+
+  static value_type getPrecision() { return std::pow(10.0, Precision); }
+};
+
+// Test conversion using a quantity of specified value type.  float
+// tests default to 1e-4 precision, but higher precision will be seen
+// for tests using small values.  These tests are not repeated for
+// most unit types; they are primarily to demonstrate use of different
+// quantity value types in place of the double default.  Note the huge
+// inaccuracy for large values compared with double, where all but
+// extremely large results have a precision in excess of 1e-10.
+
+template<typename From, typename To, typename Value, int Precision>
+struct UnitTypeConversion
+{
+  typedef typename boost::units::quantity<From, Value> from_type;
+  typedef boost::units::quantity<To, Value> to_type;
+  typedef Value value_type;
+
+  static value_type getPrecision() { return static_cast<Value>(std::pow(10.0, Precision)); }
 };
 
 #endif // TEST_UNITS_H
