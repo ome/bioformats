@@ -66,6 +66,8 @@ struct test_op
   double initial;
   double expected;
   std::string expected_output;
+  std::string model_enum;
+  std::string expected_model_output;
 };
 
 // From unit name, to unit name, test data

@@ -85,7 +85,7 @@ namespace
             std::vector<std::string> tokens;
             boost::split(tokens, line, boost::is_any_of("\t"), boost::token_compress_off);
 
-            if (tokens.size() == 5)
+            if (tokens.size() == 7)
               {
                 try
                   {
@@ -111,9 +111,11 @@ namespace
                         throw;
                       }
                     std::string to_output = tokens[4];
+                    std::string model_symbol = tokens[5];
+                    std::string model_output = tokens[6];
 
                     test_map::key_type k(from_unit, to_unit);
-                    test_op v = { from_value, to_value, to_output };
+                    test_op v = { from_value, to_value, to_output, model_symbol, model_output };
 
                     test_map::iterator i = ret.find(k);
                     if (i != ret.end())
