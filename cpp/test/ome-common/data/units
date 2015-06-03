@@ -298,6 +298,8 @@ angstrom	nanometer	42.121	4.2121	4.212 nm	nm	4.212 nm
 micrometer	angstrom	8.7123	87123	8.712e+04 A	Å	8.712e+04 Å
 thou	millimeter	20.0	0.508	0.508 mm	mm	0.508 mm
 centimeter	thou	8.0	3149.6062992126	3150 thou	thou	3150 thou
+line	millimeter	1.0	2.1166666666666667	2.117 mm	mm	2.117 mm
+centimeter	line	2.2	10.393700787401580	10.39 li	li	10.39 li
 inch	centimeter	2.0	5.08	5.08 cm	cm	5.08 cm
 meter	inch	1.2	47.244094488189	47.24 in	in	47.24 in
 foot	meter	0.1	0.03048	0.03048 m	m	0.03048 m
@@ -312,6 +314,8 @@ light year	terameter	4.2	39735.0679848394	3.974e+04 Tm	Tm	3.974e+04 Tm
 petameter	light year	102.0	10.7814085070511	10.78 ly	ly	10.78 ly
 parsec	petameter	12.9	398.052408009268	398.1 Pm	Pm	398.1 Pm
 exameter	parsec	2.4	77.7787029472741	77.78 psc	pc	77.78 pc
+point	centimeter	60.0	2.11666666666666	2.117 cm	cm	2.117 cm
+millimeter	point	53.2	150.80314960629936	150.8 pt	pt	150.8 pt
 
 # Reference frame has no conversions (undefined scale)
 reference frame	reference frame	10.0	10.0	10 r.f.	reference frame	10 reference frame

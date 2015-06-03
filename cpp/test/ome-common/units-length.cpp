@@ -99,6 +99,8 @@ typedef ::testing::Types<
   UnitConversion<micrometre_quantity,        angstrom_quantity,          -10>,
   UnitConversion<thou_quantity,              millimetre_quantity,        -10>,
   UnitConversion<centimetre_quantity,        thou_quantity,              -10>,
+  UnitConversion<line_quantity,              millimetre_quantity,        -10>,
+  UnitConversion<centimetre_quantity,        line_quantity,              -10>,
   UnitConversion<inch_quantity,              centimetre_quantity,        -10>,
   UnitConversion<metre_quantity,             inch_quantity,              -10>,
   UnitConversion<foot_quantity,              metre_quantity,             -10>,
@@ -113,6 +115,8 @@ typedef ::testing::Types<
   UnitConversion<petametre_quantity,         light_year_quantity,        -10>,
   UnitConversion<parsec_quantity,            petametre_quantity,          -5>,
   UnitConversion<exametre_quantity,          parsec_quantity,             -7>,
+  UnitConversion<point_quantity,             centimetre_quantity,        -10>,
+  UnitConversion<millimetre_quantity,        point_quantity,             -10>,
   UnitConversion<pixel_quantity,             pixel_quantity,             -10>,
   UnitConversion<reference_frame_quantity,   reference_frame_quantity,   -10>
   > NonstandardLengthTestTypes;

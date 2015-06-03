@@ -456,8 +456,10 @@ namespace ome
       /// Measured quantity in thous.
       typedef quantity<thou_unit> thou_quantity;
 
+      /// Base unit definition for line length (defined as 1/12 inch, used in botany).
+      typedef scaled_base_unit<boost::units::imperial::inch_base_unit, scale<12, static_rational<-1> > > line_base_unit;
       /// Unit definition for line length (defined as 1/12 inch, used in botany).
-      typedef scaled_base_unit<boost::units::imperial::inch_base_unit, scale<12, static_rational<-1> > >::unit_type line_unit;
+      typedef line_base_unit::unit_type line_unit;
       /// Numeric constant for line.
       BOOST_UNITS_STATIC_CONSTANT(line, line_unit);
       /// Numeric constant for line.
@@ -528,8 +530,10 @@ namespace ome
       /// Measured quantity in parsecs.
       typedef quantity<parsec_unit> parsec_quantity;
 
+      /// Base unit definition for point length.
+      typedef scaled_base_unit<boost::units::imperial::inch_base_unit, scale<72, static_rational<-1> > > point_base_unit;
       /// Unit definition for point length.
-      typedef scaled_base_unit<boost::units::imperial::inch_base_unit, scale<72, static_rational<-1> > >::unit_type point_unit;
+      typedef point_base_unit::unit_type point_unit;
       /// Numeric constant for point.
       BOOST_UNITS_STATIC_CONSTANT(point, point_unit);
       /// Numeric constant for point.
@@ -573,6 +577,24 @@ namespace boost
 {
   namespace units
   {
+
+    /// Unit information for lines.
+    template<> struct base_unit_info<ome::common::units::line_base_unit>
+    {
+      /// Unit name.
+      static std::string name()   { return "line"; }
+      /// Unit symbol.
+      static std::string symbol() { return "li"; }
+    };
+
+    /// Unit information for points.
+    template<> struct base_unit_info<ome::common::units::point_base_unit>
+    {
+      /// Unit name.
+      static std::string name()   { return "point"; }
+      /// Unit symbol.
+      static std::string symbol() { return "pt"; }
+    };
 
     /// Unit information for pixels.
     template<> struct base_unit_info<ome::common::units::pixel_base_unit>
