@@ -165,11 +165,19 @@ public class FilterMetadata implements MetadataStore
 {
 	// -- Fields --
 
+        /** The wrapped metadata store. */
 	private MetadataStore store;
+        /** Is filtering enabled? */
 	private boolean filter;
 
 	// -- Constructor --
 
+        /**
+         * Creates a new instance.
+         * @param store the metadata store to wrap.
+         * @param filter true to enable filtering, false to
+         * disable.
+         */
 	public FilterMetadata(MetadataStore store, boolean filter)
 	{
 		this.store = store;
