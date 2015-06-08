@@ -435,6 +435,13 @@ namespace ome
 
       OMETIFFWriter::~OMETIFFWriter()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void

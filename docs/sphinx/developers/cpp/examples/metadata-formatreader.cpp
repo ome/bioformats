@@ -211,6 +211,9 @@ main(int argc, char *argv[])
 
           // Read pixel data
           readPixelData(*reader, std::cout);
+
+          // Explicitly close reader
+          reader->close();
           /* reader-example-end */
         }
       else

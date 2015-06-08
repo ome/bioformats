@@ -123,6 +123,13 @@ namespace ome
 
       MinimalTIFFWriter::~MinimalTIFFWriter()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void

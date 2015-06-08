@@ -89,6 +89,13 @@ namespace ome
 
       TIFFReader::~TIFFReader()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void
