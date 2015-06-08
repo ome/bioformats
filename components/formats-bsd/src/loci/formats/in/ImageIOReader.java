@@ -62,7 +62,7 @@ public abstract class ImageIOReader extends BIFormatReader {
    * {@link #currentId}. May be null after de-serialization,
    * in which case {@link #initImage} must be called.
    */
-  private transient BufferedImage img;
+  protected transient BufferedImage img;
 
   // -- Constructors --
 
