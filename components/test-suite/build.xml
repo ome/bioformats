@@ -121,7 +121,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-config" depends="compile"
+  <target name="gen-config" depends="compile"
     description="generate config files for automated test suite">
     <testng groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
@@ -149,6 +149,7 @@ Type "ant -p" for a list of targets.
     </testng>
     <fail if="failedTest"/>
   </target>
+  <target name="test-config" depends="gen-config"/>
 
   <target name="test-automated" depends="compile"
     description="run automated tests in group 'automated'">
@@ -309,7 +310,7 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-config-xml" depends="compile"
+  <target name="gen-config-xml" depends="compile"
     description="generate OME-XML files for automated test suite">
     <testng groups="config-xml" testname="OME-XML generation"
       listener="loci.tests.testng.DotTestListener"
@@ -336,5 +337,6 @@ Type "ant -p" for a list of targets.
     </testng>
     <fail if="failedTest"/>
   </target>
+  <target name="test-config-xml" depends="gen-config-xml"/>
 
 </project>
