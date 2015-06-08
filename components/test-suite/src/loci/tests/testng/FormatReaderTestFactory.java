@@ -230,7 +230,7 @@ public class FormatReaderTestFactory {
       String id = (String) files.get(i);
       try {
         if (FormatReaderTest.configTree.get(id) == null) {
-          LOGGER.warn("{} not configured.", id);
+          LOGGER.error("{} not configured.", id);
         }
       }
       catch (Exception e) {
