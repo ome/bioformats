@@ -1260,6 +1260,8 @@ namespace ome
       {
         assertId(currentId, true);
 
+        setPlane(plane);
+
         const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 
         try
