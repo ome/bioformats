@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-INTERNAL C++ headers for internal use only
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,35 +36,37 @@
  * #L%
  */
 
-#ifndef OME_TEST_TEST_H
-#define OME_TEST_TEST_H
+#include "units.h"
 
-// Google Test has a problem with the protection of its
-// testing::internal::ImplicitlyConvertible<From, To> class
-// constructor; suppress these warnings.  It also misses declaration
-// for INSTANTIATE_TEST_CASE_P.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#endif
+#include <ome/common/units/angle.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+typedef ::testing::Types<
+  UnitConversion<radian_quantity,  gradian_quantity, -10>,
+  UnitConversion<radian_quantity,  degree_quantity,  -10>,
+  UnitConversion<gradian_quantity, radian_quantity,  -10>,
+  UnitConversion<gradian_quantity, degree_quantity,  -10>,
+  UnitConversion<degree_quantity,  radian_quantity,  -10>,
+  UnitConversion<degree_quantity,  gradian_quantity, -10>
+  > AngleTestTypes;
 
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
+typedef ::testing::Types<
+  UnitTypeConversion<radian_unit,  gradian_unit, float, -7>,
+  UnitTypeConversion<radian_unit,  degree_unit,  float, -7>,
+  UnitTypeConversion<gradian_unit, radian_unit,  float, -7>,
+  UnitTypeConversion<gradian_unit, degree_unit,  float, -7>,
+  UnitTypeConversion<degree_unit,  radian_unit,  float, -7>,
+  UnitTypeConversion<degree_unit,  gradian_unit, float, -7>
+  > AngleFloatTestTypes;
 
-#include <ome/test/config.h>
+typedef ::testing::Types<
+  UnitTypeConversion<radian_unit,  gradian_unit, long double, -10>,
+  UnitTypeConversion<radian_unit,  degree_unit,  long double, -10>,
+  UnitTypeConversion<gradian_unit, radian_unit,  long double, -10>,
+  UnitTypeConversion<gradian_unit, degree_unit,  long double, -10>,
+  UnitTypeConversion<degree_unit,  radian_unit,  long double, -10>,
+  UnitTypeConversion<degree_unit,  gradian_unit, long double, -10>
+  > AngleLongDoubleTestTypes;
 
-/**
- * Tests issue verbose output.
- *
- * @returns @c true if verbose, @c false if quiet.
- */
-bool
-verbose();
-
-#endif // OME_TEST_TEST_H
+INSTANTIATE_TYPED_TEST_CASE_P(AngleTest, UnitConv, AngleTestTypes);
+INSTANTIATE_TYPED_TEST_CASE_P(AngleFloatTest, UnitConv, AngleFloatTestTypes);
+INSTANTIATE_TYPED_TEST_CASE_P(AngleLongDoubleTest, UnitConv, AngleLongDoubleTestTypes);

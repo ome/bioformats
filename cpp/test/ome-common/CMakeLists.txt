@@ -86,6 +86,22 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-common/string string)
 
+  add_executable(units
+    units.h
+    units.cpp
+    units-angle.cpp
+    units-electric-potential.cpp
+    units-frequency.cpp
+    units-length.cpp
+    units-power.cpp
+    units-pressure.cpp
+    units-temperature.cpp
+    units-time.cpp)
+  target_link_libraries(units ome-common)
+  target_link_libraries(units ome-test ${Boost_IOSTREAMS_LIBRARY_RELEASE})
+
+  bf_add_test(ome-common/units units)
+
   add_executable(variant variant.cpp)
   target_link_libraries(variant ome-common)
   target_link_libraries(variant ome-test)

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-INTERNAL C++ headers for internal use only
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,35 +36,21 @@
  * #L%
  */
 
-#ifndef OME_TEST_TEST_H
-#define OME_TEST_TEST_H
+#include "units.h"
 
-// Google Test has a problem with the protection of its
-// testing::internal::ImplicitlyConvertible<From, To> class
-// constructor; suppress these warnings.  It also misses declaration
-// for INSTANTIATE_TEST_CASE_P.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#endif
+#include <ome/common/units/temperature.h>
 
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
+// Note lower precision is due to length of test data expected values.
 
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
+typedef ::testing::Types<
+  UnitConversion<celsius_absolute_quantity,    kelvin_absolute_quantity,     -10>,
+  UnitConversion<kelvin_absolute_quantity,     celsius_absolute_quantity,    -10>,
+  UnitConversion<fahrenheit_absolute_quantity, kelvin_absolute_quantity,      -5>,
+  UnitConversion<kelvin_absolute_quantity,     fahrenheit_absolute_quantity, -10>,
+  UnitConversion<rankine_absolute_quantity,    kelvin_absolute_quantity,      -5>,
+  UnitConversion<kelvin_absolute_quantity,     rankine_absolute_quantity,    -10>,
+  UnitConversion<celsius_absolute_quantity,    fahrenheit_absolute_quantity, -10>,
+  UnitConversion<fahrenheit_absolute_quantity, celsius_absolute_quantity,     -3>
+  > TemperatureTestTypes;
 
-#include <ome/test/config.h>
-
-/**
- * Tests issue verbose output.
- *
- * @returns @c true if verbose, @c false if quiet.
- */
-bool
-verbose();
-
-#endif // OME_TEST_TEST_H
+INSTANTIATE_TYPED_TEST_CASE_P(TemperatureTest, UnitConv, TemperatureTestTypes);

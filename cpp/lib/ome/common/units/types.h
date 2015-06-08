@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-INTERNAL C++ headers for internal use only
+ * OME-COMMON C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,35 +36,45 @@
  * #L%
  */
 
-#ifndef OME_TEST_TEST_H
-#define OME_TEST_TEST_H
-
-// Google Test has a problem with the protection of its
-// testing::internal::ImplicitlyConvertible<From, To> class
-// constructor; suppress these warnings.  It also misses declaration
-// for INSTANTIATE_TEST_CASE_P.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#endif
-
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
-
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
-
-#include <ome/test/config.h>
-
 /**
- * Tests issue verbose output.
+ * @file ome/common/units/angle.h Common units of measurement types.
  *
- * @returns @c true if verbose, @c false if quiet.
+ * This header contains types used by all units of measurement.
  */
-bool
-verbose();
 
-#endif // OME_TEST_TEST_H
+#ifndef OME_COMMON_UNITS_COMMON_H
+#define OME_COMMON_UNITS_COMMON_H
+
+#include <ome/common/config.h>
+
+#include <boost/units/unit.hpp>
+#include <boost/units/make_scaled_unit.hpp>
+#include <boost/units/quantity.hpp>
+#include <boost/units/systems/si.hpp>
+
+namespace ome
+{
+  namespace common
+  {
+    namespace units
+    {
+
+      using boost::units::quantity;
+      using boost::units::quantity_cast;
+      using boost::units::make_scaled_unit;
+      using boost::units::scaled_base_unit;
+      using boost::units::scale;
+      using boost::units::static_rational;
+      namespace si = boost::units::si;
+
+    }
+  }
+}
+
+#endif // OME_COMMON_UNITS_COMMON_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

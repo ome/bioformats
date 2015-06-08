@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-INTERNAL C++ headers for internal use only
+ * OME-COMMON C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,35 +36,30 @@
  * #L%
  */
 
-#ifndef OME_TEST_TEST_H
-#define OME_TEST_TEST_H
-
-// Google Test has a problem with the protection of its
-// testing::internal::ImplicitlyConvertible<From, To> class
-// constructor; suppress these warnings.  It also misses declaration
-// for INSTANTIATE_TEST_CASE_P.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#  pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#  pragma GCC diagnostic ignored "-Wvariadic-macros"
-#endif
-
-#include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
-
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
-
-#include <ome/test/config.h>
-
 /**
- * Tests issue verbose output.
+ * @file ome/common/units.h Units of measurement.
  *
- * @returns @c true if verbose, @c false if quiet.
+ * This header contains unit definition types, unit constants and
+ * measured quantity types for SI and other standard units of
+ * measurement.
  */
-bool
-verbose();
 
-#endif // OME_TEST_TEST_H
+#ifndef OME_COMMON_UNITS_H
+#define OME_COMMON_UNITS_H
+
+#include <ome/common/units/angle.h>
+#include <ome/common/units/electric-potential.h>
+#include <ome/common/units/frequency.h>
+#include <ome/common/units/length.h>
+#include <ome/common/units/power.h>
+#include <ome/common/units/pressure.h>
+#include <ome/common/units/temperature.h>
+#include <ome/common/units/time.h>
+
+#endif // OME_COMMON_UNITS_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
