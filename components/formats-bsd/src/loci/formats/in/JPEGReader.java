@@ -96,7 +96,7 @@ public class JPEGReader extends DelegateReader {
     try {
       super.setId(id);
     }
-    catch (CMMException e) {
+    catch (Exception e) {
       // strip out all but the first application marker
       // ImageIO isn't too keen on supporting multiple application markers
       // in the same stream, as evidenced by:
@@ -199,7 +199,11 @@ public class JPEGReader extends DelegateReader {
       try {
         super.initImage();
       }
+      catch (CMMException e) {
+        // this is handled by setId
+      }
       catch (Throwable e) {
+        LOGGER.warn("", e);
         Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("JPEG");
         ImageReader reader = null;
         while (readers.hasNext() && (reader == null || !reader.canReadRaster())) {
