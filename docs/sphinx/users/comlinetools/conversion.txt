@@ -118,7 +118,9 @@ name pattern, then the other must be included too.  The only exception is if
 
       bfconvert -bigtiff /path/to/input output.ome.tiff
 
-    Note that this option is not necessary if a BigTiff extension is used for
-    the output file, e.g.::
+    .. versionadded:: 5.1.2
 
-      bfconvert -bigtiff /path/to/input output.ome.btf
+      The :option:`-bigtiff` option is not necessary if a BigTiff extension is
+      used for the output file, e.g.::
+
+        bfconvert /path/to/input output.ome.btf
