@@ -12,6 +12,23 @@ Whatever is before the ``&`` is the image name; remaining key value pairs
 should be pretty self-explanatory. Just replace the values with whatever
 you need for testing.
 
+Additionally, you can put such values in a separate .ini file:
+
+::
+
+    touch my-special-test-file.fake
+    echo "pixelType=uint8" >> my-special-test-file.fake.ini
+    echo "sizeX=8192" >> my-special-test-file.fake.ini
+    echo "sizeY=8192" >> my-special-test-file.fake.ini
+
+In fact, just the .fake.ini file alone suffices:
+
+::
+
+    echo "pixelType=uint8" >> my-special-test-file.fake
+    echo "sizeX=8192" >> my-special-test-file.fake
+    echo "sizeY=8192" >> my-special-test-file.fake
+
 There are a few other keys that can be added as well:
 
 .. tabularcolumns:: |p{3cm}|p{11cm}|
