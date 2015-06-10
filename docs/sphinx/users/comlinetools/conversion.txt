@@ -111,3 +111,14 @@ name pattern, then the other must be included too.  The only exception is if
     To always exit without overwriting::
 
       bfconvert -nooverwrite /path/to/input /path/to/output
+
+.. option:: -bigtiff
+
+    This option allows to force the writing of a BigTiff file::
+
+      bfconvert -bigtiff /path/to/input output.ome.tiff
+
+    Note that this option is not necessary if a BigTiff extension is used for
+    the output file, e.g.::
+
+      bfconvert -bigtiff /path/to/input output.ome.btf
