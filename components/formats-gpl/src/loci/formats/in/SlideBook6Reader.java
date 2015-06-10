@@ -179,8 +179,17 @@ public class SlideBook6Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-		if (libraryFound) {
-			closeFile();
+
+		try {
+			if (libraryFound) {
+				closeFile();
+			}
+		}
+		catch (UnsatisfiedLinkError e) {
+			throw new MissingLibraryException(GENERAL_3I_MSG, e);
+		}
+		catch (Exception e) {
+			throw new MissingLibraryException(GENERAL_3I_MSG, e);
 		}
 	}
 
