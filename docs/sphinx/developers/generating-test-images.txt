@@ -49,6 +49,16 @@ There are a few other keys that can be added as well:
 
     - * Key
       * Value
+    - * thumbSizeX
+      * number of pixels wide, for the thumbnail
+    - * thumbSizeY
+      * number of pixels tall, for the thumbnail
+    - * physicalSizeX
+      * real width of the pixels, supports units defaulting to microns
+    - * physicalSizeY
+      * real height of the pixels, supports units defaulting to microns
+    - * physicalSizeZ
+      * real depth of the pixels, supports units defaulting to microns
     - * sizeZ
       * number of Z sections
     - * sizeC
@@ -57,6 +67,8 @@ There are a few other keys that can be added as well:
       * number of timepoints
     - * bitsPerPixel
       * number of valid bits (<= number of bits implied by pixel type)
+    - * acquisitionDate
+      * timestamp formatted as "yyyy-MM-dd_HH-mm-ss"
     - * rgb
       * number of channels that are merged together
     - * dimOrder
@@ -73,6 +85,20 @@ There are a few other keys that can be added as well:
       * number of series (Images)
     - * lutLength
       * number of entries in the color lookup table
+    - * exposureTime
+      * time of exposure, supports units defaulting to seconds
+    - * plates
+      * number of plates to generate
+    - * plateAcqs
+      * number of plate runs
+    - * plateRows
+      * number of rows per plate
+    - * plateCols
+      * number of rows per plate
+    - * fields
+      * number of fields per well
+    - * annLong, annDouble, annMap, annComment, annBool, annTime, annTag, annTerm, annXml
+      * number of annotations of the given type to generate
 
 You can often work with the .fake file directly, but in some cases
 support for those files is disabled and so you will need to convert the
