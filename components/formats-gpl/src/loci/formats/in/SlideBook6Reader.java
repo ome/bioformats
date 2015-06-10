@@ -41,13 +41,14 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.MissingLibraryException;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
-import loci.formats.MissingLibraryException;
+import org.scijava.nativelib.NativeLibraryUtil;
 
 /**
  * SlideBook6Reader is a file format reader for 3i SlideBook SLD files that uses
@@ -76,6 +77,8 @@ public class SlideBook6Reader  extends FormatReader {
 	private static final String GENERAL_3I_MSG = "3i SlideBook SBReadFile library problem. " +
 			"Please see " + URL_3I_SLD + " for details.";
 
+	private static final String NATIVE_LIB_CLASS = "org.scijava.nativelib.NativeLibraryUtil";
+
 	// -- Static initializers --
 
 	private static boolean libraryFound = false;
@@ -85,8 +88,12 @@ public class SlideBook6Reader  extends FormatReader {
 
 		try {
 			// load JNI wrapper of SBReadFile.dll
-			System.loadLibrary("SlideBook6Reader");
-			libraryFound = true;
+			// System.loadLibrary("SlideBook6Reader");
+			// libraryFound = true;
+			if (!libraryFound) {
+				NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
+				libraryFound = true;
+			}
 		}
 		catch (UnsatisfiedLinkError e) {
 			LOGGER.warn(NO_3I_MSG, e);
