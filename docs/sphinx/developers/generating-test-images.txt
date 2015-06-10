@@ -29,6 +29,16 @@ In fact, just the .fake.ini file alone suffices:
     echo "sizeX=8192" >> my-special-test-file.fake
     echo "sizeY=8192" >> my-special-test-file.fake
 
+If you include a "[GlobalMetadata]" section to the ini file,
+then all the included values will be accessible from the
+global metadata map:
+
+::
+
+    echo "[GlobalMetadata]" >> my-special-test-file.fake
+    echo "my.key=some.value" >> my-special-test-file.fake
+
+
 There are a few other keys that can be added as well:
 
 .. tabularcolumns:: |p{3cm}|p{11cm}|
