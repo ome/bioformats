@@ -61,6 +61,7 @@
 using boost::filesystem::path;
 using ome::xml::meta::DummyMetadata;
 using ome::xml::meta::FilterMetadata;
+using ome::xml::meta::MetadataException;
 using ome::bioformats::CoreMetadata;
 
 namespace ome
@@ -83,6 +84,7 @@ namespace ome
         series(0),
         plane(0),
         compression(boost::none),
+        interleaved(boost::none),
         sequential(false),
         framesPerSecond(0),
         metadataRetrieve(ome::compat::make_shared<DummyMetadata>())
@@ -104,12 +106,22 @@ namespace ome
       void
       FormatWriter::setId(const boost::filesystem::path& id)
       {
-        if (!currentId || id != currentId.get())
+        // Attempt to canonicalize the path.
+        path canonicalpath = id;
+        try
+          {
+            canonicalpath = ome::common::canonical(id);
+          }
+        catch (const std::exception& /* e */)
+          {
+          }
+
+        if (!currentId || canonicalpath != currentId.get())
           {
             if (out)
               out = ome::compat::shared_ptr<std::ostream>();
 
-            currentId = id;
+            currentId = canonicalpath;
           }
       }
 
@@ -139,46 +151,55 @@ namespace ome
                            writerProperties.compression_suffixes);
       }
 
-      void
-      FormatWriter::setLookupTable(const VariantPixelBuffer& /* buf */)
+      dimension_size_type
+      FormatWriter::getSeriesCount() const
       {
-        assertId(currentId, true);
+        return metadataRetrieve->getImageCount();
       }
 
       void
-      FormatWriter::saveBytes(dimension_size_type no,
+      FormatWriter::setLookupTable(dimension_size_type       /* plane */,
+                                   const VariantPixelBuffer& /* buf */)
+      {
+        assertId(currentId, true);
+
+        throw std::runtime_error("Writer does not implement lookup tables");
+      }
+
+      void
+      FormatWriter::saveBytes(dimension_size_type plane,
                               VariantPixelBuffer& buf)
       {
         assertId(currentId, true);
 
         dimension_size_type width = metadataRetrieve->getPixelsSizeX(getSeries());
         dimension_size_type height = metadataRetrieve->getPixelsSizeY(getSeries());
-        saveBytes(no, buf, 0, 0, width, height);
+        saveBytes(plane, buf, 0, 0, width, height);
       }
 
       void
-      FormatWriter::setSeries(dimension_size_type no) const
+      FormatWriter::setSeries(dimension_size_type series) const
       {
         assertId(currentId, true);
 
-        if (no >= metadataRetrieve->getImageCount())
+        if (series >= getSeriesCount())
           {
             boost::format fmt("Invalid series: %1%");
-            fmt % no;
+            fmt % series;
             throw std::logic_error(fmt.str());
           }
 
         const dimension_size_type currentSeries = getSeries();
-        if (currentSeries != no &&
-            (no > 0 && currentSeries != no - 1))
+        if (currentSeries != series &&
+            (series > 0 && currentSeries != series - 1))
           {
             boost::format fmt("Series set out of order: %1% (currently %2%)");
-            fmt % no % currentSeries;
+            fmt % series % currentSeries;
             throw std::logic_error(fmt.str());
           }
 
-        series = no;
-        plane = 0U;
+        this->series = series;
+        this->plane = 0U;
       }
 
       dimension_size_type
@@ -190,27 +211,27 @@ namespace ome
       }
 
       void
-      FormatWriter::setPlane(dimension_size_type no) const
+      FormatWriter::setPlane(dimension_size_type plane) const
       {
         assertId(currentId, true);
 
-        if (no >= getImageCount())
+        if (plane >= getImageCount())
           {
             boost::format fmt("Invalid plane: %1%");
-            fmt % no;
+            fmt % plane;
             throw std::logic_error(fmt.str());
           }
 
         const dimension_size_type currentPlane = getPlane();
-        if (currentPlane != no &&
-            (no > 0 && currentPlane != no - 1))
+        if (currentPlane != plane &&
+            (plane > 0 && currentPlane != plane - 1))
           {
             boost::format fmt("Plane set out of order: %1% (currently %2%)");
-            fmt % no % currentPlane;
+            fmt % plane % currentPlane;
             throw std::logic_error(fmt.str());
           }
 
-        plane = no;
+        this->plane = plane;
       }
 
       dimension_size_type
@@ -220,6 +241,7 @@ namespace ome
 
         return plane;
       }
+
       void
       FormatWriter::setFramesPerSecond(frame_rate_type rate)
       {
@@ -285,6 +307,18 @@ namespace ome
       }
 
       void
+      FormatWriter::setInterleaved(bool interleaved)
+      {
+        this->interleaved = interleaved;
+      }
+
+      const boost::optional<bool>&
+      FormatWriter::getInterleaved() const
+      {
+        return interleaved;
+      }
+
+      void
       FormatWriter::changeOutputFile(const boost::filesystem::path& id)
       {
         assertId(currentId, true);
@@ -330,7 +364,13 @@ namespace ome
       dimension_size_type
       FormatWriter::getImageCount() const
       {
-        return getSizeZ() * getSizeT() * getSizeC();
+        return getSizeZ() * getSizeT() * getEffectiveSizeC();
+      }
+
+      bool
+      FormatWriter::isRGB(dimension_size_type channel) const
+      {
+        return getRGBChannelCount(channel) > 1U;
       }
 
       dimension_size_type
@@ -395,6 +435,65 @@ namespace ome
       {
         dimension_size_type series = getSeries();
         return metadataRetrieve->getPixelsSignificantBits(series);
+      }
+
+      dimension_size_type
+      FormatWriter::getEffectiveSizeC() const
+      {
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getChannelCount(series);
+      }
+
+      dimension_size_type
+      FormatWriter::getRGBChannelCount(dimension_size_type channel) const
+      {
+        dimension_size_type series = getSeries();
+
+        dimension_size_type samples = 1U;
+
+        try
+          {
+            samples = metadataRetrieve->getChannelSamplesPerPixel(series, channel);
+          }
+        catch (const MetadataException& e)
+          {
+            // No SamplesPerPixel; default to 1.
+          }
+
+        return samples;
+      }
+
+      const std::string&
+      FormatWriter::getDimensionOrder() const
+      {
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getPixelsDimensionOrder(series);
+      }
+
+      dimension_size_type
+      FormatWriter::getIndex(dimension_size_type z,
+                             dimension_size_type c,
+                             dimension_size_type t) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getIndex(getDimensionOrder(),
+                                         getSizeZ(),
+                                         getEffectiveSizeC(),
+                                         getSizeT(),
+                                         getImageCount(),
+                                         z, c, t);
+      }
+
+      ome::compat::array<dimension_size_type, 3>
+      FormatWriter::getZCTCoords(dimension_size_type index) const
+      {
+        assertId(currentId, true);
+        return ome::bioformats::getZCTCoords(getDimensionOrder(),
+                                             getSizeZ(),
+                                             getEffectiveSizeC(),
+                                             getSizeT(),
+                                             getImageCount(),
+                                             index);
       }
 
       const std::string&

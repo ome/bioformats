@@ -63,6 +63,7 @@ public class EPSReader extends FormatReader {
 
   private boolean isTiff;
   private IFDList ifds;
+  private int[] map;
 
   // -- Constructor --
 
@@ -117,7 +118,6 @@ public class EPSReader extends FormatReader {
       long[] offsets = ifds.get(0).getStripOffsets();
       in.seek(offsets[0]);
 
-      int[] map = ifds.get(0).getIFDIntArray(IFD.COLOR_MAP);
       if (map == null) {
         readPlane(in, x, y, w, h, buf);
         return buf;
@@ -194,6 +194,7 @@ public class EPSReader extends FormatReader {
       start = 0;
       binary = isTiff = false;
       ifds = null;
+      map = null;
     }
   }
 
@@ -228,6 +229,7 @@ public class EPSReader extends FormatReader {
       ifds = tp.getIFDs();
 
       IFD firstIFD = ifds.get(0);
+      map = tp.getColorMap(firstIFD);
 
       m.sizeX = (int) firstIFD.getImageWidth();
       m.sizeY = (int) firstIFD.getImageLength();

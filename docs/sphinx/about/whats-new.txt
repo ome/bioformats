@@ -1,6 +1,62 @@
 Version history
 ===============
 
+5.1.2 (2015 May 28)
+-------------------
+
+* Added OME-TIFF writing support to the native C++ implementation
+* OME-TIFF export: switch to BigTIFF if .ome.tf2, .ome.tf8, or .ome.btf
+  extensions are used
+* Improved MATLAB developer documentation
+* Added SlideBook reader that uses the SDK from 3I (thanks to Richard Myers
+  and `3I - Intelligent Imaging Innovations <https://www.intelligent-imaging.com>`_)
+* Preliminary work to make MATLAB toolbox work with Octave
+* Many bug fixes, including:
+    - ImageJ
+        - fixed regression in getPlanePosition* macro extension methods
+        - fixed display of composite color virtual stacks
+    - Nikon ND2
+        - improved parsing of plane position and timestamp data
+    - TIFF
+        - reduced memory required to read color lookup tables
+    - Zeiss LSM
+        - improved parsing of 16-bit color lookup tables
+    - Zeiss CZI
+        - fixed ordering of original metadata table
+        - fixed reading of large pre-stitched tiled images
+    - AIM
+        - fixed handling of truncated files
+    - Metamorph/MetaXpress TIFF
+        - improved UIC1 metadata tag parsing
+
+5.1.1 (2015 April 28)
+---------------------
+
+* Add TIFF writing support to the native C++ implementation
+* Fixed remaining functional differences between Windows and Mac/Linux
+* Improved performance of ImageJ plugin when working with ROIs
+* TIFF export: switch to BigTIFF if .tf2, .tf8, or .btf extensions are used
+* Many bug fixes, including:
+    - fixed upgrade checking to more accurately report when a new version is
+      available
+    - Zeiss CZI
+        - fixed ordering of multiposition data
+        - improved support for RGB and fused images
+    - Nikon ND2
+        - improved ordering of multiposition data
+    - Leica LIF
+        - improved metadata validity checks
+        - improved excitation wavelength detection
+    - Metamorph STK/TIFF
+        - record lens numerical aperture
+        - fixed millisecond values in timestamps
+    - Gatan DM3
+        - correctly detect signed pixel data
+    - Imaris HDF
+        - fix channel count detection
+    - ICS export
+        - fix writing of files larger than 2GB
+
 5.1.0 (2015 April 2)
 ---------------------
 

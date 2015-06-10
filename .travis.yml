@@ -22,7 +22,7 @@ before_install:
   - if [[ $BUILD == 'cpp' ]]; then sudo add-apt-repository -y ppa:kubuntu-ppa/backports; fi
   - if [[ $BUILD == 'cpp' ]]; then sudo apt-get -qq update; fi
   - if [[ $BUILD == 'cpp' ]] || [[ $BUILD == 'cppwrap' ]]; then sudo apt-get install -qq cmake; fi
-  - if [[ $BUILD == 'sphinx' ]]; then sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ saucy main universe"; fi
+  - if [[ $BUILD == 'sphinx' ]]; then sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ trusty main universe"; fi
   - if [[ $BUILD == 'cpp' ]]; then sudo add-apt-repository -y ppa:dhor/myway; fi
   - sudo apt-get -qq update
   - if [[ $BUILD != 'sphinx' ]]; then sudo apt-get install -qq python-genshi; fi

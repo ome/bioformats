@@ -113,7 +113,7 @@ namespace ome
 
       /// Type used to index all dimensions in public interfaces.
       typedef ome::compat::array<boost::multi_array_types::index,
-                         PixelBufferBase::dimensions> indices_type;
+                                 PixelBufferBase::dimensions> indices_type;
 
       /// Storage ordering type for controlling pixel memory layout.
       typedef boost::general_storage_order<dimensions> storage_order_type;

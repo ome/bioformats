@@ -41,7 +41,7 @@
 
 namespace ome
 {
-  namespace bioformats
+  namespace qtwidgets
   {
 
     // No switch default to avoid -Wunreachable-code errors.

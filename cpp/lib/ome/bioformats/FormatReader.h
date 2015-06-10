@@ -99,8 +99,10 @@ namespace ome
       private:
         /// Reader for which the state will be saved and restored.
         const FormatReader& reader;
-        /// Saved state.
+        /// Saved core index.
         dimension_size_type coreIndex;
+        /// Saved plane index.
+        dimension_size_type plane;
 
       public:
         /**
@@ -110,7 +112,8 @@ namespace ome
          */
         SaveSeries(const FormatReader& reader):
           reader(reader),
-          coreIndex(reader.getCoreIndex())
+          coreIndex(reader.getCoreIndex()),
+          plane(reader.getPlane())
         {}
 
         /**
@@ -124,6 +127,8 @@ namespace ome
             {
               if (coreIndex != reader.getCoreIndex())
                 reader.setCoreIndex(coreIndex);
+              if (plane != reader.getPlane())
+                reader.setPlane(plane);
             }
           catch (...)
             {
@@ -212,15 +217,16 @@ namespace ome
       getImageCount() const = 0;
 
       /**
-       * Check if the image planes in the file have more than one channel per
-       * openBytes() call.
+       * Check if the image planes for a channel have more than one
+       * sub-channel per openBytes() call.
        *
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns @c true if and only if getRGBChannelCount() returns
        * a value greater than 1, @c false otherwise.
        */
       virtual
       bool
-      isRGB() const = 0;
+      isRGB(dimension_size_type channel) const = 0;
 
       /**
        * Get the size of the X dimension.
@@ -305,18 +311,19 @@ namespace ome
       getEffectiveSizeC() const = 0;
 
       /**
-       * Get the number of channels returned with each call to openBytes().
+       * Get the number of channels returned for a call to openBytes().
        *
        * The most common case where this value is greater than 1 is for interleaved
        * RGB data, such as a 24-bit color image plane. However, it is possible for
        * this value to be greater than 1 for non-interleaved data, such as an RGB
        * TIFF with Planar rather than Chunky configuration.
        *
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns the number of channels.
        */
       virtual
       dimension_size_type
-      getRGBChannelCount() const = 0;
+      getRGBChannelCount(dimension_size_type channel) const = 0;
 
       /**
        * Get whether the image planes are indexed color.
@@ -351,19 +358,19 @@ namespace ome
        * returns @c false, then this may throw an exception.
        *
        * The VariantPixelBuffer will use the X dimension for the value
-       * index and the subchannel dimension for the color samples
+       * index and the sub-channel dimension for the color samples
        * (order is RGB).  Depending upon the image type, the size of
        * the X dimension may vary.  It will typically be 2^8 or 2^16,
        * but other sizes are possible.
        *
        * @param buf the destination pixel buffer.
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @throws FormatException if a lookup table could not be obtained.
        */
       virtual
       void
-      getLookupTable(VariantPixelBuffer& buf,
-                     dimension_size_type no = 0U) const = 0;
+      getLookupTable(dimension_size_type plane,
+                     VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the Modulo subdivision of the Z dimension.
@@ -510,53 +517,53 @@ namespace ome
       isInterleaved() const = 0;
 
       /**
-       * Get whether or not the given sub-channel is interleaved.
+       * Get whether or not the given channel is interleaved.
        *
-       * This method exists because some data with multiple rasterized
-       * sub-dimensions within @c C have one sub-dimension
-       * interleaved, and the other not.  For example, @c SDTReader
-       * handles spectral-lifetime data with interleaved lifetime bins
-       * and non-interleaved spectral channels.
+       * Some data with multiple channels within @c C have the
+       * sub-channels of one sub-dimension interleaved, and the other
+       * not.  For example, @c SDTReader handles spectral-lifetime
+       * data with interleaved lifetime bins and non-interleaved
+       * spectral channels.
        *
-       * @param subC the subchannel index.
+       * @param channel the channel to use, range [0, EffectiveSizeC).
        * @returns @c true if the sub-channel is interleaved, @c false
        * otherwise.
        */
       virtual
       bool
-      isInterleaved(dimension_size_type subC) const = 0;
+      isInterleaved(dimension_size_type channel) const = 0;
 
       /**
        * Obtain an image plane.
        *
-       * Obtain and copy the image plane from the current file into a
-       * VariantPixelBuffer of size
+       * Obtain and copy the image plane from the current series into
+       * a VariantPixelBuffer of size
        *
        * \code{.cpp}
-       * getSizeX * getSizeY * bytesPerPixel * getRGBChannelCount()
+       * getSizeX * getSizeY * bytesPerPixel * getRGBChannelCount(channel)
        * \endcode
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the destination pixel buffer.
        * @throws FormatException if there was a problem parsing the
        *   metadata of the file.
        */
       virtual
       void
-      openBytes(dimension_size_type no,
+      openBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf) const = 0;
 
       /**
        * Obtain a sub-image of an image plane.
        *
        * Obtain and copy the sub-image of an image plane from the
-       * current file into a VariantPixelBuffer of size
+       * current series into a VariantPixelBuffer of size
        *
        * \code{.cpp}
-       * w * h * bytesPerPixel * getRGBChannelCount()
+       * w * h * bytesPerPixel * getRGBChannelCount(channel)
        * \endcode
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the destination pixel buffer.
        * @param x the @c X coordinate of the upper-left corner of the sub-image.
        * @param y the @c Y coordinate of the upper-left corner of the sub-image.
@@ -567,7 +574,7 @@ namespace ome
        */
       virtual
       void
-      openBytes(dimension_size_type no,
+      openBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf,
                 dimension_size_type x,
                 dimension_size_type y,
@@ -578,21 +585,21 @@ namespace ome
        * Obtain a thumbnail of an image plane.
        *
        * Obtail and copy the thumbnail for the specified image plane
-       * from the current file into a VariantPixelBuffer.
+       * from the current series into a VariantPixelBuffer.
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the destination pixel buffer.
        */
       virtual
       void
-      openThumbBytes(dimension_size_type no,
+      openThumbBytes(dimension_size_type plane,
                      VariantPixelBuffer& buf) const = 0;
 
       /**
        * Get the number of image series in this file.
        *
        * @returns the number of image series.
-       * @throws std::logic_error if the subresolution metadata (if
+       * @throws std::logic_error if the sub-resolution metadata (if
        * any) is invalid; this will only occur if the reader sets
        * invalid metadata.
        */
@@ -603,9 +610,10 @@ namespace ome
       /**
        * Set the active series.
        *
-       * @note This also resets the resolution to 0.
+       * @note This also resets the resolution to 0 and the current
+       * plane to 0.
        *
-       * @param no the series to activate.
+       * @param series the series to activate.
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
@@ -614,7 +622,7 @@ namespace ome
        */
       virtual
       void
-      setSeries(dimension_size_type no) const = 0;
+      setSeries(dimension_size_type series) const = 0;
 
       /**
        * Get the active series.
@@ -624,6 +632,25 @@ namespace ome
       virtual
       dimension_size_type
       getSeries() const = 0;
+
+      /**
+       * Set the active plane.
+       *
+       * @param plane the plane to activate.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * plane switching in const methods.
+       */
+      virtual void
+      setPlane(dimension_size_type plane) const = 0;
+
+      /**
+       * Get the active plane.
+       *
+       * @returns the active plane.
+       */
+      virtual dimension_size_type
+      getPlane() const = 0;
 
       /**
        * Set float normalization.
@@ -1068,7 +1095,38 @@ namespace ome
 
       /**
        * Get the optimal sub-image width.
+       *
        * This is intended for use with openBytes().
+       *
+       * @param channel the channel to use, range [0, EffectiveSizeC).
+       * @returns the optimal width.
+       **/
+      virtual
+      dimension_size_type
+      getOptimalTileWidth(dimension_size_type channel) const = 0;
+
+      /**
+       * Get the optimal sub-image height.
+       *
+       * This is intended for use with openBytes().
+       *
+       * @param channel the channel to use, range [0, EffectiveSizeC).
+       * @returns the optimal height.
+       **/
+      virtual
+      dimension_size_type
+      getOptimalTileHeight(dimension_size_type channel) const = 0;
+
+      /**
+       * Get the optimal sub-image width.
+       *
+       * This is intended for use with openBytes().  Note that this
+       * overload does not have a channel argument, and so the value
+       * returned is the smallest width for all channels for
+       * convienience and compatibility with the Java implementation.
+       * If the optimal width varies widely between channels, this may
+       * result in suboptimal performance; specify the channel to get
+       * the optimal width for each channel.
        *
        * @returns the optimal width.
        **/
@@ -1078,7 +1136,14 @@ namespace ome
 
       /**
        * Get the optimal sub-image height.
-       * This is intended for use with openBytes().
+       *
+       * This is intended for use with openBytes().  Note that this
+       * overload does not have a channel argument, and so the value
+       * returned is the smallest height for all channels for
+       * convienience and compatibility with the Java implementation.
+       * If the optimal height varies widely between channels, this
+       * may result in suboptimal performance; specify the channel to
+       * get the optimal height for each channel.
        *
        * @returns the optimal height.
        **/
@@ -1118,7 +1183,7 @@ namespace ome
       getCoreIndex() const = 0;
 
       /**
-       * Set the current resolution/series (ignoring subresolutions).
+       * Set the current resolution/series (ignoring sub-resolutions).
        *
        * Equivalent to setSeries(), but with flattened resolutions always
        * set to @c false.
@@ -1149,6 +1214,8 @@ namespace ome
 
       /**
        * Set the active resolution level.
+       *
+       * @note This also resets the current plane to 0.
        *
        * @param resolution the resolution to set.
        *

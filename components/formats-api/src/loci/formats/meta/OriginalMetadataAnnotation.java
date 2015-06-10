@@ -53,6 +53,11 @@ public class OriginalMetadataAnnotation extends XMLAnnotation {
 
   // -- OriginalMetadataAnnotation methods --
 
+  /**
+   * Set the key/value metadata pair for this annotation.
+   * @param key the original metadata key
+   * @param value the original metadata value
+   */
   public void setKeyValue(String key, String value) {
     setNamespace(ORIGINAL_METADATA_NS);
     this.key = key;
@@ -64,6 +69,9 @@ public class OriginalMetadataAnnotation extends XMLAnnotation {
 
   // -- XMLAnnotation methods --
 
+  /**
+   * @return the original metadata key
+   */
   public String getKey() {
     return key;
   }
@@ -76,6 +84,12 @@ public class OriginalMetadataAnnotation extends XMLAnnotation {
     return value;
   }
 
+  /**
+   * Create a DOM element for this annotation with the given document
+   * as the parent.
+   * @param document the parent document for this annotation
+   * @return the DOM element corresponding to this annotation
+   */
   protected Element makeOriginalMetadata(Document document) {
 
     Element keyElement =

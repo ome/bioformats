@@ -54,6 +54,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -147,12 +148,12 @@ public class MinimalTiffReader extends FormatReader {
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 8) {
-      int[] colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
+      int[] colorMap = tiffParser.getColorMap(lastIFD);
       if (colorMap == null) {
         // it's possible that the LUT is only present in the first IFD
         if (lastPlane != 0) {
           lastIFD = ifds.get(0);
-          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
+          colorMap = tiffParser.getColorMap(lastIFD);
           if (colorMap == null) return null;
         }
         else return null;
@@ -184,12 +185,12 @@ public class MinimalTiffReader extends FormatReader {
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 16 && bits[0] > 8) {
-      int[] colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
+      int[] colorMap = tiffParser.getColorMap(lastIFD);
       if (colorMap == null || colorMap.length < 65536 * 3) {
         // it's possible that the LUT is only present in the first IFD
         if (lastPlane != 0) {
           lastIFD = ifds.get(0);
-          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
+          colorMap = tiffParser.getColorMap(lastIFD);
           if (colorMap == null || colorMap.length < 65536 * 3) return null;
         }
         else return null;
@@ -346,6 +347,12 @@ public class MinimalTiffReader extends FormatReader {
     }
 
     return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    initTiffParser();
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

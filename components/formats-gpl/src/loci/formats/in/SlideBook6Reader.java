@@ -96,7 +96,7 @@ public class SlideBook6Reader  extends FormatReader {
 			}
 		}
 		catch (UnsatisfiedLinkError e) {
-			LOGGER.warn(NO_3I_MSG, e);
+			LOGGER.debug(NO_3I_MSG, e);
 			libraryFound = false;
 		}
 		catch (SecurityException e) {

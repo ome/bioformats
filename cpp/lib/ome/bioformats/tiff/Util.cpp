@@ -43,6 +43,7 @@
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/Tags.h>
 #include <ome/bioformats/tiff/TIFF.h>
+#include <ome/bioformats/tiff/Types.h>
 #include <ome/bioformats/tiff/Util.h>
 
 namespace ome
@@ -157,16 +158,8 @@ namespace ome
         uint16_t samples = ifd.getSamplesPerPixel();
         tiff::PhotometricInterpretation photometric = ifd.getPhotometricInterpretation();
 
-        // Note that RGB does not mean photometric interpretation is
-        // RGB.  It's a way to force the subchannels into sizeC as
-        // addressable channels in the absence of an nD API.
-        core.rgb = false;
-        core.sizeC = 1U;
-        if (samples > 1 || photometric == tiff::RGB)
-          {
-            core.rgb = true;
-            core.sizeC = samples;
-          }
+        core.sizeC.clear();
+        core.sizeC.push_back(samples);
         core.sizeZ = core.sizeT = core.imageCount = 1U;
 
         // libtiff does any needed endian conversion
@@ -180,7 +173,7 @@ namespace ome
 
         // This doesn't match the reality, but since subchannels are
         // addressed as planes this is needed.
-        core.interleaved = false;
+        core.interleaved = (ifd.getPlanarConfiguration() == tiff::CONTIG);
 
         // Indexed samples.
         if (samples == 1 && photometric == tiff::PALETTE)
@@ -190,7 +183,6 @@ namespace ome
                 ome::compat::array<std::vector<uint16_t>, 3> cmap;
                 ifd.getField(tiff::COLORMAP).get(cmap);
                 core.indexed = true;
-                core.rgb = false;
               }
             catch (...)
               {
@@ -207,7 +199,6 @@ namespace ome
                 if (indexed)
                   {
                     core.indexed = true;
-                    core.rgb = false;
                   }
               }
             catch (...)
@@ -370,49 +361,10 @@ namespace ome
         core.seriesMetadata.set("BitsPerSample", bitsPerPixel(ifd.getPixelType()));
       }
 
-      void
-      setCoreMetadata(IFD&                ifd,
-                      const CoreMetadata& core)
-      {
-        ifd.setImageWidth(core.sizeX);
-        ifd.setImageHeight(core.sizeY);
-        ifd.setPixelType(core.pixelType);
-
-        pixel_size_type psize = significantBitsPerPixel(core.pixelType);
-        if (core.bitsPerPixel < psize)
-          psize = core.bitsPerPixel;
-        ifd.setBitsPerSample(psize);
-
-        // Note that RGB does not mean photometric interpretation is
-        // RGB.  It's a way to force the subchannels into sizeC as
-        // addressable channels in the absence of an nD API.
-        uint16_t samples = 1;
-        if (core.rgb)
-          samples = core.sizeC;
-
-        tiff::PhotometricInterpretation photometric = tiff::MIN_IS_BLACK;
-        if (core.rgb && core.sizeC == 3)
-          photometric = tiff::RGB;
-        else if (!core.rgb && core.indexed && samples == 1)
-          photometric = tiff::PALETTE;
-        ifd.setPhotometricInterpretation(photometric);
-
-        // libtiff does any needed endian conversion automatically, so
-        // the data is always in the native byte order; don't set
-        // anything here.
-
-        // @todo Consider adding getMetadata equivalent to
-        // setMetadata, to allow setting of Baseline TIFF tags from
-        // original metadata, allowing round-trip of Baseline TIFF
-        // tags through Bio-Formats.
-      }
-
       dimension_size_type
       ifdIndex(const SeriesIFDRange& seriesIFDRange,
                dimension_size_type   series,
-               dimension_size_type   plane,
-               dimension_size_type   sizeC,
-               bool                  isRGB)
+               dimension_size_type   plane)
       {
         if (series >= seriesIFDRange.size())
           {
@@ -420,25 +372,94 @@ namespace ome
             fmt % series;
             throw FormatException(fmt.str());
           }
-        const IFDRange range(seriesIFDRange.at(series));
+        const IFDRange& range(seriesIFDRange.at(series));
 
         // Compute timepoint and subchannel from plane number.
-        dimension_size_type realplane = plane;
-        if (isRGB)
-          {
-            realplane = plane / sizeC;
-          }
-        dimension_size_type ifdidx = range.begin + realplane;
-        assert(range.begin <= realplane && realplane < range.end);
+        dimension_size_type ifdidx = range.begin + plane;
+        assert(range.begin <= plane && plane < range.end);
 
-        if (realplane >= (range.end - range.begin))
+        if (plane >= (range.end - range.begin))
           {
             boost::format fmt("Invalid plane number ‘%1%’ for series ‘%2%’");
-            fmt % realplane % series;
+            fmt % plane % series;
             throw FormatException(fmt.str());
           }
 
         return ifdidx;
+      }
+
+      bool
+      enableBigTIFF(const boost::optional<bool>&   wantBig,
+                    storage_size_type              pixelSize,
+                    const boost::filesystem::path& filename,
+                    ome::common::Logger&           logger)
+      {
+        bool enable = false;
+
+        // File extension in use.
+        boost::filesystem::path ext = filename.extension();
+
+        // Enable BigTIFF if using a "big" file extension.
+        bool extBig =
+          (ext == boost::filesystem::path(".tf2") ||
+           ext == boost::filesystem::path(".tf8") ||
+           ext == boost::filesystem::path(".btf"));
+
+        // Enable BigTIFF if the pixel size is sufficiently large.
+        // Multiply by 5% to allow for alignment and TIFF metadata
+        // overhead.
+        bool needBig = (pixelSize + pixelSize/20) > storage_size_type(std::numeric_limits<uint32_t>::max());
+
+#if TIFF_HAVE_BIGTIFF
+        if ((wantBig && *wantBig)     // BigTIFF explicitly requested.
+            || extBig                 // BigTIFF file extension used
+            || (!wantBig && needBig)) // BigTIFF unspecified but needed.
+          {
+            enable = true;
+
+            if (!wantBig && !extBig) // Not set manually
+              {
+                boost::format fmt
+                  ("Pixel data size is %1%, but TIFF without BigTIFF "
+                   "support enabled has a maximum size of %2%; "
+                   "automatically enabling BigTIFF support to prevent potential failure");
+                fmt % pixelSize % std::numeric_limits<uint32_t>::max();
+
+                BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+              }
+          }
+        else if (wantBig && !*wantBig && needBig) // BigTIFF explicitly disabled but needed.
+          {
+            boost::format fmt
+              ("Pixel data size is %1%, but TIFF with BigTIFF "
+               "support disabled has a maximum size of %2%; "
+               "TIFF writing may fail if the limit is exceeded");
+            fmt % pixelSize % std::numeric_limits<uint32_t>::max();
+
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+          }
+#else // ! TIFF_HAVE_BIGTIFF
+        if (needBig) // BigTIFF needed (but unsupported)
+          {
+            boost::format fmt
+              ("Unable to enable BigTIFF support since libtiff support "
+               " for BigTIFF is unavailable.  "
+               "Pixel data size is %1%, but TIFF without BigTIFF "
+               "support enabled has a maximum size of %2%; "
+               "TIFF writing may fail if the limit is exceeded; ");
+            fmt % pixelSize % std::numeric_limits<uint32_t>::max();
+
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+          }
+        else if ((wantBig && *wantBig) || extBig) // BigTIFF explicitly requested (but unsupported)
+          {
+            BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+              << "Unable to enable BigTIFF support since libtiff support "
+              " for BigTIFF is unavailable";
+          }
+#endif // TIFF_HAVE_BIGTIFF
+
+        return enable;
       }
 
     }

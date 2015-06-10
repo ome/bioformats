@@ -1,9 +1,9 @@
 function bfUpgradeCheck(varargin)
 % Check for new version of Bio-Formats and update it if applicable
-% 
+%
 % SYNOPSIS: bfUpgradeCheck(autoDownload, 'STABLE')
 %
-% Input 
+% Input
 %    autoDownload - Optional. A boolean specifying of the latest version
 %    should be downloaded
 %
@@ -41,12 +41,16 @@ ip.addOptional('version', 'STABLE', @(x) any(strcmpi(x, versions)))
 ip.parse(varargin{:})
 
 % Create UpgradeChecker
-upgrader = loci.formats.UpgradeChecker();
+upgrader = javaObject('loci.formats.UpgradeChecker');
 if upgrader.alreadyChecked(), return; end
 
 % Check for new version of Bio-Formats
-canUpgrade = upgrader.newVersionAvailable('MATLAB');
-if ~canUpgrade,
+if is_octave()
+    caller = 'Octave';
+else
+    caller = 'MATLAB';
+end
+if ~ upgrader.newVersionAvailable(caller)
     fprintf('*** bioformats_package.jar is up-to-date ***\n');
     return;
 end

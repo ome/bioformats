@@ -240,6 +240,7 @@ public class JPEG2000Reader extends FormatReader {
     }
 
     ArrayList<String> comments = metadataParser.getComments();
+    LOGGER.debug("Found {} comments", comments.size());
     for (int i=0; i<comments.size(); i++) {
       String comment = comments.get(i);
       int equal = comment.indexOf("=");

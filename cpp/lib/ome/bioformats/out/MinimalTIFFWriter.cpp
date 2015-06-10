@@ -46,12 +46,14 @@
 #include <ome/bioformats/out/MinimalTIFFWriter.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/TIFF.h>
+#include <ome/bioformats/tiff/Util.h>
 
 #include <ome/internal/config.h>
 
 using ome::bioformats::detail::WriterProperties;
 using ome::bioformats::tiff::TIFF;
 using ome::bioformats::tiff::IFD;
+using ome::bioformats::tiff::enableBigTIFF;
 using ome::xml::model::enums::PixelType;
 using ome::xml::meta::MetadataRetrieve;
 
@@ -121,6 +123,13 @@ namespace ome
 
       MinimalTIFFWriter::~MinimalTIFFWriter()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void
@@ -130,73 +139,13 @@ namespace ome
 
         std::string flags("w");
 
-        // File extension in use.
-        boost::filesystem::path ext = currentId->extension();
-
         // Get expected size of pixel data.
         ome::compat::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
         storage_size_type pixelSize = significantPixelSize(*mr);
 
-        // Enable BigTIFF if using a "big" file extension.
-        bool extBig =
-          (ext == boost::filesystem::path(".tf2") ||
-           ext == boost::filesystem::path(".tf8") ||
-           ext == boost::filesystem::path(".btf"));
+        if (enableBigTIFF(bigTIFF, pixelSize, *currentId, logger))
+          flags += '8';
 
-        // Enable BigTIFF if the pixel size is sufficiently large.
-        // Multiply by 5% to allow for alignment and TIFF metadata
-        // overhead.
-        bool needBig = (pixelSize + pixelSize/20) > storage_size_type(std::numeric_limits<uint32_t>::max());
-
-        boost::optional<bool> wantBig = getBigTIFF();
-#if TIFF_HAVE_BIGTIFF
-        if ((wantBig && *wantBig)     // BigTIFF explicitly requested.
-            || extBig                 // BigTIFF file extension used
-            || (!wantBig && needBig)) // BigTIFF unspecified but needed.
-          {
-            flags += "8";
-
-            if (!wantBig && !extBig) // Not set manually
-              {
-                boost::format fmt
-                  ("Pixel data size is %1%, but TIFF without BigTIFF "
-                   "support enabled has a maximum size of %2%; "
-                   "automatically enabling BigTIFF support to prevent potential failure");
-                fmt % pixelSize % std::numeric_limits<uint32_t>::max();
-
-                BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
-              }
-          }
-        else if (wantBig && !*wantBig && needBig) // BigTIFF explicitly disabled but needed.
-          {
-            boost::format fmt
-              ("Pixel data size is %1%, but TIFF with BigTIFF "
-               "support disabled has a maximum size of %2%; "
-               "TIFF writing may fail if the limit is exceeded");
-            fmt % pixelSize % std::numeric_limits<uint32_t>::max();
-
-            BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
-          }
-#else // ! TIFF_HAVE_BIGTIFF
-        if (needBig) // BigTIFF needed (but unsupported)
-          {
-            boost::format fmt
-              ("Unable to enable BigTIFF support since libtiff support "
-               " for BigTIFF is unavailable.  "
-               "Pixel data size is %1%, but TIFF without BigTIFF "
-               "support enabled has a maximum size of %2%; "
-               "TIFF writing may fail if the limit is exceeded; ");
-            fmt % pixelSize % std::numeric_limits<uint32_t>::max();
-
-            BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
-          }
-        else if ((wantBig && *wantBig) || extBig) // BigTIFF explicitly requested (but unsupported)
-          {
-            BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
-              << "Unable to enable BigTIFF support since libtiff support "
-              " for BigTIFF is unavailable";
-          }
-#endif // TIFF_HAVE_BIGTIFF
 
         tiff = TIFF::open(id, flags);
         ifd = tiff->getCurrentDirectory();
@@ -226,7 +175,8 @@ namespace ome
       {
         if (tiff)
           {
-            tiff->writeCurrentDirectory();
+            // Flush last IFD.
+            nextIFD();
             tiff->close();
             ifd.reset();
             tiff.reset();
@@ -241,12 +191,12 @@ namespace ome
       }
 
       void
-      MinimalTIFFWriter::setSeries(dimension_size_type no) const
+      MinimalTIFFWriter::setSeries(dimension_size_type series) const
       {
         const dimension_size_type currentSeries = getSeries();
-        detail::FormatWriter::setSeries(no);
+        detail::FormatWriter::setSeries(series);
 
-        if (currentSeries != no)
+        if (currentSeries != series)
           {
             nextIFD();
             setupIFD();
@@ -254,12 +204,12 @@ namespace ome
       }
 
       void
-      MinimalTIFFWriter::setPlane(dimension_size_type no) const
+      MinimalTIFFWriter::setPlane(dimension_size_type plane) const
       {
         const dimension_size_type currentPlane = getPlane();
-        detail::FormatWriter::setPlane(no);
+        detail::FormatWriter::setPlane(plane);
 
-        if (currentPlane != no)
+        if (currentPlane != plane)
           {
             nextIFD();
             setupIFD();
@@ -285,15 +235,31 @@ namespace ome
         ifd->setTileWidth(getSizeX());
         ifd->setTileHeight(1U);
 
+        ome::compat::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
+
+        dimension_size_type channel = coords[1];
+
         ifd->setPixelType(getPixelType());
         ifd->setBitsPerSample(bitsPerPixel(getPixelType()));
-        ifd->setSamplesPerPixel(1U);
-        ifd->setPlanarConfiguration(tiff::SEPARATE);
-        ifd->setPhotometricInterpretation(tiff::MIN_IS_BLACK);
+        ifd->setSamplesPerPixel(getRGBChannelCount(channel));
+
+        const boost::optional<bool> interleaved(getInterleaved());
+        if (isRGB(channel) && interleaved && *interleaved)
+          ifd->setPlanarConfiguration(tiff::CONTIG);
+        else
+          ifd->setPlanarConfiguration(tiff::SEPARATE);
+
+        // This isn't necessarily always true; we might want to use a
+        // photometric interpretation other than RGB with three
+        // subchannels.
+        if (isRGB(channel) && getRGBChannelCount(channel) == 3)
+          ifd->setPhotometricInterpretation(tiff::RGB);
+        else
+          ifd->setPhotometricInterpretation(tiff::MIN_IS_BLACK);
       }
 
       void
-      MinimalTIFFWriter::saveBytes(dimension_size_type no,
+      MinimalTIFFWriter::saveBytes(dimension_size_type plane,
                                    VariantPixelBuffer& buf,
                                    dimension_size_type x,
                                    dimension_size_type y,
@@ -302,11 +268,10 @@ namespace ome
       {
         assertId(currentId, true);
 
-        setPlane(no);
+        setPlane(plane);
 
-        dimension_size_type sizeC = metadataRetrieve->getPixelsSizeC(getSeries());
         dimension_size_type expectedIndex =
-          tiff::ifdIndex(seriesIFDRange, getSeries(), no, sizeC, false);
+          tiff::ifdIndex(seriesIFDRange, getSeries(), plane);
 
         if (ifdIndex != expectedIndex)
           {

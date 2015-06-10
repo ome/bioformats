@@ -36,7 +36,7 @@ Common issues to check
        suspicious-file: AppleDouble encoded Macintosh file
 -  If you get an ``OutOfMemory`` or ``NegativeArraySize`` error message when
    attempting to open an SVS or JPEG-2000 file then the amount of pixel data
-   in a single image plane exceeds the amount of memory allocated to the JVM
+   in a single image plane exceeds the amount of memory allocated to the |JVM|
    or 2 GB, respectively. For the former, you can increase the amount of
    memory allocated; in the latter case, you will need to open the image in
    sections. If you are using Bio-Formats as a library, this means using the

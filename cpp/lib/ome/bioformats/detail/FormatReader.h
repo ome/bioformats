@@ -141,6 +141,14 @@ namespace ome
          */
         mutable dimension_size_type series;
 
+        /**
+         * The number of the current plane in the current series.
+         *
+         * @todo Remove use of stateful API which requires use of
+         * series switching in const methods.
+         */
+        mutable dimension_size_type plane;
+
         /// Core metadata values.
         coremetadata_list_type core;
 
@@ -258,6 +266,7 @@ namespace ome
          * @param y the top edge of the plane.
          * @param w the width of the plane.
          * @param h the height of the plane.
+         * @param samples the number of samples per pixel.
          */
         virtual
         void
@@ -266,7 +275,8 @@ namespace ome
                   dimension_size_type x,
                   dimension_size_type y,
                   dimension_size_type w,
-                  dimension_size_type h);
+                  dimension_size_type h,
+                  dimension_size_type samples);
 
         /**
          * Read a raw plane with scanline padding.
@@ -281,6 +291,7 @@ namespace ome
          * @param w the width of the plane.
          * @param h the height of the plane.
          * @param scanlinePad the scanline padding.
+         * @param samples the number of samples per pixel.
          */
         virtual
         void
@@ -290,7 +301,8 @@ namespace ome
                   dimension_size_type y,
                   dimension_size_type w,
                   dimension_size_type h,
-                  dimension_size_type scanlinePad);
+                  dimension_size_type scanlinePad,
+                  dimension_size_type samples);
 
         /**
          * Create a configured FilterMetadata instance.
@@ -429,7 +441,7 @@ namespace ome
 
         // Documented in superclass.
         bool
-        isRGB() const;
+        isRGB(dimension_size_type channel) const;
 
         // Documented in superclass.
         dimension_size_type
@@ -465,7 +477,7 @@ namespace ome
 
         // Documented in superclass.
         dimension_size_type
-        getRGBChannelCount() const;
+        getRGBChannelCount(dimension_size_type channel) const;
 
         // Documented in superclass.
         bool
@@ -477,8 +489,8 @@ namespace ome
 
         // Documented in superclass.
         void
-        getLookupTable(VariantPixelBuffer& buf,
-                       dimension_size_type no) const;
+        getLookupTable(dimension_size_type plane,
+                       VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         Modulo&
@@ -549,12 +561,12 @@ namespace ome
 
         // Documented in superclass.
         void
-        openBytes(dimension_size_type no,
+        openBytes(dimension_size_type plane,
                   VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         void
-        openBytes(dimension_size_type no,
+        openBytes(dimension_size_type plane,
                   VariantPixelBuffer& buf,
                   dimension_size_type x,
                   dimension_size_type y,
@@ -567,7 +579,7 @@ namespace ome
          */
         virtual
         void
-        openBytesImpl(dimension_size_type no,
+        openBytesImpl(dimension_size_type plane,
                       VariantPixelBuffer& buf,
                       dimension_size_type x,
                       dimension_size_type y,
@@ -577,7 +589,7 @@ namespace ome
       public:
         // Documented in superclass.
         void
-        openThumbBytes(dimension_size_type no,
+        openThumbBytes(dimension_size_type plane,
                        VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
@@ -590,11 +602,19 @@ namespace ome
 
         // Documented in superclass.
         void
-        setSeries(dimension_size_type no) const;
+        setSeries(dimension_size_type series) const;
 
         // Documented in superclass.
         dimension_size_type
         getSeries() const;
+
+        // Documented in superclass.
+        void
+        setPlane(dimension_size_type plane) const;
+
+        // Documented in superclass.
+        dimension_size_type
+        getPlane() const;
 
         // Documented in superclass.
         void
@@ -722,6 +742,14 @@ namespace ome
         // Documented in superclass.
         const std::vector<std::string>&
         getDomains() const;
+
+        // Documented in superclass.
+        dimension_size_type
+        getOptimalTileWidth(dimension_size_type channel) const;
+
+        // Documented in superclass.
+        dimension_size_type
+        getOptimalTileHeight(dimension_size_type channel) const;
 
         // Documented in superclass.
         dimension_size_type

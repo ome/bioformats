@@ -62,11 +62,13 @@ namespace ome
     {
 
       /**
-       * TIFF reader with support for ImageJ extensions.
+       * TIFF reader with support for OME-XML metadata.
        */
       class OMETIFFReader : public ::ome::bioformats::detail::FormatReader
       {
         using detail::FormatReader::isThisType;
+        using ::ome::bioformats::FormatReader::getOptimalTileWidth;
+        using ::ome::bioformats::FormatReader::getOptimalTileHeight;
 
       protected:
         /// Message logger.
@@ -124,12 +126,12 @@ namespace ome
 
         // Documented in superclass.
         void
-        getLookupTable(VariantPixelBuffer& buf,
-                       dimension_size_type no) const;
+        getLookupTable(dimension_size_type plane,
+                       VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         void
-        openBytesImpl(dimension_size_type no,
+        openBytesImpl(dimension_size_type plane,
                       VariantPixelBuffer& buf,
                       dimension_size_type x,
                       dimension_size_type y,
@@ -139,12 +141,12 @@ namespace ome
         /**
          * Get the IFD index for a plane in the current series.
          *
-         * @param no the image index within the file.
+         * @param plane the plane index within the series.
          * @returns the IFD index.
          * @throws FormatException if out of range.
          */
         const ome::compat::shared_ptr<const tiff::IFD>
-        ifdAtIndex(dimension_size_type no) const;
+        ifdAtIndex(dimension_size_type plane) const;
 
         /**
          * Add a TIFF file to the internal TIFF map.
@@ -196,11 +198,11 @@ namespace ome
 
         // Documented in superclass.
         dimension_size_type
-        getOptimalTileWidth() const;
+        getOptimalTileWidth(dimension_size_type channel) const;
 
         // Documented in superclass.
         dimension_size_type
-        getOptimalTileHeight() const;
+        getOptimalTileHeight(dimension_size_type channel) const;
 
         // Documented in superclass.
         void

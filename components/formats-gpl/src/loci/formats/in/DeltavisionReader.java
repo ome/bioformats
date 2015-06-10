@@ -154,10 +154,19 @@ public class DeltavisionReader extends FormatReader {
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 98;
-    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    if (!FormatTools.validStream(stream, blockLen, true)) return false;
     stream.seek(96);
     int magic = stream.readShort() & 0xffff;
-    return magic == DV_MAGIC_BYTES_1 || magic == DV_MAGIC_BYTES_2;
+    boolean valid = magic == DV_MAGIC_BYTES_1 || magic == DV_MAGIC_BYTES_2;
+    if (!valid) {
+      return false;
+    }
+    stream.order(magic == (LITTLE_ENDIAN & 0xffff));
+    stream.seek(0);
+    int x = stream.readInt();
+    int y = stream.readInt();
+    int count = stream.readInt();
+    return x > 0 && y > 0 && count > 0;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -1105,13 +1114,13 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("Speed")) {
           value = value.replaceAll("KHz", "");
           try {
-            double mhz = Double.parseDouble(value) / 1000;
+            double khz = Double.parseDouble(value);
             String detectorID = MetadataTools.createLSID("Detector", 0, 0);
             store.setDetectorID(detectorID, 0, 0);
             for (int series=0; series<getSeriesCount(); series++) {
               for (int c=0; c<getSizeC(); c++) {
                 store.setDetectorSettingsReadOutRate(
-                        new Frequency(mhz, UNITS.HZ), series, c);
+                        new Frequency(khz, UNITS.KHZ), series, c);
                 store.setDetectorSettingsID(detectorID, series, c);
               }
             }

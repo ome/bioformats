@@ -72,8 +72,8 @@ public class TillVisionReader extends FormatReader {
   private static final byte[] MARKER_3 = new byte[] {(byte) 0x83, 3, 0};
 
   private static final String[] DATE_FORMATS = new String[] {
-    "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy",
-    "HH:mm:ss aa", "HH:mm:ss.SSS aa"};
+    "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss aa", "mm/dd/yy",
+    "HH:mm:ss aa", "HH:mm:ss aa"};
 
   // -- Fields --
 
@@ -396,7 +396,7 @@ public class TillVisionReader extends FormatReader {
             boolean success = false;
             for (String format : DATE_FORMATS) {
               try {
-                dateTime = DateTools.formatDate(dateTime, format);
+                dateTime = DateTools.formatDate(dateTime, format, ".");
                 success = true;
               }
               catch (NullPointerException e) { }

@@ -50,6 +50,11 @@ certain modifications to the data model may only be made via direct
 access to the model objects, otherwise the higher-level metadata store
 interface should be preferred.
 
+The header file :doxygen:`ome/bioformats/MetadataTools.h
+<MetadataTools_8h_source.html>` provides several convenience functions
+to work with and manipulate the various forms of metadata, including
+conversion of Core metadata to and from a metadata store.
+
 Core metadata
 ^^^^^^^^^^^^^
 
@@ -66,7 +71,27 @@ themselves are more of an implementation detail at present.
    :start-after: read-example-start
    :end-before: read-example-end
 
-Full example source: :download:`metadata-formatreader.cpp <examples/metadata-formatreader.cpp>`
+If implementing a reader, it is fairly typical to set the basic image
+metadata in :cpp:class:`CoreMetadata` objects, and then use the
+:cpp:func:`fillMetadata` function in
+:doxygen:`ome/bioformats/MetadataTools.h
+<MetadataTools_8h_source.html>` to fill the reader's metadata store
+with this information, before filling the metadata store with
+additional (non-core) metadata as required.  When writing an image, a
+metadata store is required in order to provide the writer with all the
+metadata needed to write an image.  If the metadata store was not
+already obtained from a reader, :cpp:func:`fillMetadata` may also be
+used in this situation to create a suitable metadata store:
+
+.. literalinclude:: examples/metadata-formatwriter.cpp
+   :language: cpp
+   :start-after: write-example-start
+   :end-before: write-example-end
+
+Full example source: :download:`metadata-formatreader.cpp
+<examples/metadata-formatreader.cpp>`,
+:download:`metadata-formatreader.cpp
+<examples/metadata-formatwriter.cpp>`
 
 .. seealso::
 
@@ -366,6 +391,14 @@ example, to read all pixel data in an image using
    :start-after: pixel-example-start
    :end-before: pixel-example-end
 
+To perform the reverse process, writing pixel data with
+:cpp:func:`saveBytes`:
+
+.. literalinclude:: examples/metadata-formatwriter.cpp
+   :language: cpp
+   :start-after: pixel-example-start
+   :end-before: pixel-example-end
+
 Both buffer classes provide access to the pixel data so that it may be
 accessed, manipulated and passed elsewhere.  The
 :cpp:class:`PixelBuffer` class provides an :cpp:class:`at` method.
@@ -437,10 +470,10 @@ Full example source: :download:`pixeldata.cpp <examples/pixeldata.cpp>`
   - :doxygen:`PixelType <classome_1_1xml_1_1model_1_1enums_1_1PixelType.html>`
   - :doxygen:`PixelBuffer <classome_1_1bioformats_1_1PixelBuffer.html>`
   - :doxygen:`VariantPixelBuffer <classome_1_1bioformats_1_1VariantPixelBuffer.html>`
-  - :doxygen:`FormatReader::getLookupTable <classome_1_1bioformats_1_1FormatReader.html#a416742287de02c29d68147e7965316c4>`
-  - :doxygen:`FormatReader::openBytes <classome_1_1bioformats_1_1FormatReader.html#a91184deaf16c42b51eb564ee11e76fe2>`
-  - :doxygen:`FormatWriter::setLookupTable <classome_1_1bioformats_1_1FormatWriter.html#a7ee8eaab7b440be78f3707d1f34ec372>`
-  - :doxygen:`FormatWriter::saveBytes <classome_1_1bioformats_1_1FormatWriter.html#a3f75d001c244c06883c986df988d31b5>`
+  - :doxygen:`FormatReader::getLookupTable <classome_1_1bioformats_1_1FormatReader.html#a75ad99e400c31ccb9e52da8aeb991b73>`
+  - :doxygen:`FormatReader::openBytes <classome_1_1bioformats_1_1FormatReader.html#aae4d2b9475b078f7ba2378ed505e864c>`
+  - :doxygen:`FormatWriter::setLookupTable <classome_1_1bioformats_1_1FormatWriter.html#a00ae3dc46c205e64f782c7b6f47bd5ab>`
+  - :doxygen:`FormatWriter::saveBytes <classome_1_1bioformats_1_1FormatWriter.html#ad1e8b427214f7cfd19ce2251d38e24f5>`
 
 Reading images
 --------------
@@ -455,10 +488,11 @@ with OME-XML metadata).
 
 Using a reader involves these steps:
 
-#. Create a reader instance
-#. Set options to control reader behavior
-#. Call :cpp:func:`setId` to read a specific image file
-#. Retrieve desired metadata and pixel data
+#. Create a reader instance.
+#. Set options to control reader behavior.
+#. Call :cpp:func:`setId` to specify the image file to read.
+#. Retrieve desired metadata and pixel data.
+#. Close the reader.
 
 These steps are illustrated in this example:
 
@@ -493,3 +527,60 @@ Full example source: :download:`metadata-formatreader.cpp <examples/metadata-for
   - :doxygen:`FormatReader <classome_1_1bioformats_1_1FormatReader.html>`
   - :doxygen:`TIFFReader <classome_1_1bioformats_1_1in_1_1TIFFReader.html>`
   - :doxygen:`OMETIFFReader <classome_1_1bioformats_1_1in_1_1OMETIFFReader.html>`
+
+Writing images
+--------------
+
+Image writing is performed using the :cpp:class:`FormatWriter`
+interface.  This is an abstract writer interface implemented by
+file-format-specific writer classes.  Examples of writers include
+:cpp:class:`MinimalTIFFWriter`, which implements writing of Baseline
+TIFF and :cpp:class:`OMETIFFWriter` which implements writing of
+OME-TIFF (TIFF with OME-XML metadata).
+
+Using a writer involves these steps:
+
+#. Create a writer instance.
+#. Set metadata store to use.
+#. Set options to control writer behavior.
+#. Call :cpp:func:`setId` to specify the image file to write.
+#. Store pixel data for each plane of each image in the specified
+   dimension order.
+#. Close the writer.
+
+These steps are illustrated in this example:
+
+.. literalinclude:: examples/metadata-formatwriter.cpp
+   :language: cpp
+   :start-after: writer-example-start
+   :end-before: writer-example-end
+
+Here we create a writer to write OME-TIFF files, set the metadata
+store using metadata we create, then set a writer option (sample
+interleaving), and then call :cpp:func:`setId`.  At this point the
+writer has been set up and initialized, and we can then write the
+pixel data, which we covered in the preceding sections.  Finally we
+call :cpp:func:`close` to flush all data.
+
+.. note::
+
+  Metadata store setting and writer option-setting methods may only be
+  called *before* :cpp:func:`setId`.  Writer state changing and
+  querying methods such as :cpp:func:`setSeries` and
+  :cpp:func:`getSeries`, and pixel data storage methods may only be
+  called *after* :cpp:func:`setId`.  If these constraints are
+  violated, a :cpp:class:`FormatException` will be thrown.
+
+.. note::
+
+  :cpp:func:`close` should be called explicitly to catch any errors.
+  While this will be called by the destructor, the destructor can't
+  throw exceptions and any errors will be silently ignored.
+
+Full example source: :download:`metadata-formatwriter.cpp <examples/metadata-formatwriter.cpp>`
+
+.. seealso::
+
+  - :doxygen:`FormatWriter <classome_1_1bioformats_1_1FormatWriter.html>`
+  - :doxygen:`TIFFWriter <classome_1_1bioformats_1_1out_1_1MinimalTIFFWriter.html>`
+  - :doxygen:`OMETIFFWriter <classome_1_1bioformats_1_1out_1_1OMETIFFWriter.html>`

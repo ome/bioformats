@@ -66,18 +66,19 @@ end
 if exist('lurawaveLicense', 'var')
     path = fullfile(fileparts(mfilename('fullpath')), 'lwf_jsdk2.6.jar');
     javaaddpath(path);
-    java.lang.System.setProperty('lurawave.license', lurawaveLicense);
+    javaMethod('setProperty', 'java.lang.System', ...
+               'lurawave.license', lurawaveLicense);
 end
 
 % Create a loci.formats.ReaderWrapper object
-r = loci.formats.ChannelFiller();
-r = loci.formats.ChannelSeparator(r);
+r = javaObject('loci.formats.ChannelSeparator', ...
+               javaObject('loci.formats.ChannelFiller'));
 if ip.Results.stitchFiles
-    r = loci.formats.FileStitcher(r);
+    r = javaObject('loci.formats.FileStitcher', r);
 end
 
 % Initialize the metadata store
-OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
+OMEXMLService = javaObject('loci.formats.services.OMEXMLServiceImpl');
 r.setMetadataStore(OMEXMLService.createOMEXMLMetadata());
 
 % Initialize the reader

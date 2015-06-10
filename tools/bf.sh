@@ -14,13 +14,19 @@ then
   exit 1
 fi
 
+# Prepare the flags.
+if [ -z "$BF_FLAGS" ]
+then
+   BF_FLAGS=""
+fi
+
 # Set the max heap size.
 if [ -z "$BF_MAX_MEM" ]
 then
   # Set a reasonable default max heap size.
   BF_MAX_MEM="512m"
 fi
-BF_FLAGS="-Xmx$BF_MAX_MEM"
+BF_FLAGS="$BF_FLAGS -Xmx$BF_MAX_MEM"
 
 # Skip the update check if the NO_UPDATE_CHECK flag is set.
 if [ -n "$NO_UPDATE_CHECK" ]
@@ -49,15 +55,15 @@ then
   java $BF_FLAGS $BF_PROG "$@"
 else
   # Developer environment variable unset; add JAR libraries to classpath.
-  if [ -e "$BF_JAR_DIR/formats-gpl.jar" ]
-  then
-    BF_CP="$BF_JAR_DIR/formats-gpl.jar:$BF_JAR_DIR/bio-formats-tools.jar:$BF_CP"
-  elif [ -e "$BF_JAR_DIR/bioformats_package.jar" ]
+  if [ -e "$BF_JAR_DIR/bioformats_package.jar" ]
   then
     BF_CP="$BF_JAR_DIR/bioformats_package.jar:$BF_CP"
   elif [ -e "$BF_JAR_DIR/loci_tools.jar" ]
   then
     BF_CP="$BF_JAR_DIR/loci_tools.jar:$BF_CP"
+  elif [ -e "$BF_JAR_DIR/formats-gpl.jar" ]
+  then
+    BF_CP="$BF_JAR_DIR/formats-gpl.jar:$BF_JAR_DIR/bio-formats-tools.jar:$BF_CP"
   else
     # Libraries not found; issue an error.
     echo "Required JAR libraries not found. Please download:"

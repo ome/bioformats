@@ -76,7 +76,7 @@ else
 end
 
 % Create ImageWriter
-writer = loci.formats.ImageWriter();
+writer = javaObject('loci.formats.ImageWriter');
 writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
@@ -92,13 +92,13 @@ switch class(ip.Results.I)
     case {'int8', 'uint8'}
         getBytes = @(x) x(:);
     case {'uint16','int16'}
-        getBytes = @(x) loci.common.DataTools.shortsToBytes(x(:), 0);
+        getBytes = @(x) javaMethod('shortsToBytes', 'loci.common.DataTools', x(:), 0);
     case {'uint32','int32'}
-        getBytes = @(x) loci.common.DataTools.intsToBytes(x(:), 0);
+        getBytes = @(x) javaMethod('intsToBytes', 'loci.common.DataTools', x(:), 0);
     case {'single'}
-        getBytes = @(x) loci.common.DataTools.floatsToBytes(x(:), 0);
+        getBytes = @(x) javaMethod('floatsToBytes', 'loci.common.DataTools', x(:), 0);
     case 'double'
-        getBytes = @(x) loci.common.DataTools.doublesToBytes(x(:), 0);
+        getBytes = @(x) javaMethod('doublesToBytes', 'loci.common.DataTools', x(:), 0);
 end
 
 % Save planes to the writer
@@ -117,9 +117,8 @@ writer.close();
 end
 
 function dimensionOrders = getDimensionOrders()
-
 % List all values of DimensionOrder
-dimensionOrderValues = ome.xml.model.enums.DimensionOrder.values();
+dimensionOrderValues = javaMethod('values', 'ome.xml.model.enums.DimensionOrder');
 dimensionOrders = cell(numel(dimensionOrderValues), 1);
 for i = 1 :numel(dimensionOrderValues),
     dimensionOrders{i} = char(dimensionOrderValues(i).toString());
@@ -127,9 +126,18 @@ end
 end
 
 function compressionTypes = getCompressionTypes()
-
 % List all values of Compression
-writer = loci.formats.ImageWriter();
-compressionTypes = arrayfun(@char, writer.getCompressionTypes(),...
-    'UniformOutput', false);
+writer = javaObject('loci.formats.ImageWriter');
+if is_octave()
+    %% FIXME when https://savannah.gnu.org/bugs/?42700 gets fixed
+    types = writer.getCompressionTypes();
+    nTypes = numel(types);
+    compressionTypes = cell(nTypes, 1);
+    for i = 1:nTypes
+        compressionTypes{i} = char(types(i));
+    end
+else
+    compressionTypes = arrayfun(@char, writer.getCompressionTypes(),...
+                                'UniformOutput', false);
+end
 end

@@ -1858,18 +1858,22 @@ public class NativeND2Reader extends FormatReader {
     if (handler != null && handler.getExposureTimes().size() > 0) {
       exposureTime = handler.getExposureTimes();
     }
+    int zcPlanes = getImageCount() / ((split ? getSizeC() : 1) * getSizeT());
     for (int i=0; i<getSeriesCount(); i++) {
       if (tsT.size() > 0) {
         setSeries(i);
         for (int n=0; n<getImageCount(); n++) {
           int[] coords = getZCTCoords(n);
-          int stampIndex = coords[2] + i * getSizeT();
+          int stampIndex = getIndex(coords[0], split ? 0 : coords[1], 0);
+          stampIndex += (coords[2] * getSeriesCount() + i) * zcPlanes;
           if (tsT.size() == getImageCount()) stampIndex = n;
           else if (tsT.size() == getSizeZ()) {
             stampIndex = coords[0];
           }
-          double stamp = tsT.get(stampIndex).doubleValue();
-          store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
+          if (stampIndex < tsT.size()) {
+            double stamp = tsT.get(stampIndex).doubleValue();
+            store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
+          }
 
           int index = i * getSizeC() + coords[1];
           if (exposureTime.size() == getSizeC()) {
@@ -1889,11 +1893,9 @@ public class NativeND2Reader extends FormatReader {
 
       String pos = "for position";
       for (int n=0; n<getImageCount(); n++) {
-        int index = n * getSeriesCount() + i;
-        if (split) {
-          int planes = getImageCount() / getSizeC();
-          index = (n / getSizeC()) * getSeriesCount() + i;
-        }
+        int[] coords = getZCTCoords(n);
+        int index = coords[0];
+        index += (coords[2] * getSeriesCount() + i) * zcPlanes;
         if (posX != null) {
           if (index >= posX.size()) index = i;
           if (index < posX.size()) {

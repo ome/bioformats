@@ -84,6 +84,7 @@ namespace ome
         metadata(),
         coreIndex(0),
         series(0),
+        plane(0),
         core(),
         resolution(0),
         flattenedResolutions(true),
@@ -207,9 +208,10 @@ namespace ome
                               dimension_size_type x,
                               dimension_size_type y,
                               dimension_size_type w,
-                              dimension_size_type h)
+                              dimension_size_type h,
+                              dimension_size_type samples)
       {
-        return readPlane(source, dest, x, y, w, h, 0);
+        return readPlane(source, dest, x, y, w, h, 0, samples);
       }
 
       namespace
@@ -223,7 +225,7 @@ namespace ome
           dimension_size_type y;
           dimension_size_type w;
           dimension_size_type h;
-          dimension_size_type c;
+          dimension_size_type samples;
           dimension_size_type scanlinePad;
 
           PlaneVisitor(std::istream&       source,
@@ -232,7 +234,7 @@ namespace ome
                        dimension_size_type y,
                        dimension_size_type w,
                        dimension_size_type h,
-                       dimension_size_type c,
+                       dimension_size_type samples,
                        dimension_size_type scanlinePad):
             source(source),
             reader(reader),
@@ -240,7 +242,7 @@ namespace ome
             y(y),
             w(w),
             h(h),
-            c(c),
+            samples(samples),
             scanlinePad(scanlinePad)
           {}
 
@@ -270,21 +272,21 @@ namespace ome
               {
                 if (interleaved)
                   {
-                    source.seekg(static_cast<std::istream::off_type>(y * w * bpp * c), std::ios::cur);
+                    source.seekg(static_cast<std::istream::off_type>(y * w * bpp * samples), std::ios::cur);
                     source.read(reinterpret_cast<char *>(v->data()),
                                 static_cast<std::streamsize>(v->num_elements() * bpp));
                   }
                 else
                   {
                     dimension_size_type rowLen = w * bpp;
-                    for (dimension_size_type channel = 0; channel < c; ++channel)
+                    for (dimension_size_type sample = 0; sample < samples; ++sample)
                       {
                         source.seekg(static_cast<std::istream::off_type>(y * rowLen), std::ios::cur);
                         source.read(reinterpret_cast<char *>(v->data())
-                                    + (channel * h * rowLen),
+                                    + (sample * h * rowLen),
                                     static_cast<std::streamsize>(h * rowLen));
-                        // no need to skip bytes after reading final channel
-                        if (channel < c - 1)
+                        // no need to skip bytes after reading final sample
+                        if (sample < samples - 1)
                           source.seekg(static_cast<std::istream::off_type>((sizeY - y - h) * rowLen), std::ios::cur);
                       }
                   }
@@ -294,35 +296,35 @@ namespace ome
                 dimension_size_type scanlineWidth = sizeX + scanlinePad;
                 if (interleaved)
                   {
-                    source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp * c), std::ios::cur);
+                    source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp * samples), std::ios::cur);
                     for (dimension_size_type row = 0; row < h; ++row)
                       {
-                        source.seekg(static_cast<std::istream::off_type>(x * bpp * c), std::ios::cur);
+                        source.seekg(static_cast<std::istream::off_type>(x * bpp * samples), std::ios::cur);
                         source.read(reinterpret_cast<char *>(v->data())
-                                    + (row * w * bpp * c),
-                                    static_cast<std::streamsize>(w * bpp * c));
+                                    + (row * w * bpp * samples),
+                                    static_cast<std::streamsize>(w * bpp * samples));
                         // no need to skip bytes after reading final row
                         if (row < h - 1)
-                          source.seekg(static_cast<std::istream::off_type>(bpp * c * (scanlineWidth - w - x)), std::ios::cur);
+                          source.seekg(static_cast<std::istream::off_type>(bpp * samples * (scanlineWidth - w - x)), std::ios::cur);
                       }
                   }
                 else
                   {
-                    for (dimension_size_type channel = 0; channel < c; ++channel)
+                    for (dimension_size_type sample = 0; sample < samples; ++sample)
                       {
                         source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp), std::ios::cur);
                         for (dimension_size_type row = 0; row < h; ++row)
                           {
                             source.seekg(static_cast<std::istream::off_type>(x * bpp), std::ios::cur);
                             source.read(reinterpret_cast<char *>(v->data())
-                                        + (channel * w * h * bpp + row * w * bpp),
+                                        + (sample * w * h * bpp + row * w * bpp),
                                         static_cast<std::streamsize>(w * bpp));
-                            // no need to skip bytes after reading final row of final channel
-                            if (row < h - 1 || channel < c - 1)
+                            // no need to skip bytes after reading final row of final sample
+                            if (row < h - 1 || sample < samples - 1)
                               source.seekg(static_cast<std::istream::off_type>(bpp * (scanlineWidth - w - x)), std::ios::cur);
                           }
-                        if (channel < c - 1)
-                          // no need to skip bytes after reading final channel
+                        if (sample < samples - 1)
+                          // no need to skip bytes after reading final sample
                           source.seekg(static_cast<std::istream::off_type>(scanlineWidth * bpp * (sizeY - y - h)), std::ios::cur);
                       }
                   }
@@ -354,14 +356,13 @@ namespace ome
                               dimension_size_type y,
                               dimension_size_type w,
                               dimension_size_type h,
-                              dimension_size_type scanlinePad)
+                              dimension_size_type scanlinePad,
+                              dimension_size_type samples)
       {
-        // Get reader and buffer size, order and type.
-        const dimension_size_type c(getRGBChannelCount());
         ome::compat::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
-        shape[DIM_SUBCHANNEL] = c;
+        shape[DIM_SUBCHANNEL] = samples;
         shape[DIM_SPATIAL_Z] = shape[DIM_TEMPORAL_T] = shape[DIM_CHANNEL] =
           shape[DIM_MODULO_Z] = shape[DIM_MODULO_T] = shape[DIM_MODULO_C] = 1;
         const VariantPixelBuffer::size_type *dest_shape_ptr(dest.shape());
@@ -384,7 +385,7 @@ namespace ome
 
         // Fill the buffer according to its type.
         PlaneVisitor v(source, *this,
-                       x, y, w, h, c, scanlinePad);
+                       x, y, w, h, samples, scanlinePad);
         boost::apply_visitor(v, dest.vbuffer());
       }
 
@@ -488,10 +489,10 @@ namespace ome
       }
 
       bool
-      FormatReader::isRGB() const
+      FormatReader::isRGB(dimension_size_type channel) const
       {
         assertId(currentId, true);
-        return getCoreMetadata(getCoreIndex()).rgb;
+        return getRGBChannelCount(channel) > 1U;
       }
 
       dimension_size_type
@@ -526,7 +527,10 @@ namespace ome
       FormatReader::getSizeC() const
       {
         assertId(currentId, true);
-        return getCoreMetadata(getCoreIndex()).sizeC;
+
+        const std::vector<dimension_size_type>& c(getCoreMetadata(getCoreIndex()).sizeC);
+
+        return std::accumulate(c.begin(), c.end(), dimension_size_type(0));
       }
 
       ome::xml::model::enums::PixelType
@@ -556,26 +560,13 @@ namespace ome
       dimension_size_type
       FormatReader::getEffectiveSizeC() const
       {
-        // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
-        dimension_size_type sizeZT = getSizeZ() * getSizeT();
-        dimension_size_type effC = 0;
-
-        if (sizeZT)
-          effC = getImageCount() / sizeZT;
-
-        return effC;
+        return getCoreMetadata(getCoreIndex()).sizeC.size();
       }
 
       dimension_size_type
-      FormatReader::getRGBChannelCount() const
+      FormatReader::getRGBChannelCount(dimension_size_type channel) const
       {
-        dimension_size_type effC = getEffectiveSizeC();
-        dimension_size_type rgbC = 0;
-
-        if (effC)
-          rgbC = getSizeC() / effC;
-
-        return rgbC;
+        return getCoreMetadata(getCoreIndex()).sizeC.at(channel);
       }
 
       bool
@@ -593,9 +584,11 @@ namespace ome
       }
 
       void
-      FormatReader::getLookupTable(VariantPixelBuffer& /* buf */,
-                                   dimension_size_type /* no */) const
+      FormatReader::getLookupTable(dimension_size_type /* plane */,
+                                   VariantPixelBuffer& /* buf */) const
       {
+        assertId(currentId, true);
+
         throw std::runtime_error("Reader does not implement lookup tables");
       }
 
@@ -733,25 +726,26 @@ namespace ome
       }
 
       void
-      FormatReader::openBytes(dimension_size_type no,
+      FormatReader::openBytes(dimension_size_type plane,
                               VariantPixelBuffer& buf) const
       {
-        openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
+        openBytes(plane, buf, 0, 0, getSizeX(), getSizeY());
       }
 
       void
-      FormatReader::openBytes(dimension_size_type no,
+      FormatReader::openBytes(dimension_size_type plane,
                               VariantPixelBuffer& buf,
                               dimension_size_type x,
                               dimension_size_type y,
                               dimension_size_type w,
                               dimension_size_type h) const
       {
-        openBytesImpl(no, buf, x, y, w, h);
+        setPlane(plane);
+        openBytesImpl(plane, buf, x, y, w, h);
       }
 
       void
-      FormatReader::openThumbBytes(dimension_size_type /* no */,
+      FormatReader::openThumbBytes(dimension_size_type /* plane */,
                                    VariantPixelBuffer& /* buf */) const
       {
         assertId(currentId, true);
@@ -770,7 +764,7 @@ namespace ome
         if (!fileOnly)
           {
             currentId = boost::none;
-            coreIndex = series = resolution = 0;
+            coreIndex = series = resolution = plane = 0;
             core.clear();
           }
       }
@@ -787,17 +781,41 @@ namespace ome
       }
 
       void
-      FormatReader::setSeries(dimension_size_type no) const
+      FormatReader::setSeries(dimension_size_type series) const
       {
-        coreIndex = seriesToCoreIndex(no);
-        series = no;
-        resolution = 0;
+        this->coreIndex = seriesToCoreIndex(series);
+        this->series = series;
+        this->resolution = 0;
+        this->plane = 0;
       }
 
       dimension_size_type
       FormatReader::getSeries() const
       {
         return series;
+      }
+
+      void
+      FormatReader::setPlane(dimension_size_type plane) const
+      {
+        assertId(currentId, true);
+
+        if (plane >= getImageCount())
+          {
+            boost::format fmt("Invalid plane: %1%");
+            fmt % plane;
+            throw std::logic_error(fmt.str());
+          }
+
+        this->plane = plane;
+      }
+
+      dimension_size_type
+      FormatReader::getPlane() const
+      {
+        assertId(currentId, true);
+
+        return plane;
       }
 
       void
@@ -1119,19 +1137,48 @@ namespace ome
       }
 
       dimension_size_type
-      FormatReader::getOptimalTileWidth() const
+      FormatReader::getOptimalTileWidth(dimension_size_type /* channel */) const
       {
         assertId(currentId, true);
         return getSizeX();
       }
 
       dimension_size_type
-      FormatReader::getOptimalTileHeight() const
+      FormatReader::getOptimalTileHeight(dimension_size_type channel) const
       {
         assertId(currentId, true);
         uint32_t bpp = bytesPerPixel(getPixelType());
-        dimension_size_type maxHeight = (1024 * 1024) / (getSizeX() * getRGBChannelCount() * bpp);
+        dimension_size_type maxHeight = (1024U * 1024U) / (getSizeX() * getRGBChannelCount(channel) * bpp);
+        if (!maxHeight)
+          maxHeight = 1U;
+
         return std::min(maxHeight, getSizeY());
+      }
+
+      dimension_size_type
+      FormatReader::getOptimalTileWidth() const
+      {
+        assertId(currentId, true);
+
+        dimension_size_type csize = getEffectiveSizeC();
+        std::vector<dimension_size_type> widths;
+        widths.reserve(csize);
+        for (dimension_size_type c = 0; c < csize; ++c)
+          widths.push_back(getOptimalTileWidth(c));
+        return *std::min_element(widths.begin(), widths.end());
+      }
+
+      dimension_size_type
+      FormatReader::getOptimalTileHeight() const
+      {
+        assertId(currentId, true);
+
+        dimension_size_type csize = getEffectiveSizeC();
+        std::vector<dimension_size_type> heights;
+        heights.reserve(csize);
+        for (dimension_size_type c = 0; c < csize; ++c)
+          heights.push_back(getOptimalTileHeight(c));
+        return *std::min_element(heights.begin(), heights.end());
       }
 
       dimension_size_type
@@ -1265,6 +1312,7 @@ namespace ome
         this->coreIndex = seriesToCoreIndex(getSeries()) + resolution;
         // this->series unchanged.
         this->resolution = resolution;
+        this->plane = 0;
       }
 
       dimension_size_type
@@ -1301,27 +1349,29 @@ namespace ome
             fmt % index;
             throw std::logic_error(fmt.str());
           }
-        this->coreIndex = index;
         this->series = coreIndexToSeries(index);
+        this->coreIndex = index;
         this->resolution = index - seriesToCoreIndex(this->series);
+        this->plane = 0;
       }
 
       void
       FormatReader::setId(const boost::filesystem::path& id)
       {
-        //    LOGGER.debug("{} initializing {}", getFormat(), id);
-        if (!currentId || id != currentId.get())
+        // Attempt to canonicalize the path.
+        path canonicalpath = id;
+        try
           {
-            path canonicalID(id);
-            try
-              {
-                // Attempt to canonicalize the path.
-                canonicalID = ome::common::canonical(id);
-              }
-            catch (const std::exception& /* e */)
-              {
-              }
-            initFile(canonicalID);
+            canonicalpath = ome::common::canonical(id);
+          }
+        catch (const std::exception& /* e */)
+          {
+          }
+
+        //    LOGGER.debug("{} initializing {}", getFormat(), id);
+        if (!currentId || canonicalpath != currentId.get())
+          {
+            initFile(canonicalpath);
 
             const ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>& store =
               ome::compat::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(getMetadataStore());
