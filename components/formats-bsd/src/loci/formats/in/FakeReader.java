@@ -467,7 +467,7 @@ public class FakeReader extends FormatReader {
         }
       }
 
-      table = list.getTable(list.getHeaders().get(0));
+      table = list.getTable("GlobalMetadata");
       if (table != null) {
         for (Map.Entry<String, String> entry : table.entrySet()) {
           addGlobalMeta(entry.getKey(), entry.getValue());
