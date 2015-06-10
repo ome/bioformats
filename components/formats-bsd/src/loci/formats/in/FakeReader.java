@@ -467,6 +467,13 @@ public class FakeReader extends FormatReader {
         }
       }
 
+      table = list.getTable(list.getHeaders().get(0));
+      if (table != null) {
+        for (Map.Entry<String, String> entry : table.entrySet()) {
+          addGlobalMeta(entry.getKey(), entry.getValue());
+        }
+      }
+
       String[] newTokArr = newTokens.toArray(new String[0]);
       String[] oldTokArr = tokens;
       tokens = new String[newTokArr.length + oldTokArr.length];
