@@ -35,8 +35,8 @@ global metadata map:
 
 ::
 
-    echo "[GlobalMetadata]" >> my-special-test-file.fake
-    echo "my.key=some.value" >> my-special-test-file.fake
+    echo "[GlobalMetadata]" >> my-special-test-file.fake.ini
+    echo "my.key=some.value" >> my-special-test-file.fake.ini
 
 
 There are a few other keys that can be added as well:
