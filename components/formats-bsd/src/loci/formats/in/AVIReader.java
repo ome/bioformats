@@ -460,7 +460,7 @@ public class AVIReader extends FormatReader {
         buf = lastImage;
       }
 
-      if (!lengths.contains(0)) {
+      if (!lengths.contains(0L)) {
         motionJPEG = false;
       }
 
