@@ -77,26 +77,19 @@ public class SlideBook6Reader  extends FormatReader {
 	private static final String GENERAL_3I_MSG = "3i SlideBook SBReadFile library problem. " +
 			"Please see " + URL_3I_SLD + " for details.";
 
-	private static final String NATIVE_LIB_CLASS = "org.scijava.nativelib.NativeLibraryUtil";
-
 	// -- Static initializers --
 
 	private static boolean libraryFound = false;
 
 	static {
-		String library_path = System.getProperty("java.library.path");
-
 		try {
 			// load JNI wrapper of SBReadFile.dll
-			// System.loadLibrary("SlideBook6Reader");
-			// libraryFound = true;
 			if (!libraryFound) {
-				NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
-				libraryFound = true;
+				libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
 			}
 		}
 		catch (UnsatisfiedLinkError e) {
-			LOGGER.debug(NO_3I_MSG, e);
+			LOGGER.warn(NO_3I_MSG, e);
 			libraryFound = false;
 		}
 		catch (SecurityException e) {
@@ -179,17 +172,8 @@ public class SlideBook6Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-
-		try {
-			if (libraryFound) {
-				closeFile();
-			}
-		}
-		catch (UnsatisfiedLinkError e) {
-			throw new MissingLibraryException(GENERAL_3I_MSG, e);
-		}
-		catch (Exception e) {
-			throw new MissingLibraryException(GENERAL_3I_MSG, e);
+		if (libraryFound) {
+			closeFile();
 		}
 	}
 
