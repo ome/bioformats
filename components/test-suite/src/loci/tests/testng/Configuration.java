@@ -549,21 +549,26 @@ public class Configuration {
       }
 
       for (int p=0; p<reader.getImageCount(); p++) {
-        Time deltaT = retrieve.getPlaneDeltaT(series, p);
-        if (deltaT != null) {
-          seriesTable.put(DELTA_T + p, deltaT.value(UNITS.S).toString());
+        try {
+          Time deltaT = retrieve.getPlaneDeltaT(series, p);
+          if (deltaT != null) {
+            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.S).toString());
+          }
+          Length xPos = retrieve.getPlanePositionX(series, p);
+          if (xPos != null) {
+            seriesTable.put(X_POSITION + p, xPos.value(UNITS.REFERENCEFRAME).toString());
+          }
+          Length yPos = retrieve.getPlanePositionY(series, p);
+          if (yPos != null) {
+            seriesTable.put(Y_POSITION + p, yPos.value(UNITS.REFERENCEFRAME).toString());
+          }
+          Length zPos = retrieve.getPlanePositionZ(series, p);
+          if (zPos != null) {
+            seriesTable.put(Z_POSITION + p, zPos.value(UNITS.REFERENCEFRAME).toString());
+          }
         }
-        Length xPos = retrieve.getPlanePositionX(series, p);
-        if (xPos != null) {
-          seriesTable.put(X_POSITION + p, xPos.value(UNITS.REFERENCEFRAME).toString());
-        }
-        Length yPos = retrieve.getPlanePositionY(series, p);
-        if (yPos != null) {
-          seriesTable.put(Y_POSITION + p, yPos.value(UNITS.REFERENCEFRAME).toString());
-        }
-        Length zPos = retrieve.getPlanePositionZ(series, p);
-        if (zPos != null) {
-          seriesTable.put(Z_POSITION + p, zPos.value(UNITS.REFERENCEFRAME).toString());
+        catch (IndexOutOfBoundsException e) {
+          // only happens if no Plane elements were populated
         }
       }
 
