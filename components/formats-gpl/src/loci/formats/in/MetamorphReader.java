@@ -1721,6 +1721,9 @@ public class MetamorphReader extends BaseTiffReader {
             }
             skipKey = true;
           }
+          else if (valOrOffset == 0) {
+            core.get(0).sizeZ = 1;
+          }
           break;
         case 49:
           if (valOrOffset < in.length()) {
