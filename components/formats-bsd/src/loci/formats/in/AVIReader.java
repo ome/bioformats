@@ -763,6 +763,7 @@ public class AVIReader extends FormatReader {
           if (type.equals("LIST")) {
             if (fcc.equals("movi")) {
               spos = in.getFilePointer();
+              long startOfMovi = spos - 4;
               if (spos >= in.length() - 12) break;
               readChunkHeader();
               if (!(type.equals("LIST") && (fcc.equals("rec ") ||
@@ -835,7 +836,7 @@ public class AVIReader extends FormatReader {
                     // the number of entries in the index table may not
                     // match the number of frame streams (frames can
                     // be omitted or duplicated)
-                    in.skipBytes(24);
+                    in.skipBytes(8);
 
                     offsets.clear();
                     lengths.clear();
@@ -844,6 +845,7 @@ public class AVIReader extends FormatReader {
                     if (tableEnd <= 0 || tableEnd > in.length()) {
                       tableEnd = in.length();
                     }
+                    boolean useSOM = false;
                     while (in.getFilePointer() + 16 <= tableEnd) {
                       String chunkID = in.readString(4);
                       int flags = in.readInt();
@@ -851,7 +853,22 @@ public class AVIReader extends FormatReader {
                       int chunkSize = in.readInt();
 
                       if (chunkID.endsWith("db") || chunkID.endsWith("dc")) {
-                        offsets.add(new Long(offset));
+                        if (offsets.size() == 0) {
+                          useSOM = offset < startOfMovi;
+                        }
+
+                        if (offsets.size() > 0) {
+                          if (offset == offsets.get(offsets.size() - 1)) {
+                            chunkSize = lengths.get(lengths.size() - 1).intValue();
+                          }
+                        }
+
+                        if (chunkSize == 0 && offsets.size() > 0 && bmpCompression == 0) {
+                          offsets.add(offsets.get(offsets.size() - 1));
+                        }
+                        else {
+                          offsets.add(new Long(useSOM ? startOfMovi + offset : offset));
+                        }
                         lengths.add(new Long(chunkSize));
                       }
                     }
