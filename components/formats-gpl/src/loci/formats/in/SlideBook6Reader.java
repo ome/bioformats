@@ -71,7 +71,7 @@ public class SlideBook6Reader  extends FormatReader {
 	public static final long SLD_MAGIC_BYTES_3 = 0xf6010101L;
 
 	private static final String URL_3I_SLD =
-			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook6-sld.html";
+			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook6.html";
 	private static final String NO_3I_MSG = "3i SlideBook SBReadFile library not found. " +
 			"Please see " + URL_3I_SLD + " for details.";
 	private static final String GENERAL_3I_MSG = "3i SlideBook SBReadFile library problem. " +
