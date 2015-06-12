@@ -48,7 +48,7 @@ The output file format is determined by the extension of the output file, e.g.
 
       bfconvert -range 0 2 /path/to/input output-first-3-images.tiff
 
-.. option:: -tilex TILEX, -tiley TILEY
+.. option:: -tilex TILEX, -tiley TILEX
 
     All images larger than 4096x4096 will be saved as a set of tiles if the
     output format supports doing so.  The default tile size is determined by
@@ -56,7 +56,7 @@ The output file format is determined by the extension of the output file, e.g.
 
       bfconvert -tilex 512 -tiley 512 /path/to/input output-512x512-tiles.tiff
 
-    :option:`-tilex` is the width in pixel of each tile; :option:`-tiley` is
+    :option:`-tilex` is the width in pixels of each tile; :option:`-tiley` is
     the height in pixels of each tile.  The last row and column of tiles may
     be slightly smaller if the image width and height are not multiples of the
     specified tile width and height.  Note that specifying :option:`-tilex`
@@ -114,7 +114,7 @@ name pattern, then the other must be included too.  The only exception is if
 
 .. option:: -bigtiff
 
-    This option allows to force the writing of a BigTiff file::
+    This option forces the writing of a BigTiff file::
 
       bfconvert -bigtiff /path/to/input output.ome.tiff
 

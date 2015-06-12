@@ -12,25 +12,24 @@ The default behavior is to print a plain-text list of formats::
 
 .. option:: -txt
 
-    This can also be accomplished using by specifying the :option:`-txt`
-    argument::
+    Prints the list of formats as plaint-text::
 
         formatlist -txt
 
 .. option:: -html
 
-    This option allows to print the list of formats as HTML::
+    Prints the list of formats as HTML::
 
         formatlist -html
 
 .. option:: -xml
 
-    This option allows to print the list of formats as XML::
+    Prints the list of formats as XML::
 
         formatlist -xml
 
 .. option:: -help
 
-    Current usage information can be shown by running::
+    Displays the usage information::
 
         formatlist -help
