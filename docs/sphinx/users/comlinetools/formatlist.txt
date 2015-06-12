@@ -12,7 +12,7 @@ The default behavior is to print a plain-text list of formats::
 
 .. option:: -txt
 
-    Prints the list of formats as plaint-text::
+    Prints the list of formats as plain-text::
 
         formatlist -txt
 
