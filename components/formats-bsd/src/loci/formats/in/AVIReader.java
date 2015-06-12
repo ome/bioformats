@@ -774,7 +774,7 @@ public class AVIReader extends FormatReader {
 
               spos = in.getFilePointer();
               boolean end = false;
-              while (!end) {
+              while (!end && in.getFilePointer() < in.length() - 8) {
                 readTypeAndSize();
                 String oldType = type;
                 while (type.startsWith("ix") || type.endsWith("tx") ||
