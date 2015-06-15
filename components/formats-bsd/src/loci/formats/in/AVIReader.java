@@ -866,7 +866,7 @@ public class AVIReader extends FormatReader {
                         if (chunkSize == 0 && offsets.size() > 0 && bmpCompression == 0) {
                           offsets.add(offsets.get(offsets.size() - 1));
                         }
-                        else {
+                        else if (chunkSize > 0 || offsets.size() > 0) {
                           offsets.add(new Long(useSOM ? startOfMovi + offset : offset));
                         }
                         lengths.add(new Long(chunkSize));
