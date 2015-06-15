@@ -89,7 +89,8 @@ public class SlideBook6Reader  extends FormatReader {
 			}
 		}
 		catch (UnsatisfiedLinkError e) {
-			LOGGER.warn(NO_3I_MSG, e);
+			// log level debug, otherwise a warning will be printed every time a file is initialized without the .dll present
+			LOGGER.debug(NO_3I_MSG, e);
 			libraryFound = false;
 		}
 		catch (SecurityException e) {
