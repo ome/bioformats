@@ -24,6 +24,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     BINARY_DIR "${EP_BINARY_DIR}"
     INSTALL_DIR ""
     INSTALL_COMMAND "make;install;DESTDIR=${BIOFORMATS_EP_INSTALL_DIR}"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_ARGS
       -Wno-dev --no-warn-unused-cli
       "-DINSTALL_LIB_DIR=/${CMAKE_INSTALL_LIBDIR}"
