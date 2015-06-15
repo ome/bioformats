@@ -711,7 +711,7 @@ Format readers
      - 0
      - 0
      - 442
-   * - :doc:`SlideBook6Reader <formats/3i-Slidebook6-metadata>`
+   * - :doc:`SlideBook6Reader <formats/3i-slidebook6-metadata>`
      - 37
      - 0
      - 0

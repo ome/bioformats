@@ -1,5 +1,5 @@
 *******************************************************************************
-Slidebook6Reader
+SlideBook6Reader
 *******************************************************************************
 
 This page lists supported metadata fields for the Bio-Formats Slidebook 6 format reader.

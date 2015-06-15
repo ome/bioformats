@@ -47,7 +47,7 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`Slidebook6Reader.java`
+Source Code: :bfreader:`SlideBook6Reader.java`
 
 Notes:
 
