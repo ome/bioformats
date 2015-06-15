@@ -72,7 +72,6 @@ if(bioformats-superbuild)
 else()
   project(bioformats)
   message(STATUS "Configuring Bio-Formats main build")
-  message(STATUS "BFSB prefix path: ${CMAKE_PREFIX_PATH}")
 
   include(cpp/cmake/Version.cmake)
 
