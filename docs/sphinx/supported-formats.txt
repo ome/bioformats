@@ -1375,6 +1375,7 @@ Bio-Formats currently supports **142** formats
     :glob:
     :hidden:
 
+    formats/3i-slidebook6
     formats/3i-slidebook
     formats/abd-tiff
     formats/aim
