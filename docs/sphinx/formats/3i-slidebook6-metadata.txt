@@ -2,7 +2,7 @@
 SlideBook6Reader
 *******************************************************************************
 
-This page lists supported metadata fields for the Bio-Formats Slidebook 6 format reader.
+This page lists supported metadata fields for the Bio-Formats SlideBook 6 SLD (native) format reader.
 
 These fields are from the :model_doc:`OME data model <>`.
 Bio-Formats standardizes each format's original metadata to and from the OME
@@ -10,42 +10,27 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 52 of them (11%).
-  * Of those, Bio-Formats fully or partially converts 52 (100%).
+  * The file format itself supports 37 of them (7%).
+  * Of those, Bio-Formats fully or partially converts 37 (100%).
 
 Supported fields
 ===============================================================================
 
-These fields are fully supported by the Bio-Formats Slidebook 6 format reader:
-  * :schema:`Channel : AcquisitionMode <OME-2015-01/ome_xsd.html#Channel_AcquisitionMode>`
-  * :schema:`Channel : Color <OME-2015-01/ome_xsd.html#Channel_Color>`
-  * :schema:`Channel : EmissionWavelength <OME-2015-01/ome_xsd.html#EmissionWavelength>`
-  * :schema:`Channel : ExcitationWavelength <OME-2015-01/ome_xsd.html#ExcitationWavelength>`
+These fields are fully supported by the Bio-Formats SlideBook 6 SLD (native) format reader:
   * :schema:`Channel : ID <OME-2015-01/ome_xsd.html#Channel_ID>`
-  * :schema:`Channel : IlluminationType <OME-2015-01/ome_xsd.html#Channel_IlluminationType>`
-  * :schema:`Channel : NDFilter <OME-2015-01/ome_xsd.html#Channel_NDFilter>`
   * :schema:`Channel : Name <OME-2015-01/ome_xsd.html#Channel_Name>`
-  * :schema:`Channel : PockelCellSetting <OME-2015-01/ome_xsd.html#Channel_PockelCellSetting>`
   * :schema:`Channel : SamplesPerPixel <OME-2015-01/ome_xsd.html#Channel_SamplesPerPixel>`
-  * :schema:`DetectorSettings : AmplificationGain <OME-2015-01/ome_xsd.html#DetectorSettings_AmplificationGain>`
-  * :schema:`DetectorSettings : Binning <OME-2015-01/ome_xsd.html#DetectorSettings_Binning>`
-  * :schema:`DetectorSettings : ID <OME-2015-01/ome_xsd.html#DetectorSettings_ID>`
-  * :schema:`DetectorSettings : Integration <OME-2015-01/ome_xsd.html#DetectorSettings_Integration>`
-  * :schema:`DetectorSettings : Gain <OME-2015-01/ome_xsd.html#DetectorSettings_Gain>`
   * :schema:`Image : AcquisitionDate <OME-2015-01/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : Description <OME-2015-01/ome_xsd.html#Image_Description>`
   * :schema:`Image : ID <OME-2015-01/ome_xsd.html#Image_ID>`
   * :schema:`Image : InstrumentRef <OME-2015-01/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2015-01/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2015-01/ome_xsd.html#Instrument_ID>`
-  * :schema:`Detector : ID <OME-2015-01/ome_xsd.html#Detector_ID>`
-  * :schema:`Detector : Model <OME-2015-01/ome_xsd.html#Detector_Model>`
-  * :schema:`Detector : Type <OME-2015-01/ome_xsd.html#Detector_Type>`
+  * :schema:`Objective : Correction <OME-2015-01/ome_xsd.html#Objective_Correction>`
   * :schema:`Objective : ID <OME-2015-01/ome_xsd.html#Objective_ID>`
   * :schema:`Objective : Immersion <OME-2015-01/ome_xsd.html#Objective_Immersion>`
-  * :schema:`Objective : Immersion <OME-2015-01/ome_xsd.html#Objective_LensNA>`
+  * :schema:`Objective : Model <OME-2015-01/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Objective : NominalMagnification <OME-2015-01/ome_xsd.html#Objective_NominalMagnification>`
-  * :schema:`Objective : CalibratedMagnification <OME-2015-01/ome_xsd.html#Objective_CalibratedMagnification>`
   * :schema:`ObjectiveSettings : ID <OME-2015-01/ome_xsd.html#ObjectiveSettings_ID>`
   * :schema:`Pixels : BigEndian <OME-2015-01/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2015-01/ome_xsd.html#Pixels_DimensionOrder>`
@@ -70,6 +55,6 @@ These fields are fully supported by the Bio-Formats Slidebook 6 format reader:
   * :schema:`Plane : TheT <OME-2015-01/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2015-01/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 52**
+**Total supported: 37**
 
-**Total unknown or missing: 423**
+**Total unknown or missing: 438**
