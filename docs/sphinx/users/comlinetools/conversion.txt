@@ -48,7 +48,7 @@ The output file format is determined by the extension of the output file, e.g.
 
       bfconvert -range 0 2 /path/to/input output-first-3-images.tiff
 
-.. option:: -tilex TILEX, -tiley TILEX
+.. option:: -tilex TILEX, -tiley TILEY
 
     All images larger than 4096x4096 will be saved as a set of tiles if the
     output format supports doing so.  The default tile size is determined by
