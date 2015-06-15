@@ -25,6 +25,15 @@ Supported Formats
      - .. image:: images/header-export.png
      - BSD
 
+   * - :doc:`formats/3i-slidebook6`
+     - .sld
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |Very good|
+     - |Poor|
+     - |no|
+     - |no|
    * - :doc:`formats/3i-slidebook`
      - .sld
      - |Very good|
