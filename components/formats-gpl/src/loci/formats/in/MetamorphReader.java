@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import org.joda.time.DateTime;
@@ -1516,15 +1518,22 @@ public class MetamorphReader extends BaseTiffReader {
 
   private void readRationals(String[] labels) throws IOException {
     String pos;
+    Set<Double> uniqueZ = new HashSet<Double>();
     for (int i=0; i<mmPlanes; i++) {
       pos = intFormatMax(i, mmPlanes);
       for (int q=0; q<labels.length; q++) {
         double v = readRational(in).doubleValue();
-        if (labels[q].endsWith("absoluteZ") && i == 0) {
-          tempZ = v;
+        if (labels[q].endsWith("absoluteZ")) {
+          if (i == 0) {
+            tempZ = v;
+          }
+          uniqueZ.add(v);
         }
         addSeriesMeta(labels[q] + "[" + pos + "]", v);
       }
+    }
+    if (uniqueZ.size() == mmPlanes) {
+      core.get(0).sizeZ = mmPlanes;
     }
   }
 
