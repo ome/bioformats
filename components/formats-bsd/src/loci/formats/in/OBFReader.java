@@ -76,7 +76,7 @@ public class OBFReader extends FormatReader
   private static final String STACK_MAGIC_STRING = "OMAS_BF_STACK\n";
   private static final short MAGIC_NUMBER = (short) 0xFFFF;
 
-  private static final int FILE_VERSION = 1;
+  private static final int FILE_VERSION = 2;
   private static final int STACK_VERSION = 5;
 
   private static final int MAXIMAL_NUMBER_OF_DIMENSIONS = 15;
@@ -148,10 +148,12 @@ public class OBFReader extends FormatReader
     in = new RandomAccessInputStream(id);
 
     final int fileVersion = getFileVersion(in);
-
     long stackPosition = in.readLong();
-
     final int lengthOfDescription = in.readInt();
+    if (fileVersion > 1)
+    {
+      in.readLong();
+    }
     final String description = in.readString(lengthOfDescription);
     metadata.put("Description", description);
 
