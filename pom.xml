@@ -683,10 +683,6 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
-    <repository>
       <id>unidata.releases</id>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
     </repository>
@@ -704,13 +700,6 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </pluginRepository>
     <pluginRepository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
@@ -720,20 +709,78 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <distributionManagement>
-    <repository>
-      <id>ome.staging</id>
-      <name>OME Staging Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
-    </repository>
-    <snapshotRepository>
-      <id>ome.snapshots</id>
-      <name>OME Snapshots Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <profiles>
+    <profile>
+      <id>merge-build</id>
+
+      <repositories>
+        <repository>
+          <id>ome.unstable</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </repository>
+      </repositories>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>ome.unstable</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+
+      <distributionManagement>
+        <repository>
+          <id>ome.unstable</id>
+          <name>OME Unstable Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </repository>
+        <snapshotRepository>
+          <id>ome.unstable</id>
+          <name>OME Unstable Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
+    <profile>
+      <id>latest-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>ome.snapshots</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+        </repository>
+      </repositories>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>ome.snapshots</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+
+      <distributionManagement>
+        <repository>
+          <id>ome.staging</id>
+          <name>OME Staging Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
+        </repository>
+        <snapshotRepository>
+          <id>ome.snapshots</id>
+          <name>OME Snapshots Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
     <!-- Build test artifact when tests are present. -->
     <profile>
       <id>test-jar</id>
