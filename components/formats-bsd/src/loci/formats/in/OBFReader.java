@@ -150,12 +150,12 @@ public class OBFReader extends FormatReader
     final int fileVersion = getFileVersion(in);
     long stackPosition = in.readLong();
     final int lengthOfDescription = in.readInt();
+    final String description = in.readString(lengthOfDescription);
+    metadata.put("Description", description);
     if (fileVersion > 1)
     {
       in.readLong();
     }
-    final String description = in.readString(lengthOfDescription);
-    metadata.put("Description", description);
 
     if (stackPosition != 0)
     {
