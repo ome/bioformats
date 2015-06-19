@@ -552,6 +552,9 @@ public final class ImageConverter {
         write += e - m;
 
         nextOutputIndex.put(outputName, outputIndex + 1);
+        if (i == endPlane - 1) {
+          nextOutputIndex.remove(outputName);
+        }
 
         // log number of planes processed every second or so
         if (count == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
