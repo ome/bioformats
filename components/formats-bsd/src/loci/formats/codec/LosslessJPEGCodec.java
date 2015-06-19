@@ -286,24 +286,28 @@ public class LosslessJPEGCodec extends BaseCodec {
           if (huffmanTables == null) {
             huffmanTables = new short[4][];
           }
-          int s = in.read();
-          byte tableClass = (byte) ((s & 0xf0) >> 4);
-          byte destination = (byte) (s & 0xf);
-          int[] nCodes = new int[16];
-          Vector table = new Vector();
-          for (int i=0; i<nCodes.length; i++) {
-            nCodes[i] = in.read();
-            table.add(new Short((short) nCodes[i]));
-          }
-
-          for (int i=0; i<nCodes.length; i++) {
-            for (int j=0; j<nCodes[i]; j++) {
-              table.add(new Short((short) (in.read() & 0xff)));
-            }
-          }
-          huffmanTables[destination] = new short[table.size()];
-          for (int i=0; i<huffmanTables[destination].length; i++) {
-            huffmanTables[destination][i] = ((Short) table.get(i)).shortValue();
+          int bytesRead = 0;
+          while (bytesRead < length) {
+	          int s = in.read();
+	          byte tableClass = (byte) ((s & 0xf0) >> 4);
+	          byte destination = (byte) (s & 0xf);
+	          int[] nCodes = new int[16];
+	          Vector table = new Vector();
+	          for (int i=0; i<nCodes.length; i++) {
+	            nCodes[i] = in.read();
+	            table.add(new Short((short) nCodes[i]));
+	          }
+	
+	          for (int i=0; i<nCodes.length; i++) {
+	            for (int j=0; j<nCodes[i]; j++) {
+	              table.add(new Short((short) (in.read() & 0xff)));
+	            }
+	          }
+	          huffmanTables[destination] = new short[table.size()];
+	          for (int i=0; i<huffmanTables[destination].length; i++) {
+	            huffmanTables[destination][i] = ((Short) table.get(i)).shortValue();
+	          }
+	          bytesRead += table.size() + 1;
           }
         }
         in.seek(fp + length);
