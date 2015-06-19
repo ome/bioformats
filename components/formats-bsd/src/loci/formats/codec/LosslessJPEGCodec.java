@@ -164,8 +164,14 @@ public class LosslessJPEGCodec extends BaseCodec {
 
         ByteVector b = new ByteVector();
         for (int i=0; i<toDecode.length; i++) {
-          b.add(toDecode[i]);
-          if (toDecode[i] == (byte) 0xff && toDecode[i + 1] == 0) i++;
+          byte val = toDecode[i];
+          if (val == (byte) 0xff) {
+        	if (toDecode[i + 1] == 0)
+        		b.add(val);
+    		i++;
+          } else {
+            b.add(val);
+          }
         }
         toDecode = b.toByteArray();
 
