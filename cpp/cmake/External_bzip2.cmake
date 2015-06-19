@@ -13,28 +13,28 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-source)
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-  # Notes:
-  # INSTALL_LIB_DIR overridden to use GNUInstallDirs setting
+  # Notes: Using custom CMake build for bzip2; this has been submitted
+  # upstream and may be included in a future release.  If so, the
+  # files copied in the patch step may be dropped.
 
   ExternalProject_Add(${proj}
     ${BIOFORMATS_EP_COMMON_ARGS}
     URL "http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz"
     URL_HASH "SHA512=00ace5438cfa0c577e5f578d8a808613187eff5217c35164ffe044fbafdfec9e98f4192c02a7d67e01e5a5ccced630583ad1003c37697219b0f147343a3fdd12"
     SOURCE_DIR "${EP_SOURCE_DIR}"
+    BINARY_DIR "${EP_BINARY_DIR}"
     INSTALL_DIR ""
-    BUILD_IN_SOURCE 1
-    PATCH_COMMAND ${CMAKE_COMMAND}
-      "-DPATCH_DIR:PATH=${EP_SOURCE_DIR}"
-      -P "${CMAKE_CURRENT_LIST_DIR}/External_bzip2_patch.cmake"
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ${CMAKE_COMMAND}
-      "-DBUILD_DIR:PATH=${EP_SOURCE_DIR}"
-      "-DINSTALL_DIR:PATH=${BIOFORMATS_EP_INSTALL_DIR}"
-      "-DLIB_DIR:PATH=${CMAKE_INSTALL_LIBDIR}"
-      -P "${CMAKE_CURRENT_LIST_DIR}/External_bzip2_build.cmake"
-    INSTALL_COMMAND ""
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy_directory
+      "${CMAKE_CURRENT_LIST_DIR}/External_bzip2_files"
+      "${EP_SOURCE_DIR}"
+    INSTALL_COMMAND "make;install;DESTDIR=${BIOFORMATS_EP_INSTALL_DIR}"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
+    CMAKE_ARGS
+      -Wno-dev --no-warn-unused-cli
+      "-DINSTALL_LIB_DIR=/${CMAKE_INSTALL_LIBDIR}"
+    CMAKE_CACHE_ARGS
     DEPENDS
-      ${bzip2_DEPENDENCIES}
+      ${zlib_DEPENDENCIES}
     )
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${bzip2_DEPENDENCIES})
