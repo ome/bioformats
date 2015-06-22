@@ -35,6 +35,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -63,6 +64,8 @@ public class TestTools {
 
   public static final String DIVIDER =
     "----------------------------------------";
+
+  public static final String baseConfigName = ".bioformats";
 
   /** Calculate the SHA-1 of a byte array. */
   public static String sha1(byte[] b, int offset, int len) {
@@ -162,6 +165,19 @@ public class TestTools {
   }
 
   /** Recursively generate a list of files to test. */
+  public static boolean isConfigFile(Location file, String configFileSuffix)
+  {
+    String configName = baseConfigName;
+    if (configFileSuffix.length() > 0) {
+      configName += ".";
+      configName += configFileSuffix;
+    }
+
+    String filename = file.getName();
+    return (filename.equals(configName) || filename.equals(baseConfigName));
+  }
+
+  /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig)
   {
@@ -175,19 +191,11 @@ public class TestTools {
     getFiles(root, files, config, toplevelConfig, subdirs, "");
   }
 
-
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
     String configFileSuffix)
   {
-    String configName = ".bioformats";
-    String baseConfigName = configName;
-    if (configFileSuffix.length() > 0) {
-      configName += ".";
-      configName += configFileSuffix;
-    }
-
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
@@ -197,30 +205,45 @@ public class TestTools {
 
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();
-
     Arrays.sort(subs);
+
+    String rootDir = config.getRootDirectory();
+    String configDir = config.getConfigDirectory();
+    boolean useConfigDir = (configDir != null);
+
+    List<String> subsList = new ArrayList<String>();
+
+    if (useConfigDir) {
+      // Look for a configuration file under the configuration directory
+      String configRoot = root.replaceAll(rootDir, configDir);
+      Location configFile = new Location(configRoot, baseConfigName);
+      if (configFile.exists()) {
+        LOGGER.debug("found config file: {}", configFile.getAbsolutePath());
+        subsList.add(configFile.getAbsolutePath());
+      }
+    }
 
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(root, subs[i]);
-      subs[i] = file.getAbsolutePath();
 
-      String filename = file.getName();
-
-      if ((!isToplevel && (filename.equals(configName) ||
-        filename.equals(baseConfigName))) ||
-        (isToplevel && subs[i].equals(toplevelConfig)))
+      if ((!isToplevel && isConfigFile(file, configFileSuffix)) ||
+          (isToplevel && subs[i].equals(toplevelConfig)))
       {
-        String tmp = subs[0];
-        subs[0] = subs[i];
-        subs[i] = tmp;
+        if (!useConfigDir) {
+          LOGGER.debug("adding config file: {}", file.getAbsolutePath());
+          subsList.add(0, file.getAbsolutePath());
+        }
+      } else {
+        subsList.add(file.getAbsolutePath());
       }
     }
 
     // special config file for the test suite
     LOGGER.debug("\tconfig file");
     try {
-      config.parseConfigFile(subs[0]);
+      LOGGER.debug("Parsing {}:", subsList.get(0));
+      config.parseConfigFile(subsList.get(0));
     }
     catch (IOException exc) {
       LOGGER.debug("", exc);
@@ -258,25 +281,24 @@ public class TestTools {
 
     ImageReader typeTester = new ImageReader();
 
-    for (int i=0; i<subs.length; i++) {
-      Location file = new Location(subs[i]);
-      LOGGER.debug("Checking {}:", subs[i]);
+    for (int i=0; i<subsList.size(); i++) {
+      Location file = new Location(subsList.get(i));
+      LOGGER.debug("Checking {}:", subsList.get(i));
 
-      String filename = file.getName();
-
-      if (filename.equals(configName) || filename.equals(baseConfigName)) {
+      if (isConfigFile(file, configFileSuffix)) {
         continue;
       }
-      else if (isIgnoredFile(subs[i], config)) {
+      else if (isIgnoredFile(subsList.get(i), config)) {
         LOGGER.debug("\tignored");
         continue;
       }
       else if (file.isDirectory()) {
         LOGGER.debug("\tdirectory");
-        getFiles(subs[i], files, config, null, null, configFileSuffix);
+        getFiles(subsList.get(i), files, config, null, null, configFileSuffix);
       }
-      else if (!subs[i].endsWith("readme.txt") && !subs[i].endsWith("test_setup.ini")) {
-        if (typeTester.isThisType(subs[i])) {
+      else if (!subsList.get(i).endsWith("readme.txt") &&
+               !subsList.get(i).endsWith("test_setup.ini")) {
+        if (typeTester.isThisType(subsList.get(i))) {
           LOGGER.debug("\tOK");
           files.add(file.getAbsolutePath());
         }
