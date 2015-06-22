@@ -565,6 +565,7 @@ public class FlexReader extends FormatReader {
     for (int run=0; run<runCount; run++) {
       String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, run);
       store.setPlateAcquisitionID(plateAcqID, 0, run);
+      store.setPlateAcquisitionName(runDirs.get(run).getName(), 0, run);
 
       PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
       if (maxFieldCount != null) {
@@ -624,8 +625,15 @@ public class FlexReader extends FormatReader {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
 
-      if (plateName == null) plateName = currentFile.getParentFile().getName();
-      if (plateBarcodes.size() > 0) plateName = plateBarcodes.iterator().next() + " " + plateName;
+      if (plateName == null) {
+        if (runCount <= 1) {
+          plateName = " " + currentFile.getParentFile().getName();
+        }
+        else {
+          plateName = "";
+        }
+      }
+      if (plateBarcodes.size() > 0) plateName = plateBarcodes.iterator().next() + plateName;
       store.setPlateName(plateName, 0);
       store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
       store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
