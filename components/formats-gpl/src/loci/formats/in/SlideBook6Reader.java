@@ -84,6 +84,11 @@ public class SlideBook6Reader  extends FormatReader {
 	static {
 		try {
 			// load JNI wrapper of SBReadFile.dll
+			NativeLibraryUtil.Architecture arch = NativeLibraryUtil.getArchitecture();
+			if (arch != NativeLibraryUtil.Architecture.WINDOWS_64 && arch != NativeLibraryUtil.Architecture.WINDOWS_32) {
+				// TODO: add compiled linux and OS X architecture libraries to class
+				throw new UnsatisfiedLinkError();
+			}
 			if (!libraryFound) {
 				libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
 			}
