@@ -1,28 +1,32 @@
-# zlib superbuild
-set(proj zlib)
+# tiff superbuild
+set(proj tiff)
 
 # Set dependency list
-set(zlib_DEPENDENCIES)
+set(tiff_DEPENDENCIES zlib)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  unset(zlib_DIR CACHE)
-  find_package(ZLIB REQUIRED)
+  unset(tiff_DIR CACHE)
+  find_package(TIFF REQUIRED)
 endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-source)
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-  # Notes:
-  # INSTALL_LIB_DIR overridden to use GNUInstallDirs setting
+  # Notes: Using custom CMake build for tiff; this has been submitted
+  # upstream and may be included in a future release.  If so, the
+  # files copied in the patch step may be dropped.
 
   ExternalProject_Add(${proj}
     ${BIOFORMATS_EP_COMMON_ARGS}
-    URL "ftp://ftp.heanet.ie/mirrors/download.sourceforge.net/pub/sourceforge/l/li/libpng/zlib/1.2.8/zlib-1.2.8.tar.xz"
-    URL_HASH "SHA512=405fbb4fc9ca8a59f34488205f403e77d4f184b08d344efbec6a8f558cac0512ee6cda1dc01b7913d61d9bed04cc710e61db1081bb8782c139fcb727f586fa54"
+    URL "ftp://ftp.remotesensing.org/pub/libtiff/tiff-4.0.4.tar.gz"
+    URL_HASH "SHA512=4c83f8d7c10224c481c58721044813056b6fbc44c94b1b94a35d2f829bf4a89d35edd878e40e4d8579fd04b889edab946c95b0dc04b090794d1bd9120a79882b"
     SOURCE_DIR "${EP_SOURCE_DIR}"
     BINARY_DIR "${EP_BINARY_DIR}"
     INSTALL_DIR ""
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy_directory
+      "${CMAKE_CURRENT_LIST_DIR}/External_tiff_files"
+      "${EP_SOURCE_DIR}"
     INSTALL_COMMAND "make;install;DESTDIR=${BIOFORMATS_EP_INSTALL_DIR}"
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_ARGS
@@ -33,6 +37,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${zlib_DEPENDENCIES}
     )
 else()
-  ExternalProject_Add_Empty(${proj} DEPENDS ${zlib_DEPENDENCIES})
+  ExternalProject_Add_Empty(${proj} DEPENDS ${tiff_DEPENDENCIES})
 endif()
 
