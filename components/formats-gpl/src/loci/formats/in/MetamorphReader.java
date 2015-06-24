@@ -499,6 +499,12 @@ public class MetamorphReader extends BaseTiffReader {
         currentValue.append(line.substring(comma + 1).trim());
       }
 
+      if (!globalDoZ) {
+        for (int i=0; i<hasZ.size(); i++) {
+          hasZ.set(i, false);
+        }
+      }
+
       // figure out how many files we need
 
       if (z != null) zc = Integer.parseInt(z);
@@ -511,6 +517,9 @@ public class MetamorphReader extends BaseTiffReader {
       if (cc == 0) cc = 1;
       if (cc == 1 && bizarreMultichannelAcquisition) {
         cc = 2;
+      }
+      if (tc == 0) {
+        tc = 1;
       }
 
       int numFiles = cc * tc;
