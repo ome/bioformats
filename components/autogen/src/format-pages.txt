@@ -1466,8 +1466,7 @@ developer = `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/
 bsd = no
 export = no
 samples = `golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar.gz>`_
-weHave = * an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) \n
-* `another MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) \n
+weHave = * an `MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) \n
 * a few MRC datasets
 pixelsRating = Outstanding
 metadataRating = Very good
