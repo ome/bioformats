@@ -353,7 +353,7 @@ public class TiffWriter extends FormatWriter {
     else {
       out.seek((Long) ifd.get(IFD.REUSE));
     }
-    
+
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION,
       interleaved || getSamplesPerPixel() == 1 ? 1 : 2);
 
@@ -361,6 +361,12 @@ public class TiffWriter extends FormatWriter {
     if (FormatTools.isSigned(type)) sampleFormat = 2;
     if (FormatTools.isFloatingPoint(type)) sampleFormat = 3;
     ifd.putIFDValue(IFD.SAMPLE_FORMAT, sampleFormat);
+
+    int channels = retrieve.getPixelsSizeC(series).getValue().intValue();
+    int z = retrieve.getPixelsSizeZ(series).getValue().intValue();
+    int t = retrieve.getPixelsSizeT(series).getValue().intValue();
+    ifd.putIFDValue(IFD.IMAGE_DESCRIPTION,
+      "ImageJ=\nchannels=" + channels + "\nslices=" + z + "\nframes=" + t);
 
     int index = no;
     for (int i=0; i<getSeries(); i++) {
