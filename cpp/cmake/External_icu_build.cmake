@@ -6,7 +6,7 @@ if(WIN32)
 
 else(WIN32)
 
-  execute_process(COMMAND make install "DESTDIR=${ICU_INSTALL_DIR}"
+  execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} install "DESTDIR=${ICU_INSTALL_DIR}"
                   WORKING_DIRECTORY ${BUILD_DIR}
                   RESULT_VARIABLE build_result)
 

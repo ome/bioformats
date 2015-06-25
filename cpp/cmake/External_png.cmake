@@ -28,7 +28,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_ARGS
       -Wno-dev --no-warn-unused-cli
-      "-DCMAKE_INSTALL_LIBDIR=/${CMAKE_INSTALL_LIBDIR}"
     DEPENDS
       ${png_DEPENDENCIES}
     )

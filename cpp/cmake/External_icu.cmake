@@ -2,7 +2,7 @@
 set(proj icu)
 
 # Set dependency list
-set(icu_DEPENDENCIES zlib bzip2)
+set(icu_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(icu_DIR CACHE)
@@ -50,6 +50,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       "-DLIB_DIR:PATH=${CMAKE_INSTALL_LIBDIR}"
       "-DCXXFLAGS=${EP_CXXFLAGS}"
       "-DLDFLAGS=${EP_LDFLAGS}"
+      "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}"
       -P "${CMAKE_CURRENT_LIST_DIR}/External_icu_build.cmake"
     INSTALL_COMMAND ""
     DEPENDS
