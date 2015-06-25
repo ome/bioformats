@@ -19,7 +19,7 @@ else(WIN32)
                           --without-libraries=python
                           --with-toolset=${BOOST_TOOLSET}
                   WORKING_DIRECTORY ${BUILD_DIR}
-                  RESULT_VARIABLE boostrap_result)
+                  RESULT_VARIABLE bootstrap_result)
 
 endif(WIN32)
 
