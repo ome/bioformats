@@ -565,7 +565,18 @@ public class FlexReader extends FormatReader {
     for (int run=0; run<runCount; run++) {
       String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, run);
       store.setPlateAcquisitionID(plateAcqID, 0, run);
-      store.setPlateAcquisitionName(runDirs.get(run).getName(), 0, run);
+
+      String acqName = runDirs.get(run).getName();
+      store.setPlateAcquisitionName(acqName, 0, run);
+
+      int timeStart = acqName.indexOf("(");
+      if (timeStart > 0) {
+        String time = acqName.substring(timeStart);
+        time = DateTools.formatDate(time, "(yyyy-MM-dd_HH-mm-ss)");
+
+        store.setPlateAcquisitionStartTime(new Timestamp(time), 0, run);
+        plateAcqStartTime = null;
+      }
 
       PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
       if (maxFieldCount != null) {
