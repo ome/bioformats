@@ -52,6 +52,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/External_bzip2.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_png.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_tiff.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_boost.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/External_xerces.cmake")
 
 install(DIRECTORY ${BIOFORMATS_EP_INSTALL_DIR}/
         DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -59,7 +60,7 @@ install(DIRECTORY ${BIOFORMATS_EP_INSTALL_DIR}/
 # Re-run top-level CMakeLists.txt as an external project.
 set(proj bioformats)
 
-set(bioformats_DEPENDENCIES zlib bzip2 png tiff boost)
+set(bioformats_DEPENDENCIES zlib bzip2 png tiff boost xerces)
 set(bioformats_ARGS)
 
 set(EP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
