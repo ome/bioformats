@@ -402,10 +402,14 @@ public class ColumbusReader extends FormatReader {
               if (p != null) {
                 p.series = wellSample;
                 store.setChannelName(p.channelName, p.series, p.channel);
-                store.setChannelEmissionWavelength(
-                  new PositiveInteger((int) p.emWavelength), p.series, p.channel);
-                store.setChannelExcitationWavelength(
-                  new PositiveInteger((int) p.exWavelength), p.series, p.channel);
+                if ((int) p.emWavelength > 0) {
+                  store.setChannelEmissionWavelength(
+                    new PositiveInteger((int) p.emWavelength), p.series, p.channel);
+                }
+                if ((int) p.exWavelength > 0) {
+                  store.setChannelExcitationWavelength(
+                    new PositiveInteger((int) p.exWavelength), p.series, p.channel);
+                }
                 store.setChannelColor(p.channelColor, p.series, p.channel);
               }
 
