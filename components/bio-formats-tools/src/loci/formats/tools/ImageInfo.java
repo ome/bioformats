@@ -203,7 +203,10 @@ public class ImageInfo {
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
-        else if (args[i].equals("-autoscale")) autoscale = true;
+        else if (args[i].equals("-autoscale")) {
+          fastBlit = true;
+          autoscale = true;
+        }
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
