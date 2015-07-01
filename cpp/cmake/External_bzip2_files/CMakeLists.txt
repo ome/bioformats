@@ -27,6 +27,10 @@ set(VERSION "1.0.6")
 include(GNUInstallDirs)
 enable_testing()
 
+if(MSVC)
+  set(CMAKE_DEBUG_POSTFIX "d")
+endif()
+
 add_definitions(-D_FILE_OFFSET_BITS=64)
 
 include_directories("${CMAKE_SOURCE_DIR}")
