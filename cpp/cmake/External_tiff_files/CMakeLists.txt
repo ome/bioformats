@@ -58,6 +58,7 @@ set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 set(PACKAGE_BUGREPORT "tiff@lists.maptools.org")
 
 include(GNUInstallDirs)
+include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckIncludeFile)
 include(CheckTypeSize)
@@ -89,6 +90,72 @@ set(EXTRA_DIST
   configure.com
   nmake.opt
   libtiff-4.pc.in)
+
+if(MSVC)
+    set(CMAKE_DEBUG_POSTFIX "d")
+endif()
+
+# These are annoyingly verbose, produce false positives or don't work
+# nicely with all supported compiler versions, so are disabled unless
+# explicitly enabled.
+option(extra-warnings "Enable extra compiler warnings" OFF)
+
+# This will cause the compiler to fail when an error occurs.
+option(fatal-warnings "Compiler warnings are errors" OFF)
+
+# Check if the compiler supports each of the following additional
+# flags, and enable them if supported.  This greatly improves the
+# quality of the build by checking for a number of common problems,
+# some of which are quite serious.
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR
+   CMAKE_C_COMPILER_ID MATCHES "Clang")
+  set(test_flags
+      -Wall
+      -Winline
+      -W
+      -Wformat-security
+      -Wpointer-arith
+      -Wdisabled-optimization
+      -Wno-unknown-pragmas
+      -Wdeclaration-after-statement
+      -fstrict-aliasing)
+  if(extra-warnings)
+    list(APPEND test_flags
+        -Wfloat-equal
+        -Wmissing-prototypes
+        -Wunreachable-code)
+  endif()
+  if(fatal-warnings)
+    list(APPEND test_flags
+         -Werror)
+  endif()
+elseif(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+  set(test_flags)
+  if(extra-warnings)
+    list(APPEND test_flags
+         /W4)
+  else()
+    list(APPEND test_flags
+         /W3)
+  endif()
+  if (fatal-warnings)
+    list(APPEND test_flags
+         /WX)
+  endif()
+endif()
+
+foreach(flag ${test_flags})
+  string(REGEX REPLACE "[^A-Za-z0-9]" "_" flag_var "${flag}")
+  set(test_c_flag "C_FLAG${flag_var}")
+  CHECK_C_COMPILER_FLAG(${flag} "${test_c_flag}")
+  if (${test_c_flag})
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
+  endif (${test_c_flag})
+endforeach(flag ${test_flags})
+
+if(MSVC)
+    set(CMAKE_DEBUG_POSTFIX "d")
+endif()
 
 # Check if LD supports linker scripts.
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/conftest.map" "VERS_1 {
@@ -314,7 +381,6 @@ check_function_exists(memmove    HAVE_MEMMOVE)
 check_function_exists(memset     HAVE_MEMSET)
 check_function_exists(mmap       HAVE_MMAP)
 check_function_exists(setmode    HAVE_SETMODE)
-check_function_exists(snprintf   HAVE_SNPRINTF)
 check_function_exists(strcasecmp HAVE_STRCASECMP)
 check_function_exists(strchr     HAVE_STRCHR)
 check_function_exists(strrchr    HAVE_STRRCHR)
@@ -325,10 +391,15 @@ check_function_exists(strtoull   HAVE_STRTOULL)
 check_function_exists(getopt     HAVE_GETOPT)
 check_function_exists(lfind      HAVE_LFIND)
 
-# VS2013 has a usable _snprintf
-if(NOT MSVC_VERSION VERSION_LESS 1800 AND MSVC_VERSION VERSION_LESS 1900)
-  check_function_exists(_snprintf  HAVE__SNPRINTF)
-endif()
+# May be inlined, so check it compiles:
+check_c_source_compiles("
+#include <stdio.h>
+int main(void) {
+  char buf[10];
+  snprintf(buf, 10, \"Test %d\", 1);
+  return 0;
+}"
+  HAVE_SNPRINTF)
 
 # CPU bit order
 set(fillorder FILLORDER_MSB2LSB)

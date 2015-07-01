@@ -98,9 +98,9 @@
 /* Define to 1 if you have the `_snprintf' function. */
 #cmakedefine HAVE__SNPRINTF 1
 
-#if !defined(HAVE_SNPRINTF) && defined(HAVE__SNPRINTF)
+/*#if !defined(HAVE_SNPRINTF) && defined(HAVE__SNPRINTF)
 #define snprintf _snprintf
-#endif
+#endif*/
 
 /* Define to 1 if you have the `sqrt' function. */
 #cmakedefine HAVE_SQRT 1
