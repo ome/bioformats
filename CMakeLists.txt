@@ -64,6 +64,9 @@ option(bioformats-superbuild "Build Bio-Formats and the projects it depends upon
 mark_as_advanced(bioformats-superbuild)
 unset(sb_default)
 
+list(APPEND CMAKE_MODULE_PATH
+     "${CMAKE_CURRENT_LIST_DIR}/cpp/cmake")
+
 include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
 
 if(bioformats-superbuild)
@@ -80,9 +83,6 @@ else()
   endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
   enable_language(CXX)
-
-  list(APPEND CMAKE_MODULE_PATH
-       "${PROJECT_SOURCE_DIR}/cpp/cmake")
 
   include(GNUInstallDirs)
   include(CompilerChecks)

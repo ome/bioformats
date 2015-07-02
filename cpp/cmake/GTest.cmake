@@ -37,13 +37,11 @@
 enable_testing()
 option(test "Enable unit tests (requires gtest)" ON)
 set(BUILD_TESTS ${test})
-option(extended-tests "Enable extended tests (more comprehensive, longer run time)" ON)
 set(EXTENDED_TESTS ${extended-tests})
 
 # Unit tests
 find_package(Threads REQUIRED)
 
-option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
 if(NOT embedded-gtest)
   find_package(GTest)
 endif()
