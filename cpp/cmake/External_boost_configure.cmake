@@ -5,27 +5,29 @@ include(${CMAKE_CURRENT_LIST_DIR}/ExternalProjectEnvironment.cmake)
 if(WIN32) # bootstrap.bat has no options, the options are given to ./b2 when building
 
   message(STATUS "Bootstrapping boost (Windows)")
+
   execute_process(COMMAND bootstrap.bat
-                  WORKING_DIRECTORY ${EP_SOURCE_DIR}
+                  WORKING_DIRECTORY ${SOURCE_DIR}
                   RESULT_VARIABLE boostrap_result)
 
-else(WIN32)
+else()
 
   message(STATUS "Bootstrapping boost (Unix)")
 
-  set(ENV{CXX} "${BOOST_CXX}")
-  file(WRITE "user-config.jam" "using ${BOOST_TOOLSET} : : ${BOOST_CXX}
-")
-
   execute_process(COMMAND ./bootstrap.sh
-                          --prefix=${BOOST_INSTALL_DIR}
-                          --libdir=${BOOST_INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}
+                          --prefix=${BIOFORMATS_EP_INSTALL_DIR}
+                          --libdir=${BIOFORMATS_EP_LIB_DIR}
                           --without-libraries=python
                           --with-toolset=${BOOST_TOOLSET}
-                  WORKING_DIRECTORY ${EP_SOURCE_DIR}
+                  WORKING_DIRECTORY ${SOURCE_DIR}
                   RESULT_VARIABLE bootstrap_result)
 
-endif(WIN32)
+  file(READ "${SOURCE_DIR}/project-config.jam" PROJECT_CONFIG)
+  file(WRITE "${SOURCE_DIR}/project-config.jam" "using ${BOOST_TOOLSET} : : ${CMAKE_CXX_COMPILER} ;
+
+${PROJECT_CONFIG}")
+
+endif()
 
 if (bootstrap_result)
   message(FATAL_ERROR "boost: Configure (bootstrap) failed")
