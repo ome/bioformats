@@ -99,6 +99,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
+          <classifier>${envClassifier}</classifier>
           <archive>
             <manifest>
               <packageName>loci.tests</packageName>

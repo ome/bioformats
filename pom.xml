@@ -343,6 +343,7 @@
           <version>2.4</version>
           <!-- Always add classpath to JAR manifests. -->
           <configuration>
+            <classifier>${envClassifier}</classifier>
             <archive>
               <manifest>
                 <addClasspath>true</addClasspath>
@@ -734,6 +735,24 @@
   </distributionManagement>
 
   <profiles>
+    <profile>
+      <id>latest-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <properties>
+        <envClassifier></envClassifier>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>merge-build</id>
+      <properties>
+        <envClassifier>merge</envClassifier>
+      </properties>
+    </profile>
+
     <!-- Build test artifact when tests are present. -->
     <profile>
       <id>test-jar</id>
