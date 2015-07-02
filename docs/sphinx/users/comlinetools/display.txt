@@ -21,7 +21,7 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -series SERIES
 
-    To display a different series, for example the second one:
+    Displays a different series, for example the second one:
 
     ::
 
@@ -31,7 +31,7 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -omexml
 
-    To display the OME-XML metadata for a file on the console:
+    Displays the OME-XML metadata for a file on the console:
 
     ::
 
@@ -101,7 +101,7 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -omexml-only
 
-    This option allows to display the OME-XML alone:
+    Displays the OME-XML alone:
 
     ::
 
@@ -112,7 +112,7 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -debug
 
-    Debugging output can also be enabled if more information is needed:
+    Enables debugging output if more information is needed:
 
     ::
 
@@ -120,8 +120,8 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -fast
 
-    This option allows to display an image as quickly as possible. This is
-    achieved by converting the raw data into a 8 bit RGB image::
+    Displays an image as quickly as possible. This is achieved by converting
+    the raw data into a 8 bit RGB image::
 
       showinf -fast /path/to/file
 
@@ -131,8 +131,7 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -autoscale
 
-    This option allows to adjust the display range to the minimum and maximum
-    pixel values::
+    Adjusts the display range to the minimum and maximum pixel values::
 
       showinf -autoscale /path/to/file
 
@@ -142,14 +141,13 @@ dimensions, and other basic metadata will be printed to the console.
 
 .. option:: -cache
 
-    After initialization, the reader can be cached under the same directory as 
-    the input file::
+    Caches the reader under the same directory as the input file after
+    initialization::
 
       showinf -cache /path/to/file
 
 .. option:: -cache-dir DIR
 
-    It is also possible to specify the base directory under which the reader
-    should be cached::
+    Specifies the base directory under which the reader should be cached::
 
       showinf -cache-dir /tmp/cachedir /path/to/file
