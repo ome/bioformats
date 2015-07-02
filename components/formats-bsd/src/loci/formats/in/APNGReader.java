@@ -147,7 +147,11 @@ public class APNGReader extends FormatReader {
       lastImage = null;
 
       PNGInputStream stream = new PNGInputStream("IDAT");
-      lastImage = decode(stream, getSizeX(), y + h);
+      int decodeHeight = y + h;
+      if (decodeHeight < getSizeY() && decodeHeight % 8 != 0) {
+        decodeHeight += 8 - (decodeHeight % 8);
+      }
+      lastImage = decode(stream, getSizeX(), decodeHeight);
       stream.close();
       lastImageIndex = 0;
       lastImageRow = y + h;
@@ -215,6 +219,9 @@ public class APNGReader extends FormatReader {
       lastImage = null;
       lastImageIndex = -1;
       lastImageRow = -1;
+      compression = 0;
+      interlace = 0;
+      idatCount = 0;
     }
   }
 
@@ -402,16 +409,16 @@ public class APNGReader extends FormatReader {
 
       byte[][] passImages = new byte[7][];
 
-      int nRowBlocks = height / 8;
-      int nColBlocks = width / 8;
+      int nRowBlocks = getSizeY() / 8;
+      int nColBlocks = getSizeX() / 8;
 
       // row and column counts have to be adjusted when the image
       // dimensions are not multiples of 8
 
-      if (8 * nRowBlocks != height) {
+      if (8 * nRowBlocks != getSizeY()) {
         nRowBlocks++;
       }
-      if (8 * nColBlocks != width) {
+      if (8 * nColBlocks != getSizeX()) {
         nColBlocks++;
       }
 
@@ -434,7 +441,7 @@ public class APNGReader extends FormatReader {
           // for clarification of the pass width / pass row adjustments
 
           if (nColBlocks * 8 != width) {
-            int extraCols = width - (nColBlocks - 1) * 8;
+            int extraCols = getSizeX() - (nColBlocks - 1) * 8;
             switch (extraCols) {
               case 1:
                 if (i == 1 || i == 3 || i == 5) {
@@ -522,8 +529,11 @@ public class APNGReader extends FormatReader {
           passImages[i] = new byte[rowSize * passHeight];
 
           for (int row=0; row<passHeight; row++) {
-            if (nRowBlocks * 8 != height && row >= PASS_HEIGHTS[i] * (nRowBlocks - 1)) {
-              int extraRows = height - (nRowBlocks - 1) * 8;
+            if (passWidth == 0) {
+              continue;
+            }
+            if (nRowBlocks * 8 != getSizeY() && row >= PASS_HEIGHTS[i] * (nRowBlocks - 1)) {
+              int extraRows = getSizeY() - (nRowBlocks - 1) * 8;
               switch (extraRows) {
                 case 1:
                   if (i == 2 || i == 4 || i == 6) {
