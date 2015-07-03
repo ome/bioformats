@@ -67,6 +67,10 @@ import ome.units.UNITS;
  * {@link loci.formats.IFormatReader} interface, with some additional
  * functions to control the type of format reader used.
  *
+ * Note that public methods in this class can only accept parameters of String,
+ * Double, String[], Double[], and Object[] types.  Anything else will prevent
+ * the method from being usable within a macro.
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class LociFunctions extends MacroFunctions {
@@ -471,7 +475,7 @@ public class LociFunctions extends MacroFunctions {
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
 
-  public void getPlanePositionX(Length[] positionX, Double no) {
+  public void getPlanePositionX(Double[] positionX, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
@@ -479,13 +483,11 @@ public class LociFunctions extends MacroFunctions {
     if (planeIndex >= 0) {
       val = retrieve.getPlanePositionX(imageIndex, planeIndex);
     }
-    if (val == null) {
-        val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
-    }
-    positionX[0] = val;
+    positionX[0] =
+      val == null ? Double.NaN : val.value(UNITS.REFERENCEFRAME).doubleValue();
   }
 
-  public void getPlanePositionY(Length[] positionY, Double no) {
+  public void getPlanePositionY(Double[] positionY, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
@@ -496,10 +498,11 @@ public class LociFunctions extends MacroFunctions {
     if (val == null) {
         val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
     }
-    positionY[0] = val;
+    positionY[0] =
+      val == null ? Double.NaN : val.value(UNITS.REFERENCEFRAME).doubleValue();
   }
 
-  public void getPlanePositionZ(Length[] positionZ, Double no) {
+  public void getPlanePositionZ(Double[] positionZ, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
@@ -510,7 +513,8 @@ public class LociFunctions extends MacroFunctions {
     if (val == null) {
         val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
     }
-    positionZ[0] = val;
+    positionZ[0] =
+      val == null ? Double.NaN : val.value(UNITS.REFERENCEFRAME).doubleValue();
   }
 
   public void getPixelsPhysicalSizeX(Double[] sizeX) {

@@ -160,11 +160,14 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
     IniList ini = parser.parseINI(new BufferedReader(new StringReader(data)));
 
-    String objective = ini.getTable(" MICROSCOPE ").get("Objective");
-    int space = objective.indexOf(" ");
-    if (space != -1) {
-      magnification = new Double(objective.substring(0, space - 1));
-      immersion = objective.substring(space + 1);
+    IniTable microscopeTable = ini.getTable(" MICROSCOPE ");
+    if (microscopeTable != null) {
+      String objective = microscopeTable.get("Objective");
+      int space = objective.indexOf(" ");
+      if (space != -1) {
+        magnification = new Double(objective.substring(0, space - 1));
+        immersion = objective.substring(space + 1);
+      }
     }
 
     CoreMetadata m = core.get(0);
@@ -181,7 +184,6 @@ public class SimplePCITiffReader extends BaseTiffReader {
       if (captureTable.get("c_Filter" + index) != null) {
         exposureTimes.add(new Double(captureTable.get("c_Expos" + index)));
       }
-      else i--;
       index++;
     }
 
@@ -248,7 +250,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        if (exposureTimes.get(zct[1]) != null) {
+        if (zct[1] < exposureTimes.size() && exposureTimes.get(zct[1]) != null) {
           store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]) / 1000000, UNITS.S), 0, i);
         }
       }

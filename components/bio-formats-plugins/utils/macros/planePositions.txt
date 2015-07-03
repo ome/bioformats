@@ -1,0 +1,26 @@
+// Uses Bio-Formats to print the chosen file's plane positions to the Log.
+
+run("Bio-Formats Macro Extensions");
+
+id = File.openDialog("Choose a file");
+print("Image path: " + id);
+
+Ext.setId(id);
+Ext.getImageCount(imageCount);
+print("Plane count: " + imageCount);
+
+positionX = newArray(imageCount);
+positionY = newArray(imageCount);
+positionZ = newArray(imageCount);
+
+print("Plane positions (relative to microscope reference frame):");
+for (no=0; no<imageCount; no++) {
+  Ext.getPlanePositionX(positionX[no], no);
+  Ext.getPlanePositionY(positionY[no], no);
+  Ext.getPlanePositionZ(positionZ[no], no);
+  print("\tplane #" + (no + 1));
+  print("\t\tX = " + positionX[no]);
+  print("\t\tY = " + positionY[no]);
+  print("\t\tZ = " + positionZ[no]);
+}
+print("Complete.");

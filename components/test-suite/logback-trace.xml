@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+  <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+       <level>INFO</level>
+   </filter>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>[%d] [%t] %m%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+    <timeout>60 minutes</timeout>
+    <discriminator class="loci.tests.testng.ThreadNameBasedDiscriminator"/>
+    <sift>
+      <appender name="logfile-${threadName}" class="loci.tests.testng.TimestampedLogFileAppender">
+	    <File>target/bio-formats-test-${threadName}.log</File>
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+	      <pattern>[%d] %level  %m%n</pattern>
+	    </encoder>
+	  </appender>
+	</sift>
+  </appender>
+  <logger name="loci.tests.testng" level="DEBUG"/>
+  <root level="INFO">
+    <appender-ref ref="SIFT"/>
+  </root>
+  <logger name="loci.tests.testng">
+    <appender-ref ref="stdout"/>
+  </logger>
+  <logger name="loci.common.Location" level="TRACE"/>
+</configuration>

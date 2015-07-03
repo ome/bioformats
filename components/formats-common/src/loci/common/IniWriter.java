@@ -36,6 +36,9 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,22 +64,39 @@ public class IniWriter {
   }
 
   /** Saves the given IniList to the given file. */
-  public void saveINI(IniList ini, String path, boolean append)
+  public void saveINI(IniList ini, String path, boolean append, boolean sorted)
     throws IOException
   {
     BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
       new FileOutputStream(path, append), Constants.ENCODING));
 
     for (IniTable table : ini) {
+
       String header = table.get(IniTable.HEADER_KEY);
       out.write("[" + header + "]\n");
-      for (String key : table.keySet()) {
+      Set<String> keys;
+      if (sorted) {
+        Map<String, String> treeMap = new TreeMap<String, String>(table);
+        keys = treeMap.keySet();
+      }
+      else {
+        keys = table.keySet();
+      }
+
+      for (String key : keys) {
         out.write(key + " = " + table.get(key) + "\n");
       }
       out.write("\n");
     }
 
     out.close();
+  }
+
+  /** Saves the given IniList to the given file. */
+  public void saveINI(IniList ini, String path, boolean append)
+    throws IOException
+  {
+    saveINI(ini, path, append, false);
   }
 
 }

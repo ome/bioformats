@@ -747,7 +747,7 @@ public class DicomReader extends FormatReader {
 
     if (date != null && time != null) {
       stamp = date + " " + time;
-      stamp = DateTools.formatDate(stamp, "yyyy.MM.dd HH:mm:ss.SSSSSS");
+      stamp = DateTools.formatDate(stamp, "yyyy.MM.dd HH:mm:ss", ".");
     }
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;

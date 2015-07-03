@@ -403,6 +403,14 @@ public class IFD extends HashMap<Integer, Object> {
       results = new long[integers.length];
       for (int i=0; i<integers.length; i++) results[i] = integers[i];
     }
+    else if (value instanceof OnDemandLongArray) {
+      try {
+        results = ((OnDemandLongArray) value).toArray();
+      }
+      catch (IOException e) {
+        throw new FormatException(e);
+      }
+    }
     else if (value != null) {
       throw new FormatException(getIFDTagName(tag) +
         " directory entry is the wrong type (got " +
@@ -853,8 +861,9 @@ public class IFD extends HashMap<Integer, Object> {
   public long[] getRowsPerStrip() throws FormatException {
     long[] rowsPerStrip = getIFDLongArray(ROWS_PER_STRIP);
     if (rowsPerStrip == null) {
-      // create a fake RowsPerStrip entry if one is not present
-      return new long[] {getImageLength()};
+      // create a fake RowsPerStrip entry if one is not present 
+      long tileLength = getIFDLongValue(TILE_LENGTH, 0);
+      return new long[] {tileLength == 0 ? getImageLength() : tileLength};
     }
 
     // rowsPerStrip should never be more than the total number of rows

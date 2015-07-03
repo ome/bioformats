@@ -111,6 +111,7 @@ public class ND2Handler extends BaseHandler {
   private ArrayList<Boolean> validLoopState = new ArrayList<Boolean>();
 
   private boolean canAdjustDimensions = true;
+  private boolean firstTimeLoop = true;
 
   // -- Constructor --
 
@@ -926,8 +927,9 @@ public class ND2Handler extends BaseHandler {
       }
       else if (key.equals("Time Loop")) {
         int v = Integer.parseInt(value);
-        if (v <= nImages) {
+        if (v <= nImages && firstTimeLoop) {
           core.get(0).sizeT = v;
+          firstTimeLoop = false;
         }
       }
     }

@@ -99,8 +99,10 @@ public class IPWReader extends FormatReader {
     IFD firstIFD = tp.getFirstIFD();
     int[] bits = firstIFD.getBitsPerSample();
     if (bits[0] <= 8) {
-      int[] colorMap = (int[]) firstIFD.getIFDValue(IFD.COLOR_MAP);
-      if (colorMap == null) return null;
+      int[] colorMap = tp.getColorMap(firstIFD);
+      if (colorMap == null) {
+        return null;
+      }
 
       byte[][] table = new byte[3][colorMap.length / 3];
       int next = 0;
@@ -263,7 +265,7 @@ public class IPWReader extends FormatReader {
             timestamp = timestamp.substring(timestamp.length() - 26);
           }
           creationDate =
-            DateTools.formatDate(timestamp, "MM/dd/yyyy HH:mm:ss.SSS aa");
+            DateTools.formatDate(timestamp, "MM/dd/yyyy HH:mm:ss aa", ".");
         }
       }
       else if (relativePath.equals("ImageTIFF")) {

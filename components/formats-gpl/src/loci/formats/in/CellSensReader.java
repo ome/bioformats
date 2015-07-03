@@ -387,9 +387,6 @@ public class CellSensReader extends FormatReader {
   private boolean foundChannelTag = false;
   private int dimensionTag;
 
-  private HashMap<String, Integer> dimensionOrdering =
-    new HashMap<String, Integer>();
-
   private HashMap<Integer, byte[]> backgroundColor = new HashMap<Integer, byte[]>();
 
   private int metadataIndex = -1;
@@ -584,7 +581,6 @@ public class CellSensReader extends FormatReader {
       inDimensionProperties = false;
       foundChannelTag = false;
       dimensionTag = 0;
-      dimensionOrdering.clear();
       backgroundColor.clear();
       metadataIndex = -1;
       previousTag = 0;
@@ -762,6 +758,7 @@ public class CellSensReader extends FormatReader {
 
     int nextPyramid = 0;
     for (int i=0; i<core.size();) {
+      setCoreIndex(i);
       Pyramid pyramid = null;
       if (nextPyramid < pyramids.size()) {
         pyramid = pyramids.get(nextPyramid++);
@@ -864,6 +861,7 @@ public class CellSensReader extends FormatReader {
 
       i += core.get(i).resolutionCount;
     }
+    setCoreIndex(0);
   }
 
   // -- Helper methods --
@@ -887,8 +885,27 @@ public class CellSensReader extends FormatReader {
     t.coordinate[0] = col;
     t.coordinate[1] = row;
 
-    for (String dim : dimensionOrdering.keySet()) {
-      int index = dimensionOrdering.get(dim) + 2;
+    int resIndex = getResolution();
+    int pyramidIndex = getSeries();
+    if (hasFlattenedResolutions()) {
+      int index = 0;
+      pyramidIndex = 0;
+      for (int i=0; i<core.size(); ) {
+        if (index + core.get(i).resolutionCount <= getSeries()) {
+          index += core.get(i).resolutionCount;
+          i += core.get(i).resolutionCount;
+          pyramidIndex++;
+        }
+        else {
+          resIndex = getSeries() - index;
+          break;
+        }
+      }
+    }
+
+    Pyramid pyramid = pyramids.get(pyramidIndex);
+    for (String dim : pyramid.dimensionOrdering.keySet()) {
+      int index = pyramid.dimensionOrdering.get(dim) + 2;
 
       if (dim.equals("Z")) {
         t.coordinate[index] = zct[0];
@@ -898,21 +915,6 @@ public class CellSensReader extends FormatReader {
       }
       else if (dim.equals("T")) {
         t.coordinate[index] = zct[2];
-      }
-    }
-
-    int resIndex = getResolution();
-    if (hasFlattenedResolutions()) {
-      int index = 0;
-      for (int i=0; i<core.size(); ) {
-        if (index + core.get(i).resolutionCount <= getSeries()) {
-          index += core.get(i).resolutionCount;
-          i += core.get(i).resolutionCount;
-        }
-        else {
-          resIndex = getSeries() - index;
-          break;
-        }
       }
     }
 
@@ -1095,21 +1097,51 @@ public class CellSensReader extends FormatReader {
     int[] maxC = new int[maxResolution];
     int[] maxT = new int[maxResolution];
 
+    HashMap<String, Integer> dimOrder = pyramids.get(s).dimensionOrdering;
+
     for (TileCoordinate t : tmpTiles) {
       int resolution = usePyramid ? t.coordinate[t.coordinate.length - 1] : 0;
 
-      Integer tv = dimensionOrdering.get("T");
-      Integer zv = dimensionOrdering.get("Z");
-      Integer cv = dimensionOrdering.get("C");
+      Integer tv = dimOrder.get("T");
+      Integer zv = dimOrder.get("Z");
+      Integer cv = dimOrder.get("C");
 
       int tIndex = tv == null ? -1 : tv + 2;
       int zIndex = zv == null ? -1 : zv + 2;
       int cIndex = cv == null ? -1 : cv + 2;
 
+      if (usePyramid && tIndex == t.coordinate.length - 1) {
+        tv = null;
+        tIndex = -1;
+      }
+      if (usePyramid && zIndex == t.coordinate.length - 1) {
+        zv = null;
+        zIndex = -1;
+      }
+
+      int upperLimit = usePyramid ? t.coordinate.length - 1 : t.coordinate.length;
+      if ((tIndex < 0 || tIndex >= upperLimit) &&
+        (zIndex < 0 || zIndex >= upperLimit) &&
+        (cIndex < 0 || cIndex >= upperLimit))
+      {
+        tIndex--;
+        zIndex--;
+        cIndex--;
+        if (dimOrder.containsKey("T")) {
+          dimOrder.put("T", tIndex - 2);
+        }
+        if (dimOrder.containsKey("Z")) {
+          dimOrder.put("Z", zIndex - 2);
+        }
+        if (dimOrder.containsKey("C")) {
+          dimOrder.put("C", cIndex - 2);
+        }
+      }
+
       if (tv == null && zv == null) {
         if (t.coordinate.length > 4 && cv == null) {
           cIndex = 2;
-          dimensionOrdering.put("C", cIndex - 2);
+          dimOrder.put("C", cIndex - 2);
         }
 
         if (t.coordinate.length > 4) {
@@ -1120,7 +1152,7 @@ public class CellSensReader extends FormatReader {
             tIndex = cIndex + 2;
           }
           if (tIndex < t.coordinate.length) {
-            dimensionOrdering.put("T", tIndex - 2);
+            dimOrder.put("T", tIndex - 2);
           }
           else {
             tIndex = -1;
@@ -1135,7 +1167,7 @@ public class CellSensReader extends FormatReader {
             zIndex = cIndex + 1;
           }
           if (zIndex < t.coordinate.length) {
-            dimensionOrdering.put("Z", zIndex - 2);
+            dimOrder.put("Z", zIndex - 2);
           }
           else {
             zIndex = -1;
@@ -1666,22 +1698,24 @@ public class CellSensReader extends FormatReader {
         }
 
         if (inDimensionProperties) {
-          if (tag == Z_START && !dimensionOrdering.containsValue(dimensionTag)) {
-            dimensionOrdering.put("Z", dimensionTag);
+          Pyramid p = pyramids.get(metadataIndex);
+          if (tag == Z_START && !p.dimensionOrdering.containsValue(dimensionTag)) {
+            p.dimensionOrdering.put("Z", dimensionTag);
           }
           else if ((tag == TIME_START || tag == DIMENSION_VALUE_ID) &&
-            !dimensionOrdering.containsValue(dimensionTag))
+            !p.dimensionOrdering.containsValue(dimensionTag))
           {
-            dimensionOrdering.put("T", dimensionTag);
+            p.dimensionOrdering.put("T", dimensionTag);
           }
-          else if (tag == LAMBDA_START && !dimensionOrdering.containsValue(dimensionTag))
+          else if (tag == LAMBDA_START &&
+            !p.dimensionOrdering.containsValue(dimensionTag))
           {
-            dimensionOrdering.put("L", dimensionTag);
+            p.dimensionOrdering.put("L", dimensionTag);
           }
           else if (tag == CHANNEL_PROPERTIES && foundChannelTag &&
-            !dimensionOrdering.containsValue(dimensionTag))
+            !p.dimensionOrdering.containsValue(dimensionTag))
           {
-            dimensionOrdering.put("C", dimensionTag);
+            p.dimensionOrdering.put("C", dimensionTag);
           }
           else if (tag == CHANNEL_PROPERTIES) {
             foundChannelTag = true;
@@ -2236,35 +2270,6 @@ public class CellSensReader extends FormatReader {
     }
 
     @Override
-    public int hashCode() {
-      int[] lengths = new int[coordinate.length];
-      lengths[0] = 0;
-      lengths[1] = 0;
-
-      for (String dim : dimensionOrdering.keySet()) {
-        int index = dimensionOrdering.get(dim) + 2;
-
-        if (dim.equals("Z")) {
-          lengths[index] = getSizeZ();
-        }
-        else if (dim.equals("C")) {
-          lengths[index] = getEffectiveSizeC();
-        }
-        else if (dim.equals("T")) {
-          lengths[index] = getSizeT();
-        }
-      }
-
-      for (int i=0; i<lengths.length; i++) {
-        if (lengths[i] == 0) {
-          lengths[i] = 1;
-        }
-      }
-
-      return FormatTools.positionToRaster(lengths, coordinate);
-    }
-
-    @Override
     public String toString() {
       StringBuffer b = new StringBuffer("{");
       for (int p : coordinate) {
@@ -2321,6 +2326,9 @@ public class CellSensReader extends FormatReader {
 
     public Hashtable<String, Object> originalMetadata =
       new Hashtable<String, Object>();
+
+    public HashMap<String, Integer> dimensionOrdering =
+      new HashMap<String, Integer>();
   }
 
 }

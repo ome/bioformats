@@ -353,6 +353,7 @@ public class Location {
    * @see java.io.File#list()
    */
   public String[] list(boolean noHiddenFiles) {
+    LOGGER.trace("list({})", noHiddenFiles);
     String key = getAbsolutePath() + Boolean.toString(noHiddenFiles);
     String [] result = null;
     if (cacheListings) {
@@ -419,6 +420,7 @@ public class Location {
     if (cacheListings) {
       fileListings.put(key, new ListingsResult(result, System.nanoTime()));
     }
+    LOGGER.trace("  returning {} files", files.size());
     return result;
   }
 
@@ -432,6 +434,7 @@ public class Location {
    * @see java.io.File#canRead()
    */
   public boolean canRead() {
+    LOGGER.trace("canRead()");
     return isURL ? (isDirectory() || isFile() || exists()) : file.canRead();
   }
 
@@ -442,6 +445,7 @@ public class Location {
    * @see java.io.File#canWrite()
    */
   public boolean canWrite() {
+    LOGGER.trace("canWrite()");
     return isURL ? false : file.canWrite();
   }
 
@@ -529,6 +533,7 @@ public class Location {
    * @see java.io.File#exists()
    */
   public boolean exists() {
+    LOGGER.trace("exists()");
     if (isURL) {
       try {
         url.getContent();
@@ -553,6 +558,7 @@ public class Location {
 
   /* @see java.io.File#getAbsolutePath() */
   public String getAbsolutePath() {
+    LOGGER.trace("getAbsolutePath()");
     return isURL ? url.toExternalForm() : file.getAbsolutePath();
   }
 
@@ -578,6 +584,7 @@ public class Location {
    * @see java.io.File#getName()
    */
   public String getName() {
+    LOGGER.trace("getName()");
     if (isURL) {
       String name = url.getFile();
       name = name.substring(name.lastIndexOf("/") + 1);
@@ -594,6 +601,7 @@ public class Location {
    * @see java.io.File#getParent()
    */
   public String getParent() {
+    LOGGER.trace("getParent()");
     if (isURL) {
       String absPath = getAbsolutePath();
       absPath = absPath.substring(0, absPath.lastIndexOf("/"));
@@ -619,6 +627,7 @@ public class Location {
    * @see java.io.File#isAbsolute()
    */
   public boolean isAbsolute() {
+    LOGGER.trace("isAbsolute()");
     return isURL ? true : file.isAbsolute();
   }
 
@@ -628,6 +637,7 @@ public class Location {
    * @see java.io.File#isDirectory()
    */
   public boolean isDirectory() {
+    LOGGER.trace("isDirectory()");
     if (isURL) {
       String[] list = list();
       return list != null;
@@ -641,6 +651,7 @@ public class Location {
    * @see java.io.File#exists()
    */
   public boolean isFile() {
+    LOGGER.trace("isFile()");
     return isURL ? (!isDirectory() && exists()) : file.isFile();
   }
 
@@ -651,6 +662,7 @@ public class Location {
    * @see java.io.File#isHidden()
    */
   public boolean isHidden() {
+    LOGGER.trace("isHidden()");
     if (isURL) {
       return false;
     }
@@ -670,6 +682,7 @@ public class Location {
    * @see java.net.URLConnection#getLastModified()
    */
   public long lastModified() {
+    LOGGER.trace("lastModified()");
     if (isURL) {
       try {
         return url.openConnection().getLastModified();
@@ -687,6 +700,7 @@ public class Location {
    * @see java.net.URLConnection#getContentLength()
    */
   public long length() {
+    LOGGER.trace("length()");
     if (isURL) {
       try {
         return url.openConnection().getContentLength();

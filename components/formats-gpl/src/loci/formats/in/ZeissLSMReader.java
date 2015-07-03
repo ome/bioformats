@@ -165,7 +165,6 @@ public class ZeissLSMReader extends FormatReader {
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private byte[][][] lut = null;
   private List<Double> timestamps;
-  private int validChannels;
 
   private String[] lsmFilenames;
   private List<IFDList> ifdsList;
@@ -195,6 +194,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private Map<Integer, String> acquiredDate =
     new HashMap<Integer, String>();
+  private Color[] channelColor;
 
   // -- Constructor --
 
@@ -250,7 +250,6 @@ public class ZeissLSMReader extends FormatReader {
       pixelSizeX = pixelSizeY = pixelSizeZ = 0;
       lut = null;
       timestamps = null;
-      validChannels = 0;
       lsmFilenames = null;
       ifdsList = null;
       tiffParser = null;
@@ -276,6 +275,7 @@ public class ZeissLSMReader extends FormatReader {
       userName = null;
       acquiredDate.clear();
       channelNames = null;
+      channelColor = null;
     }
   }
 
@@ -343,15 +343,16 @@ public class ZeissLSMReader extends FormatReader {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()] == null ||
-      getPixelType() != FormatTools.UINT16 || validChannels == 0)
+      getPixelType() != FormatTools.UINT16 || channelColor == null)
     {
       return null;
     }
     short[][] s = new short[3][65536];
-    for (int i=2; i>=3-validChannels; i--) {
-      for (int j=0; j<s[i].length; j++) {
-        s[i][j] = (short) j;
-      }
+    Color color = channelColor[prevChannel];
+    for (int j=0; j<s[0].length; j++) {
+      s[0][j] = (short) ((color.getRed() / 255.0) * j);
+      s[1][j] = (short) ((color.getGreen() / 255.0) * j);
+      s[2][j] = (short) ((color.getBlue() / 255.0) * j);
     }
     return s;
   }
@@ -893,7 +894,7 @@ public class ZeissLSMReader extends FormatReader {
     long scanInformationOffset = 0;
     long channelWavelengthOffset = 0;
     long applicationTagOffset = 0;
-    Color[] channelColor = new Color[getSizeC()];
+    channelColor = new Color[getSizeC()];
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();

@@ -239,6 +239,11 @@ public class MetakitReader {
 
   // -- Helper methods --
 
+  /**
+   * Read the tables for the current database file.
+   * @throws IOException if the file could not be read
+   * @throws MetakitException if the file is not valid for the Metakit format
+   */
   private void initialize() throws IOException, MetakitException {
     String magic = stream.readString(2);
 
@@ -266,6 +271,11 @@ public class MetakitReader {
     readFooter();
   }
 
+  /**
+   * Read the footer data for the current database file.
+   * @throws IOException if the footer cannot be read from the file
+   * @throws MetakitException if the footer is not valid for the Metakit format
+   */
   private void readFooter() throws IOException, MetakitException {
     stream.skipBytes(4);
 
@@ -278,6 +288,11 @@ public class MetakitReader {
     readTOC();
   }
 
+  /**
+   * Reads the table of contents (TOC) for the current database file.
+   * @throws IOException if the footer cannot be read from the file
+   * @throws MetakitException if the footer is not valid for the Metakit format
+   */
   private void readTOC() throws IOException, MetakitException {
     int tocMarker = MetakitTools.readBpInt(stream);
     String structureDefinition = MetakitTools.readPString(stream);

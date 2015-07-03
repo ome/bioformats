@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -299,7 +300,9 @@ public class LeicaHandler extends BaseHandler {
     if (!canParse) return;
 
     StringBuffer key = new StringBuffer();
-    for (String k : nameStack) {
+    final Iterator<String> nameStackIterator = nameStack.descendingIterator();
+    while (nameStackIterator.hasNext()) {
+      final String k = nameStackIterator.next();
       key.append(k);
       key.append("|");
     }

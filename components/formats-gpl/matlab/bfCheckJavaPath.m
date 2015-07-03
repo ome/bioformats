@@ -68,7 +68,7 @@ if ~status && ip.Results.autoloadBioFormats,
     jarPath = getJarPath(bfJarFiles);
     assert(~isempty(jarPath), 'bf:jarNotFound',...
         'Cannot automatically locate a Bio-Formats JAR file');
-    
+
     % Add the Bio-Formats JAR file to dynamic Java class path
     javaaddpath(jarPath);
     status = true;
@@ -76,7 +76,11 @@ end
 
 if status
     % Read Bio-Formats version
-    version = char(loci.formats.FormatTools.VERSION);
+    if is_octave()
+        version = char(java_get('loci.formats.FormatTools', 'VERSION'));
+    else
+        version = char(loci.formats.FormatTools.VERSION);
+    end
 else
     version = '';
 end

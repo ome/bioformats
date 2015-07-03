@@ -25,7 +25,7 @@ Supported Metadata Fields: :doc:`PCX (PC Paintbrush) <pcx-pc-paintbrush-metadata
 We currently have:
 
 * several .pcx files 
-* the ability to generate additional .pcx filse
+* the ability to generate additional .pcx files
 
 We would like to have:
 
@@ -52,4 +52,4 @@ Source Code: :bsd-reader:`PCXReader.java`
 Notes:
 
 
-Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com.au/microscopy/en_au/downloads/lsm-5-series.html>`_.
+Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_.

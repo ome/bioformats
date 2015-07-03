@@ -57,16 +57,25 @@ public class FormatReaderTestFactory {
 
   // -- TestNG factory methods --
 
+  /**
+   * Safely return a system property by key excluding default Ant values
+   */
+  public String getProperty(String key) {
+    String value = System.getProperty(key);
+    if (value == null || value.equals("${" + key + "}")) {
+      return null;
+    }
+    return value;
+  }
+
   @Factory
   public Object[] createInstances() {
     List files = new ArrayList();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
-    String filename = System.getProperty(nameProp);
-    if (filename != null && filename.equals("${" + nameProp + "}")) {
-      filename = null;
-    }
+    String filename = getProperty(nameProp);
+
     if (filename != null && !new File(filename).exists()) {
       LOGGER.error("Invalid filename: {}", filename);
       return new Object[0];
@@ -77,10 +86,10 @@ public class FormatReaderTestFactory {
     if (filename == null) {
       // parse base directory
       final String baseDirProp = "testng.directory";
-      baseDir = System.getProperty(baseDirProp);
+      baseDir = getProperty(baseDirProp);
 
-      if (baseDir == null || baseDir.equals("${" + baseDirProp + "}")) {
-        baseDir = System.getProperty("testng.directory-prefix");
+      if (baseDir == null) {
+        baseDir = getProperty("testng.directory-prefix");
         String dirList = System.getProperty("testng.directory-list");
         try {
           validSubdirs = DataTools.readFile(dirList).split("\n");
@@ -90,31 +99,42 @@ public class FormatReaderTestFactory {
         }
       }
 
+      // Return early if no base directory is supplied
+      if (baseDir == null) {
+        LOGGER.error("No base directory specified.");
+        LOGGER.error("Please specify a directory containing files to test:");
+        LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
+        return new Object[0];
+      }
+
+      // Test base directory validity
       File baseDirFile = new File(baseDir);
       if (!baseDirFile.isDirectory()) {
         LOGGER.info("Directory: {}", baseDir);
         LOGGER.info("  exists?: {}", baseDirFile.exists());
         LOGGER.info("  readable?: {}", baseDirFile.canRead());
         LOGGER.info("  is a directory?: {}", baseDirFile.isDirectory());
-
-        if (baseDir == null || baseDir.equals("${" + baseDirProp + "}")) {
-          LOGGER.error("No base directory specified.");
-        }
-        else LOGGER.error("Invalid base directory: {}", baseDir);
         LOGGER.error("Please specify a directory containing files to test:");
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
-      FormatReaderTest.configTree = new ConfigurationTree(baseDir);
 
+      // check for an alternate configuration directory
+      final String configDirProperty = "testng.configDirectory";
+      String configDir = getProperty(configDirProperty);
       LOGGER.info("testng.directory = {}", baseDir);
+      if (configDir != null) {
+        LOGGER.info("testng.configDirectory = {}", configDir);
+      }
+
+      FormatReaderTest.configTree = new ConfigurationTree(baseDir, configDir);
     }
 
     // parse multiplier
     final String multProp = "testng.multiplier";
-    String mult = System.getProperty(multProp);
+    String mult = getProperty(multProp);
     float multiplier = 1;
-    if (mult != null && !mult.equals("${" + multProp + "}")) {
+    if (mult != null) {
       try {
         multiplier = Float.parseFloat(mult);
       }
@@ -126,20 +146,22 @@ public class FormatReaderTestFactory {
 
     // detect whether or not the map the files into memory
     final String inMemoryProp = "testng.in-memory";
-    String inMemoryValue = System.getProperty(inMemoryProp);
+    String inMemoryValue = getProperty(inMemoryProp);
     boolean inMemory = Boolean.parseBoolean(inMemoryValue);
     LOGGER.info("testng.in-memory = {}", inMemory);
 
     // check for an alternate top level configuration file
 
     final String toplevelConfig = "testng.toplevel-config";
-    String configFile = System.getProperty(toplevelConfig);
-    LOGGER.info("testng.toplevel-config = {}", configFile);
+    String configFile = getProperty(toplevelConfig);
+    if (configFile != null) {
+      LOGGER.info("testng.toplevel-config = {}", configFile);
+    }
 
     // check for a configuration file suffix
 
     final String configSuffixProperty = "testng.configSuffix";
-    String configSuffix = System.getProperty(configSuffixProperty);
+    String configSuffix = getProperty(configSuffixProperty);
     if (configSuffix == null) {
       configSuffix = "";
     }
@@ -208,7 +230,7 @@ public class FormatReaderTestFactory {
       String id = (String) files.get(i);
       try {
         if (FormatReaderTest.configTree.get(id) == null) {
-          LOGGER.warn("{} not configured.", id);
+          LOGGER.error("{} not configured.", id);
         }
       }
       catch (Exception e) {

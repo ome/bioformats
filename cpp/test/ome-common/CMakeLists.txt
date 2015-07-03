@@ -56,6 +56,12 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-common/endian endian)
 
+  add_executable(filesystem filesystem.cpp)
+  target_link_libraries(filesystem ome-common)
+  target_link_libraries(filesystem ome-test)
+
+  bf_add_test(ome-common/filesystem filesystem)
+
   add_executable(module module.cpp)
   target_link_libraries(module ome-common)
   target_link_libraries(module ome-test)
@@ -79,6 +85,22 @@ if(BUILD_TESTS)
   target_link_libraries(string ome-test)
 
   bf_add_test(ome-common/string string)
+
+  add_executable(units
+    units.h
+    units.cpp
+    units-angle.cpp
+    units-electric-potential.cpp
+    units-frequency.cpp
+    units-length.cpp
+    units-power.cpp
+    units-pressure.cpp
+    units-temperature.cpp
+    units-time.cpp)
+  target_link_libraries(units ome-common)
+  target_link_libraries(units ome-test ${Boost_IOSTREAMS_LIBRARY_RELEASE})
+
+  bf_add_test(ome-common/units units)
 
   add_executable(variant variant.cpp)
   target_link_libraries(variant ome-common)

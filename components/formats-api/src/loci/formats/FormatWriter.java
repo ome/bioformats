@@ -315,12 +315,9 @@ public abstract class FormatWriter extends FormatHandler
 
     MetadataRetrieve r = getMetadataRetrieve();
     initialized = new boolean[r.getImageCount()][];
-    int oldSeries = series;
     for (int i=0; i<r.getImageCount(); i++) {
-      setSeries(i);
-      initialized[i] = new boolean[getPlaneCount()];
+      initialized[i] = new boolean[getPlaneCount(i)];
     }
-    setSeries(oldSeries);
   }
 
   /* @see IFormatHandler#close() */
@@ -430,6 +427,11 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Retrieve the number of samples per pixel for the current series. */
   protected int getSamplesPerPixel() {
+    return getSamplesPerPixel(series);
+  }
+  
+  /** Retrieve the number of samples per pixel for given series. */
+  protected int getSamplesPerPixel(int series) {
     MetadataRetrieve r = getMetadataRetrieve();
     PositiveInteger samples = r.getChannelSamplesPerPixel(series, 0);
     if (samples == null) {
@@ -437,9 +439,14 @@ public abstract class FormatWriter extends FormatHandler
     }
     return samples == null ? 1 : samples.getValue();
   }
-
+  
   /** Retrieve the total number of planes in the current series. */
   protected int getPlaneCount() {
+    return getPlaneCount(series);
+  }
+  
+  /** Retrieve the total number of planes in given series. */
+  protected int getPlaneCount(int series) {
     MetadataRetrieve r = getMetadataRetrieve();
     int z = r.getPixelsSizeZ(series).getValue().intValue();
     int t = r.getPixelsSizeT(series).getValue().intValue();

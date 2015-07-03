@@ -344,11 +344,12 @@ public class ROIHandler {
                         }
                         if (sc != null) roi.setStrokeColor(sc);
                         manager.add(images[imageNum], roi, nextRoi++);
-                        //manager.setAlwaysOnTop(true);
-                        //manager.runCommand("Select All");
-                        //manager.runCommand("Show All");
                     }
                 }
+            }
+            if (roiCount > 0 && manager != null) {
+                manager.setAlwaysOnTop(true);
+                manager.runCommand("show all with labels");
             }
         }
 
@@ -582,7 +583,7 @@ public class ROIHandler {
             store.setPointTheC(unwrap(roi.getCPosition()), roiNum, shape);
             store.setPointTheZ(unwrap(roi.getZPosition()), roiNum, shape);
             store.setPointTheT(unwrap(roi.getTPosition()), roiNum, shape);
-            
+
             if (roi.getStrokeWidth() > 0) {
                 store.setPointStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape+cntr);
             }
@@ -688,7 +689,7 @@ public class ROIHandler {
             store.setPolygonTheC(unwrap(roi.getCPosition()), roiNum, shape);
             store.setPolygonTheZ(unwrap(roi.getZPosition()), roiNum, shape);
             store.setPolygonTheT(unwrap(roi.getTPosition()), roiNum, shape);
-            
+
             if (roi.getStrokeWidth() > 0) {
                 store.setPolygonStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
             }
@@ -720,7 +721,7 @@ public class ROIHandler {
         store.setEllipseTheC(unwrap(roi.getCPosition()), roiNum, shape);
         store.setEllipseTheZ(unwrap(roi.getZPosition()), roiNum, shape);
         store.setEllipseTheT(unwrap(roi.getTPosition()), roiNum, shape);
-        
+
         if (roi.getStrokeWidth() > 0) {
             store.setEllipseStrokeWidth( new Length((roi.getStrokeWidth()), UNITS.PIXEL), roiNum, shape);
         }

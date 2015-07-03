@@ -456,6 +456,8 @@ ${customContent[obj.name][prop.name]}
 
 #include <ome/common/xml/Platform.h>
 
+#include <ome/internal/url.h>
+
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
 {% for header in fu.OBJECT_HEADERS %}\
@@ -628,6 +630,16 @@ namespace ome
         resolveReferences();
 
         ome::common::xml::dom::Document doc(ome::common::xml::dom::createEmptyDocument("${model.getObjectByName("OME").namespace}", "OME"));
+
+        ome::common::xml::dom::Node comment
+          (doc.createComment
+           (" Warning: this comment is within an OME-XML metadata block, which "
+            "contains crucial dimensional parameters and other important metadata. "
+            "Please edit cautiously (if at all), and back up the original data "
+            "before doing so. For more information, see the OME-TIFF web site: "
+            URL_OME_TIFF " "));
+        doc.getDocumentElement().appendChild(comment);
+
         ome::common::xml::dom::Element ome = root->asXMLElement(doc);
 
         std::string text;

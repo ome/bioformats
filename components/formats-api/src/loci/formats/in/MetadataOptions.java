@@ -33,13 +33,17 @@
 package loci.formats.in;
 
 /**
- *
+ * 
  * @author callan
  */
 public interface MetadataOptions {
 
+  /** Set the MetadataLevel associated with this MetadataOptions. */
   void setMetadataLevel(MetadataLevel level);
 
+  /**
+   * @return the MetadataLevel associated with this MetadataOptions
+   */
   MetadataLevel getMetadataLevel();
 
 }

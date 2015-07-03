@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ArrayIndexOutOfBoundsException;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -655,6 +656,21 @@ public class Memoizer extends ReaderWrapper {
       loadedFromMemo = false;
       savedToMemo = false;
 
+      if (memo != null) {
+        // loadMemo has already called handleMetadataStore with non-null
+        try {
+          loadedFromMemo = true;
+          reader = memo;
+          reader.reopenFile();
+        } catch (FileNotFoundException e) {
+          LOGGER.info("could not reopen file - deleting invalid memo file: {}", memoFile);
+          deleteQuietly(memoFile);
+          memo = null;
+          reader.close();
+          loadedFromMemo = false;
+        }
+      }
+
       if (memo == null) {
         OMEXMLService service = getService();
         super.setMetadataStore(service.createOMEXMLMetadata());
@@ -667,11 +683,6 @@ public class Memoizer extends ReaderWrapper {
           return; // EARLY EXIT!
         }
         savedToMemo = saveMemo(); // Should never throw.
-      } else {
-        // loadMemo has already called handleMetadataStore with non-null
-        loadedFromMemo = true;
-        reader = memo;
-        reader.reopenFile();
       }
     } catch (ServiceException e) {
       LOGGER.error("Could not create OMEXMLMetadata", e);
@@ -888,6 +899,10 @@ public class Memoizer extends ReaderWrapper {
         memoFile, memoFile.length());
       return copy;
     } catch (KryoException e) {
+      LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      deleteQuietly(memoFile);
+      return null;
+    } catch (ArrayIndexOutOfBoundsException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
       deleteQuietly(memoFile);
       return null;

@@ -2,6 +2,7 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -32,6 +33,9 @@ classdef TestBfGetPlane < ReaderTest
         y
         width
         height
+        bpp
+        sgn
+        fp
     end
     
     methods
@@ -258,6 +262,25 @@ classdef TestBfGetPlane < ReaderTest
             self.width = 1;
             self.height = 100;
             self.checkTile()
-        end        
+        end
+               
+        function testJavaMethod(self)
+            pixelType = self.reader.getPixelType();
+            
+            self.bpp = javaMethod('getBytesPerPixel', 'loci.formats.FormatTools', pixelType);
+            self.fp = javaMethod('isFloatingPoint', 'loci.formats.FormatTools', pixelType);
+            self.sgn = javaMethod('isSigned', 'loci.formats.FormatTools', pixelType);
+            
+            bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
+            fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
+            sgn = loci.formats.FormatTools.isSigned(pixelType);
+            
+            assertEqual(self.bpp, bpp);
+            assertEqual(self.fp,fp);
+            assertEqual(self.sgn,sgn);
+            
+        end
+
+        
     end
 end

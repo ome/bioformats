@@ -549,6 +549,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     return getModuloAlong(omexml, "ModuloAlongT", image);
   }
 
+  /**
+   * Create a {@link loci.formats.Modulo} corresponding to the given ModuloAlong* tag.
+   * @param omexml the OMEXMLMetadata from which to retrieve the ModuloAlong* tag
+   * @param tag the tag name (e.g. "ModuloAlongC")
+   * @param image the Image index within the OMEXMLMetadata
+   * @return the corresponding Modulo object
+   */
   private Modulo getModuloAlong(OMEXMLMetadata omexml, String tag, int image) {
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexml.getRoot();
     Image img = root.getImage(image);
@@ -1004,6 +1011,17 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     meta.setRoot(root);
   }
 
+  /**
+   * Create a ModuloAlong* annotation corresponding to the given
+   * {@link loci.formats.Modulo}.
+   * @param meta the OMEXMLMetadata in which to create the annotation
+   * @param modulo the Modulo object that contains the annotation data
+   * @param annotations the list of existing annotations
+   * @param image the Image to which the new annotation should be linked
+   * @param imageIdx the index of the Image
+   * @param annotationIndex the index to be assigned to the new annotation
+   * @param imageAnnotation the index to be assigned to the new annotation link
+   */
   private void createModulo(
           final OMEXMLMetadata meta,
           final Modulo modulo,

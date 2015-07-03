@@ -1,0 +1,20 @@
+if(WIN32)
+
+  set(ENV{PATH} "${BIOFORMATS_EP_BIN_DIR};$ENV{PATH}")
+
+else()
+
+  set(ENV{PATH} "${BIOFORMATS_EP_BIN_DIR}:$ENV{PATH}")
+  if(APPLE)
+    set(ENV{DYLD_FALLBACK_LIBRARY_PATH} "${BIOFORMATS_EP_LIB_DIR}:$ENV{DYLD_FALLBACK_LIBRARY_PATH}")
+  else()
+    set(ENV{LD_LIBRARY_PATH} "${BIOFORMATS_EP_LIB_DIR}:$ENV{LD_LIBRARY_PATH}")
+  endif()
+endif()
+
+if(WIN32)
+  # Windows compiler flags
+else()
+  set(EP_CXXFLAGS "${EP_CXXFLAGS} \"-I${BIOFORMATS_EP_INCLUDE_DIR}\"")
+  set(EP_LDFLAGS "${EP_LDFLAGS} \"-L${BIOFORMATS_EP_LIB_DIR}\"")
+endif()
