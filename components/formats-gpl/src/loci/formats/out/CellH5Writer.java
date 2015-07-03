@@ -37,6 +37,9 @@ import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.base.mdarray.MDShortArray;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.Locale;
 
 import loci.common.services.DependencyException;
@@ -166,6 +169,7 @@ public class CellH5Writer extends FormatWriter {
     }
     
     LOGGER.info("CellH5Writer.saveBytes(): Current c, t, z == {} {} {}", c,t,z);
+    LOGGER.info("CellH5Writer.saveBytes(): bpp {} byte buffer len {}", bpp, buf.length);
     
     if (bpp==1) {
         MDByteArray image = new MDByteArray(new int[] {1, 1, 1, sizeY, sizeX});
@@ -177,19 +181,23 @@ public class CellH5Writer extends FormatWriter {
         }
         jhdf.writeArraySlice(outputPath, image, new long[] {c,t,z, 0, 0});
     } else if (bpp==2) {
+        ByteBuffer bb = ByteBuffer.wrap(buf);
+        ShortBuffer sb = bb.asShortBuffer();
         MDShortArray image = new MDShortArray(new int[] {1, 1, 1, sizeY, sizeX});
         for (int x_i=0; x_i < sizeX; x_i++) {
             for (int y_i=0; y_i < sizeY; y_i++) {
-                short value = (short) buf[y_i*sizeX + x_i];
+                short value = sb.get(y_i*sizeX + x_i);
                 image.set(value, 0, 0, 0, y_i, x_i );
             }
         }
         jhdf.writeArraySlice(outputPath, image, new long[] {c,t,z, 0, 0});
     } else if (bpp==4) {
+        ByteBuffer bb = ByteBuffer.wrap(buf);
+        IntBuffer ib = bb.asIntBuffer();
         MDIntArray image = new MDIntArray(new int[] {1, 1, 1, sizeY, sizeX});
         for (int x_i=0; x_i < sizeX; x_i++) {
             for (int y_i=0; y_i < sizeY; y_i++) {
-                int value = (int) buf[y_i*sizeX + x_i];
+                int value = (int) ib.get(y_i*sizeX + x_i);
                 image.set(value, 0, 0, 0, y_i, x_i );
             }
         }
