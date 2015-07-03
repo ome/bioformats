@@ -267,6 +267,7 @@ public class CellH5Reader extends FormatReader {
         double[] rowData = data[row];
         for (int i = 0; i < w; i++) {
           long v = Double.doubleToLongBits(rowData[i + x]);
+          DataTools.unpackBytes(v, buf, base + i * 8, 8, little);
         }
       }
     }
