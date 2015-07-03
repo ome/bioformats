@@ -20,6 +20,27 @@ over time.
   changed incompatibly.
 
 
+Prebuilt packages
+-----------------
+
+MacOS X Homebrew
+^^^^^^^^^^^^^^^^
+
+Run::
+
+    brew tap homebrew/science
+    brew install bioformats-cpp [--without-docs] [--with-qt5]
+
+.. option:: --without-docs`
+
+    Do not build the HTML version of this manual (built by default).
+
+.. option:: --with-qt5
+
+    Build the Qt5 OpenGL viewer widget library :file:`ome-qtwidgets`
+    and :file:`bf-test view` image viewer (not built by default).
+
+
 Prerequisites
 -------------
 
