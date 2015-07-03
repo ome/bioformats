@@ -366,7 +366,8 @@ public class TiffWriter extends FormatWriter {
     int z = retrieve.getPixelsSizeZ(series).getValue().intValue();
     int t = retrieve.getPixelsSizeT(series).getValue().intValue();
     ifd.putIFDValue(IFD.IMAGE_DESCRIPTION,
-      "ImageJ=\nchannels=" + channels + "\nslices=" + z + "\nframes=" + t);
+      "ImageJ=\nhyperstack=true\nimages=" + (channels * z * t) + "\nchannels=" +
+      channels + "\nslices=" + z + "\nframes=" + t);
 
     int index = no;
     for (int i=0; i<getSeries(); i++) {
