@@ -158,7 +158,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>cisd</groupId>
+      <groupId>ch.systems.cisd</groupId>
       <artifactId>jhdf5</artifactId>
       <version>14.12.0</version>
     </dependency>

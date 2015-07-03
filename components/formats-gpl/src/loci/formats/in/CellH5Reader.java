@@ -439,7 +439,19 @@ public class CellH5Reader extends FormatReader {
         m.littleEndian = true;
         m.interleaved = false;
         m.indexed = true;
-        m.pixelType = FormatTools.UINT8;
+        int bpp = jhdf.getElementSize(coord.pathToImageData);
+        if (bpp==1) {
+            m.pixelType = FormatTools.UINT8;
+        }
+        else if (bpp==2) {
+            m.pixelType = FormatTools.UINT16;
+        }
+        else if (bpp==4) {
+            m.pixelType = FormatTools.INT32;
+        }
+        else {
+            throw new FormatException("Pixel type not understood. Only 8, 16 and 32 bit images supported");
+        }
 
         seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
         seriesPlate.add(coord.plate);
