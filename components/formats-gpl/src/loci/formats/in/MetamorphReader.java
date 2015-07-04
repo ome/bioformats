@@ -526,8 +526,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (nstages > 0) numFiles *= nstages;
 
       // determine series count
-
-      int seriesCount = nstages == 0 ? 1 : nstages;
+      int stagesCount = nstages == 0 ? 1 : nstages;
+      int seriesCount = stagesCount;
       firstSeriesChannels = new boolean[cc];
       Arrays.fill(firstSeriesChannels, true);
       boolean differentZs = false;
@@ -553,8 +553,7 @@ public class MetamorphReader extends BaseTiffReader {
       stks = new String[seriesCount][];
       if (seriesCount == 1) stks[0] = new String[numFiles];
       else if (differentZs) {
-        int stages = nstages == 0 ? 1 : nstages;
-        for (int i=0; i<stages; i++) {
+        for (int i=0; i<stagesCount; i++) {
           stks[i * 2] = new String[channelsInFirstSeries * tc];
           stks[i * 2 + 1] = new String[(cc - channelsInFirstSeries) * tc];
         }
@@ -574,11 +573,10 @@ public class MetamorphReader extends BaseTiffReader {
       boolean anyZ = hasZ.contains(Boolean.TRUE);
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
-        int ns = nstages == 0 ? 1 : nstages;
-        for (int s=0; s<ns; s++) {
+        for (int s=0; s<stagesCount; s++) {
           for (int j=0; j<cc; j++) {
             boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
-            int seriesNdx = s * (seriesCount / ns);
+            int seriesNdx = s * (seriesCount / stagesCount);
 
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
@@ -678,8 +676,7 @@ public class MetamorphReader extends BaseTiffReader {
           ms.orderCertain = true;
         }
         if (stks.length > nstages) {
-          int ns = nstages == 0 ? 1 : nstages;
-          for (int j=0; j<ns; j++) {
+          for (int j=0; j<stagesCount; j++) {
             int idx = j * 2 + 1;
             CoreMetadata midx = newCore.get(idx);
             CoreMetadata pmidx = newCore.get(j * 2);
