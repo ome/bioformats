@@ -545,7 +545,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (differentZs) {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
-          if (hasZ.get(i).booleanValue()) channelsInFirstSeries++;
+          if ((!hasZ.get(0) && i == 0) ||
+            (hasZ.get(0) && hasZ.get(i).booleanValue()))
+          {
+            channelsInFirstSeries++;
+          }
           else firstSeriesChannels[i] = false;
         }
       }
