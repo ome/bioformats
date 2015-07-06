@@ -42,6 +42,10 @@ if (POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif(POLICY CMP0054)
 
+include(CheckIncludeFileCXX)
+include(CheckCXXCompilerFlag)
+include(CheckCXXSourceCompiles)
+
 function(cxx_std_check flag var)
   check_cxx_compiler_flag("${flag}" ${var})
   if (${var})

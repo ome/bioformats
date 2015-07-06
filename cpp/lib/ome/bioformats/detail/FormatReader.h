@@ -141,6 +141,14 @@ namespace ome
          */
         mutable dimension_size_type series;
 
+        /**
+         * The number of the current plane in the current series.
+         *
+         * @todo Remove use of stateful API which requires use of
+         * series switching in const methods.
+         */
+        mutable dimension_size_type plane;
+
         /// Core metadata values.
         coremetadata_list_type core;
 
@@ -599,6 +607,14 @@ namespace ome
         // Documented in superclass.
         dimension_size_type
         getSeries() const;
+
+        // Documented in superclass.
+        void
+        setPlane(dimension_size_type plane) const;
+
+        // Documented in superclass.
+        dimension_size_type
+        getPlane() const;
 
         // Documented in superclass.
         void

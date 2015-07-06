@@ -183,6 +183,13 @@ namespace ome
 
       OMETIFFReader::~OMETIFFReader()
       {
+        try
+          {
+            close();
+          }
+        catch (...)
+          {
+          }
       }
 
       void
@@ -1259,6 +1266,8 @@ namespace ome
                                     VariantPixelBuffer& buf) const
       {
         assertId(currentId, true);
+
+        setPlane(plane);
 
         const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 

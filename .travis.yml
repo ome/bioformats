@@ -42,19 +42,19 @@ script:
 
 matrix:
   exclude:
-    - jdk: oraclejdk8
+    - jdk: openjdk6
       env: BUILD=flake8
     - jdk: oraclejdk7
       env: BUILD=flake8
-    - jdk: oraclejdk8
+    - jdk: openjdk6
       env: BUILD=sphinx
     - jdk: oraclejdk7
       env: BUILD=sphinx
-    - jdk: oraclejdk8
+    - jdk: openjdk6
       env: BUILD=cpp
     - jdk: oraclejdk7
       env: BUILD=cpp
     - jdk: oraclejdk8
       env: BUILD=cppwrap
-    - jdk: oraclejdk7
+    - jdk: openjdk6
       env: BUILD=cppwrap

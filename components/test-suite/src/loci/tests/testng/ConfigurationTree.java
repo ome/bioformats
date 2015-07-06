@@ -61,6 +61,11 @@ public class ConfigurationTree {
   /** Directory on the file system associated with the tree root. */
   private String rootDir;
 
+  /** Base directory on the file system associated with the configuration
+   * files.
+   */
+  private String configDir;
+
   /**
    * Root of tree structure containing configuration data.
    * Each node's user object is a hashtable of key/value pairs.
@@ -70,15 +75,51 @@ public class ConfigurationTree {
   // -- Constructor --
 
   /**
-   * Creates a new configuration tree rooted at
-   * the given directory in the file system.
+   *  Constructs a new configuration tree rooted at the given directory in the
+   *  file system.
+   *
+   *  @param rootDir a string specifying the root directory
+   *
    */
   public ConfigurationTree(String rootDir) {
+    this(rootDir, null);
+  }
+
+  /**
+   *  Constructs a new configuration tree rooted at the given directory in the
+   *  file system with a custom configuration directory.
+   *
+   *  @param rootDir a string specifying the root directory
+   *
+   *  @param configDir a string specifying the base configuration directory
+   *
+   */
+  public ConfigurationTree(String rootDir, String configDir) {
+    if (rootDir == null) {
+      throw new IllegalArgumentException("rootDir cannot be null.");
+    }
     this.rootDir = new File(rootDir).getAbsolutePath();
+    if (configDir != null) {
+        this.configDir = new File(configDir).getAbsolutePath();
+    }
     root = new DefaultMutableTreeNode();
   }
 
   // -- ConfigurationTree API methods --
+
+  /**
+   *  Returns the toot directory holding the data
+   */
+  public String getRootDirectory() {
+    return this.rootDir;
+  }
+
+  /**
+   *  Returns the base directory holding the configuration files
+   */
+  public String getConfigDirectory() {
+    return this.configDir;
+  }
 
   /** Retrieves the Configuration object corresponding to the given file. */
   public Configuration get(String id) throws IOException {
@@ -93,6 +134,11 @@ public class ConfigurationTree {
     if (file.isDirectory()) {
       return;
     }
+    String parent = file.getParent();
+    if (configDir != null) {
+        parent = parent.replaceAll(configDir, rootDir);
+    }
+
     configFile = file.getAbsolutePath();
     String dir = file.getParentFile().getAbsolutePath();
 
@@ -106,7 +152,7 @@ public class ConfigurationTree {
       String id = table.get(IniTable.HEADER_KEY);
       id = id.substring(0, id.lastIndexOf(" "));
 
-      id = new File(file.getParent(), id).getAbsolutePath();
+      id = new File(parent, id).getAbsolutePath();
 
       DefaultMutableTreeNode node = findNode(id, true, configFile);
       if (node == null) {

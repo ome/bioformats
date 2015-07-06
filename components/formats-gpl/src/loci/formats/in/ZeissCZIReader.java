@@ -507,8 +507,12 @@ public class ZeissCZIReader extends FormatReader {
     for (String f : list) {
       if (f.startsWith(base + "(") || f.startsWith(base + " (")) {
         String part = f.substring(f.lastIndexOf("(") + 1, f.lastIndexOf(")"));
-        pixels.put(Integer.parseInt(part),
-          new Location(parent, f).getAbsolutePath());
+        try {
+          pixels.put(Integer.parseInt(part),
+            new Location(parent, f).getAbsolutePath());
+        } catch (NumberFormatException e) {
+          LOGGER.debug("{} not included in multi-file dataset", f);
+        }
       }
     }
 

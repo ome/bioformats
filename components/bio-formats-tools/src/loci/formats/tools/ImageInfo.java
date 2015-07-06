@@ -203,7 +203,10 @@ public class ImageInfo {
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
-        else if (args[i].equals("-autoscale")) autoscale = true;
+        else if (args[i].equals("-autoscale")) {
+          fastBlit = true;
+          autoscale = true;
+        }
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
@@ -304,8 +307,8 @@ public class ImageInfo {
       "   -separate: split RGB image into separate channels",
       "     -expand: expand indexed color to RGB",
       "     -omexml: populate OME-XML metadata",
-      "  -normalize: normalize floating point images*",
-      "       -fast: paint RGB images as quickly as possible*",
+      "  -normalize: normalize floating point images (*)",
+      "       -fast: paint RGB images as quickly as possible (*)",
       "      -debug: turn on debugging output",
       "      -range: specify range of planes to read (inclusive)",
       "     -series: specify which image series to read",
@@ -319,8 +322,7 @@ public class ImageInfo {
       "              reduces the time required to read the images, but",
       "              requires more memory",
       "       -crop: crop images before displaying; argument is 'x,y,w,h'",
-      "  -autoscale: used in combination with '-fast' to automatically adjust",
-      "              brightness and contrast",
+      "  -autoscale: automatically adjust brightness and contrast (*)",
       "    -novalid: do not perform validation of OME-XML",
       "-omexml-only: only output the generated OME-XML",
       "     -no-sas: do not output OME-XML StructuredAnnotation elements",

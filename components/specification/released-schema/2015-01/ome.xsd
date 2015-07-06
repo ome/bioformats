@@ -1703,7 +1703,7 @@
 
 			<xsd:enumeration value =  "atm"><xsd:annotation><xsd:documentation>The pressure unit is standard atmosphere.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
-			<xsd:enumeration value =  "psi"><xsd:annotation><xsd:documentation>The pressure unit is pounds per square inch.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value =  "psi"><xsd:annotation><xsd:documentation>The pressure unit is pound-force per square inch.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
 			<xsd:enumeration value =  "Torr"><xsd:annotation><xsd:documentation>The pressure unit is       torr.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "mTorr"><xsd:annotation><xsd:documentation>The pressure unit is milli torr.</xsd:documentation></xsd:annotation></xsd:enumeration>
