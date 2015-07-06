@@ -317,14 +317,14 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
 
     Length px = retrieve.getPixelsPhysicalSizeX(series);
-    Double physicalSizeX = px == null ? null : px.value(UNITS.MICROM).doubleValue();
+    Double physicalSizeX = px == null || px.value() == null ? null : px.value(UNITS.MICROM).doubleValue();
     if (physicalSizeX == null || physicalSizeX.doubleValue() == 0) {
       physicalSizeX = 0d;
     }
     else physicalSizeX = 1d / physicalSizeX;
 
     Length py = retrieve.getPixelsPhysicalSizeY(series);
-    Double physicalSizeY = py == null ? null : py.value(UNITS.MICROM).doubleValue();
+    Double physicalSizeY = py == null || py.value() == null ? null : py.value(UNITS.MICROM).doubleValue();
     if (physicalSizeY == null || physicalSizeY.doubleValue() == 0) {
       physicalSizeY = 0d;
     }
