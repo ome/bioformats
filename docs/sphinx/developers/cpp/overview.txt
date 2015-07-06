@@ -31,7 +31,7 @@ Run::
     brew tap homebrew/science
     brew install bioformats-cpp [--without-docs] [--with-qt5]
 
-.. option:: --without-docs`
+.. option:: --without-docs
 
     Do not build the HTML version of this manual (built by default).
 
