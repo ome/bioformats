@@ -578,7 +578,8 @@ public class MetamorphReader extends BaseTiffReader {
             boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
             int seriesNdx = s * (seriesCount / stagesCount);
 
-            if ((seriesCount != 1 && !validZ) ||
+            if ((seriesCount != 1 &&
+              (!validZ || (hasZ.size() > 0  && !hasZ.get(0)))) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
               if (anyZ && j > 0 && seriesNdx < seriesCount - 1 &&
