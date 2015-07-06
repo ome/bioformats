@@ -48,7 +48,7 @@ lfind(const void *key, const void *base, size_t *nmemb, size_t size,
       int(*compar)(const void *, const void *));
 #endif
 
-#if !defined(HAVE_SNPRINTF) && !defined(HAVE__SNPRINTF)
+#if !defined(HAVE_SNPRINTF)
 int snprintf(char* str, size_t size, const char* format, ...);
 #endif
 

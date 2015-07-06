@@ -15,6 +15,11 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   # Notes:
   # INSTALL_LIB_DIR overridden to use GNUInstallDirs setting
+  if (CMAKE_GENERATOR MATCHES "Unix Makefiles")
+    set(ZLIB_OPTIONS "-DINSTALL_LIB_DIR=/${CMAKE_INSTALL_LIBDIR}")
+  else()
+    set(ZLIB_OPTIONS "-DINSTALL_LIB_DIR=${BIOFORMATS_EP_INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}")
+  endif()
 
   ExternalProject_Add(${proj}
     ${BIOFORMATS_EP_COMMON_ARGS}
@@ -23,11 +28,16 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     SOURCE_DIR "${EP_SOURCE_DIR}"
     BINARY_DIR "${EP_BINARY_DIR}"
     INSTALL_DIR ""
-    INSTALL_COMMAND "make;install;DESTDIR=${BIOFORMATS_EP_INSTALL_DIR}"
+    INSTALL_COMMAND ${CMAKE_COMMAND}
+      "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}"
+      "-DBUILD_DIR:PATH=${EP_BINARY_DIR}"
+      "-DCONFIG:INTERNAL=$<CONFIG>"
+      "-DEP_SCRIPT_CONFIG=${EP_SCRIPT_CONFIG}"
+      -P "${CMAKE_CURRENT_LIST_DIR}/ExternalProject_cmake_install.cmake"
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_ARGS
       -Wno-dev --no-warn-unused-cli
-      "-DINSTALL_LIB_DIR=/${CMAKE_INSTALL_LIBDIR}"
+      ${ZLIB_OPTIONS}
     CMAKE_CACHE_ARGS
     DEPENDS
       ${zlib_DEPENDENCIES}
