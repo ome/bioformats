@@ -174,11 +174,18 @@ public class APNGWriter extends FormatWriter {
     else {
       numFramesPointer = PNG_SIG.length + 33;
       RandomAccessInputStream in = new RandomAccessInputStream(id);
-      in.seek(numFramesPointer);
       in.order(littleEndian);
+      in.seek(8);
+      while (in.getFilePointer() < in.length()) {
+        int length = in.readInt();
+        String type = in.readString(4);
+        if (type.equals("fcTL") || type.equals("fdAT")) {
+          nextSequenceNumber = in.readInt() + 1;
+        }
+        in.skipBytes(length + 4);
+      }
+      in.seek(numFramesPointer);
       numFrames = in.readInt();
-      in.seek(in.length() - 12);
-      nextSequenceNumber = in.readInt();
       in.close();
       footerPointer = out.length() - 12;
     }
@@ -329,13 +336,7 @@ public class APNGWriter extends FormatWriter {
     footerPointer = out.getFilePointer();
     // write IEND chunk
 
-    // decoders ignore the data field in the IEND chunk
-    // most encoders set it to zero, but we're using it as
-    // a placeholder for the sequence number, so that setting
-    // the correct fcTL/fdAT sequence number when switching between files
-    // is easy (otherwise, the entire file would have to be read for
-    // every switch)
-    out.writeInt(nextSequenceNumber);
+    out.writeInt(0);
     out.writeBytes("IEND");
     out.writeInt(crc("IEND".getBytes(Constants.ENCODING)));
 
