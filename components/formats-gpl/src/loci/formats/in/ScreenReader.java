@@ -95,6 +95,14 @@ public class ScreenReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    for (ImageReader reader : readers) {
+      reader.getReader().reopenFile();
+    }
+  }
+
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
