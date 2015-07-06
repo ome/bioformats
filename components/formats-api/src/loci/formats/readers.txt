@@ -4,7 +4,7 @@
 
 # generic reader for HCS data
 # disabled for now, as it has been causing no end of problems outside of OMERO
-#loci.formats.in.ScreenReader
+loci.formats.in.ScreenReader
 
 loci.formats.in.FilePatternReader     # pattern
 
