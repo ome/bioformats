@@ -498,7 +498,7 @@ public class APNGReader extends FormatReader {
                   passWidth -= (PASS_WIDTHS[i] - 2);
                 }
                 if (i == 4) {
-                  passWidth -= (PASS_WIDTHS[i] =- 3);
+                  passWidth -= (PASS_WIDTHS[i] - 3);
                 }
                 if (i == 6) {
                   passWidth -= (PASS_WIDTHS[i] - 5);
