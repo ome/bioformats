@@ -21,8 +21,30 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(EP_LDFLAGS ${EP_LDFLAGS} \"-L${BIOFORMATS_EP_LIB_DIR}\")
   endif()
 
+  if(NOT MSVC)
+    set(ICU_PATCH)
+  # VS 10.0
+  elseif(NOT MSVC_VERSION VERSION_LESS 1600 AND MSVC_VERSION VERSION_LESS 1700)
+    set(ICU_PATCH)
+  # VS 11.0
+  elseif(NOT MSVC_VERSION VERSION_LESS 1700 AND MSVC_VERSION VERSION_LESS 1800)
+    set(ICU_PATCH PATCH_COMMAND "${CMAKE_COMMAND}" -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/External_icu_files/VC11"
+        "${EP_SOURCE_DIR}")
+  # VS 12.0
+  elseif(NOT MSVC_VERSION VERSION_LESS 1800 AND MSVC_VERSION VERSION_LESS 1900)
+    set(ICU_PATCH PATCH_COMMAND "${CMAKE_COMMAND}" -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/External_icu_files/VC12"
+        "${EP_SOURCE_DIR}")
+  # VS 14.0
+  elseif(NOT MSVC_VERSION VERSION_LESS 1900 AND MSVC_VERSION VERSION_LESS 2000)
+    message(FATAL_ERROR "VS14 not yet supported")
+  else()
+    message(FATAL_ERROR "VS version not supported")
+  endif()
+
   # Notes:
-  # Builds icu without Icu.Python (not currently used by Bio-Formats)
+  # Patches solution/projects for VS2012 and VS2013
 
   ExternalProject_Add(${proj}
     ${BIOFORMATS_EP_COMMON_ARGS}
@@ -32,27 +54,26 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     BINARY_DIR "${EP_BINARY_DIR}"
     INSTALL_DIR ""
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
+    ${ICU_PATCH}
     CONFIGURE_COMMAND
       ${CMAKE_COMMAND}
-      "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}/source"
+      "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}"
       "-DBUILD_DIR:PATH=${EP_BINARY_DIR}"
-      "-DICU_INSTALL_DIR:PATH=${BIOFORMATS_EP_INSTALL_DIR}"
-      "-DLIB_DIR:PATH=${CMAKE_INSTALL_LIBDIR}"
-      "-DICU_C:PATH=${CMAKE_C_COMPILER}"
-      "-DICU_CXX:PATH=${CMAKE_CXX_COMPILER}"
-      "-DCXXFLAGS=${EP_CXXFLAGS}"
-      "-DLDFLAGS=${EP_LDFLAGS}"
+      "-DCONFIG:INTERNAL=$<CONFIG>"
+      "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
       -P ${CMAKE_CURRENT_LIST_DIR}/External_icu_configure.cmake
     BUILD_COMMAND ${CMAKE_COMMAND}
-      "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}/source"
+      "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}"
       "-DBUILD_DIR:PATH=${EP_BINARY_DIR}"
-      "-DICU_INSTALL_DIR:PATH=${BIOFORMATS_EP_INSTALL_DIR}"
-      "-DLIB_DIR:PATH=${CMAKE_INSTALL_LIBDIR}"
-      "-DCXXFLAGS=${EP_CXXFLAGS}"
-      "-DLDFLAGS=${EP_LDFLAGS}"
-      "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}"
+      "-DCONFIG:INTERNAL=$<CONFIG>"
+      "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
       -P "${CMAKE_CURRENT_LIST_DIR}/External_icu_build.cmake"
-    INSTALL_COMMAND ""
+    INSTALL_COMMAND ${CMAKE_COMMAND}
+      "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}"
+      "-DBUILD_DIR:PATH=${EP_BINARY_DIR}"
+      "-DCONFIG:INTERNAL=$<CONFIG>"
+      "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
+      -P "${CMAKE_CURRENT_LIST_DIR}/External_icu_install.cmake"
     DEPENDS
       ${icu_DEPENDENCIES}
     )

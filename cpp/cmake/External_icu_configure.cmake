@@ -1,4 +1,6 @@
 # Configure icu
+include(${EP_SCRIPT_CONFIG})
+include(${CMAKE_CURRENT_LIST_DIR}/ExternalProjectEnvironment.cmake)
 
 if(WIN32) # Use appropriate MSVC solution
 
@@ -11,9 +13,9 @@ else(WIN32)
   set(ENV{CC} "${ICU_C}")
   set(ENV{CXX} "${ICU_CXX}")
 
-  execute_process(COMMAND "${SOURCE_DIR}/configure"
+  execute_process(COMMAND "${SOURCE_DIR}/source/configure"
                           "--prefix=/"
-                          "--libdir=/${LIB_DIR}"
+                          "--libdir=/${CMAKE_INSTALL_LIBDIR}"
                   WORKING_DIRECTORY ${BUILD_DIR}
                   RESULT_VARIABLE configure_result)
 
