@@ -34,6 +34,10 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_LIBS OFF)
+
 # Log is header only for some Boost versions, so check is optional.
 #if (Boost_LOG_LIBRARY_RELEASE STREQUAL "")
 #  set(Boost_LOG_LIBRARY_RELEASE "Boost_LOG_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging is probably header-only for this Boost version; reset for FindBoost" FORCE)
@@ -68,6 +72,8 @@ find_package(Boost 1.46 REQUIRED
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
 
+set(CMAKE_REQUIRED_DEFINITIONS_SAVE ${CMAKE_REQUIRED_DEFINITIONS})
+set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} -DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
 set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
 
@@ -136,16 +142,28 @@ BOOST_IOSTREAMS_LINK)
 # boost::iostreams::file_descriptor_source in -lboost_iostreams
 # + BOOST_IOSTREAMS_CLOSE_HANDLE_OLD
 
-check_cxx_source_compiles(
+if(MSVC)
+  check_cxx_source_compiles(
+"#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <windows.h>
+
+int main() {
+  HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+  boost::iostreams::file_descriptor_sink dummy(out, boost::iostreams::close_handle);
+}"
+  BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT_LINK)
+else()
+  check_cxx_source_compiles(
 "#include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <unistd.h>
 
 int main() {
-boost::iostreams::file_descriptor_sink dummy(STDOUT_FILENO, boost::iostreams::close_handle);
+  boost::iostreams::file_descriptor_sink dummy(STDOUT_FILENO, boost::iostreams::close_handle);
 }"
-BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT_LINK)
-
+  BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT_LINK)
+endif()
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 
 set(BOOST_IOSTREAMS_CLOSE_HANDLE_OLD 0)
@@ -256,3 +274,4 @@ OME_VARIANT_LIMIT)
 
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
+set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS_SAVE})
