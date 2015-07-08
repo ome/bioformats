@@ -102,22 +102,14 @@ public class ImspectorReader extends FormatReader {
     }
     index += no;
 
-    int block = 0;
-    int plane = 0;
-    while (index >= 0) {
-      int planeCount = planesPerBlock.get(block);
-      if (planeCount <= index) {
-        index -= planeCount;
-        block++;
-      }
-      else {
-        plane = index;
-        index = -1;
-      }
-    }
+    int[] zct = getZCTCoords(no);
+    int block = getSeries() * getSizeC() + zct[1];
+    int plane = getIndex(zct[0], 0, zct[2]);
 
-    in.seek(pixelsOffsets.get(block) + FormatTools.getPlaneSize(this) * plane);
-    readPlane(in, x, y, w, h, buf);
+    if (plane < planesPerBlock.get(block)) {
+      in.seek(pixelsOffsets.get(block) + FormatTools.getPlaneSize(this) * plane);
+      readPlane(in, x, y, w, h, buf);
+    }
     return buf;
   }
 
@@ -444,8 +436,19 @@ public class ImspectorReader extends FormatReader {
         m.sizeC = 1;
       }
       if (m.imageCount != m.sizeZ * m.sizeC * m.sizeT) {
-        m.sizeZ = m.imageCount / m.sizeC;
-        m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
+        if (planesPerBlock.size() > 1) {
+          m.sizeZ = 1;
+          for (Integer block : planesPerBlock) {
+            if (block > m.sizeZ) {
+              m.sizeZ = block;
+            }
+          }
+          m.imageCount = m.sizeZ * m.sizeC * m.sizeT;
+        }
+        else {
+          m.sizeZ = m.imageCount / m.sizeC;
+          m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
+        }
       }
       if (m.sizeC > 1 && m.sizeT != 1) {
         m.dimensionOrder = "XYZTC";
