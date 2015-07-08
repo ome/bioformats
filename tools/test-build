@@ -50,6 +50,8 @@ cppwrap()
         cd build
         cmake ..
         make
+        ./showinf ../../../../specification/samples/2009-09/18x24y5z1t1c8b-text.ome.tiff
+        ./minimum_writer test.ome.tiff
     )
 }
 
