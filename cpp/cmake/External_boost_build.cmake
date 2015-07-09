@@ -57,8 +57,6 @@ else(WIN32)
 
   message(STATUS "Building boost (Unix) with toolset=${BOOST_TOOLSET} cxxflags=${CMAKE_CXX_FLAGS} linkflags=${CMAKE_SHARED_LINKER_FLAGS}")
 
-  set(ENV{CXX} "${BOOST_CXX}")
-
   execute_process(COMMAND ./b2 install
                                "cxxflags=${CMAKE_CXX_FLAGS}"
                                "linkflags=${CMAKE_SHARED_LINKER_FLAGS}"
