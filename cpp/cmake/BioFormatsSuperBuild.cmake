@@ -56,7 +56,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/External_boost.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_xerces.cmake")
 
 install(DIRECTORY ${BIOFORMATS_EP_INSTALL_DIR}/
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        USE_SOURCE_PERMISSIONS)
 
 # Re-run top-level CMakeLists.txt as an external project.
 include("${CMAKE_CURRENT_LIST_DIR}/External_bioformats.cmake")
