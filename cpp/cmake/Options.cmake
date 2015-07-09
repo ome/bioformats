@@ -67,6 +67,7 @@ endif()
 option(sphinx-pdf "Enable sphinx PDF documentation" ${SPHINX_PDF_DEFAULT})
 
 set(SUPERBUILD_OPTIONS
+    "-Dbioformats-superbuild:BOOL=OFF"
     "-Dcxxstd-autodetect:BOOL=${cxxstd-autodetect}"
     "-Dextra-warnings:BOOL=${extra-warnings}"
     "-Dfatal-warnings:BOOL=${fatal-warnings}"

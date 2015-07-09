@@ -7,12 +7,11 @@ set(bioformats_ARGS)
 
 set(EP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
 list(APPEND CONFIGURE_OPTIONS
      ${bioformats_ARGS}
-     "-Dbioformats-superbuild:BOOL=OFF")
-string(REPLACE ";" "^^" BIOFORMATS_EP_ESCAPED_CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
+     ${SUPERBUILD_OPTIONS})
+string(REPLACE ";" "^^" CONFIGURE_OPTIONS "${CONFIGURE_OPTIONS}")
 
 ExternalProject_Add(${proj}
   ${BIOFORMATS_EP_COMMON_ARGS}
@@ -36,15 +35,3 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${bioformats_DEPENDENCIES}
   )
-
-# Force rebuilding of the main subproject every time building from super structure
-ExternalProject_Add_Step(${proj} forcebuild
-    COMMAND ${CMAKE_COMMAND} -E remove
-    ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
-    DEPENDEES configure
-    DEPENDERS build
-    ALWAYS 1
-  )
-
-install(DIRECTORY ${EP_INSTALL_DIR}/
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
