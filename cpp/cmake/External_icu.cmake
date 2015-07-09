@@ -10,8 +10,8 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-source)
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_SOURCE_DIR "${CMAKE_BINARY_DIR}/${proj}-source")
+  set(EP_BINARY_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
   set(EP_CXXFLAGS ${CMAKE_CXX_FLAGS})
   set(EP_LDFLAGS ${CMAKE_SHARED_LINKER_FLAGS})
   if(WIN32)
@@ -53,7 +53,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     SOURCE_DIR "${EP_SOURCE_DIR}"
     BINARY_DIR "${EP_BINARY_DIR}"
     INSTALL_DIR ""
-    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     ${ICU_PATCH}
     CONFIGURE_COMMAND
       ${CMAKE_COMMAND}
@@ -74,6 +73,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       "-DCONFIG:INTERNAL=$<CONFIG>"
       "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
       -P "${CMAKE_CURRENT_LIST_DIR}/External_icu_install.cmake"
+    ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     DEPENDS
       ${icu_DEPENDENCIES}
     )
