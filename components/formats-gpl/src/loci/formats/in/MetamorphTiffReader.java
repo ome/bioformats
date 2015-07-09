@@ -291,6 +291,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     for (Double z : zPositions) {
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
+
     if (getSizeZ() == 0) m.sizeZ = 1;
     m.sizeZ *= uniqueZ.size();
 
@@ -308,9 +309,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     int seriesCount = wellCount * fieldRowCount * fieldColumnCount;
 
-    if (seriesCount > 1 && getSizeZ() > totalPlanes / seriesCount) {
+    if (seriesCount > 1 && getSizeZ() > totalPlanes / seriesCount ||
+      totalPlanes > getSizeZ() * getSizeT() * effectiveC)
+    {
       m.sizeZ = 1;
-      m.sizeT = totalPlanes / (seriesCount * getSizeT() * effectiveC);
+      m.sizeT = totalPlanes / (seriesCount * effectiveC);
     }
 
     m.imageCount = getSizeZ() * getSizeT() * effectiveC;
