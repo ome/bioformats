@@ -147,8 +147,6 @@ set(BIOFORMATS_EP_CMAKE_CACHE_ARGS
   "-DCMAKE_INSTALL_SHAREDSTATEDIR:PATH=${CMAKE_INSTALL_SHAREDSTATEDIR}"
   "-DCMAKE_INSTALL_SYSCONFDIR:PATH=${CMAKE_INSTALL_SYSCONFDIR}"
 
-  "-DCMAKE_INSTALL_PREFIX:PATH="
-
   "-DCMAKE_SKIP_INSTALL_RPATH:BOOL=${CMAKE_SKIP_INSTALL_RPATH}"
   "-DCMAKE_SKIP_RPATH:BOOL=${CMAKE_SKIP_RPATH}"
   "-DCMAKE_USE_RELATIVE_PATHS:BOOL=${CMAKE_USE_RELATIVE_PATHS}"
@@ -211,8 +209,8 @@ foreach(arg ${BIOFORMATS_EP_CMAKE_ARGS}
       set(type "${CMAKE_MATCH_2}")
       set(value "${CMAKE_MATCH_3}")
       string(REPLACE "\"" "\\\"" value "${value}")
-      set(setArg "set(${name} \"${value}")
-      list(APPEND EP_SCRIPT_PARAMS "set(${name} \"${value}\")")
+      set(line "set(${name} \"${value}\" CACHE ${type} \"${name} from superbuild\")")
+      list(APPEND EP_SCRIPT_PARAMS "${line}")
     else()
       message(WARNING "Regex match failed for ${arg}")
     endif()
