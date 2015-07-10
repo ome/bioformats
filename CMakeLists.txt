@@ -55,6 +55,8 @@ endif(POLICY CMP0054)
 
 # For MSVC
 enable_language(CXX)
+# For feature tests with CMake 2.8.x
+enable_language(C)
 
 set(sb_default OFF)
 if(MSVC)
