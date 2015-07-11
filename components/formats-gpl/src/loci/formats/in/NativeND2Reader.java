@@ -973,7 +973,10 @@ public class NativeND2Reader extends FormatReader {
         getSizeC() > 3) && getPixelType() == FormatTools.INT8)
       {
         core.get(0).pixelType = FormatTools.UINT16;
-        if (getSizeC() > 3 && availableBytes % planeSize != 0) {
+        planeSize *= 2;
+        if (getSizeC() > 3 && availableBytes % planeSize != 0 &&
+          planeSize > availableBytes)
+        {
           core.get(0).sizeC = 3;
           core.get(0).rgb = true;
         }
