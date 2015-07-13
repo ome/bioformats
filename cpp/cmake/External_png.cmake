@@ -30,6 +30,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       "-DCONFIG:INTERNAL=$<CONFIG>"
       "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
       -P "${CMAKE_CURRENT_LIST_DIR}/ExternalProject_cmake_install.cmake"
+    TEST_COMMAND ${CMAKE_COMMAND}
+      "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}"
+      "-DBUILD_DIR:PATH=${EP_BINARY_DIR}"
+      "-DCONFIG:INTERNAL=$<CONFIG>"
+      "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
+      -P "${CMAKE_CURRENT_LIST_DIR}/ExternalProject_cmake_test.cmake"
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CMAKE_ARGS
       -Wno-dev --no-warn-unused-cli

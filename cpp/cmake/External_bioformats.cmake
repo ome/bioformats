@@ -32,6 +32,12 @@ ExternalProject_Add(${proj}
     "-DCONFIG:INTERNAL=$<CONFIG>"
     "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
     -P "${CMAKE_CURRENT_LIST_DIR}/ExternalProject_cmake_install.cmake"
+  TEST_COMMAND ${CMAKE_COMMAND}
+    "-DSOURCE_DIR:PATH=${EP_SOURCE_DIR}"
+    "-DBUILD_DIR:PATH=${EP_BINARY_DIR}"
+    "-DCONFIG:INTERNAL=$<CONFIG>"
+    "-DEP_SCRIPT_CONFIG:FILEPATH=${EP_SCRIPT_CONFIG}"
+    -P "${CMAKE_CURRENT_LIST_DIR}/ExternalProject_cmake_test.cmake"
   DEPENDS
     ${bioformats_DEPENDENCIES}
   )
