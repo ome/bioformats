@@ -4,19 +4,11 @@ from __future__ import print_function
 
 from optparse import OptionParser
 import os
-from subprocess import call, Popen, PIPE
+from subprocess import call
 import sys
 import zipfile
 
-# Due to "git archive" not supporting archiving of submodules in
-# addition to the base tree, this requires additional support in order
-# to create a complete and functional source archive.
-#
-# This script archives the base tree, and then uses "git submodule
-# foreach" to archive each submodule separately, setting the correct
-# path prefix for each archive, so that they may all be unpacked in
-# the same root to result in a complete and functional source tree.
-# It then repacks each of these zip files into a single zip which is
+# This script archives the base tree and repacks it into a single zip which is
 # the source release, taking care to preserve timestamps and exectute
 # permissions, etc.  This is done via ZipInfo objects, and the
 # repacking is done entirely in memory so that this should work on any
@@ -98,21 +90,6 @@ if __name__ == "__main__":
 
     zips = list(["%s/%s-base.zip" % (options.target, prefix)])
 
-    # Create submodule archives
-    submodule_archive = Popen([
-        'git', 'submodule', 'foreach', '--quiet', '--recursive',
-        ("npath=\"$(echo \"$path\" | tr / _)\"; "
-         "zip=\"%s/%s-submod-${npath}.zip\"; "
-         "git archive --format zip --prefix \"%s/${path}/\""
-         " --output \"${zip}\" HEAD || exit 1; "
-         "echo \"${zip}\"") % (options.target, prefix, prefix)],
-        stdout=PIPE)
-    submodule_zips = submodule_archive.communicate()[0]
-    if submodule_archive.returncode != 0:
-        raise Exception('Failed to create git submodule archives')
-
-    zips.extend(submodule_zips.splitlines())
-
     # Create destination zip file
     print("  - creating %s/%s.zip" % (options.target, prefix))
     sys.stdout.flush()
@@ -127,10 +104,10 @@ if __name__ == "__main__":
         for info in subzip.infolist():
             # Skip unwanted git and travis files
             if (os.path.basename(info.filename) == '.gitignore' or
-                    os.path.basename(info.filename) == '.gitmodule' or
                     os.path.basename(info.filename) == '.travis.yml'):
                 continue
-            # Skip files for which we don't have source in this repository, for GPL compliance
+            # Skip files for which we don't have source in this repository,
+            # for GPL compliance
             if (options.release.endswith("-dfsg") and
                 (os.path.splitext(info.filename)[1] == ".jar" or
                  os.path.splitext(info.filename)[1] == ".dll" or
@@ -138,7 +115,8 @@ if __name__ == "__main__":
                  os.path.splitext(info.filename)[1] == ".so")):
                 continue
             if (options.release.endswith("-dfsg") and
-                info.filename.startswith("%s/components/xsd-fu/python/genshi" % (prefix))):
+                info.filename.startswith(
+                    "%s/components/xsd-fu/python/genshi" % (prefix))):
                 continue
             print("File: %s" % (info.filename))
             # Repack a single zip object; preserve the metadata
