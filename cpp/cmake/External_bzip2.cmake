@@ -45,7 +45,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       "-DINSTALL_LIB_DIR=/${CMAKE_INSTALL_LIBDIR}"
     CMAKE_CACHE_ARGS
     DEPENDS
-      ${zlib_DEPENDENCIES}
+      ${bzip2_DEPENDENCIES}
     )
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${bzip2_DEPENDENCIES})
