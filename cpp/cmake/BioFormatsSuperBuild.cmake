@@ -46,7 +46,11 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(GNUInstallDirs)
 include(ExternalProject)
+
+# Helper functions and variables used by the following external projects.
 include("${CMAKE_CURRENT_LIST_DIR}/ExternalProjectHelpers.cmake")
+
+# External projects.
 include("${CMAKE_CURRENT_LIST_DIR}/External_zlib.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_bzip2.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_png.cmake")
@@ -55,9 +59,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/External_icu.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_boost.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_xerces.cmake")
 
+# Re-run top-level CMakeLists.txt as an external project.
+include("${CMAKE_CURRENT_LIST_DIR}/External_bioformats.cmake")
+
 install(DIRECTORY ${BIOFORMATS_EP_INSTALL_DIR}/
         DESTINATION ${CMAKE_INSTALL_PREFIX}
         USE_SOURCE_PERMISSIONS)
-
-# Re-run top-level CMakeLists.txt as an external project.
-include("${CMAKE_CURRENT_LIST_DIR}/External_bioformats.cmake")
