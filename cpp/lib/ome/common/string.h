@@ -46,6 +46,7 @@
 # include <ome/common/config.h>
 
 #include <string>
+#include <cstdarg>
 #include <cstring>
 
 namespace ome
