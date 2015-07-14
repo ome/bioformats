@@ -16,7 +16,8 @@ if(WIN32)
   file(GLOB XERCES_PDBS "${XERCES_BINARY_DIR}/xerces-c*.pdb")
   file(GLOB_RECURSE XERCES_HDRS
        RELATIVE ${SOURCE_DIR}/src/xercesc
-       "${SOURCE_DIR}/src/xercesc/*.hpp")
+       "${SOURCE_DIR}/src/xercesc/*.hpp"
+       "${SOURCE_DIR}/src/xercesc/*.c")
 
   file(INSTALL ${XERCES_DLLS}
        DESTINATION "${BIOFORMATS_EP_BIN_DIR}")
