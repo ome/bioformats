@@ -100,7 +100,15 @@ else()
   include(Doxygen)
   include(HeaderTest)
 
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
+  if(MSVC)
+    # Debug library suffix.
+    set(CMAKE_DEBUG_POSTFIX "d")
+    # Require dynamic linking and disable autolinking.
+    add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
+  endif()
+
+
+  if(NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
     set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
         CACHE PATH "Bio-Formats-specific datadir")
   endif()
