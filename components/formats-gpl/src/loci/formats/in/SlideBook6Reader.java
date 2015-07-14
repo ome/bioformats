@@ -41,13 +41,14 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.MissingLibraryException;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
-import loci.formats.MissingLibraryException;
+import org.scijava.nativelib.NativeLibraryUtil;
 
 /**
  * SlideBook6Reader is a file format reader for 3i SlideBook SLD files that uses
@@ -70,10 +71,10 @@ public class SlideBook6Reader  extends FormatReader {
 	public static final long SLD_MAGIC_BYTES_3 = 0xf6010101L;
 
 	private static final String URL_3I_SLD =
-			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook6-sld.html";
-	private static final String NO_3I_MSG = "3i SlideBook SBReadFile library not found. " +
+			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook6.html";
+	private static final String NO_3I_MSG = "3i SlideBook SlideBook6Reader library not found. " +
 			"Please see " + URL_3I_SLD + " for details.";
-	private static final String GENERAL_3I_MSG = "3i SlideBook SBReadFile library problem. " +
+	private static final String GENERAL_3I_MSG = "3i SlideBook SlideBook6Reader library problem. " +
 			"Please see " + URL_3I_SLD + " for details.";
 
 	// -- Static initializers --
@@ -81,14 +82,19 @@ public class SlideBook6Reader  extends FormatReader {
 	private static boolean libraryFound = false;
 
 	static {
-		String library_path = System.getProperty("java.library.path");
-
 		try {
 			// load JNI wrapper of SBReadFile.dll
-			System.loadLibrary("SlideBook6Reader");
-			libraryFound = true;
+			NativeLibraryUtil.Architecture arch = NativeLibraryUtil.getArchitecture();
+			if (arch != NativeLibraryUtil.Architecture.WINDOWS_64 && arch != NativeLibraryUtil.Architecture.WINDOWS_32) {
+				// TODO: add compiled linux and OS X architecture libraries to class
+				throw new UnsatisfiedLinkError();
+			}
+			if (!libraryFound) {
+				libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
+			}
 		}
 		catch (UnsatisfiedLinkError e) {
+			// log level debug, otherwise a warning will be printed every time a file is initialized without the .dll present
 			LOGGER.debug(NO_3I_MSG, e);
 			libraryFound = false;
 		}

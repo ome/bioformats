@@ -1,0 +1,66 @@
+.. index:: 3i SlideBook6
+.. index:: .sld
+
+3i SlideBook6
+===============================================================================
+
+Extensions: .sld
+
+Developer: `Intelligent Imaging Innovations`_
+
+Owner: `Intelligent Imaging Innovations`_
+
+**Support**
+
+
+BSD-licensed: |no|
+
+Export: |no|
+
+Officially Supported Versions: 4.1, 4.2, 5.0, 5.5, 6.0
+
+Supported Metadata Fields: :doc:`3i SlideBook6 <3i-slidebook6-metadata>`
+
+
+
+We currently have:
+
+* Numerous SlideBook datasets
+
+We would like to have:
+
+* A SlideBook specification document 
+* More SlideBook datasets (preferably acquired with the most recent SlideBook software)
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Very good|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`SlideBook6Reader.java`
+
+Notes:
+
+
+As of Bioformats 5.1.2 the native binary file SlideBook6Reader.dll
+of the proper architecture (x32 or x64) must be in the java binary path for
+this  reader to work.  This file is available from
+`3i Support <mailto: support@intelligent-imaging.com>`_ and is currently
+only available for Windows systems.
+
+.. seealso:: 
+  `Slidebook software overview <https://www.slidebook.com>`_ 
+
+.. _Intelligent Imaging Innovations: http://www.intelligent-imaging.com/
