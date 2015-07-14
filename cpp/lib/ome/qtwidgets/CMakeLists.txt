@@ -116,8 +116,10 @@ if (OME_QTOPENGL)
 
   set_target_properties(ome-qtwidgets PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-  install(TARGETS ome-qtwidgets LIBRARY
-          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+  install(TARGETS ome-qtwidgets
+          RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
   set(ome_qtwidgets_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/qtwidgets")
 

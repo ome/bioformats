@@ -129,8 +129,10 @@ target_link_libraries(ome-common
 set_target_properties(ome-common PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(ome-common PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-install(TARGETS ome-common LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+install(TARGETS ome-common
+        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 set(ome_common_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/common")
 
