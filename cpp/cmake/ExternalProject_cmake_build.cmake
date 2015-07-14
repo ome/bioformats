@@ -15,7 +15,7 @@ else()
                   WORKING_DIRECTORY "${EP_BUILD_DIR}"
                   RESULT_VARIABLE install_result)
 
-endif(WIN32)
+endif()
 
 if(install_result)
   message(FATAL_ERROR "cmake: Install failed")
