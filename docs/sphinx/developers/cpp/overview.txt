@@ -132,7 +132,7 @@ Debian/Ubuntu
 Homebrew
   ``brew install boost cmake hdf5 libpng python libtiff xerces-c git glm qt5 graphviz ant``
 RedHat/CentOS
-  ``yum install libhdf5-devel libpng-devel python python-genshi libtiff-devel xerces-c-devel git gtest-devel graphviz java-1.7.0-openjdk``
+  ``yum install boost-devel libhdf5-devel libpng-devel python python-genshi libtiff-devel xerces-c-devel git gtest-devel graphviz java-1.7.0-openjdk``
 
 Note that Homebrew and RedHat/CentOS do not provide packages for everything you need; see below for details.
 
