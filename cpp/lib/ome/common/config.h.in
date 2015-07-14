@@ -65,6 +65,9 @@
 #cmakedefine OME_VARIANT_LIMIT 1
 
 #ifndef OME_HAVE_NOEXCEPT
+# ifdef _MSC_VER
+#  define _ALLOW_KEYWORD_MACROS 1
+# endif
 # define noexcept
 #endif
 
