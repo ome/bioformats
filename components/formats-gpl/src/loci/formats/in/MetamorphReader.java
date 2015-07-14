@@ -914,10 +914,19 @@ public class MetamorphReader extends BaseTiffReader {
               stream = new RandomAccessInputStream(file, 16);
               tp = new TiffParser(stream);
               tp.checkHeader();
-              lastFile = fileIndex;
-              lastIFDs = tp.getIFDs();
+              IFDList f = tp.getIFDs();
+              if (f.size() > 0) {
+                lastFile = fileIndex;
+                lastIFDs = f;
+              }
+              else {
+                file = null;
+                stks[i][fileIndex] = null;
+              }
             }
+          }
 
+          if (file != null) {
             lastIFD = lastIFDs.get(p % lastIFDs.size());
             Object commentEntry = lastIFD.get(IFD.IMAGE_DESCRIPTION);
             if (commentEntry != null) {
