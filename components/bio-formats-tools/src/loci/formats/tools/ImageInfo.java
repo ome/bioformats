@@ -79,6 +79,8 @@ import loci.formats.services.OMEXMLServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * ImageInfo is a utility class for reading a file
  * and reporting information about it.
@@ -91,6 +93,9 @@ public class ImageInfo {
   private static final String NEWLINE = System.getProperty("line.separator");
 
   private static final String NO_UPGRADE_CHECK = "-no-upgrade";
+
+  private static final ImmutableSet<String> HELP_ARGUMENTS =
+      ImmutableSet.of("-h", "-help", "--help");
 
   // -- Fields --
 
@@ -989,6 +994,15 @@ public class ImageInfo {
     throws FormatException, ServiceException, IOException
   {
     DebugTools.enableLogging("INFO");
+
+    if (args.length == 1 && HELP_ARGUMENTS.contains(args[0])) {
+      /* a help argument is accepted only as the sole argument */
+      if (reader == null) {
+        reader = new ImageReader();
+      }
+      printUsage();
+      return false;
+    }
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
     if (printVersion) {
