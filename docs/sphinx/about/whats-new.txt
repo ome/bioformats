@@ -5,7 +5,8 @@ Version history
 --------------------
 
 * Native C++ updates:
-   - Added cmake superbuild for easier dependency management
+   - Added cmake superbuild to build core dependencies (zlib, bzip2, png, icu, xerces, boost)
+   - Progress on support for Windows
 * Bug fixes, including:
    - Fixed segfault in the `showinf` tool used with the C++ bindings
    - Allow reading from https URLs
@@ -17,7 +18,7 @@ Version history
        - improved detection of time series
        - fixed .nd datasets with variable Z and T counts in each channel
        - fixed .nd datasets that contain invalid TIFF/STK files
-       - fix dimensions when the number of planes does not match the recorded
+       - fixed dimensions when the number of planes does not match the recorded
          Z, C, and T sizes
    - SlideBook
        - improved native library detection (thanks to Richard Myers)
@@ -31,7 +32,7 @@ Version history
        - improved handling of multiple acquisitions of the same plate
    - Zeiss CZI
        - fixed error when opening single-file datasets whose names contained
-         `(`  and `)`
+         "("  and ")"
    - TIFF
        - improved speed of reading files with many tiles
    - AVI
