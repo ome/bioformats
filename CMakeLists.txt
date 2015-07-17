@@ -55,6 +55,8 @@ endif(POLICY CMP0054)
 
 # For MSVC
 enable_language(CXX)
+# For feature tests with CMake 2.8.x
+enable_language(C)
 
 set(sb_default OFF)
 if(MSVC)
@@ -63,6 +65,9 @@ endif()
 option(bioformats-superbuild "Build Bio-Formats and the projects it depends upon using a Super-Build setup" ${sb_default})
 mark_as_advanced(bioformats-superbuild)
 unset(sb_default)
+
+list(APPEND CMAKE_MODULE_PATH
+     "${CMAKE_CURRENT_LIST_DIR}/cpp/cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
 
@@ -81,9 +86,6 @@ else()
 
   enable_language(CXX)
 
-  list(APPEND CMAKE_MODULE_PATH
-       "${PROJECT_SOURCE_DIR}/cpp/cmake")
-
   include(GNUInstallDirs)
   include(CompilerChecks)
   include(PlatformChecks)
@@ -98,7 +100,15 @@ else()
   include(Doxygen)
   include(HeaderTest)
 
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
+  if(MSVC)
+    # Debug library suffix.
+    set(CMAKE_DEBUG_POSTFIX "d")
+    # Require dynamic linking and disable autolinking.
+    add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
+  endif()
+
+
+  if(NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
     set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
         CACHE PATH "Bio-Formats-specific datadir")
   endif()

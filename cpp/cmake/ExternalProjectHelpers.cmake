@@ -147,12 +147,14 @@ set(BIOFORMATS_EP_CMAKE_CACHE_ARGS
   "-DCMAKE_INSTALL_SHAREDSTATEDIR:PATH=${CMAKE_INSTALL_SHAREDSTATEDIR}"
   "-DCMAKE_INSTALL_SYSCONFDIR:PATH=${CMAKE_INSTALL_SYSCONFDIR}"
 
-  "-DCMAKE_INSTALL_PREFIX:PATH="
+  "-DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}"
 
   "-DCMAKE_SKIP_INSTALL_RPATH:BOOL=${CMAKE_SKIP_INSTALL_RPATH}"
   "-DCMAKE_SKIP_RPATH:BOOL=${CMAKE_SKIP_RPATH}"
   "-DCMAKE_USE_RELATIVE_PATHS:BOOL=${CMAKE_USE_RELATIVE_PATHS}"
   "-DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE}"
+
+  ${SUPERBUILD_OPTIONS}
 )
 
 # With make, we can do a DESTDIR staging install, otherwise we have to
@@ -162,6 +164,23 @@ if (CMAKE_GENERATOR MATCHES "Unix Makefiles")
   list(APPEND BIOFORMATS_EP_CMAKE_CACHE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=")
 else()
   list(APPEND BIOFORMATS_EP_CMAKE_CACHE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${BIOFORMATS_EP_INSTALL_DIR}")
+endif()
+
+# Primarily for Windows; will need extending for non-x86 platforms if required.
+if(MSVC)
+  list(APPEND BIOFORMATS_EP_CMAKE_CACHE_ARGS
+       "-DMSVC:INTERNAL=${MSVC}"
+       "-DMSVC_VERSION:INTERNAL=${MSVC_VERSION}"
+       "-DCMAKE_VS_PLATFORM_NAME:INTERNAL=${CMAKE_VS_PLATFORM_NAME}"
+       "-DCMAKE_VS_PLATFORM_TOOLSET:INTERNAL=${CMAKE_VS_PLATFORM_TOOLSET}")
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  list(APPEND BIOFORMATS_EP_CMAKE_CACHE_ARGS
+       "-DEP_PLATFORM_BITS:INTERNAL=64")
+else()
+  list(APPEND BIOFORMATS_EP_CMAKE_CACHE_ARGS
+       "-DEP_PLATFORM_BITS:INTERNAL=32")
 endif()
 
 set(BIOFORMATS_EP_SCRIPT_ARGS
@@ -194,8 +213,8 @@ foreach(arg ${BIOFORMATS_EP_CMAKE_ARGS}
       set(type "${CMAKE_MATCH_2}")
       set(value "${CMAKE_MATCH_3}")
       string(REPLACE "\"" "\\\"" value "${value}")
-      set(setArg "set(${name} \"${value}")
-      list(APPEND EP_SCRIPT_PARAMS "set(${name} \"${value}\")")
+      set(line "set(${name} \"${value}\" CACHE ${type} \"${name} from superbuild\")")
+      list(APPEND EP_SCRIPT_PARAMS "${line}")
     else()
       message(WARNING "Regex match failed for ${arg}")
     endif()

@@ -35,6 +35,7 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS}
                     ${GTEST_INCLUDE_DIR})
 
 if(BUILD_TESTS)
