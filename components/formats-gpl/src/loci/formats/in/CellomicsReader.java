@@ -28,6 +28,8 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +43,6 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
@@ -186,7 +187,6 @@ public class CellomicsReader extends FormatReader {
     else pixelFiles.add(id);
 
     files = pixelFiles.toArray(new String[pixelFiles.size()]);
-    Arrays.sort(files);
 
     int wellRows = 0;
     int wellColumns = 0;
@@ -215,6 +215,36 @@ public class CellomicsReader extends FormatReader {
     if (fields * wellRows * wellColumns > files.length) {
       files = new String[] {id};
     }
+    final int wellColumnsFinal = wellColumns;
+    Arrays.sort(files, new Comparator<String>() {
+        @Override
+        public int compare(String f1, String f2) {
+            int wellRow1 = getWellRow(f1);
+            int wellCol1 = getWellColumn(f1);
+            int field1_1 = getField(f1);
+            String field1 = String.valueOf(field1_1);
+            if (field1_1<10) {
+                field1 = "00" + field1;
+            }else if (field1_1<100) {
+                field1 = "0" + field1;
+            }
+
+            int wellRow2 = getWellRow(f2);
+            int wellCol2 = getWellColumn(f2);
+            int field2_2 = getField(f2);
+
+            String field2 = String.valueOf(field2_2);
+            if (field2_2<10) {
+                field2 = "00" + field2;
+            }else if (field2_2<100) {
+                field2 = "0" + field2;
+            }
+
+            int fileId1 = Integer.valueOf(String.valueOf((wellRow1 * wellColumnsFinal) + wellCol1) + field1);
+            int fileId2 = Integer.valueOf(String.valueOf((wellRow2 * wellColumnsFinal) + wellCol2) + field2);
+            return fileId1 - fileId2;
+        }
+    });
 
     core.clear();
 
@@ -325,6 +355,7 @@ public class CellomicsReader extends FormatReader {
       }
     }
 
+    int cntr = 0;
     for (int i=0; i<getSeriesCount(); i++) {
       String file = files[i * getSizeC()];
 
@@ -354,11 +385,12 @@ public class CellomicsReader extends FormatReader {
 
         String wellSampleID =
           MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
-        store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
+        store.setWellSampleID(wellSampleID, 0, wellIndex, cntr);
         store.setWellSampleIndex(
-          new NonNegativeInteger(i), 0, wellIndex, fieldIndex);
+          new NonNegativeInteger(fieldIndex), 0, wellIndex, cntr);
 
-        store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
+        store.setWellSampleImageRef(imageID, 0, wellIndex, cntr);
+        cntr++;
       }
     }
 
