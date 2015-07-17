@@ -41,7 +41,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${BIOFORMATS_EP_COMMON_ARGS}
-    URL "http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.bz2"
+    URL "https://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/b/bo/boost/boost/1.58.0/boost_1_58_0.tar.bz2"
     URL_HASH "SHA512=7480ec713b0aa13f0ec990603e87e3b5c8d53f4411329b10fae37fc963b90aad12dbd9290a33c3669ae801e9012a68683eadff057591e9ca2ebcd22b1a67b5d1"
     SOURCE_DIR "${EP_SOURCE_DIR}"
     INSTALL_DIR ""
