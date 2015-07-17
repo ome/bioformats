@@ -56,6 +56,18 @@ public class Modulo {
     parentDimension = dimension;
   }
 
+  public Modulo(Modulo m) {
+    this.parentDimension = m.parentDimension;
+    this.start = m.start;
+    this.step = m.step;
+    this.end = m.end;
+    this.parentType = m.parentType;
+    this.type = m.type;
+    this.typeDescription = m.typeDescription;
+    this.unit = m.unit;
+    this.labels = m.labels;
+  }
+
   // -- Methods --
 
   public int length() {
