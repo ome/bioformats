@@ -1013,9 +1013,7 @@ Type "ant -p" for a list of targets.
     </zip>
   </target>
 
-  <target name="test-matlab" description="run Matlab tests"
-	depends="tools">
-
+  <target name="test-matlab" description="run Matlab tests" depends="tools">
     <property environment="env"/>
     <exec executable="matlab">
       <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>
@@ -1024,6 +1022,32 @@ Type "ant -p" for a list of targets.
       <arg value="-r"/>
       <arg value="runtests ${root.dir}/components/formats-gpl/test/matlab"/>
     </exec>
+  </target>
+
+  <!-- Octave -->
+  <target name="dist-octave" description="generate an Octave package"
+          depends="release-version">
+    <echo>-------=========== Octave package ===========-------</echo>
+
+    <tempfile property="temp.file" destDir="${java.io.tmpdir}"/>
+    <copy file="${root.dir}/components/formats-gpl/octave/DESCRIPTION"
+          toFile="${temp.file}">
+      <filterset begintoken="$${" endtoken ="}" >
+        <filter token="release.version" value="${release.version}"/>
+        <filter token="DATE" value="${vcs.date}"/>
+      </filterset>
+    </copy>
+
+    <tar destfile="${artifact.dir}/bioformats-${release.version}.tar.gz"
+         compression="gzip">
+      <tarfileset dir="${root.dir}/components/formats-gpl/octave"
+                  prefix="bioformats/" excludes="DESCRIPTION"/>
+      <tarfileset file="${temp.file}" fullpath="bioformats/DESCRIPTION"/>
+      <tarfileset file="${root.dir}/LICENSE.txt" fullpath="bioformats/COPYING"/>
+      <tarfileset dir="${root.dir}/components/formats-gpl/matlab"
+                  prefix="bioformats/inst/"/>
+    </tar>
+    <delete file="${temp.file}"/>
   </target>
 
   <!-- Internal targets -->
