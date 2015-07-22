@@ -995,13 +995,14 @@ public class ImageInfo {
   {
     DebugTools.enableLogging("INFO");
 
-    if (args.length == 1 && HELP_ARGUMENTS.contains(args[0])) {
-      /* a help argument is accepted only as the sole argument */
-      if (reader == null) {
-        reader = new ImageReader();
+    for (final String arg : args) {
+      if (HELP_ARGUMENTS.contains(arg)) {
+        if (reader == null) {
+          reader = new ImageReader();
+        }
+        printUsage();
+        return false;
       }
-      printUsage();
-      return false;
     }
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
