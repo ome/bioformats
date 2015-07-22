@@ -60,11 +60,11 @@ the prerequisites to be installed in advance, for example using your
 operating system's package manager.  The second (*BF superbuild*),
 builds the prerequisites in addition to Bio-Formats, and is useful on
 systems where the prerequisites are unavailable, for example on
-Windows or on older systems where the versions available through a
-package manager are too old.  Note that the superbuild cannot provide
-*all* prerequisites; some will still need installing before building,
-shown in the table below.  On Windows, the superbuild is enabled by
-default.
+Windows which lacks a package manager or on older systems where the
+versions available through a package manager are too old.  Note that
+the superbuild cannot provide *all* prerequisites; some will still
+need installing before building, shown in the table below.  On
+Windows, the superbuild is enabled by default.
 
 .. tabularcolumns:: |l|l|l|c|c|c|c|
 
@@ -122,10 +122,6 @@ default.
   Optional, needed to build the manual pages
 §
   Optional, needed to build the manual (HTML and PDF)
-
-Due to lacking a package manager, if building on Windows most of the
-above packages will require downloading and installing by hand.  Links
-for these are provided below.
 
 Quick start
 ^^^^^^^^^^^
