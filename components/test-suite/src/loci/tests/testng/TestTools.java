@@ -215,7 +215,13 @@ public class TestTools {
 
     if (useConfigDir) {
       // Look for a configuration file under the configuration directory
-      String configRoot = root.replaceAll(rootDir, configDir);
+      String configRoot = root.substring((int) Math.min(rootDir.length() + 1, root.length()));
+      if (configRoot.length() == 0) {
+        configRoot = configDir;
+      }
+      else {
+        configRoot = new Location(configDir, configRoot).getAbsolutePath();
+      }
       Location configFile = new Location(configRoot, baseConfigName);
       if (configFile.exists()) {
         LOGGER.debug("found config file: {}", configFile.getAbsolutePath());
