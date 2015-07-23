@@ -1387,64 +1387,99 @@ public final class FormatTools {
 
   // -- OME-XML primitive type methods --
 
+  public static Length getPhysicalSize(Double value, String unit) {
+    if (unit != null) {
+      try {
+        UnitsLength ul = UnitsLength.fromString(unit);
+        return UnitsLength.create(value, ul);
+      } catch (EnumerationException e) {
+      }
+    }
+    return new Length(value, UNITS.MICROM);
+  }
+
+  /**
+   * Formats the input value for the physical size in X into a length in
+   * microns
+   *
+   * @param value  a {@link Double} giving the value of the physical size in X
+   * @return       a {@link Length} object
+   */
   public static Length getPhysicalSizeX(Double value) {
    return getPhysicalSizeX(value, null);
   }
   
+  /**
+   * Formats the input value for the physical size in X into a length of the
+   * given unit.
+   *
+   * @param value  a {@link Double} giving the value of the physical size in X
+   * @param unit   a {@link String} specifying the size unit
+   * @return       a {@link Length} object
+   */
   public static Length getPhysicalSizeX(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      if (unit != null) {
-        try {
-          UnitsLength ul = UnitsLength.fromString(unit);
-          return UnitsLength.create(value, ul);
-        } catch (EnumerationException e) {
-        }
-      }
-      return new Length(value, UNITS.MICROM);
+      return getPhysicalSize(value, unit);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
     return null;
   }
   
+  /**
+   * Formats the input value for the physical size in Y into a length in
+   * microns
+   *
+   * @param value  a {@link Double} giving the value of the physical size in Y
+   * @return       a {@link Length} object
+   */
   public static Length getPhysicalSizeY(Double value) {
     return getPhysicalSizeY(value, null);
   }
   
+  /**
+   * Formats the input value for the physical size in Y into a length of the
+   * given unit.
+   *
+   * @param value  a {@link Double} giving the value of the physical size in Y
+   * @param unit   a {@link String} specifying the size unit
+   * @return       a {@link Length} object
+   */
   public static Length getPhysicalSizeY(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      if (unit != null) {
-        try {
-          UnitsLength ul = UnitsLength.fromString(unit);
-          return UnitsLength.create(value, ul);
-        } catch (EnumerationException e) {
-        }
-      }
-      return new Length(value, UNITS.MICROM);
+      return getPhysicalSize(value, unit);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
     return null;
   }
 
+  /**
+   * Formats the input value for the physical size in Z into a length in
+   * microns
+   *
+   * @param value  a {@link Double} giving the value of the physical size in Z
+   * @return       a {@link Length} object
+   */
   public static Length getPhysicalSizeZ(Double value) {
     return getPhysicalSizeZ(value, null);
   }
 
+  /**
+   * Formats the input value for the physical size in Z into a length of the
+   * given unit.
+   *
+   * @param value  a {@link Double} giving the value of the physical size in Z
+   * @param unit   a {@link String} specifying the size unit
+   * @return       a {@link Length} object
+   */
   public static Length getPhysicalSizeZ(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      if (unit != null) {
-        try {
-          UnitsLength ul = UnitsLength.fromString(unit);
-          return UnitsLength.create(value, ul);
-        } catch (EnumerationException e) {
-        }
-      }
-      return new Length(value, UNITS.MICROM);
+      return getPhysicalSize(value, unit);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
     return null;
