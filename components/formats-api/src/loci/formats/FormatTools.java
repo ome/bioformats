@@ -1430,9 +1430,20 @@ public final class FormatTools {
   }
 
   public static Length getPhysicalSizeZ(Double value) {
+    return getPhysicalSizeZ(value, null);
+  }
+
+  public static Length getPhysicalSizeZ(Double value, String unit) {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
+      if (unit != null) {
+        try {
+          UnitsLength ul = UnitsLength.fromString(unit);
+          return UnitsLength.create(value, ul);
+        } catch (EnumerationException e) {
+        }
+      }
       return new Length(value, UNITS.MICROM);
     }
     LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
