@@ -912,10 +912,11 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
-      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+        (expectedSize == null || (
+          Math.abs(size - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -937,10 +938,11 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
-      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+        (expectedSize == null || (
+          Math.abs(size - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -963,10 +965,11 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+        (expectedSize == null || (
+          Math.abs(size - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
