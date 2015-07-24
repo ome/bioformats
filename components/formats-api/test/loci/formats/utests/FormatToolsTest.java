@@ -74,7 +74,7 @@ public class FormatToolsTest {
       {.1, "mm", new Length(.1, UNITS.MM)},
     };
   }
-  Z
+
   @DataProvider(name = "physicalSizeUnit")
   public Object[][] createValueUnitLengths() {
     return new Object[][] {
