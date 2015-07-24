@@ -135,7 +135,7 @@ public class FormatToolsTest {
   }
 
   @Test(dataProvider = "physicalSizeInvalidUnit")
-  public void testGetPhysicalSizeInvalidUnit(Double value, String unit, Length length) {
+  public void testGetPhysicalSizeInvalidUnit(Double value, Unit<Length> unit, Length length) {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
