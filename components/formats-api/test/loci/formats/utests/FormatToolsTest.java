@@ -49,6 +49,65 @@ import org.testng.annotations.Test;
  */
 public class FormatToolsTest {
 
+  @Test
+  public void testDefaultMinMaxInt8() {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.INT8);
+    assertEquals(lim[0], -128);
+    assertEquals(lim[1], 127);
+  }
+
+  @Test
+  public void testDefaultMinMaxInt16() {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.INT16);
+    assertEquals(lim[0], -32768);
+    assertEquals(lim[1], 32767);
+  }
+
+  @Test
+  public void testDefaultMinMaxInt32() {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.INT32);
+    assertEquals(lim[0], -2147483648);
+    assertEquals(lim[1], 2147483647);
+  }
+
+  @Test
+  public void testDefaultMinMaxUint8() {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT8);
+    assertEquals(lim[0], 0);
+    assertEquals(lim[1], 255);
+  }
+
+  @Test
+  public void testDefaultMinMaxUint16() {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT16);
+    assertEquals(lim[0], 0);
+    assertEquals(lim[1], 65535);
+  }
+
+  @Test
+  public void testDefaultMinMaxUint32() {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT32);
+    assertEquals(lim[0], 0);
+    assertEquals(lim[1], 4294967295L);
+  }
+
+  public void testDefaultMinMaxFloat() throws IllegalArgumentException {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.FLOAT);
+    assertEquals(lim[0], -2147483648);
+    assertEquals(lim[1], 2147483647);
+  }
+
+  public void testDefaultMinMaxDouble() throws IllegalArgumentException {
+    long[] lim = FormatTools.defaultMinMax(FormatTools.DOUBLE);
+    assertEquals(lim[0], -2147483648);
+    assertEquals(lim[1], 2147483647);
+  }
+
+  @Test(expectedExceptions={IllegalArgumentException.class})
+  public void testDefaultMinMaxInvalid() throws IllegalArgumentException {
+    long[] lim = FormatTools.defaultMinMax(9999); // Invalid pixel type number
+  }
+
   @DataProvider(name = "physicalSizeNoUnit")
   public Object[][] createValueLengths() {
     return new Object[][] {
