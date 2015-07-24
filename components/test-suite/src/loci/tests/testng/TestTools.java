@@ -207,21 +207,11 @@ public class TestTools {
      toplevelConfig != null && new File(toplevelConfig).exists();
     Arrays.sort(subs);
 
-    String rootDir = config.getRootDirectory();
-    String configDir = config.getConfigDirectory();
-    boolean useConfigDir = (configDir != null);
-
     List<String> subsList = new ArrayList<String>();
 
-    if (useConfigDir) {
+    if (config.getConfigDirectory() != null) {
       // Look for a configuration file under the configuration directory
-      String configRoot = root.substring((int) Math.min(rootDir.length() + 1, root.length()));
-      if (configRoot.length() == 0) {
-        configRoot = configDir;
-      }
-      else {
-        configRoot = new Location(configDir, configRoot).getAbsolutePath();
-      }
+      String configRoot = config.relocateToConfig(root);
       Location configFile = new Location(configRoot, baseConfigName);
       if (configFile.exists()) {
         LOGGER.debug("found config file: {}", configFile.getAbsolutePath());
@@ -236,7 +226,7 @@ public class TestTools {
       if ((!isToplevel && isConfigFile(file, configFileSuffix)) ||
           (isToplevel && subs[i].equals(toplevelConfig)))
       {
-        if (!useConfigDir) {
+        if (config.getConfigDirectory() != null) {
           LOGGER.debug("adding config file: {}", file.getAbsolutePath());
           subsList.add(0, file.getAbsolutePath());
         }
