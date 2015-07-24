@@ -1425,9 +1425,10 @@ public final class FormatTools {
       value < Double.POSITIVE_INFINITY)
     {
       return getPhysicalSize(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
+      return null;
     }
-    LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
-    return null;
   }
 
   /**
@@ -1443,10 +1444,11 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      createLength(value, unit);
+      return createLength(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
+      return null;
     }
-    LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
-    return null;
   }
 
   /**
@@ -1494,10 +1496,11 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      createLength(value, unit);
+      return createLength(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
+      return null;
     }
-    LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
-    return null;
   }
 
   /**
@@ -1527,9 +1530,10 @@ public final class FormatTools {
       value < Double.POSITIVE_INFINITY)
     {
       return getPhysicalSize(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
+      return null;
     }
-    LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
-    return null;
   }
 
   /**
@@ -1546,10 +1550,11 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      createLength(value, unit);
+      return createLength(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
+      return null;
     }
-    LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
-    return null;
   }
 
   public static Length getEmissionWavelength(Double value) {
