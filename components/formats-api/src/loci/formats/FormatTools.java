@@ -1387,6 +1387,11 @@ public final class FormatTools {
 
   // -- OME-XML primitive type methods --
 
+  public static boolean isPositiveValue(Double value) {
+    return (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY);
+  }
+
   public static Length getPhysicalSize(Double value, String unit) {
     if (unit != null) {
       try {
@@ -1421,8 +1426,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeX(Double value, String unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
+    if (isPositiveValue(value))
     {
       return getPhysicalSize(value, unit);
     } else {
@@ -1440,9 +1444,8 @@ public final class FormatTools {
    *
    * @return       the physical size formatted as a {@link Length}
    */
-  public static Length getPhysicalSizeX(Double value, ome.units.unit.Unit<ome.units.quantity.Length> unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
+  public static Length getPhysicalSizeX(Double value, Unit<Length> unit) {
+    if (isPositiveValue(value))
     {
       return createLength(value, unit);
     } else {
@@ -1474,13 +1477,13 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeY(Double value, String unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
+    if (isPositiveValue(value))
     {
       return getPhysicalSize(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
+      return null;
     }
-    LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
-    return null;
   }
 
   /**
@@ -1492,9 +1495,8 @@ public final class FormatTools {
    *
    * @return       the physical size formatted as a {@link Length}
    */
-  public static Length getPhysicalSizeY(Double value, ome.units.unit.Unit<ome.units.quantity.Length> unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
+  public static Length getPhysicalSizeY(Double value, Unit<Length> unit) {
+    if (isPositiveValue(value))
     {
       return createLength(value, unit);
     } else {
@@ -1526,8 +1528,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeZ(Double value, String unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
+    if (isPositiveValue(value))
     {
       return getPhysicalSize(value, unit);
     } else {
@@ -1546,9 +1547,8 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
 
    */
-  public static Length getPhysicalSizeZ(Double value, ome.units.unit.Unit<ome.units.quantity.Length> unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
+  public static Length getPhysicalSizeZ(Double value, Unit<Length> unit) {
+    if (isPositiveValue(value))
     {
       return createLength(value, unit);
     } else {
