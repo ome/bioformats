@@ -75,6 +75,15 @@ public class FormatToolsTest {
     };
   }
 
+  @DataProvider(name = "physicalSizeInvalidStringUnit")
+  public Object[][] createValueInvalidStringLengths() {
+    return new Object[][] {
+      {1.0, null, new Length(1.0, UNITS.MICROM)},
+      {1.0, "foo", new Length(1.0, UNITS.MICROM)},
+      {1.0, "s", new Length(1.0, UNITS.MICROM)},
+    };
+  }
+
   @DataProvider(name = "physicalSizeUnit")
   public Object[][] createValueUnitLengths() {
     return new Object[][] {
@@ -98,6 +107,13 @@ public class FormatToolsTest {
 
   @Test(dataProvider = "physicalSizeStringUnit")
   public void testGetPhysicalSizeStringUnit(Double value, String unit, Length length) {
+    assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
+  }
+
+  @Test(dataProvider = "physicalSizeStringUnit")
+  public void testGetPhysicalSizeInvalidStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
