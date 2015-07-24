@@ -85,6 +85,11 @@ else()
   endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
   enable_language(CXX)
+    set(BUILD_SHARED_LIBS_DEFAULT ON)
+  if(MSVC)
+    set(BUILD_SHARED_LIBS_DEFAULT OFF)
+  endif()
+  set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_DEFAULT} CACHE BOOL "Use shared libraries")
 
   include(GNUInstallDirs)
   include(CompilerChecks)
@@ -105,6 +110,8 @@ else()
     set(CMAKE_DEBUG_POSTFIX "d")
     # Require dynamic linking and disable autolinking.
     add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
+    # To prevent a lot of spam warnings about standard POSIX functions
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
   endif()
 
 
