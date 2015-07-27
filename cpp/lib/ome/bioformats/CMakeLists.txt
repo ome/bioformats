@@ -41,6 +41,7 @@ include_directories(${OME_TOPLEVEL_INCLUDES}
 
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
+    Dimension.cpp
     FormatException.cpp
     FormatTools.cpp
     MetadataConfigurable.cpp
@@ -60,6 +61,7 @@ set(OME_BIOFORMATS_SOURCES
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
+    Dimension.h
     FileInfo.h
     FormatException.h
     MetadataMap.h
