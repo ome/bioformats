@@ -48,52 +48,63 @@ In order to build the C++ library and its documentation, a number of
 packages are required to be installed.  Note that the minimum version
 is the minimum version we regularly test with; older versions may work
 but are not supported.  Some packages are required only for building
-Bio-Formats (*BF build*).  A subset of these are required for building
-client applications making use of Bio-Formats (*Client build*) For
-end-user deployment (*Deploy*), the library packages rather than the
-development packages should be preferred; in some cases such as for
-Boost and Qt5, these are split up into a separate package for each
-library.
+Bio-Formats (*BF [super]build*).  A subset of these are required for
+building client applications making use of Bio-Formats (*Client
+build*).  For end-user deployment (*Deploy*), the library packages
+rather than the development packages should be preferred; in some
+cases such as for Boost and Qt5, these are split up into a separate
+package for each library.
 
-.. tabularcolumns:: |l|l|l|c|c|c|
+Bio-Formats may be built in two ways.  The first (*BF build*) requires
+the prerequisites to be installed in advance, for example using your
+operating system's package manager.  The second (*BF superbuild*),
+builds the prerequisites in addition to Bio-Formats, and is useful on
+systems where the prerequisites are unavailable, for example on
+Windows which lacks a package manager or on older systems where the
+versions available through a package manager are too old.  Note that
+the superbuild cannot provide *all* prerequisites; some will still
+need installing before building, shown in the table below.  On
+Windows, the superbuild is enabled by default.
 
-+-----------------+--------------+--------------+----------------------------------+
-|                 |           Version           |           When required          |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Package         | Recommended  | Minimum      | BF build | Client build | Deploy |
-+=================+==============+==============+==========+==============+========+
-| Boost           | 1.54         | 1.48         |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| HDF5            | 1.8.x        | 1.8.x        |    ◦     | ◦            | ◦      |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| PNG             | 1.2          | 1.2          |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| TIFF            | 4.0.3        | 3.9.5        |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Xerces-C        | 3.0          | 3.0          |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| GLM*            | 0.9.6        | 0.9.5        |    ◦     | ◦            |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Qt5*            | 5.2          | 5.0          |    ◦     | ◦            | ◦      |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| CMake           | 3.0          | 2.8.12       |    \•    |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Python          | 2.7          | 2.6          |    \•    |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Python Genshi   | 0.7          | 0.6          |    \•    |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Git             | 2.1.x        | 1.7.x        |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| GTest           | 1.7          | 1.5          |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Doxygen†        | 1.8          | 1.6          |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Graphviz†       | 2.x          | 1.8.10       |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Python Sphinx‡§ | 1.2.x        | 1.1.x        |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| TeX (XeLaTeX)§  | TeXLive 2014 | TeXLive 2012 |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
+.. tabularcolumns:: |l|l|l|c|c|c|c|
+
++---------------+--------------+--------------+--------------------------------------------------+
+|               |           Version           |                   When required                  |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Package       | Recommended  | Minimum      | BF build | BF superbuild | Client build | Deploy |
++===============+==============+==============+==========+===============+==============+========+
+| Boost         | 1.54         | 1.48         |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| HDF5          | 1.8.x        | 1.8.x        |    ◦     |               | ◦            | ◦      |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| PNG           | 1.2          | 1.2          |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| TIFF          | 4.0.3        | 3.9.5        |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Xerces-C      | 3.0          | 3.0          |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| GLM           | 0.9.6        | 0.9.5        |    \*    | \*            | \*           |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Qt5           | 5.2          | 5.0          |    \*    | \*            | \*           | \*     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| CMake         | 3.0          | 2.8.12       |    \•    | \•            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Python        | 2.7          | 2.6          |    \•    | \•            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Python Genshi | 0.7          | 0.6          |    \•    | \•            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Git           | 2.1.x        | 1.7.x        |    ◦     | ◦             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| GTest         | 1.7          | 1.5          |    ◦     | ◦             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Doxygen       | 1.8          | 1.6          |    †     | †             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Graphviz      | 2.x          | 1.8.10       |    †     | †             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Python Sphinx | 1.2.x        | 1.1.x        |    ‡§    | ‡§            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| TeX (XeLaTeX) | TeXLive 2014 | TeXLive 2012 |    §     | §             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
 
 \•
   Required for Bio-Formats build; headers may be needed for client
@@ -111,10 +122,6 @@ library.
   Optional, needed to build the manual pages
 §
   Optional, needed to build the manual (HTML and PDF)
-
-Due to lacking a package manager, if building on Windows most of the
-above packages will require downloading and installing by hand.  Links
-for these are provided below.
 
 Quick start
 ^^^^^^^^^^^
@@ -375,8 +382,8 @@ not functional on a specific system.
 
 If using an external GTest, make sure that :envvar:`GTEST_ROOT` is set
 in the environment, or that ``-DGTEST_ROOT=/path/to/gtest`` is passed
-to :program:`cmake` and that this points to the location where you
-installed the :program:`gtest` library.  If the library is located on
+to :program:`cmake` and that this points to the location where the
+:program:`gtest` library was installed.  If the library is located on
 the default library search path, this is not necessary.
 
 - `Website <https://code.google.com/p/googletest/>`__
@@ -679,7 +686,7 @@ instead, if desired.
 
 Start by creating a temporary build directory.  This directory may be
 in any location inside or outside the Bio-Formats source tree.
-However, you may not use the source directory as the build directory.
+However, the source directory cannot be used as the build directory.
 (This fills the source tree full of autogenerated files.)
 
 Run :program:`cmake` from the temporary build directory::
@@ -699,7 +706,10 @@ bioformats-superbuild=(ON|OFF)
   default since most platforms provide all the libraries by default.
   However, it is enabled by default when using Microsoft Visual C++,
   since this platform does not provide libraries unless you have built
-  your own.
+  your own.  The cache variable ``BIOFORMATS_EP_SOURCE_CACHE`` may be
+  set to specify a directory in which to store downloaded source
+  files; this is useful if you need to repeat the build since the
+  source files will not need downloading again.
 cxxstd-autodetect=(ON|OFF)
   Enable or disable (default) C++ compiler standard autodetection.  If
   enabled, the compiler will be put into C++11 mode if available,
