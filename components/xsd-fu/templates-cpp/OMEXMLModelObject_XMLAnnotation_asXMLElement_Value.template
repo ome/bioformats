@@ -3,7 +3,7 @@
         // Don't validate.  Currently fails due to inheriting our
         // schema if no namespace was explicitly specified.
         std::string wrappedValue("<wrapped>");
-        wrappedValue += value;
+        wrappedValue += this->impl->value;
         wrappedValue += "</wrapped>";
         common::xml::dom::ParseParameters params;
         params.validationScheme = xercesc::XercesDOMParser::Val_Never;
