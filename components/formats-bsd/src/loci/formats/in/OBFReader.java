@@ -53,7 +53,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.quantity.Length;
-import ome.units.unit.Unit;
 import ome.units.UNITS;
 import ome.xml.model.primitives.PositiveFloat;
 
@@ -184,10 +183,13 @@ public class OBFReader extends FormatReader
       if (lengths.size() > 0)
       {
         double lengthX = Math.abs(lengths.get(0));
+        if (lengthX < 0.01)
+        {
+          lengthX *= 1000000;
+        }
         if (lengthX > 0)
         {
-          Unit<Length> unit = (lengthX < 0.01) ? UNITS.M : UNITS.MICROM;
-          Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, unit);
+          Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, UNITS.MICROM);
           if (physicalSizeX != null) {
             ome.setPixelsPhysicalSizeX(physicalSizeX, series);
           }
@@ -196,10 +198,13 @@ public class OBFReader extends FormatReader
       if (lengths.size() > 1)
       {
         double lengthY = Math.abs(lengths.get(1));
+        if (lengthY < 0.01)
+        {
+          lengthY *= 1000000;
+        }
         if (lengthY > 0)
         {
-          Unit<Length> unit = (lengthY < 0.01) ? UNITS.M : UNITS.MICROM;
-          Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, unit);
+          Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, UNITS.MICROM);
           if (physicalSizeY != null) {
             ome.setPixelsPhysicalSizeY(physicalSizeY, series);
           }
@@ -208,10 +213,13 @@ public class OBFReader extends FormatReader
       if (lengths.size() > 2)
       {
         double lengthZ = Math.abs(lengths.get(2));
+        if (lengthZ < 0.01)
+        {
+          lengthZ *= 1000000;
+        }
         if (lengthZ > 0)
         {
-          Unit<Length> unit = (lengthZ < 0.01) ? UNITS.M : UNITS.MICROM;
-          Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, unit);
+          Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, UNITS.MICROM);
           if (physicalSizeZ != null) {
             ome.setPixelsPhysicalSizeZ(physicalSizeZ, series);
           }
