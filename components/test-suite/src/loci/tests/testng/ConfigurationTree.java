@@ -40,6 +40,7 @@ import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
+import loci.common.Location;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +137,13 @@ public class ConfigurationTree {
     }
     String parent = file.getParent();
     if (configDir != null) {
-        parent = parent.replaceAll(configDir, rootDir);
+      parent = parent.substring((int) Math.min(configDir.length() + 1, parent.length()));
+      if (parent.length() == 0) {
+        parent = rootDir;
+      }
+      else {
+        parent = new Location(rootDir, parent).getAbsolutePath();
+      }
     }
 
     configFile = file.getAbsolutePath();

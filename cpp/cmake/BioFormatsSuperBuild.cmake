@@ -46,7 +46,11 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(GNUInstallDirs)
 include(ExternalProject)
+
+# Helper functions and variables used by the following external projects.
 include("${CMAKE_CURRENT_LIST_DIR}/ExternalProjectHelpers.cmake")
+
+# External projects.
 include("${CMAKE_CURRENT_LIST_DIR}/External_zlib.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_bzip2.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_png.cmake")
@@ -55,41 +59,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/External_icu.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_boost.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_xerces.cmake")
 
-install(DIRECTORY ${BIOFORMATS_EP_INSTALL_DIR}/
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
-
 # Re-run top-level CMakeLists.txt as an external project.
-set(proj bioformats)
+include("${CMAKE_CURRENT_LIST_DIR}/External_bioformats.cmake")
 
-set(bioformats_DEPENDENCIES zlib bzip2 png tiff icu boost xerces)
-set(bioformats_ARGS)
-
-set(EP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
-ExternalProject_Add(${proj}
-  ${BIOFORMATS_EP_COMMON_ARGS}
-  DOWNLOAD_COMMAND ""
-  SOURCE_DIR ${EP_SOURCE_DIR}
-  BINARY_DIR ${EP_BINARY_DIR}
-  INSTALL_DIR ""
-  INSTALL_COMMAND "make;install;DESTDIR=${EP_INSTALL_DIR}"
-  CMAKE_ARGS
-    ${bioformats_ARGS}
-  CMAKE_CACHE_ARGS
-    -Dbioformats-superbuild:BOOL=OFF
-  DEPENDS
-    ${bioformats_DEPENDENCIES}
-  )
-
-# Force rebuilding of the main subproject every time building from super structure
-ExternalProject_Add_Step(${proj} forcebuild
-    COMMAND ${CMAKE_COMMAND} -E remove
-    ${CMAKE_CURRENT_BUILD_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
-    DEPENDEES configure
-    DEPENDERS build
-    ALWAYS 1
-  )
-
-install(DIRECTORY ${EP_INSTALL_DIR}/
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY ${BIOFORMATS_EP_INSTALL_DIR}/
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        USE_SOURCE_PERMISSIONS)

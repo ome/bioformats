@@ -1,16 +1,26 @@
 # Build icu
+include(${EP_SCRIPT_CONFIG})
+include(${CMAKE_CURRENT_LIST_DIR}/ExternalProjectEnvironment.cmake)
 
 if(WIN32)
 
-  # msbuild
+  message(STATUS "Building icu (Windows)")
 
-else(WIN32)
+  execute_process(COMMAND msbuild "source\\allinone\\allinone.sln"
+                          "/p:Configuration=${CONFIG}"
+                          "/p:Platform=${CMAKE_VS_PLATFORM_NAME}"
+                  WORKING_DIRECTORY ${SOURCE_DIR}
+                  RESULT_VARIABLE build_result)
 
-  execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} install "DESTDIR=${ICU_INSTALL_DIR}"
+else()
+
+  message(STATUS "Building icu (Unix)")
+
+  execute_process(COMMAND ${CMAKE_MAKE_PROGRAM}
                   WORKING_DIRECTORY ${BUILD_DIR}
                   RESULT_VARIABLE build_result)
 
-endif(WIN32)
+endif()
 
 if (build_result)
   message(FATAL_ERROR "icu: Build failed")

@@ -19,5 +19,5 @@ else()
 endif(WIN32)
 
 if(install_result)
-  message(FATAL_ERROR "boost: Install failed")
+  message(FATAL_ERROR "cmake: Install failed")
 endif()

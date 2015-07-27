@@ -63,7 +63,7 @@ set(BZIP2_MANPAGES
 add_library(bz2 SHARED
             ${BZIP2_SOURCES}
             ${BZIP2_PUBLIC_HEADERS} ${BZIP2_PRIVATE_HEADERS}
-            libbz2.def)
+            bz2.def)
 set_target_properties(bz2 PROPERTIES SOVERSION 1)
 
 if(NOT CYGWIN)
@@ -77,7 +77,7 @@ endif()
 add_library(bz2static STATIC
             ${BZIP2_SOURCES}
             ${BZIP2_PUBLIC_HEADERS} ${BZIP2_PRIVATE_HEADERS}
-            libbz2.def)
+            bz2.def)
 if (NOT WIN32)
   # Windows static and DLL import libraries both use .lib so the
   # static lib can't use the same name as the DLL
@@ -176,6 +176,7 @@ macro(add_bzip_test name arg input output expected_output)
            "-DBZIP2_INPUT:FILEPATH=${CMAKE_SOURCE_DIR}/${input}"
            "-DBZIP2_OUTPUT:FILEPATH=${output}"
            "-DBZIP2_EXPECTED_OUTPUT:FILEPATH=${CMAKE_SOURCE_DIR}/${expected_output}"
+           "-DLIBBZ2=$<TARGET_FILE:bz2>"
            -P "${CMAKE_CURRENT_LIST_DIR}/RunTest.cmake")
 endmacro()
 
