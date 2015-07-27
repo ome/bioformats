@@ -133,8 +133,10 @@ Debian/Ubuntu
 Partial quick starts
 ^^^^^^^^^^^^^^^^^^^^
 
-Homebrew and RedHat/CentOS do not provide packages for everything you need. The lists below will install
-*most* of the dependencies, but you will need to see the details below to install further dependencies.
+Homebrew and RedHat/CentOS do not provide packages for everything that is
+needed. The commands listed will install *most* of the dependencies, but
+further dependencies will need to be installed as described in various
+sections below.
 
 Homebrew
   ``brew install boost cmake hdf5 libpng python libtiff xerces-c git glm qt5 graphviz ant``
