@@ -915,7 +915,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || (
+        (expectedSize == null || realSize == null || (
           Math.abs(size - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -941,7 +941,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || (
+        (expectedSize == null || realSize == null || (
           Math.abs(size - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -968,7 +968,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
 
       if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || (
+        (expectedSize == null || realSize == null || (
           Math.abs(size - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
