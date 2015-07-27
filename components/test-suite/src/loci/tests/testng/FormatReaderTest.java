@@ -912,11 +912,12 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
-      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
+      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || realSize == null || (
-          Math.abs(size - expectedSize) > Constants.EPSILON)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -938,11 +939,12 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
-      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
+      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || realSize == null || (
-          Math.abs(size - expectedSize) > Constants.EPSILON)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -965,11 +967,12 @@ public class FormatReaderTest {
         expectedSize = null;
       }
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      Double size = realSize == null ? null : realSize.value(UNITS.MICROM).doubleValue();
+      Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || realSize == null || (
-          Math.abs(size - expectedSize) > Constants.EPSILON)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
