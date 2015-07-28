@@ -1436,7 +1436,7 @@ public final class FormatTools {
   }
 
   /**
-   * Formats the input value for the physical size in Y into a length of the
+   * Formats the input value for the physical size in X into a length of the
    * given unit.
    *
    * @param value  the value of the physical size in X
