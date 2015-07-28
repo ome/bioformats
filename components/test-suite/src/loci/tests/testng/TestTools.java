@@ -226,7 +226,7 @@ public class TestTools {
       if ((!isToplevel && isConfigFile(file, configFileSuffix)) ||
           (isToplevel && subs[i].equals(toplevelConfig)))
       {
-        if (config.getConfigDirectory() != null) {
+        if (config.getConfigDirectory() == null) {
           LOGGER.debug("adding config file: {}", file.getAbsolutePath());
           subsList.add(0, file.getAbsolutePath());
         }
