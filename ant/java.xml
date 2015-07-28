@@ -257,7 +257,9 @@ your FindBugs installation's lib directory. E.g.:
         include (none) to prevent problems if component.resources-bin is empty
       -->
       <fileset dir="${src.dir}" includes="(none) ${component.resources-bin}"/>
-      <fileset dir="${src.dir}/.." includes="(none) ${component.resources-bin}"/>
+    </copy>
+    <copy todir="${dest.dir}/META-INF" preservelastmodified="true">
+      <fileset dir="${src.dir}/.." includes="(non) ${component.resources-bin}"/>
     </copy>
     <!-- copy source files and text resources with filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
