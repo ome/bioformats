@@ -191,6 +191,34 @@ public class TestTools {
     getFiles(root, files, config, toplevelConfig, subdirs, "");
   }
 
+  /**
+   * Retrieve an external configuration file given a root directory and test
+   * configuration
+   */
+  public static String getExternalConfigFile(String root,
+    final ConfigurationTree config)
+  {
+    // Look for a configuration file under the configuration directory
+    String configRoot = config.relocateToConfig(root);
+    Location configFile = new Location(configRoot, baseConfigName);
+    if (configFile.exists()) {
+      return configFile.getAbsolutePath();
+    } else
+    {
+      try {
+        String canonicalRoot = new Location(root).getCanonicalPath();
+        if (root != canonicalRoot) {
+          String configCanonicalRoot = config.relocateToConfig(canonicalRoot);
+          configFile = new Location(configCanonicalRoot, baseConfigName);
+          if (configFile.exists()) {
+            return configFile.getAbsolutePath();
+          }
+        }
+      } catch (IOException e) {};
+    }
+    return null;
+  }
+
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
@@ -210,12 +238,10 @@ public class TestTools {
     List<String> subsList = new ArrayList<String>();
 
     if (config.getConfigDirectory() != null) {
-      // Look for a configuration file under the configuration directory
-      String configRoot = config.relocateToConfig(root);
-      Location configFile = new Location(configRoot, baseConfigName);
-      if (configFile.exists()) {
-        LOGGER.debug("found config file: {}", configFile.getAbsolutePath());
-        subsList.add(configFile.getAbsolutePath());
+      String configFile = getExternalConfigFile(root, config);
+      if (configFile != null) {
+        LOGGER.debug("found config file: {}", configFile);
+        subsList.add(configFile);
       }
     }
 
