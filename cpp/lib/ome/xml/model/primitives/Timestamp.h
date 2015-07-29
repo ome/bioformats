@@ -213,8 +213,8 @@ namespace ome
                 }
 
               is.imbue(savedlocale);
-              return is;
             }
+          return is;
         }
 
       }
