@@ -42,6 +42,7 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <string>
 
 using ome::xml::model::primitives::Color;
 
