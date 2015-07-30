@@ -706,7 +706,7 @@ bioformats-superbuild=(ON|OFF)
   default since most platforms provide all the libraries by default.
   However, it is enabled by default when using Microsoft Visual C++,
   since this platform does not provide libraries unless you have built
-  your own.  The cache variable ``BIOFORMATS_EP_SOURCE_CACHE`` may be
+  your own.  The cache variable ``source-cache`` may be
   set to specify a directory in which to store downloaded source
   files; this is useful if you need to repeat the build since the
   source files will not need downloading again.
