@@ -153,7 +153,7 @@ set(BIOFORMATS_GENERATED_HEADERS)
 set(BIOFORMATS_HEADERS
     ${BIOFORMATS_STATIC_HEADERS})
 
-add_library(ome-bioformats SHARED
+add_library(ome-bioformats
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
 target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
