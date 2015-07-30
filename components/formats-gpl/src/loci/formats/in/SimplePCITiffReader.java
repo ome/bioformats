@@ -181,8 +181,12 @@ public class SimplePCITiffReader extends BaseTiffReader {
       m.bitsPerPixel = Integer.parseInt(displayDepth);
     } else {
       String bitDepth = cameraTable.get("Bit Depth");
-      bitDepth = bitDepth.substring(0, bitDepth.length() - "-bit".length());
-      m.bitsPerPixel = Integer.parseInt(bitDepth);
+      if (bitDepth != null && bitDepth.length() > "-bit".length()) {
+        bitDepth = bitDepth.substring(0, bitDepth.length() - "-bit".length());
+        m.bitsPerPixel = Integer.parseInt(bitDepth);
+      } else {
+        throw new FormatException("Could not find bits per pixels");
+      }
     }
 
     IniTable captureTable = ini.getTable(" CAPTURE ");
