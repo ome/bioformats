@@ -85,7 +85,7 @@ function(xsd_fu_single filetype command outvar)
                   OUTPUT_VARIABLE genfiles
                   RESULT_VARIABLE genfiles_result)
   if (genfiles_result)
-    message(FATAL_ERROR "xsd-fu: Failed to get output file list for target ${command} (${filetype}s)")
+    message(FATAL_ERROR "xsd-fu: Failed to get output file list for target ${command} (${filetype}s): ${genfiles_result}")
   endif()
 
   string(REPLACE "\n" ";" genfiles "${genfiles}")
@@ -98,7 +98,7 @@ function(xsd_fu_single filetype command outvar)
                   OUTPUT_VARIABLE gendeps
                   RESULT_VARIABLE gendeps_result)
   if (gendeps_result)
-    message(FATAL_ERROR "xsd-fu: Failed to get dependency file list for target ${command} (${filetype}s)")
+    message(FATAL_ERROR "xsd-fu: Failed to get dependency file list for target ${command} (${filetype}s): ${gendeps_result}")
   endif()
 
   string(REPLACE "\n" ";" gendeps "${gendeps}")
