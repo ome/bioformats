@@ -86,57 +86,6 @@ namespace ome
       typedef uint16_t frame_rate_type;
 
     protected:
-      /**
-       * Sentry for saving and restoring writer series state.
-       *
-       * For any FormatWriter method or subclass method which needs to
-       * set and later restore the series/coreIndex/resolution as part
-       * of its operation, this class exists to manage the safe
-       * restoration of the state.  Create an instance of this class
-       * with the writer set to @c *this.  When the instance goes out
-       * of scope, e.g. at the end of a block or method, or when an
-       * exception is thrown, the saved state will be transparently
-       * restored.
-       */
-      class SaveSeries
-      {
-      private:
-        /// Writer for which the state will be saved and restored.
-        const FormatWriter& writer;
-        /// Saved state.
-        dimension_size_type series;
-
-      public:
-        /**
-         * Constructor.
-         *
-         * @param writer the writer to manage.
-         */
-        SaveSeries(const FormatWriter& writer):
-          writer(writer),
-          series(writer.getSeries())
-        {}
-
-        /**
-         * Destructor.
-         *
-         * Saved state will be restored when run.
-         */
-        ~SaveSeries()
-        {
-          try
-            {
-              if (series != writer.getSeries())
-                writer.setSeries(series);
-            }
-          catch (...)
-            {
-              // We can't throw in a destructor.
-            }
-        }
-      };
-
-    protected:
       /// Constructor.
       FormatWriter()
       {}
@@ -162,11 +111,13 @@ namespace ome
        * If the pixel type of the lookup table is unsupported by the
        * file format, this method will throw an exception.
        *
+       * @param plane the plane index within the series.
        * @param buf the source pixel buffer.
        */
       virtual
       void
-      setLookupTable(const VariantPixelBuffer& buf) = 0;
+      setLookupTable(dimension_size_type       plane,
+                     const VariantPixelBuffer& buf) = 0;
 
       /**
        * Save an image plane.
@@ -180,13 +131,13 @@ namespace ome
        *
        * to the current series in the current file.
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the source pixel buffer.
        * @throws FormatException if any of the parameters are invalid.
        */
       virtual
       void
-      saveBytes(dimension_size_type no,
+      saveBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf) = 0;
 
       /**
@@ -201,7 +152,7 @@ namespace ome
        *
        * to the current series in the current file.
        *
-       * @param no the image index within the file.
+       * @param plane the plane index within the series.
        * @param buf the source pixel buffer.
        * @param x the @c X coordinate of the upper-left corner of the sub-image.
        * @param y the @c Y coordinate of the upper-left corner of the sub-image.
@@ -211,7 +162,7 @@ namespace ome
        */
       virtual
       void
-      saveBytes(dimension_size_type no,
+      saveBytes(dimension_size_type plane,
                 VariantPixelBuffer& buf,
                 dimension_size_type x,
                 dimension_size_type y,
@@ -221,14 +172,14 @@ namespace ome
       /**
        * Set the active series.
        *
-       * @param no the series to activate.
+       * @param series the series to activate.
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
        */
       virtual
       void
-      setSeries(dimension_size_type no) const = 0;
+      setSeries(dimension_size_type series) const = 0;
 
       /**
        * Get the active series.
@@ -362,6 +313,25 @@ namespace ome
       virtual
       const boost::optional<std::string>&
       getCompression() const = 0;
+
+      /**
+       * Set subchannel interleaving.
+       *
+       * @param interleaved @c true to enable interleaving (chunky) or
+       * @c false to disable interleaving (planar).
+       */
+      virtual
+      void
+      setInterleaved(bool interleaved) = 0;
+
+      /**
+       * Set subchannel interleaving.
+       *
+       * @returns the current interleaving setting; @c false if unset.
+       */
+      virtual
+      const boost::optional<bool>&
+      getInterleaved() const = 0;
 
       /**
        * Switch the output file for the current dataset.

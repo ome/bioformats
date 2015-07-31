@@ -33,12 +33,12 @@
 package loci.formats.tools;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Collection;
+import java.util.Map;
+
+import com.google.common.collect.TreeMultimap;
 
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 
@@ -52,18 +52,13 @@ public class PrintDomains {
     // get a list of all available readers
     IFormatReader[] readers = new ImageReader().getReaders();
 
-    Hashtable<String, Vector<IFormatReader>> domains =
-      new Hashtable<String, Vector<IFormatReader>>();
-
-    for (String domain : FormatTools.ALL_DOMAINS) {
-      domains.put(domain, new Vector<IFormatReader>());
-    }
+    final TreeMultimap<String, String> domains = TreeMultimap.create();
 
     for (IFormatReader reader : readers) {
       try {
         String[] readerDomains = reader.getPossibleDomains("");
         for (String domain : readerDomains) {
-          domains.get(domain).add(reader);
+          domains.put(domain, reader.getFormat());
         }
       }
       catch (FormatException e) {
@@ -74,14 +69,11 @@ public class PrintDomains {
       }
     }
 
-    String[] domainKeys = domains.keySet().toArray(new String[domains.size()]);
-    Arrays.sort(domainKeys);
-
-    for (String domain : domainKeys) {
-      System.out.println(domain + ":");
-      Vector<IFormatReader> r = domains.get(domain);
-      for (IFormatReader reader : r) {
-        System.out.println("  " + reader.getFormat());
+    for (final Map.Entry<String, Collection<String>> domain :
+             domains.asMap().entrySet()) {
+      System.out.println(domain.getKey() + ":");
+      for (final String readerFormat : domain.getValue()) {
+        System.out.println("  " + readerFormat);
       }
     }
   }

@@ -462,10 +462,10 @@ Format readers
      - 0
      - 456
    * - :doc:`MetamorphReader <formats/metamorph-stack-stk-metadata>`
-     - 43
+     - 46
      - 0
      - 0
-     - 432
+     - 429
    * - :doc:`MetamorphTiffReader <formats/metamorph-75-tiff-metadata>`
      - 38
      - 0
@@ -2174,10 +2174,10 @@ Metadata fields
      - 0
      - 142
    * - :schema:`Objective - ID <OME-2015-01/ome_xsd.html#Objective_ID>`
-     - 36
+     - 37
      - 0
      - 0
-     - 131
+     - 130
    * - :schema:`Objective - Immersion <OME-2015-01/ome_xsd.html#Objective_Immersion>`
      - 26
      - 0
@@ -2189,10 +2189,10 @@ Metadata fields
      - 0
      - 165
    * - :schema:`Objective - LensNA <OME-2015-01/ome_xsd.html#Objective_LensNA>`
-     - 20
+     - 21
      - 0
      - 0
-     - 147
+     - 146
    * - :schema:`Objective - LotNumber <OME-2015-01/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
@@ -2229,10 +2229,10 @@ Metadata fields
      - 0
      - 166
    * - :schema:`ObjectiveSettings - ID <OME-2015-01/ome_xsd.html#ObjectiveSettings_ID>`
-     - 31
+     - 32
      - 0
      - 0
-     - 136
+     - 135
    * - :schema:`ObjectiveSettings - Medium <OME-2015-01/ome_xsd.html#ObjectiveSettings_Medium>`
      - 1
      - 0

@@ -41,7 +41,9 @@
 #include <boost/lexical_cast.hpp>
 
 #include <ome/bioformats/FormatException.h>
+#include <ome/bioformats/FormatTools.h>
 #include <ome/bioformats/MetadataTools.h>
+#include <ome/bioformats/PixelProperties.h>
 #include <ome/bioformats/XMLTools.h>
 
 #include <ome/compat/regex.h>
@@ -408,6 +410,55 @@ namespace ome
     }
 
     void
+    fillMetadata(::ome::xml::meta::MetadataStore&                          store,
+                 const std::vector<ome::compat::shared_ptr<CoreMetadata> > seriesList,
+                 bool                                                      doPlane)
+    {
+      dimension_size_type s = 0U;
+      for (std::vector<ome::compat::shared_ptr<CoreMetadata> >::const_iterator i = seriesList.begin();
+           i != seriesList.end();
+           ++i, ++s)
+        {
+          std::string pixelType = (*i)->pixelType;
+
+          fillPixels(store, **i, s);
+
+          try
+            {
+              OMEXMLMetadata& omexml(dynamic_cast<OMEXMLMetadata&>(store));
+              addMetadataOnly(omexml, s);
+            }
+          catch (const std::bad_cast& e)
+            {
+            }
+
+          if (doPlane)
+            {
+              for (dimension_size_type p = 0; p < (*i)->imageCount; ++p)
+                {
+                  dimension_size_type sizeZT = (*i)->sizeZ * (*i)->sizeT;
+                  dimension_size_type effSizeC = 1U;
+                  if (sizeZT)
+                    effSizeC = (*i)->imageCount / sizeZT;
+
+                  ome::compat::array<dimension_size_type, 3> coords =
+                    getZCTCoords((*i)->dimensionOrder,
+                                 (*i)->sizeZ,
+                                 effSizeC,
+                                 (*i)->sizeT,
+                                 (*i)->imageCount,
+                                 p);
+                  // The cast to int here is nasty, but the data model
+                  // isn't using unsigned types…
+                  store.setPlaneTheZ(static_cast<int>(coords[0]), s, p);
+                  store.setPlaneTheC(static_cast<int>(coords[1]), s, p);
+                  store.setPlaneTheT(static_cast<int>(coords[2]), s, p);
+                }
+            }
+        }
+    }
+
+    void
     fillAllPixels(::ome::xml::meta::MetadataStore& store,
                   const FormatReader&              reader)
     {
@@ -445,7 +496,41 @@ namespace ome
       for (dimension_size_type c = 0; c < effSizeC; ++c)
         {
           store.setChannelID(createID("Channel", series, c), series, c);
-          store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(reader.getRGBChannelCount()), series, c);
+          store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(reader.getRGBChannelCount(c)), series, c);
+        }
+
+    }
+
+    void
+    fillPixels(::ome::xml::meta::MetadataStore& store,
+               const CoreMetadata&              seriesMetadata,
+               dimension_size_type              series)
+    {
+      store.setPixelsID(createID("Pixels", series), series);
+      store.setPixelsBigEndian(!seriesMetadata.littleEndian, series);
+      store.setPixelsSignificantBits(seriesMetadata.bitsPerPixel, series);
+      store.setPixelsDimensionOrder(seriesMetadata.dimensionOrder, series);
+      store.setPixelsInterleaved(seriesMetadata.interleaved, series);
+      store.setPixelsType(seriesMetadata.pixelType, series);
+
+      // The cast to int here is nasty, but the data model isn't using
+      // unsigned types…
+      store.setPixelsSizeX(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeX), series);
+      store.setPixelsSizeY(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeY), series);
+      store.setPixelsSizeZ(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeZ), series);
+      store.setPixelsSizeT(static_cast<PositiveInteger::value_type>(seriesMetadata.sizeT), series);
+      store.setPixelsSizeC(static_cast<PositiveInteger::value_type>
+                           (std::accumulate(seriesMetadata.sizeC.begin(), seriesMetadata.sizeC.end(),
+                                            dimension_size_type(0))), series);
+
+      dimension_size_type effSizeC = seriesMetadata.sizeC.size();
+
+      for (dimension_size_type c = 0; c < effSizeC; ++c)
+        {
+          dimension_size_type rgbC = seriesMetadata.sizeC.at(c);
+
+          store.setChannelID(createID("Channel", series, c), series, c);
+          store.setChannelSamplesPerPixel(static_cast<PositiveInteger::value_type>(rgbC), series, c);
         }
 
     }
@@ -946,6 +1031,76 @@ namespace ome
         }
 
       return ome::xml::model::enums::DimensionOrder(validorder);
+    }
+
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+              dimension_size_type                       series)
+    {
+      dimension_size_type x = meta.getPixelsSizeX(series);
+      dimension_size_type y = meta.getPixelsSizeY(series);
+      dimension_size_type z = meta.getPixelsSizeZ(series);
+      dimension_size_type t = meta.getPixelsSizeT(series);
+      dimension_size_type c = meta.getPixelsSizeC(series);
+
+      storage_size_type size = bytesPerPixel(meta.getPixelsType(series));
+      size *= x;
+      size *= y;
+      size *= z;
+      size *= t;
+      size *= c;
+
+      return size;
+    }
+
+    storage_size_type
+    pixelSize(const ::ome::xml::meta::MetadataRetrieve& meta)
+    {
+      storage_size_type size = 0;
+
+      for (dimension_size_type  s = 0;
+           s < meta.getImageCount();
+           ++s)
+        {
+          size += pixelSize(meta, s);
+        }
+
+      return size;
+    }
+
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta,
+                         dimension_size_type                       series)
+    {
+      dimension_size_type x = meta.getPixelsSizeX(series);
+      dimension_size_type y = meta.getPixelsSizeY(series);
+      dimension_size_type z = meta.getPixelsSizeZ(series);
+      dimension_size_type t = meta.getPixelsSizeT(series);
+      dimension_size_type c = meta.getPixelsSizeC(series);
+
+      storage_size_type size = significantBitsPerPixel(meta.getPixelsType(series));
+      size *= x;
+      size *= y;
+      size *= z;
+      size *= t;
+      size *= c;
+
+      return size;
+    }
+
+    storage_size_type
+    significantPixelSize(const ::ome::xml::meta::MetadataRetrieve& meta)
+    {
+      storage_size_type size = 0;
+
+      for (dimension_size_type  s = 0;
+           s < meta.getImageCount();
+           ++s)
+        {
+          size += pixelSize(meta, s);
+        }
+
+      return size;
     }
 
   }

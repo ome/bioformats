@@ -277,7 +277,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       files = new String[] {currentId};
     }
 
-    if (files.length > 1 && files.length * ifds.size() < getImageCount()) {
+    if (files.length * ifds.size() < getImageCount()) {
       files = new String[] {currentId};
       m.imageCount = ifds.size();
       m.sizeZ = ifds.size();

@@ -26,10 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -129,7 +129,7 @@ public class CellWorxReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     if (plateLogFile != null && new Location(plateLogFile).exists()) {
       files.add(plateLogFile);

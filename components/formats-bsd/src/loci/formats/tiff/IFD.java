@@ -264,8 +264,20 @@ public class IFD extends HashMap<Integer, Object> {
       }
       else {
         try {
-          value = Array.get(value, 0);
-          if (checkClass.isInstance(value)) return value;
+          if (checkClass.equals(String.class)) {
+            StringBuilder sb = new StringBuilder();
+            int l = Array.getLength(value);
+            for (int i = 0; i < l; i++) {
+              sb.append(Array.get(value, i));
+              if (i < l - 1)
+                sb.append(" ");
+            }
+            return sb.toString();
+          } else {
+            value = Array.get(value, 0);
+            if (checkClass.isInstance(value))
+              return value;
+          }
         }
         catch (IllegalArgumentException exc) { }
         catch (ArrayIndexOutOfBoundsException exc) {

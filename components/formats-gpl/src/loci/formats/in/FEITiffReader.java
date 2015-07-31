@@ -44,7 +44,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -126,8 +125,13 @@ public class FEITiffReader extends BaseTiffReader {
     addGlobalMeta("Software", helios ? "Helios NanoLab" : "S-FEG");
 
     String tag = ifds.get(0).getIFDTextValue(helios ? HELIOS_TAG : SFEG_TAG);
+    if (tag == null) {
+      return;
+    }
     tag = tag.trim();
-
+    if (tag.isEmpty()) {
+      return;//fall back to regular reader
+    }
     // store metadata for later conversion to OME-XML
     if (tag.startsWith("<")) {
       XMLTools.parseXML(tag, new FEIHandler());

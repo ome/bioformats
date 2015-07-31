@@ -27,10 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -179,7 +179,7 @@ public class ScreenReader extends FormatReader {
     int[] spwIndexes = getSPWIndexes(getSeries());
     int well = spwIndexes[0];
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     if (plateMetadataFiles != null) {
       for (String f : plateMetadataFiles) {
         files.add(f);
@@ -227,7 +227,7 @@ public class ScreenReader extends FormatReader {
     else throw new FormatException(id + " is not a valid well name.");
 
     // build the list of plate directories
-    Vector<String> metadataFiles = new Vector<String>();
+    final List<String> metadataFiles = new ArrayList<String>();
 
     Comparator<String> c = new Comparator<String>() {
       @Override
@@ -246,7 +246,7 @@ public class ScreenReader extends FormatReader {
     };
 
     // build the list of well files for each plate
-    Vector<String> tmpWells = new Vector<String>();
+    final List<String> tmpWells = new ArrayList<String>();
 
     String[] plateList = plate.list(true);
     int maxRow = 0, maxCol = 0;

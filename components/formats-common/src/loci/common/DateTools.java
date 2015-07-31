@@ -257,6 +257,10 @@ public final class DateTools {
   /**
    * Converts a string date in the given format to a long timestamp
    * (in Unix format: milliseconds since January 1, 1970).
+   *
+   * @param date   The date to convert
+   * @param format The date format to parse the string date
+   * @return       The date in milliseconds
    */
   public static long getTime(String date, String format) {
     final DateTimeFormatter parser =
@@ -273,6 +277,27 @@ public final class DateTools {
     }
     if (timestamp == null) return -1;
     return timestamp.getMillis();
+  }
+
+  /**
+   * Converts a string date in the given format to a long timestamp
+   * (in Unix format: milliseconds since January 1, 1970) with special
+   * milliseconds handling.
+   *
+   * @param date       The date to convert
+   * @param format     The date format to parse the string date
+   * @param separator  The separator for milliseconds
+   * @return           The date in milliseconds
+   */
+  public static long getTime(String date, String format, String separator) {
+    int msSeparator = date.lastIndexOf(separator);
+    long ms = 0;
+    String newStamp = date;
+    if (msSeparator > 0) {
+        newStamp = date.substring(0, msSeparator);
+        ms = Long.parseLong(date.substring(msSeparator + 1));
+    }
+    return getTime(newStamp, format) + ms;
   }
 
   /**

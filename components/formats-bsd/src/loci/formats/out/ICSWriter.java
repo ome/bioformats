@@ -125,7 +125,7 @@ public class ICSWriter extends FormatWriter {
     int pixelType =
       FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
+    long planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
 
     if (!initialized[series][realIndex]) {
       initialized[series][realIndex] = true;

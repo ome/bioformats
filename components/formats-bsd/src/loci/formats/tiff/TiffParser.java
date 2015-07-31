@@ -33,9 +33,10 @@
 package loci.formats.tiff;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -294,7 +295,7 @@ public class TiffParser {
     int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
       TiffConstants.BYTES_PER_ENTRY;
 
-    Vector<Long> offsets = new Vector<Long>();
+    final List<Long> offsets = new ArrayList<Long>();
     long offset = getFirstOffset();
     while (offset > 0 && offset < in.length()) {
       in.seek(offset);

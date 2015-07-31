@@ -121,8 +121,14 @@ namespace ome
         /// Current series.
         mutable dimension_size_type series;
 
+        /// Current plane.
+        mutable dimension_size_type plane;
+
         /// The compression type to use.
         boost::optional<std::string> compression;
+
+        /// Subchannel interleaving enabled.
+        boost::optional<bool> interleaved;
 
         /// Planes are written sequentially.
         bool sequential;
@@ -160,16 +166,17 @@ namespace ome
 
         // Documented in superclass.
         void
-        setLookupTable(const VariantPixelBuffer& buf);
+        setLookupTable(dimension_size_type       plane,
+                       const VariantPixelBuffer& buf);
 
         // Documented in superclass.
         void
-        saveBytes(dimension_size_type no,
+        saveBytes(dimension_size_type plane,
                   VariantPixelBuffer& buf);
 
         // Documented in superclass.
         void
-        saveBytes(dimension_size_type no,
+        saveBytes(dimension_size_type plane,
                   VariantPixelBuffer& buf,
                   dimension_size_type x,
                   dimension_size_type y,
@@ -178,11 +185,30 @@ namespace ome
 
         // Documented in superclass.
         void
-        setSeries(dimension_size_type no) const;
+        setSeries(dimension_size_type series) const;
 
         // Documented in superclass.
         dimension_size_type
         getSeries() const;
+
+        /**
+         * Set the active plane.
+         *
+         * @param plane the plane to activate.
+         *
+         * @todo Remove use of stateful API which requires use of
+         * plane switching in const methods.
+         */
+        virtual void
+        setPlane(dimension_size_type plane) const;
+
+        /**
+         * Get the active plane.
+         *
+         * @returns the active plane.
+         */
+        virtual dimension_size_type
+        getPlane() const;
 
         // Documented in superclass.
         bool
@@ -199,6 +225,149 @@ namespace ome
         // Documented in superclass.
         ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve();
+
+        /**
+         * Determine the number of image planes in the current series.
+         *
+         * @returns the number of image planes.
+         */
+        virtual
+        dimension_size_type
+        getImageCount() const;
+
+        /**
+         * Does a channel contain subchannels?
+         *
+         * Check if the image planes in the file have more than one subchannel per
+         * openBytes() call for the specified channel.
+         *
+         * @param channel the channel to use, range [0, EffectiveSizeC).
+         * @returns @c true if and only if @c getRGBChannelCount(channel) returns
+         * a value greater than 1, @c false otherwise.
+         */
+        virtual
+        bool
+        isRGB(dimension_size_type channel) const;
+
+        /**
+         * Get the size of the X dimension.
+         *
+         * @returns the X dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeX() const;
+
+        /**
+         * Get the size of the Y dimension.
+         *
+         * @returns the Y dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeY() const;
+
+        /**
+         * Get the size of the Z dimension.
+         *
+         * @returns the Z dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeZ() const;
+
+        /**
+         * Get the size of the T dimension.
+         *
+         * @returns the T dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeT() const;
+
+        /**
+         * Get the size of the C dimension.
+         *
+         * @returns the C dimension size.
+         */
+        virtual
+        dimension_size_type
+        getSizeC() const;
+
+        /**
+         * Get the pixel type.
+         *
+         * @returns the pixel type.
+         */
+        virtual
+        ome::xml::model::enums::PixelType
+        getPixelType() const;
+
+        /**
+         * Get the number of valid bits per pixel.
+         *
+         * The number of valid bits per pixel is always less than or
+         * equal to the number of bits per pixel that correspond to
+         * getPixelType().
+         *
+         * @returns the number of valid bits per pixel.
+         */
+        virtual
+        pixel_size_type
+        getBitsPerPixel() const;
+
+        /**
+         * Get the effective size of the C dimension
+         *
+         * This guarantees that
+         * \code{.cpp}
+         * getEffectiveSizeC() * getSizeZ() * getSizeT() == getImageCount()
+         * \endcode
+         * regardless of the result of isRGB().
+         *
+         * @returns the effective C dimension size.
+         */
+        virtual
+        dimension_size_type
+        getEffectiveSizeC() const;
+
+        /**
+         * Get the number of channels required for a call to saveBytes().
+         *
+         * The most common case where this value is greater than 1 is for interleaved
+         * RGB data, such as a 24-bit color image plane. However, it is possible for
+         * this value to be greater than 1 for non-interleaved data, such as an RGB
+         * TIFF with Planar rather than Chunky configuration.
+         *
+         * @param channel the channel to use, range [0, EffectiveSizeC).
+         * @returns the number of channels.
+         */
+        virtual
+        dimension_size_type
+        getRGBChannelCount(dimension_size_type channel) const;
+
+        /**
+         * @copydoc ome::bioformats::FormatReader::getDimensionOrder() const
+         */
+        virtual
+        const std::string&
+        getDimensionOrder() const;
+
+        /**
+         * @copydoc ome::bioformats::FormatReader::getIndex(dimension_size_type,dimension_size_type,dimension_size_type) const
+         */
+        virtual
+        dimension_size_type
+        getIndex(dimension_size_type z,
+                 dimension_size_type c,
+                 dimension_size_type t) const;
+
+        /**
+         * @copydoc ome::bioformats::FormatReader::getZCTCoords(dimension_size_type) const
+         */
+        virtual
+        ome::compat::array<dimension_size_type, 3>
+        getZCTCoords(dimension_size_type index) const;
 
         // Documented in superclass.
         void
@@ -236,6 +405,14 @@ namespace ome
         // Documented in superclass.
         const boost::optional<std::string>&
         getCompression() const;
+
+        // Documented in superclass.
+        void
+        setInterleaved(bool interleaved);
+
+        // Documented in superclass.
+        const boost::optional<bool>&
+        getInterleaved() const;
 
         // Documented in superclass.
         void

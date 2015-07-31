@@ -169,5 +169,35 @@ classdef TestBfGetReader < ReaderTest
             self.reader = bfGetReader('interleaved-test&interleaved=false.fake');
             assertFalse(self.reader.isInterleaved());
         end
+        
+        function testGetPixelsPhysicalSizeX(self)
+            self.reader = bfGetReader('pixelSize-test&physicalSizeX=.3.fake');
+            metadata = self.reader.getMetadataStore();
+            physicalSizeX = metadata.getPixelsPhysicalSizeX(0);
+            assertFalse(isempty(physicalSizeX));
+            assertEqual(physicalSizeX.value().doubleValue(), .3);
+            assertEqual(char(physicalSizeX.unit().getSymbol()), 'µm');
+            assertElementsAlmostEqual(physicalSizeX.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+        end
+        
+        function testGetPixelsPhysicalSizeY(self)
+            self.reader = bfGetReader('pixelSize-test&physicalSizeY=.3.fake');
+            metadata = self.reader.getMetadataStore();
+            physicalSizeY = metadata.getPixelsPhysicalSizeY(0);
+            assertFalse(isempty(physicalSizeY));
+            assertEqual(physicalSizeY.value().doubleValue(), .3);
+            assertEqual(char(physicalSizeY.unit().getSymbol()), 'µm');
+            assertElementsAlmostEqual(physicalSizeY.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+        end
+        
+        function testGetPixelsPhysicalSizeZ(self)
+            self.reader = bfGetReader('pixelSize-test&physicalSizeZ=.3.fake');
+            metadata = self.reader.getMetadataStore();
+            physicalSizeZ = metadata.getPixelsPhysicalSizeZ(0);
+            assertFalse(isempty(physicalSizeZ));
+            assertEqual(physicalSizeZ.value().doubleValue(), .3);
+            assertEqual(char(physicalSizeZ.unit().getSymbol()), 'µm');
+            assertElementsAlmostEqual(physicalSizeZ.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+        end
     end
 end

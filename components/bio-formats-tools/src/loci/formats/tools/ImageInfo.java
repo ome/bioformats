@@ -800,8 +800,8 @@ public class ImageInfo {
           }
         }
         else if (normalize) {
-          min = new Double(0);
-          max = new Double(1);
+          min = Double.valueOf(0);
+          max = Double.valueOf(1);
         }
 
         if (normalize) {

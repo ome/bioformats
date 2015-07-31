@@ -78,6 +78,7 @@ namespace ome
     {
       /**
        * Get size of pixel type, in bytes.
+       *
        * @returns pixel size, in bytes.
        */
       static pixel_size_type
@@ -88,12 +89,25 @@ namespace ome
 
       /**
        * Get size of pixel type, in bits.
+       *
        * @returns pixel size, in bits.
        */
       static pixel_size_type
       pixel_bit_size()
       {
         return pixel_byte_size() * 8;
+      }
+
+      /**
+       * Get significant (maximum bits used) size of pixel type, in
+       * bits.
+       *
+       * @returns pixel size, in bits.
+       */
+      static pixel_size_type
+      pixel_significant_bit_size()
+      {
+        return pixel_bit_size();
       }
     };
 
@@ -302,6 +316,18 @@ namespace ome
       static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
+
+      /**
+       * Get significant (maximum bits used) size of pixel type, in
+       * bits.
+       *
+       * @returns pixel size, in bits.
+       */
+      static pixel_size_type
+      pixel_significant_bit_size()
+      {
+        return 1;
+      }
     };
 
     /// Properties of COMPLEX pixels.
@@ -408,6 +434,17 @@ namespace ome
      */
     pixel_size_type
     bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype);
+
+    /**
+     * Get the significant (maximum bits used) size of a PixelType, in
+     * bits.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns the size, in bits
+     */
+    pixel_size_type
+    significantBitsPerPixel(::ome::xml::model::enums::PixelType pixeltype);
 
     /**
      * Check whether a PixelType is signed.

@@ -34,7 +34,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import loci.common.Constants;
@@ -78,9 +78,9 @@ public class BDReader extends FormatReader {
     "xyz", "mac", "bmp", "roi", "adf"};
 
   // -- Fields --
-  private Vector<String> metadataFiles = new Vector<String>();
-  private Vector<String> channelNames = new Vector<String>();
-  private Vector<String> wellLabels = new Vector<String>();
+  private List<String> metadataFiles = new ArrayList<String>();
+  private List<String> channelNames = new ArrayList<String>();
+  private List<String> wellLabels = new ArrayList<String>();
   private String plateName, plateDescription;
   private String[][] tiffs;
   private MinimalTiffReader reader;
@@ -95,7 +95,7 @@ public class BDReader extends FormatReader {
   private int fieldCols;
 
   private String[] rootList;
-  private ArrayList<String[]> wellList = new ArrayList<String[]>();
+  private List<String[]> wellList = new ArrayList<String[]>();
 
   // -- Constructor --
 
@@ -155,7 +155,7 @@ public class BDReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(new Location(currentId).getAbsolutePath());
     for (String file : metadataFiles) {
       if (file != null && !files.contains(file)) {
@@ -319,8 +319,8 @@ public class BDReader extends FormatReader {
       addGlobalMeta("Camera binning", binning);
     }
 
-    Vector<String> uniqueRows = new Vector<String>();
-    Vector<String> uniqueColumns = new Vector<String>();
+    final List<String> uniqueRows = new ArrayList<String>();
+    final List<String> uniqueColumns = new ArrayList<String>();
 
     for (String well : wellLabels) {
       String row = well.substring(0, 1).trim();
@@ -710,7 +710,7 @@ public class BDReader extends FormatReader {
   }
 
   private String[][] getTiffs() {
-    Vector<Vector<String>> files = new Vector<Vector<String>>();
+    final List<List<String>> files = new ArrayList<List<String>>();
 
     Pattern p = Pattern.compile(".* - n\\d\\d\\d\\d\\d\\d\\.tif");
 
@@ -719,7 +719,7 @@ public class BDReader extends FormatReader {
       Location file = new Location(filename).getAbsoluteFile();
       if (file.getName().startsWith("Well ") && file.isDirectory()) {
         String[] list = wellList.get(nextWell++);
-        Vector<String> tiffList = new Vector<String>();
+        final List<String> tiffList = new ArrayList<String>();
         for (String tiff : list) {
           if (p.matcher(tiff).matches()) {
             tiffList.add(new Location(file, tiff).getAbsolutePath());

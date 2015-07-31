@@ -40,6 +40,8 @@
 
 #include <ome/bioformats/detail/FormatReader.h>
 
+#include <ome/bioformats/tiff/Util.h>
+
 #include <vector>
 
 namespace ome
@@ -62,19 +64,16 @@ namespace ome
        * Basic TIFF reader.
        *
        * @note Any derived reader which does not implement its own
-       * openBytesImpl() must fill @c series_ifd_map.
+       * openBytesImpl() must fill @c seriesIFDRange.
        */
       class MinimalTIFFReader : public ::ome::bioformats::detail::FormatReader
       {
       protected:
-        /// Mapping between series index and start and end IFD as a half-open range.
-        typedef std::vector<std::pair<dimension_size_type, dimension_size_type> > series_ifd_map_type;
-
         /// Underlying TIFF file.
         ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
 
         /// Mapping between series index and start and end IFD as a half-open range.
-        series_ifd_map_type series_ifd_map;
+        tiff::SeriesIFDRange seriesIFDRange;
 
       public:
         /// Constructor.
@@ -106,12 +105,12 @@ namespace ome
         /**
          * Get the IFD index for a plane in the current series.
          *
-         * @param no the image index within the file.
+         * @param plane the plane index within the series.
          * @returns the IFD index.
          * @throws FormatException if out of range.
          */
         const ome::compat::shared_ptr<const tiff::IFD>
-        ifdAtIndex(dimension_size_type no) const;
+        ifdAtIndex(dimension_size_type plane) const;
 
       public:
         // Documented in superclass.
@@ -120,13 +119,13 @@ namespace ome
 
         // Documented in superclass.
         void
-        getLookupTable(VariantPixelBuffer& buf,
-                       dimension_size_type no) const;
+        getLookupTable(dimension_size_type plane,
+                       VariantPixelBuffer& buf) const;
 
       protected:
         // Documented in superclass.
         void
-        openBytesImpl(dimension_size_type no,
+        openBytesImpl(dimension_size_type plane,
                       VariantPixelBuffer& buf,
                       dimension_size_type x,
                       dimension_size_type y,

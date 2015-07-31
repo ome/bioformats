@@ -27,8 +27,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 
 import org.xml.sax.Attributes;
@@ -470,7 +471,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     public ArrayList<Image> imageMap = new ArrayList<Image>();
 
     // Stack of XML elements to keep track of placement in the tree.
-    public Stack<String> nameStack = new Stack<String>();
+    public Deque<String> nameStack = new ArrayDeque<String>();
     // CDATA text stored while parsing.  Note that this is limited to a
     // single span between two tags, and CDATA with embedded elements is
     // not supported.
@@ -482,7 +483,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-      if (!nameStack.empty() && nameStack.peek().equals(qName)) {
+      if (!nameStack.isEmpty() && nameStack.peek().equals(qName)) {
         nameStack.pop();
       }
 

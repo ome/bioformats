@@ -1386,7 +1386,7 @@ public class CellSensReader extends FormatReader {
             long start = vsi.getFilePointer();
             readTags(vsi, populateMetadata || inDimensionProperties, getVolumeName(tag));
             long end = vsi.getFilePointer();
-            if (start == end) {
+            if (start >= end) {
               break;
             }
           }

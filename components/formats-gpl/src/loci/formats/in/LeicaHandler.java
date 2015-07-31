@@ -25,11 +25,14 @@
 
 package loci.formats.in;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Stack;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -81,13 +84,13 @@ public class LeicaHandler extends BaseHandler {
 
   // -- Fields --
 
-  private Stack<String> nameStack = new Stack<String>();
+  private Deque<String> nameStack = new ArrayDeque<String>();
 
   private String elementName, collection;
   private int count = 0, numChannels, extras = 1;
 
   private Vector<String> lutNames;
-  private Vector<Length> xPos, yPos, zPos;
+  private List<Length> xPos, yPos, zPos;
   private double physicalSizeX, physicalSizeY;
 
   private int numDatasets = -1;
@@ -97,7 +100,7 @@ public class LeicaHandler extends BaseHandler {
 
   private int nextChannel = 0;
   private Double zoom, pinhole;
-  private Vector<Integer> detectorIndices;
+  private List<Integer> detectorIndices;
   private String filterWheelName;
   private int nextFilter = 0;
   private int nextROI = 0;
@@ -112,12 +115,12 @@ public class LeicaHandler extends BaseHandler {
   private boolean canParse = true;
   private long firstStamp = 0;
 
-  private Hashtable<Integer, String> bytesPerAxis;
-  private Vector<MultiBand> multiBands = new Vector<MultiBand>();
-  private Vector<Detector> detectors = new Vector<Detector>();
-  private Vector<Laser> lasers = new Vector<Laser>();
-  private Hashtable<String, Channel> channels =
-    new Hashtable<String, Channel>();
+  private Map<Integer, String> bytesPerAxis;
+  private List<MultiBand> multiBands = new ArrayList<MultiBand>();
+  private List<Detector> detectors = new ArrayList<Detector>();
+  private List<Laser> lasers = new ArrayList<Laser>();
+  private Map<String, Channel> channels =
+    new HashMap<String, Channel>();
 
   private MetadataLevel level;
   private int laserCount = 0;
@@ -130,11 +133,11 @@ public class LeicaHandler extends BaseHandler {
     lutNames = new Vector<String>();
     this.store = store;
     core = new ArrayList<CoreMetadata>();
-    detectorIndices = new Vector<Integer>();
-    xPos = new Vector<Length>();
-    yPos = new Vector<Length>();
-    zPos = new Vector<Length>();
-    bytesPerAxis = new Hashtable<Integer, String>();
+    detectorIndices = new ArrayList<Integer>();
+    xPos = new ArrayList<Length>();
+    yPos = new ArrayList<Length>();
+    zPos = new ArrayList<Length>();
+    bytesPerAxis = new HashMap<Integer, String>();
     this.level = level;
   }
 
@@ -150,7 +153,7 @@ public class LeicaHandler extends BaseHandler {
 
   @Override
   public void endElement(String uri, String localName, String qName) {
-    if (!nameStack.empty() && nameStack.peek().equals(qName)) nameStack.pop();
+    if (!nameStack.isEmpty() && nameStack.peek().equals(qName)) nameStack.pop();
 
     if (qName.equals("ImageDescription")) {
       CoreMetadata coreMeta = core.get(numDatasets);
@@ -735,7 +738,7 @@ public class LeicaHandler extends BaseHandler {
         // find the corresponding MultiBand and Detector
         MultiBand m = null;
         Detector detector = null;
-        Laser laser = lasers.size() == 0 ? null : lasers.get(lasers.size() - 1);
+        Laser laser = lasers.isEmpty() ? null : lasers.get(lasers.size() - 1);
         String c = attributes.getValue("Channel");
         int channel = c == null ? 0 : Integer.parseInt(c);
 

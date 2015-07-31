@@ -28,10 +28,11 @@ package loci.formats.in;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
 
 import loci.common.ByteArrayHandle;
@@ -645,9 +646,26 @@ public class ZeissCZIReader extends FormatReader {
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
     {
-      prestitched = false;
-      ms0.sizeX = planes.get(planes.size() - 1).x;
-      ms0.sizeY = planes.get(planes.size() - 1).y;
+      boolean equalTiles = true;
+      for (SubBlock plane : planes) {
+        if (plane.x != planes.get(0).x || plane.y != planes.get(0).y) {
+          equalTiles = false;
+          break;
+        }
+      }
+      if (getSizeX() > planes.get(0).x && !equalTiles) {
+        // image was fused; treat the mosaics as a single image
+        seriesCount = 1;
+        positions = 1;
+        acquisitions = 1;
+        mosaics = 1;
+        angles = 1;
+      }
+      else {
+        prestitched = false;
+        ms0.sizeX = planes.get(planes.size() - 1).x;
+        ms0.sizeY = planes.get(planes.size() - 1).y;
+      }
     }
 
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
@@ -754,7 +772,7 @@ public class ZeissCZIReader extends FormatReader {
       indexIntoPlanes.put(c, indices);
     }
 
-    if (channels.size() > 0 && channels.get(0).color != null) {
+    if (channels.size() > 0 && channels.get(0).color != null && !isRGB()) {
       for (int i=0; i<seriesCount; i++) {
         core.get(i).indexed = true;
       }
@@ -907,7 +925,9 @@ public class ZeissCZIReader extends FormatReader {
         if (c < channels.size()) {
           store.setChannelName(channels.get(c).name, i, c);
           store.setChannelFluor(channels.get(c).fluor, i, c);
-          store.setChannelFilterSetRef(channels.get(c).filterSetRef, i, c);
+          if (channels.get(c).filterSetRef != null) {
+            store.setChannelFilterSetRef(channels.get(c).filterSetRef, i, c);
+          }
 
           String color = channels.get(c).color;
           if (color != null) {
@@ -1110,7 +1130,58 @@ public class ZeissCZIReader extends FormatReader {
       angles = 1;
     }
 
-    int[] extraLengths = {positions, acquisitions, mosaics, angles};
+    // use the natural ordering of the extra dimensions,
+    // instead of always using SBMV
+    ArrayList<Character> extraDimOrder = new ArrayList<Character>();
+    int[] extraLengths = new int[4];
+
+    int prevS = 0, prevB = 0, prevM = 0, prevV = 0;
+    for (int p=0; p<planes.size(); p++) {
+      SubBlock plane = planes.get(p);
+      for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
+        if (dimension == null) {
+          continue;
+        }
+        switch (dimension.dimension.charAt(0)) {
+          case 'S':
+            if (dimension.start > prevS) {
+              if (!extraDimOrder.contains('S')) {
+                extraLengths[extraDimOrder.size()] = positions;
+                extraDimOrder.add('S');
+              }
+            }
+            prevS = dimension.start;
+            break;
+          case 'B':
+            if (dimension.start > prevB) {
+              if (!extraDimOrder.contains('B')) {
+                extraLengths[extraDimOrder.size()] = acquisitions;
+                extraDimOrder.add('B');
+              }
+            }
+            prevB = dimension.start;
+            break;
+          case 'M':
+            if (dimension.start > prevM) {
+              if (!extraDimOrder.contains('M')) {
+                extraLengths[extraDimOrder.size()] = mosaics;
+                extraDimOrder.add('M');
+              }
+            }
+            prevM = dimension.start;
+            break;
+          case 'V':
+            if (dimension.start > prevV) {
+              if (!extraDimOrder.contains('V')) {
+                extraLengths[extraDimOrder.size()] = angles;
+                extraDimOrder.add('V');
+              }
+            }
+            prevV = dimension.start;
+            break;
+        }
+      }
+    }
 
     for (int p=0; p<planes.size(); p++) {
       LOGGER.trace("  processing plane #{} of {}", p, planes.size());
@@ -1131,6 +1202,7 @@ public class ZeissCZIReader extends FormatReader {
         if (dimension == null) {
           continue;
         }
+        int extraIndex = extraDimOrder.indexOf(dimension.dimension.charAt(0));
         switch (dimension.dimension.charAt(0)) {
           case 'C':
             c = dimension.start;
@@ -1151,33 +1223,41 @@ public class ZeissCZIReader extends FormatReader {
             r = dimension.start;
             break;
           case 'S':
-            extra[0] = dimension.start;
-            if (extra[0] >= extraLengths[0]) {
-              extra[0] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             break;
           case 'I':
             i = dimension.start;
             break;
           case 'B':
-            extra[1] = dimension.start;
-            if (extra[1] >= extraLengths[1]) {
-              extra[1] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             break;
           case 'M':
-            extra[2] = dimension.start;
-            if (extra[2] >= extraLengths[2]) {
-              extra[2] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             break;
           case 'H':
             phase = dimension.start;
             break;
           case 'V':
-            extra[3] = dimension.start;
-            if (extra[3] >= extraLengths[3]) {
-              extra[3] = 0;
+            if (extraIndex >= 0) {
+              extra[extraIndex] = dimension.start;
+              if (extra[extraIndex] >= extraLengths[extraIndex]) {
+                extra[extraIndex] = 0;
+              }
             }
             noAngle = false;
             break;
@@ -1185,7 +1265,8 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       if (angles > 1 && noAngle) {
-        extra[3] = p / (getImageCount() * (getSeriesCount() / angles));
+        extra[extraDimOrder.indexOf('V')] =
+          p / (getImageCount() * (getSeriesCount() / angles));
       }
 
       if (rotations > 0) {
@@ -1238,7 +1319,7 @@ public class ZeissCZIReader extends FormatReader {
     translateLayers(realRoot);
     translateHardwareSettings(realRoot);
 
-    Stack<String> nameStack = new Stack<String>();
+    final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(realRoot, nameStack);
   }
 
@@ -2365,7 +2446,7 @@ public class ZeissCZIReader extends FormatReader {
     return null;
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
     String name = root.getNodeName();
     if (name.equals("DisplaySetting")) {
       return;

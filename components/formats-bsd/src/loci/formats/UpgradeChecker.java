@@ -63,7 +63,7 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "5.1.0";
+  public static final String STABLE_VERSION = "5.1.1";
 
   /** Location of the OME continuous integration server. */
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
@@ -225,35 +225,27 @@ public class UpgradeChecker {
       conn.addRequestProperty("User-Agent", registryID);
       conn.connect();
 
-      // retrieve latest version number from the registry
-
+      // retrieve the string from the registry
       InputStream in = conn.getInputStream();
-      StringBuffer latestVersion = new StringBuffer();
+      StringBuffer sb = new StringBuffer();
       while (true) {
         int data = in.read();
         if (data == -1) {
           break;
         }
-        latestVersion.append((char) data);
+        sb.append((char) data);
       }
       in.close();
 
-      // check to see if the version reported by the registry is greater than
-      // the current version - version numbers are in "x.x.x" format
+      // check if the string is not empty (upgrade available)
 
-      String[] version = latestVersion.toString().split("\\.");
-      String[] thisVersion = FormatTools.VERSION.split("\\.");
-      for (int i=0; i<thisVersion.length; i++) {
-        try {
-          int subVersion = Integer.parseInt(thisVersion[i]);
-          int registrySubVersion = Integer.parseInt(version[i]);
-          if (registrySubVersion != subVersion) {
-            return registrySubVersion > subVersion;
-          }
-        }
-        catch (NumberFormatException e) {
-          return false;
-        }
+      String result = sb.toString();
+      if (sb.length() == 0) {
+        LOGGER.debug("No update needed");
+        return false;
+      } else {
+        LOGGER.debug("UPGRADE AVAILABLE:" + result);
+        return true;
       }
     }
     catch (IOException e) {
