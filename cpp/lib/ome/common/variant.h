@@ -68,6 +68,7 @@
 #include <boost/mpl/joint_view.hpp>
 #include <boost/mpl/transform_view.hpp>
 #include <boost/mpl/vector.hpp>
+#include <boost/mpl/vector/vector0.hpp>
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 105800
