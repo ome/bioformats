@@ -191,6 +191,25 @@ namespace ome
       getSeries() const = 0;
 
       /**
+       * Set the active plane.
+       *
+       * @param plane the plane to activate.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * plane switching in const methods.
+       */
+      virtual void
+      setPlane(dimension_size_type plane) const = 0;
+
+      /**
+       * Get the active plane.
+       *
+       * @returns the active plane.
+       */
+      virtual dimension_size_type
+      getPlane() const = 0;
+
+      /**
        * Get whether or not the writer can save multiple images in a
        * single file.
        *

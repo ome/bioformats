@@ -79,6 +79,8 @@ public class SDTInfo {
   public static final String X_IMG_STRING = "#SP [SP_IMG_X,I,";
   public static final String Y_IMG_STRING = "#SP [SP_IMG_Y,I,";
 
+  public static final String BINARY_SETUP = "BIN_PARA_BEGIN:\0";
+
   // -- Fields --
 
   public int width, height, timeBins, channels, timepoints;
@@ -389,6 +391,11 @@ public class SDTInfo {
   /** No of MCS values. */
   public int mcsPoints;
 
+  // -- Fields - extended binary header --
+
+  /** Number of MCS_TA points. */
+  public int mcstaPoints;
+
   // -- Fields - BHFileBlockHeader --
 
   /**
@@ -494,10 +501,17 @@ public class SDTInfo {
     byte[] setupBytes = new byte[setupLength];
     in.readFully(setupBytes);
     setup = new String(setupBytes, Constants.ENCODING);
-    
+
+    int textEnd = setup.indexOf(BINARY_SETUP);
+    if (textEnd > 0) {
+      setup = setup.substring(0, textEnd);
+      textEnd += BINARY_SETUP.length();
+      in.seek(setupOffs + textEnd);
+    }
+
     // variables to hold height & width read from header string for measMode 13
     int mode13width = 0;
-    int mode13height = 0; 
+    int mode13height = 0;
 
     st = new StringTokenizer(setup, "\n");
     while (st.hasMoreTokens()) {
@@ -551,6 +565,75 @@ public class SDTInfo {
       }
         
       
+    }
+
+    if (in.getFilePointer() < setupOffs + setupLength) {
+      // BHBinHdr
+
+      in.skipBytes(4);
+      long baseOffset = in.getFilePointer();
+      long softwareRevision = readUnsignedLong(in);
+      long paramLength = readUnsignedLong(in);
+      long reserved1 = readUnsignedLong(in);
+      int reserved2 = in.readShort() & 0xffff;
+
+      // SPCBinHdr
+
+      long fcsOldOffset = readUnsignedLong(in);
+      long fcsOldSize = readUnsignedLong(in);
+      long gr1Offset = readUnsignedLong(in);
+      long gr1Size = readUnsignedLong(in);
+      long fcsOffset = readUnsignedLong(in);
+      long fcsSize = readUnsignedLong(in);
+      long fidaOffset = readUnsignedLong(in);
+      long fidaSize = readUnsignedLong(in);
+      long fildaOffset = readUnsignedLong(in);
+      long fildaSize = readUnsignedLong(in);
+      long gr2Offset = readUnsignedLong(in);
+      int grNo = in.readShort() & 0xffff;
+      int hstNo = in.readShort() & 0xffff;
+      long hstOffset = readUnsignedLong(in);
+      long gvdOffset = readUnsignedLong(in);
+      int gvdSize = in.readShort() & 0xffff;
+      int fitOffset = in.readShort() & 0xffff;
+      int fitSize = in.readShort() & 0xffff;
+      int extdevOffset = in.readShort() & 0xffff;
+      int extdevSize = in.readShort() & 0xffff;
+      long binhdrextOffset = readUnsignedLong(in);
+      int binhdrextSize = in.readShort() & 0xffff;
+
+      if (binhdrextOffset != 0) {
+        in.seek(baseOffset + binhdrextOffset);
+        long mcsImgOffset = readUnsignedLong(in);
+        long mcsImgSize = readUnsignedLong(in);
+        int momNo = in.readShort() & 0xffff;
+        int momSize = in.readShort() & 0xffff;
+        long momOffset = readUnsignedLong(in);
+        long sysparExtOffset = readUnsignedLong(in);
+        long sysparExtSize = readUnsignedLong(in);
+        long mosaicOffset = readUnsignedLong(in);
+        long mosaicSize = readUnsignedLong(in);
+        // 52 longs reserved
+
+        if (mcsImgOffset != 0) {
+          in.seek(baseOffset + mcsImgOffset);
+
+          int mcsActive = in.readInt();
+          in.skipBytes(4); // Window
+          mcstaPoints = in.readShort() & 0xffff;
+          int mcstaFlags = in.readShort() & 0xffff;
+          int mcstaTimePerPoint = in.readShort() & 0xffff;
+          float mcsOffset = in.readFloat();
+          float mcsTpp = in.readFloat();
+
+          if (meta != null) {
+            meta.put("MCS_TA.active", mcsActive);
+            meta.put("MCS_TA.points", mcstaPoints);
+            meta.put("MCS_TA.flags", mcstaFlags);
+            meta.put("MCS_TA.time per point", mcstaTimePerPoint);
+          }
+        }
+      }
     }
 
     // read measurement data
@@ -872,6 +955,10 @@ public class SDTInfo {
 
       in.skipBytes(len);
     }
+  }
+
+  private long readUnsignedLong(RandomAccessInputStream in) throws IOException {
+    return in.readInt() & 0xffffffffL;
   }
 
 }

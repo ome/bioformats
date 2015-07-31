@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import org.joda.time.DateTime;
@@ -497,6 +499,12 @@ public class MetamorphReader extends BaseTiffReader {
         currentValue.append(line.substring(comma + 1).trim());
       }
 
+      if (!globalDoZ) {
+        for (int i=0; i<hasZ.size(); i++) {
+          hasZ.set(i, false);
+        }
+      }
+
       // figure out how many files we need
 
       if (z != null) zc = Integer.parseInt(z);
@@ -510,13 +518,16 @@ public class MetamorphReader extends BaseTiffReader {
       if (cc == 1 && bizarreMultichannelAcquisition) {
         cc = 2;
       }
+      if (tc == 0) {
+        tc = 1;
+      }
 
       int numFiles = cc * tc;
       if (nstages > 0) numFiles *= nstages;
 
       // determine series count
-
-      int seriesCount = nstages == 0 ? 1 : nstages;
+      int stagesCount = nstages == 0 ? 1 : nstages;
+      int seriesCount = stagesCount;
       firstSeriesChannels = new boolean[cc];
       Arrays.fill(firstSeriesChannels, true);
       boolean differentZs = false;
@@ -534,7 +545,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (differentZs) {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
-          if (hasZ.get(i).booleanValue()) channelsInFirstSeries++;
+          if ((!hasZ.get(0) && i == 0) ||
+            (hasZ.get(0) && hasZ.get(i).booleanValue()))
+          {
+            channelsInFirstSeries++;
+          }
           else firstSeriesChannels[i] = false;
         }
       }
@@ -542,8 +557,7 @@ public class MetamorphReader extends BaseTiffReader {
       stks = new String[seriesCount][];
       if (seriesCount == 1) stks[0] = new String[numFiles];
       else if (differentZs) {
-        int stages = nstages == 0 ? 1 : nstages;
-        for (int i=0; i<stages; i++) {
+        for (int i=0; i<stagesCount; i++) {
           stks[i * 2] = new String[channelsInFirstSeries * tc];
           stks[i * 2 + 1] = new String[(cc - channelsInFirstSeries) * tc];
         }
@@ -563,13 +577,13 @@ public class MetamorphReader extends BaseTiffReader {
       boolean anyZ = hasZ.contains(Boolean.TRUE);
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
-        int ns = nstages == 0 ? 1 : nstages;
-        for (int s=0; s<ns; s++) {
+        for (int s=0; s<stagesCount; s++) {
           for (int j=0; j<cc; j++) {
             boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
-            int seriesNdx = s * (seriesCount / ns);
+            int seriesNdx = s * (seriesCount / stagesCount);
 
-            if ((seriesCount != 1 && !validZ) ||
+            if ((seriesCount != 1 &&
+              (!validZ || (hasZ.size() > 0  && !hasZ.get(0)))) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
               if (anyZ && j > 0 && seriesNdx < seriesCount - 1 &&
@@ -667,8 +681,7 @@ public class MetamorphReader extends BaseTiffReader {
           ms.orderCertain = true;
         }
         if (stks.length > nstages) {
-          int ns = nstages == 0 ? 1 : nstages;
-          for (int j=0; j<ns; j++) {
+          for (int j=0; j<stagesCount; j++) {
             int idx = j * 2 + 1;
             CoreMetadata midx = newCore.get(idx);
             CoreMetadata pmidx = newCore.get(j * 2);
@@ -903,10 +916,19 @@ public class MetamorphReader extends BaseTiffReader {
               stream = new RandomAccessInputStream(file, 16);
               tp = new TiffParser(stream);
               tp.checkHeader();
-              lastFile = fileIndex;
-              lastIFDs = tp.getIFDs();
+              IFDList f = tp.getIFDs();
+              if (f.size() > 0) {
+                lastFile = fileIndex;
+                lastIFDs = f;
+              }
+              else {
+                file = null;
+                stks[i][fileIndex] = null;
+              }
             }
+          }
 
+          if (file != null) {
             lastIFD = lastIFDs.get(p % lastIFDs.size());
             Object commentEntry = lastIFD.get(IFD.IMAGE_DESCRIPTION);
             if (commentEntry != null) {
@@ -1516,15 +1538,22 @@ public class MetamorphReader extends BaseTiffReader {
 
   private void readRationals(String[] labels) throws IOException {
     String pos;
+    Set<Double> uniqueZ = new HashSet<Double>();
     for (int i=0; i<mmPlanes; i++) {
       pos = intFormatMax(i, mmPlanes);
       for (int q=0; q<labels.length; q++) {
         double v = readRational(in).doubleValue();
-        if (labels[q].endsWith("absoluteZ") && i == 0) {
-          tempZ = v;
+        if (labels[q].endsWith("absoluteZ")) {
+          if (i == 0) {
+            tempZ = v;
+          }
+          uniqueZ.add(v);
         }
         addSeriesMeta(labels[q] + "[" + pos + "]", v);
       }
+    }
+    if (uniqueZ.size() == mmPlanes) {
+      core.get(0).sizeZ = mmPlanes;
     }
   }
 
@@ -1720,6 +1749,9 @@ public class MetamorphReader extends BaseTiffReader {
               readAbsoluteZValid();
             }
             skipKey = true;
+          }
+          else if (valOrOffset == 0 && getSizeZ() < mmPlanes) {
+            core.get(0).sizeZ = 1;
           }
           break;
         case 49:

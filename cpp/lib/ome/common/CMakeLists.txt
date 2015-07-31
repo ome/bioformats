@@ -50,6 +50,7 @@ set(ome_common_static_headers
     module.h
     mstream.h
     string.h
+    units.h
     variant.h)
 
 set(ome_common_endian_static_headers
@@ -64,7 +65,18 @@ set(ome_common_endian_detail_static_headers
     endian/detail/disable_warnings_pop.hpp
     endian/detail/intrinsic.hpp)
 
-set(ome_common_xml_static_headers
+set(ome_common_units_static_headers
+    units/angle.h
+    units/electric-potential.h
+    units/frequency.h
+    units/length.h
+    units/power.h
+    units/pressure.h
+    units/temperature.h
+    units/time.h
+    units/types.h)
+
+  set(ome_common_xml_static_headers
     xml/EntityResolver.h
     xml/ErrorReporter.h
     xml/Platform.h
@@ -117,8 +129,10 @@ target_link_libraries(ome-common
 set_target_properties(ome-common PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(ome-common PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-install(TARGETS ome-common LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+install(TARGETS ome-common
+        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 set(ome_common_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/common")
 
@@ -128,6 +142,8 @@ install(FILES ${ome_common_endian_static_headers}
         DESTINATION ${ome_common_includedir}/endian)
 install(FILES ${ome_common_endian_detail_static_headers}
         DESTINATION ${ome_common_includedir}/endian/detail)
+install(FILES ${ome_common_units_static_headers}
+        DESTINATION ${ome_common_includedir}/units)
 install(FILES ${ome_common_xml_static_headers}
         DESTINATION ${ome_common_includedir}/xml)
 install(FILES ${ome_common_xml_dom_static_headers}

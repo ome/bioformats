@@ -225,6 +225,20 @@ public class FakeReaderTest {
     }
   }
 
+  @Test
+  public void testExtraMetadata() throws Exception {
+    RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
+    try {
+      StringBuilder sb = new StringBuilder();
+      sb.append("\n[GlobalMetadata]\nfoo=bar\n");
+      raf.writeUTF(sb.toString());
+    } finally {
+      raf.close();
+    }
+    reader.setId(fakeIni.getAbsolutePath());
+    assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
+  }
+
   //
   // HELPERS
   //

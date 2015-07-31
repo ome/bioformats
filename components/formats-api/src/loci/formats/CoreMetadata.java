@@ -200,9 +200,9 @@ public class CoreMetadata implements Cloneable {
     seriesMetadata = c.seriesMetadata;
     thumbnail = c.thumbnail;
     resolutionCount = c.resolutionCount;
-    moduloZ = c.moduloZ;
-    moduloC = c.moduloC;
-    moduloT = c.moduloT;
+    moduloZ = new Modulo(c.moduloZ);
+    moduloC = new Modulo(c.moduloC);
+    moduloT = new Modulo(c.moduloT);
   }
 
   // -- Object methods --

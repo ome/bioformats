@@ -35,7 +35,8 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS})
+                    ${Boost_INCLUDE_DIRS}
+                    ${XercesC_INCLUDE_DIRS})
 
 xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
 xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
@@ -138,8 +139,10 @@ target_link_libraries(ome-xml ome-compat ome-common)
 target_link_libraries(ome-xml ${Boost_DATE_TIME_LIBRARY_RELEASE})
 set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-install(TARGETS ome-xml LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+install(TARGETS ome-xml
+        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 set(ome_xml_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xml")
 

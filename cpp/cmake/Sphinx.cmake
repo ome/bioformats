@@ -34,37 +34,7 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-# Sphinx documentation generator
-find_program(SPHINX_BUILD sphinx-build)
-if (SPHINX_BUILD)
-  message(STATUS "Looking for sphinx-build - ${SPHINX_BUILD}")
-else()
-  message(STATUS "Looking for sphinx-build - not found")
-endif()
-find_program(XELATEX xelatex)
-if (XELATEX)
-  message(STATUS "Looking for xelatex - ${XELATEX}")
-else()
-  message(STATUS "Looking for xelatex - not found")
-endif()
-find_program(MAKEINDEX makeindex)
-if (MAKEINDEX)
-  message(STATUS "Looking for makeindex - ${MAKEINDEX}")
-else()
-  message(STATUS "Looking for makeindex - not found")
-endif()
-
-set(SPHINX_DEFAULT OFF)
-if(SPHINX_BUILD)
-  set(SPHINX_DEFAULT ON)
-endif()
-option(sphinx "Enable sphinx manual page and HTML documentation" ${SPHINX_DEFAULT})
 set(BUILD_SPHINX ${sphinx})
-set(SPHINX_PDF_DEFAULT OFF)
-if(SPHINX_DEFAULT AND XELATEX AND MAKEINDEX)
-  set(SPHINX_PDF_DEFAULT ON)
-endif()
-option(sphinx-pdf "Enable sphinx PDF documentation" ${SPHINX_PDF_DEFAULT})
 set(BUILD_SPHINX_PDF ${sphinx-pdf})
 
 function(sphinx_manpages srcdir confdir mandir manvar)

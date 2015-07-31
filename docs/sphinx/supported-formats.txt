@@ -34,6 +34,15 @@ Supported Formats
      - |Poor|
      - |no|
      - |no|
+   * - :doc:`formats/3i-slidebook6`
+     - .sld
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |Very good|
+     - |Fair|
+     - |no|
+     - |no|
    * - :doc:`formats/abd-tiff`
      - .tif
      - |Very good|
@@ -1304,7 +1313,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **142** formats
+Bio-Formats currently supports **143** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1367,6 +1376,7 @@ Bio-Formats currently supports **142** formats
     :hidden:
 
     formats/3i-slidebook
+    formats/3i-slidebook6
     formats/abd-tiff
     formats/aim
     formats/alicona-3d

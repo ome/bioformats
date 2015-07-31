@@ -241,6 +241,7 @@ namespace ome
 
         return plane;
       }
+
       void
       FormatWriter::setFramesPerSecond(frame_rate_type rate)
       {

@@ -163,8 +163,10 @@ target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
                       ${TIFF_LIBRARIES})
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-install(TARGETS ome-bioformats LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+install(TARGETS ome-bioformats
+        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 set(ome_bioformats_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/bioformats")
 
