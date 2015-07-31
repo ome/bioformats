@@ -173,7 +173,7 @@ public class OBFReader extends FormatReader
         }
         else
         {
-          readString() ;
+          addGlobalMeta( key, readString() ) ;
         }
       }
 
