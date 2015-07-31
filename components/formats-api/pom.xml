@@ -134,6 +134,21 @@
                     </execute>
                   </action>
                 </pluginExecution>
+                <pluginExecution>
+                	<pluginExecutionFilter>
+                		<groupId>org.codehaus.mojo</groupId>
+                		<artifactId>
+                			build-helper-maven-plugin
+                		</artifactId>
+                		<versionRange>[1.4,)</versionRange>
+                		<goals>
+                			<goal>add-source</goal>
+                		</goals>
+                	</pluginExecutionFilter>
+                	<action>
+                		<ignore></ignore>
+                	</action>
+                </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
