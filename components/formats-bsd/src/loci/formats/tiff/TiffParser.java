@@ -453,7 +453,9 @@ public class TiffParser {
     }
 
     for (TiffIFDEntry entry : entries) {
-      if (entry.getValueCount() < 10 * 1024 * 1024 || entry.getTag() < 32768) {
+      if ((entry.getValueCount() < 10 * 1024 * 1024 || entry.getTag() < 32768) &&
+        entry.getTag() != IFD.COLOR_MAP)
+      {
         ifd.put(new Integer(entry.getTag()), getIFDValue(entry));
       }
     }
@@ -551,8 +553,10 @@ public class TiffParser {
         longs = new long[1];
         longs[0] = in.readLong();
       }
-      else if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
-        entry.getTag() == IFD.TILE_OFFSETS))
+      else if (entry.getTag() == IFD.STRIP_OFFSETS ||
+        entry.getTag() == IFD.TILE_OFFSETS ||
+        entry.getTag() == IFD.STRIP_BYTE_COUNTS ||
+        entry.getTag() == IFD.TILE_BYTE_COUNTS)
       {
         OnDemandLongArray offsets = new OnDemandLongArray(in);
         offsets.setSize(count);
@@ -627,6 +631,24 @@ public class TiffParser {
     return firstIFD.getComment();
   }
 
+  /**
+   * Retrieve the color map associated with the given IFD.
+   */
+  public int[] getColorMap(IFD ifd) throws IOException {
+    Object map = ifd.get(IFD.COLOR_MAP);
+    if (map == null) {
+      return null;
+    }
+    int[] colorMap = null;
+    if (map instanceof TiffIFDEntry) {
+      colorMap = (int[]) getIFDValue((TiffIFDEntry) map);
+    }
+    else if (map instanceof int[]) {
+      colorMap = (int[]) map;
+    }
+    return colorMap;
+  }
+
   // -- TiffParser methods - image reading --
 
   public byte[] getTile(IFD ifd, byte[] buf, int row, int col)
@@ -647,6 +669,19 @@ public class TiffParser {
 
     int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
+
+    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
 
     long[] stripByteCounts = ifd.getStripByteCounts();
     long[] rowsPerStrip = ifd.getRowsPerStrip();
@@ -672,6 +707,9 @@ public class TiffParser {
 
     if (ifd.getOnDemandStripOffsets() != null) {
       OnDemandLongArray stripOffsets = ifd.getOnDemandStripOffsets();
+      if (stripOffsets.getStream() == null) {
+        stripOffsets.setStream(in);
+      }
       stripOffset = stripOffsets.get(offsetIndex);
       nStrips = stripOffsets.size();
     }
@@ -810,7 +848,32 @@ public class TiffParser {
     codecOptions.littleEndian = ifd.isLittleEndian();
     long imageLength = ifd.getImageLength();
 
-    long[] stripOffsets = ifd.getStripOffsets();
+    long[] stripOffsets = null;
+
+    if (ifd.getOnDemandStripOffsets() != null) {
+      OnDemandLongArray offsets = ifd.getOnDemandStripOffsets();
+      if (offsets.getStream() == null) {
+        offsets.setStream(in);
+      }
+      stripOffsets = offsets.toArray();
+    }
+    else {
+      stripOffsets = ifd.getStripOffsets();
+    }
+
+    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+
     long[] stripByteCounts = ifd.getStripByteCounts();
 
     // special case: if we only need one tile, and that tile doesn't need

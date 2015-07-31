@@ -38,7 +38,7 @@
 
 #include <ome/common/variant.h>
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 typedef boost::variant<int,double,std::string> var;
 

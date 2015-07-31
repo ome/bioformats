@@ -54,6 +54,7 @@
 
 namespace ome
 {
+  /// Qt5 widgets for image display with OpenGL.
   namespace qtwidgets
   {
 

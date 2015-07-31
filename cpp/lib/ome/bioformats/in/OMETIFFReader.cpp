@@ -45,6 +45,7 @@
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
 #include <ome/bioformats/MetadataTools.h>
+#include <ome/bioformats/detail/OMETIFF.h>
 #include <ome/bioformats/in/OMETIFFReader.h>
 #include <ome/bioformats/tiff/IFD.h>
 #include <ome/bioformats/tiff/TIFF.h>
@@ -132,43 +133,9 @@ namespace ome
             }
         }
 
-        class OMETIFFPlane
-        {
-        public:
-          /// Status of the file associated with this plane.
-          enum Status
-            {
-              UNKNOWN, ///< Not known.
-              PRESENT, ///< File exists.
-              ABSENT   ///< File is missing.
-            };
+        typedef ome::bioformats::detail::OMETIFFPlane OMETIFFPlane;
 
-          /// File containing this plane.
-          path id;
-          /// IFD index.
-          dimension_size_type ifd;
-          /// Certainty flag, for dealing with unspecified NumPlanes.
-          bool certain;
-          /// File status.
-          Status status;
-
-          OMETIFFPlane():
-            id(),
-            ifd(),
-            certain(false),
-            status(UNKNOWN)
-          {
-          }
-
-          OMETIFFPlane(const std::string& id):
-            id(id),
-            ifd(),
-            certain(false),
-            status(UNKNOWN)
-          {
-          }
-        };
-
+        /// OME-TIFF-specific core metadata.
         class OMETIFFMetadata : public CoreMetadata
         {
         public:

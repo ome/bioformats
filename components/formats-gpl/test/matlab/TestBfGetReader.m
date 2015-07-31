@@ -2,6 +2,7 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -58,6 +59,11 @@ classdef TestBfGetReader < ReaderTest
         function testNonExistingInput(self)
             assertExceptionThrown(@() bfGetReader('nonexistingfile'),...
                 'bfGetReader:FileNotFound');
+        end
+        
+        function testFormatTypeInput(self)
+            self.reader = bfGetReader('test.fake');
+            assertEqual(char(self.reader.getFormat),'Simulated data');
         end
         
         function testFileInput(self)
@@ -199,5 +205,32 @@ classdef TestBfGetReader < ReaderTest
             assertEqual(char(physicalSizeZ.unit().getSymbol()), 'µm');
             assertElementsAlmostEqual(physicalSizeZ.value(ome.units.UNITS.NM).doubleValue(), 300.0);
         end
+        
+        function testJavaMethod(self)
+            self.reader = loci.formats.ChannelFiller();
+            self.reader = loci.formats.ChannelSeparator(self.reader);
+            
+            reader = javaObject('loci.formats.ChannelSeparator', ...
+                javaObject('loci.formats.ChannelFiller'));
+            assertEqual(self.reader.getClass(),reader.getClass());
+            
+            OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
+            OMEXMLService1 = javaObject('loci.formats.services.OMEXMLServiceImpl');
+            assertEqual(OMEXMLService.getClass(),OMEXMLService1.getClass());
+            
+            self.reader.setMetadataStore(OMEXMLService1.createOMEXMLMetadata());
+        end
+        
+        %Test Default Thumb Size
+        function testThumbSizeX(self)
+            self.reader = bfGetReader('test.fake');
+            assertEqual(self.reader.getThumbSizeX(),128);
+        end
+        
+        function testThumbSizeY(self)
+            self.reader = bfGetReader('test.fake');
+            assertEqual(self.reader.getThumbSizeY(),128);
+        end
+       
     end
 end

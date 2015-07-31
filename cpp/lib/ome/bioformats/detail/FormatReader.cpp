@@ -1322,27 +1322,28 @@ namespace ome
             fmt % index;
             throw std::logic_error(fmt.str());
           }
-        this->coreIndex = index;
         this->series = coreIndexToSeries(index);
+        this->coreIndex = index;
         this->resolution = index - seriesToCoreIndex(this->series);
       }
 
       void
       FormatReader::setId(const boost::filesystem::path& id)
       {
-        //    LOGGER.debug("{} initializing {}", getFormat(), id);
-        if (!currentId || id != currentId.get())
+        // Attempt to canonicalize the path.
+        path canonicalpath = id;
+        try
           {
-            path canonicalID(id);
-            try
-              {
-                // Attempt to canonicalize the path.
-                canonicalID = ome::common::canonical(id);
-              }
-            catch (const std::exception& /* e */)
-              {
-              }
-            initFile(canonicalID);
+            canonicalpath = ome::common::canonical(id);
+          }
+        catch (const std::exception& /* e */)
+          {
+          }
+
+        //    LOGGER.debug("{} initializing {}", getFormat(), id);
+        if (!currentId || canonicalpath != currentId.get())
+          {
+            initFile(canonicalpath);
 
             const ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>& store =
               ome::compat::dynamic_pointer_cast< ::ome::xml::meta::OMEXMLMetadata>(getMetadataStore());

@@ -376,14 +376,6 @@ namespace ome
       static const bool is_complex = true;
     };
 
-    /// Endianness.
-    enum EndianType
-      {
-        ENDIAN_BIG,    ///< Big endian.
-        ENDIAN_LITTLE, ///< Little endian.
-        ENDIAN_NATIVE  ///< Native endian.
-      };
-
     /**
      * Map the given PixelPropertiesType and Endian enums to the
      * corresponding endian-specific language type.

@@ -419,14 +419,10 @@ public class AVIReader extends FormatReader {
       in.read(b);
       MSRLECodec codec = new MSRLECodec();
       buf = codec.decompress(b, options);
-      lastImage = buf;
-      lastImageNo = no;
     }
     else if (bmpCompression == MS_VIDEO) {
       MSVideoCodec codec = new MSVideoCodec();
       buf = codec.decompress(in, options);
-      lastImage = buf;
-      lastImageNo = no;
     }
     else if (bmpCompression == JPEG) {
       JPEGCodec codec = new JPEGCodec();
@@ -434,7 +430,7 @@ public class AVIReader extends FormatReader {
       byte[] plane = new byte[(int) lengths.get(no).longValue()];
       in.read(plane);
 
-      boolean motionJPEG =
+      boolean motionJPEG = plane.length >= 10 &&
         new String(plane, 6, 4, Constants.ENCODING).equals("AVI1");
 
       if (motionJPEG) {
@@ -452,7 +448,12 @@ public class AVIReader extends FormatReader {
         plane = fixedPlane;
       }
 
-      buf = codec.decompress(plane, options);
+      if (plane.length > 0) {
+        buf = codec.decompress(plane, options);
+      }
+      else {
+        buf = lastImage;
+      }
 
       if (motionJPEG) {
         // transform YCbCr data to RGB
@@ -509,6 +510,8 @@ public class AVIReader extends FormatReader {
       throw new UnsupportedCompressionException(
         bmpCompression + " not supported");
     }
+    lastImage = buf;
+    lastImageNo = no;
     return buf;
   }
 

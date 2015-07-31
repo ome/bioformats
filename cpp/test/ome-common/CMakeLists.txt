@@ -56,6 +56,12 @@ if(BUILD_TESTS)
 
   bf_add_test(ome-common/endian endian)
 
+  add_executable(filesystem filesystem.cpp)
+  target_link_libraries(filesystem ome-common)
+  target_link_libraries(filesystem ome-test)
+
+  bf_add_test(ome-common/filesystem filesystem)
+
   add_executable(module module.cpp)
   target_link_libraries(module ome-common)
   target_link_libraries(module ome-test)

@@ -106,12 +106,22 @@ namespace ome
       void
       FormatWriter::setId(const boost::filesystem::path& id)
       {
-        if (!currentId || id != currentId.get())
+        // Attempt to canonicalize the path.
+        path canonicalpath = id;
+        try
+          {
+            canonicalpath = ome::common::canonical(id);
+          }
+        catch (const std::exception& /* e */)
+          {
+          }
+
+        if (!currentId || canonicalpath != currentId.get())
           {
             if (out)
               out = ome::compat::shared_ptr<std::ostream>();
 
-            currentId = id;
+            currentId = canonicalpath;
           }
       }
 
@@ -141,6 +151,12 @@ namespace ome
                            writerProperties.compression_suffixes);
       }
 
+      dimension_size_type
+      FormatWriter::getSeriesCount() const
+      {
+        return metadataRetrieve->getImageCount();
+      }
+
       void
       FormatWriter::setLookupTable(dimension_size_type       /* plane */,
                                    const VariantPixelBuffer& /* buf */)
@@ -166,7 +182,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        if (series >= metadataRetrieve->getImageCount())
+        if (series >= getSeriesCount())
           {
             boost::format fmt("Invalid series: %1%");
             fmt % series;
@@ -347,7 +363,7 @@ namespace ome
       dimension_size_type
       FormatWriter::getImageCount() const
       {
-        return getSizeZ() * getSizeT() * getSizeC();
+        return getSizeZ() * getSizeT() * getEffectiveSizeC();
       }
 
       bool
@@ -423,14 +439,8 @@ namespace ome
       dimension_size_type
       FormatWriter::getEffectiveSizeC() const
       {
-        // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
-        dimension_size_type sizeZT = getSizeZ() * getSizeT();
-        dimension_size_type effC = 0;
-
-        if (sizeZT)
-          effC = getImageCount() / sizeZT;
-
-        return effC;
+        dimension_size_type series = getSeries();
+        return metadataRetrieve->getChannelCount(series);
       }
 
       dimension_size_type

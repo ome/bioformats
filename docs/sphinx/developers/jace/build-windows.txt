@@ -67,7 +67,7 @@ e.g.:
 
 This step ensures that a directory containing jvm.dll is present in the PATH.
 If you do not perform this step, you will receive a runtime error when
-attempting to initialize a JVM from native code.
+attempting to initialize a |JVM| from native code.
 
 Optionally, you can add the bin subdirectory to the PATH; e.g.:
 

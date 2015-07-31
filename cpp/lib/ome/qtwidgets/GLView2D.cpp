@@ -56,7 +56,9 @@
 #include <iostream>
 
 // Only Microsoft issue warnings about correct behaviour...
+#ifdef _MSVC_VER
 #pragma warning(disable : 4351)
+#endif
 
 namespace ome
 {
@@ -323,6 +325,14 @@ namespace ome
       lastPos = event->pos();
     }
 
+    // No switch default to avoid -Wunreachable-code errors.
+    // However, this then makes -Wswitch-default complain.  Disable
+    // temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
     void
     GLView2D::mouseMoveEvent(QMouseEvent *event)
     {
@@ -346,6 +356,10 @@ namespace ome
       }
       lastPos = event->pos();
     }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
     void
     GLView2D::timerEvent (QTimerEvent *event)

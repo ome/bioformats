@@ -595,7 +595,8 @@ public class ImagePlusReader implements StatusReporter {
       else sb.append("; ");
       int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
       for (int i=0; i<subC.length; i++) {
-        boolean ch = subCTypes[i].equals(FormatTools.CHANNEL);
+        boolean ch =
+          subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
         sb.append(ch ? "c" : subCTypes[i]);
         sb.append(":");
         sb.append(subCPos[i] + 1);

@@ -38,6 +38,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,8 @@ public class FileStitcher extends ReaderWrapper {
 
   private static final Logger LOGGER =
     LoggerFactory.getLogger(FileStitcher.class);
+
+  private static final int MAX_READERS = 1000;
 
   // -- Fields --
 
@@ -181,7 +184,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public DimensionSwapper getReader(int series, int no) {
     if (noStitch) return (DimensionSwapper) reader;
-    DimensionSwapper r = externals[getExternalSeries(series)].getReaders()[no];
+    DimensionSwapper r = externals[getExternalSeries(series)].getReader(no);
     initReader(series, no);
     return r;
   }
@@ -664,12 +667,12 @@ public class FileStitcher extends ReaderWrapper {
     // have to call initFile on each constituent file; but we can only do so
     // when each constituent file does not itself have multiple used files
 
-    Vector<String> files = new Vector<String>();
+    Set<String> files = new LinkedHashSet<String>();
     for (ExternalSeries s : externals) {
       String[] f = s.getFiles();
       for (String file : f) {
         String path = new Location(file).getAbsolutePath();
-        if (!files.contains(path)) files.add(path);
+        files.add(path);
       }
 
       DimensionSwapper[] readers = s.getReaders();
@@ -679,7 +682,7 @@ public class FileStitcher extends ReaderWrapper {
           String[] used = readers[i].getUsedFiles();
           for (String file : used) {
             String path = new Location(file).getAbsolutePath();
-            if (!files.contains(path)) files.add(path);
+            files.add(path);
           }
           readers[i].close();
         }
@@ -1093,7 +1096,7 @@ public class FileStitcher extends ReaderWrapper {
     lenC[sno] = new int[numC + 1];
     lenT[sno] = new int[numT + 1];
     lenZ[sno][0] = sizeZ[sno];
-    lenC[sno][0] = sizeC[sno];
+    lenC[sno][0] = sizeC[sno] / reader.getRGBChannelCount();
     lenT[sno][0] = sizeT[sno];
 
     for (int i=0, z=1, c=1, t=1; i<count.length; i++) {
@@ -1118,10 +1121,7 @@ public class FileStitcher extends ReaderWrapper {
       }
     }
     ms.imageCount = ms.sizeZ * ms.sizeT;
-    if (!isRGB()) {
-      ms.imageCount *= ms.sizeC;
-    }
-    else ms.imageCount *= reader.getEffectiveSizeC();
+    ms.imageCount *= (ms.sizeC / reader.getRGBChannelCount());
 
     ms.moduloC = reader.getModuloC();
     ms.moduloZ = reader.getModuloZ();
@@ -1211,7 +1211,7 @@ public class FileStitcher extends ReaderWrapper {
 
   protected void initReader(int sno, int fno) {
     int external = getExternalSeries(sno);
-    DimensionSwapper r = externals[external].getReaders()[fno];
+    DimensionSwapper r = externals[external].getReader(fno);
     try {
       if (r.getCurrentFile() == null) {
         r.setGroupFiles(false);
@@ -1252,7 +1252,8 @@ public class FileStitcher extends ReaderWrapper {
       this.pattern = pattern;
       files = this.pattern.getFiles();
 
-      readers = new DimensionSwapper[files.length];
+      int nReaders = files.length > MAX_READERS ? 1 : files.length;
+      readers = new DimensionSwapper[nReaders];
       for (int i=0; i<readers.length; i++) {
         if (classList != null) {
           readers[i] = new DimensionSwapper(new ImageReader(classList));
@@ -1271,6 +1272,13 @@ public class FileStitcher extends ReaderWrapper {
 
       originalOrder = readers[0].getDimensionOrder();
       imagesPerFile = readers[0].getImageCount();
+    }
+
+    public DimensionSwapper getReader(int fno) {
+      if (fno < readers.length) {
+        return readers[fno];
+      }
+      return readers[0];
     }
 
     public DimensionSwapper[] getReaders() {
