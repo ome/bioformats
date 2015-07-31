@@ -59,6 +59,10 @@ include("${CMAKE_CURRENT_LIST_DIR}/External_icu.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_boost.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/External_xerces.cmake")
 
+# Single target to build all prerequisites
+add_custom_target(prerequisites
+                  DEPENDS zlib bzip2 png tiff icu boost xerces)
+
 # Re-run top-level CMakeLists.txt as an external project.
 include("${CMAKE_CURRENT_LIST_DIR}/External_bioformats.cmake")
 
