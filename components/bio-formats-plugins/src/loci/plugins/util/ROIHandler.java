@@ -399,13 +399,13 @@ public class ROIHandler {
             int z = ijRoi.getZPosition();
             int t = ijRoi.getTPosition();
             //set the position to the correct ome-index
-            if (c > 1) {
+            if (c >= 1) {
                 c = c-1;
             }
-            if (t > 1) {
+            if (t >= 1) {
                 t = t-1;
             }
-            if (z > 1) {
+            if (z >= 1) {
                 z = z-1;
             }
             ijRoi.setPosition(c, z, t);
