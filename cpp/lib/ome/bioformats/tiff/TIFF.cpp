@@ -129,7 +129,11 @@ namespace ome
         {
           Sentry sentry;
 
-          tiff = TIFFOpen(filename.native().c_str(), mode.c_str());
+#ifdef _MSC_VER
+          tiff = TIFFOpen(filename.wstring().c_str(), mode.c_str());
+#else
+          tiff = TIFFOpen(filename.string().c_str(), mode.c_str());
+#endif
           if (!tiff)
             sentry.error();
         }
