@@ -455,7 +455,7 @@ namespace ome
           {
             samples = metadataRetrieve->getChannelSamplesPerPixel(series, channel);
           }
-        catch (const MetadataException& e)
+        catch (const MetadataException& /* e */)
           {
             // No SamplesPerPixel; default to 1.
           }

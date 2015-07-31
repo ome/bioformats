@@ -435,7 +435,7 @@ namespace ome
           {
             array();
           }
-        catch (const std::runtime_error& e)
+        catch (const std::runtime_error& /* e */)
           {
             is_valid = false;
           }

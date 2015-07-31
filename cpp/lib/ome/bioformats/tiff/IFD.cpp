@@ -801,7 +801,7 @@ namespace ome
                 getField(TILELENGTH).get(h);
                 impl->tiletype = TILE;
               }
-            catch (const Exception& e)
+            catch (const Exception& /* e */)
               {
                 getField(ROWSPERSTRIP).get(h);
                 impl->tiletype = STRIP;
@@ -975,7 +975,7 @@ namespace ome
               {
                 getField(SAMPLEFORMAT).get(sampleformat);
               }
-            catch(const Exception& e)
+            catch(const Exception& /* e */)
               {
                 // Default to unsigned integer.
                 sampleformat = UNSIGNED_INT;

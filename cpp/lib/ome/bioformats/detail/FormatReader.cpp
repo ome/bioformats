@@ -190,12 +190,12 @@ namespace ome
                         break;
                       }
                   }
-                catch (const boost::filesystem::filesystem_error& e)
+                catch (const boost::filesystem::filesystem_error& /* e */)
                   {
                   }
               }
           }
-        catch (const boost::filesystem::filesystem_error& e)
+        catch (const boost::filesystem::filesystem_error& /* e */)
           {
           }
 
@@ -1398,7 +1398,7 @@ namespace ome
                               if (!imageName.empty() && ome::common::trim(imageName).size() != 0)
                                 name = imageName;
                             }
-                          catch (std::exception& e)
+                          catch (const std::exception& /* e */)
                             {
                             }
                           setSeries(series);

@@ -405,7 +405,7 @@ namespace ome
                   samples = meta.getChannelSamplesPerPixel(series, c);
                   realSizeC += samples;
                 }
-              catch (const MetadataException& e)
+              catch (const MetadataException& /* e */)
                 {
                   badChannels.push_back(c);
                 }
@@ -508,7 +508,7 @@ namespace ome
               OMEXMLMetadata& omexml(dynamic_cast<OMEXMLMetadata&>(store));
               addMetadataOnly(omexml, s);
             }
-          catch (const std::bad_cast& e)
+          catch (const std::bad_cast& /* e */)
             {
             }
 
@@ -551,7 +551,7 @@ namespace ome
               OMEXMLMetadata& omexml(dynamic_cast<OMEXMLMetadata&>(store));
               addMetadataOnly(omexml, s);
             }
-          catch (const std::bad_cast& e)
+          catch (const std::bad_cast& /* e */)
             {
             }
 
@@ -795,7 +795,7 @@ namespace ome
           if (!store.getRoot())
             throw FormatException("Metadata object has null root; call createRoot() first");
         }
-      catch (const std::bad_cast& e)
+      catch (const std::bad_cast& /* e */)
         {
         }
 
@@ -1082,7 +1082,7 @@ namespace ome
           std::cerr << "SAXParseException parsing schema version: " << message << '\n';
           return "";
         }
-      catch (const xercesc::SAXException& e)
+      catch (const xercesc::SAXException& /* e */)
         {
           // Early termination (expected).
         }
