@@ -221,7 +221,7 @@ namespace ome
         if (!tiff)
           {
             boost::format fmt("Failed to open ‘%1%’");
-            fmt % id.native();
+            fmt % id.string();
             throw FormatException(fmt.str());
           }
 
@@ -267,7 +267,7 @@ namespace ome
         if (!tiff)
           {
             boost::format fmt("Failed to open ‘%1%’");
-            fmt % name.native();
+            fmt % name.string();
             throw FormatException(fmt.str());
           }
 
@@ -673,7 +673,7 @@ namespace ome
 
                     BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
                       << "    Plane[" << no
-                      << "]: file=" << plane.id.native()
+                      << "]: file=" << plane.id.string()
                       << ", IFD=" << plane.ifd;
                   }
                 if (numPlanes == 0)
@@ -727,7 +727,7 @@ namespace ome
 
                 BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
                   << "  Verify Plane[" << no
-                  << "]: file=" << plane.id.native()
+                  << "]: file=" << plane.id.string()
                   << ", IFD=" << plane.ifd;
 
                 if (plane.id.empty())
@@ -1025,7 +1025,7 @@ namespace ome
                 else if (existing->second != filename)
                   {
                     boost::format fmt("Inconsistent UUID filenames ‘%1%’ and ‘%2%’");
-                    fmt % existing->second.native() % filename.native();
+                    fmt % existing->second.string() % filename.string();
                     throw FormatException(fmt.str());
                   }
               }
@@ -1314,7 +1314,7 @@ namespace ome
         if (!i->second)
           {
             boost::format fmt("Failed to open ‘%1%’");
-            fmt % i->first.native();
+            fmt % i->first.string();
             throw FormatException(fmt.str());
           }
 
