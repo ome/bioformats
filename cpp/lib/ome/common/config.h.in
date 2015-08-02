@@ -65,11 +65,32 @@
 #cmakedefine OME_HAVE_SNPRINTF 1
 #cmakedefine OME_VARIANT_LIMIT 1
 
+#ifndef OME_VARIANT_LIMIT
+#  ifndef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+/// Disable MPL header preprocessing (to allow the following macros to be modified).
+#    define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#  endif
+#  if !defined(BOOST_MPL_LIMIT_VECTOR_SIZE) || BOOST_MPL_LIMIT_VECTOR_SIZE < 40
+/// MPL vector size limit increase.
+#    ifdef BOOST_MPL_LIMIT_VECTOR_SIZE
+#      undef BOOST_MPL_LIMIT_VECTOR_SIZE
+#    endif
+#  define BOOST_MPL_LIMIT_VECTOR_SIZE 40
+#  endif
+#  if !defined(BOOST_MPL_LIMIT_LIST_SIZE) || BOOST_MPL_LIMIT_LIST_SIZE < 40
+/// MPL list size limit increase.
+#    ifdef BOOST_MPL_LIMIT_LIST_SIZE
+#      undef BOOST_MPL_LIMIT_LIST_SIZE
+#    endif
+#  define BOOST_MPL_LIMIT_LIST_SIZE 40
+#  endif
+#endif
+
 #ifndef OME_HAVE_NOEXCEPT
-# ifdef _MSC_VER
-#  define _ALLOW_KEYWORD_MACROS 1
-# endif
-# define noexcept
+#  ifdef _MSC_VER
+#    define _ALLOW_KEYWORD_MACROS 1
+#  endif
+#  define noexcept
 #endif
 
 #endif // OME_COMMON_CONFIG_H
