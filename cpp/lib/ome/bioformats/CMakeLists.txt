@@ -36,7 +36,8 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${Boost_INCLUDE_DIRS}
-                    ${TIFF_INCLUDE_DIR})
+                    ${TIFF_INCLUDE_DIR}
+                    ${XercesC_INCLUDE_DIRS})
 
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp

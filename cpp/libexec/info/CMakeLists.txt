@@ -36,7 +36,8 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${OME_LIBEXEC_INCLUDES}
-                    ${Boost_INCLUDE_DIRS})
+                    ${Boost_INCLUDE_DIRS}
+                    ${XercesC_INCLUDE_DIRS})
 
 set(info_SOURCES
     ImageInfo.h
