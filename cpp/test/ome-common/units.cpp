@@ -43,7 +43,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/range/size.hpp>
 #include <boost/units/io.hpp>
@@ -55,6 +54,9 @@
 #include <ome/test/test.h>
 
 #include "units.h"
+
+// Include last due to side effect of MPL vector limit setting which can change the default
+#include <boost/lexical_cast.hpp>
 
 using namespace ome::common::units;
 
