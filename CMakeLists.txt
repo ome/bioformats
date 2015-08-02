@@ -111,7 +111,8 @@ else()
     # Require dynamic linking and disable autolinking.
     add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
     # To prevent a lot of spam warnings about standard POSIX functions
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    # and unsafe use of the standard library.
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
   endif()
 
 
