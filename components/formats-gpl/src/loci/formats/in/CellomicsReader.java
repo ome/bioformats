@@ -219,13 +219,13 @@ public class CellomicsReader extends FormatReader {
     Arrays.sort(files, new Comparator<String>() {
         @Override
         public int compare(String f1, String f2) {
-            Integer wellRow1 = getWellRow(f1);
-            Integer wellCol1 = getWellColumn(f1);
-            Integer field1 = getField(f1);
+            int wellRow1 = getWellRow(f1);
+            int wellCol1 = getWellColumn(f1);
+            int field1 = getField(f1);
 
-            Integer wellRow2 = getWellRow(f2);
-            Integer wellCol2 = getWellColumn(f2);
-            Integer field2 = getField(f2);
+            int wellRow2 = getWellRow(f2);
+            int wellCol2 = getWellColumn(f2);
+            int field2 = getField(f2);
 
             if (wellRow1 < wellRow2){
                 return -1;
@@ -238,10 +238,11 @@ public class CellomicsReader extends FormatReader {
             }else if (wellCol1 > wellCol2){
                 return 1;
             }
-            return field1.compareTo(field2);
+            return field1-field2;
 
         }
     });
+
 
     core.clear();
 
@@ -380,6 +381,10 @@ public class CellomicsReader extends FormatReader {
           fieldIndex = 0;
         }
 
+        if (fieldIndex == 0){
+            cntr=0;
+        }
+
         String wellSampleID =
           MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
         store.setWellSampleID(wellSampleID, 0, wellIndex, cntr);
@@ -388,6 +393,7 @@ public class CellomicsReader extends FormatReader {
 
         store.setWellSampleImageRef(imageID, 0, wellIndex, cntr);
         cntr++;
+
       }
     }
 
