@@ -1108,7 +1108,7 @@ public class LIFReader extends FormatReader {
 
       final Deque<String> nameStack = new ArrayDeque<String>();
       populateOriginalMetadata(image, nameStack);
-      addUserCommentMeta(image);
+      addUserCommentMeta(image, i);
     }
     setSeries(0);
 
@@ -1857,7 +1857,7 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  private void addUserCommentMeta(Element imageNode)
+  private void addUserCommentMeta(Element imageNode, int image)
     throws FormatException
   {
     NodeList attachmentNodes = getNodes(imageNode, "User-Comment");
@@ -1865,6 +1865,9 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<attachmentNodes.getLength(); i++) {
       Node attachment = attachmentNodes.item(i);
       addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
+      if (i == 0 && descriptions[image] == null) {
+        descriptions[image] = attachment.getTextContent();
+      }
     }
   }
 
