@@ -100,7 +100,7 @@ namespace ome
        * @param value the value to copy.
        */
       boolean(const boolean& value):
-        value(value)
+        value(value.value)
       {}
 
       /**
@@ -110,7 +110,7 @@ namespace ome
        */
       operator bool() const
       {
-        return static_cast<bool>(value);
+        return value != std::numeric_limits<uint8_t>::min();
       }
 
       /**
