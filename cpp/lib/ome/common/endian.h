@@ -53,8 +53,12 @@
 #include <ome/common/config.h>
 
 // Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
-#if defined(noexcept) and !defined(BOOST_NOEXCEPT)
-# define BOOST_NOEXCEPT
+#ifndef BOOST_NOEXCEPT
+# ifdef OME_HAVE_NOEXCEPT
+#  define BOOST_NOEXCEPT noexcept
+# else
+#  define BOOST_NOEXCEPT
+# endif
 #endif
 
 #include <ome/common/endian/types.hpp>
