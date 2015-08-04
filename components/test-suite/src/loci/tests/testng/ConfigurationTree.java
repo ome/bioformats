@@ -98,9 +98,19 @@ public class ConfigurationTree {
     if (rootDir == null) {
       throw new IllegalArgumentException("rootDir cannot be null.");
     }
-    this.rootDir = new File(rootDir).getAbsolutePath();
+
     if (configDir != null) {
-        this.configDir = new File(configDir).getAbsolutePath();
+      Location rootLocation = new Location(rootDir);
+      Location configLocation = new Location(configDir);
+      while (rootLocation.getName().equals(configLocation.getName())) {
+        rootLocation = rootLocation.getParentFile();
+        configLocation = configLocation.getParentFile();
+      }
+
+      this.rootDir = rootLocation.getAbsolutePath();
+      this.configDir = configLocation.getAbsolutePath();
+    } else {
+      this.rootDir = new File(rootDir).getAbsolutePath();
     }
     root = new DefaultMutableTreeNode();
   }
@@ -126,21 +136,13 @@ public class ConfigurationTree {
    */
   public String relocate(String path, String oldRoot, String newRoot) {
 
-    Location oldLocation = new Location(oldRoot);
-    Location newLocation = new Location(newRoot);
-    while (oldLocation.getName().equals(newLocation.getName()))
-    {
-        oldLocation = oldLocation.getParentFile();
-        newLocation = newLocation.getParentFile();
-    }
-
     String subPath = path.substring((int) Math.min(
-      oldLocation.getAbsolutePath().length() + 1, path.length()));
+      oldRoot.length() + 1, path.length()));
     if (subPath.length() == 0) {
-      return newLocation.getAbsolutePath();
+      return newRoot;
     }
     else {
-      return new Location(newLocation, subPath).getAbsolutePath();
+      return new Location(newRoot, subPath).getAbsolutePath();
     }
   }
 
