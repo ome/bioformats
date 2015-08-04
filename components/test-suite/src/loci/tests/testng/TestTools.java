@@ -257,7 +257,11 @@ public class TestTools {
           subsList.add(0, file.getAbsolutePath());
         }
       } else {
-        subsList.add(file.getAbsolutePath());
+        try {
+          subsList.add(file.getCanonicalPath());
+        } catch (IOException e) {
+          subsList.add(file.getAbsolutePath());
+        }
       }
     }
 
