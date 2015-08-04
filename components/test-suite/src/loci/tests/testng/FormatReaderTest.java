@@ -913,9 +913,11 @@ public class FormatReaderTest {
       }
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
       Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -938,9 +940,11 @@ public class FormatReaderTest {
       }
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
       Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -964,9 +968,11 @@ public class FormatReaderTest {
       }
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
       Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }

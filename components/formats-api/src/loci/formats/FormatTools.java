@@ -1387,56 +1387,174 @@ public final class FormatTools {
 
   // -- OME-XML primitive type methods --
 
-  public static Length getPhysicalSizeX(Double value) {
-   return getPhysicalSizeX(value, null);
-  }
-  
-  public static Length getPhysicalSizeX(Double value, String unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
-    {
-      if (unit != null) {
-        try {
-          UnitsLength ul = UnitsLength.fromString(unit);
-          return UnitsLength.create(value, ul);
-        } catch (EnumerationException e) {
-        }
-      }
-      return new Length(value, UNITS.MICROM);
-    }
-    LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
-    return null;
-  }
-  
-  public static Length getPhysicalSizeY(Double value) {
-    return getPhysicalSizeY(value, null);
-  }
-  
-  public static Length getPhysicalSizeY(Double value, String unit) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
-    {
-      if (unit != null) {
-        try {
-          UnitsLength ul = UnitsLength.fromString(unit);
-          return UnitsLength.create(value, ul);
-        } catch (EnumerationException e) {
-        }
-      }
-      return new Length(value, UNITS.MICROM);
-    }
-    LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
-    return null;
+  public static boolean isPositiveValue(Double value) {
+    return (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY);
   }
 
-  public static Length getPhysicalSizeZ(Double value) {
-    if (value != null && value - Constants.EPSILON > 0 &&
-      value < Double.POSITIVE_INFINITY)
-    {
-      return new Length(value, UNITS.MICROM);
+  public static Length getPhysicalSize(Double value, String unit) {
+    if (unit != null) {
+      try {
+        UnitsLength ul = UnitsLength.fromString(unit);
+        return UnitsLength.create(value, ul);
+      } catch (EnumerationException e) {
+      }
     }
-    LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
-    return null;
+    return new Length(value, UNITS.MICROM);
+  }
+
+  /**
+   * Formats the input value for the physical size in X into a length in
+   * microns
+   *
+   * @param value  the value of the physical size in X in microns
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeX(Double value) {
+   return getPhysicalSizeX(value, UNITS.MICROM);
+  }
+  
+  /**
+   * Formats the input value for the physical size in X into a length of the
+   * given unit.
+   *
+   * @param value  the value of the physical size in X
+   * @param unit   the unit of the physical size in X. If {@code null},
+   *               default to microns.
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeX(Double value, String unit) {
+    if (isPositiveValue(value))
+    {
+      return getPhysicalSize(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
+      return null;
+    }
+  }
+
+  /**
+   * Formats the input value for the physical size in X into a length of the
+   * given unit.
+   *
+   * @param value  the value of the physical size in X
+   * @param unit   the unit of the physical size in X
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeX(Double value, Unit<Length> unit) {
+    if (isPositiveValue(value))
+    {
+      return createLength(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
+      return null;
+    }
+  }
+
+  /**
+   * Formats the input value for the physical size in Y into a length in
+   * microns
+   *
+   * @param value  the value of the physical size in Y in microns
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeY(Double value) {
+    return getPhysicalSizeY(value, UNITS.MICROM);
+  }
+
+  /**
+   * Formats the input value for the physical size in Y into a length of the
+   * given unit.
+   *
+   * @param value  the value of the physical size in Y
+   * @param unit   the unit of the physical size in Y. If {@code null},
+   *               default to microns.
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeY(Double value, String unit) {
+    if (isPositiveValue(value))
+    {
+      return getPhysicalSize(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
+      return null;
+    }
+  }
+
+  /**
+   * Formats the input value for the physical size in Y into a length of the
+   * given unit.
+   *
+   * @param value  the value of the physical size in Y
+   * @param unit   the unit of the physical size in Y
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeY(Double value, Unit<Length> unit) {
+    if (isPositiveValue(value))
+    {
+      return createLength(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
+      return null;
+    }
+  }
+
+  /**
+   * Formats the input value for the physical size in Z into a length in
+   * microns
+   *
+   * @param value  the value of the physical size in Z in microns
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeZ(Double value) {
+    return getPhysicalSizeZ(value, UNITS.MICROM);
+  }
+
+  /**
+   * Formats the input value for the physical size in Z into a length of the
+   * given unit.
+   *
+   * @param value  the value of the physical size in Z
+   * @param unit   the unit of the physical size in Z. If {@code null},
+   *               default to microns.
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPhysicalSizeZ(Double value, String unit) {
+    if (isPositiveValue(value))
+    {
+      return getPhysicalSize(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
+      return null;
+    }
+  }
+
+  /**
+   * Formats the input value for the physical size in Z into a length of the
+   * given unit.
+   *
+   * @param value  the value of the physical size in Z
+   * @param unit   the unit of the physical size in Z
+   *
+   * @return       the physical size formatted as a {@link Length}
+
+   */
+  public static Length getPhysicalSizeZ(Double value, Unit<Length> unit) {
+    if (isPositiveValue(value))
+    {
+      return createLength(value, unit);
+    } else {
+      LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
+      return null;
+    }
   }
 
   public static Length getEmissionWavelength(Double value) {
