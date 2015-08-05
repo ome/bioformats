@@ -70,6 +70,7 @@ public class CellH5Reader extends FormatReader {
       public final static String DEFINITION = "/definition/";
       public final static String OBJECT = "object/";
       public final static String FEATURE = "feature/";
+      public final static String IMAGE = "image/";
       public final static String BBOX = "bounding_box/";
       public final static String CLASS_LABELS = "object_classification/class_labels/";
       public final static String PREDICTED_CLASS_LABELS = "object_classification/prediction";
@@ -231,7 +232,7 @@ public class CellH5Reader extends FormatReader {
     // pixel data is stored in XYZ blocks
     Object image = getImageData(no, y, h);
 
-    boolean big = !isLittleEndian();
+    boolean little = isLittleEndian();
 
     // images is of type byte[][]. Left these checks and unpacking
     // in the code for feature data types
@@ -246,27 +247,27 @@ public class CellH5Reader extends FormatReader {
         short[][] data = (short[][]) image;
         short[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + 2 * i, 2, big);
+          DataTools.unpackBytes(rowData[i + x], buf, base + 2 * i, 2, little);
         }
       } else if (image instanceof int[][]) {
         int[][] data = (int[][]) image;
         int[] rowData = data[row];
         for (int i = 0; i < w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + i * 4, 4, big);
+          DataTools.unpackBytes(rowData[i + x], buf, base + i * 4, 4, little);
         }
       } else if (image instanceof float[][]) {
         float[][] data = (float[][]) image;
         float[] rowData = data[row];
         for (int i = 0; i < w; i++) {
           int v = Float.floatToIntBits(rowData[i + x]);
-          DataTools.unpackBytes(v, buf, base + i * 4, 4, big);
+          DataTools.unpackBytes(v, buf, base + i * 4, 4, little);
         }
       } else if (image instanceof double[][]) {
         double[][] data = (double[][]) image;
         double[] rowData = data[row];
         for (int i = 0; i < w; i++) {
           long v = Double.doubleToLongBits(rowData[i + x]);
-          DataTools.unpackBytes(v, buf, base + i * 8, 8, big);
+          DataTools.unpackBytes(v, buf, base + i * 8, 8, little);
         }
       }
     }
@@ -390,12 +391,15 @@ public class CellH5Reader extends FormatReader {
     core.clear();
     // read experiment structure and collect coordinates
 
-    String path = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
-    for (String plate : jhdf.getMember(path)) {
-      path += plate + "/" + CellH5Constants.WELL;
-      for (String well : jhdf.getMember(path)) {
-        path += well + "/" + CellH5Constants.SITE;
-        for (String site : jhdf.getMember(path)) {
+    String path_to_plate = CellH5Constants.PREFIX_PATH + CellH5Constants.PLATE;
+    LOGGER.info("Plate :" + path_to_plate );
+    for (String plate : jhdf.getMember(path_to_plate)) {
+      String path_to_well = path_to_plate + plate + CellH5Constants.WELL;
+      LOGGER.info("Well :" + path_to_well );
+      for (String well : jhdf.getMember(path_to_well)) {
+        String path_to_site = path_to_well + well + CellH5Constants.SITE;
+        LOGGER.info("Site :" + path_to_site );
+        for (String site : jhdf.getMember(path_to_site)) {     
           CellH5PositionList.add(new CellH5Coordinate(plate, well, site));
         }
       }
@@ -406,6 +410,10 @@ public class CellH5Reader extends FormatReader {
     }
 
     List<String> seriesNames = new ArrayList<String>();
+    List<String> seriesPlate = new ArrayList<String>();
+    List<String> seriesWell = new ArrayList<String>();
+    List<String> seriesSite = new ArrayList<String>();
+    
 
     for (CellH5Coordinate coord : CellH5PositionList) {
       if (jhdf.exists(coord.pathToImageData)) {
@@ -431,9 +439,25 @@ public class CellH5Reader extends FormatReader {
         m.littleEndian = true;
         m.interleaved = false;
         m.indexed = true;
-        m.pixelType = FormatTools.UINT8;
+        int bpp = jhdf.getElementSize(coord.pathToImageData);
+        if (bpp==1) {
+            m.pixelType = FormatTools.UINT8;
+        }
+        else if (bpp==2) {
+            m.pixelType = FormatTools.UINT16;
+        }
+        else if (bpp==4) {
+            m.pixelType = FormatTools.INT32;
+        }
+        else {
+            throw new FormatException("Pixel type not understood. Only 8, "
+                    + "16 and 32 bit images supported");
+        }
 
         seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
+        seriesPlate.add(coord.plate);
+        seriesWell.add(coord.well);
+        seriesSite.add(coord.site);
         CellH5PathsToImageData.add(coord.pathToImageData);
         seriesCount++;
       }
@@ -463,10 +487,26 @@ public class CellH5Reader extends FormatReader {
         m.littleEndian = true;
         m.interleaved = false;
         m.indexed = true;
-        m.pixelType = FormatTools.UINT16;
+        int bpp = jhdf.getElementSize(coord.pathToSegmentationData);
+        if (bpp==1) {
+            m.pixelType = FormatTools.UINT8;
+        }
+        else if (bpp==2) {
+            m.pixelType = FormatTools.UINT16;
+        }
+        else if (bpp==4) {
+            m.pixelType = FormatTools.INT32;
+        }
+        else {
+            throw new FormatException("Pixel type not understood. Only 8, "
+                    + "16 and 32 bit images supported");
+        }
 
         seriesNames.add(String.format("P_%s, W_%s_%s label image",
           coord.plate, coord.well, coord.site));
+        seriesPlate.add(coord.plate);
+        seriesWell.add(coord.well);
+        seriesSite.add(coord.site);
         CellH5PathsToImageData.add(coord.pathToSegmentationData);
         seriesCount++;
       }
@@ -480,9 +520,46 @@ public class CellH5Reader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int s=0; s<seriesNames.size(); s++) {
+      String image_id = MetadataTools.createLSID("Image", s);  
       store.setImageName(seriesNames.get(s), s);
+      
+      String plate_id =  MetadataTools.createLSID("Plate", 0);
+     
+      store.setPlateID(plate_id, 0);
+      store.setPlateName(seriesPlate.get(s), 0);
+      
+      String well_id =  MetadataTools.createLSID("Well", 0);
+      
+      store.setWellID(well_id, 0, 0);
+      
+      String cellh5WellCoord = seriesWell.get(s); 
+      String wellRowLetter = cellh5WellCoord.substring(0, 1);
+      String wellColNumber = cellh5WellCoord.substring(1);
+      
+      int wellRowLetterIndex = "ABCDEFGHIJKLMNOP".indexOf(wellRowLetter);
+      int wellColNumberIndex = -1;
+      try {
+          wellColNumberIndex = Integer.parseInt(wellColNumber);
+      } catch (NumberFormatException e){
+          //
+      }
+     
+      if (wellRowLetterIndex > -1 && wellColNumberIndex > 0) {
+          store.setWellRow(new NonNegativeInteger(wellRowLetterIndex), 0, 0);
+          store.setWellColumn(new NonNegativeInteger(wellColNumberIndex - 1), 0, 0);
+      } else {
+          store.setWellRow(new NonNegativeInteger(0), 0, 0);
+          store.setWellColumn(new NonNegativeInteger(0), 0, 0);
+      }
+   
+      store.setWellExternalIdentifier(cellh5WellCoord, 0, 0);
+      
+      String site_id = MetadataTools.createLSID("WellSample", 0);
+      store.setWellSampleID(site_id, 0, 0, 0);
+      store.setWellSampleIndex(NonNegativeInteger.valueOf(seriesSite.get(s)), 0, 0, 0);
+      store.setWellSampleImageRef(image_id, 0, 0, 0);   
     }
-    setSeries(0);
+    setSeries(0); 
     parseCellObjects();
   }
 
@@ -585,6 +662,8 @@ public class CellH5Reader extends FormatReader {
           store.setRectangleWidth((double) width, roiManagerRoiIndex, 0);
           store.setRectangleHeight((double) height, roiManagerRoiIndex, 0);
 
+          store.setRectangleText(cellObjectName, roiManagerRoiIndex, 0);
+                  
           store.setRectangleTheT(
             new NonNegativeInteger(roiTime), roiManagerRoiIndex, 0);
           store.setRectangleTheC(

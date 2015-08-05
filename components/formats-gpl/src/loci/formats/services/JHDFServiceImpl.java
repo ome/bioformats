@@ -43,7 +43,10 @@ import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.base.mdarray.MDShortArray;
 import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
+import ch.systemsx.cisd.hdf5.HDF5IntStorageFeatures;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
+
+import ch.systemsx.cisd.hdf5.IHDF5Writer;
 
 /**
  * Utility class for working with HDF files.
@@ -71,6 +74,11 @@ public class JHDFServiceImpl extends AbstractService
      * Root of the HDF5 file.
      */
     private IHDF5Reader hdfReader;
+    
+    /**
+     * Root of the HDF5 file.
+     */
+    private IHDF5Writer hdfWriter;
 
     // -- NetCDFService API methods ---
     /**
@@ -88,6 +96,14 @@ public class JHDFServiceImpl extends AbstractService
     public void setFile(String file) throws IOException {
         this.currentFile = file;
         this.hdfReader = HDF5Factory.openForReading(file);
+    }
+    
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#setFileForWrite()
+     */
+    public void setFileForWrite(String file) throws IOException {
+        this.currentFile = file;
+        this.hdfWriter = HDF5Factory.open(file);
     }
 
     /* (non-Javadoc)
@@ -180,12 +196,68 @@ public class JHDFServiceImpl extends AbstractService
     }
 
     /* (non-Javadoc)
-     * @see loci.formats.JHDFService#exists()
+     * @see loci.formats.JHDFService#getElementSize()
      */
     public int getElementSize(String path) {
         return this.hdfReader.getDataSetInformation(path).getTypeInformation().getElementSize();
     }
 
+    
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#initIntArray()
+     */
+    public void initIntArray(String path, long[] dimensions, long bpp) {
+        if (bpp == 1) {
+            this.hdfWriter.uint8().createMDArray(path, dimensions, 
+                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]}, 
+                        HDF5IntStorageFeatures.createDeflationKeep(1));
+        } else if (bpp == 2) {
+            this.hdfWriter.uint16().createMDArray(path, dimensions, 
+                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]}, 
+                        HDF5IntStorageFeatures.createDeflationKeep(1));
+        } else if (bpp == 4) {
+            this.hdfWriter.int32().createMDArray(path, dimensions, 
+                new int[] {1,1,1, (int) dimensions[3], (int) dimensions[4]}, 
+                        HDF5IntStorageFeatures.createDeflationKeep(1));
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#writeArraySlice()
+     */
+    public void writeArraySlice(String path, MDByteArray image, long[] offset) {
+        int[] mem_offset = new int[] {0, 0, 0, 0, 0};
+        this.hdfWriter.uint8().writeMDArrayBlockWithOffset(path, image, image.dimensions(), offset, mem_offset);
+    }
+    
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#writeArraySlice()
+     */
+    public void writeArraySlice(String path, MDShortArray image, long[] offset) {
+        int[] mem_offset = new int[] {0, 0, 0, 0, 0};
+        this.hdfWriter.uint16().writeMDArrayBlockWithOffset(path, image, image.dimensions(), offset, mem_offset);
+    }
+    
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#writeArraySlice()
+     */
+    public void writeArraySlice(String path, MDIntArray image, long[] offset) {
+        int[] mem_offset = new int[] {0, 0, 0, 0, 0};
+        this.hdfWriter.int32().writeMDArrayBlockWithOffset(path, image, image.dimensions(), offset, mem_offset);
+    }
+    
+    /* (non-Javadoc)
+     * @see loci.formats.JHDFService#createGroup()
+     */
+    public void createGroup(String path) throws IOException{
+        try {
+            hdfWriter.object().createGroup(path);
+        }
+        catch (Exception e) {
+            throw new IOException("JHDFService: Unable to create group.\n" + e.getMessage());
+        }
+    }
+    
     /* (non-Javadoc)
      * @see loci.formats.JHDFService#exists()
      */
@@ -199,6 +271,10 @@ public class JHDFServiceImpl extends AbstractService
     public void close() throws IOException {
         if (hdfReader != null) {
             hdfReader.close();
+        }
+        
+        if (hdfWriter != null) {
+            hdfWriter.close();
         }
         currentFile = null;
         hdfReader = null;

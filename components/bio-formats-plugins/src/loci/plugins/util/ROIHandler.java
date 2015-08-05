@@ -305,8 +305,12 @@ public class ROIHandler {
 
 
                     if (roi != null) {
-                        roi.setName(shapeObject.getID());
-
+                        String roiLabel = shapeObject.getText();
+                        if (roiLabel == null) {
+                            roiLabel = shapeObject.getID();
+                        }
+                        roi.setName(roiLabel);
+                        
                         if (Prefs.showAllSliceOnly){
                             if(shapeObject.getTheC() != null){
                                 c = shapeObject.getTheC().getValue();
@@ -317,7 +321,17 @@ public class ROIHandler {
                             if(shapeObject.getTheT() != null){
                                 t = shapeObject.getTheT().getValue();
                             }
-                            roi.setPosition(c, z, t);
+                            
+                            // ImageJ expects 1-based indexing, opposed to 
+                            // 0-based indexing in OME  
+                            if (images[imageNum].getNChannels()== 1 &&
+                                    images[imageNum].getNSlices()== 1) {
+                                roi.setPosition(t+1);
+                            }
+                            else {
+                                roi.setPosition(c+1, z+1, t+1);
+                            }
+                            
                         }
                         roi.setImage(images[imageNum]);
 
@@ -381,6 +395,20 @@ public class ROIHandler {
             roiID = MetadataTools.createLSID("ROI", cntr, 0);
             Roi ijRoi = rois[i];
 
+            int c = ijRoi.getCPosition();
+            int z = ijRoi.getZPosition();
+            int t = ijRoi.getTPosition();
+            //set the position to the correct ome-index
+            if (c >= 1) {
+                c = c-1;
+            }
+            if (t >= 1) {
+                t = t-1;
+            }
+            if (z >= 1) {
+                z = z-1;
+            }
+            ijRoi.setPosition(c, z, t);
             if (ijRoi.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
                 if (ijRoi.getTypeAsString().matches("Text")){
                     if (ijRoi instanceof TextRoi){
@@ -529,6 +557,7 @@ public class ROIHandler {
     // -- Helper methods --
     private static NonNegativeInteger unwrap(int r) {
         return new NonNegativeInteger(r);
+        
     }
 
     private static void storeText(TextRoi roi, MetadataStore store, int roiNum, int shape) {
