@@ -31,8 +31,9 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -53,7 +54,6 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
-import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
@@ -74,15 +74,15 @@ public class ScanrReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector<String> metadataFiles = new Vector<String>();
+  private final List<String> metadataFiles = new ArrayList<String>();
   private int wellRows, wellColumns;
   private int fieldRows, fieldColumns;
   private int wellCount = 0;
-  private Vector<String> channelNames = new Vector<String>();
-  private Hashtable<String, Integer> wellLabels =
-    new Hashtable<String, Integer>();
-  private Hashtable<Integer, Integer> wellNumbers =
-    new Hashtable<Integer, Integer>();
+  private final List<String> channelNames = new ArrayList<String>();
+  private Map<String, Integer> wellLabels =
+    new HashMap<String, Integer>();
+  private Map<Integer, Integer> wellNumbers =
+    new HashMap<Integer, Integer>();
   private String plateName;
   private Double pixelSize;
 
@@ -95,11 +95,11 @@ public class ScanrReader extends FormatReader {
   private boolean foundPositions = false;
   private Length[] fieldPositionX;
   private Length[] fieldPositionY;
-  private Vector<Double> exposures = new Vector<Double>();
+  private final List<Double> exposures = new ArrayList<Double>();
   private Double deltaT = null;
 
-  private Hashtable<Integer, String[]> seriesFiles =
-    new Hashtable<Integer, String[]>();
+  private Map<Integer, String[]> seriesFiles =
+    new HashMap<Integer, String[]>();
 
   // -- Constructor --
 
@@ -183,7 +183,7 @@ public class ScanrReader extends FormatReader {
       return seriesFiles.get(getSeries());
     }
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     for (String file : metadataFiles) {
       if (file != null) files.add(file);
     }
@@ -326,9 +326,9 @@ public class ScanrReader extends FormatReader {
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
-      Hashtable globalMetadata = r.getGlobalMetadata();
-      for (Object key : globalMetadata.keySet()) {
-        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = r.getGlobalMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
 
       r.close();
@@ -362,8 +362,8 @@ public class ScanrReader extends FormatReader {
 
     XMLTools.parseXML(xml, new ScanrHandler());
 
-    Vector<String> uniqueRows = new Vector<String>();
-    Vector<String> uniqueColumns = new Vector<String>();
+    final List<String> uniqueRows = new ArrayList<String>();
+    final List<String> uniqueColumns = new ArrayList<String>();
 
     if (wellRows == 0 || wellColumns == 0) {
       for (String well : wellLabels.keySet()) {
@@ -461,8 +461,8 @@ public class ScanrReader extends FormatReader {
         char row1 = s1.charAt(0);
         char row2 = s2.charAt(0);
 
-        Integer col1 = new Integer(s1.substring(1));
-        Integer col2 = new Integer(s2.substring(1));
+        final Integer col1 = new Integer(s1.substring(1));
+        final Integer col2 = new Integer(s2.substring(1));
 
         if (row1 < row2) {
           return -1;
@@ -816,7 +816,7 @@ public class ScanrReader extends FormatReader {
           else if (key.equals("well selection table + cDNA")) {
             if (Character.isDigit(v.charAt(0))) {
               wellIndex = v;
-              wellNumbers.put(new Integer(wellCount), new Integer(v));
+              wellNumbers.put(wellCount, new Integer(v));
               wellCount++;
             }
             else {

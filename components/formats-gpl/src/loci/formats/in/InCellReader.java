@@ -27,8 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -79,8 +81,8 @@ public class InCellReader extends FormatReader {
 
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
-  private Vector<Double> emWaves, exWaves;
-  private Vector<String> channelNames;
+  private List<Double> emWaves, exWaves;
+  private List<String> channelNames;
   private int totalImages;
   private int imageWidth, imageHeight;
   private String creationDate;
@@ -88,16 +90,16 @@ public class InCellReader extends FormatReader {
   private int fieldCount;
 
   private int wellRows, wellCols;
-  private Hashtable<Integer, int[]> wellCoordinates;
-  private Vector<Length> posX, posY;
+  private Map<Integer, int[]> wellCoordinates;
+  private List<Length> posX, posY;
 
   private boolean[][] exclude;
 
-  private Vector<Integer> channelsPerTimepoint;
+  private List<Integer> channelsPerTimepoint;
   private boolean oneTimepointPerSeries;
   private int totalChannels;
 
-  private Vector<String> metadataFiles;
+  private List<String> metadataFiles;
 
   private Binning bin;
   private Length x, y;
@@ -214,7 +216,7 @@ public class InCellReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     files.addAll(metadataFiles);
     if (!noPixels && imageFiles != null) {
@@ -344,17 +346,17 @@ public class InCellReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    channelNames = new Vector<String>();
-    emWaves = new Vector<Double>();
-    exWaves = new Vector<Double>();
-    channelsPerTimepoint = new Vector<Integer>();
-    metadataFiles = new Vector<String>();
+    channelNames = new ArrayList<String>();
+    emWaves = new ArrayList<Double>();
+    exWaves = new ArrayList<Double>();
+    channelsPerTimepoint = new ArrayList<Integer>();
+    metadataFiles = new ArrayList<String>();
 
     // parse metadata from the .xdce or .xml file
 
-    wellCoordinates = new Hashtable<Integer, int[]>();
-    posX = new Vector<Length>();
-    posY = new Vector<Length>();
+    wellCoordinates = new HashMap<Integer, int[]>();
+    posX = new ArrayList<Length>();
+    posY = new ArrayList<Length>();
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -720,17 +722,17 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("TimePoint")) {
-        channelsPerTimepoint.add(new Integer(nChannels));
+        channelsPerTimepoint.add(nChannels);
         nChannels = 0;
       }
       else if (qName.equals("Times")) {
         if (channelsPerTimepoint.size() == 0) {
-          channelsPerTimepoint.add(new Integer(getSizeC()));
+          channelsPerTimepoint.add(getSizeC());
         }
         for (int i=0; i<channelsPerTimepoint.size(); i++) {
           int c = channelsPerTimepoint.get(i).intValue();
           if (c == 0) {
-            channelsPerTimepoint.setElementAt(new Integer(getSizeC()), i);
+            channelsPerTimepoint.set(i, getSizeC());
           }
         }
       }
@@ -863,7 +865,7 @@ public class InCellReader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("Image")) {
-        wellCoordinates.put(new Integer(currentField),
+        wellCoordinates.put(currentField,
           new int[] {currentRow, currentCol});
         openImage = false;
 
@@ -904,7 +906,7 @@ public class InCellReader extends FormatReader {
         openImage = true;
         double time =
           Double.parseDouble(attributes.getValue("acquisition_time_ms"));
-        timestamp = new Double(time / 1000);
+        timestamp = time / 1000;
       }
       else if (qName.equals("Identifier")) {
         currentField = Integer.parseInt(attributes.getValue("field_index"));
@@ -1011,7 +1013,7 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Exposure") && openImage) {
         double exp = Double.parseDouble(attributes.getValue("time"));
-        exposure = new Double(exp / 1000);
+        exposure = exp / 1000;
       }
       else if (qName.equals("offset_point")) {
         String x = attributes.getValue("x");
