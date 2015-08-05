@@ -27,7 +27,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -102,7 +104,7 @@ public class NativeND2Reader extends FormatReader {
   private ArrayList<Length> posZ;
   private ArrayList<Double> exposureTime = new ArrayList<Double>();
 
-  private Hashtable<String, Integer> channelColors;
+  private Map<String, Integer> channelColors;
   private boolean split = false;
   private int lastChannel = 0;
   private int[] colors;
@@ -342,7 +344,7 @@ public class NativeND2Reader extends FormatReader {
     // better performance with the seek/skip pattern used here
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
 
-    channelColors = new Hashtable<String, Integer>();
+    channelColors = new HashMap<String, Integer>();
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000
@@ -493,7 +495,7 @@ public class NativeND2Reader extends FormatReader {
             extraZDataCount = 0;
             useLastText = true;
           }
-          imageOffsets.add(new Long(fp));
+          imageOffsets.add(fp);
           imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
           while (b != '!') {
@@ -705,7 +707,7 @@ public class NativeND2Reader extends FormatReader {
           long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
           long intOffset = fp + 4 * (nInts - imageOffsets.size());
           if (blockType.startsWith("CustomData|A")) {
-            customDataOffsets.add(new Long(fp));
+            customDataOffsets.add(fp);
             customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
@@ -770,7 +772,7 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadataList();
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      final Map<String, Object> globalMetadata = handler.getMetadata();
       nXFields = handler.getXFields();
       if (nXFields > 6) {
         nXFields = 0;
@@ -1355,7 +1357,7 @@ public class NativeND2Reader extends FormatReader {
             for (int plane=0; plane<count; plane++) {
               // timestamps are stored in ms; we want them in seconds
               double time = in.readDouble() / 1000;
-              tsT.add(new Double(time));
+              tsT.add(time);
               addSeriesMetaList("timestamp", time);
             }
           }
@@ -1397,7 +1399,7 @@ public class NativeND2Reader extends FormatReader {
       length -= 8;
 
       if (box == 0x6a703263) {
-        vs.add(new Long(pos));
+        vs.add(pos);
       }
       else if (box == 0x6a703268) {
         in.skipBytes(4);
@@ -1524,9 +1526,9 @@ public class NativeND2Reader extends FormatReader {
       ts = handler.getTimepoints();
       numSeries = handler.getSeriesCount();
       core = handler.getCoreMetadataList();
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
 
@@ -2129,9 +2131,9 @@ public class NativeND2Reader extends FormatReader {
         backupHandler = handler;
       }
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
     catch (IOException e) {

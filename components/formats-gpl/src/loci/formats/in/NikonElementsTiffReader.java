@@ -28,8 +28,8 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map;
 
-import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
@@ -115,9 +115,9 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     try {
       XMLTools.parseXML(xml, handler);
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
     catch (IOException e) { }
