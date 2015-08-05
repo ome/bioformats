@@ -35,8 +35,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
@@ -218,9 +216,9 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      Length sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
-      Length sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
-      Length sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
+      Length sizeX = FormatTools.getPhysicalSizeX((double) dx);
+      Length sizeY = FormatTools.getPhysicalSizeY((double) dy);
+      Length sizeZ = FormatTools.getPhysicalSizeZ((double) dz);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -245,9 +243,9 @@ public class ImarisReader extends FormatReader {
 
       for (int i=0; i<getSizeC(); i++) {
         if (gains[i] > 0) {
-          store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
+          store.setDetectorSettingsGain((double) gains[i], 0, i);
         }
-        store.setDetectorSettingsOffset(new Double(offsets[i]), i, 0);
+        store.setDetectorSettingsOffset((double) offsets[i], i, 0);
 
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, i);

@@ -30,9 +30,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import ome.xml.model.primitives.Timestamp;
@@ -79,14 +82,14 @@ public class TillVisionReader extends FormatReader {
 
   private String[] pixelsFiles;
   private transient RandomAccessInputStream pixelsStream;
-  private Hashtable<Integer, Double> exposureTimes;
+  private Map<Integer, Double> exposureTimes;
   private boolean embeddedImages;
   private long[] embeddedOffset;
   private String[] infFiles;
 
-  private Vector<String> imageNames = new Vector<String>();
-  private Vector<String> types = new Vector<String>();
-  private Vector<String> dates = new Vector<String>();
+  private final List<String> imageNames = new ArrayList<String>();
+  private final List<String> types = new ArrayList<String>();
+  private final List<String> dates = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -170,7 +173,7 @@ public class TillVisionReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     if (!noPixels) {
       if (pixelsFiles[getCoreIndex()] != null) {
@@ -224,7 +227,7 @@ public class TillVisionReader extends FormatReader {
 
     super.initFile(id);
 
-    exposureTimes = new Hashtable<Integer, Double>();
+    exposureTimes = new HashMap<Integer, Double>();
 
     POIService poi = null;
     try {
@@ -240,7 +243,7 @@ public class TillVisionReader extends FormatReader {
 
     int nImages = 0;
 
-    Hashtable tmpSeriesMetadata = new Hashtable();
+    final Hashtable<String, Object> tmpSeriesMetadata = new Hashtable<String, Object>();
 
     for (String name : documents) {
       LOGGER.debug("Reading {}", name);
@@ -383,7 +386,7 @@ public class TillVisionReader extends FormatReader {
               }
               else if (key.equals("Exposure time [ms]")) {
                 double exp = Double.parseDouble(value) / 1000;
-                exposureTimes.put(new Integer(nImages), new Double(exp));
+                exposureTimes.put(nImages, exp);
               }
               else if (key.equals("Image type")) {
                 types.add(value);
@@ -529,7 +532,7 @@ public class TillVisionReader extends FormatReader {
       ms.littleEndian = true;
       ms.dimensionOrder = "XYCZT";
 
-      ms.seriesMetadata = new Hashtable();
+      ms.seriesMetadata = new Hashtable<String, Object>();
       for (Object key : metadataKeys) {
         String keyName = key.toString();
         if (keyName.startsWith("Series " + i + " ")) {
@@ -539,7 +542,6 @@ public class TillVisionReader extends FormatReader {
       }
     }
     setSeries(0);
-    tmpSeriesMetadata = null;
     populateMetadataStore();
 
     poi.close();
@@ -637,7 +639,7 @@ public class TillVisionReader extends FormatReader {
   }
 
   private Long[] findImages(RandomAccessInputStream s) throws IOException {
-    Vector<Long> offsets = new Vector<Long>();
+    final List<Long> offsets = new ArrayList<Long>();
 
     byte[] buf = new byte[8192];
     int overlap = 128;
