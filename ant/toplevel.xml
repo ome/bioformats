@@ -1038,7 +1038,7 @@ Type "ant -p" for a list of targets.
       </filterset>
     </copy>
 
-    <tar destfile="${artifact.dir}/bioformats-${release.version}.tar.gz"
+    <tar destfile="${artifact.dir}/bioformats-octave-${release.version}.tar.gz"
          compression="gzip">
       <tarfileset dir="${root.dir}/components/formats-gpl/octave"
                   prefix="bioformats/" excludes="DESCRIPTION.in"/>
