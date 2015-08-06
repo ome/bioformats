@@ -626,11 +626,11 @@ public class MicromanagerReader extends FormatReader {
 
           if (key.equals("Exposure-ms")) {
             double t = Double.parseDouble(value);
-            p.exposureTime = new Time(new Double(t), UNITS.MS);
+            p.exposureTime = new Time(Double.valueOf(t), UNITS.MS);
           }
           else if (key.equals("ElapsedTime-ms")) {
             double t = Double.parseDouble(value);
-            stamps.add(new Double(t));
+            stamps.add(Double.valueOf(t));
           }
           else if (key.equals("Core-Camera")) p.cameraRef = value;
           else if (key.equals(p.cameraRef + "-Binning")) {
