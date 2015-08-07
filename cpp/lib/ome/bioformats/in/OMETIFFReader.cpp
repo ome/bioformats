@@ -127,7 +127,7 @@ namespace ome
               else
                 throw tiff::Exception("No TIFF IFDs found");
             }
-          catch (const tiff::Exception& /* e */)
+          catch (const tiff::Exception&)
             {
               throw FormatException("No TIFF ImageDescription found");
             }
@@ -294,7 +294,7 @@ namespace ome
               }
             return meta->getImageCount() > 0;
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
             return false;
           }
@@ -368,7 +368,7 @@ namespace ome
             if (!isSingleFile(id))
               group = MUST_GROUP;
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
           }
 
@@ -430,7 +430,7 @@ namespace ome
             if (!metadataFile.empty() && boost::filesystem::exists(metadataFile))
               meta = createOMEXMLMetadata(metadataFile);
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
             /// @todo Log.
             metadataFile.clear();
@@ -441,7 +441,7 @@ namespace ome
           {
             this->hasSPW = meta->getPlateCount() > 0U;
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
           }
 
@@ -464,7 +464,7 @@ namespace ome
           {
             currentUUID = meta->getUUID();
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
             // null UUID.
           }
@@ -506,7 +506,7 @@ namespace ome
                       {
                         samplesPerPixel = static_cast<dimension_size_type>(meta->getChannelSamplesPerPixel(series, 0));
                       }
-                    catch (const std::exception& /* e */)
+                    catch (const std::exception&)
                       {
                       }
                     coreMeta->sizeC.push_back(samplesPerPixel);
@@ -585,7 +585,7 @@ namespace ome
                   {
                     filename = path(meta->getUUIDFileName(series, td));
                   }
-                catch (const std::exception& /* e */)
+                catch (const std::exception&)
                   {
                     BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
                       << "Ignoring null UUID object when retrieving filename";
@@ -594,7 +594,7 @@ namespace ome
                   {
                     uuid = meta->getUUIDValue(series, td);
                   }
-                catch (const std::exception& /* e */)
+                catch (const std::exception&)
                   {
                     BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
                       << "Ignoring null UUID object when retrieving value";
@@ -980,7 +980,7 @@ namespace ome
                   {
                     uuid = meta.getUUIDValue(series, td);
                   }
-                catch (const std::exception& /* e */)
+                catch (const std::exception&)
                   {
                   }
                 if (uuid.empty())
@@ -996,7 +996,7 @@ namespace ome
                       {
                         uuidFilename = meta.getUUIDFileName(series, td);
                       }
-                    catch (const std::exception& /* e */)
+                    catch (const std::exception&)
                       {
                       }
                     if (fs::exists(uuidFilename))
@@ -1051,7 +1051,7 @@ namespace ome
               {
                 meta.getImageAcquisitionDate(i);
               }
-            catch (const std::exception& /* e */)
+            catch (const std::exception&)
               {
                 // null timestamp.
               }
@@ -1086,7 +1086,7 @@ namespace ome
               {
                 firstC = meta.getTiffDataFirstC(series, td);
               }
-            catch (const std::exception& /* e */)
+            catch (const std::exception&)
               {
               }
             if (!cIndexStart)
@@ -1099,7 +1099,7 @@ namespace ome
               {
                 firstZ = meta.getTiffDataFirstC(series, td);
               }
-            catch (const std::exception& /* e */)
+            catch (const std::exception&)
               {
               }
             if (!zIndexStart)
@@ -1112,7 +1112,7 @@ namespace ome
               {
                 firstT = meta.getTiffDataFirstT(series, td);
               }
-            catch (const std::exception& /* e */)
+            catch (const std::exception&)
               {
               }
             if (!tIndexStart)
@@ -1138,7 +1138,7 @@ namespace ome
           {
             tdIFD = meta.getTiffDataIFD(series, tiffData);
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
           }
 
@@ -1146,7 +1146,7 @@ namespace ome
           {
             numPlanes = meta.getTiffDataPlaneCount(series, tiffData);
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
             if (tdIFD)
               numPlanes = 1;
@@ -1165,7 +1165,7 @@ namespace ome
           {
             firstC = meta.getTiffDataFirstC(series, tiffData);
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
           }
 
@@ -1173,7 +1173,7 @@ namespace ome
           {
             firstT = meta.getTiffDataFirstT(series, tiffData);
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
           }
 
@@ -1181,7 +1181,7 @@ namespace ome
           {
             firstZ = meta.getTiffDataFirstZ(series, tiffData);
           }
-        catch (const std::exception& /* e */)
+        catch (const std::exception&)
           {
           }
 
@@ -1201,7 +1201,7 @@ namespace ome
               if (meta.getTiffDataCount(series) > 0)
                 uuidFileName = meta.getUUIDFileName(series, 0);
             }
-          catch (const std::exception& /* e */)
+          catch (const std::exception&)
             {
             }
           if (meta.getChannelCount(series) > 0)
@@ -1216,7 +1216,7 @@ namespace ome
                       coreMeta)
                     coreMeta->dimensionOrder = ome::xml::model::enums::DimensionOrder("XYZCT");
                 }
-              catch (const std::exception& /* e */)
+              catch (const std::exception&)
                 {
                 }
             }

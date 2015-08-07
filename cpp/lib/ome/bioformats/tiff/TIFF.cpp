@@ -145,7 +145,7 @@ namespace ome
             {
               close();
             }
-          catch (const Exception& /* e */)
+          catch (const Exception&)
             {
               /// @todo Log the error elsewhere.
             }

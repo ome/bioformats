@@ -137,7 +137,7 @@ namespace ome
           ome::common::xml::Platform xmlplat;
           ome::common::xml::dom::createDocument(s);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
           valid = false;
         }
