@@ -52,6 +52,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.plugins.in.ImporterOptions;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 import ome.xml.model.Ellipse;
@@ -397,7 +398,18 @@ public class ROIHandler {
             if (sc != null) {
               roi.setStrokeColor(sc);
             }
-            manager.add(images[imageNum], roi, nextRoi++);
+            
+            if (roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
+                manager.add(images[imageNum], roi, nextRoi++);
+            } else if (roisMode.equals(ImporterOptions.ROIS_MODE_OVERLAY)) {
+                Overlay overlay = images[imageNum].getOverlay();                        
+                if (overlay == null) {
+                    overlay = new Overlay(roi);
+                    images[imageNum].setOverlay(overlay);
+                } else {
+                    overlay.add(roi);
+                }
+            }
           }
         }
       }
