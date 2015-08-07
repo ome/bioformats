@@ -109,7 +109,7 @@ public class ROIHandler {
     int imageCount = images.length;
     for (int imageNum=0; imageNum<imageCount; imageNum++) {
       int roiCount = root.sizeOfROIList();
-      if (roiCount > 0 && manager == null) {
+      if (roiCount > 0 && manager == null && roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
         manager = new RoiManager();
       }
 
