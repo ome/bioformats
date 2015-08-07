@@ -82,6 +82,7 @@ public class MainDialog extends ImporterDialog
   protected Checkbox showMetadataBox;
   protected Checkbox showOMEXMLBox;
   protected Checkbox showROIsBox;
+  protected Choice roisModeChoice;
   protected Checkbox specifyRangesBox;
   protected Checkbox splitZBox;
   protected Checkbox splitTBox;
@@ -124,6 +125,7 @@ public class MainDialog extends ImporterDialog
     addCheckbox(gd, ImporterOptions.KEY_SHOW_METADATA);
     addCheckbox(gd, ImporterOptions.KEY_SHOW_OME_XML);
     addCheckbox(gd, ImporterOptions.KEY_SHOW_ROIS);
+    addChoice(gd, ImporterOptions.KEY_ROIS_MODE);
     addCheckbox(gd, ImporterOptions.KEY_SPECIFY_RANGES);
     addCheckbox(gd, ImporterOptions.KEY_SPLIT_Z);
     addCheckbox(gd, ImporterOptions.KEY_SPLIT_T);
@@ -151,6 +153,7 @@ public class MainDialog extends ImporterDialog
     options.setShowMetadata(gd.getNextBoolean());
     options.setShowOMEXML(gd.getNextBoolean());
     options.setShowROIs(gd.getNextBoolean());
+    options.setROIsMode(options.getROIsModes()[gd.getNextChoiceIndex()]);
     options.setSpecifyRanges(gd.getNextBoolean());
     options.setSplitFocalPlanes(gd.getNextBoolean());
     options.setSplitTimepoints(gd.getNextBoolean());
@@ -293,6 +296,7 @@ public class MainDialog extends ImporterDialog
     infoTable.put(showMetadataBox, options.getShowMetadataInfo());
     infoTable.put(showOMEXMLBox, options.getShowOMEXMLInfo());
     infoTable.put(showROIsBox, options.getShowROIsInfo());
+    infoTable.put(roisModeChoice, options.getROIsModeInfo());
     infoTable.put(specifyRangesBox, options.getSpecifyRangesInfo());
     infoTable.put(splitZBox, options.getSplitFocalPlanesInfo());
     infoTable.put(splitTBox, options.getSplitTimepointsInfo());
@@ -372,6 +376,8 @@ public class MainDialog extends ImporterDialog
     builder.add(showOMEXMLBox, xyw(cc, 5, row, 1));
     row += 2;
     builder.add(showROIsBox, xyw(cc, 5, row, 1));
+    row += 2;
+    builder.add(roisModeChoice, xyw(cc, 5, row, 1));
     row += 2;
     builder.addSeparator("Memory management", cc.xy(5, row));
     row += 2;

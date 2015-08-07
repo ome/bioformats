@@ -192,6 +192,17 @@ info = <b>Display ROIs</b> - \
   Adds any ROIs in the file to ImageJ's ROI manager.
 default = false
 
+[roiMode]
+label = ROIs_Import Mode
+info = <b>ROI Import Mode</b> - \
+  ROIs can be imported to the ROI Manager or an Overlay.
+type = string
+save = false
+default = ROI Manager
+values = \
+  ROI Manager, \
+  Overlay
+
 [specifyRanges]
 type = boolean
 label = Specify_range for each series
