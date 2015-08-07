@@ -528,7 +528,7 @@ namespace ome
                 {
                   enumeration = ${klass.langType}(value, false);
                 }
-              catch (const EnumerationException& e)
+              catch (const EnumerationException&)
                 {
                   is.setstate(std::ios::failbit);
                 }
