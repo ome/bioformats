@@ -355,15 +355,21 @@ public class ROIHandler {
 
     }
 
-
+    /**
+     * Returns the roi if any stored in the ROI manager.
+     * @return
+     */
     public static Roi[] readFromRoiManager(){
 
         RoiManager manager = RoiManager.getInstance();
         if (manager == null) return null;
-        Roi[] rois = manager.getRoisAsArray();
-        return rois;
+        return manager.getRoisAsArray();
     }
 
+    /**
+     * Returns rois if any from the overlay.
+     * @return See above
+     */
     public static Roi[] readFromOverlays(){
 
         ImagePlus image = IJ.getImage();
@@ -377,7 +383,7 @@ public class ROIHandler {
     public static void saveROIs(MetadataStore store) {
 
         Roi[] rois = readFromOverlays();
-        if (rois == null) {
+        if (rois == null || rois.length == 0) {
             rois = readFromRoiManager();
         }
 
