@@ -8,7 +8,7 @@
         common::xml::dom::ParseParameters params;
         params.validationScheme = xercesc::XercesDOMParser::Val_Never;
         common::xml::dom::Document Value_document(ome::common::xml::dom::createDocument(wrappedValue, params));
-        common::xml::dom::Element value_element = document.createElementNS(NAMESPACE, "Value");
+        common::xml::dom::Element value_element = document.createElementNS(getXMLNamespace(), "Value");
         common::xml::dom::NodeList Value_subNodes = Value_document.getDocumentElement().getChildNodes();
 
         for (common::xml::dom::NodeList::iterator elem = Value_subNodes.begin();
