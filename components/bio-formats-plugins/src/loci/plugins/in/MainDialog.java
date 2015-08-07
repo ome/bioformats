@@ -265,6 +265,7 @@ public class MainDialog extends ImporterDialog
       showMetadataBox   = boxes.get(boxIndex++);
       showOMEXMLBox     = boxes.get(boxIndex++);
       showROIsBox       = boxes.get(boxIndex++);
+      roisModeChoice    = choices.get(choiceIndex++);
       specifyRangesBox  = boxes.get(boxIndex++);
       splitZBox         = boxes.get(boxIndex++);
       splitTBox         = boxes.get(boxIndex++);
