@@ -227,6 +227,7 @@ public class MainDialog extends ImporterDialog
     List<Choice> choices = null;
     List<Label> labels = null;
     Label colorModeLabel = null;
+    Label roisModeLabel = null;
     Label stackFormatLabel = null;
     Label stackOrderLabel = null;
     Component[] c = gd.getComponents();
@@ -266,6 +267,7 @@ public class MainDialog extends ImporterDialog
       showOMEXMLBox     = boxes.get(boxIndex++);
       showROIsBox       = boxes.get(boxIndex++);
       roisModeChoice    = choices.get(choiceIndex++);
+      roisModeLabel     = labels.get(labelIndex++);
       specifyRangesBox  = boxes.get(boxIndex++);
       splitZBox         = boxes.get(boxIndex++);
       splitTBox         = boxes.get(boxIndex++);
@@ -298,6 +300,7 @@ public class MainDialog extends ImporterDialog
     infoTable.put(showOMEXMLBox, options.getShowOMEXMLInfo());
     infoTable.put(showROIsBox, options.getShowROIsInfo());
     infoTable.put(roisModeChoice, options.getROIsModeInfo());
+    infoTable.put(roisModeLabel, options.getROIsModeInfo());
     infoTable.put(specifyRangesBox, options.getSpecifyRangesInfo());
     infoTable.put(splitZBox, options.getSplitFocalPlanesInfo());
     infoTable.put(splitTBox, options.getSplitTimepointsInfo());
@@ -316,13 +319,13 @@ public class MainDialog extends ImporterDialog
       // first column
       "pref, 3dlu, pref:grow, " +
       // second column
-      "10dlu, pref, " +
+      "10dlu, pref, 3dlu, pref:grow, " +
       // third column
       "10dlu, fill:150dlu";
 
     String rows =
       // Stack viewing        | Metadata viewing
-      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Dataset organization | Memory management
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       "3dlu, pref, " +
@@ -345,7 +348,7 @@ public class MainDialog extends ImporterDialog
     row += 2;
     builder.add(stackOrderLabel, cc.xy(1, row));
     builder.add(stackOrderChoice, cc.xy(3, row));
-    row += 4;
+    row += 6;
     builder.addSeparator("Dataset organization", cc.xyw(1, row, 3));
     row += 2;
     builder.add(groupFilesBox, xyw(cc, 1, row, 3));
@@ -370,43 +373,44 @@ public class MainDialog extends ImporterDialog
 
     // populate 2nd column
     row = 1;
-    builder.addSeparator("Metadata viewing", cc.xy(5, row));
+    builder.addSeparator("Metadata viewing", cc.xyw(5, row, 3));
     row += 2;
-    builder.add(showMetadataBox, xyw(cc, 5, row, 1));
+    builder.add(showMetadataBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(showOMEXMLBox, xyw(cc, 5, row, 1));
+    builder.add(showOMEXMLBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(showROIsBox, xyw(cc, 5, row, 1));
+    builder.add(showROIsBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(roisModeChoice, xyw(cc, 5, row, 1));
+    builder.add(roisModeLabel, cc.xy(5, row));
+    builder.add(roisModeChoice, cc.xy(7, row));
     row += 2;
-    builder.addSeparator("Memory management", cc.xy(5, row));
+    builder.addSeparator("Memory management", cc.xyw(5, row, 3));
     row += 2;
-    builder.add(virtualBox, xyw(cc, 5, row, 1));
+    builder.add(virtualBox, xyw(cc, 5, row, 3));
     row += 2;
-    //builder.add(recordBox, xyw(cc, 5, row, 1));
+    //builder.add(recordBox, xyw(cc, 5, row, 3));
     //row += 2;
-    builder.add(specifyRangesBox, xyw(cc, 5, row, 1));
+    builder.add(specifyRangesBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(cropBox, xyw(cc, 5, row, 1));
+    builder.add(cropBox, xyw(cc, 5, row, 3));
     row += 4;
-    builder.addSeparator("Split into separate windows", cc.xy(5, row));
+    builder.addSeparator("Split into separate windows", cc.xyw(5, row, 3));
     row += 2;
-    builder.add(splitCBox, xyw(cc, 5, row, 1));
+    builder.add(splitCBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(splitZBox, xyw(cc, 5, row, 1));
+    builder.add(splitZBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(splitTBox, xyw(cc, 5, row, 1));
+    builder.add(splitTBox, xyw(cc, 5, row, 3));
     //row += 4;
 
     // information section
-    builder.addSeparator("Information", cc.xy(7, 1));
+    builder.addSeparator("Information", cc.xy(9, 1));
     //row += 2;
     infoPane = new JEditorPane();
     infoPane.setContentType("text/html");
     infoPane.setEditable(false);
     infoPane.setText("<html>" + INFO_DEFAULT);
-    builder.add(new JScrollPane(infoPane), cc.xywh(7, 3, 1, row));
+    builder.add(new JScrollPane(infoPane), cc.xywh(9, 3, 1, row));
     //row += 2;
 
     gd.removeAll();

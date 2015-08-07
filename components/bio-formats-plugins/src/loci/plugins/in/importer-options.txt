@@ -197,7 +197,6 @@ label = ROIs_Import Mode
 info = <b>ROI Import Mode</b> - \
   ROIs can be imported to the ROI Manager or an Overlay.
 type = string
-save = false
 default = ROI Manager
 values = \
   ROI Manager, \
