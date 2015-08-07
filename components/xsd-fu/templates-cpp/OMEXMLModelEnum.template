@@ -228,6 +228,7 @@ namespace ome
           const string_map_type& string_map(strings());
           const string_map_type& lowercase_string_map(lowercase_strings());
           string_map_type::const_iterator i = string_map.find(name);
+          string_map_type::const_iterator li = lowercase_string_map.end();
           if (strict == false && i == string_map.end())
             {
               // Trim leading and trailing whitespace and lowercase.
@@ -236,9 +237,9 @@ namespace ome
               std::string lname(name);
               trim(lname);
               std::transform(lname.begin(), lname.end(), lname.begin(), std::ptr_fun(::tolower));
-              i = lowercase_string_map.find(lname);
+              li = lowercase_string_map.find(lname);
 {% if 'Other' in klass.possibleValues %}\
-              if (i == lowercase_string_map.end())
+              if (li == lowercase_string_map.end())
                 {
                   ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “Other”");
@@ -250,18 +251,25 @@ namespace ome
                 {
                   ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “%3%”");
-                  fmt % "${klass.langType}" % name % ${klass.langType}(i->second);
+                  fmt % "${klass.langType}" % name % ${klass.langType}(li->second);
                   BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
                 }
 {% end %}\
             }
-          if (i == string_map.end() || i == lowercase_string_map.end())
+          if (i != string_map.end())
+	    {
+	      this->value = i->second;
+	    }
+	  else if (li != lowercase_string_map.end())
+	    {
+	      this->value = li->second;
+	    }
+	  else
             {
               format fmt("‘%1%’ not a supported value of %2%");
               fmt % name % "${klass.langType}";
               throw EnumerationException(fmt.str());
             }
-          this->value = i->second;
 
           const value_map_type& value_map(values());
           value_map_type::const_iterator i2 = value_map.find(value);
