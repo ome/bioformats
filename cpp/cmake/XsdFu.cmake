@@ -92,6 +92,7 @@ function(xsd_fu_single filetype command outvar)
   if(WIN32)
     string(REPLACE "\\" "/" genfiles "${genfiles}")
   endif(WIN32)
+  list(REMOVE_DUPLICATES genfiles)
 
   message(STATUS "Determining xsd-fu dependencies for target ${command} (${filetype}s)")
   execute_process(COMMAND ${XSD_FU} ${command} --dry-run --file-type=${filetype} --print-depends ${XSD_FU_ARGS}
@@ -105,6 +106,7 @@ function(xsd_fu_single filetype command outvar)
   if(WIN32)
     string(REPLACE "\\" "/" gendeps "${gendeps}")
   endif(WIN32)
+  list(REMOVE_DUPLICATES gendeps)
 
   add_custom_command(OUTPUT ${genfiles}
                      COMMAND ${XSD_FU} ${command} --quiet --file-type=${filetype} ${XSD_FU_ARGS}
