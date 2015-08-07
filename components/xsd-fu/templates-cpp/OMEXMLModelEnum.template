@@ -75,42 +75,6 @@ namespace
   typedef std::pair<std::string,${klass.langTypeNS}::enum_value> smap;
   typedef std::pair<${klass.langTypeNS}::enum_value,std::string> vmap;
 
-  smap init_string_values[] =
-    {
-{% for value in klass.possibleValues %}\
-{% if value == klass.possibleValues[-1] %}\
-      smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
-{% end %}\
-{% if value != klass.possibleValues[-1] %}\
-      smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
-{% end %}\
-{% end %}\
-    };
-
-  smap init_lcase_string_values[] =
-    {
-{% for value in klass.possibleValues %}\
-{% if value == klass.possibleValues[-1] %}\
-      smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()})
-{% end %}\
-{% if value != klass.possibleValues[-1] %}\
-      smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
-{% end %}\
-{% end %}\
-    };
-
-  vmap init_value_values[] =
-    {
-{% for value in klass.possibleValues %}\
-{% if value == klass.possibleValues[-1] %}\
-      vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}")
-{% end %}\
-{% if value != klass.possibleValues[-1] %}\
-      vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}"),
-{% end %}\
-{% end %}\
-    };
-
 }
 
 {% end %}\
@@ -319,24 +283,63 @@ namespace ome
         const ${klass.langType}::string_map_type&
         ${klass.langType}::strings()
         {
+	  const smap init_string_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% end %}\
+	    };
+
           static const string_map_type string_map(init_string_values,
                                                   init_string_values + (sizeof(init_string_values) / sizeof(init_string_values[0])));
+
           return string_map;
         }
 
         const ${klass.langType}::value_map_type&
         ${klass.langType}::values()
         {
+	  vmap init_value_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}")
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}"),
+{% end %}\
+{% end %}\
+	    };
+
           static const value_map_type value_map(init_value_values,
                                                 init_value_values + (sizeof(init_value_values) / sizeof(init_value_values[0])));
+
           return value_map;
         }
 
         const ${klass.langType}::string_map_type&
         ${klass.langType}::lowercase_strings()
         {
+	  smap init_lcase_string_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()})
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% end %}\
+	    };
+
           static const string_map_type lcase_string_map(init_lcase_string_values,
                                                         init_lcase_string_values + (sizeof(init_lcase_string_values) / sizeof(init_lcase_string_values[0])));
+
           return lcase_string_map;
         }
 {% end source%}\
