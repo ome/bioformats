@@ -130,7 +130,7 @@ namespace ome
           Sentry sentry;
 
 #ifdef _MSC_VER
-          tiff = TIFFOpen(filename.wstring().c_str(), mode.c_str());
+          tiff = TIFFOpenW(filename.wstring().c_str(), mode.c_str());
 #else
           tiff = TIFFOpen(filename.string().c_str(), mode.c_str());
 #endif
