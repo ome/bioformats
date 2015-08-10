@@ -203,19 +203,29 @@ public class TestTools {
     Location configFile = new Location(configRoot, baseConfigName);
     if (configFile.exists()) {
       return configFile.getAbsolutePath();
-    } else
-    {
-      try {
-        String canonicalRoot = new Location(root).getCanonicalPath();
-        if (root != canonicalRoot) {
-          String configCanonicalRoot = config.relocateToConfig(canonicalRoot);
-          configFile = new Location(configCanonicalRoot, baseConfigName);
-          if (configFile.exists()) {
-            return configFile.getAbsolutePath();
-          }
-        }
-      } catch (IOException e) {};
+    } else {
+      return null;
     }
+  }
+
+  /**
+   * Retrieve an external symlinkedconfiguration file given a root directory 
+   * and a test configuration
+   */
+  public static String getExternalSymlinkConfigFile(String root,
+    final ConfigurationTree config)
+  {
+    // Look for a configuration file under the configuration directory
+    try {
+      String canonicalRoot = new Location(root).getCanonicalPath();
+      if (root != canonicalRoot) {
+        String configCanonicalRoot = config.relocateToConfig(canonicalRoot);
+        Location configFile = new Location(configCanonicalRoot, baseConfigName);
+        if (configFile.exists()) {
+          return configFile.getAbsolutePath();
+        }
+      }
+    } catch (IOException e) {};
     return null;
   }
 
@@ -234,6 +244,7 @@ public class TestTools {
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();
     Arrays.sort(subs);
+    boolean isSymlinkConfig = false;
 
     List<String> subsList = new ArrayList<String>();
 
@@ -242,6 +253,13 @@ public class TestTools {
       if (configFile != null) {
         LOGGER.debug("found config file: {}", configFile);
         subsList.add(configFile);
+      } else {
+        configFile = getExternalSymlinkConfigFile(root, config);
+        if (configFile != null) {
+          LOGGER.debug("found symlinked config file: {}", configFile);
+          subsList.add(configFile);
+          isSymlinkConfig = true;
+        }
       }
     }
 
@@ -257,9 +275,13 @@ public class TestTools {
           subsList.add(0, file.getAbsolutePath());
         }
       } else {
-        try {
-          subsList.add(file.getCanonicalPath());
-        } catch (IOException e) {
+        if (isSymlinkConfig) {
+          try {
+            subsList.add(file.getCanonicalPath());
+          } catch (IOException e) {
+            subsList.add(file.getAbsolutePath());
+          }
+        } else {
           subsList.add(file.getAbsolutePath());
         }
       }
