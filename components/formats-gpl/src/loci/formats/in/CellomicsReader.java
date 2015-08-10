@@ -373,21 +373,17 @@ public class CellomicsReader extends FormatReader {
       if (row < realRows && col < realCols) {
         wellIndex = row * realCols + col;
 
-        if (i==0){
-            wellIndexPrev = wellIndex;
-        }
-
-        if (wellIndexPrev != wellIndex){
+        if ((wellIndexPrev != wellIndex) || i==0){
+          if(i>0){
             wellCntr++;
-        }
-
-        if (wellIndexPrev != wellIndex){
+            fieldCntr = 0;
+          }else{
+            wellIndexPrev = wellIndex;
+          }
 
           store.setWellID(MetadataTools.createLSID("Well", 0, wellIndex), 0, wellCntr);
           store.setWellRow(new NonNegativeInteger(row), 0, wellCntr);
           store.setWellColumn(new NonNegativeInteger(col), 0, wellCntr);
-          fieldCntr = 0;
-
         }
 
         if (files.length == 1) {
@@ -395,19 +391,17 @@ public class CellomicsReader extends FormatReader {
         }
 
         if (fieldIndex == 0){
-            fieldCntr=0;
+          fieldCntr=0;
         }
-        System.out.println("wellIndex:" + wellIndex + "WellCntr:" + wellCntr + " fieldCntr:" + fieldCntr);
+
         String wellSampleID =
           MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
         store.setWellSampleID(wellSampleID, 0, wellCntr, fieldCntr);
         store.setWellSampleIndex(
-          new NonNegativeInteger(fieldIndex), 0, wellCntr, fieldCntr);
-
+          new NonNegativeInteger(i), 0, wellCntr, fieldCntr);
         store.setWellSampleImageRef(imageID, 0, wellCntr, fieldCntr);
 
         fieldCntr++;
-
       }
     }
 
