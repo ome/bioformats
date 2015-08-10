@@ -388,7 +388,6 @@ public class ROIHandler {
         }
 
         IJ.debugMode = true;
-        IJ.log("rois:"+rois);
         if (rois == null || rois.length == 0) return;
         List<String> discardList = new ArrayList<String>();
         String roiID = null;
