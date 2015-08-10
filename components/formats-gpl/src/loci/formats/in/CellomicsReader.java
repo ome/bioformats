@@ -338,22 +338,10 @@ public class CellomicsReader extends FormatReader {
       realCols = 24;
     }
 
-    for (int row=0; row<realRows; row++) {
-      for (int col=0; col<realCols; col++) {
-        int well = row * realCols + col;
-
-        if (files.length == 1) {
-          row = getWellRow(files[0]);
-          col = getWellColumn(files[0]);
-        }
-
-        store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
-        store.setWellRow(new NonNegativeInteger(row), 0, well);
-        store.setWellColumn(new NonNegativeInteger(col), 0, well);
-      }
-    }
-
-    int cntr = 0;
+    int fieldCntr = 0;
+    int wellCntr = 0;
+    int wellIndexPrev = 0;
+    int wellIndex = 0;
     for (int i=0; i<getSeriesCount(); i++) {
       String file = files[i * getSizeC()];
 
@@ -371,28 +359,54 @@ public class CellomicsReader extends FormatReader {
         col = 0;
       }
 
+      if (i>0 && files.length != 1){
+          String prevFile = files[(i-1) * getSizeC()];
+          int prevRow = getWellRow(prevFile);
+          int prevCol = getWellColumn(prevFile);
+          if (prevRow < realRows && prevCol < realCols){
+              wellIndexPrev = prevRow * realCols + prevCol;
+          }
+      }
+
       String imageID = MetadataTools.createLSID("Image", i);
       store.setImageID(imageID, i);
       if (row < realRows && col < realCols) {
+        wellIndex = row * realCols + col;
 
-        int wellIndex = row * realCols + col;
+        if (i==0){
+            wellIndexPrev = wellIndex;
+        }
+
+        if (wellIndexPrev != wellIndex){
+            wellCntr++;
+        }
+
+        if (wellIndexPrev != wellIndex){
+
+          store.setWellID(MetadataTools.createLSID("Well", 0, wellIndex), 0, wellCntr);
+          store.setWellRow(new NonNegativeInteger(row), 0, wellCntr);
+          store.setWellColumn(new NonNegativeInteger(col), 0, wellCntr);
+          fieldCntr = 0;
+
+        }
 
         if (files.length == 1) {
           fieldIndex = 0;
         }
 
         if (fieldIndex == 0){
-            cntr=0;
+            fieldCntr=0;
         }
-
+        System.out.println("wellIndex:" + wellIndex + "WellCntr:" + wellCntr + " fieldCntr:" + fieldCntr);
         String wellSampleID =
           MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
-        store.setWellSampleID(wellSampleID, 0, wellIndex, cntr);
+        store.setWellSampleID(wellSampleID, 0, wellCntr, fieldCntr);
         store.setWellSampleIndex(
-          new NonNegativeInteger(fieldIndex), 0, wellIndex, cntr);
+          new NonNegativeInteger(fieldIndex), 0, wellCntr, fieldCntr);
 
-        store.setWellSampleImageRef(imageID, 0, wellIndex, cntr);
-        cntr++;
+        store.setWellSampleImageRef(imageID, 0, wellCntr, fieldCntr);
+
+        fieldCntr++;
 
       }
     }
