@@ -637,7 +637,7 @@
 
   <issueManagement>
     <system>Trac</system>
-    <url>https://trac.openmicroscopy.org/ome/wiki/BioFormats</url>
+    <url>https://trac.openmicroscopy.org</url>
   </issueManagement>
 
   <ciManagement>
