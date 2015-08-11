@@ -132,7 +132,7 @@ set(OME_XML_SOURCES
     ${OME_XML_GENERATED_META_SOURCES}
     ${OME_XML_GENERATED_MODEL_SOURCES})
 
-add_library(ome-xml SHARED
+add_library(ome-xml
             ${OME_XML_SOURCES}
             ${OME_XML_HEADERS})
 target_link_libraries(ome-xml ome-compat ome-common)

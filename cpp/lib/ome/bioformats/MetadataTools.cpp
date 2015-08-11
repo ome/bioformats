@@ -488,7 +488,7 @@ namespace ome
           std::ostringstream nos;
           if (doImageName && !!cfile)
             {
-              nos << (*cfile).native();
+              nos << (*cfile).string();
               if (reader.getSeriesCount() > 1)
                 nos << " #" << (s + 1);
             }

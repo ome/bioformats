@@ -36,7 +36,8 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${Boost_INCLUDE_DIRS}
-                    ${TIFF_INCLUDE_DIR})
+                    ${TIFF_INCLUDE_DIR}
+                    ${XercesC_INCLUDE_DIRS})
 
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
@@ -153,7 +154,7 @@ set(BIOFORMATS_GENERATED_HEADERS)
 set(BIOFORMATS_HEADERS
     ${BIOFORMATS_STATIC_HEADERS})
 
-add_library(ome-bioformats SHARED
+add_library(ome-bioformats
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
 target_link_libraries(ome-bioformats ome-compat ome-common ome-xml

@@ -50,19 +50,124 @@ TEST(Variant, Create)
 TEST(Variant, SetInt)
 {
   var v1(int(32354));
-  ASSERT_EQ(boost::get<int>(v1), 32354);
+  ASSERT_EQ(32354, boost::get<int>(v1));
 
   var v2;
   v2 = int(32354);
-  ASSERT_EQ(boost::get<int>(v2), 32354);
+  ASSERT_EQ(32354, boost::get<int>(v2));
 }
 
 TEST(Variant, SetString)
 {
   var v1(std::string("test"));
-  ASSERT_EQ(boost::get<std::string>(v1), "test");
+  ASSERT_EQ(std::string("test"), boost::get<std::string>(v1));
 
   var v2;
   v2 = std::string("test");
-  ASSERT_EQ(boost::get<std::string>(v2), "test");
+  ASSERT_EQ(std::string("test"), boost::get<std::string>(v2));
+}
+
+class test_visitor : public boost::static_visitor<>
+{
+public:
+  template<typename T>
+  void
+  operator()(const T& value)
+  {
+    std::cout << value << std::endl;
+  }
+};
+
+TEST(Variant, ApplyStaticVisitor)
+{
+  test_visitor visitor;
+  var v;
+
+  v = 32;
+  boost::apply_visitor(visitor, v);
+
+  v = std::string("V");
+  boost::apply_visitor(visitor, v);
+}
+
+// Now test more complex MPL variant types.
+
+#include <string>
+
+typedef boost::mpl::vector<std::string,
+                           bool> non_numeric_types;
+typedef boost::make_variant_over<non_numeric_types>::type non_numeric_variant;
+
+TEST(Variant, MPLVectorNonNumeric)
+{
+  non_numeric_variant v1(std::string("String value"));
+  ASSERT_EQ(std::string("String value"), boost::get<std::string>(v1));
+  non_numeric_variant v2(false);
+  ASSERT_EQ(false, boost::get<bool>(v2));
+}
+
+#include <ome/compat/cstdint.h>
+
+typedef boost::mpl::vector<uint8_t,
+                           uint16_t,
+                           uint32_t,
+                           uint64_t,
+                           int8_t,
+                           int16_t,
+                           int32_t,
+                           int64_t> integer_types;
+typedef boost::make_variant_over<integer_types>::type integer_variant;
+
+TEST(Variant, MPLVectorInteger)
+{
+  integer_variant v1(uint64_t(238220U));
+  ASSERT_EQ(uint64_t(238220U), boost::get<uint64_t>(v1));
+  integer_variant v2(int16_t(432));
+  ASSERT_EQ(int16_t(432), boost::get<int16_t>(v2));
+}
+
+typedef boost::mpl::joint_view<non_numeric_types,
+                               integer_types>::type joint_types_view;
+
+typedef boost::mpl::vector<> empty_types;
+typedef boost::mpl::insert_range<empty_types, boost::mpl::end<empty_types>::type, joint_types_view>::type joint_types;
+typedef boost::make_variant_over<joint_types>::type joint_variant;
+
+TEST(Variant, MPLVectorJointView)
+{
+  joint_variant v1(std::string("String value"));
+  ASSERT_EQ(std::string("String value"), boost::get<std::string>(v1));
+  joint_variant v2(int16_t(432));
+  ASSERT_EQ(int16_t(432), boost::get<int16_t>(v2));
+}
+
+/// Convert T into a std::vector<T>.
+template<typename T>
+struct make_vector
+{
+  typedef std::vector<T> type;
+};
+
+typedef boost::mpl::transform_view<joint_types_view, make_vector<boost::mpl::_1> >::type list_types_view;
+typedef boost::mpl::insert_range<empty_types, boost::mpl::end<empty_types>::type, list_types_view>::type list_types;
+typedef boost::make_variant_over<list_types>::type list_variant;
+
+TEST(Variant, MPLVectorTransformList)
+{
+  std::vector<std::string> strings;
+  strings.push_back("s1");
+  strings.push_back("s2");
+  strings.push_back("s3");
+
+  list_variant v1(strings);
+  ASSERT_EQ(3, boost::get<std::vector< std::string> >(v1).size());
+
+  std::vector<uint8_t> ints;
+  ints.push_back(3);
+  ints.push_back(8);
+  ints.push_back(9);
+  ints.push_back(43);
+
+  list_variant v2(ints);
+  ASSERT_EQ(4, boost::get<std::vector<uint8_t> >(v2).size());
 }
