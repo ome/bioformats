@@ -38,7 +38,7 @@ import loci.formats.ImageReader;
  * Utility class for generating a table containing the dataset structure for
  * every supported format.
  * This class is used to generate this wiki page:
- * http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-DatasetStructureTable
+ * http://www.openmicroscopy.org/site/support/bio-formats5.1/formats/dataset-table.html
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
