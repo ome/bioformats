@@ -637,12 +637,12 @@
 
   <issueManagement>
     <system>Trac</system>
-    <url>http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats</url>
+    <url>https://trac.openmicroscopy.org/ome/wiki/BioFormats</url>
   </issueManagement>
 
   <ciManagement>
     <system>Jenkins</system>
-    <url>http://ci.openmicroscopy.org/</url>
+    <url>https://ci.openmicroscopy.org/</url>
   </ciManagement>
 
   <mailingLists>

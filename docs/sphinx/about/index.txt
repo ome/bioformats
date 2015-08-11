@@ -36,7 +36,7 @@ to the documentation.
 Other places where questions are commonly asked and/or bugs are reported
 include:
 
--  `OME Trac <http://trac.openmicroscopy.org.uk/ome>`_
+-  `OME Trac <https://trac.openmicroscopy.org/ome>`_
 -  `ome-devel mailing
    list <http://lists.openmicroscopy.org.uk/pipermail/ome-devel>`_
    (searchable using google with 'site:lists.openmicroscopy.org.uk')

@@ -433,7 +433,7 @@ Version history
 * Updated to 2011-06 OME-XML schema
 * Minor speed improvements in many formats
 * Switched version control system from SVN to Git
-* Moved all Trac tickets into the OME Trac: http://trac.openmicroscopy.org.uk
+* Moved all Trac tickets into the OME Trac: https://trac.openmicroscopy.org
 * Improvements to testing frameworks
 * Added Maven build system as an alternative to the existing Ant build system
 * Added pre-compiled C++ bindings to the download page
