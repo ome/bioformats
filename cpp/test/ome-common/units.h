@@ -52,6 +52,8 @@
 #include <boost/units/io.hpp>
 #include <boost/units/systems/si/io.hpp>
 
+#include <ome/compat/regex.h>
+
 #include <ome/common/units/types.h>
 #include <ome/common/filesystem.h>
 
@@ -156,7 +158,17 @@ TYPED_TEST_P(UnitConv, StreamOutput)
       // errors lead to unpredicable output)
       os << std::setprecision(4) << obs;
 
-      EXPECT_EQ(i->expected_output, os.str());
+      std::string obsstr(os.str());
+
+      // MSVC stream output uses a slightly different format than GCC
+      // and Clang; it outputs three digits for the exponent instead
+      // of two.  Drop the leading zero to make it compatible with the
+      // expected test output.
+      ome::compat::regex repl("e([+-]?)0([0-9][0-9])", ome::compat::regex::extended);
+
+      std::string obsstr_fixed(ome::compat::regex_replace(obsstr, repl, "e$1$2"));
+
+      EXPECT_EQ(i->expected_output, obsstr_fixed);
     }
 }
 
