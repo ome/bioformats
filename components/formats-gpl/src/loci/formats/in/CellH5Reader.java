@@ -47,12 +47,6 @@ import ome.xml.model.primitives.NonNegativeInteger;
 
 /**
  * Reader for CellH5 (HDF) files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a
- * href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/CellH5Reader.java">Trac</a>,
- * <a
- * href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/CellH5Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CellH5Reader extends FormatReader {
 
