@@ -218,7 +218,7 @@ public class TestTools {
     // Look for a configuration file under the configuration directory
     try {
       String canonicalRoot = new Location(root).getCanonicalPath();
-      if (root != canonicalRoot) {
+      if (!root.equals(canonicalRoot)) {
         String configCanonicalRoot = config.relocateToConfig(canonicalRoot);
         Location configFile = new Location(configCanonicalRoot, baseConfigName);
         if (configFile.exists()) {
