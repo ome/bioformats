@@ -136,12 +136,21 @@ BSD Ports
   ``pkg install devel/boost-all devel/cmake science/hdf5 graphics/png lang/python textproc/py-genshi graphics/tiff textproc/xerces-c3 devel/git devel/googletest math/glm devel/qt5 graphics/graphviz devel/apache-ant java/openjdk7 textproc/py-sphinx print/texlive-full``
 Debian/Ubuntu
   ``apt-get install build-essential libboost-all-dev cmake libhdf5-dev libpng12-dev python python-genshi libtiff5-dev libxerces-c-dev git libgtest-dev libglm-dev qt5-default libqt5-opengl5-dev libqt5-svg5-dev graphviz ant ant-contrib ant-optional openjdk-7-jdk openjdk-7-jre python-sphinx texlive-full``
+
+Partial quick starts
+^^^^^^^^^^^^^^^^^^^^
+
+Homebrew and RedHat/CentOS do not provide packages for everything that is
+needed. The commands listed will install *most* of the dependencies, but
+further dependencies will need to be installed as described in various
+sections below.
+
 Homebrew
   ``brew install boost cmake hdf5 libpng python libtiff xerces-c git glm qt5 graphviz ant``
 RedHat/CentOS
   ``yum install libhdf5-devel libpng-devel python python-genshi libtiff-devel xerces-c-devel git gtest-devel graphviz java-1.7.0-openjdk``
+  See the :ref:`boost_req` section for installing a newer version of Boost.
 
-Note that Homebrew and RedHat/CentOS do not provide packages for everything you need; see below for details.
 
 Basic toolchain
 ^^^^^^^^^^^^^^^
@@ -173,6 +182,8 @@ If possible, install the following packages:
   Run ``yum groupinstall "Development Tools"``
 §
   Install Visual Studio or `Visual Studio Express <http://www.visualstudio.com/downloads/download-visual-studio-vs#d-express-windows-desktop>`__
+
+.. _boost_req:
 
 Boost
 ^^^^^
