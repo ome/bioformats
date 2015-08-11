@@ -240,7 +240,7 @@ namespace ome
             list_type& list(get<list_type>(key));
             list.push_back(value);
           }
-        catch (boost::bad_get& e)
+        catch (const boost::bad_get&)
           {
             list_type new_list;
             new_list.push_back(value);
@@ -290,7 +290,7 @@ namespace ome
             value = get<T>(key);
             return true;
           }
-        catch (boost::bad_get& e)
+        catch (const boost::bad_get&)
           {
             return false;
           }
