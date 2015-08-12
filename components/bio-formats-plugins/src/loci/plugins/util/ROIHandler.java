@@ -862,7 +862,7 @@ public class ROIHandler {
       store.setEllipseTheZ(unwrap(z), roiNum, shape);
     }
     if (t >= 0) {
-      store.setEllipseTheT(unwrap(roi.getTPosition()), roiNum, shape);
+      store.setEllipseTheT(unwrap(t), roiNum, shape);
     }
     if (roi.getStrokeWidth() > 0) {
       store.setEllipseStrokeWidth(new Length((roi.getStrokeWidth()),
