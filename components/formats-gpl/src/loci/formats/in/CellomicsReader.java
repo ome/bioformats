@@ -241,11 +241,13 @@ public class CellomicsReader extends FormatReader {
             }else if (wellCol1 > wellCol2){
                 return 1;
             }
-            if (field1<field2){
+
+            if (field1 < field2){
                 return -1;
             }else if (field1 > field2){
                 return 1;
             }
+
             return channel1-channel2;
 
         }
