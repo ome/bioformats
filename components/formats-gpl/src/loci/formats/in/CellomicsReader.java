@@ -219,13 +219,16 @@ public class CellomicsReader extends FormatReader {
     Arrays.sort(files, new Comparator<String>() {
         @Override
         public int compare(String f1, String f2) {
+
             int wellRow1 = getWellRow(f1);
             int wellCol1 = getWellColumn(f1);
             int field1 = getField(f1);
+            int channel1 = getChannel(f1);
 
             int wellRow2 = getWellRow(f2);
             int wellCol2 = getWellColumn(f2);
             int field2 = getField(f2);
+            int channel2 = getChannel(f2);
 
             if (wellRow1 < wellRow2){
                 return -1;
@@ -238,7 +241,12 @@ public class CellomicsReader extends FormatReader {
             }else if (wellCol1 > wellCol2){
                 return 1;
             }
-            return field1-field2;
+            if (field1<field2){
+                return -1;
+            }else if (field1 > field2){
+                return 1;
+            }
+            return channel1-channel2;
 
         }
     });
