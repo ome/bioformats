@@ -40,3 +40,7 @@ else()
 endif()
 
 string(REPLACE "^^" ";" CONFIGURE_OPTIONS "${CONFIGURE_OPTIONS}")
+
+if (CMAKE_VERBOSE_MAKEFILE AND CMAKE_GENERATOR MATCHES "Ninja")
+  set(MAKE_VERBOSE -v)
+endif()
