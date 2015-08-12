@@ -105,6 +105,8 @@
  *─────────────────────────────────────────────────────────────────────────────
  */
 
+// Test diff generation (C++).
+
 {% if fu.SOURCE_TYPE == "header" %}\
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
