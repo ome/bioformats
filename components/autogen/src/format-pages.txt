@@ -554,7 +554,7 @@ bsd = yes
 export = no
 software = `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ \n
 `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ \n
-`Wikipedia's list of freeware health software <http://en.wikipedia.org/wiki/List_of_freeware_health_software#Imaging.2FVisualization>`_
+`Wikipedia's list of freeware health software <http://en.wikipedia.org/wiki/List_of_freeware_health_software>`_
 samples = `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ \n
 `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ \n
 `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
