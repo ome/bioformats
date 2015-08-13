@@ -149,16 +149,16 @@ install(FILES ${tiff_HEADERS} ${nodist_tiff_HEADERS}
 if(cxx)
   add_library(tiffxx SHARED ${tiffxx_SOURCES} ${tiffxx_HEADERS})
   target_link_libraries(tiffxx tiff)
-  set_target_properties(tiff PROPERTIES SOVERSION ${SO_COMPATVERSION})
+  set_target_properties(tiffxx PROPERTIES SOVERSION ${SO_COMPATVERSION})
   if(NOT CYGWIN)
     # This property causes shared libraries on Linux to have the full version
     # encoded into their final filename.  We disable this on Cygwin because
     # it causes cygz-${TIFF_FULL_VERSION}.dll to be created when cygz.dll
     # seems to be the default.
-    set_target_properties(tiff PROPERTIES VERSION ${SO_VERSION})
+    set_target_properties(tiffxx PROPERTIES VERSION ${SO_VERSION})
   endif()
   if(HAVE_LD_VERSION_SCRIPT)
-    set_target_properties(tiff PROPERTIES LINK_FLAGS
+    set_target_properties(tiffxx PROPERTIES LINK_FLAGS
                           "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libtiffxx.map")
   endif()
 
