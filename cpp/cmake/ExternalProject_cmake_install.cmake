@@ -13,6 +13,7 @@ else()
   execute_process(COMMAND "${CMAKE_COMMAND}" --build .
                                              --target install
                                              --config "${CONFIG}"
+                                             -- ${MAKE_VERBOSE}
                   WORKING_DIRECTORY "${EP_BUILD_DIR}"
                   RESULT_VARIABLE install_result)
 
