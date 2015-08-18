@@ -42,8 +42,6 @@
 #include <vector>
 #include <map>
 
-#include <boost/lexical_cast.hpp>
-
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/FormatHandler.h>
 

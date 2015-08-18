@@ -38,7 +38,6 @@
 #include <string>
 
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
@@ -77,6 +76,9 @@
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
+
+// Include last due to side effect of MPL vector limit setting which can change the default
+#include <boost/lexical_cast.hpp>
 
 using boost::format;
 

@@ -38,6 +38,7 @@
 #include <string>
 
 #include <ome/bioformats/FormatReader.h>
+#include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/Types.h>
 
 #include <ome/common/filesystem.h>

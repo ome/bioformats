@@ -36,7 +36,8 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${Boost_INCLUDE_DIRS}
-                    ${PNG_INCLUDE_DIRS})
+                    ${PNG_INCLUDE_DIRS}
+                    ${XercesC_INCLUDE_DIRS})
 
 add_subdirectory(data)
 
