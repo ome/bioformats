@@ -91,7 +91,6 @@ public class ConfigurationTree {
    *  file system with a custom configuration directory.
    *
    *  @param rootDir a string specifying the root directory
-   *
    *  @param configDir a string specifying the base configuration directory
    *
    */
@@ -99,9 +98,19 @@ public class ConfigurationTree {
     if (rootDir == null) {
       throw new IllegalArgumentException("rootDir cannot be null.");
     }
-    this.rootDir = new File(rootDir).getAbsolutePath();
+
     if (configDir != null) {
-        this.configDir = new File(configDir).getAbsolutePath();
+      Location rootLocation = new Location(rootDir);
+      Location configLocation = new Location(configDir);
+      while (rootLocation.getName().equals(configLocation.getName())) {
+        rootLocation = rootLocation.getParentFile();
+        configLocation = configLocation.getParentFile();
+      }
+
+      this.rootDir = rootLocation.getAbsolutePath();
+      this.configDir = configLocation.getAbsolutePath();
+    } else {
+      this.rootDir = new File(rootDir).getAbsolutePath();
     }
     root = new DefaultMutableTreeNode();
   }
@@ -122,6 +131,35 @@ public class ConfigurationTree {
     return this.configDir;
   }
 
+  /**
+   *  Relocate a path from an base directory into a target directory
+   */
+  public String relocate(String path, String oldRoot, String newRoot) {
+
+    String subPath = path.substring((int) Math.min(
+      oldRoot.length() + 1, path.length()));
+    if (subPath.length() == 0) {
+      return newRoot;
+    }
+    else {
+      return new Location(newRoot, subPath).getAbsolutePath();
+    }
+  }
+
+  /**
+   *  Relocate a path under the root directory to the configuration directory
+   */
+  public String relocateToConfig(String path) {
+    return relocate(path, this.rootDir, this.configDir);
+  }
+
+  /**
+   *  Relocate a path under the configuration directory to the root directory
+   */
+  public String relocateToRoot(String path) {
+    return relocate(path, this.configDir, this.rootDir);
+  }
+
   /** Retrieves the Configuration object corresponding to the given file. */
   public Configuration get(String id) throws IOException {
     DefaultMutableTreeNode pos = findNode(id, false, null);
@@ -137,13 +175,7 @@ public class ConfigurationTree {
     }
     String parent = file.getParent();
     if (configDir != null) {
-      parent = parent.substring((int) Math.min(configDir.length() + 1, parent.length()));
-      if (parent.length() == 0) {
-        parent = rootDir;
-      }
-      else {
-        parent = new Location(rootDir, parent).getAbsolutePath();
-      }
+      parent = relocateToRoot(parent);
     }
 
     configFile = file.getAbsolutePath();
