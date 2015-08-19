@@ -612,6 +612,10 @@ public class LeicaReader extends FormatReader {
           ms.sizeX = (int) firstIFD.getImageWidth();
           ms.sizeY = (int) firstIFD.getImageLength();
 
+          // override the .lei pixel type, in case a TIFF file was overwritten
+          ms.pixelType = firstIFD.getPixelType();
+          ms.littleEndian = firstIFD.isLittleEndian();
+
           tileWidth[i] = (int) firstIFD.getTileWidth();
           tileHeight[i] = (int) firstIFD.getTileLength();
         }
@@ -649,7 +653,6 @@ public class LeicaReader extends FormatReader {
 
       ms.dimensionOrder =
         MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
-      ms.littleEndian = realLittleEndian;
     }
 
     MetadataStore store = makeFilterMetadata();
