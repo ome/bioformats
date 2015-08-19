@@ -84,6 +84,7 @@ set(OME_XML_META_STATIC_HEADERS
     meta/OMEXMLMetadataRoot.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
+    model/Catalog.cpp
     model/ModelException.h
     model/OMEModel.h
     model/OMEModelObject.h

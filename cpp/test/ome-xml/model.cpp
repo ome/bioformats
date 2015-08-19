@@ -51,7 +51,18 @@
 
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
+#include <ome/xml/model/Catalog.h>
+
 using namespace boost::filesystem;
+
+namespace
+{
+
+  // Register of all OME-XML schemas.
+  ome::common::xml::EntityResolver::RegisterCatalog
+  modelcatalog(ome::xml::model::registerCatalog());
+
+}
 
 struct ModelTestParameters
 {

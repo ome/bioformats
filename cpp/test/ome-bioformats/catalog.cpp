@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-XML C++ library for working with OME-XML metadata structures.
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2014 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,31 +36,7 @@
  * #L%
  */
 
-#include <iostream>
-
-#include <ome/common/module.h>
-#include <ome/common/xml/Platform.h>
-
 #include <ome/xml/model/Catalog.h>
-
-namespace ome
-{
-  namespace xml
-  {
-    namespace model
-    {
-
-      // Register all OME-XML schemas.
-      ome::common::xml::EntityResolver::RegisterCatalog
-      registerCatalog()
-      {
-	ome::common::xml::Platform platform;
-	return ome::common::xml::EntityResolver::RegisterCatalog(ome::common::module_runtime_path("bf-schema") / "catalog.xml");
-      }
-
-    }
-  }
-}
 
 namespace
 {
