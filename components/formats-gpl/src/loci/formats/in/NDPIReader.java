@@ -55,6 +55,7 @@ public class NDPIReader extends BaseTiffReader {
   // -- Constants --
 
   private static final int MAX_SIZE = 2048;
+  private static final int SOURCE_LENS = 65421;
   private static final int MARKER_TAG = 65426;
   private static final int THUMB_TAG_2 = 65439;
   private static final int METADATA_TAG = 65449;
@@ -346,12 +347,13 @@ public class NDPIReader extends BaseTiffReader {
     for (int i=1; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
 
+      float source_lens = (Float) ifd.getIFDValue(SOURCE_LENS);
       if (ifd.getImageWidth() == ifds.get(0).getImageWidth() &&
         ifd.getImageLength() == ifds.get(0).getImageLength())
       {
         sizeZ++;
       }
-      else if (sizeZ == 1 && i < ifds.size() - 1) {
+      else if (sizeZ == 1 && source_lens != -1 && source_lens != -2) {
         pyramidHeight++;
       }
     }
