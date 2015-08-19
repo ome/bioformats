@@ -19,8 +19,8 @@ where $DATA is the path to the full data repository.
 .. program:: ant test-automated
 
 Multiple options can be passed to the :program:`ant test-automated` target 
-either via environment variable of by passing
-:option:`-Dtestng.parameter=value` via the command-line.
+either by setting the ``testng.${option}`` environment variable or by passing
+:option:`-Dtestng.${option}=value` via the command-line.
 
 .. envvar:: testng.directory
  
@@ -127,13 +127,13 @@ failures under the same thread::
 The console output is also recorded under :file:`components/test-suite/target` 
 as :file:`bio-formats-software-test-main-$DATE.log` where "$DATE" is the date 
 on which the tests started in "yyyy-MM-dd_hh-mm-ss" format. The detailed report
-of each thread is recorder under
+of each thread is recorded under
 :file:`bio-formats-software-pool-$POOL-thread-$THREAD-main-$DATE.log`
 
 Configuration files can be generated for files or directories using the 
 :program:`ant gen-config` target. This generation target supports the same options as :program:`ant test-automated`::
 
-  $ ant gen-config -Dtestng.directory=/path/to/data -Dtestng.configDirectory=/path/to/config -Dtestng.memory=4g -Dtestng.threadCount=6
+  $ ant -Dtestng.directory=/path/to/data -Dtestng.configDirectory=/path/to/config -Dtestng.memory=4g -Dtestng.threadCount=6 gen-config
 
 MATLAB tests
 ------------
