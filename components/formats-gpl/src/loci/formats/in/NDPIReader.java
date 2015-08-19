@@ -347,14 +347,26 @@ public class NDPIReader extends BaseTiffReader {
     for (int i=1; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
 
-      float source_lens = (Float) ifd.getIFDValue(SOURCE_LENS);
       if (ifd.getImageWidth() == ifds.get(0).getImageWidth() &&
         ifd.getImageLength() == ifds.get(0).getImageLength())
       {
         sizeZ++;
-      }
-      else if (sizeZ == 1 && source_lens != -1 && source_lens != -2) {
-        pyramidHeight++;
+      } else if (sizeZ == 1)
+      {
+        boolean isPyramid;
+        Object source_lens_value = ifd.getIFDValue(SOURCE_LENS);
+        if (source_lens_value != null)
+        {
+          float source_lens = (Float) source_lens_value;
+          // A value of -1 correspond to the macro image and a value of -2
+          // correspond to the map image
+          isPyramid = (source_lens != -1 && source_lens != -2);
+        } else {
+          // Assume the last IFD is the macro image
+          isPyramid = i < ifds.size() - 1;
+        }
+
+        if (isPyramid) pyramidHeight++;
       }
     }
 
