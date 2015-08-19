@@ -2532,7 +2532,7 @@ public class FormatReaderTest {
       }
       boolean single = used.length == 1;
       if (single && base) LOGGER.debug("OK");
-      else LOGGER.info("{} {}", used.length, single ? "file" : "files");
+      else LOGGER.debug("{} {}", used.length, single ? "file" : "files");
       if (!base) {
         LOGGER.error("Used files list does not include base file");
       }
