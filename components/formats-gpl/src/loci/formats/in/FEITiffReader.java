@@ -28,7 +28,9 @@ package loci.formats.in;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 
 import loci.common.DateTools;
@@ -62,6 +64,7 @@ public class FEITiffReader extends BaseTiffReader {
 
   public static final int SFEG_TAG = 34680;
   public static final int HELIOS_TAG = 34682;
+  public static final int TITAN_TAG = 34683;
 
   private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss a";
   private static final double MAG_MULTIPLIER = 0.0024388925;
@@ -94,7 +97,7 @@ public class FEITiffReader extends BaseTiffReader {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    return ifd.containsKey(SFEG_TAG) || ifd.containsKey(HELIOS_TAG);
+    return ifd.containsKey(SFEG_TAG) || ifd.containsKey(HELIOS_TAG) || ifd.containsKey(TITAN_TAG);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -122,9 +125,32 @@ public class FEITiffReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     boolean helios = ifds.get(0).containsKey(HELIOS_TAG);
-    addGlobalMeta("Software", helios ? "Helios NanoLab" : "S-FEG");
+    boolean titan = ifds.get(0).containsKey(TITAN_TAG);
 
-    String tag = ifds.get(0).getIFDTextValue(helios ? HELIOS_TAG : SFEG_TAG);
+    // Helios etc data might have a stray Titan tag
+    if (titan && ifds.get(0).getIFDTextValue(TITAN_TAG).trim().isEmpty()) {
+      titan = false;
+    }
+
+    // Titan data (always?) has an empty Helios tag as well, so the Titan tag is checked first
+    String software = "S-FEG";
+    if (titan) {
+      software = "Titan";
+    }
+    else if (helios) {
+      software = "Helios NanoLab";
+    }
+    addGlobalMeta("Software", software);
+
+    int tagKey = SFEG_TAG;
+    if (titan) {
+      tagKey = TITAN_TAG;
+    }
+    else if (helios) {
+      tagKey = HELIOS_TAG;
+    }
+
+    String tag = ifds.get(0).getIFDTextValue(tagKey);
     if (tag == null) {
       return;
     }
@@ -313,31 +339,48 @@ public class FEITiffReader extends BaseTiffReader {
   class FEIHandler extends BaseHandler {
     private String key, value;
     private String qName;
+    private Deque<String> parentNames = new ArrayDeque<String>();
 
     // -- DefaultHandler API methods --
 
     @Override
     public void characters(char[] data, int start, int len) {
+      String d = new String(data, start, len).trim();
+      if (d.isEmpty()) {
+        return;
+      }
+      String parent = parentNames.peek();
+      if (parent == null) {
+        return;
+      }
+      if (parent.equals(qName)) {
+        parentNames.pop();
+        parent = parentNames.peek();
+      }
       if (qName.equals("Label")) {
-        key = new String(data, start, len);
+        key = d;
         value = null;
       }
       else if (qName.equals("Value")) {
-        value = new String(data, start, len);
+        value = d;
+      }
+      else {
+        key = parent + " " + qName;
+        value = d;
       }
 
       if (key != null && value != null) {
         addGlobalMeta(key, value);
 
-        if (key.equals("Stage X")) {
+        if (key.equals("Stage X") || ("StagePosition".equals(parent) && key.equals("X"))) {
           final Double number = Double.valueOf(value);
           stageX = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Y")) {
+        else if (key.equals("Stage Y") || ("StagePosition".equals(parent) && key.equals("Y"))) {
           final Double number = Double.valueOf(value);
           stageY = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Z")) {
+        else if (key.equals("Stage Z") || ("StagePosition".equals(parent) && key.equals("Z"))) {
           final Double number = Double.valueOf(value);
           stageZ = new Length(number, UNITS.REFERENCEFRAME);
         }
@@ -350,6 +393,12 @@ public class FEITiffReader extends BaseTiffReader {
         else if (key.equals("Magnification")) {
           magnification = new Double(value);
         }
+        else if (key.equals("X") && "PixelsSize".equals(parent)) {
+          sizeX = new Double(value);
+        }
+        else if (key.equals("Y") && "PixelsSize".equals(parent)) {
+          sizeY = new Double(value);
+        }
       }
     }
 
@@ -358,6 +407,18 @@ public class FEITiffReader extends BaseTiffReader {
       Attributes attributes)
     {
       this.qName = qName;
+      parentNames.push(qName);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName)
+    {
+      if (parentNames.size() > 0) {
+        String name = parentNames.peek();
+        if (qName.equals(name)) {
+          parentNames.pop();
+        }
+      }
     }
 
   }
