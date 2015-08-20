@@ -917,8 +917,11 @@ public class ZeissCZIReader extends FormatReader {
           String color = channels.get(c).color;
           if (color != null) {
             color = color.replaceAll("#", "");
-            color = color.substring(2, color.length());
+            if (color.length() > 6) {
+              color = color.substring(2, color.length());
+            }
             try {
+              // shift by 8 to allow alpha in the final byte
               store.setChannelColor(
                 new Color((Integer.parseInt(color, 16) << 8) | 0xff), i, c);
             }
