@@ -384,6 +384,17 @@ public class PCIReader extends FormatReader {
       imageFiles.put(getImageIndex(parent), file);
     }
 
+    int bpp = FormatTools.getBytesPerPixel(m.pixelType);
+    int expectedPlaneSize = m.sizeX * m.sizeY * bpp;
+    String file = imageFiles.get(0);
+    RandomAccessInputStream s = poi.getDocumentStream(file);
+    TiffParser tp = new TiffParser(s);
+    // don't correct the image width if it's stored as a TIFF
+    if (!tp.isValidHeader() && s.length() > expectedPlaneSize) {
+      m.sizeX += (s.length() - expectedPlaneSize) / (m.sizeY * bpp);
+    }
+    s.close();
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
