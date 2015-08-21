@@ -9,20 +9,19 @@ contains most of the infrastructure to run automated tests against the data
 repository.
 
 After checking out source code and building all the JAR files (see
-:doc:`building-bioformats`), switch to the test-suite component and run the tests using the :program:`ant test-automated` target::
+:doc:`building-bioformats`), switch to the :file:`test-suite` component and run the tests using the :program:`ant` ``test-automated`` target::
 
     $ cd components/test-suite
     $ ant -Dtestng.directory=$DATA/metamorph test-automated
 
-where $DATA is the path to the full data repository.
+where ``$DATA`` is the path to the full data repository.
 
-.. program:: ant test-automated
 
-Multiple options can be passed to the :program:`ant test-automated` target 
-either by setting the ``testng.${option}`` environment variable or by passing
-:option:`-Dtestng.${option}=value` via the command-line.
+Multiple options can be passed to the :program:`ant` ``test-automated`` target 
+either by setting the ``testng.${option}`` via the command-line. Useful options
+are described below.
 
-.. envvar:: testng.directory
+testng.directory
  
   Mandatory option. Specifies the root of the data directory to be tested::
 
@@ -32,11 +31,11 @@ either by setting the ``testng.${option}`` environment variable or by passing
 
     > ant "-Dtestng.directory=$DATA\metamorph" test-automated
 
-.. envvar:: testng.configDirectory
+testng.configDirectory
 
   Specifies the root of the directory containing the configuration files. This
   directory must have the same hierarchy as the one specified by
-  :envvar:`testng.directory` and contain :file:`.bioformats` configuration
+  ``testng.directory`` and contain :file:`.bioformats` configuration
   files::
 
     $ ant -Dtestng.directory=/path/to/data -Dtestng.configDirectory=/path/to/config test-automated
@@ -44,13 +43,13 @@ either by setting the ``testng.${option}`` environment variable or by passing
   If no configuration directory is passed, the assumption is that it is the 
   same as the data directory.
 
-.. envvar:: testng.configSuffix
+testng.configSuffix
 
   Specifies an optional suffix for the configuration files::
 
     $ ant -Dtestng.directory=/path/to/data -Dtestng.configSuffix=win test-automated
 
-.. envvar:: testng.memory
+testng.memory
 
   Specifies the amount of memory to be allocated to the |JVM|::
 
@@ -58,7 +57,7 @@ either by setting the ``testng.${option}`` environment variable or by passing
 
   Default: 512m.
 
-.. envvar:: testng.threadCount
+testng.threadCount
 
   Specifies the number of threads to use for testing::
 
@@ -131,7 +130,7 @@ of each thread is recorded under
 :file:`bio-formats-software-pool-$POOL-thread-$THREAD-main-$DATE.log`
 
 Configuration files can be generated for files or directories using the 
-:program:`ant gen-config` target. This generation target supports the same options as :program:`ant test-automated`::
+:program:`ant` ``gen-config`` target. This generation target supports the same options as :program:`ant` ``test-automated``::
 
   $ ant -Dtestng.directory=/path/to/data -Dtestng.configDirectory=/path/to/config -Dtestng.memory=4g -Dtestng.threadCount=6 gen-config
 
