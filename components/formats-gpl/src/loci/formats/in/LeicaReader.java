@@ -632,6 +632,9 @@ public class LeicaReader extends FormatReader {
           s.close();
         }
       }
+      else {
+        ms.littleEndian = realLittleEndian;
+      }
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
