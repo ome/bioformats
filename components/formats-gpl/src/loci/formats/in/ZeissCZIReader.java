@@ -327,7 +327,7 @@ public class ZeissCZIReader extends FormatReader {
               tile.y += (no / getSizeC());
               image.height = scanDim;
             }
-            if (prestitched && realX == getSizeX() && realY == getSizeY()) {
+            if (prestitched != null && prestitched && realX == getSizeX() && realY == getSizeY()) {
               tile.x = 0;
               tile.y = 0;
             }
