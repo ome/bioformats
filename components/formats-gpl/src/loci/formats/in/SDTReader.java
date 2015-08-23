@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.zip.ZipInputStream;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
@@ -170,10 +171,34 @@ public class SDTReader extends FormatReader {
         // The whole plane (all timebins) is  copied into storage
         // to allow different sub-plane sizes to be used for different timebins
         chanStore = new byte[planeSize];
-        in.seek(info.allBlockOffsets[getSeries()] + (channel * planeSize));
+        in.seek(info.allBlockOffsets[getSeries()]);
+
+        ZipInputStream codec = null;
+        String check = in.readString(2);
+        in.seek(in.getFilePointer() - 2);
+        if (check.equals("PK")) {
+          codec = new ZipInputStream(in);
+          codec.getNextEntry();
+          codec.skip(channel * planeSize);
+        }
+        else {
+          in.skipBytes(channel * planeSize);
+        }
 
         for (int row = 0; row < sizeY; row++) {
-          in.read(rowBuf);
+          if (codec == null) {
+            in.read(rowBuf);
+          }
+          else {
+            int nread = 0;
+            while (nread < rowBuf.length) {
+              int n = codec.read(rowBuf, nread, rowBuf.length - nread);
+              nread += n;
+              if (n <= 0) {
+                break;
+              }
+            }
+          }
 
           int input = 0;
           for (int col = 0; col < paddedWidth; col++) {
@@ -242,12 +267,36 @@ public class SDTReader extends FormatReader {
 
       byte[] rowBuf = new byte[bpp * times * w];
 
-      in.seek(info.allBlockOffsets[getSeries()] +
-        channel * planeSize + y * paddedWidth * bpp * times);
+      in.seek(info.allBlockOffsets[getSeries()]);
+
+      ZipInputStream codec = null;
+      String check = in.readString(2);
+      in.seek(in.getFilePointer() - 2);
+      if (check.equals("PK")) {
+        codec = new ZipInputStream(in);
+        codec.getNextEntry();
+        codec.skip(channel * planeSize + y * paddedWidth * bpp * times);
+      }
+      else {
+        in.skipBytes(channel * planeSize + y * paddedWidth * bpp * times);
+      }
 
       for (int row = 0; row < h; row++) {
-        in.skipBytes(x * bpp * times);
-        in.read(rowBuf);
+        if (codec == null) {
+          in.skipBytes(x * bpp * times);
+          in.read(rowBuf);
+        }
+        else {
+          codec.skip(x * bpp * times);
+          int nread = 0;
+          while (nread < rowBuf.length) {
+            int n = codec.read(rowBuf, 0, rowBuf.length - nread);
+            nread += n;
+            if (n <= 0) {
+              break;
+            }
+          }
+        }
         if (intensity) {
           System.arraycopy(rowBuf, 0, b, row * bpp * times * w, b.length);
         }
@@ -260,7 +309,12 @@ public class SDTReader extends FormatReader {
             }
           }
         }
-        in.skipBytes(bpp * times * (paddedWidth - x - w));
+        if (codec == null) {
+          in.skipBytes(bpp * times * (paddedWidth - x - w));
+        }
+        else {
+          codec.skip(bpp * times * (paddedWidth - x - w));
+        }
       }
 
       if (!intensity) {
