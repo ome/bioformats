@@ -7,7 +7,7 @@
         wrappedValue += "</wrapped>";
         common::xml::dom::ParseParameters params;
         params.validationScheme = xercesc::XercesDOMParser::Val_Never;
-        common::xml::dom::Document Value_document(ome::common::xml::dom::createDocument(wrappedValue, params));
+        common::xml::dom::Document Value_document(ome::xml::createDocument(wrappedValue, params));
         common::xml::dom::Element value_element = document.createElementNS(getXMLNamespace(), "Value");
         common::xml::dom::NodeList Value_subNodes = Value_document.getDocumentElement().getChildNodes();
 

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-BIOFORMATS C++ library for image IO.
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2014 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,13 +36,51 @@
  * #L%
  */
 
-#include <ome/xml/model/Catalog.h>
+#include <ome/common/xml/dom/Document.h>
+#include <ome/xml/OMEEntityResolver.h>
 
 namespace
 {
 
-  // Register of all OME-XML schemas.
-  ome::common::xml::EntityResolver::RegisterCatalog
-  modelcatalog(ome::xml::model::registerCatalog());
+  ome::xml::OMEEntityResolver&
+  get_resolver()
+  {
+    static ome::xml::OMEEntityResolver resolver;
+    return resolver;
+  }
 
+}
+
+namespace ome
+{
+  namespace xml
+  {
+
+    ome::common::xml::dom::Document
+    createDocument(const boost::filesystem::path&                file,
+                   const ome::common::xml::dom::ParseParameters& params)
+    {
+      ome::xml::OMEEntityResolver& resolver = get_resolver();
+      return ome::common::xml::dom::createDocument(file, resolver, params);
+    }
+
+    ome::common::xml::dom::Document
+    createDocument(const std::string&                            text,
+                   const ome::common::xml::dom::ParseParameters& params,
+                   const std::string&                            id)
+    {
+      ome::xml::OMEEntityResolver& resolver = get_resolver();
+      return ome::common::xml::dom::createDocument(text, resolver, params, id);
+    }
+
+    ome::common::xml::dom::Document
+    createDocument(std::istream&                                 stream,
+                   const ome::common::xml::dom::ParseParameters& params,
+                   const std::string&                            id)
+    {
+      ome::xml::OMEEntityResolver& resolver = get_resolver();
+      return ome::common::xml::dom::createDocument(stream, resolver, params, id);
+    }
+
+  }
 }

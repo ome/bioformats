@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2014 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,49 +36,24 @@
  * #L%
  */
 
-#ifndef OME_XML_MODEL_CATALOG_H
-#define OME_XML_MODEL_CATALOG_H
+#include <ome/common/module.h>
 
-#include <map>
-#include <string>
-#include <vector>
-
-#include <ome/compat/memory.h>
-#include <ome/common/xml/EntityResolver.h>
-
-#include <ome/xml/model/OMEModelObject.h>
+#include <ome/xml/OMEEntityResolver.h>
 
 namespace ome
 {
   namespace xml
   {
-    namespace model
+
+    OMEEntityResolver::OMEEntityResolver():
+      ome::common::xml::EntityResolver()
     {
-
-      /**
-       * Register the OME-XML model schema files with the EntityResolver.
-       *
-       * This will register the root OME-XML specification catalog,
-       * and recursively process all referenced sub-catalogs.  This
-       * will include all OME-XML model schema releases.
-       *
-       * @note The files will remain registered with the resolver for
-       * the lifetime of the RegisterCatalog object returned.  When
-       * built as a shared library, this will be done automatically.
-       *
-       * @returns a proxy for the registered catalog.
-       */
-      ome::common::xml::EntityResolver::RegisterCatalog
-      registerCatalog();
-
+      registerCatalog(ome::common::module_runtime_path("bf-schema") / "catalog.xml");
     }
+
+    OMEEntityResolver::~OMEEntityResolver()
+    {
+    }
+
   }
 }
-
-#endif // OME_XML_MODEL_CATALOG_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */

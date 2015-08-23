@@ -69,6 +69,7 @@
 
 #include <ome/common/xml/String.h>
 
+#include <ome/xml/Document.h>
 #include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/detail/Parse.h>
 

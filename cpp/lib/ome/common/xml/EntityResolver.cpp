@@ -41,6 +41,7 @@
 #include <fstream>
 #include <iostream>
 #include <set>
+#include <utility>
 
 #include <boost/format.hpp>
 
@@ -49,6 +50,7 @@
 #include <ome/common/xml/EntityResolver.h>
 #include <ome/common/xml/String.h>
 
+#include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 #include <ome/common/xml/dom/Element.h>
 #include <ome/common/xml/dom/NodeList.h>
@@ -64,7 +66,10 @@ namespace ome
     {
 
       EntityResolver::EntityResolver():
-        xercesc::XMLEntityResolver()
+        xercesc::XMLEntityResolver(),
+        logger(ome::common::createLogger("EntityResolver")),
+        entity_path_map(),
+        entity_data_map()
       {
       }
 
@@ -105,26 +110,22 @@ namespace ome
       {
         xercesc::InputSource *ret = 0;
 
-        entity_map_type& cache(entities());
-        entity_map_type::iterator i = cache.find(resource);
+        entity_path_map_type::const_iterator i = entity_path_map.find(resource);
 
-        entity_ref ref;
-        if (i != cache.end())
-          ref = entity_ref(i->second.lock());
-
-        if (ref) // Value is both cached and valid
+        if (i != entity_path_map.end())
           {
-            std::string& data(ref->data);
+            entity_data_map_type::iterator d = entity_data_map.find(resource);
 
-            if (data.empty())
+            if (d == entity_data_map.end()) // No cached data
               {
-                const boost::filesystem::path& file(ref->path);
+                const boost::filesystem::path& file(i->second);
 
                 if (boost::filesystem::exists(file))
                   {
                     std::ifstream in(file.string().c_str());
                     if (in)
                       {
+                        std::string data;
                         std::ios::pos_type pos = in.tellg();
                         in.seekg(0, std::ios::end);
                         std::ios::pos_type len = in.tellg() - pos;
@@ -135,6 +136,14 @@ namespace ome
                         data.assign(std::istreambuf_iterator<char>(in),
                                     std::istreambuf_iterator<char>());
 
+                        BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+                          << "Registering resource data " << resource
+                          << " (" << i->second << ")\n" << data;
+
+                        std::pair<entity_data_map_type::iterator,bool> valid =
+                          entity_data_map.insert(std::make_pair(resource, data));
+                        if (valid.second)
+                          d = valid.first;
                       }
                     else
                       {
@@ -145,100 +154,53 @@ namespace ome
                   }
               }
 
-            if (!data.empty())
+            if (d != entity_data_map.end()) // Cached data
               {
+                const std::string&data(d->second);
+
+                BOOST_LOG_SEV(logger, ome::logging::trivial::trace)
+                  << "Returning resource " << resource
+                  << " (" << i->second << ")\n" << data;
+
                 ret = new xercesc::MemBufInputSource(reinterpret_cast<const XMLByte *>(data.c_str()),
                                                      static_cast<XMLSize_t>(data.size()),
-                                                     String(ref->path.string()));
+                                                     String(i->second.string()));
               }
           }
 
-        return ret;
-      }
-
-      EntityResolver::entity_map_type&
-      EntityResolver::entities()
-      {
-        static entity_map_type entity_map;
-        return entity_map;
-      }
-
-      EntityResolver::entity_ref
-      EntityResolver::registerEntity(const std::string&             id,
-                                     const boost::filesystem::path& file)
-      {
-        entity_map_type& cache(entities());
-        entity_map_type::iterator i = cache.find(id);
-
-        entity_ref ref;
-        if (i != cache.end())
-          ref = entity_ref(i->second.lock());
-
-        entity_ref ret;
-
-        if (i == cache.end() || !ref)
-          {
-            // Remove existing invalid entry.
-            if (!ref)
-              cache.erase(id);
-
-            // Insert new entry.
-            ret = ome::compat::make_shared<entity_data>(file);
-            entity_cache cacheval(ret);
-            cache.insert(std::make_pair(id, cacheval));
-          }
-        else
-          {
-            // Return existing entry.  But only if the canonical path
-            // of the file is the same as the (already canonical)
-            // cached file.
-            ret = ref;
-
-            if(canonical(file) != ret->path)
-              {
-                boost::format fmt("Mismatch registering entity id ‘%1%’: File ‘%2%’ does not match existing cached file ‘%3%’");
-                fmt % id % ret->path % file;
-                throw std::runtime_error(fmt.str());
-              }
-          }
-
-        assert(ret);
         return ret;
       }
 
       void
-      EntityResolver::unregisterEntity(const std::string& id)
+      EntityResolver::registerEntity(const std::string&             id,
+                                     const boost::filesystem::path& file)
       {
-        entity_map_type& cache(entities());
-        entity_map_type::iterator i = cache.find(id);
+        entity_path_map_type::iterator i = entity_path_map.find(id);
 
-        if (i != cache.end())
+        if (i == entity_path_map.end())
           {
-            // Remove id from cache if the weak_ptr is no longer valid.
-            entity_ref ref(i->second.lock());
-            if(!ref)
-              cache.erase(id);
+            // Insert new entry.
+            entity_path_map.insert(std::make_pair(id, canonical(file)));
+          }
+        else
+          {
+            if(canonical(file) != i->second)
+              {
+                boost::format fmt("Mismatch registering entity id ‘%1%’: File ‘%2%’ does not match existing cached file ‘%3%’");
+                fmt % id % i->second % file;
+                std::cerr << fmt.str() << std::endl;
+                throw std::runtime_error(fmt.str());
+              }
           }
       }
 
-      EntityResolver::RegisterEntity::RegisterEntity(const std::string&             id,
-                                                     const boost::filesystem::path& file):
-        id(id),
-        ref(EntityResolver::registerEntity(id, file))
-      {
-      }
-
-      EntityResolver::RegisterEntity::~RegisterEntity()
-      {
-        ref.reset();
-        EntityResolver::unregisterEntity(id);
-      }
-
-      EntityResolver::RegisterCatalog::RegisterCatalog(const boost::filesystem::path& catalog):
-        refs()
+      void
+      EntityResolver::registerCatalog(const boost::filesystem::path& catalog)
       {
         std::set<boost::filesystem::path> visited;
         std::deque<boost::filesystem::path> pending;
+
+	ome::common::xml::Platform platform;
 
         pending.push_back(ome::common::canonical(catalog));
 
@@ -262,7 +224,8 @@ namespace ome
             std::ifstream in(current.string().c_str());
             if (in)
               {
-                dom::Document doc(dom::createDocument(in));
+                EntityResolver r; // Does nothing.
+                dom::Document doc(dom::createDocument(in, r));
                 dom::Element root(doc.getDocumentElement());
                 dom::NodeList nodes(root.getChildNodes());
                 for (dom::NodeList::iterator i = nodes.begin();
@@ -279,8 +242,13 @@ namespace ome
                                 if (e.hasAttribute("uri") && e.hasAttribute("name"))
                                   {
                                     boost::filesystem::path newid(currentdir / static_cast<std::string>(e.getAttribute("uri")));
-                                    refs.push_back(RegisterEntity(static_cast<std::string>(e.getAttribute("name")),
-                                                                  ome::common::canonical(newid)));
+
+                                    BOOST_LOG_SEV(logger, ome::logging::trivial::debug)
+
+                                      << "Registering " << static_cast<std::string>(e.getAttribute("name"))
+                                      << " as " << ome::common::canonical(newid);
+                                    registerEntity(static_cast<std::string>(e.getAttribute("name")),
+                                                   ome::common::canonical(newid));
                                   }
                               }
                             if (e.getTagName() == "nextCatalog")
@@ -308,10 +276,6 @@ namespace ome
             // Mark this file visited.
             visited.insert(current);
           }
-      }
-
-      EntityResolver::RegisterCatalog::~RegisterCatalog()
-      {
       }
 
     }

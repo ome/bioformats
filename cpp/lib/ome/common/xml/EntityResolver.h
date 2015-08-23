@@ -43,6 +43,8 @@
 #include <string>
 
 #include <ome/common/filesystem.h>
+#include <ome/common/log.h>
+
 #include <ome/compat/memory.h>
 
 #include <xercesc/util/XMLEntityResolver.hpp>
@@ -70,6 +72,11 @@ namespace ome
         /// Destructor.
         ~EntityResolver();
 
+      private:
+        // Copy constructor (deleted).
+        EntityResolver(const EntityResolver& /* copy */);
+
+      public:
         /**
          * Resolve an entity.
          *
@@ -80,43 +87,29 @@ namespace ome
         xercesc::InputSource *
         resolveEntity(xercesc::XMLResourceIdentifier* resource);
 
+	/**
+	 * Register a file with the entity resolver.
+	 *
+	 * @param id the XML system ID of the entity.
+	 * @param file the filename of the entity.
+	 */
+        void
+	registerEntity(const std::string&             id,
+		       const boost::filesystem::path& file);
+
+        /**
+	 * Register a catalog with the entity resolver.
+	 *
+	 * @param file the filename of the catalog.
+	 */
+        void
+	registerCatalog(const boost::filesystem::path& file);
+
       private:
-        /// Entity metadata.
-        struct entity_data
-        {
-          // Filesystem path for system ID.
-          boost::filesystem::path path;
-          // File content for the ID.
-          std::string data;
-
-          /**
-           * Constructor.
-           *
-           * @param path the filesystem path for the ID.
-           */
-          entity_data(const boost::filesystem::path& path):
-            path(path),
-            data()
-          {}
-
-          /**
-           * Constructor.
-           *
-           * @param path the filesystem path for the ID.
-           * @param data the file content for the ID.
-           */
-          entity_data(const boost::filesystem::path& path,
-                      const std::string&             data):
-            path(path),
-            data(data)
-          {}
-        };
-        /// Cached entity.
-        typedef ome::compat::weak_ptr<entity_data> entity_cache;
-        /// Referenced entity.
-        typedef ome::compat::shared_ptr<entity_data> entity_ref;
-        /// Entity mapping type.
-        typedef std::map<std::string, entity_cache> entity_map_type;
+        /// Mapping from system ID to filesystem path.
+        typedef std::map<std::string, boost::filesystem::path> entity_path_map_type;
+        /// Mapping from system ID to XML data.
+        typedef std::map<std::string, std::string> entity_data_map_type;
 
         /**
          * Get input source from file.
@@ -130,96 +123,13 @@ namespace ome
         xercesc::InputSource *
         getSource(const std::string& resource);
 
-        /**
-         * Get entity mappings.
-         *
-         * @returns a reference to the current entity map.
-         */
-        static
-        entity_map_type&
-        entities();
-
-        /**
-         * Register a file with the entity resolver.
-         *
-         * @param id the XML system ID of the entity.
-         * @param file the filename of the entity.
-         */
-        static
-        entity_ref
-        registerEntity(const std::string&             id,
-                       const boost::filesystem::path& file);
-
-        /**
-         * Unregister a file with the entity resolver.
-         *
-         * @note that this will only have an effect if the entity is
-         * no longer actively referenced.
-         *
-         * @param id the XML system ID of the entity.
-         */
-        static
-        void
-        unregisterEntity(const std::string& id);
-
-      public:
-        /**
-         * Automatically register and unregister an entity with the entity resolver.
-         */
-        class RegisterEntity
-        {
-        public:
-          /**
-           * Register a file with the entity resolver.
-           *
-           * @param id the XML system ID of the entity.
-           * @param file the filename of the entity.
-           */
-          RegisterEntity(const std::string&             id,
-                         const boost::filesystem::path& file);
-
-          /**
-           * Destructor.
-           *
-           * The entity will be unregistered with the entity resolver.
-           */
-          ~RegisterEntity();
-
-          /// XML system ID.
-          std::string id;
-          /// Reference to entity registration.
-          entity_ref ref;
-        };
-
-        /**
-         * Automatically register and unregister an XML catalog with
-         * the entity resolver.
-         */
-        class RegisterCatalog
-        {
-        public:
-          /**
-           * Register a catalog file with the entity resolver.
-           *
-           * The catalog will be read, and any entities in it will be
-           * registered.  This will be done recursively for all
-           * referenced catalogs.
-           *
-           * @param catalog the filename of the catalog.
-           */
-          RegisterCatalog(const boost::filesystem::path& catalog);
-
-          /**
-           * Destructor.
-           *
-           * The entity will be unregistered with the entity resolver.
-           */
-          ~RegisterCatalog();
-
         private:
-          /// Registered entities from this catalog.
-          std::vector<RegisterEntity> refs;
-        };
+          /// Message logger.
+          ome::common::Logger logger;
+          /// Map of registered system IDs to filesystem paths.
+          entity_path_map_type entity_path_map;
+          /// Map of system IDs to cached XML data.
+          entity_data_map_type entity_data_map;
       };
 
     }
