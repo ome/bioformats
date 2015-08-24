@@ -41,7 +41,16 @@
 namespace
 {
 
-  ome::logging::trivial::severity_level globalSeverity = ome::logging::trivial::warning;
+  ome::logging::trivial::severity_level
+  default_log_level()
+  {
+    ome::common::setLogLevel(ome::logging::trivial::warning);
+    return ome::common::getLogLevel();
+  }
+
+  // The default is already set by default_log_level so is a no-op,
+  // but it's used to trigger the filter in the logging core.
+  ome::logging::trivial::severity_level globalSeverity(default_log_level());
 
 }
 
