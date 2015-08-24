@@ -22,7 +22,6 @@ either by setting the ``testng.${option}`` via the command line. Useful options
 are described below.
 
 testng.directory
- 
   Mandatory option. Specifies the root of the data directory to be tested::
 
     $ ant -Dtestng.directory=$DATA/metamorph test-automated
@@ -32,7 +31,6 @@ testng.directory
     > ant "-Dtestng.directory=$DATA\metamorph" test-automated
 
 testng.configDirectory
-
   Specifies the root of the directory containing the configuration files. This
   directory must have the same hierarchy as the one specified by
   ``testng.directory`` and contain :file:`.bioformats` configuration
@@ -44,13 +42,11 @@ testng.configDirectory
   same as the data directory.
 
 testng.configSuffix
-
   Specifies an optional suffix for the configuration files::
 
     $ ant -Dtestng.directory=/path/to/data -Dtestng.configSuffix=win test-automated
 
 testng.memory
-
   Specifies the amount of memory to be allocated to the |JVM|::
 
     $ ant -Dtestng.directory=$DATA -Dtestng.memory=4g test-automated
@@ -58,7 +54,6 @@ testng.memory
   Default: 512m.
 
 testng.threadCount
-
   Specifies the number of threads to use for testing::
 
     $ ant -Dtestng.directory=$DATA -Dtestng.threadCount=4 test-automated
