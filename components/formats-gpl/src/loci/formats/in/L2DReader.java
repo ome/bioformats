@@ -27,8 +27,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -215,9 +215,9 @@ public class L2DReader extends FormatReader {
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
-      final Hashtable<String, Object> globalMetadata = r.getGlobalMetadata();
-      for (Object key : globalMetadata.keySet()) {
-        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = r.getGlobalMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
       r.close();
       reader = new MinimalTiffReader();

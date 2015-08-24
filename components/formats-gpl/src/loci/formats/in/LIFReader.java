@@ -69,6 +69,7 @@ import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 import org.xml.sax.SAXException;
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -457,7 +458,7 @@ public class LIFReader extends FormatReader {
       int descrLength = in.readInt() * 2;
 
       if (blockLength > 0) {
-        offsets.add(new Long(in.getFilePointer() + descrLength));
+        offsets.add(in.getFilePointer() + descrLength);
       }
 
       in.seek(in.getFilePointer() + descrLength + blockLength);
@@ -1913,8 +1914,8 @@ public class LIFReader extends FormatReader {
       long nBytes = v == null || v.trim().isEmpty() ? 0 : Long.parseLong(v.trim());
       v = dimension.getAttribute("Length");
       Double physicalLen;
-      if (v == null || v.trim().isEmpty()) {
-        physicalLen = new Double(0);
+      if (StringUtils.isBlank(v)) {
+        physicalLen = 0d;
       } else {
         physicalLen = new Double(v.trim());
       }
@@ -2153,7 +2154,7 @@ public class LIFReader extends FormatReader {
         }
         catch (NumberFormatException e) { }
       }
-      Length l = new Length(new Double(linewidth), UNITS.PIXEL);
+      Length l = new Length((double) linewidth, UNITS.PIXEL);
       store.setLabelStrokeWidth(l, roi, 0);
 
       if (!normalized) normalize();
