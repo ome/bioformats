@@ -375,10 +375,11 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-
-import urllib
-brokenfiles_url = 'https://raw.github.com/openmicroscopy/sphinx-ignore-links/master/broken_links.txt'
+linkcheck_ignore = []
 try:
-    linkcheck_ignore = urllib.urlopen(brokenfiles_url).read().splitlines()
+    import urllib
+    brokenfiles_url = 'https://raw.github.com/openmicroscopy/sphinx-ignore-links/master/broken_links.txt'
+    brokenlinks = urllib.urlopen(brokenfiles_url)
+    linkcheck_ignore.extend(brokenlinks.read().splitlines())
 except IOError:
-    linkcheck_ignore = []
+    print "Could not open list of broken links."
