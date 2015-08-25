@@ -782,9 +782,9 @@ public class ZeissLSMReader extends FormatReader {
       pixelSizeY = ras.readDouble() * 1000000;
       pixelSizeZ = ras.readDouble() * 1000000;
 
-      addSeriesMeta("VoxelSizeX", (Double) pixelSizeX);
-      addSeriesMeta("VoxelSizeY", (Double) pixelSizeY);
-      addSeriesMeta("VoxelSizeZ", (Double) pixelSizeZ);
+      addSeriesMeta("VoxelSizeX", pixelSizeX);
+      addSeriesMeta("VoxelSizeY", pixelSizeY);
+      addSeriesMeta("VoxelSizeZ", pixelSizeZ);
 
       originX = ras.readDouble() * 1000000;
       originY = ras.readDouble() * 1000000;
@@ -2148,7 +2148,7 @@ public class ZeissLSMReader extends FormatReader {
 
     switch (blockType) {
       case TYPE_LONG:
-        return (long) in.readInt();
+        return in.readInt();
       case TYPE_RATIONAL:
         return in.readDouble();
       case TYPE_ASCII:
@@ -2196,7 +2196,7 @@ public class ZeissLSMReader extends FormatReader {
           data = in.readLong();
           break;
         case TYPE_BOOLEAN:
-          data = (Boolean) (in.readInt() == 0);
+          data = in.readInt() == 0;
           break;
       }
 
