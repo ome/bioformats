@@ -72,11 +72,6 @@ namespace ome
         /// Destructor.
         ~EntityResolver();
 
-      private:
-        // Copy constructor (deleted).
-        EntityResolver(const EntityResolver& /* copy */);
-
-      public:
         /**
          * Resolve an entity.
          *

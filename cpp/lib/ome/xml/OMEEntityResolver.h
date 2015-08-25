@@ -60,10 +60,6 @@ namespace ome
 
       /// Destructor.
       ~OMEEntityResolver();
-
-    private:
-      // Copy constructor (deleted).
-      OMEEntityResolver(const OMEEntityResolver& /* copy */);
     };
 
   }

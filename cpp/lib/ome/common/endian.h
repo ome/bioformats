@@ -52,11 +52,12 @@
 
 #include <ome/common/config.h>
 
-// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
 #ifndef BOOST_NOEXCEPT
 # ifdef OME_HAVE_NOEXCEPT
+/// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
 #  define BOOST_NOEXCEPT noexcept
 # else
+/// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
 #  define BOOST_NOEXCEPT
 # endif
 #endif
