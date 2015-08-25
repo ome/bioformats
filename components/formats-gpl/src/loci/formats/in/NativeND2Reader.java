@@ -92,6 +92,8 @@ public class NativeND2Reader extends FormatReader {
 
   private ArrayList<Double> tsT = new ArrayList<Double>();
 
+  private int positionCount = 0;
+
   private int fieldIndex;
 
   private long xOffset, yOffset, zOffset;
@@ -328,6 +330,7 @@ public class NativeND2Reader extends FormatReader {
       textData = false;
       refractiveIndex = null;
       exposureTime.clear();
+      positionCount = 0;
     }
   }
 
@@ -419,6 +422,10 @@ public class NativeND2Reader extends FormatReader {
           nameAttri.contains("CalibrationLV") ||
           (nameAttri.contains("MetadataSeqLV") && !seq))
         {
+          // prevent position count from being doubled
+          if (nameAttri.equals("ImageMetadataLV!")) {
+            positionCount = 0;
+          }
           iterateIn(in, stop);
         }
 
@@ -813,6 +820,12 @@ public class NativeND2Reader extends FormatReader {
       // rearrange image data offsets
 
       if (numSeries == 0) numSeries = 1;
+      else if (numSeries == 1 && positionCount > 1) {
+        for (int i=1; i<positionCount; i++) {
+          core.add(core.get(0));
+        }
+        numSeries = core.size();
+      }
 
       if (getSizeZ() == 0) {
         for (int i=0; i<getSeriesCount(); i++) {
@@ -841,7 +854,7 @@ public class NativeND2Reader extends FormatReader {
         core.add(ms0);
       }
 
-      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && (extraZDataCount == getSizeC())) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
+      if (positionCount != getSeriesCount() && (getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && (extraZDataCount == getSizeC())) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
         CoreMetadata ms0 = core.get(0);
         if (getSeriesCount() > ms0.sizeZ) {
           ms0.sizeZ = getSeriesCount();
@@ -1736,6 +1749,9 @@ public class NativeND2Reader extends FormatReader {
         }
         else if (name.equals("dZStep")) {
           trueSizeZ = new Double(value.toString());
+        }
+        else if (name.equals("dPosX")) {
+          positionCount++;
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
