@@ -2187,10 +2187,10 @@ public class ZeissLSMReader extends FormatReader {
           data = in.readString(dataSize);
           break;
         case TYPE_LONG:
-          data = (Integer) in.readInt();
+          data = in.readInt();
           break;
         case TYPE_RATIONAL:
-          data = (Double) in.readDouble();
+          data = in.readDouble();
           break;
         case TYPE_DATE:
           data = in.readLong();
