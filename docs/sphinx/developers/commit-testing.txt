@@ -18,7 +18,7 @@ where ``$DATA`` is the path to the full data repository.
 
 
 Multiple options can be passed to the :program:`ant` ``test-automated`` target 
-either by setting the ``testng.${option}`` via the command line. Useful options
+by setting the ``testng.${option}`` option via the command line. Useful options
 are described below.
 
 testng.directory
