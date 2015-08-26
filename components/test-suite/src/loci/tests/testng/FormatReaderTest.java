@@ -2364,7 +2364,7 @@ public class FormatReaderTest {
         // log the memo file's size
         try {
           RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath());
-          LOGGER.info("memo file size for {} = {} bytes",
+          LOGGER.debug("memo file size for {} = {} bytes",
                       new Location(reader.getCurrentFile()).getAbsolutePath(),
                       s.length());
           s.close();
@@ -2532,7 +2532,7 @@ public class FormatReaderTest {
       }
       boolean single = used.length == 1;
       if (single && base) LOGGER.debug("OK");
-      else LOGGER.info("{} {}", used.length, single ? "file" : "files");
+      else LOGGER.debug("{} {}", used.length, single ? "file" : "files");
       if (!base) {
         LOGGER.error("Used files list does not include base file");
       }
