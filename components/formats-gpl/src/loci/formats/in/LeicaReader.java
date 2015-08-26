@@ -869,6 +869,7 @@ public class LeicaReader extends FormatReader {
     else {
       listing = Location.getIdMap().keySet().toArray(new String[0]);
     }
+    Arrays.sort(listing);
 
     final List<String> list = new ArrayList<String>();
 
