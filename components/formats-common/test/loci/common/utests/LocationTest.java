@@ -87,8 +87,8 @@ public class LocationTest {
       new Location(tmpDirectory),
       new Location("http://loci.wisc.edu/software/bio-formats"),
       new Location("http://www.openmicroscopy.org/site/foo/products/bio-formats"),
-      new Location("https://www.openmicroscopy.org/site/products/images/omero191x120.png"),
-      new Location("https://www.openmicroscopy.org/site/products/images/foo.png"),
+      new Location("https://www.openmicroscopy.org/site/products/images"),
+      new Location("https://www.openmicroscopy.org/site/products/images/foo"),
       new Location(hiddenFile)
     };
 
