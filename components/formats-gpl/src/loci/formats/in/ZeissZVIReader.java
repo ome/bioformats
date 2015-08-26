@@ -344,7 +344,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         }
         else {
           for (int p=0; p<nTiles; p++) {
-            tmpOffsets.add(new Integer(offsets[index + p]));
+            tmpOffsets.add(offsets[index + p]);
             tmpFiles.add(imageFiles[index + p]);
           }
         }
@@ -373,13 +373,13 @@ public class ZeissZVIReader extends BaseZeissReader {
   protected void countImages() {
     // count number of images
     files = (String[]) poi.getDocumentList().toArray(new String[0]);
-    Arrays.sort(files, new Comparator() {
+    Arrays.sort(files, new Comparator<String>() {
       @Override
-      public int compare(Object o1, Object o2) {
-        int n1 = getImageNumber((String) o1, -1);
-        int n2 = getImageNumber((String) o2, -1);
+      public int compare(String o1, String o2) {
+        final Integer n1 = getImageNumber(o1, -1);
+        final Integer n2 = getImageNumber(o2, -1);
 
-        return new Integer(n1).compareTo(new Integer(n2));
+        return n1.compareTo(n2);
       }
     });
     core.get(0).imageCount = 0;
@@ -560,7 +560,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       }
 
       long roiOffset = s.getFilePointer() - 8;
-      roiOffsets.add(new Long(roiOffset));
+      roiOffsets.add(roiOffset);
 
       LOGGER.debug("ROI@{}", roiOffset);
 
