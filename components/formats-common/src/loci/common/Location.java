@@ -32,15 +32,18 @@
 
 package loci.common;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -363,18 +366,22 @@ public class Location {
         return listingsResult.listing;
       }
     }
-    ArrayList<String> files = new ArrayList<String>();
+    final List<String> files = new ArrayList<String>();
     if (isURL) {
       try {
         URLConnection c = url.openConnection();
         InputStream is = c.getInputStream();
         boolean foundEnd = false;
-
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String input;
+        StringBuffer buffer = new StringBuffer();
+        while ((input = br.readLine()) != null){
+          buffer.append(input);
+        }
+        br.close();
+        String s = buffer.toString();
         while (!foundEnd) {
-          byte[] b = new byte[is.available()];
-          is.read(b);
-          String s = new String(b, Constants.ENCODING);
-          if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
+         if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
 
           while (s.indexOf("a href") != -1) {
             int ndx = s.indexOf("a href") + 8;
