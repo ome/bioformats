@@ -186,19 +186,7 @@ public class SDTReader extends FormatReader {
         }
 
         for (int row = 0; row < sizeY; row++) {
-          if (codec == null) {
-            in.read(rowBuf);
-          }
-          else {
-            int nread = 0;
-            while (nread < rowBuf.length) {
-              int n = codec.read(rowBuf, nread, rowBuf.length - nread);
-              nread += n;
-              if (n <= 0) {
-                break;
-              }
-            }
-          }
+          readPixels(rowBuf, in, codec, 0);
 
           int input = 0;
           for (int col = 0; col < paddedWidth; col++) {
@@ -282,21 +270,7 @@ public class SDTReader extends FormatReader {
       }
 
       for (int row = 0; row < h; row++) {
-        if (codec == null) {
-          in.skipBytes(x * bpp * times);
-          in.read(rowBuf);
-        }
-        else {
-          codec.skip(x * bpp * times);
-          int nread = 0;
-          while (nread < rowBuf.length) {
-            int n = codec.read(rowBuf, 0, rowBuf.length - nread);
-            nread += n;
-            if (n <= 0) {
-              break;
-            }
-          }
-        }
+        readPixels(rowBuf, in, codec, x * bpp * times);
         if (intensity) {
           System.arraycopy(rowBuf, 0, b, row * bpp * times * w, b.length);
         }
@@ -438,6 +412,26 @@ public class SDTReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+  }
+
+  private void readPixels(byte[] rowBuf, RandomAccessInputStream in, ZipInputStream codec, int skip)
+    throws IOException
+  {
+    if (codec == null) {
+      in.skipBytes(skip);
+      in.read(rowBuf);
+    }
+    else {
+      codec.skip(skip);
+      int nread = 0;
+      while (nread < rowBuf.length) {
+        int n = codec.read(rowBuf, nread, rowBuf.length - nread);
+        nread += n;
+        if (n <= 0) {
+          break;
+        }
+      }
+    }
   }
 
 }
