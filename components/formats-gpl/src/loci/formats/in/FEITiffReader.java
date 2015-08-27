@@ -393,11 +393,12 @@ public class FEITiffReader extends BaseTiffReader {
         else if (key.equals("Magnification")) {
           magnification = new Double(value);
         }
-        else if (key.equals("X") && "PixelsSize".equals(parent)) {
-          sizeX = new Double(value);
+        // physical sizes stored in meters, but usually too small to be used without converting
+        else if (key.endsWith("X") && "PixelSize".equals(parent)) {
+          sizeX = new Double(value) * 1000000;
         }
-        else if (key.equals("Y") && "PixelsSize".equals(parent)) {
-          sizeY = new Double(value);
+        else if (key.endsWith("Y") && "PixelSize".equals(parent)) {
+          sizeY = new Double(value) * 1000000;
         }
       }
     }
