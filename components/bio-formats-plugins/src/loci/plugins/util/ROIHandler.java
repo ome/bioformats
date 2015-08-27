@@ -374,7 +374,15 @@ public class ROIHandler {
               if (c == 0) c = 1;
               if (t == 0) t = 1;
               if (z == 0) z = 1;
-              roi.setPosition(c, z, t);
+              if (c == 1 && z == 1 && t > 1) {
+                roi.setPosition(t);
+              } else if (c == 1 && z > 1 && t == 1) {
+                roi.setPosition(z);
+              } else if (c > 1 && z == 1 && t == 1) {
+                roi.setPosition(c);
+              } else {
+                roi.setPosition(c, z, t);
+              }
             }
 
             if (sw == null) {
