@@ -372,7 +372,8 @@ public class Location {
         URLConnection c = url.openConnection();
         InputStream is = c.getInputStream();
         boolean foundEnd = false;
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        BufferedReader br = new BufferedReader(
+              new InputStreamReader(is, Constants.ENCODING));
         String input;
         StringBuffer buffer = new StringBuffer();
         while ((input = br.readLine()) != null){
