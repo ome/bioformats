@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMMON C++ library for C++ compatibility/portability
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2014 - 2015 Open Microscopy Environment:
+ * Copyright © 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,43 +36,36 @@
  * #L%
  */
 
-/**
- * @file endian.h Endian-specific integer types.  This header uses the
- * proposed Boost.Endian headers, which are not yet an official part of
- * any Boost release.
- *
- * @note Boost.Endian was imported from https://github.com/Beman/endian.git
- * commit d339470e6.  It should be replaced with the real Boost implementation
- * once it is included.  This is only included here as a workaround until
- * then.
- */
+#ifndef OME_XML_MODEL_OMEENTITYRESOLVER_H
+#define OME_XML_MODEL_OMEENTITYRESOLVER_H
 
-#ifndef OME_COMMON_ENDIAN_H
-# define OME_COMMON_ENDIAN_H
-
-#include <ome/common/config.h>
-
-#ifndef BOOST_NOEXCEPT
-# ifdef OME_HAVE_NOEXCEPT
-/// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
-#  define BOOST_NOEXCEPT noexcept
-# else
-/// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
-#  define BOOST_NOEXCEPT
-# endif
-#endif
-
-#include <ome/common/endian/types.hpp>
+#include <ome/common/xml/EntityResolver.h>
 
 namespace ome
 {
+  namespace xml
+  {
 
-  // Import all endian types into the ome namespace.
-  using namespace boost::endian;
+    /**
+     * Entity resolver for the OME schemas.
+     *
+     * This resolver will resolve local copies of all the OME schemas
+     * distributed with Bio-Formats.
+     */
+    class OMEEntityResolver : public ome::common::xml::EntityResolver
+    {
+    public:
+      /// Constructor.
+      OMEEntityResolver();
 
+      /// Destructor.
+      ~OMEEntityResolver();
+    };
+
+  }
 }
 
-#endif /* OME_COMMON_ENDIAN_H */
+#endif // OME_XML_MODEL_OMEENTITYRESOLVER_H
 
 /*
  * Local Variables:

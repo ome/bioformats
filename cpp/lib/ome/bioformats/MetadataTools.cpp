@@ -55,6 +55,8 @@
 #include <ome/common/xml/dom/Element.h>
 #include <ome/common/xml/dom/NodeList.h>
 
+#include <ome/xml/Document.h>
+
 #include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/MetadataException.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
@@ -238,14 +240,14 @@ namespace ome
       ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::common::xml::dom::createDocument(file);
+          doc = ome::xml::createDocument(file);
         }
       catch (const std::runtime_error&)
         {
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::common::xml::dom::createDocument(file, params);
+          doc = ome::xml::createDocument(file, params);
         }
       return createOMEXMLMetadata(doc);
     }
@@ -258,7 +260,7 @@ namespace ome
       ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::common::xml::dom::createDocument(text, ome::common::xml::dom::ParseParameters(),
+          doc = ome::xml::createDocument(text, ome::common::xml::dom::ParseParameters(),
                                                  "OME-XML");
         }
       catch (const std::runtime_error&)
@@ -266,7 +268,7 @@ namespace ome
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::common::xml::dom::createDocument(text, params, "Broken OME-XML");
+          doc = ome::xml::createDocument(text, params, "Broken OME-XML");
         }
       return createOMEXMLMetadata(doc);
     }
@@ -279,7 +281,7 @@ namespace ome
       ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::common::xml::dom::createDocument(stream, ome::common::xml::dom::ParseParameters(),
+          doc = ome::xml::createDocument(stream, ome::common::xml::dom::ParseParameters(),
                                                  "OME-XML");
         }
       catch (const std::runtime_error&)
@@ -287,7 +289,7 @@ namespace ome
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::common::xml::dom::createDocument(stream, params, "Broken OME-XML");
+          doc = ome::xml::createDocument(stream, params, "Broken OME-XML");
         }
       return createOMEXMLMetadata(doc);
     }
@@ -733,7 +735,7 @@ namespace ome
               try
                 {
                   ome::common::xml::Platform xmlplat;
-                  ::ome::common::xml::dom::Document xmlroot(::ome::common::xml::dom::createDocument(xmlannotation->getValue()));
+                  ::ome::common::xml::dom::Document xmlroot(::ome::xml::createDocument(xmlannotation->getValue()));
                   ::ome::common::xml::dom::NodeList nodes(xmlroot.getElementsByTagName(tag));
 
                   Modulo m(tag.substr(tag.size() ? tag.size() - 1 : 0));
@@ -919,7 +921,7 @@ namespace ome
                       common::xml::Platform xmlplat;
                       common::xml::dom::ParseParameters params;
                       params.validationScheme = xercesc::XercesDOMParser::Val_Never;
-                      common::xml::dom::Document doc(ome::common::xml::dom::createDocument(wrappedValue));
+                      common::xml::dom::Document doc(ome::xml::createDocument(wrappedValue));
 
                       std::vector<common::xml::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc.getDocumentElement(), "OriginalMetadata");
                       if (OriginalMetadataValue_nodeList.size() > 1)

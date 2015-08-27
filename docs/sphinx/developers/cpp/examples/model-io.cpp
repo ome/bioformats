@@ -43,6 +43,8 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/xml/Document.h>
+
 #include <ome/xml/model/OME.h>
 #include <ome/xml/model/OMEModel.h>
 #include <ome/xml/model/detail/OMEModel.h>
@@ -61,7 +63,7 @@ namespace
   {
     /* read-example-start */
     // XML DOM tree containing parsed file content
-    xml::dom::Document inputdoc(xml::dom::createDocument(filename));
+    xml::dom::Document inputdoc(ome::xml::createDocument(filename));
     // OME Model (needed only during parsing to track model object references)
     model::detail::OMEModel model;
     // OME Model root object

@@ -53,11 +53,13 @@ foreach(hdr ${model_headers})
 endforeach(hdr)
 
 set(OME_XML_STATIC_SOURCES
+  Document.cpp
+  OMEEntityResolver.cpp
   meta/MetadataException.cpp
   meta/OMEXMLMetadataRoot.cpp
   meta/Convert.cpp
-  model/Catalog.cpp
   model/ModelException.cpp
+  model/OriginalMetadataAnnotation.cpp
   model/detail/OMEModel.cpp
   model/detail/OMEModelObject.cpp
   model/detail/Parse.cpp
@@ -83,6 +85,10 @@ set(OME_XML_META_STATIC_HEADERS
     meta/MetadataRoot.h
     meta/OMEXMLMetadataRoot.h)
 
+set(OME_XML_STATIC_HEADERS
+    Document.h
+    OMEEntityResolver.h)
+
 set(OME_XML_STATIC_MODEL_HEADERS
     model/ModelException.h
     model/OMEModel.h
@@ -92,7 +98,6 @@ set(OME_XML_STATIC_MODEL_HEADERS
 set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
     model/detail/OMEModel.h
     model/detail/OMEModelObject.h
-    model/OriginalMetadataAnnotation.cpp
     model/detail/Parse.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
@@ -111,21 +116,21 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
     model/primitives/NumericConstraints.h
     model/primitives/Timestamp.h)
 
-set(OME_XML_STATIC_HEADERS
+set(OME_XML_PUBLIC_STATIC_HEADERS
     ${OME_XML_STATIC_MODEL_HEADERS}
     ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
     ${OME_XML_STATIC_PRIMITIVES_HEADERS}
     ${OME_XML_STATIC_ENUMS_HEADERS})
 
-set(OME_XML_GENERATED_HEADERS
+set(OME_XML_PUBLIC_GENERATED_HEADERS
     ${OME_XML_GENERATED_META_HEADERS}
     ${OME_XML_GENERATED_MODEL_HEADERS}
     ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
 
 set(OME_XML_HEADERS
     ${OME_XML_PRIVATE_STATIC_HEADERS}
-    ${OME_XML_STATIC_HEADERS}
-    ${OME_XML_GENERATED_HEADERS})
+    ${OME_XML_PUBLIC_STATIC_HEADERS}
+    ${OME_XML_PUBLIC_GENERATED_HEADERS})
 
 set(OME_XML_SOURCES
     ${OME_XML_STATIC_SOURCES}
@@ -146,6 +151,8 @@ install(TARGETS ome-xml
 
 set(ome_xml_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xml")
 
+install(FILES ${OME_XML_STATIC_HEADERS}
+        DESTINATION ${ome_xml_includedir})
 install(FILES ${OME_XML_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS}
         DESTINATION ${ome_xml_includedir}/meta)
 install(FILES ${OME_XML_STATIC_MODEL_HEADERS} ${OME_XML_GENERATED_MODEL_HEADERS}
@@ -166,7 +173,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 
 # Dump header list for testing
-header_include_list_write(OME_XML_STATIC_HEADERS OME_XML_GENERATED_HEADERS ome/xml ${PROJECT_BINARY_DIR}/cpp/test/ome-xml)
+header_include_list_write(OME_XML_PUBLIC_STATIC_HEADERS
+                          OME_XML_PUBLIC_GENERATED_HEADERS
+                          ome/xml ${PROJECT_BINARY_DIR}/cpp/test/ome-xml)
 
 # Add target to generate all xsd-fu sources
 add_custom_target(gensrc DEPENDS
