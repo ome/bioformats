@@ -361,21 +361,20 @@ public class ROIHandler {
               // 0-based indexing in OME
               // Roi positions differ between hyperstacks and normal stacks
               ImagePlus imp = images[imageNum];
-              if (imp.isHyperStack()) {
-                // Set position in CZT fashion for hyperstack
-                roi.setPosition(c+1, z+1, t+1);
-              } else {
-                // Number of channels in imp
-                int imageC = images[imageNum].getNChannels();
-                // Number of frames in imp
-                int imageT = images[imageNum].getNSlices();
-                // Determine which dimension is used as position
-                if (imageT > 1) {
-                  roi.setPosition(t+1);
-                } else if (imageC > 1) {
-                  roi.setPosition(t+1);
-                }
+              if (imp.getNChannels() > 1) {
+                c++;
               }
+              if (imp.getNSlices() > 1) {
+                z++;
+              }
+              
+              if (imp.getNFrames() > 1) {
+                t++;
+              }
+              if (c == 0) c = 1;
+              if (t == 0) t = 1;
+              if (z == 0) z = 1;
+              roi.setPosition(c, z, t);
             }
 
             if (sw == null) {
