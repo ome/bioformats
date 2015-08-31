@@ -608,9 +608,22 @@ public class LeicaReader extends FormatReader {
           TiffParser parser = new TiffParser(s);
           parser.setDoCaching(false);
           IFD firstIFD = parser.getFirstIFD();
+          parser.fillInIFD(firstIFD);
 
           ms.sizeX = (int) firstIFD.getImageWidth();
           ms.sizeY = (int) firstIFD.getImageLength();
+
+          // override the .lei pixel type, in case a TIFF file was overwritten
+          ms.pixelType = firstIFD.getPixelType();
+
+          // don't worry about changing the endianness when it
+          // won't affect the pixel data
+          if (FormatTools.getBytesPerPixel(ms.pixelType) > 1) {
+            ms.littleEndian = firstIFD.isLittleEndian();
+          }
+          else {
+            ms.littleEndian = realLittleEndian;
+          }
 
           tileWidth[i] = (int) firstIFD.getTileWidth();
           tileHeight[i] = (int) firstIFD.getTileLength();
@@ -618,6 +631,9 @@ public class LeicaReader extends FormatReader {
         finally {
           s.close();
         }
+      }
+      else {
+        ms.littleEndian = realLittleEndian;
       }
     }
 
@@ -649,7 +665,6 @@ public class LeicaReader extends FormatReader {
 
       ms.dimensionOrder =
         MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
-      ms.littleEndian = realLittleEndian;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -854,6 +869,7 @@ public class LeicaReader extends FormatReader {
     else {
       listing = Location.getIdMap().keySet().toArray(new String[0]);
     }
+    Arrays.sort(listing);
 
     final List<String> list = new ArrayList<String>();
 
