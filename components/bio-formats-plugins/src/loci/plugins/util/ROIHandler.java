@@ -367,7 +367,6 @@ public class ROIHandler {
               if (imp.getNSlices() > 1) {
                 z++;
               }
-              
               if (imp.getNFrames() > 1) {
                 t++;
               }
