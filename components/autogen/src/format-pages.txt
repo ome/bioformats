@@ -32,6 +32,7 @@ extensions = .sld
 owner = `Intelligent Imaging Innovations`_
 developer = `Intelligent Imaging Innovations`_
 bsd = no
+alternateReader = 3i SlideBook
 export = no
 versions = 4.1, 4.2, 5.0, 5.5, 6.0
 weHave = * Numerous SlideBook datasets
