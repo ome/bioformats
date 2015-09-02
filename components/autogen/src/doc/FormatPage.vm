@@ -28,8 +28,11 @@ Export: |$export|
 Officially Supported Versions: $versions
 
 #if ($metadataPage)
-Supported Metadata Fields: :doc:`$format <$metadataPage>`
+Supported Metadata Fields: #foreach ($item in $metadataPage)
+#if ($velocityHasNext):doc:`$item`, #else:doc:`$item`#end
 #end
+#end
+
 
 #if ($software)
 Freely Available Software:

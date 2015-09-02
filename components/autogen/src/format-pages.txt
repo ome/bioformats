@@ -1,4 +1,5 @@
 [3i SlideBook]
+metadataPage = 3i-slidebook-metadata, 3i-slidebook6-metadata
 extensions = .sld
 owner = `Intelligent Imaging Innovations`_
 developer = `Intelligent Imaging Innovations`_
