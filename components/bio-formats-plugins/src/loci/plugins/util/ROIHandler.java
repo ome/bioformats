@@ -373,13 +373,14 @@ public class ROIHandler {
               if (c == 0) c = 1;
               if (t == 0) t = 1;
               if (z == 0) z = 1;
-              if (c == 1 && z == 1 && t > 1) {
-                roi.setPosition(0, 0, t);
-              } else if (c == 1 && z > 1 && t == 1) {
-                roi.setPosition(0, z, 0);
-              } else if (c > 1 && z == 1 && t == 1) {
-                roi.setPosition(c, 0, 0);
-              } else {
+              if (imp.getNChannels() == 1 && imp.getNSlices() == 1 && t > 1) {
+                roi.setPosition(t);
+              } else if (imp.getNChannels() == 1 && z > 1 && imp.getNFrames() == 1) {
+                roi.setPosition(z);
+              } else if (c > 1 && imp.getNSlices() == 1 && imp.getNFrames() == 1) {
+                roi.setPosition(c);
+              } else if (imp.getNChannels() > 1 && imp.getNSlices() > 1
+                    && imp.getNFrames() > 1) {
                 roi.setPosition(c, z, t);
               }
             }
