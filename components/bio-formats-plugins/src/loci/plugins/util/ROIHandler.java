@@ -379,8 +379,7 @@ public class ROIHandler {
                 roi.setPosition(z);
               } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
                 roi.setPosition(c);
-              } else if (imp.getNChannels() > 1 && imp.getNSlices() > 1
-                    && imp.getNFrames() > 1) {
+              } else if (imp.isHyperStack()) {
                 roi.setPosition(c, z, t);
               }
             }
