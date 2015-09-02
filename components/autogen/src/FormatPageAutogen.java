@@ -183,15 +183,11 @@ public class FormatPageAutogen {
     VelocityContext context = VelocityTools.createContext();
 
     IniTable[] sortedTable = new IniTable[data.size()];
-    int formatDuplicates = 0;
     for (int i=0; i<data.size(); i++) {
       IniTable table = data.get(i);
       table.put("pagename",
         getPageName(table.get(IniTable.HEADER_KEY), table.get("pagename")));
       sortedTable[i] = table;
-      if (table.containsKey("alternateReader")) {
-        formatDuplicates++;
-      }
     }
 
     Arrays.sort(sortedTable, new Comparator<IniTable>() {
@@ -205,7 +201,7 @@ public class FormatPageAutogen {
     });
 
     context.put("formats", sortedTable);
-    context.put("count", sortedTable.length - formatDuplicates);
+    context.put("count", sortedTable.length);
 
     VelocityTools.processTemplate(engine, context, TABLE_TEMPLATE,
       "../../docs/sphinx/supported-formats.txt");
