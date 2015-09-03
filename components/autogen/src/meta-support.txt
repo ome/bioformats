@@ -540,17 +540,27 @@ Pixels.Type = Yes
 Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
+Plate.ID = Yes
+Plate.Name = Yes
 ROI.ID = Yes
 ROI.Name = Yes
 Rectangle.Height = Yes
 Rectangle.ID = Yes
 Rectangle.StrokeColor = Yes
+Rectangle.Text = Yes
 Rectangle.TheC = Yes
 Rectangle.TheT = Yes
 Rectangle.TheZ = Yes
 Rectangle.Width = Yes
 Rectangle.X = Yes
 Rectangle.Y = Yes
+Well.Column = Yes
+Well.ExternalIdentifier = Yes
+Well.ID = Yes
+Well.Row = Yes
+WellSample.ID = Yes
+WellSample.ImageRef = Yes
+WellSample.Index = Yes
 
 [CellomicsReader]
 Channel.ID = Yes
