@@ -358,17 +358,31 @@ public class ROIHandler {
                 t = shapeObject.getTheT().getValue();
               }
               // ImageJ expects 1-based indexing, opposed to 
-              // 0-based indexing in OME  
-              if (images[imageNum].getNChannels() == 1 &&
-              images[imageNum].getNSlices() == 1) {
-                roi.setPosition(t+1);
+              // 0-based indexing in OME
+              // Roi positions differ between hyperstacks and normal stacks
+              ImagePlus imp = images[imageNum];
+              if (imp.getNChannels() > 1) {
+                c++;
               }
-              else {
-                roi.setPosition(c+1, z+1, t+1);
+              if (imp.getNSlices() > 1) {
+                z++;
               }
-
+              if (imp.getNFrames() > 1) {
+                t++;
+              }
+              if (c == 0) c = 1;
+              if (t == 0) t = 1;
+              if (z == 0) z = 1;
+              if (imp.getNChannels() == 1 && imp.getNSlices() == 1) {
+                roi.setPosition(t);
+              } else if (imp.getNChannels() == 1 && imp.getNFrames() == 1) {
+                roi.setPosition(z);
+              } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
+                roi.setPosition(c);
+              } else if (imp.isHyperStack()) {
+                roi.setPosition(c, z, t);
+              }
             }
-            roi.setImage(images[imageNum]);
 
             if (sw == null) {
               roi.setStrokeWidth((float) 1);
