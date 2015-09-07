@@ -778,6 +778,32 @@ public class MetamorphReader extends BaseTiffReader {
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
+      else {
+        Vector<Double> zPositions = new Vector<Double>();
+        Vector<Double> uniqueZ = new Vector<Double>();
+    	  
+        for (IFD ifd : ifds) {
+          String xml = XMLTools.sanitizeXML(ifd.getComment());
+          XMLTools.parseXML(xml, handler);
+
+          zPositions = handler.getZPositions();
+          for (Double z : zPositions) {
+            if (!uniqueZ.contains(z)) uniqueZ.add(z);
+          }
+        }
+        
+        if (uniqueZ.size() > 0) {
+          CoreMetadata ms0 = core.get(0);   
+          if (getSizeZ() == 0) ms0.sizeZ = 1;
+    	  
+          Double zRange = zPositions.get(zPositions.size() - 1) - zPositions.get(0);
+          stepSize = Math.abs(zRange);
+          if (ms0.sizeZ > 1) {
+            stepSize /= (ms0.sizeZ - 1);
+          }
+        }
+      }
+      
       Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
       if (physicalSizeZ != null) {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
