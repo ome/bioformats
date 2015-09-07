@@ -339,3 +339,8 @@ default = false
 type = boolean
 label = windowless
 default = false
+
+[mustGroup]
+type = boolean
+label = mustGroup
+default = false
