@@ -105,38 +105,44 @@ namespace
   typedef path_map::value_type pm;
   typedef boost::filesystem::path path;
 
-  pm paths[] =
-    {
-      // Standard GNU paths.
-      pm("bin",         internalpath("BIOFORMATS_BINDIR",         INSTALL_FULL_BINDIR,         INSTALL_BINDIR)),
-      pm("sbin",        internalpath("BIOFORMATS_SBINDIR",        INSTALL_FULL_SBINDIR,        INSTALL_SBINDIR)),
-      // Note envvar SYS prefix to avoid clash with package path.
-      pm("libexec",     internalpath("BIOFORMATS_SYSLIBEXECDIR",  INSTALL_FULL_LIBEXECDIR,     INSTALL_LIBEXECDIR)),
-      pm("sysconf",     internalpath("BIOFORMATS_SYSCONFDIR",     INSTALL_FULL_SYSCONFDIR,     INSTALL_SYSCONFDIR)),
-      pm("sharedstate", internalpath("BIOFORMATS_SHAREDSTATEDIR", INSTALL_FULL_SHAREDSTATEDIR, INSTALL_SHAREDSTATEDIR)),
-      pm("localstate",  internalpath("BIOFORMATS_LOCALSTATEDIR",  INSTALL_FULL_LOCALSTATEDIR,  INSTALL_LOCALSTATEDIR)),
-      pm("lib",         internalpath("BIOFORMATS_LIBDIR",         INSTALL_FULL_LIBDIR,         INSTALL_LIBDIR)),
-      pm("include",     internalpath("BIOFORMATS_INCLUDEDIR",     INSTALL_FULL_INCLUDEDIR,     INSTALL_INCLUDEDIR)),
-      pm("oldinclude",  internalpath("BIOFORMATS_OLDINCLUDEDIR",  INSTALL_FULL_OLDINCLUDEDIR,  INSTALL_OLDINCLUDEDIR)),
-      pm("dataroot",    internalpath("BIOFORMATS_DATAROOTDIR",    INSTALL_FULL_DATAROOTDIR,    INSTALL_DATAROOTDIR)),
-      // Note envvar SYS prefix to avoid clash with package path.
-      pm("data",        internalpath("BIOFORMATS_SYSDATADIR",     INSTALL_FULL_DATADIR,        INSTALL_DATADIR)),
-      pm("info",        internalpath("BIOFORMATS_INFODIR",        INSTALL_FULL_INFODIR,        INSTALL_INFODIR)),
-      pm("locale",      internalpath("BIOFORMATS_LOCALEDIR",      INSTALL_FULL_LOCALEDIR,      INSTALL_LOCALEDIR)),
-      pm("man",         internalpath("BIOFORMATS_MANDIR",         INSTALL_FULL_MANDIR,         INSTALL_MANDIR)),
-      pm("doc",         internalpath("BIOFORMATS_DOCDIR",         INSTALL_FULL_DOCDIR,         INSTALL_DOCDIR)),
+  const path_map&
+  internalpaths()
+  {
+    static const pm paths[] =
+      {
+        // Standard GNU paths.
+        pm("bin", internalpath("BIOFORMATS_BINDIR", INSTALL_FULL_BINDIR, INSTALL_BINDIR)),
+        pm("sbin", internalpath("BIOFORMATS_SBINDIR", INSTALL_FULL_SBINDIR, INSTALL_SBINDIR)),
+        // Note envvar SYS prefix to avoid clash with package path.
+        pm("libexec", internalpath("BIOFORMATS_SYSLIBEXECDIR", INSTALL_FULL_LIBEXECDIR, INSTALL_LIBEXECDIR)),
+        pm("sysconf", internalpath("BIOFORMATS_SYSCONFDIR", INSTALL_FULL_SYSCONFDIR, INSTALL_SYSCONFDIR)),
+        pm("sharedstate", internalpath("BIOFORMATS_SHAREDSTATEDIR", INSTALL_FULL_SHAREDSTATEDIR, INSTALL_SHAREDSTATEDIR)),
+        pm("localstate", internalpath("BIOFORMATS_LOCALSTATEDIR", INSTALL_FULL_LOCALSTATEDIR, INSTALL_LOCALSTATEDIR)),
+        pm("lib", internalpath("BIOFORMATS_LIBDIR", INSTALL_FULL_LIBDIR, INSTALL_LIBDIR)),
+        pm("include", internalpath("BIOFORMATS_INCLUDEDIR", INSTALL_FULL_INCLUDEDIR, INSTALL_INCLUDEDIR)),
+        pm("oldinclude", internalpath("BIOFORMATS_OLDINCLUDEDIR", INSTALL_FULL_OLDINCLUDEDIR, INSTALL_OLDINCLUDEDIR)),
+        pm("dataroot", internalpath("BIOFORMATS_DATAROOTDIR", INSTALL_FULL_DATAROOTDIR, INSTALL_DATAROOTDIR)),
+        // Note envvar SYS prefix to avoid clash with package path.
+        pm("data", internalpath("BIOFORMATS_SYSDATADIR", INSTALL_FULL_DATADIR, INSTALL_DATADIR)),
+        pm("info", internalpath("BIOFORMATS_INFODIR", INSTALL_FULL_INFODIR, INSTALL_INFODIR)),
+        pm("locale", internalpath("BIOFORMATS_LOCALEDIR", INSTALL_FULL_LOCALEDIR, INSTALL_LOCALEDIR)),
+        pm("man", internalpath("BIOFORMATS_MANDIR", INSTALL_FULL_MANDIR, INSTALL_MANDIR)),
+        pm("doc", internalpath("BIOFORMATS_DOCDIR", INSTALL_FULL_DOCDIR, INSTALL_DOCDIR)),
 
-      // Bio-Formats package-specific paths.
-      pm("bf-root",      internalpath("BIOFORMATS_HOME",          INSTALL_PREFIX,                           "")),
-      pm("bf-data",      internalpath("BIOFORMATS_DATADIR",       OME_BIOFORMATS_INSTALL_FULL_DATADIR,      OME_BIOFORMATS_INSTALL_DATADIR)),
-      pm("bf-icon",      internalpath("BIOFORMATS_ICONDIR",       OME_BIOFORMATS_INSTALL_FULL_ICONDIR,      OME_BIOFORMATS_INSTALL_ICONDIR)),
-      pm("bf-libexec",   internalpath("BIOFORMATS_LIBEXECDIR",    OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR,   OME_BIOFORMATS_INSTALL_LIBEXECDIR)),
-      pm("bf-schema",    internalpath("BIOFORMATS_SCHEMADIR",     OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR,    OME_BIOFORMATS_INSTALL_SCHEMADIR)),
-      pm("bf-transform", internalpath("BIOFORMATS_TRANSFORMDIR",  OME_BIOFORMATS_INSTALL_FULL_TRANSFORMDIR, OME_BIOFORMATS_INSTALL_TRANSFORMDIR))
-    };
+        // Bio-Formats package-specific paths.
+        pm("bf-root", internalpath("BIOFORMATS_HOME", INSTALL_PREFIX, "")),
+        pm("bf-data", internalpath("BIOFORMATS_DATADIR", OME_BIOFORMATS_INSTALL_FULL_DATADIR, OME_BIOFORMATS_INSTALL_DATADIR)),
+        pm("bf-icon", internalpath("BIOFORMATS_ICONDIR", OME_BIOFORMATS_INSTALL_FULL_ICONDIR, OME_BIOFORMATS_INSTALL_ICONDIR)),
+        pm("bf-libexec", internalpath("BIOFORMATS_LIBEXECDIR", OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR, OME_BIOFORMATS_INSTALL_LIBEXECDIR)),
+        pm("bf-schema", internalpath("BIOFORMATS_SCHEMADIR", OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR, OME_BIOFORMATS_INSTALL_SCHEMADIR)),
+        pm("bf-transform", internalpath("BIOFORMATS_TRANSFORMDIR", OME_BIOFORMATS_INSTALL_FULL_TRANSFORMDIR, OME_BIOFORMATS_INSTALL_TRANSFORMDIR))
+      };
 
-  path_map internalpaths(paths,
+    static path_map pmap(paths,
                          paths + boost::size(paths));
+
+    return pmap;
+  }
 }
 
 
@@ -188,10 +194,11 @@ namespace ome
     fs::path
     module_runtime_path(const std::string& dtype)
     {
-      path_map::const_iterator ipath(internalpaths.find(dtype));
+      const path_map& paths(internalpaths());
+      path_map::const_iterator ipath(paths.find(dtype));
 
       // Is this a valid dtype?
-      if (ipath == internalpaths.end())
+      if (ipath == paths.end())
         {
           boost::format fmt("Invalid runtime path type “%1%”");
           fmt % dtype;

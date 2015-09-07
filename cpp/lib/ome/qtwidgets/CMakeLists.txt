@@ -97,7 +97,7 @@ if (OME_QTOPENGL)
       glsl/v110/GLImageShader2D.h
       glsl/v110/GLLineShader2D.h)
 
-  add_library(ome-qtwidgets SHARED
+  add_library(ome-qtwidgets
               ${QTWIDGETS_SOURCES}
               ${QTWIDGETS_HEADERS}
               ${QTWIDGETS_GL_SOURCES}

@@ -275,3 +275,13 @@ void print(const char *fmt, ...)
 
 int main() { print(\"%d %s\", 43, \"test\"); }
 " OME_HAVE_CSTDARG)
+
+# May be inlined, so check it compiles:
+check_cxx_source_compiles("
+#include <stdio.h>
+int main(void) {
+  char buf[10];
+  snprintf(buf, 10, \"Test %d\", 1);
+  return 0;
+}"
+  OME_HAVE_SNPRINTF)

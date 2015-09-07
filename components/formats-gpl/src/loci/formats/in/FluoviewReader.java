@@ -799,7 +799,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
       if (date != null) {
         date = DateTools.formatDate(date.trim(),
-          new String[] {"MM/dd/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss"}, true);
+          new String[] {"MM/dd/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss","MM/dd/yyyy H:mm:ss"}, true);
         Timestamp timestamp = Timestamp.valueOf(date);
         if (timeIndex >= 0 && timestamp != null) {
           long ms = timestamp.asInstant().getMillis();

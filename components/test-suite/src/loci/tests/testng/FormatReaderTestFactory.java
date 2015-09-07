@@ -200,7 +200,7 @@ public class FormatReaderTestFactory {
 
     // remove duplicates
     int index = 0;
-    FileStitcher reader = new FileStitcher();
+    FileStitcher reader = new FileStitcher(TestTools.getTestImageReader());
     while (index < files.size()) {
       String file = (String) files.get(index);
       try {

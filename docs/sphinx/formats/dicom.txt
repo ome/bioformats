@@ -24,7 +24,7 @@ Freely Available Software:
 
 - `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ 
 - `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ 
-- `Wikipedia's list of freeware health software <http://en.wikipedia.org/wiki/List_of_freeware_health_software#Imaging.2FVisualization>`_
+- `Wikipedia's list of freeware health software <http://en.wikipedia.org/wiki/List_of_freeware_health_software>`_
 
 Sample Datasets:
 

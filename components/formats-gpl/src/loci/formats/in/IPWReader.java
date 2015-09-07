@@ -27,8 +27,8 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import ome.xml.model.primitives.Timestamp;
@@ -67,7 +67,7 @@ public class IPWReader extends FormatReader {
   // -- Fields --
 
   /** List of embedded image file names (one per image plane). */
-  private Hashtable<Integer, String> imageFiles;
+  private Map<Integer, String> imageFiles;
 
   /** Helper reader - parses embedded files from the OLE document. */
   private transient POIService poi;
@@ -199,7 +199,7 @@ public class IPWReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     initPOIService();
 
-    imageFiles = new Hashtable<Integer, String>();
+    imageFiles = new HashMap<Integer, String>();
 
     Vector<String> fileList = poi.getDocumentList();
 

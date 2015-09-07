@@ -24,7 +24,7 @@
  */
 
 /*
- * https://trac.openmicroscopy.org.uk/ome/ticket/4151
+ * https://trac.openmicroscopy.org/ome/ticket/4151
  *
  * AxioVision TIFF format documentation:
  *
