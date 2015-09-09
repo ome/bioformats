@@ -48,7 +48,7 @@ matrix:
       env: BUILD=sphinx_html
     - jdk: oraclejdk7
       env: BUILD=sphinx_html
-    - jdk: oraclejdk7
+    - jdk: oraclejdk8
       env: BUILD=cppwrap
     - jdk: openjdk6
       env: BUILD=cppwrap
