@@ -15,10 +15,9 @@ clean()
 maven()
 {
     mvn
-    clean
 }
 
-findbugs()
+maven_findbugs()
 {
     mvn findbugs:findbugs -Dfindbugs.threshold=medium
 }
@@ -119,9 +118,9 @@ do
         ant)
             antbuild ;;
         findbugs)
-            findbugs ;;
+            maven_findbugs ;;
         all)
-            clean && maven && findbugs && cppwrap && sphinx && antbuild;;
+            clean && maven_findbugs && cppwrap && sphinx && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1
