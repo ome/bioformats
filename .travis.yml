@@ -15,6 +15,7 @@ addons:
     - git
     - cmake
     - build-essential
+    - libboost-all-dev
 
 jdk:
   - oraclejdk8
