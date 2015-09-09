@@ -23,6 +23,7 @@ jdk:
 
 env:
   - BUILD=maven_findbugs
+  - BUILD=maven
   - BUILD=cppwrap
   - BUILD=sphinx_html
   - BUILD=ant
@@ -52,3 +53,9 @@ matrix:
       env: BUILD=cppwrap
     - jdk: openjdk6
       env: BUILD=cppwrap
+    - jdk: openjdk6
+      env: BUILD=maven_findbugs
+    - jdk: oraclejdk7
+      env: BUILD=maven
+    - jdk: oraclejdk8
+      env: BUILD=maven
