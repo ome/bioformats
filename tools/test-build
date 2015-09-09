@@ -107,6 +107,8 @@ do
             clean ;;
         maven)
             maven ;;
+        maven_findbugs)
+            maven_findbugs ;;
         cpp)
             cpp ;;
         cppwrap)
@@ -117,8 +119,6 @@ do
             sphinx ;;
         ant)
             antbuild ;;
-        findbugs)
-            maven_findbugs ;;
         all)
             clean && maven_findbugs && cppwrap && sphinx && antbuild;;
         *)
