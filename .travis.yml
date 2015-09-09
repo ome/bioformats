@@ -24,7 +24,7 @@ jdk:
 env:
   - BUILD=maven_findbugs
   - BUILD=cppwrap
-  - BUILD=sphinx
+  - BUILD=sphinx_html
   - BUILD=ant
 
 matrix:
@@ -33,10 +33,10 @@ matrix:
     - env: "BUILD=cppwrap"
 
 before_install:
-  - if [[ $BUILD == 'sphinx' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
+  - if [[ $BUILD == 'sphinx_html' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
 
 install:
-  - if [[ $BUILD != 'ant' ]] && [[ $BUILD != 'sphinx' ]]; then git fetch --tags; fi
+  - if [[ $BUILD != 'ant' ]] && [[ $BUILD != 'sphinx_html' ]]; then git fetch --tags; fi
   - if [[ $BUILD == 'maven_findbugs' ]]; then mvn install -DskipTests=true; fi
 
 script:
@@ -45,9 +45,9 @@ script:
 matrix:
   exclude:
     - jdk: openjdk6
-      env: BUILD=sphinx
+      env: BUILD=sphinx_html
     - jdk: oraclejdk7
-      env: BUILD=sphinx
+      env: BUILD=sphinx_html
     - jdk: oraclejdk7
       env: BUILD=cppwrap
     - jdk: openjdk6

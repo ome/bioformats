@@ -75,6 +75,14 @@ sphinx()
     )
 }
 
+sphinx_html()
+{
+    (
+        cd docs/sphinx
+        ant -Dsphinx.warnopts=$SPHINXOPTS html
+     )
+ }
+
 # Test Ant build targets
 antbuild()
 {
@@ -117,6 +125,8 @@ do
             flake ;;
         sphinx)
             sphinx ;;
+        sphinx_html)
+            sphinx_html ;;
         ant)
             antbuild ;;
         all)
