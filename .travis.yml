@@ -12,6 +12,7 @@ env:
   - BUILD=flake8
   - BUILD=sphinx
   - BUILD=ant
+  - BUILD=findbugs
 
 matrix:
   fast_finish: true
