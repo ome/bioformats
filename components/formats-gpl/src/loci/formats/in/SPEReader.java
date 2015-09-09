@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -690,11 +691,7 @@ public class SPEReader extends FormatReader {
      *  @param  index  The index of the expected value in the header array
      *  @return The value read at the given header entry location */
     private int getInt(int index) {
-      int b1 = getByte(index);
-      int b2 = getByte(index + 1);
-      int b3 = getByte(index + 2);
-      int b4 = getByte(index + 3);
-      return ((b4 << 24) | (b3 << 16) | (b2 << 8) | b1);
+      return DataTools.bytesToInt(header, index, true);
     }
   
     /** 
@@ -702,14 +699,10 @@ public class SPEReader extends FormatReader {
      *  @param  index   The starting index in the header array in which to write the value
      *  @param  value   The Integer value to be written to the SPE header */
     private void setInt(int index, int value) {
-      int b1 = value & 0xff;
-      int b2 = (value >> 8) & 0xff;
-      int b3 = (value >> 16) & 0xff;
-      int b4 = (value >> 24) & 0xff;
-      setByte(index, b1);
-      setByte(index + 1, b2);
-      setByte(index + 2, b3);
-      setByte(index + 3, b4);
+      byte[] intValue = DataTools.intToBytes(value, true);
+      for (int i = 0; i < intValue.length; i++) {
+        setByte(index + i, intValue[i]);
+      }
     }
     
     /** 
@@ -729,15 +722,7 @@ public class SPEReader extends FormatReader {
      *  @param  index  The index of the expected value in the header array
      *  @return The value read at the given header entry location */
     private long getLong(int index) {
-      int b1 = getByte(index);
-      int b2 = getByte(index + 2);
-      int b3 = getByte(index + 3);
-      int b4 = getByte(index + 4);
-      int b5 = getByte(index + 5);
-      int b6 = getByte(index + 6);
-      int b7 = getByte(index + 7);
-      int b8 = getByte(index + 8);
-      return ((b8 << 56) |(b7 << 48) |(b6 << 40) |(b5 << 32) |(b4 << 24) | (b3 << 16) | (b2 << 8) | b1);
+      return DataTools.bytesToLong(header, index, true);
     }
 
     /** 
@@ -745,22 +730,10 @@ public class SPEReader extends FormatReader {
      *  @param  index   The starting index in the header array in which to write the value
      *  @param  value   The Long value to be written to the SPE header */
     private void setLong(int index, int value) {
-      int b1 = value & 0xff;
-      int b2 = (value >> 8) & 0xff;
-      int b3 = (value >> 16) & 0xff;
-      int b4 = (value >> 24) & 0xff;
-      int b5 = (value >> 32) & 0xff;
-      int b6 = (value >> 40) & 0xff;
-      int b7 = (value >> 48) & 0xff;
-      int b8 = (value >> 56) & 0xff;
-      setByte(index, b1);
-      setByte(index + 1, b2);
-      setByte(index + 2, b3);
-      setByte(index + 3, b4);
-      setByte(index + 4, b5);
-      setByte(index + 5, b6);
-      setByte(index + 6, b7);
-      setByte(index + 7, b8);
+      byte[] longValue = DataTools.longToBytes(value, true);
+      for (int i = 0; i < longValue.length; i++) {
+        setByte(index + i, longValue[i]);
+      }
     }
   
     /** 
