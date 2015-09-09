@@ -783,20 +783,29 @@ public class MetamorphReader extends BaseTiffReader {
         Vector<Double> uniqueZ = new Vector<Double>();
     	  
         for (IFD ifd : ifds) {
-          String xml = XMLTools.sanitizeXML(ifd.getComment());
-          XMLTools.parseXML(xml, handler);
+          MetamorphHandler zPlaneHandler = new MetamorphHandler();
 
-          zPositions = handler.getZPositions();
+          String zComment = ifd.getComment();
+          if (zComment != null &&
+              zComment.startsWith("<MetaData>"))
+          {
+            try {
+              XMLTools.parseXML(XMLTools.sanitizeXML(zComment),
+                  zPlaneHandler);
+            }
+            catch (IOException e) { }
+          }
+
+          zPositions = zPlaneHandler.getZPositions();
           for (Double z : zPositions) {
             if (!uniqueZ.contains(z)) uniqueZ.add(z);
           }
         }
-        
-        if (uniqueZ.size() > 0) {
+        if (uniqueZ.size() > 1) {
           CoreMetadata ms0 = core.get(0);   
           if (getSizeZ() == 0) ms0.sizeZ = 1;
-    	  
-          Double zRange = zPositions.get(zPositions.size() - 1) - zPositions.get(0);
+        
+          Double zRange = uniqueZ.get(uniqueZ.size() - 1) - uniqueZ.get(0);
           stepSize = Math.abs(zRange);
           if (ms0.sizeZ > 1) {
             stepSize /= (ms0.sizeZ - 1);
