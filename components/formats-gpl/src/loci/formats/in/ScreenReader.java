@@ -41,6 +41,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
+import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -72,7 +73,7 @@ public class ScreenReader extends FormatReader {
 
   private String[] plateMetadataFiles;
 
-  private ImageReader[] readers;
+  private IFormatReader[] readers;
   private ClassList<IFormatReader> validReaders;
   private int fields, wells;
   private HashMap<Integer, Integer> seriesMap = new HashMap<Integer, Integer>();
@@ -102,8 +103,8 @@ public class ScreenReader extends FormatReader {
   @Override
   public void reopenFile() throws IOException {
     super.reopenFile();
-    for (ImageReader reader : readers) {
-      reader.getReader().reopenFile();
+    for (IFormatReader reader : readers) {
+      reader.reopenFile();
     }
   }
 
@@ -185,7 +186,7 @@ public class ScreenReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
-      for (ImageReader well : readers) {
+      for (IFormatReader well : readers) {
         well.close(fileOnly);
       }
     }
@@ -266,7 +267,7 @@ public class ScreenReader extends FormatReader {
       }
     }
 
-    readers = new ImageReader[files.length];
+    readers = new IFormatReader[files.length];
     int coreLength = files.length;
 
     plateMetadataFiles =
@@ -296,7 +297,7 @@ public class ScreenReader extends FormatReader {
       if (files[well] == null) {
         continue;
       }
-      readers[well] = new ImageReader(validReaders);
+      readers[well] = new FileStitcher(new ImageReader(validReaders));
       readers[well].setMetadataStore(omexmlMeta);
       readers[well].setId(files[well]);
       List<CoreMetadata> wcore = readers[well].getCoreMetadataList();
