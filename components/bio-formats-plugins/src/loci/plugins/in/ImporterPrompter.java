@@ -80,7 +80,7 @@ public class ImporterPrompter implements StatusListener {
         break;
       case STACK:
         ImporterOptions options = process.getOptions();
-        if (options != null && options.doMustGroup()) {
+        if (options != null && options.doMustGroup() && options.isGroupFiles()) {
           IJ.showMessage("Bio-Formats",
     				 "Image specifications state that files of this given format cannot be handled separately "
     				 + "and must be grouped according to supporting metadata\n");
