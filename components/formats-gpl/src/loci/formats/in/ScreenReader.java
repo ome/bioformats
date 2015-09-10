@@ -297,7 +297,9 @@ public class ScreenReader extends FormatReader {
       if (files[well] == null) {
         continue;
       }
-      readers[well] = new FileStitcher(new ImageReader(validReaders));
+      FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders));
+      stitcher.setCanChangePattern(false);
+      readers[well] = stitcher;
       readers[well].setMetadataStore(omexmlMeta);
       readers[well].setId(files[well]);
       List<CoreMetadata> wcore = readers[well].getCoreMetadataList();
