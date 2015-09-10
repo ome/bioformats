@@ -782,9 +782,9 @@ public class ZeissLSMReader extends FormatReader {
       pixelSizeY = ras.readDouble() * 1000000;
       pixelSizeZ = ras.readDouble() * 1000000;
 
-      addSeriesMeta("VoxelSizeX", new Double(pixelSizeX));
-      addSeriesMeta("VoxelSizeY", new Double(pixelSizeY));
-      addSeriesMeta("VoxelSizeZ", new Double(pixelSizeZ));
+      addSeriesMeta("VoxelSizeX", pixelSizeX);
+      addSeriesMeta("VoxelSizeY", pixelSizeY);
+      addSeriesMeta("VoxelSizeZ", pixelSizeZ);
 
       originX = ras.readDouble() * 1000000;
       originY = ras.readDouble() * 1000000;
@@ -1109,7 +1109,7 @@ public class ZeissLSMReader extends FormatReader {
         for (int i=0; i<nStamps; i++) {
           double stamp = in.readDouble();
           addSeriesMetaList("TimeStamp", stamp);
-          timestamps.add(new Double(stamp));
+          timestamps.add(stamp);
         }
       }
 
@@ -1258,9 +1258,9 @@ public class ZeissLSMReader extends FormatReader {
         store.setExperimenterUserName(userName, 0);
       }
 
-      Length pixX = FormatTools.getPhysicalSizeX(new Double(pixelSizeX));
-      Length pixY = FormatTools.getPhysicalSizeY(new Double(pixelSizeY));
-      Length pixZ = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ));
+      Length pixX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length pixY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length pixZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
       if (pixX != null) {
         store.setPixelsPhysicalSizeX(pixX, series);
       }
@@ -1412,7 +1412,7 @@ public class ZeissLSMReader extends FormatReader {
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
           try {
-            Double cutIn = new Double(v[0].trim());
+            final Double cutIn = new Double(v[0].trim());
             Length in = FormatTools.getCutIn(cutIn);
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, instrument, nextFilter);
@@ -1421,7 +1421,7 @@ public class ZeissLSMReader extends FormatReader {
           catch (NumberFormatException e) { }
           if (v.length > 1) {
             try {
-             Double cutOut = new Double(v[1].trim());
+              final Double cutOut = new Double(v[1].trim());
               Length out = FormatTools.getCutOut(cutOut);
               if (out != null) {
                 store.setTransmittanceRangeCutOut(out, instrument, nextFilter);
@@ -1974,172 +1974,172 @@ public class ZeissLSMReader extends FormatReader {
 
   private static ImmutableMap<Integer, String> createKeys() {
     final Builder<Integer, String> h = ImmutableMap.builder();
-    h.put(new Integer(0x10000001), "Name");
-    h.put(new Integer(0x4000000c), "Name");
-    h.put(new Integer(0x50000001), "Name");
-    h.put(new Integer(0x90000001), "Name");
-    h.put(new Integer(0x90000005), "Detection Channel Name");
-    h.put(new Integer(0xb0000003), "Name");
-    h.put(new Integer(0xd0000001), "Name");
-    h.put(new Integer(0x12000001), "Name");
-    h.put(new Integer(0x14000001), "Name");
-    h.put(new Integer(0x10000002), "Description");
-    h.put(new Integer(0x14000002), "Description");
-    h.put(new Integer(0x10000003), "Notes");
-    h.put(new Integer(0x10000004), "Objective");
-    h.put(new Integer(0x10000005), "Processing Summary");
-    h.put(new Integer(0x10000006), "Special Scan Mode");
-    h.put(new Integer(0x10000007), "Scan Type");
-    h.put(new Integer(0x10000008), "Scan Mode");
-    h.put(new Integer(0x10000009), "Number of Stacks");
-    h.put(new Integer(0x1000000a), "Lines Per Plane");
-    h.put(new Integer(0x1000000b), "Samples Per Line");
-    h.put(new Integer(0x1000000c), "Planes Per Volume");
-    h.put(new Integer(0x1000000d), "Images Width");
-    h.put(new Integer(0x1000000e), "Images Height");
-    h.put(new Integer(0x1000000f), "Number of Planes");
-    h.put(new Integer(0x10000010), "Number of Stacks");
-    h.put(new Integer(0x10000011), "Number of Channels");
-    h.put(new Integer(0x10000012), "Linescan XY Size");
-    h.put(new Integer(0x10000013), "Scan Direction");
-    h.put(new Integer(0x10000014), "Time Series");
-    h.put(new Integer(0x10000015), "Original Scan Data");
-    h.put(new Integer(0x10000016), "Zoom X");
-    h.put(new Integer(0x10000017), "Zoom Y");
-    h.put(new Integer(0x10000018), "Zoom Z");
-    h.put(new Integer(0x10000019), "Sample 0X");
-    h.put(new Integer(0x1000001a), "Sample 0Y");
-    h.put(new Integer(0x1000001b), "Sample 0Z");
-    h.put(new Integer(0x1000001c), "Sample Spacing");
-    h.put(new Integer(0x1000001d), "Line Spacing");
-    h.put(new Integer(0x1000001e), "Plane Spacing");
-    h.put(new Integer(0x1000001f), "Plane Width");
-    h.put(new Integer(0x10000020), "Plane Height");
-    h.put(new Integer(0x10000021), "Volume Depth");
-    h.put(new Integer(0x10000034), "Rotation");
-    h.put(new Integer(0x10000035), "Precession");
-    h.put(new Integer(0x10000036), "Sample 0Time");
-    h.put(new Integer(0x10000037), "Start Scan Trigger In");
-    h.put(new Integer(0x10000038), "Start Scan Trigger Out");
-    h.put(new Integer(0x10000039), "Start Scan Event");
-    h.put(new Integer(0x10000040), "Start Scan Time");
-    h.put(new Integer(0x10000041), "Stop Scan Trigger In");
-    h.put(new Integer(0x10000042), "Stop Scan Trigger Out");
-    h.put(new Integer(0x10000043), "Stop Scan Event");
-    h.put(new Integer(0x10000044), "Stop Scan Time");
-    h.put(new Integer(0x10000045), "Use ROIs");
-    h.put(new Integer(0x10000046), "Use Reduced Memory ROIs");
-    h.put(new Integer(0x10000047), "User");
-    h.put(new Integer(0x10000048), "Use B/C Correction");
-    h.put(new Integer(0x10000049), "Position B/C Contrast 1");
-    h.put(new Integer(0x10000050), "Position B/C Contrast 2");
-    h.put(new Integer(0x10000051), "Interpolation Y");
-    h.put(new Integer(0x10000052), "Camera Binning");
-    h.put(new Integer(0x10000053), "Camera Supersampling");
-    h.put(new Integer(0x10000054), "Camera Frame Width");
-    h.put(new Integer(0x10000055), "Camera Frame Height");
-    h.put(new Integer(0x10000056), "Camera Offset X");
-    h.put(new Integer(0x10000057), "Camera Offset Y");
-    h.put(new Integer(0x40000001), "Multiplex Type");
-    h.put(new Integer(0x40000002), "Multiplex Order");
-    h.put(new Integer(0x40000003), "Sampling Mode");
-    h.put(new Integer(0x40000004), "Sampling Method");
-    h.put(new Integer(0x40000005), "Sampling Number");
-    h.put(new Integer(0x40000006), "Acquire");
-    h.put(new Integer(0x50000002), "Acquire");
-    h.put(new Integer(0x7000000b), "Acquire");
-    h.put(new Integer(0x90000004), "Acquire");
-    h.put(new Integer(0xd0000017), "Acquire");
-    h.put(new Integer(0x40000007), "Sample Observation Time");
-    h.put(new Integer(0x40000008), "Time Between Stacks");
-    h.put(new Integer(0x4000000d), "Collimator 1 Name");
-    h.put(new Integer(0x4000000e), "Collimator 1 Position");
-    h.put(new Integer(0x4000000f), "Collimator 2 Name");
-    h.put(new Integer(0x40000010), "Collimator 2 Position");
-    h.put(new Integer(0x40000011), "Is Bleach Track");
-    h.put(new Integer(0x40000012), "Bleach After Scan Number");
-    h.put(new Integer(0x40000013), "Bleach Scan Number");
-    h.put(new Integer(0x40000014), "Trigger In");
-    h.put(new Integer(0x12000004), "Trigger In");
-    h.put(new Integer(0x14000003), "Trigger In");
-    h.put(new Integer(0x40000015), "Trigger Out");
-    h.put(new Integer(0x12000005), "Trigger Out");
-    h.put(new Integer(0x14000004), "Trigger Out");
-    h.put(new Integer(0x40000016), "Is Ratio Track");
-    h.put(new Integer(0x40000017), "Bleach Count");
-    h.put(new Integer(0x40000018), "SPI Center Wavelength");
-    h.put(new Integer(0x40000019), "Pixel Time");
-    h.put(new Integer(0x40000020), "ID Condensor Frontlens");
-    h.put(new Integer(0x40000021), "Condensor Frontlens");
-    h.put(new Integer(0x40000022), "ID Field Stop");
-    h.put(new Integer(0x40000023), "Field Stop Value");
-    h.put(new Integer(0x40000024), "ID Condensor Aperture");
-    h.put(new Integer(0x40000025), "Condensor Aperture");
-    h.put(new Integer(0x40000026), "ID Condensor Revolver");
-    h.put(new Integer(0x40000027), "Condensor Revolver");
-    h.put(new Integer(0x40000028), "ID Transmission Filter 1");
-    h.put(new Integer(0x40000029), "ID Transmission 1");
-    h.put(new Integer(0x40000030), "ID Transmission Filter 2");
-    h.put(new Integer(0x40000031), "ID Transmission 2");
-    h.put(new Integer(0x40000032), "Repeat Bleach");
-    h.put(new Integer(0x40000033), "Enable Spot Bleach Pos");
-    h.put(new Integer(0x40000034), "Spot Bleach Position X");
-    h.put(new Integer(0x40000035), "Spot Bleach Position Y");
-    h.put(new Integer(0x40000036), "Bleach Position Z");
-    h.put(new Integer(0x50000003), "Power");
-    h.put(new Integer(0x90000002), "Power");
-    h.put(new Integer(0x70000003), "Detector Gain");
-    h.put(new Integer(0x70000005), "Amplifier Gain");
-    h.put(new Integer(0x70000007), "Amplifier Offset");
-    h.put(new Integer(0x70000009), "Pinhole Diameter");
-    h.put(new Integer(0x7000000c), "Detector Name");
-    h.put(new Integer(0x7000000d), "Amplifier Name");
-    h.put(new Integer(0x7000000e), "Pinhole Name");
-    h.put(new Integer(0x7000000f), "Filter Set Name");
-    h.put(new Integer(0x70000010), "Filter Name");
-    h.put(new Integer(0x70000013), "Integrator Name");
-    h.put(new Integer(0x70000014), "Detection Channel Name");
-    h.put(new Integer(0x70000015), "Detector Gain B/C 1");
-    h.put(new Integer(0x70000016), "Detector Gain B/C 2");
-    h.put(new Integer(0x70000017), "Amplifier Gain B/C 1");
-    h.put(new Integer(0x70000018), "Amplifier Gain B/C 2");
-    h.put(new Integer(0x70000019), "Amplifier Offset B/C 1");
-    h.put(new Integer(0x70000020), "Amplifier Offset B/C 2");
-    h.put(new Integer(0x70000021), "Spectral Scan Channels");
-    h.put(new Integer(0x70000022), "SPI Wavelength Start");
-    h.put(new Integer(0x70000023), "SPI Wavelength End");
-    h.put(new Integer(0x70000026), "Dye Name");
-    h.put(new Integer(0xd0000014), "Dye Name");
-    h.put(new Integer(0x70000027), "Dye Folder");
-    h.put(new Integer(0xd0000015), "Dye Folder");
-    h.put(new Integer(0x90000003), "Wavelength");
-    h.put(new Integer(0x90000006), "Power B/C 1");
-    h.put(new Integer(0x90000007), "Power B/C 2");
-    h.put(new Integer(0xb0000001), "Filter Set");
-    h.put(new Integer(0xb0000002), "Filter");
-    h.put(new Integer(0xd0000004), "Color");
-    h.put(new Integer(0xd0000005), "Sample Type");
-    h.put(new Integer(0xd0000006), "Bits Per Sample");
-    h.put(new Integer(0xd0000007), "Ratio Type");
-    h.put(new Integer(0xd0000008), "Ratio Track 1");
-    h.put(new Integer(0xd0000009), "Ratio Track 2");
-    h.put(new Integer(0xd000000a), "Ratio Channel 1");
-    h.put(new Integer(0xd000000b), "Ratio Channel 2");
-    h.put(new Integer(0xd000000c), "Ratio Const. 1");
-    h.put(new Integer(0xd000000d), "Ratio Const. 2");
-    h.put(new Integer(0xd000000e), "Ratio Const. 3");
-    h.put(new Integer(0xd000000f), "Ratio Const. 4");
-    h.put(new Integer(0xd0000010), "Ratio Const. 5");
-    h.put(new Integer(0xd0000011), "Ratio Const. 6");
-    h.put(new Integer(0xd0000012), "Ratio First Images 1");
-    h.put(new Integer(0xd0000013), "Ratio First Images 2");
-    h.put(new Integer(0xd0000016), "Spectrum");
-    h.put(new Integer(0x12000003), "Interval");
+    h.put(0x10000001, "Name");
+    h.put(0x4000000c, "Name");
+    h.put(0x50000001, "Name");
+    h.put(0x90000001, "Name");
+    h.put(0x90000005, "Detection Channel Name");
+    h.put(0xb0000003, "Name");
+    h.put(0xd0000001, "Name");
+    h.put(0x12000001, "Name");
+    h.put(0x14000001, "Name");
+    h.put(0x10000002, "Description");
+    h.put(0x14000002, "Description");
+    h.put(0x10000003, "Notes");
+    h.put(0x10000004, "Objective");
+    h.put(0x10000005, "Processing Summary");
+    h.put(0x10000006, "Special Scan Mode");
+    h.put(0x10000007, "Scan Type");
+    h.put(0x10000008, "Scan Mode");
+    h.put(0x10000009, "Number of Stacks");
+    h.put(0x1000000a, "Lines Per Plane");
+    h.put(0x1000000b, "Samples Per Line");
+    h.put(0x1000000c, "Planes Per Volume");
+    h.put(0x1000000d, "Images Width");
+    h.put(0x1000000e, "Images Height");
+    h.put(0x1000000f, "Number of Planes");
+    h.put(0x10000010, "Number of Stacks");
+    h.put(0x10000011, "Number of Channels");
+    h.put(0x10000012, "Linescan XY Size");
+    h.put(0x10000013, "Scan Direction");
+    h.put(0x10000014, "Time Series");
+    h.put(0x10000015, "Original Scan Data");
+    h.put(0x10000016, "Zoom X");
+    h.put(0x10000017, "Zoom Y");
+    h.put(0x10000018, "Zoom Z");
+    h.put(0x10000019, "Sample 0X");
+    h.put(0x1000001a, "Sample 0Y");
+    h.put(0x1000001b, "Sample 0Z");
+    h.put(0x1000001c, "Sample Spacing");
+    h.put(0x1000001d, "Line Spacing");
+    h.put(0x1000001e, "Plane Spacing");
+    h.put(0x1000001f, "Plane Width");
+    h.put(0x10000020, "Plane Height");
+    h.put(0x10000021, "Volume Depth");
+    h.put(0x10000034, "Rotation");
+    h.put(0x10000035, "Precession");
+    h.put(0x10000036, "Sample 0Time");
+    h.put(0x10000037, "Start Scan Trigger In");
+    h.put(0x10000038, "Start Scan Trigger Out");
+    h.put(0x10000039, "Start Scan Event");
+    h.put(0x10000040, "Start Scan Time");
+    h.put(0x10000041, "Stop Scan Trigger In");
+    h.put(0x10000042, "Stop Scan Trigger Out");
+    h.put(0x10000043, "Stop Scan Event");
+    h.put(0x10000044, "Stop Scan Time");
+    h.put(0x10000045, "Use ROIs");
+    h.put(0x10000046, "Use Reduced Memory ROIs");
+    h.put(0x10000047, "User");
+    h.put(0x10000048, "Use B/C Correction");
+    h.put(0x10000049, "Position B/C Contrast 1");
+    h.put(0x10000050, "Position B/C Contrast 2");
+    h.put(0x10000051, "Interpolation Y");
+    h.put(0x10000052, "Camera Binning");
+    h.put(0x10000053, "Camera Supersampling");
+    h.put(0x10000054, "Camera Frame Width");
+    h.put(0x10000055, "Camera Frame Height");
+    h.put(0x10000056, "Camera Offset X");
+    h.put(0x10000057, "Camera Offset Y");
+    h.put(0x40000001, "Multiplex Type");
+    h.put(0x40000002, "Multiplex Order");
+    h.put(0x40000003, "Sampling Mode");
+    h.put(0x40000004, "Sampling Method");
+    h.put(0x40000005, "Sampling Number");
+    h.put(0x40000006, "Acquire");
+    h.put(0x50000002, "Acquire");
+    h.put(0x7000000b, "Acquire");
+    h.put(0x90000004, "Acquire");
+    h.put(0xd0000017, "Acquire");
+    h.put(0x40000007, "Sample Observation Time");
+    h.put(0x40000008, "Time Between Stacks");
+    h.put(0x4000000d, "Collimator 1 Name");
+    h.put(0x4000000e, "Collimator 1 Position");
+    h.put(0x4000000f, "Collimator 2 Name");
+    h.put(0x40000010, "Collimator 2 Position");
+    h.put(0x40000011, "Is Bleach Track");
+    h.put(0x40000012, "Bleach After Scan Number");
+    h.put(0x40000013, "Bleach Scan Number");
+    h.put(0x40000014, "Trigger In");
+    h.put(0x12000004, "Trigger In");
+    h.put(0x14000003, "Trigger In");
+    h.put(0x40000015, "Trigger Out");
+    h.put(0x12000005, "Trigger Out");
+    h.put(0x14000004, "Trigger Out");
+    h.put(0x40000016, "Is Ratio Track");
+    h.put(0x40000017, "Bleach Count");
+    h.put(0x40000018, "SPI Center Wavelength");
+    h.put(0x40000019, "Pixel Time");
+    h.put(0x40000020, "ID Condensor Frontlens");
+    h.put(0x40000021, "Condensor Frontlens");
+    h.put(0x40000022, "ID Field Stop");
+    h.put(0x40000023, "Field Stop Value");
+    h.put(0x40000024, "ID Condensor Aperture");
+    h.put(0x40000025, "Condensor Aperture");
+    h.put(0x40000026, "ID Condensor Revolver");
+    h.put(0x40000027, "Condensor Revolver");
+    h.put(0x40000028, "ID Transmission Filter 1");
+    h.put(0x40000029, "ID Transmission 1");
+    h.put(0x40000030, "ID Transmission Filter 2");
+    h.put(0x40000031, "ID Transmission 2");
+    h.put(0x40000032, "Repeat Bleach");
+    h.put(0x40000033, "Enable Spot Bleach Pos");
+    h.put(0x40000034, "Spot Bleach Position X");
+    h.put(0x40000035, "Spot Bleach Position Y");
+    h.put(0x40000036, "Bleach Position Z");
+    h.put(0x50000003, "Power");
+    h.put(0x90000002, "Power");
+    h.put(0x70000003, "Detector Gain");
+    h.put(0x70000005, "Amplifier Gain");
+    h.put(0x70000007, "Amplifier Offset");
+    h.put(0x70000009, "Pinhole Diameter");
+    h.put(0x7000000c, "Detector Name");
+    h.put(0x7000000d, "Amplifier Name");
+    h.put(0x7000000e, "Pinhole Name");
+    h.put(0x7000000f, "Filter Set Name");
+    h.put(0x70000010, "Filter Name");
+    h.put(0x70000013, "Integrator Name");
+    h.put(0x70000014, "Detection Channel Name");
+    h.put(0x70000015, "Detector Gain B/C 1");
+    h.put(0x70000016, "Detector Gain B/C 2");
+    h.put(0x70000017, "Amplifier Gain B/C 1");
+    h.put(0x70000018, "Amplifier Gain B/C 2");
+    h.put(0x70000019, "Amplifier Offset B/C 1");
+    h.put(0x70000020, "Amplifier Offset B/C 2");
+    h.put(0x70000021, "Spectral Scan Channels");
+    h.put(0x70000022, "SPI Wavelength Start");
+    h.put(0x70000023, "SPI Wavelength End");
+    h.put(0x70000026, "Dye Name");
+    h.put(0xd0000014, "Dye Name");
+    h.put(0x70000027, "Dye Folder");
+    h.put(0xd0000015, "Dye Folder");
+    h.put(0x90000003, "Wavelength");
+    h.put(0x90000006, "Power B/C 1");
+    h.put(0x90000007, "Power B/C 2");
+    h.put(0xb0000001, "Filter Set");
+    h.put(0xb0000002, "Filter");
+    h.put(0xd0000004, "Color");
+    h.put(0xd0000005, "Sample Type");
+    h.put(0xd0000006, "Bits Per Sample");
+    h.put(0xd0000007, "Ratio Type");
+    h.put(0xd0000008, "Ratio Track 1");
+    h.put(0xd0000009, "Ratio Track 2");
+    h.put(0xd000000a, "Ratio Channel 1");
+    h.put(0xd000000b, "Ratio Channel 2");
+    h.put(0xd000000c, "Ratio Const. 1");
+    h.put(0xd000000d, "Ratio Const. 2");
+    h.put(0xd000000e, "Ratio Const. 3");
+    h.put(0xd000000f, "Ratio Const. 4");
+    h.put(0xd0000010, "Ratio Const. 5");
+    h.put(0xd0000011, "Ratio Const. 6");
+    h.put(0xd0000012, "Ratio First Images 1");
+    h.put(0xd0000013, "Ratio First Images 2");
+    h.put(0xd0000016, "Spectrum");
+    h.put(0x12000003, "Interval");
     return h.build();
   }
 
   private Integer readEntry() throws IOException {
-    return new Integer(in.readInt());
+    return in.readInt();
   }
 
   private Object readValue() throws IOException {
@@ -2148,9 +2148,9 @@ public class ZeissLSMReader extends FormatReader {
 
     switch (blockType) {
       case TYPE_LONG:
-        return new Long(in.readInt());
+        return in.readInt();
       case TYPE_RATIONAL:
-        return new Double(in.readDouble());
+        return in.readDouble();
       case TYPE_ASCII:
         String s = in.readByteToString(dataSize).trim();
         StringBuffer sb = new StringBuffer();
@@ -2187,16 +2187,16 @@ public class ZeissLSMReader extends FormatReader {
           data = in.readString(dataSize);
           break;
         case TYPE_LONG:
-          data = new Integer(in.readInt());
+          data = in.readInt();
           break;
         case TYPE_RATIONAL:
-          data = new Double(in.readDouble());
+          data = in.readDouble();
           break;
         case TYPE_DATE:
-          data = new Long(in.readLong());
+          data = in.readLong();
           break;
         case TYPE_BOOLEAN:
-          data = new Boolean(in.readInt() == 0);
+          data = in.readInt() == 0;
           break;
       }
 
@@ -2231,25 +2231,25 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     protected int getIntValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       if (o == null) return -1;
       return !(o instanceof Number) ? -1 : ((Number) o).intValue();
     }
 
     protected float getFloatValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       if (o == null) return -1f;
       return !(o instanceof Number) ? -1f : ((Number) o).floatValue();
     }
 
     protected double getDoubleValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       if (o == null) return -1d;
       return !(o instanceof Number) ? -1d : ((Number) o).doubleValue();
     }
 
     protected String getStringValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       return o == null ? null : o.toString();
     }
 
@@ -2281,7 +2281,7 @@ public class ZeissLSMReader extends FormatReader {
           }
         }
       }
-      addGlobalMetaList(prefix + " Acquire", new Boolean(acquire));
+      addGlobalMetaList(prefix + " Acquire", acquire);
     }
   }
 
@@ -2346,7 +2346,7 @@ public class ZeissLSMReader extends FormatReader {
       immersion = next < tokens.length ? tokens[next++] : "Unknown";
       iris = Boolean.FALSE;
       if (next < tokens.length) {
-        iris = new Boolean(tokens[next++].trim().equalsIgnoreCase("iris"));
+        iris = tokens[next++].trim().equalsIgnoreCase("iris");
       }
     }
   }
@@ -2409,9 +2409,9 @@ public class ZeissLSMReader extends FormatReader {
     @Override
     protected void read() throws IOException {
       super.read();
-      pinhole = new Double(getDoubleValue(CHANNEL_PINHOLE_DIAMETER));
-      gain = new Double(getDoubleValue(CHANNEL_DETECTOR_GAIN));
-      amplificationGain = new Double(getDoubleValue(CHANNEL_AMPLIFIER_GAIN));
+      pinhole = getDoubleValue(CHANNEL_PINHOLE_DIAMETER);
+      gain = getDoubleValue(CHANNEL_DETECTOR_GAIN);
+      amplificationGain = getDoubleValue(CHANNEL_AMPLIFIER_GAIN);
       filter = getStringValue(CHANNEL_FILTER);
       if (filter != null) {
         filter = filter.trim();
@@ -2434,8 +2434,8 @@ public class ZeissLSMReader extends FormatReader {
     @Override
     protected void read() throws IOException {
       super.read();
-      wavelength = new Double(getDoubleValue(ILLUM_CHANNEL_WAVELENGTH));
-      attenuation = new Double(getDoubleValue(ILLUM_CHANNEL_ATTENUATION));
+      wavelength = getDoubleValue(ILLUM_CHANNEL_WAVELENGTH);
+      attenuation = getDoubleValue(ILLUM_CHANNEL_ATTENUATION);
       acquire = getIntValue(ILLUM_CHANNEL_ACQUIRE) != 0;
 
       name = getStringValue(ILLUM_CHANNEL_NAME);

@@ -39,8 +39,8 @@ setup(
 Python tools for generating code from the OME specification""",
     author="The Open Microscopy Consortium",
     author_email="ome-users@lists.openmicroscopy.org.uk",
-    url="http://trac.openmicroscopy.org.uk/ome/wiki/XsdFu",
-    download_url="http://trac.openmicroscopy.org.uk/ome/wiki/XsdFu",
+    url="http://downloads.openmicroscopy.org/bio-formats/",
+    download_url="http://downloads.openmicroscopy.org/bio-formats/",
     # package_dir = {"": "target"},
     # packages=packages,
     test_suite='test.suite'

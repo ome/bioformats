@@ -124,7 +124,6 @@ public class Configuration {
       new FileInputStream(this.configFile), Constants.ENCODING));
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
-    parser.setBackslashContinuesLine(false);
     ini = parser.parseINI(reader);
     pruneINI();
   }

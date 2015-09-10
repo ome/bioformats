@@ -59,6 +59,7 @@ namespace ome
     using std::regex;
     using std::regex_error;
     using std::regex_match;
+    using std::regex_replace;
     using std::regex_search;
     using std::cmatch;
     using std::smatch;
@@ -73,6 +74,7 @@ namespace ome
     using std::tr1::regex;
     using std::tr1::regex_error;
     using std::tr1::regex_match;
+    using std::tr1::regex_replace;
     using std::tr1::regex_search;
     using std::tr1::cmatch;
     using std::tr1::smatch;
@@ -87,6 +89,7 @@ namespace ome
     using boost::regex;
     using boost::regex_error;
     using boost::regex_match;
+    using boost::regex_replace;
     using boost::regex_search;
     using boost::cmatch;
     using boost::smatch;

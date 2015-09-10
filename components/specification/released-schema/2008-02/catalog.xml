@@ -6,7 +6,7 @@
   <uri name="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd" uri="BinaryFile.xsd"/>
   <uri name="http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd" uri="CA.xsd"/>
   <uri name="http://www.openmicroscopy.org/Schemas/CLI/2008-02/CLI.xsd" uri="CLI.xsd"/>
-  <uri name="http://www.openmicroscopy.org/Schemas/DataHistory/2008-09/DataHistory.xsd" uri="DataHistory.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/DataHistory/2008-02/DataHistory.xsd" uri="DataHistory.xsd"/>
   <uri name="http://www.openmicroscopy.org/Schemas/MLI/2008-02/MLI.xsd" uri="MLI.xsd"/>
   <uri name="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd" uri="STD.xsd"/>
   <uri name="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd" uri="SPW.xsd"/>

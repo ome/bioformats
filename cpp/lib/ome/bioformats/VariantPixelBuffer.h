@@ -39,8 +39,11 @@
 #define OME_BIOFORMATS_VARIANTPIXELBUFFER_H
 
 #include <ome/bioformats/PixelBuffer.h>
+#include <ome/bioformats/PixelProperties.h>
 
 #include <ome/common/variant.h>
+
+#include <ome/compat/memory.h>
 
 namespace ome
 {
@@ -262,7 +265,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage));
+        return variant_buffer_type(ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage)));
       }
 
       /**
@@ -282,7 +285,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage));
+        return variant_buffer_type(ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage)));
       }
 
       // No switch default to avoid -Wunreachable-code errors.

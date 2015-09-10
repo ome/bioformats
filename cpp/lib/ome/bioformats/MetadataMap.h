@@ -136,11 +136,8 @@ namespace ome
       /// Aggregate view of all storable types.
       typedef boost::mpl::joint_view<basic_types_view, list_types_view> all_types_view;
 
-      /// Empty vector placeholder.
-      typedef boost::mpl::vector<> empty_types;
-
       /// List of discriminated types used by boost::variant.
-      typedef boost::mpl::insert_range<empty_types, boost::mpl::end<empty_types>::type, all_types_view>::type discriminated_types;
+      typedef boost::mpl::insert_range<boost::mpl::vector0<>, boost::mpl::end<boost::mpl::vector0<> >::type, all_types_view>::type discriminated_types;
 
     public:
       /// Key type.
@@ -240,7 +237,7 @@ namespace ome
             list_type& list(get<list_type>(key));
             list.push_back(value);
           }
-        catch (boost::bad_get& e)
+        catch (const boost::bad_get&)
           {
             list_type new_list;
             new_list.push_back(value);
@@ -290,7 +287,7 @@ namespace ome
             value = get<T>(key);
             return true;
           }
-        catch (boost::bad_get& e)
+        catch (const boost::bad_get&)
           {
             return false;
           }

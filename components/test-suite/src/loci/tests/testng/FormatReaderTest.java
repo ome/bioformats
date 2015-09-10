@@ -913,9 +913,11 @@ public class FormatReaderTest {
       }
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
       Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -938,9 +940,11 @@ public class FormatReaderTest {
       }
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
       Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -964,9 +968,11 @@ public class FormatReaderTest {
       }
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
       Number size = realSize == null ? null : realSize.value(UNITS.MICROM);
+      Double doubleSize = size == null ? null : size.doubleValue();
 
-      if (!(expectedSize == null && size == null) &&
-        (expectedSize == null || !expectedSize.equals(size)))
+      if (!(expectedSize == null && doubleSize == null) &&
+        (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -1551,7 +1557,7 @@ public class FormatReaderTest {
 
       LOGGER.debug("newFile = {}", newFile);
 
-      IFormatReader check = new FileStitcher();
+      IFormatReader check = new FileStitcher(TestTools.getTestImageReader());
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
@@ -1592,7 +1598,7 @@ public class FormatReaderTest {
       else {
         Arrays.sort(base);
         IFormatReader r =
-          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
+          /*config.noStitching() ? TestTools.getTestImageReader() :*/ new FileStitcher(TestTools.getTestImageReader());
 
         int maxFiles = (int) Math.min(base.length, 100);
 
@@ -1836,7 +1842,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher());
+        new BufferedImageReader(new FileStitcher(TestTools.getTestImageReader()));
       resolutionReader.setFlattenedResolutions(false);
       resolutionReader.setNormalized(true);
       resolutionReader.setOriginalMetadataPopulated(false);
@@ -1982,7 +1988,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher());
+        new BufferedImageReader(new FileStitcher(TestTools.getTestImageReader()));
       resolutionReader.setFlattenedResolutions(false);
       resolutionReader.setNormalized(true);
       resolutionReader.setOriginalMetadataPopulated(false);
@@ -2334,7 +2340,7 @@ public class FormatReaderTest {
       String tmpdir = System.getProperty("java.io.tmpdir");
       memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
       memoDir.mkdir();
-      Memoizer memo = new Memoizer(0, memoDir);
+      Memoizer memo = new Memoizer(TestTools.getTestImageReader(), 0, memoDir);
       memo.setId(reader.getCurrentFile());
       memo.close();
       memoFile = memo.getMemoFile(reader.getCurrentFile());
@@ -2358,7 +2364,7 @@ public class FormatReaderTest {
         // log the memo file's size
         try {
           RandomAccessInputStream s = new RandomAccessInputStream(memoFile.getAbsolutePath());
-          LOGGER.info("memo file size for {} = {} bytes",
+          LOGGER.debug("memo file size for {} = {} bytes",
                       new Location(reader.getCurrentFile()).getAbsolutePath(),
                       s.length());
           s.close();
@@ -2437,7 +2443,8 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    reader = new BufferedImageReader(new FileStitcher(new Memoizer(Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
+    ImageReader ir = TestTools.getTestImageReader();
+    reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(false);
@@ -2526,7 +2533,7 @@ public class FormatReaderTest {
       }
       boolean single = used.length == 1;
       if (single && base) LOGGER.debug("OK");
-      else LOGGER.info("{} {}", used.length, single ? "file" : "files");
+      else LOGGER.debug("{} {}", used.length, single ? "file" : "files");
       if (!base) {
         LOGGER.error("Used files list does not include base file");
       }

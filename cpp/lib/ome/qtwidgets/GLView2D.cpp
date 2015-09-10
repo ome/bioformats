@@ -60,6 +60,20 @@
 #pragma warning(disable : 4351)
 #endif
 
+namespace
+{
+
+  void
+  qNormalizeAngle(int &angle)
+  {
+    while (angle < 0)
+      angle += 360 * 16;
+    while (angle > 360 * 16)
+      angle -= 360 * 16;
+  }
+
+}
+
 namespace ome
 {
   namespace qtwidgets
@@ -98,14 +112,6 @@ namespace ome
     QSize GLView2D::sizeHint() const
     {
       return QSize(800, 600);
-    }
-
-    static void qNormalizeAngle(int &angle)
-    {
-      while (angle < 0)
-        angle += 360 * 16;
-      while (angle > 360 * 16)
-        angle -= 360 * 16;
     }
 
     ome::compat::shared_ptr<ome::bioformats::FormatReader>

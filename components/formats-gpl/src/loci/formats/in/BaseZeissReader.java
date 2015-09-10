@@ -31,7 +31,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -46,8 +45,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -80,24 +77,25 @@ public abstract class BaseZeissReader extends FormatReader {
 
   protected List<String> tagsToParse;
   protected int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  protected Hashtable<Integer, Length> stageX = new Hashtable<Integer, Length>();
-  protected Hashtable<Integer, Length> stageY = new Hashtable<Integer, Length>();
+  protected final Map<Integer, Length> stageX = new HashMap<Integer, Length>();
+  protected final Map<Integer, Length> stageY = new HashMap<Integer, Length>();
   protected int timepoint = 0;
 
   protected int[] channelColors;
   protected int lastPlane = 0;
-  protected Hashtable<Integer, Integer> tiles = new Hashtable<Integer, Integer>();
+  protected final Map<Integer, Integer> tiles =
+      new HashMap<Integer, Integer>();
 
-  protected Hashtable<Integer, Double> detectorGain =
-      new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, Double> detectorOffset =
-      new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, Length> emWavelength =
-      new Hashtable<Integer, Length>();
-  protected Hashtable<Integer, Length> exWavelength =
-      new Hashtable<Integer, Length>();
-  protected Hashtable<Integer, String> channelName =
-      new Hashtable<Integer, String>();
+  protected final Map<Integer, Double> detectorGain =
+      new HashMap<Integer, Double>();
+  protected final Map<Integer, Double> detectorOffset =
+      new HashMap<Integer, Double>();
+  protected final Map<Integer, Length> emWavelength =
+      new HashMap<Integer, Length>();
+  protected final Map<Integer, Length> exWavelength =
+      new HashMap<Integer, Length>();
+  protected final Map<Integer, String> channelName =
+      new HashMap<Integer, String>();
   protected Double physicalSizeX, physicalSizeY, physicalSizeZ;
   protected int rowCount, colCount, rawCount;
   protected String imageDescription;
@@ -284,7 +282,7 @@ public abstract class BaseZeissReader extends FormatReader {
     m.indexed = !isRGB() && channelColors != null;
 
     // We shouldn't need to copy the coremetadata here.  This
-    // indicates a need for better ordering of the initialisation, or
+    // indicates a need for better ordering of the initialization, or
     // rather not using the size of core as the series count until
     // it's filled.
     for (int i=1; i<core.size(); i++) {
@@ -385,7 +383,7 @@ public abstract class BaseZeissReader extends FormatReader {
           if (exposure == null && exposureTime.size() == 1) {
             exposure = exposureTime.values().iterator().next();
           }
-          Double exp = new Double(0.0);
+          Double exp = 0d;
           try { exp = new Double(exposure); }
           catch (NumberFormatException e) { }
           catch (NullPointerException e) { }
@@ -394,10 +392,10 @@ public abstract class BaseZeissReader extends FormatReader {
           int posIndex = i * getImageCount() + plane;
 
           if (posIndex < timestamps.size()) {
-            String timestamp = timestamps.get(new Integer(posIndex));
+            String timestamp = timestamps.get(posIndex);
             long stamp = parseTimestamp(timestamp);
             stamp -= firstStamp;
-            store.setPlaneDeltaT(new Time(new Double(stamp / 1600000), UNITS.S), i, plane);
+            store.setPlaneDeltaT(new Time((double) stamp / 1600000, UNITS.S), i, plane);
           }
 
           if (stageX.get(posIndex) != null) {
@@ -975,11 +973,11 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Acquisition Date")) {
           if (timepoint > 0) {
-            timestamps.put(new Integer(timepoint - 1), value);
+            timestamps.put(timepoint - 1, value);
             addGlobalMetaList("Timestamp", value);
           }
           else {
-            timestamps.put(new Integer(timepoint), value);
+            timestamps.put(timepoint, value);
           }
           timepoint++;
         }
@@ -1061,8 +1059,9 @@ public abstract class BaseZeissReader extends FormatReader {
 
     /**
      * Constructor.
-     * All variables are initialised to be invalid to permit later validation of correct parsing.
+     * All variables are initialized to be invalid to permit later validation of correct parsing.
      * @param index the index number of the tag.
+     * @param context the context (main, scaling or plane).
      */
     public Tag(int index, Context context)
     {
@@ -1077,6 +1076,7 @@ public abstract class BaseZeissReader extends FormatReader {
      * Constructor.  The key id will be automatically set.
      * @param keyid the key number of the tag.
      * @param value the value of the tag.
+     * @param context the context (main, scaling or plane).
      */
     public Tag(int keyid, String value, Context context)
     {

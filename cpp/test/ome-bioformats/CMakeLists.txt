@@ -36,7 +36,8 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${Boost_INCLUDE_DIRS}
-                    ${PNG_INCLUDE_DIRS})
+                    ${PNG_INCLUDE_DIRS}
+                    ${XercesC_INCLUDE_DIRS})
 
 add_subdirectory(data)
 
@@ -65,7 +66,6 @@ if(BUILD_TESTS)
   bf_add_test(ome-bioformats/formatwriter formatwriter)
 
   add_executable(metadatamap metadatamap.cpp)
-  target_link_libraries(metadatamap ome-bioformats)
   target_link_libraries(metadatamap ome-test)
 
   bf_add_test(ome-bioformats/metadatamap metadatamap)

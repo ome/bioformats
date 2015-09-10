@@ -1,0 +1,38 @@
+## The bioformats package must be present in the *static* classpath to
+## work properly in Octave.  We must error loading the package if not.
+
+## First check if Octave was even built with Java support
+
+if (! octave_config_info ("features").JAVA)
+  error ("bioformats: support for java was disabled when Octave was built");
+endif
+
+## Now check if bioformats java library is working properly
+
+## We can't just check for a jar in classpath, filenames mean nothing.
+try
+  if (javaObject ("loci.formats.in.FakeReader"))
+    ## without an if block, we would replace the user "ans" variable
+  endif
+catch
+  error (["bioformats: the bioformats java library is missing " ...
+          "(check javaclasspath)"]);
+end_try_catch
+
+## The whole reason why we need bioformats.jar to be on the static classpath
+## is because Octave can't handle this properly.  So we use it for testing.
+if (! isa (javaObject ("loci.formats.in.FakeReader"),
+           "loci.formats.IFormatReader"))
+
+  ## If we find it, tell the user, otherwise a more general error message.
+  if (any (cellfun (@numel, regexp (javaclasspath ("-dynamic"),
+                                    [filesep "bioformats_package.jar$"]))))
+    error (["found bioformats_package.jar on java dynamic classpath but " ...
+            "must be on java static classpath"]);
+  else
+    error (["bioformats java library not working.  Note that it must be " ...
+            "present on 'javaclasspath -static'"]);
+  endif
+
+endif
+

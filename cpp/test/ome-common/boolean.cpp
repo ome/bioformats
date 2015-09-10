@@ -42,6 +42,28 @@
 
 using ome::common::boolean;
 
+// Verify underlying bit pattern is 0xFF
+void
+verify_true(const boolean& value)
+{
+  const uint8_t& raw(*reinterpret_cast<const uint8_t *>(&value));
+  ASSERT_EQ(std::numeric_limits<uint8_t>::max(), raw);
+}
+
+// Verify underlying bit pattern is 0x00
+void
+verify_false(const boolean& value)
+{
+  const uint8_t& raw(*reinterpret_cast<const uint8_t *>(&value));
+  ASSERT_EQ(std::numeric_limits<uint8_t>::min(), raw);
+}
+
+TEST(Boolean, NumericLimits)
+{
+  ASSERT_EQ(0, std::numeric_limits<uint8_t>::min());
+  ASSERT_EQ(255, std::numeric_limits<uint8_t>::max());
+}
+
 TEST(Boolean, DefaultConstruct)
 {
   boolean b;
@@ -58,16 +80,26 @@ TEST(Boolean, ValueConstruct)
   ASSERT_FALSE(f);
   ASSERT_TRUE(tv);
   ASSERT_FALSE(fv);
+  verify_true(t);
+  verify_false(f);
+  verify_true(tv);
+  verify_false(fv);
 }
 
 TEST(Boolean, CopyConstruct)
 {
   boolean t(true);
   boolean f(false);
+  ASSERT_TRUE(t);
+  ASSERT_FALSE(f);
+  verify_true(t);
+  verify_false(f);
   boolean tc(t);
   boolean fc(f);
   ASSERT_TRUE(tc);
   ASSERT_FALSE(fc);
+  verify_true(tc);
+  verify_false(fc);
 }
 
 TEST(Boolean, BoolCast)
@@ -84,10 +116,13 @@ TEST(Boolean, BoolAssign)
 {
   boolean b;
   ASSERT_FALSE(b);
+  verify_false(b);
   b = true;
   ASSERT_TRUE(b);
+  verify_true(b);
   b = false;
   ASSERT_FALSE(b);
+  verify_false(b);
 }
 
 TEST(Boolean, BooleanAssign)
@@ -96,10 +131,13 @@ TEST(Boolean, BooleanAssign)
   const boolean f(false);
   boolean b;
   ASSERT_FALSE(b);
+  verify_false(b);
   b = t;
   ASSERT_TRUE(b);
+  verify_true(b);
   b = f;
   ASSERT_FALSE(b);
+  verify_false(b);
 }
 
 TEST(Boolean, BoolEquals)
@@ -175,8 +213,8 @@ TEST(Boolean, StorageSize)
 
 TEST(Boolean, Packing)
 {
-  boolean::value_type ia[16];
-  boolean ca[16];
+  boolean::value_type ia[16] = {0};
+  boolean ca[16] = {0};
   ASSERT_EQ(sizeof(ia), sizeof(ca));
 }
 
@@ -220,10 +258,14 @@ TEST(Boolean, StreamInput)
   ASSERT_EQ(bf, bcf);
   ASSERT_FALSE(bf);
   ASSERT_FALSE(bcf);
+  verify_false(bf);
+  verify_false(bcf);
 
   ASSERT_EQ(bt, bct);
   ASSERT_TRUE(bt);
   ASSERT_TRUE(bct);
+  verify_true(bt);
+  verify_true(bct);
 
   ASSERT_EQ(bslash, bcslash);
   ASSERT_EQ('/', bslash);

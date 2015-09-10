@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.1.4-SNAPSHOT</version>
+  <version>5.1.4</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -49,7 +49,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.1.4-SNAPSHOT</release.version>
+    <release.version>5.1.4</release.version>
     <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
     <year>2013</year>
@@ -60,6 +60,7 @@
     <logback.version>1.1.1</logback.version>
     <slf4j.version>1.7.6</slf4j.version>
     <kryo.version>2.24.0</kryo.version>
+    <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
 
     <xsdfu.schemaver>2015-01</xsdfu.schemaver>
@@ -636,12 +637,12 @@
 
   <issueManagement>
     <system>Trac</system>
-    <url>http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats</url>
+    <url>https://trac.openmicroscopy.org/ome</url>
   </issueManagement>
 
   <ciManagement>
     <system>Jenkins</system>
-    <url>http://ci.openmicroscopy.org/</url>
+    <url>https://ci.openmicroscopy.org/</url>
   </ciManagement>
 
   <mailingLists>
