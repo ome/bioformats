@@ -800,16 +800,11 @@ public class MetamorphReader extends BaseTiffReader {
           for (Double z : zPositions) {
             if (!uniqueZ.contains(z)) uniqueZ.add(z);
           }
-        }
-        if (uniqueZ.size() > 1) {
-          CoreMetadata ms0 = core.get(0);   
-          if (getSizeZ() == 0) ms0.sizeZ = 1;
-        
+        } 
+        if (uniqueZ.size() > 1 && uniqueZ.size() == getSizeZ()) {
           Double zRange = uniqueZ.get(uniqueZ.size() - 1) - uniqueZ.get(0);
           stepSize = Math.abs(zRange);
-          if (ms0.sizeZ > 1) {
-            stepSize /= (ms0.sizeZ - 1);
-          }
+          stepSize /= (getSizeZ() - 1);
         }
       }
       
