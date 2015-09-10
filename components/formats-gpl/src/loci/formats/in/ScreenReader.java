@@ -226,8 +226,8 @@ public class ScreenReader extends FormatReader {
         }
         catch (NumberFormatException e) { }
         for (int i=0; i<count; i++) {
-          if (metadataTable.containsKey(i)) {
-            metadataFiles.add(metadataTable.get(i));
+          if (metadataTable.containsKey(String.valueOf(i))) {
+            metadataFiles.add(metadataTable.get(String.valueOf(i)));
           }
         }
       }
