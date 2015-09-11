@@ -292,7 +292,7 @@ latex_elements = {
     'utf8extra': '%% Unused',
     'fontenc' : '%% Unused',
     'fontpkg': '%% Unused',
-    'babel': '%% Unused',
+    'babel': '',
     'printindex': '''\\phantomsection
 \\addcontentsline{toc}{part}{\indexname}
 \\printindex''',
