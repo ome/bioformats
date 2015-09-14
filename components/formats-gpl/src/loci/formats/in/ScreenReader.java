@@ -104,7 +104,9 @@ public class ScreenReader extends FormatReader {
   public void reopenFile() throws IOException {
     super.reopenFile();
     for (IFormatReader reader : readers) {
-      reader.reopenFile();
+      if (reader != null) {
+        reader.reopenFile();
+      }
     }
   }
 
@@ -187,7 +189,9 @@ public class ScreenReader extends FormatReader {
     super.close(fileOnly);
     if (readers != null) {
       for (IFormatReader well : readers) {
-        well.close(fileOnly);
+        if (well != null) {
+          well.close(fileOnly);
+        }
       }
     }
     if (!fileOnly) {
