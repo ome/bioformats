@@ -244,7 +244,7 @@ namespace ome
                   ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “Other”");
                   fmt % "${klass.langType}" % name;
-                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                   i = string_map.find("Other");
                 }
               else
@@ -252,7 +252,7 @@ namespace ome
                   ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “%3%”");
                   fmt % "${klass.langType}" % name % ${klass.langType}(li->second);
-                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                 }
 {% end %}\
             }
