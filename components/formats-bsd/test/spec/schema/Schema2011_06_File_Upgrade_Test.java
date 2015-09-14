@@ -898,7 +898,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(Label.class.getName(), shape11.getClass().getName());
         Label label11 = (Label) shape11;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label11.getText());
-        Assert.assertFalse(label11.getVisible());
         Assert.assertEquals(Double.valueOf(0), label11.getX());
         Assert.assertEquals(Double.valueOf(0), label11.getY());
     }
@@ -910,7 +909,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(Label.class.getName(), shape12.getClass().getName());
         Label label12 = (Label) shape12;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label12.getText());
-        Assert.assertFalse(label12.getVisible());
         Assert.assertEquals(Double.valueOf(0), label12.getX());
         Assert.assertEquals(Double.valueOf(0), label12.getY());
     }
@@ -921,7 +919,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(Label.class.getName(), shape13.getClass().getName());
         Label label13 = (Label) shape13;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label13.getText());
-        Assert.assertFalse(label13.getVisible());
         Assert.assertEquals(Double.valueOf(0), label13.getX());
         Assert.assertEquals(Double.valueOf(0), label13.getY());
     }
