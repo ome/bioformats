@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -802,9 +803,11 @@ public class MetamorphReader extends BaseTiffReader {
           }
         } 
         if (uniqueZ.size() > 1 && uniqueZ.size() == getSizeZ()) {
-          Double zRange = uniqueZ.get(uniqueZ.size() - 1) - uniqueZ.get(0);
-          stepSize = Math.abs(zRange);
-          stepSize /= (getSizeZ() - 1);
+          BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
+          BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
+          BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
+          BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
+          stepSize = zRange.divide(zSize).doubleValue();
         }
       }
       
