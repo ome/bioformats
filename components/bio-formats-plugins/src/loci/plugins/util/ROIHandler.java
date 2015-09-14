@@ -30,6 +30,7 @@ package loci.plugins.util;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
+import ij.WindowManager;
 import ij.gui.EllipseRoi;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
@@ -460,6 +461,15 @@ public class ROIHandler {
       int c = ijRoi.getCPosition()-1;
       int z = ijRoi.getZPosition()-1;
       int t = ijRoi.getTPosition()-1;
+      ImagePlus imp = WindowManager.getImage(ijRoi.getImageID());
+      int pos = ijRoi.getPosition();
+      if (imp.getNChannels() == 1 && imp.getNSlices() == 1) {
+        t = pos-1;
+      } else if (imp.getNChannels() == 1 && imp.getNFrames() == 1) {
+        z = pos-1;
+      } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
+        c = pos-1;
+      }
       if (ijRoi.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
         if (ijRoi.getTypeAsString().matches("Text")) {
           if (ijRoi instanceof TextRoi){
