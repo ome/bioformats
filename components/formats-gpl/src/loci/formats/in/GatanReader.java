@@ -484,7 +484,7 @@ public class GatanReader extends FormatReader {
 
         if (labelString.equals("Scale")) {
           if (value.indexOf(",") == -1) {
-            pixelSizes.add(new Double(value));
+            pixelSizes.add(f.parse(value).doubleValue());
           }
         }
         else if (labelString.equals("Units")) {
