@@ -73,6 +73,7 @@ set(OME_BIOFORMATS_HEADERS
     Modulo.h
     PixelBuffer.h
     PixelProperties.h
+    PlaneRegion.h
     TileBuffer.h
     TileCache.h
     TileCoverage.h
