@@ -453,6 +453,7 @@ public class ROIHandler {
     int roicount = root.sizeOfROIList();
     int cntr = roicount;
 
+    ImagePlus imp = WindowManager.getCurrentImage();
     for (int i = 0; i < rois.length; i++) {
 
       String polylineID = MetadataTools.createLSID("Shape", cntr, 0);
@@ -461,16 +462,21 @@ public class ROIHandler {
       int c = ijRoi.getCPosition()-1;
       int z = ijRoi.getZPosition()-1;
       int t = ijRoi.getTPosition()-1;
-      ImagePlus imp = WindowManager.getImage(ijRoi.getImageID());
-      int pos = ijRoi.getPosition();
-      if (imp.getNChannels() == 1 && imp.getNSlices() == 1) {
-        t = pos-1;
-      } else if (imp.getNChannels() == 1 && imp.getNFrames() == 1) {
-        z = pos-1;
-      } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
-        c = pos-1;
+      ImagePlus image = WindowManager.getImage(ijRoi.getImageID());
+      if (image == null) {
+        image = imp; //pick the current image in that case
       }
-      if (ijRoi.isDrawingTool()){//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
+      int pos = ijRoi.getPosition();
+      if (imp != null) {
+        if (imp.getNChannels() == 1 && imp.getNSlices() == 1) {
+          t = pos-1;
+        } else if (imp.getNChannels() == 1 && imp.getNFrames() == 1) {
+          z = pos-1;
+        } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
+          c = pos-1;
+        }
+      }
+      if (ijRoi.isDrawingTool()) {//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
         if (ijRoi.getTypeAsString().matches("Text")) {
           if (ijRoi instanceof TextRoi){
             store.setLabelID(polylineID, cntr, 0);
