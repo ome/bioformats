@@ -242,6 +242,9 @@ public class FlexReader extends FormatReader {
 
     FlexFile firstFile = lookupFile(0);
     FlexFile file = lookupFile(getSeries());
+    if (file == null) {
+      return buf; // EARLY EXIT
+    }
 
     int[] lengths =
       new int[] {fieldCount / effectiveFieldCount, wellCount, plateCount, runCount};
