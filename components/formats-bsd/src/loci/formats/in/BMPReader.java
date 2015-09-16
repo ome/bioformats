@@ -149,28 +149,97 @@ public class BMPReader extends FormatReader {
     in.skipBytes(rowsToSkip * pad);
 
     int effectiveC = palette != null && palette[0].length > 0 ? 1 : getSizeC();
-    for (int row=h-1; row>=0; row--) {
-      int rowIndex = invertY ? h - 1 - row : row;
-      in.skipBits(x * bpp * effectiveC);
-      for (int i=0; i<w*effectiveC; i++) {
-        if (bpp <= 8) {
-          buf[rowIndex * w * effectiveC + i] = (byte) (in.readBits(bpp) & 0xff);
+    
+    if (compression == RAW) {
+      for (int row=h-1; row>=0; row--) {
+        int rowIndex = invertY ? h - 1 - row : row;
+        in.skipBits(x * bpp * effectiveC);
+        for (int i=0; i<w*effectiveC; i++) {
+          if (bpp <= 8) {
+            buf[rowIndex * w * effectiveC + i] = (byte) (in.readBits(bpp) & 0xff);
+          }
+          else {
+            for (int b=0; b<bpp/8; b++) {
+              buf[(bpp / 8) * (rowIndex * w * effectiveC + i) + b] =
+                (byte) (in.readBits(8) & 0xff);
+            }
+          }
         }
-        else {
-          for (int b=0; b<bpp/8; b++) {
-            buf[(bpp / 8) * (rowIndex * w * effectiveC + i) + b] =
-              (byte) (in.readBits(8) & 0xff);
+        if (row > 0) {
+          int nBits = (getSizeX() - w - x) * bpp * effectiveC + pad * 8;
+  
+          if (in.getFilePointer() + (nBits / 8) < in.length()) {
+            in.skipBits(nBits);
+          }
+          else {
+            break;
           }
         }
       }
-      if (row > 0) {
-        int nBits = (getSizeX() - w - x) * bpp * effectiveC + pad * 8;
-
-        if (in.getFilePointer() + (nBits / 8) < in.length()) {
-          in.skipBits(nBits);
+    }
+    else if (compression == RLE_8 || compression == RLE_4) {
+      boolean endOfFile = false;
+      int index = 0;
+      while(!endOfFile) {
+        byte firstByte = (byte) (in.readBits(bpp) & 0xff);
+        byte secondByte = (byte) (in.readBits(bpp) & 0xff);
+        if (firstByte == 0) {
+          if (secondByte == 1) {
+            endOfFile = true;
+          }
+          else if (secondByte == 2) {
+            byte xDelta = (byte) (in.readBits(bpp) & 0xff);
+            byte yDelta = (byte) (in.readBits(bpp) & 0xff);
+            index += (yDelta * rowLength) + xDelta;
+          }
+          else if (secondByte > 2) {
+            // Absolute mode
+            if (compression == RLE_8) {
+              for (int i = 0; i < secondByte; i++) {
+                  byte absoluteByte = (byte) (in.readBits(bpp) & 0xff);
+                  buf[index] = absoluteByte;
+                  index++;
+              }
+              // In absolute mode, each run must be aligned on a word boundary
+              if (secondByte % 2 == 1) in.skipBytes(1);
+            }
+            else if (compression == RLE_4) {
+              for (int i = 0; i < secondByte; i+=2) {
+                byte absoluteByte = (byte) (in.readBits(bpp) & 0xff);
+                byte firstNibble = (byte)(absoluteByte & 0xf);
+                byte secondNibble = (byte)((byte)(absoluteByte >> 4) & 0xf);
+                buf[index] = firstNibble;
+                index++;
+                if (i + 1 < secondByte) {
+                  buf[index] = secondNibble;
+                  index++;
+                }
+              }
+              // In absolute mode, each run must be aligned on a word boundary
+              if (secondByte % 4 == 2) in.skipBytes(1);
+            }
+          }
         }
         else {
-          break;
+          if (compression == RLE_8) {
+            for (int i = 0; i < firstByte; i++) {
+              buf[index] = secondByte;
+              index++;
+            }
+          }
+          else if (compression == RLE_4) {
+            byte firstNibble = (byte)(secondByte & 0xf);
+            byte secondNibble = (byte)((byte)(secondByte >> 4) & 0xf);
+            for (int i = 0; i < firstByte; i++) {
+              if (i % 2 == 0) {
+                buf[index] = firstNibble;
+              }
+              else {
+                buf[index] = secondNibble;
+              }
+              index++;
+            }
+          }
         }
       }
     }
