@@ -73,8 +73,7 @@
 
     <xsl:template match="OME:*">
         <xsl:element name="{name()}" namespace="{$newOMENS}">
-            <xsl:call-template name="attribute-units-conversion"/>
-            <xsl:apply-templates select="node()"/>
+            <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
