@@ -475,6 +475,10 @@ public class ROIHandler {
         } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
           c = pos-1;
         }
+        if (t > imp.getNFrames()-1 || c > imp.getNChannels() -1 ||
+           z > imp.getNSlices()-1) {
+          continue;//
+        }
       }
       if (ijRoi.isDrawingTool()) {//Checks if the given roi is a Text box/Arrow/Rounded Rectangle
         if (ijRoi.getTypeAsString().matches("Text")) {
