@@ -1512,6 +1512,27 @@ public class XMLMockObjects
   }
 
   /**
+   * Creates several plates but no containing screen.
+   *
+   * @param plates The number of plates to create.
+   * @param rows   The number of rows for plate.
+   * @param cols   The number of columns for plate.
+   * @param fields The number of fields.
+   * @param acqs   The number of plate acquisitions.
+   * @return See above.
+   */
+  public OME createPopulatedPlate(int plates, int rows, int cols, int fields,
+      int acqs)
+  {
+    Plate plate;
+    for (int p = 0; p < plates; p++) {
+      plate = createPlate(plates, p, rows, cols, fields, acqs);
+      ome.addPlate(plate);
+    }
+    return ome;
+  }
+
+  /**
    * Creates a screen with several plates.
    *
    * @param plates The number of plates to create.
