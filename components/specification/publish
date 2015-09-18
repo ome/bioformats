@@ -189,7 +189,7 @@ do
             fi
 
             path="${root}/${base}/${rel}"
-            print $path
+
             # Copy schema
             mkdir -p "$path"
             cp -v "$schema" "${path}/${name}"
