@@ -188,8 +188,8 @@ do
                 base="OME"
             fi
 
-            path="${root}/Schemas/${base}/${rel}"
-
+            path="${root}/${base}/${rel}"
+            print $path
             # Copy schema
             mkdir -p "$path"
             cp -v "$schema" "${path}/${name}"
@@ -215,7 +215,7 @@ do
             version=1
         fi
 
-        path="${root}/Schemas/${base}/${rel}"
+        path="${root}/${base}/${rel}"
         reldate=$(parsedate "$rel")
 
         # Copy schema
@@ -269,7 +269,7 @@ done
 # Special cases
 
 # Transforms folder
-path="${root}/Schemas/Transforms/"
+path="${root}/Transforms/"
 dir="transforms"
 mkdir -p "$path"
 for transform in "$dir"/*.xsl
@@ -278,7 +278,7 @@ do
 done
 
 # Samples folder
-path="${root}/Schemas/Samples/"
+path="${root}/Samples/"
 dir="samples"
 mkdir -p "$path"
 for sample in "$dir"/*
@@ -322,15 +322,8 @@ createlink() {
         reldesc=""
     fi
     if [ "$5" = "current" ]; then
-        link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
-        link=$(echo "$link" | sed -e 's;published/Schemas/;;')
-        if [ "$6" = "legacy" ]; then
-            if [ -z "$2" ]; then
-                link="../Schemas/$link"
-            else
-                link="../../Schemas/$link"
-            fi
-        fi
+        link=$(find $root -name "$name" | grep "$release" | head -n1)
+        link=$(echo "$link" | sed -e "s;$root/;;")
     else
         link=$(find published/XMLschemas -name "$name" | grep "$release" | head -n1)
         link=$(echo "$link" | sed -e 's;published/XMLschemas/;;')
@@ -427,7 +420,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
+    for schema in $(find $root -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
         createlink "$schema" "" "current" "true" "current" "$1"
     done
 
@@ -437,7 +430,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
+    for schema in $(find $root -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
         createlink "$schema" "" "legacy" "true" "current" "$1"
     done
     cat <<EOF
@@ -494,7 +487,7 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+    for release in $(ls -1d "$root"/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
         reldate=$(parsedate "$release")
         echo "<li>$reldate - namespace /$release/</li>"
     done
@@ -514,7 +507,7 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+    for year in $(find $root -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
         createlink "$schema" "$year" "current" "false" "current" "$2"
     done
     cat <<EOF
@@ -523,7 +516,7 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+    for year in $(find $root -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
         createlink "$schema" "$year" "legacy" "false" "current" "$2"
     done
     cat <<EOF
@@ -535,12 +528,12 @@ EOF
 EOF
 }
 
-for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e "s;^${root}/Schemas/;;"); do
+for type in $(find ${root} -mindepth 1 -maxdepth 1 -type d | sed -e "s;^${root}/;;"); do
     if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
-        echo "HTML [2] -> ${root}/Schemas/${type}/index.html"
-        createintermediateindex "$type" "current" > "${root}/Schemas/${type}/index.html"
+        echo "HTML [2] -> ${root}/${type}/index.html"
+        createintermediateindex "$type" "current" > "${root}/${type}/index.html"
     fi
 done
 
-echo "HTML [4] -> ${root}/Schemas/index.html"
-createmainindex "current" > "${root}/Schemas/index.html"
+echo "HTML [4] -> ${root}/index.html"
+createmainindex "current" > "${root}/index.html"
