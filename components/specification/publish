@@ -153,12 +153,12 @@ contains() {
 }
 
 devmarker="dev"
-root=published
+root=${1:-published}
 
 
 # Clean up
 
-rm -rf "$root"
+rm -rf "$root/*"
 mkdir -p "$root"
 
 for dir in released-schema/20*
@@ -535,10 +535,10 @@ EOF
 EOF
 }
 
-for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
+for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e "s;^${root}/Schemas/;;"); do
     if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
-        echo "HTML [2] -> $root/Schemas/${type}/index.html"
-        createintermediateindex "$type" "current" > "$root/Schemas/${type}/index.html"
+        echo "HTML [2] -> ${root}/Schemas/${type}/index.html"
+        createintermediateindex "$type" "current" > "${root}/Schemas/${type}/index.html"
     fi
 done
 
