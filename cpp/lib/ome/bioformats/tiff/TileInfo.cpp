@@ -128,11 +128,11 @@ namespace ome
             }
 
           // Compute row and column counts.
-          nrows = imagewidth / tileheight;
-          if (imagewidth % tileheight)
+          nrows = imageheight / tileheight;
+          if (imageheight % tileheight)
             ++nrows;
-          ncols = imageheight / tilewidth;
-          if (imageheight % tilewidth)
+          ncols = imagewidth / tilewidth;
+          if (imagewidth % tilewidth)
             ++ncols;
           ntiles = nrows * ncols;
         }
