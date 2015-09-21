@@ -154,7 +154,7 @@ contains() {
 
 devmarker="dev"
 root=${1:-published}
-
+root=${root%/}
 
 # Clean up
 
