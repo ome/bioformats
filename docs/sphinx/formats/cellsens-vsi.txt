@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`cellSens VSI <cellsens-vsi-metadata>`
+
+Source Code: :bfreader:`CellSensReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/CellSensReader`
 
 
 
@@ -47,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`CellSensReader.java`
 
 Notes:
 

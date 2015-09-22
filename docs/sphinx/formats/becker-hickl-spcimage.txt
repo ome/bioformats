@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Becker & Hickl SPCImage <becker-hickl-spcimage-metadata>`
+
+Source Code: :bfreader:`SDTReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/SDTReader`
 
 
 
@@ -50,7 +53,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`SDTReader.java`
 
 Notes:
 

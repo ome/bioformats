@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`ECAT7 <ecat7-metadata>`
+
+Source Code: :bfreader:`Ecat7Reader.java`
+
+Supported Metadata Fields: :doc:`/metadata/Ecat7Reader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`Ecat7Reader.java`
 
 Notes:
 

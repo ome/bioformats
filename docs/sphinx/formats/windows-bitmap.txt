@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Windows Bitmap <windows-bitmap-metadata>`
+
+Source Code: :bsd-reader:`BMPReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/BMPReader`
 
 Freely Available Software:
 
@@ -49,7 +52,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`BMPReader.java`
 
 Notes:
 

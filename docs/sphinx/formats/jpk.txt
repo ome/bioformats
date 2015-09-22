@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`JPK <jpk-metadata>`
+
+Source Code: :bfreader:`JPKReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/JPKReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`JPKReader.java`
 
 Notes:
 

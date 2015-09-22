@@ -19,7 +19,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`WA-TOP <wa-top-metadata>`
+
+Source Code: :bfreader:`WATOPReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/WATOPReader`
 
 
 
@@ -50,7 +53,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`WATOPReader.java`
 
 Notes:
 

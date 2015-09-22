@@ -19,7 +19,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Improvision TIFF <improvision-tiff-metadata>`
+
+Source Code: :bfreader:`ImprovisionTiffReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/ImprovisionTiffReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`ImprovisionTiffReader.java`
 
 Notes:
 

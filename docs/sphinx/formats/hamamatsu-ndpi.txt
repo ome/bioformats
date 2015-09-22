@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Hamamatsu ndpi <hamamatsu-ndpi-metadata>`
+
+Source Code: :bfreader:`NDPIReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/NDPIReader`
 
 Freely Available Software:
 
@@ -53,7 +56,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`NDPIReader.java`
 
 Notes:
 

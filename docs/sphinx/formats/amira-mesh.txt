@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Amira Mesh <amira-mesh-metadata>`
+
+Source Code: :bfreader:`AmiraReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/AmiraReader`
 
 
 
@@ -47,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`AmiraReader.java`
 
 Notes:
 

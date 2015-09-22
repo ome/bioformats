@@ -16,7 +16,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Bruker MRI <bruker-mri-metadata>`
+
+Source Code: :bfreader:`BrukerReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/BrukerReader`
 
 Freely Available Software:
 
@@ -48,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`BrukerReader.java`
 
 Notes:
 

@@ -19,7 +19,10 @@ Export: |no|
 
 Officially Supported Versions: 2.0, 5.0
 
-Supported Metadata Fields: :doc:`Improvision Openlab LIFF <improvision-openlab-liff-metadata>`
+
+Source Code: :bfreader:`OpenlabReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/OpenlabReader`
 
 
 
@@ -50,7 +53,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`OpenlabReader.java`
 
 Notes:
 

@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Hitachi S-4800 <hitachi-s-4800-metadata>`
+
+Source Code: :bfreader:`HitachiReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/HitachiReader`
 
 
 
@@ -46,7 +49,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`HitachiReader.java`
 
 Notes:
 
