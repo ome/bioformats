@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Cellomics <cellomics-metadata>`
+
+Source Code: :bfreader:`CellomicsReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/CellomicsReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`CellomicsReader.java`
 
 Notes:
 

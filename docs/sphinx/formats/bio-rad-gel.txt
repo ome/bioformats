@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Bio-Rad Gel <bio-rad-gel-metadata>`
+
+Source Code: :bfreader:`BioRadGelReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/BioRadGelReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`BioRadGelReader.java`
 
 Notes:
 

@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`SimplePCI & HCImage <simplepci-hcimage-metadata>`
+
+Source Code: :bfreader:`PCIReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/PCIReader`
 
 
 
@@ -46,7 +49,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`PCIReader.java`
 
 Notes:
 

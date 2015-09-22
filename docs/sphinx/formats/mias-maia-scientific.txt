@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`MIAS (Maia Scientific) <mias-maia-scientific-metadata>`
+
+Source Code: :bfreader:`MIASReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/MIASReader`
 
 
 
@@ -46,7 +49,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`MIASReader.java`
 
 Notes:
 

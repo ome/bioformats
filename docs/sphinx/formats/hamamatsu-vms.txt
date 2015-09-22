@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Hamamatsu VMS <hamamatsu-vms-metadata>`
+
+Source Code: :bfreader:`HamamatsuVMSReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/HamamatsuVMSReader`
 
 
 Sample Datasets:
@@ -52,7 +55,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`HamamatsuVMSReader.java`
 
 Notes:
 

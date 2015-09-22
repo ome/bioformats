@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`AIM <aim-metadata>`
+
+Source Code: :bfreader:`AIMReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/AIMReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`AIMReader.java`
 
 Notes:
 

@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Amnis FlowSight <amnis-flowsight-metadata>`
+
+Source Code: :bsd-reader:`FlowSightReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/FlowSightReader`
 
 
 
@@ -46,7 +49,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`FlowSightReader.java`
 
 Notes:
 

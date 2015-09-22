@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`NEF (Nikon Electronic Format) <nef-metadata>`
+
+Source Code: :bfreader:`NikonReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/NikonReader`
 
 
 Sample Datasets:
@@ -51,7 +54,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`NikonReader.java`
 
 Notes:
 

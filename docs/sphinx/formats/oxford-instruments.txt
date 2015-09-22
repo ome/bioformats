@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Oxford Instruments <oxford-instruments-metadata>`
+
+Source Code: :bfreader:`OxfordInstrumentsReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/OxfordInstrumentsReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`OxfordInstrumentsReader.java`
 
 Notes:
 

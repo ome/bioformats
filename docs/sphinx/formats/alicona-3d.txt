@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 1.0
 
-Supported Metadata Fields: :doc:`Alicona 3D <alicona-3d-metadata>`
+
+Source Code: :bfreader:`AliconaReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/AliconaReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`AliconaReader.java`
 
 Notes:
 

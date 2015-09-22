@@ -19,7 +19,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`IMOD <imod-metadata>`
+
+Source Code: :bfreader:`IMODReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/IMODReader`
 
 Freely Available Software:
 
@@ -51,7 +54,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`IMODReader.java`
 
 Notes:
 

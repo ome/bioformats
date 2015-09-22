@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Axon Raw Format <axon-raw-format-metadata>`
+
+Source Code: :bfreader:`ARFReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/ARFReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`ARFReader.java`
 
 Notes:
 

@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`IPLab-Mac <iplab-mac-metadata>`
+
+Source Code: :bfreader:`IvisionReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/IvisionReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`IvisionReader.java`
 
 Notes:
 

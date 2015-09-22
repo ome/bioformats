@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Canon DNG <canon-dng-metadata>`
+
+Source Code: :bfreader:`DNGReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/DNGReader`
 
 Freely Available Software:
 
@@ -50,7 +53,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`DNGReader.java`
 
 Notes:
 

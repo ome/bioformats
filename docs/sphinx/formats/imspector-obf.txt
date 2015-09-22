@@ -19,7 +19,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Imspector OBF <imspector-obf-metadata>`
+
+Source Code: :bsd-reader:`OBFReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/OBFReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`OBFReader.java`
 
 Notes:
 

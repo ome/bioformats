@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Topometrix <topometrix-metadata>`
+
+Source Code: :bfreader:`TopometrixReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/TopometrixReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`TopometrixReader.java`
 
 Notes:
 

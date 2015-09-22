@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Seiko <seiko-metadata>`
+
+Source Code: :bfreader:`SeikoReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/SeikoReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`SeikoReader.java`
 
 Notes:
 

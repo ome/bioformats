@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`InCell 1000 <incell-1000-metadata>`
+
+Source Code: :bfreader:`InCellReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/InCellReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`InCellReader.java`
 
 Notes:
 

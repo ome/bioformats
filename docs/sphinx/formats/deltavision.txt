@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`DeltaVision <deltavision-metadata>`
+
+Source Code: :bfreader:`DeltavisionReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/DeltavisionReader`
 
 Freely Available Software:
 
@@ -50,7 +53,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`DeltavisionReader.java`
 
 Notes:
 

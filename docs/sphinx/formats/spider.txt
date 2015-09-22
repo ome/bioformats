@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`SPIDER <spider-metadata>`
+
+Source Code: :bfreader:`SpiderReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/SpiderReader`
 
 Freely Available Software:
 
@@ -50,7 +53,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`SpiderReader.java`
 
 Notes:
 

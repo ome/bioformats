@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Perkin Elmer Densitometer <perkin-elmer-densitometer-metadata>`
+
+Source Code: :bfreader:`PDSReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/PDSReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`PDSReader.java`
 
 Notes:
 
