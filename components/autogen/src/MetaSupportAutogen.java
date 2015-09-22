@@ -90,11 +90,22 @@ public class MetaSupportAutogen {
       supportList.setHandler(handler);
 
       for (IniTable table : data) {
-        if (table.get("reader").startsWith(handler + ".java")) {
-          String formatPage = FormatPageAutogen.getPageName(
-            table.get(IniTable.HEADER_KEY), table.get("pagename"));
-
-          supportList.setPageName(formatPage + "-metadata");
+        String [] readers = table.get("reader").split(", ");
+        for (String reader : readers) {
+          if (reader.startsWith(handler + ".java")) {
+            if (table.containsKey("metadataPage")) {
+              String page = table.get("metadataPage");
+              if (page.length() > 0) {
+                supportList.setPageName("formats/" + page.split(", ")[0]);
+              } else {
+                supportList.setPageName("formats/" + page);
+              }
+            } else {
+              String formatPage = FormatPageAutogen.getPageName(
+                table.get(IniTable.HEADER_KEY), table.get("pagename"));
+              supportList.setPageName(handler + "-metadata");
+            }
+          }
         }
       }
     }

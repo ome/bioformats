@@ -15,7 +15,7 @@ Format readers
    :header-rows: 1
    :widths: 30, 10, 10, 10, 10
 
-   * - Format
+   * - Reader
      - Supported
      - Unsupported
      - Partial
