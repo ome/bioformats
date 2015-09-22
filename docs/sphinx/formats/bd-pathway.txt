@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`BD Pathway <bd-pathway-metadata>`
+
+Source Code: :bfreader:`BDReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/BDReader`
 
 
 
@@ -47,7 +50,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`BDReader.java`
 
 Notes:
 

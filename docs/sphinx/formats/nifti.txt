@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`NIfTI <nifti-metadata>`
+
+Source Code: :bfreader:`NiftiReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/NiftiReader`
 
 
 Sample Datasets:
@@ -50,7 +53,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`NiftiReader.java`
 
 Notes:
 

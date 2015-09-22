@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`InCell 3000 <incell-3000-metadata>`
+
+Source Code: :bfreader:`InCell3000Reader.java`
+
+Supported Metadata Fields: :doc:`/metadata/InCell3000Reader`
 
 
 Sample Datasets:
@@ -50,7 +53,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`InCell3000Reader.java`
 
 Notes:
 

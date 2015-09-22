@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Volocity Library Clipping <volocity-library-clipping-metadata>`
+
+Source Code: :bfreader:`VolocityClippingReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/VolocityClippingReader`
 
 
 
@@ -48,7 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`VolocityClippingReader.java`
 
 Notes:
 

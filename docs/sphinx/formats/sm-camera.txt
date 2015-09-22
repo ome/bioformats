@@ -15,7 +15,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`SM Camera <sm-camera-metadata>`
+
+Source Code: :bfreader:`SMCameraReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/SMCameraReader`
 
 
 
@@ -46,7 +49,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`SMCameraReader.java`
 
 Notes:
 

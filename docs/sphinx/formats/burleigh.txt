@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Burleigh <burleigh-metadata>`
+
+Source Code: :bfreader:`BurleighReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/BurleighReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`BurleighReader.java`
 
 Notes:
 

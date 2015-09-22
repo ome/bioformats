@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Zeiss CZI <zeiss-czi-metadata>`
+
+Source Code: :bfreader:`ZeissCZIReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/ZeissCZIReader`
 
 Freely Available Software:
 
@@ -50,7 +53,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`ZeissCZIReader.java`
 
 Notes:
 

@@ -19,7 +19,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Zeiss Axio CSM <zeiss-axio-csm-metadata>`
+
+Source Code: :bfreader:`ZeissLMSReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/ZeissLMSReader`
 
 
 
@@ -47,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`ZeissLMSReader.java`
 
 Notes:
 

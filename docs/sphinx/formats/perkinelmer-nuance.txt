@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PerkinElmer Nuance <perkinelmer-nuance-metadata>`
+
+Source Code: :bsd-reader:`IM3Reader.java`
+
+Supported Metadata Fields: :doc:`/metadata/IM3Reader`
 
 
 
@@ -46,7 +49,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`IM3Reader.java`
 
 Notes:
 

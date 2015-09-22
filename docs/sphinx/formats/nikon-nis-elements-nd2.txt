@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Nikon NIS-Elements ND2 <nikon-nis-elements-nd2-metadata>`
+
+Source Code: :bfreader:`NativeND2Reader.java`
+
+Supported Metadata Fields: :doc:`/metadata/NativeND2Reader`
 
 Freely Available Software:
 
@@ -50,7 +53,6 @@ Utility: |Very good|
 **Additional Information**
 
 
-Source Code: :bfreader:`NativeND2Reader.java`
 
 Notes:
 

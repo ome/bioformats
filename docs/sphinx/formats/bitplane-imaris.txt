@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 2.7, 3.0, 5.5
 
-Supported Metadata Fields: :doc:`Bitplane Imaris <bitplane-imaris-metadata>`
+
+Source Code: :bfreader:`ImarisHDFReader.java`, :bfreader:`ImarisTiffReader.java`, :bfreader:`ImarisReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/ImarisHDFReader`, :doc:`/metadata/ImarisTiffReader`, :doc:`/metadata/ImarisReader`
 
 
 
@@ -53,7 +56,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`ImarisHDFReader.java`, :bfreader:`ImarisTiffReader.java`, :bfreader:`ImarisReader.java`
 
 Notes:
 

@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Lambert Instruments FLIM <lambert-instruments-flim-metadata>`
+
+Source Code: :bfreader:`LiFlimReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/LiFlimReader`
 
 
 
@@ -47,7 +50,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`LiFlimReader.java`
 
 Notes:
 

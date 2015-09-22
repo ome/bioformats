@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PicoQuant Bin <picoquant-bin-metadata>`
+
+Source Code: :bfreader:`PQBinReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/PQBinReader`
 
 Freely Available Software:
 
@@ -49,7 +52,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`PQBinReader.java`
 
 Notes:
 

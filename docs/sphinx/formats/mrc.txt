@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`MRC (Medical Research Council) <mrc-metadata>`
+
+Source Code: :bfreader:`MRCReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/MRCReader`
 
 
 Sample Datasets:
@@ -50,7 +53,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`MRCReader.java`
 
 Notes:
 

@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`LEO <leo-metadata>`
+
+Source Code: :bfreader:`LEOReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/LEOReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`LEOReader.java`
 
 Notes:
 

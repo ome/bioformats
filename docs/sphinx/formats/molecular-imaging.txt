@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Molecular Imaging <molecular-imaging-metadata>`
+
+Source Code: :bfreader:`MolecularImagingReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/MolecularImagingReader`
 
 
 
@@ -49,7 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`MolecularImagingReader.java`
 
 Notes:
 

@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PICT (Macintosh Picture) <pict-macintosh-picture-metadata>`
+
+Source Code: :bsd-reader:`PictReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/PictReader`
 
 
 
@@ -46,7 +49,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`PictReader.java`
 
 Notes:
 

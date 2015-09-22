@@ -18,7 +18,10 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`QuickTime Movie <quicktime-movie-metadata>`
+
+Source Code: :bsd-reader:`NativeQTReader.java`
+
+Supported Metadata Fields: :doc:`/metadata/NativeQTReader`
 
 Freely Available Software:
 
@@ -55,8 +58,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`NativeQTReader.java`
-Source Code: :bsd-writer:`QTWriter.java`
+Source Code: :bsd-writer:`QTWriter`
 
 Notes:
 
