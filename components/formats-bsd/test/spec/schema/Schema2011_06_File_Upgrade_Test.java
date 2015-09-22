@@ -683,7 +683,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi0 = ome.getROI(0);
         Assert.assertNull(roi0.getDescription());
         Assert.assertNull(roi0.getName());
-        Assert.assertNull(roi0.getNamespace());
         union0 = roi0.getUnion();
         Assert.assertNotNull(union0);
         Assert.assertEquals(1, union0.sizeOfShapeList());
@@ -695,7 +694,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi1 = ome.getROI(1);
         Assert.assertEquals(ref.ROI1Description, roi1.getDescription());
         Assert.assertNull(roi1.getName());
-        Assert.assertNull(roi1.getNamespace());
         union1 = roi1.getUnion();
         Assert.assertNotNull(union1);
         Assert.assertEquals(1, union1.sizeOfShapeList());
@@ -707,7 +705,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi2 = ome.getROI(2);
         Assert.assertNull(roi2.getDescription());
         Assert.assertNull(roi2.getName());
-        Assert.assertNull(roi2.getNamespace());
         union2 = roi2.getUnion();
         Assert.assertNotNull(union2);
         Assert.assertEquals(8, union2.sizeOfShapeList());
@@ -719,7 +716,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi3  = ome.getROI(3);
         Assert.assertNull(roi3.getDescription());
         Assert.assertNull(roi3.getName());
-        Assert.assertNull(roi3.getNamespace());
         union3 = roi3.getUnion();
         Assert.assertNotNull(union3);
         Assert.assertEquals(1, union3.sizeOfShapeList());
@@ -731,7 +727,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi4 = ome.getROI(4);
         Assert.assertNull(roi4.getDescription());
         Assert.assertNull(roi4.getName());
-        Assert.assertNull(roi4.getNamespace());
         union4 = roi4.getUnion();
         Assert.assertNotNull(union4);
         Assert.assertEquals(2, union4.sizeOfShapeList());
