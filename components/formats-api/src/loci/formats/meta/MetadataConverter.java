@@ -2370,12 +2370,6 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
-      try {
-        String namespace = src.getROINamespace(i);
-        dest.setROINamespace(namespace, i);
-      }
-      catch (NullPointerException e) { }
-
       int shapeCount = 0;
       try {
         shapeCount = src.getShapeCount(i);
