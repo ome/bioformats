@@ -30,7 +30,6 @@ class TemplateInfo(object):
             config.ABSTRACT_PROPRIETARY_OVERRIDE
         self.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
         self.REF_REGEX = config.REF_REGEX
-        self.OMERO_NAMED_OPTIONAL = config.OMERO_NAMED_OPTIONAL
 
     def link_overridden(self, property_name, class_name):
         """Whether or not a back reference link should be overridden."""

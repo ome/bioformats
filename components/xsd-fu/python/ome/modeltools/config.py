@@ -64,23 +64,6 @@ DEFAULT_NAMESPACE = "xsd:"
 PACKAGE_NAMESPACE_RE = re.compile(
     r'http://www.openmicroscopy.org/Schemas/(\w+)/\d+-\w+')
 
-# The default OMERO package.
-OMERO_DEFAULT_PACKAGE = "ome.model"
-
-# The OMERO package overrides.
-OMERO_PACKAGE_OVERRIDES = {
-    "OME": "ome.model.core",
-    "enum": "ome.model.enums",
-    "OMERO": "ome.model.meta",
-}
-
-# The OMERO classes for which the type's Name attribute is optional
-OMERO_NAMED_OPTIONAL = (
-    "ROI",
-    "Channel",
-    "RenderingDef",
-)
-
 REF_REGEX = re.compile(r'Ref$|RefNode$')
 
 BACKREF_REGEX = re.compile(r'_BackReference')
