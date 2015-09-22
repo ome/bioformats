@@ -81,4 +81,5 @@ Metadata fields
     :glob:
     :hidden:
 
+    metadata/*
     formats/*-metadata

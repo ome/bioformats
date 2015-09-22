@@ -88,26 +88,7 @@ public class MetaSupportAutogen {
 
     for (String handler : supportList.handlers()) {
       supportList.setHandler(handler);
-
-      for (IniTable table : data) {
-        String [] readers = table.get("reader").split(", ");
-        for (String reader : readers) {
-          if (reader.startsWith(handler + ".java")) {
-            if (table.containsKey("metadataPage")) {
-              String page = table.get("metadataPage");
-              if (page.length() > 0) {
-                supportList.setPageName("formats/" + page.split(", ")[0]);
-              } else {
-                supportList.setPageName("formats/" + page);
-              }
-            } else {
-              String formatPage = FormatPageAutogen.getPageName(
-                table.get(IniTable.HEADER_KEY), table.get("pagename"));
-              supportList.setPageName(handler + "-metadata");
-            }
-          }
-        }
-      }
+      supportList.setPageName("metadata/" + handler);
     }
 
     // generate master table of metadata properties
