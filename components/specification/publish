@@ -293,8 +293,6 @@ done
 # $2=year (may be blank)
 # $3=filter (current or legacy)
 # $4=verbose (true or false)
-# $5=schema set (current or legacy)
-# $6=schema location (current=Schemas, legacy=XMLschemas)
 createlink() {
     name=$(basename "$1")
     release="$2"
@@ -302,39 +300,19 @@ createlink() {
     if [ "$shortname" = "ome" ]; then
         shortname="OME"
     fi
-    if [ "$5" = "legacy" ]; then
-        reldate="2003 ($2)"
+    if [ -z "$2" ]; then
+        release=$(mostrecentversion "$name")
+        reldate=$(parsedate "$release")
     else
-        if [ -z "$2" ]; then
-            release=$(mostrecentversion "$name")
-            reldate=$(parsedate "$release")
-        else
-            reldate=$(parsedate "$2")
-        fi
+        reldate=$(parsedate "$2")
     fi
-    if [ "$5" = "current" ]; then
-        relversion=$(schemaversion "$name" "$release")
-    else
-        relversion=$(schemaversion "$name" "2003-$release")
-    fi
+    relversion=$(schemaversion "$name" "$release")
     reldesc=" The $(schemadesc "$name")"
     if [ "$4" = "false" ]; then
         reldesc=""
     fi
-    if [ "$5" = "current" ]; then
-        link=$(find $root -name "$name" | grep "$release" | head -n1)
-        link=$(echo "$link" | sed -e "s;$root/;;")
-    else
-        link=$(find published/XMLschemas -name "$name" | grep "$release" | head -n1)
-        link=$(echo "$link" | sed -e 's;published/XMLschemas/;;')
-        if [ "$6" = "current" ]; then
-            if [ -z "$2" ]; then
-                link="../XMLschemas/$link"
-            else
-                link="../../XMLschemas/$link"
-            fi
-        fi
-    fi
+    link=$(find $root -name "$name" | grep "$release" | head -n1)
+    link=$(echo "$link" | sed -e "s;$root/;;")
     if [ -n "$2" ]; then
         link=$(echo "$link" | sed -e "s;^${shortname}/;;")
     fi
@@ -420,7 +398,7 @@ EOF
 EOF
 
     for schema in $(find $root -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
-        createlink "$schema" "" "current" "true" "current" "$1"
+        createlink "$schema" "" "current" "true"
     done
 
     cat <<EOF
@@ -430,7 +408,7 @@ EOF
 EOF
 
     for schema in $(find $root -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
-        createlink "$schema" "" "legacy" "true" "current" "$1"
+        createlink "$schema" "" "legacy" "true"
     done
     cat <<EOF
 </ul>
@@ -509,7 +487,7 @@ EOF
 EOF
 
     for year in $(find $root -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
-        createlink "$schema" "$year" "current" "false" "current" "$2"
+        createlink "$schema" "$year" "current" "false"
     done
     cat <<EOF
 </ul>
@@ -518,7 +496,7 @@ EOF
 EOF
 
     for year in $(find $root -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
-        createlink "$schema" "$year" "legacy" "false" "current" "$2"
+        createlink "$schema" "$year" "legacy" "false"
     done
 
     if [ "$1" = "OME" ]; then
@@ -538,9 +516,9 @@ EOF
 for type in $(find ${root} -mindepth 1 -maxdepth 1 -type d | sed -e "s;^${root}/;;"); do
     if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
         echo "HTML [2] -> ${root}/${type}/index.html"
-        createintermediateindex "$type" "current" > "${root}/${type}/index.html"
+        createintermediateindex "$type" > "${root}/${type}/index.html"
     fi
 done
 
 echo "HTML [4] -> ${root}/index.html"
-createmainindex "current" > "${root}/index.html"
+createmainindex > "${root}/index.html"
