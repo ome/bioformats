@@ -402,10 +402,9 @@ EOF
         reldate=$(parsedate "$release")
         echo "<li>$reldate - namespace /$release/</li>"
     done
-    for release in $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
-        reldate="2003 ($release)"
-        echo "<li>$reldate - namespace /$release/*.xsd</li>"
-    done
+
+    # Manually list legacy FC schema
+    echo "<li>2003 (FC) - namespace /FC/</li>"
 
     cat <<EOF
 </ul>
@@ -492,6 +491,8 @@ EOF
         echo "<li>$reldate - namespace /$release/</li>"
     done
 
+    # Manually list legacy FC schema
+    echo "<li>2003 (FC) - namespace /FC/</li>"
 
     cat <<EOF
 </ul>
@@ -519,6 +520,12 @@ EOF
     for year in $(find $root -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
         createlink "$schema" "$year" "legacy" "false" "current" "$2"
     done
+
+    if [ "$1" = "OME" ]; then
+        # Manually list legacy FC OME xsd
+        legacyurl="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
+        echo "<li>ome.xsd - 2003 (FC), version 1 [<a href=\"$legacyurl\">FC</a>]</li>"
+    fi
     cat <<EOF
 </ul>
 </div>
