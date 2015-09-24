@@ -28,13 +28,10 @@ Export: |$export|
 Officially Supported Versions: $versions
 
 
-Source Code: #foreach ($item in $reader)
-#if ($velocityHasNext):$readerextlink:`${item}.java`, #else:$readerextlink:`${item}.java`#end
-#end
+Reader(s):
+#foreach ($item in $reader)
 
-
-Supported Metadata Fields: #foreach ($item in $reader)
-#if ($velocityHasNext):doc:`/metadata/${item}`, #else:doc:`/metadata/${item}`#end
+- ${item} (:$readerextlink:`Source Code <${item}.java>`, :doc:`Supported Metadata Fields </metadata/${item}>`)
 #end
 
 
@@ -84,7 +81,7 @@ Utility: |$utilityRating|
 
 
 #if ($writer)
-Source Code: :$writerextlink:`$writer`
+Writer: ${writer} (:$writerextlink:`Source Code <${writer}.java>`)
 #end
 
 Notes:
