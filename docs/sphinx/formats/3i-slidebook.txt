@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 4.1, 4.2, 5.0, 5.5, 6.0
 
-Reader(s):
+Readers:
 
 - SlidebookReader (:bfreader:`Source Code <SlidebookReader.java>`, :doc:`Supported Metadata Fields </metadata/SlidebookReader>`)
 - SlideBook6Reader (:bfreader:`Source Code <SlideBook6Reader.java>`, :doc:`Supported Metadata Fields </metadata/SlideBook6Reader>`)

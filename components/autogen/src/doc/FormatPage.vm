@@ -28,7 +28,7 @@ Export: |$export|
 Officially Supported Versions: $versions
 
 #if ($reader.size() > 1)
-Reader(s):
+Readers:
 
 #foreach ($item in $reader)
 - ${item} (:$readerextlink:`Source Code <${item}.java>`, :doc:`Supported Metadata Fields </metadata/${item}>`)
