@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 2.7, 3.0, 5.5
 
-Reader(s):
+Readers:
 
 - ImarisHDFReader (:bfreader:`Source Code <ImarisHDFReader.java>`, :doc:`Supported Metadata Fields </metadata/ImarisHDFReader>`)
 - ImarisTiffReader (:bfreader:`Source Code <ImarisTiffReader.java>`, :doc:`Supported Metadata Fields </metadata/ImarisTiffReader>`)
