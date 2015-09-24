@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: Ecat7Reader (:bfreader:`Source Code <Ecat7Reader.java>`, :doc:`Supported Metadata Fields </metadata/Ecat7Reader>`)
 
-Source Code: :bfreader:`Ecat7Reader.java`
-
-Supported Metadata Fields: :doc:`/metadata/Ecat7Reader`
 
 
 

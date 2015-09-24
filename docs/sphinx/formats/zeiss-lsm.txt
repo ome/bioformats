@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: ZeissLSMReader (:bfreader:`Source Code <ZeissLSMReader.java>`, :doc:`Supported Metadata Fields </metadata/ZeissLSMReader>`)
 
-Source Code: :bfreader:`ZeissLSMReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/ZeissLSMReader`
 
 Freely Available Software:
 

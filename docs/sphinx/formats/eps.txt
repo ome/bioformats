@@ -18,10 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
+Reader: EPSReader (:bsd-reader:`Source Code <EPSReader.java>`, :doc:`Supported Metadata Fields </metadata/EPSReader>`)
 
-Source Code: :bsd-reader:`EPSReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/EPSReader`
 
 Freely Available Software:
 
@@ -53,7 +51,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-writer:`EPSWriter`
+Writer: EPSWriter (:bsd-writer:`Source Code <EPSWriter.java>`)
 
 Notes:
 

@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: FitsReader (:bsd-reader:`Source Code <FitsReader.java>`, :doc:`Supported Metadata Fields </metadata/FitsReader>`)
 
-Source Code: :bsd-reader:`FitsReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/FitsReader`
 
 
 

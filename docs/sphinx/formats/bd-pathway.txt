@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: BDReader (:bfreader:`Source Code <BDReader.java>`, :doc:`Supported Metadata Fields </metadata/BDReader>`)
 
-Source Code: :bfreader:`BDReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/BDReader`
 
 
 

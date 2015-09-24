@@ -19,10 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: FluoviewReader (:bfreader:`Source Code <FluoviewReader.java>`, :doc:`Supported Metadata Fields </metadata/FluoviewReader>`)
 
-Source Code: :bfreader:`FluoviewReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/FluoviewReader`
 
 
 

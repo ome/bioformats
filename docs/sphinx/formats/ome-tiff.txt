@@ -18,10 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
 
+Reader: OMETiffReader (:bsd-reader:`Source Code <OMETiffReader.java>`, :doc:`Supported Metadata Fields </metadata/OMETiffReader>`)
 
-Source Code: :bsd-reader:`OMETiffReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/OMETiffReader`
 
 
 
@@ -51,7 +49,7 @@ Utility: |Outstanding|
 **Additional Information**
 
 
-Source Code: :bsd-writer:`OMETiffWriter`
+Writer: OMETiffWriter (:bsd-writer:`Source Code <OMETiffWriter.java>`)
 
 Notes:
 

@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: MIASReader (:bfreader:`Source Code <MIASReader.java>`, :doc:`Supported Metadata Fields </metadata/MIASReader>`)
 
-Source Code: :bfreader:`MIASReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/MIASReader`
 
 
 

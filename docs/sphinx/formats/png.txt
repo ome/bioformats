@@ -18,10 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
+Reader: APNGReader (:bsd-reader:`Source Code <APNGReader.java>`, :doc:`Supported Metadata Fields </metadata/APNGReader>`)
 
-Source Code: :bsd-reader:`APNGReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/APNGReader`
 
 Freely Available Software:
 

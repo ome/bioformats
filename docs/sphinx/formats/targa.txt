@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: TargaReader (:bfreader:`Source Code <TargaReader.java>`, :doc:`Supported Metadata Fields </metadata/TargaReader>`)
 
-Source Code: :bfreader:`TargaReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/TargaReader`
 
 
 

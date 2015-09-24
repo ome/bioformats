@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: CellH5Reader (:bfreader:`Source Code <CellH5Reader.java>`, :doc:`Supported Metadata Fields </metadata/CellH5Reader>`)
 
-Source Code: :bfreader:`CellH5Reader.java`
-
-Supported Metadata Fields: :doc:`/metadata/CellH5Reader`
 
 Freely Available Software:
 

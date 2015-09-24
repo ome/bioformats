@@ -18,10 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
+Reader: AVIReader (:bsd-reader:`Source Code <AVIReader.java>`, :doc:`Supported Metadata Fields </metadata/AVIReader>`)
 
-Source Code: :bsd-reader:`AVIReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/AVIReader`
 
 Freely Available Software:
 

@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: FEIReader (:bfreader:`Source Code <FEIReader.java>`, :doc:`Supported Metadata Fields </metadata/FEIReader>`)
 
-Source Code: :bfreader:`FEIReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/FEIReader`
 
 
 

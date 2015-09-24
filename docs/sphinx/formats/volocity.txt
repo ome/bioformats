@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: VolocityReader (:bfreader:`Source Code <VolocityReader.java>`, :doc:`Supported Metadata Fields </metadata/VolocityReader>`)
 
-Source Code: :bfreader:`VolocityReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/VolocityReader`
 
 
 Sample Datasets:

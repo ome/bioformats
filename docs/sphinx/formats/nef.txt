@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: NikonReader (:bfreader:`Source Code <NikonReader.java>`, :doc:`Supported Metadata Fields </metadata/NikonReader>`)
 
-Source Code: :bfreader:`NikonReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/NikonReader`
 
 
 Sample Datasets:

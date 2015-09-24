@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: L2DReader (:bfreader:`Source Code <L2DReader.java>`, :doc:`Supported Metadata Fields </metadata/L2DReader>`)
 
-Source Code: :bfreader:`L2DReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/L2DReader`
 
 
 

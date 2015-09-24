@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: IPWReader (:bfreader:`Source Code <IPWReader.java>`, :doc:`Supported Metadata Fields </metadata/IPWReader>`)
 
-Source Code: :bfreader:`IPWReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/IPWReader`
 
 
 

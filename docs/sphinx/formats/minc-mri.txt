@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: MINCReader (:bfreader:`Source Code <MINCReader.java>`, :doc:`Supported Metadata Fields </metadata/MINCReader>`)
 
-Source Code: :bfreader:`MINCReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/MINCReader`
 
 Freely Available Software:
 

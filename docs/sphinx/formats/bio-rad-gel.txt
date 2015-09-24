@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: BioRadGelReader (:bfreader:`Source Code <BioRadGelReader.java>`, :doc:`Supported Metadata Fields </metadata/BioRadGelReader>`)
 
-Source Code: :bfreader:`BioRadGelReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/BioRadGelReader`
 
 
 

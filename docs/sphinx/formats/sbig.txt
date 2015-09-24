@@ -16,10 +16,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: SBIGReader (:bfreader:`Source Code <SBIGReader.java>`, :doc:`Supported Metadata Fields </metadata/SBIGReader>`)
 
-Source Code: :bfreader:`SBIGReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/SBIGReader`
 
 
 

@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: RHKReader (:bfreader:`Source Code <RHKReader.java>`, :doc:`Supported Metadata Fields </metadata/RHKReader>`)
 
-Source Code: :bfreader:`RHKReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/RHKReader`
 
 
 

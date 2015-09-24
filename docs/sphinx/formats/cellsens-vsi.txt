@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: CellSensReader (:bfreader:`Source Code <CellSensReader.java>`, :doc:`Supported Metadata Fields </metadata/CellSensReader>`)
 
-Source Code: :bfreader:`CellSensReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/CellSensReader`
 
 
 

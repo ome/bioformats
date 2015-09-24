@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: LIMReader (:bfreader:`Source Code <LIMReader.java>`, :doc:`Supported Metadata Fields </metadata/LIMReader>`)
 
-Source Code: :bfreader:`LIMReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/LIMReader`
 
 
 

@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: I2IReader (:bfreader:`Source Code <I2IReader.java>`, :doc:`Supported Metadata Fields </metadata/I2IReader>`)
 
-Source Code: :bfreader:`I2IReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/I2IReader`
 
 
 

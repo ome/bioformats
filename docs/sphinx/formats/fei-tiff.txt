@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: FEITiffReader (:bfreader:`Source Code <FEITiffReader.java>`, :doc:`Supported Metadata Fields </metadata/FEITiffReader>`)
 
-Source Code: :bfreader:`FEITiffReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/FEITiffReader`
 
 
 

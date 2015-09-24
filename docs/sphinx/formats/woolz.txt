@@ -18,10 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
+Reader: WlzReader (:bfreader:`Source Code <WlzReader.java>`, :doc:`Supported Metadata Fields </metadata/WlzReader>`)
 
-Source Code: :bfreader:`WlzReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/WlzReader`
 
 Freely Available Software:
 
@@ -52,7 +50,7 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfwriter:`WlzWriter`
+Writer: WlzWriter (:bfwriter:`Source Code <WlzWriter.java>`)
 
 Notes:
 

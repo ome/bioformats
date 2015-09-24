@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: SISReader (:bfreader:`Source Code <SISReader.java>`, :doc:`Supported Metadata Fields </metadata/SISReader>`)
 
-Source Code: :bfreader:`SISReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/SISReader`
 
 
 
