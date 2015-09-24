@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: InCellReader (:bfreader:`Source Code <InCellReader.java>`, :doc:`Supported Metadata Fields </metadata/InCellReader>`)
 
-Source Code: :bfreader:`InCellReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/InCellReader`
 
 
 

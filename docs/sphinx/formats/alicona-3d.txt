@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 1.0
 
+Reader: AliconaReader (:bfreader:`Source Code <AliconaReader.java>`, :doc:`Supported Metadata Fields </metadata/AliconaReader>`)
 
-Source Code: :bfreader:`AliconaReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/AliconaReader`
 
 
 

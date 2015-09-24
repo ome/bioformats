@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: ImspectorReader (:bfreader:`Source Code <ImspectorReader.java>`, :doc:`Supported Metadata Fields </metadata/ImspectorReader>`)
 
-Source Code: :bfreader:`ImspectorReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/ImspectorReader`
 
 
 

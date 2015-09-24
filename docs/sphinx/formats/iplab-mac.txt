@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: IvisionReader (:bfreader:`Source Code <IvisionReader.java>`, :doc:`Supported Metadata Fields </metadata/IvisionReader>`)
 
-Source Code: :bfreader:`IvisionReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/IvisionReader`
 
 
 

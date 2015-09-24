@@ -19,10 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: BioRadReader (:bfreader:`Source Code <BioRadReader.java>`, :doc:`Supported Metadata Fields </metadata/BioRadReader>`)
 
-Source Code: :bfreader:`BioRadReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/BioRadReader`
 
 Freely Available Software:
 

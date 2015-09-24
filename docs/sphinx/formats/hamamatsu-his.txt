@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: HISReader (:bfreader:`Source Code <HISReader.java>`, :doc:`Supported Metadata Fields </metadata/HISReader>`)
 
-Source Code: :bfreader:`HISReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/HISReader`
 
 
 

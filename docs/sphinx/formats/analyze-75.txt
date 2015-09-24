@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: AnalyzeReader (:bfreader:`Source Code <AnalyzeReader.java>`, :doc:`Supported Metadata Fields </metadata/AnalyzeReader>`)
 
-Source Code: :bfreader:`AnalyzeReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/AnalyzeReader`
 
 
 

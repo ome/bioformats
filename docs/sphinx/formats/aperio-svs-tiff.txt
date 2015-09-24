@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 8.0, 8.2, 9.0
 
+Reader: SVSReader (:bfreader:`Source Code <SVSReader.java>`, :doc:`Supported Metadata Fields </metadata/SVSReader>`)
 
-Source Code: :bfreader:`SVSReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/SVSReader`
 
 
 

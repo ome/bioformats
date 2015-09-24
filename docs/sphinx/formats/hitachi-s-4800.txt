@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: HitachiReader (:bfreader:`Source Code <HitachiReader.java>`, :doc:`Supported Metadata Fields </metadata/HitachiReader>`)
 
-Source Code: :bfreader:`HitachiReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/HitachiReader`
 
 
 

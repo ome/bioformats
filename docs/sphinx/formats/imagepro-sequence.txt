@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: SEQReader (:bfreader:`Source Code <SEQReader.java>`, :doc:`Supported Metadata Fields </metadata/SEQReader>`)
 
-Source Code: :bfreader:`SEQReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/SEQReader`
 
 
 

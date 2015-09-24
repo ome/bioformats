@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: MRCReader (:bfreader:`Source Code <MRCReader.java>`, :doc:`Supported Metadata Fields </metadata/MRCReader>`)
 
-Source Code: :bfreader:`MRCReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/MRCReader`
 
 
 Sample Datasets:

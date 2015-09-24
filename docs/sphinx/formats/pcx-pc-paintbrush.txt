@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: PCXReader (:bsd-reader:`Source Code <PCXReader.java>`, :doc:`Supported Metadata Fields </metadata/PCXReader>`)
 
-Source Code: :bsd-reader:`PCXReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/PCXReader`
 
 
 

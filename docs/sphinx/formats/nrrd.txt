@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: NRRDReader (:bsd-reader:`Source Code <NRRDReader.java>`, :doc:`Supported Metadata Fields </metadata/NRRDReader>`)
 
-Source Code: :bsd-reader:`NRRDReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/NRRDReader`
 
 Freely Available Software:
 

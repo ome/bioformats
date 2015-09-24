@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: CellomicsReader (:bfreader:`Source Code <CellomicsReader.java>`, :doc:`Supported Metadata Fields </metadata/CellomicsReader>`)
 
-Source Code: :bfreader:`CellomicsReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/CellomicsReader`
 
 
 

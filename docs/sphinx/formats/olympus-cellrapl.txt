@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: APLReader (:bfreader:`Source Code <APLReader.java>`, :doc:`Supported Metadata Fields </metadata/APLReader>`)
 
-Source Code: :bfreader:`APLReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/APLReader`
 
 
 

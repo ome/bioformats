@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 1.0
 
+Reader: PSDReader (:bfreader:`Source Code <PSDReader.java>`, :doc:`Supported Metadata Fields </metadata/PSDReader>`)
 
-Source Code: :bfreader:`PSDReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/PSDReader`
 
 
 

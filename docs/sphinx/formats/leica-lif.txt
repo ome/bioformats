@@ -19,10 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
+Reader: LIFReader (:bfreader:`Source Code <LIFReader.java>`, :doc:`Supported Metadata Fields </metadata/LIFReader>`)
 
-Source Code: :bfreader:`LIFReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/LIFReader`
 
 Freely Available Software:
 

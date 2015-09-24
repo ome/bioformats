@@ -19,10 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: GelReader (:bfreader:`Source Code <GelReader.java>`, :doc:`Supported Metadata Fields </metadata/GelReader>`)
 
-Source Code: :bfreader:`GelReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/GelReader`
 
 
 

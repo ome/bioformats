@@ -18,10 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
+Reader: NativeQTReader (:bsd-reader:`Source Code <NativeQTReader.java>`, :doc:`Supported Metadata Fields </metadata/NativeQTReader>`)
 
-Source Code: :bsd-reader:`NativeQTReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/NativeQTReader`
 
 Freely Available Software:
 
@@ -58,7 +56,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-writer:`QTWriter`
+Writer: QTWriter (:bsd-writer:`Source Code <QTWriter.java>`)
 
 Notes:
 

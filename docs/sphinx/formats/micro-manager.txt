@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: MicromanagerReader (:bsd-reader:`Source Code <MicromanagerReader.java>`, :doc:`Supported Metadata Fields </metadata/MicromanagerReader>`)
 
-Source Code: :bsd-reader:`MicromanagerReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/MicromanagerReader`
 
 Freely Available Software:
 

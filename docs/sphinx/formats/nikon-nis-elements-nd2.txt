@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: NativeND2Reader (:bfreader:`Source Code <NativeND2Reader.java>`, :doc:`Supported Metadata Fields </metadata/NativeND2Reader>`)
 
-Source Code: :bfreader:`NativeND2Reader.java`
-
-Supported Metadata Fields: :doc:`/metadata/NativeND2Reader`
 
 Freely Available Software:
 

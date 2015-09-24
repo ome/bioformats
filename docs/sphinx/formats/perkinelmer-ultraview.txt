@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: PerkinElmerReader (:bfreader:`Source Code <PerkinElmerReader.java>`, :doc:`Supported Metadata Fields </metadata/PerkinElmerReader>`)
 
-Source Code: :bfreader:`PerkinElmerReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/PerkinElmerReader`
 
 
 

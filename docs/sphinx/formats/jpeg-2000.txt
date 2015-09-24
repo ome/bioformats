@@ -18,10 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
+Reader: JPEG2000Reader (:bsd-reader:`Source Code <JPEG2000Reader.java>`, :doc:`Supported Metadata Fields </metadata/JPEG2000Reader>`)
 
-Source Code: :bsd-reader:`JPEG2000Reader.java`
-
-Supported Metadata Fields: :doc:`/metadata/JPEG2000Reader`
 
 Freely Available Software:
 
@@ -53,7 +51,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-writer:`JPEG2000Writer`
+Writer: JPEG2000Writer (:bsd-writer:`Source Code <JPEG2000Writer.java>`)
 
 Notes:
 

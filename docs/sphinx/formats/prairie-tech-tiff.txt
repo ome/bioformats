@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: PrairieReader (:bfreader:`Source Code <PrairieReader.java>`, :doc:`Supported Metadata Fields </metadata/PrairieReader>`)
 
-Source Code: :bfreader:`PrairieReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/PrairieReader`
 
 
 

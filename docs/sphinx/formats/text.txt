@@ -17,10 +17,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: TextReader (:bsd-reader:`Source Code <TextReader.java>`, :doc:`Supported Metadata Fields </metadata/TextReader>`)
 
-Source Code: :bsd-reader:`TextReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/TextReader`
 
 
 

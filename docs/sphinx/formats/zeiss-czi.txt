@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: ZeissCZIReader (:bfreader:`Source Code <ZeissCZIReader.java>`, :doc:`Supported Metadata Fields </metadata/ZeissCZIReader>`)
 
-Source Code: :bfreader:`ZeissCZIReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/ZeissCZIReader`
 
 Freely Available Software:
 

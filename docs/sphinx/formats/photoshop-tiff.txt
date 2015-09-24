@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: PhotoshopTiffReader (:bfreader:`Source Code <PhotoshopTiffReader.java>`, :doc:`Supported Metadata Fields </metadata/PhotoshopTiffReader>`)
 
-Source Code: :bfreader:`PhotoshopTiffReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/PhotoshopTiffReader`
 
 
 

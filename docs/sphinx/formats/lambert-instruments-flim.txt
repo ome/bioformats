@@ -18,10 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
+Reader: LiFlimReader (:bfreader:`Source Code <LiFlimReader.java>`, :doc:`Supported Metadata Fields </metadata/LiFlimReader>`)
 
-Source Code: :bfreader:`LiFlimReader.java`
-
-Supported Metadata Fields: :doc:`/metadata/LiFlimReader`
 
 
 
