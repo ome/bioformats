@@ -91,7 +91,7 @@ public class ScreenReader extends FormatReader {
     Class<? extends IFormatReader>[] classArray = classes.getClasses();
     validReaders = new ClassList<IFormatReader>(IFormatReader.class);
     for (Class<? extends IFormatReader> c : classArray) {
-      if (!c.equals(ScreenReader.class)) {
+      if (!c.equals(ScreenReader.class) && !c.equals(OMETiffReader.class)) {
         validReaders.addClass(c);
       }
     }
