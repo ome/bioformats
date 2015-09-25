@@ -1,6 +1,7 @@
 /*
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
+
  * %%
  * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -30,7 +31,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import loci.common.Location;
 
 import loci.common.RandomAccessInputStream;
@@ -73,7 +73,7 @@ public class SPCReader extends FormatReader {
   // -- Fields --
   
   /** List of all files to open */
-  private Vector<String> allFiles;
+  private ArrayList<String> allFiles;
   
   /** Number of time bins in lifetime histogram. */
   protected int nTimebins;
@@ -161,11 +161,9 @@ public class SPCReader extends FormatReader {
     frameClockList = new ArrayList<Integer>();
   }
   
- 
- 
+
   // -- IFormatReader API methods --
-  
-  
+ 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
@@ -181,45 +179,39 @@ public class SPCReader extends FormatReader {
    /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
   public boolean isThisType(String name, boolean open) {
+    
+    /*
+     * N.B. The setup file for the example available at writing contains the string 
+     * "FIFO_IMAGE measurement with module SPC-830"
+     * as npted above this code is valid with data from te following modules:
+     * (SPC-134, SPC-144, SPC-154, SPC-830)
+     * ideally the .set file should be checked here for the occurence of one of these strings
+     * but this could adversely affect performance so is currently checked in initFile
+    */
+    
+    if (!checkSuffix(name, "spc"))  {
+       return false;
+    }
+    
     Location location = new Location(name);
     if (!location.exists()) {
         return false;
     }
     
-    if (!checkSuffix(name, ".spc"))  {
-       return false;
-    }
-    location = location.getAbsoluteFile();
-    Location parent = location.getParentFile();
+    String setName = name.substring(0, name.lastIndexOf(".spc")) + ".set";
     
-    String baseName = name.substring(0, name.lastIndexOf(".spc"));
-    LOGGER.info(baseName);
-        
-    if (new Location(parent, baseName + ".set").exists())  {
-      return true;
-    }
-    
-    return false;
-    
+    return new Location(setName).exists(); 
   }
 
-  
   
    /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    LOGGER.info("in getSeriesUsedFiles");
-    LOGGER.info(allFiles.get(0));
-    LOGGER.info(allFiles.get(1));
     String[] farray = allFiles.toArray(new String[allFiles.size()]);
-    for (String farray1 : farray) {
-      LOGGER.info("allFiles = " + farray1);
-    }
     return farray;
   } 
 
- 
    /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -236,7 +228,6 @@ public class SPCReader extends FormatReader {
             
     Integer T = no/nTimebins;
   
-    
     no -= T * nTimebins;
             
     Integer timebin = no;
@@ -312,7 +303,7 @@ public class SPCReader extends FormatReader {
     
     super.initFile(id);
     
-    allFiles = new Vector<String>();
+    allFiles = new ArrayList<String>();
     
     // get the working directory
     Location tmpFile = new Location(id).getAbsoluteFile();
@@ -355,9 +346,29 @@ public class SPCReader extends FormatReader {
     Integer setuppos = in.readInt();
     
     Short setupcount = in.readShort();
+    String module = "";
     
-    // skip to start of setup information
-    in.skip(setuppos - 8);
+    try  {
+      // Arbitrary length established by trial and error
+      String header = in.readString(600);
+
+      int index = header.indexOf("module SPC-");
+      module = header.substring(index + 7, index + 14);
+      
+    }
+    catch (IOException exc) {
+      LOGGER.debug("Failed read header from .set file!", exc);
+    }
+    
+    
+    if (!module.equalsIgnoreCase("SPC-134") && !module.equalsIgnoreCase("SPC-144") 
+            && !module.equalsIgnoreCase("SPC-154") && !module.equalsIgnoreCase("SPC-830"))  {
+      throw new FormatException("Failed to find a matching .set file!");
+    } 
+    
+    // goto start of setup information
+    in.seek(setuppos);
+    
     
     String setup = in.readString(setupcount);
     
@@ -380,7 +391,6 @@ public class SPCReader extends FormatReader {
       throw new FormatException("Failed to parse setup file!");
     }
     
-   
     LOGGER.debug("timeBase = " + ((Double)timeBase).toString());
     
     // Now read .spc file
@@ -388,6 +398,24 @@ public class SPCReader extends FormatReader {
     in.order(true);
 
     LOGGER.info("Reading info from .spc file");
+    
+    /* The first 3 bytes in the file contain information about the 
+     * macro time clock in 0.1 ns units ("500" for 50ns clock)
+    */
+    
+    in.skip(3);
+    /*
+     * The 4th byte contains information about the number of 
+     * routing channels in bits 3 to 6.
+     * Bits 0-2 reserved bit 7 = 1 ("Data invalid")
+    */
+    byte routing  = in.readByte();
+    
+    if ((routing & 0x10) != 0)  {
+      throw new FormatException("Invalid data!");
+    }
+    
+    nChannels = (routing & 0x78) >>3;
      
     currentPixel = 0;
     currentLine = -1;
@@ -435,8 +463,6 @@ public class SPCReader extends FormatReader {
     LOGGER.debug("nLines = " + ((Integer)nLines).toString());
     nFrames = currentFrame - 1;
     LOGGER.debug("nFrames = " + ((Integer)nFrames).toString());
-
-    nChannels = 2;
     
     addGlobalMeta("time bins", nTimebins);
     addGlobalMeta("nChannels", nChannels);
@@ -588,7 +614,7 @@ public class SPCReader extends FormatReader {
    
     int adc = rawBuf[blockPtr] & 0x0F;   // 4 MSBs of the ADC 
     int currentChannel = (rawBuf[blockPtr - 2] & 0xF0) >> 4;
-    if (currentChannel == channel) {
+    if (currentChannel == channel || nChannels==1) {
       if (currentPixel < nPixels && currentLine > -1) {  
         int pix =  bpp *((currentLine * nPixels) + currentPixel);
         
@@ -615,7 +641,6 @@ public class SPCReader extends FormatReader {
     String taggedString = setup.substring(tagOffset, tagOffset + 30);
     tagOffset = taggedString.indexOf(",");
     String tagType = taggedString.substring(tagOffset + 1, tagOffset + 2);
-    LOGGER.debug("type = " + tagType);
     String valueTxt = taggedString.substring(tagOffset + 3, taggedString.indexOf("]"));
     double value = 0.0;
     if (tagType.matches("I")) {
