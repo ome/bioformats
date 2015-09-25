@@ -58,6 +58,7 @@ public class SPCReader extends FormatReader {
   
   // -- Constants --
 
+  // Setup file text field strings.
   public static final String TAC_RANGE = "SP_TAC_R";
   public static final String TAC_GAIN = "SP_TAC_G";
   
@@ -97,25 +98,56 @@ public class SPCReader extends FormatReader {
    */
   protected int storedT = -1;
 
+  /*
+   * Current position in image
+   */
   private int currentPixel;
   private int currentLine;
   private int currentFrame;
   
+  
+  /*
+   * Buffer for reading from files
+   */
   protected int bufLength;
   protected byte[] rawBuf;
   private int nBuffers;  // no of buffers read
 
+  /*
+   * Image size 
+   */
   private int nLines;
   private int nFrames;
   private int nPixels;
-  private boolean endOfFrameFlag;
-  private int bpp;
-  private int binSize;
-  private int channel;
- 
-  private boolean initialised;
   
-  List<Integer> frameClockList = new ArrayList<Integer>();
+  /*
+   * Flag indicating that a Frame clock has been detected.
+   * true until the first line clock in that frame is detected
+   */
+  private boolean endOfFrameFlag;
+  
+  /*
+   * bits per pixel
+   */
+  private int bpp;
+  
+  /*
+   * Length in bytes of data in a single timebin.
+   */
+  private int binSize;
+  
+  /*
+   * Requested channel- photons in other channels are ignored.
+   */
+  private int channel;
+  
+  /*
+   * Position of each frame clock in the .spc file.
+   */
+  
+  List<Integer> frameClockList;
+  
+  
  
   // -- Constructor --
 
@@ -126,6 +158,7 @@ public class SPCReader extends FormatReader {
     suffixSufficient = true;
     hasCompanionFiles = true;
     datasetDescription = "One .spc file and accompanying .set file";
+    frameClockList = new ArrayList<Integer>();
   }
   
  
@@ -145,11 +178,32 @@ public class SPCReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   } 
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
- /* @Override
+   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
+    Location location = new Location(name);
+    if (!location.exists()) {
+        return false;
+    }
+    
+    if (!checkSuffix(name, ".spc"))  {
+       return false;
+    }
+    location = location.getAbsoluteFile();
+    Location parent = location.getParentFile();
+    
+    String baseName = name.substring(0, name.lastIndexOf(".spc"));
+    LOGGER.info(baseName);
+        
+    if (new Location(parent, baseName + ".set").exists())  {
+      return true;
+    }
+    
     return false;
-  }*/
+    
+  }
+
+  
   
    /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
@@ -245,6 +299,7 @@ public class SPCReader extends FormatReader {
       storedChannel = -1;
       storedT = -1;
       allFiles = null;
+      frameClockList = new ArrayList<Integer>();
 
     }
   }
@@ -298,64 +353,42 @@ public class SPCReader extends FormatReader {
     in.skip(8);
     
     Integer setuppos = in.readInt();
-    LOGGER.info("pos = " + setuppos.toString()); 
     
     Short setupcount = in.readShort();
-    LOGGER.info("count = " + setupcount.toString()); 
     
     // skip to start of setup information
     in.skip(setuppos - 8);
     
     String setup = in.readString(setupcount);
-    int rangeOffset = setup.indexOf(TAC_RANGE);
-    int gainOffset = setup.indexOf(TAC_GAIN);
     
     in.close();
     
-     
-    String tacGain = setup.substring(gainOffset,gainOffset + 30);
-    gainOffset = tacGain.indexOf(",");
-    String gainType = tacGain.substring(gainOffset + 1,gainOffset+2);
-    LOGGER.info("gainType = " + gainType);
-    tacGain = tacGain.substring(gainOffset + 3,tacGain.indexOf("]"));
-    double tacGainv = 0.0;
-    if (gainType.matches("I"))  {
-      tacGainv = Integer.valueOf(tacGain);
+    // get the tac range from the setup information
+    double tacRange = parseSetup(TAC_RANGE, setup);
+    
+    // get the tac range from the setup information
+    double tacGain = parseSetup(TAC_GAIN, setup);
+    
+    
+    double timeBase;
+    if (tacGain != 0.0 && tacRange != 0.0)  {
+      timeBase = 4095 * tacRange/(tacGain * 4096);
+       // convert from s to ps 
+      timeBase *= 1.000e12;
     }
-    if (gainType.matches("F"))  {
-      tacGainv = Double.valueOf(tacGain);
+    else  {
+      throw new FormatException("Failed to parse setup file!");
     }
     
    
-    String tacRange = setup.substring(rangeOffset,rangeOffset + 30);
-    rangeOffset = tacRange.indexOf(",");
-    String rangeType = tacRange.substring(rangeOffset + 1,rangeOffset+2);
-    LOGGER.info("rangeType = " + rangeType);
-    tacRange = tacRange.substring(rangeOffset + 3,tacRange.indexOf("]"));
-    LOGGER.info("tacRange = " + tacRange);
-    
-    double tacRangev = 0.0;
-    if (rangeType.matches("I"))  {
-      tacRangev = (double)Integer.valueOf(tacRange);
-    }
-    if (rangeType.matches("F"))  {
-      tacRangev = Double.valueOf(tacRange);
-    }
-    
-    
-    double timeBase = 4095 * tacRangev/(tacGainv * 4096);
-    // convert from s to ps 
-    timeBase *= 1.000e12;
-    LOGGER.info("timeBase = " + ((Double)timeBase).toString());
+    LOGGER.debug("timeBase = " + ((Double)timeBase).toString());
     
     // Now read .spc file
     in = new RandomAccessInputStream(id);
     in.order(true);
 
     LOGGER.info("Reading info from .spc file");
-    
-    initialised = false;
-    
+     
     currentPixel = 0;
     currentLine = -1;
     currentFrame = -1;
@@ -379,11 +412,11 @@ public class SPCReader extends FormatReader {
           // at this point only the various clocks are of interest
           switch (adcLM) { 
             case (byte) 0x90:
-              invalidAndMark(bb);
+              invalidAndMark(bb, false);
               break;
 
             case (byte) 0xd0:         // Invalid, Mark and MTOV all set.
-              invalidAndMark(bb);     // Unsure about this-- Not well documented!
+              invalidAndMark(bb, false);     // Unsure about this-- Not well documented!
               break;
 
             default:
@@ -396,12 +429,12 @@ public class SPCReader extends FormatReader {
     
     
     nTimebins = (0xFFF >> adcResShift) + 1;
-    LOGGER.info("nTimebins = " + ((Integer)nTimebins).toString());
+    LOGGER.debug("nTimebins = " + ((Integer)nTimebins).toString());
 
-    LOGGER.info("nPixels = " + ((Integer)nPixels).toString());
-    LOGGER.info("nLines = " + ((Integer)nLines).toString());
+    LOGGER.debug("nPixels = " + ((Integer)nPixels).toString());
+    LOGGER.debug("nLines = " + ((Integer)nLines).toString());
     nFrames = currentFrame - 1;
-    LOGGER.info("nFrames = " + ((Integer)nFrames).toString());
+    LOGGER.debug("nFrames = " + ((Integer)nFrames).toString());
 
     nChannels = 2;
     
@@ -441,8 +474,6 @@ public class SPCReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     
-    initialised = true;
-    
     
   }
   
@@ -461,7 +492,7 @@ public class SPCReader extends FormatReader {
           break;
 
         case 0x20:
-          System.out.println(" Got GAP but not invalid!!!");
+          LOGGER.debug(" Got GAP but not invalid!!!");
           break;
 
         case 0x40:		// photon + ovfl
@@ -477,11 +508,11 @@ public class SPCReader extends FormatReader {
           break;
 
         case (byte) 0x90:
-          invalidAndMark(bb);
+          invalidAndMark(bb, true);
           break;
           
         case (byte) 0xd0:         // Invalid, Mark and MTOV all set.
-          invalidAndMark(bb);     // Unsure about this-- Not well documented!
+          invalidAndMark(bb, true);     // Unsure about this-- Not well documented!
           break;
 
         case (byte) 0xC0:  // timer overflow  
@@ -489,7 +520,7 @@ public class SPCReader extends FormatReader {
           break;
 
         default:
-          System.out.println("Unrecognised pattern !!!");
+          LOGGER.debug("Unrecognised pattern !!!");
           break;
 
       }   //end switch
@@ -499,7 +530,7 @@ public class SPCReader extends FormatReader {
   
  
    
-   private void invalidAndMark(int blockPtr) {
+   private void invalidAndMark(int blockPtr, boolean initialised) {
 
     long sum;
     byte routM = (byte) (rawBuf[blockPtr - 2] & 0xf0);
@@ -513,7 +544,7 @@ public class SPCReader extends FormatReader {
 
       case 0x20:          //line clock
 
-        //System.out.println("Line clock");
+        //LOGGER.debug("Line clock");
         if (currentFrame == 0 && currentLine == 1) {
           nPixels = currentPixel;
         }
@@ -530,7 +561,7 @@ public class SPCReader extends FormatReader {
 
       case 0x40:         // frame clock
 
-        //LOGGER.info("Frame clock!");
+        LOGGER.debug("Frame clock!");
         if (initialised == false)  {
           if (currentFrame == 0) {
             nLines = currentLine + 1;
@@ -547,7 +578,7 @@ public class SPCReader extends FormatReader {
         break;
 
       default:
-      //System.out.println( "got unknown mark");
+      //LOGGER.debug( "got unknown mark");
     }
 
   }
@@ -572,5 +603,31 @@ public class SPCReader extends FormatReader {
       }
     }
   }
+  
+  private double parseSetup(String tag, String setup) {
+    
+    // Fields in setup text consist of a tag, followed by a type (either "I" or "F")
+    // folowed by a text value
+    // e.g. #SP [SP_TAC_G,I,4]
+   
+    
+    int tagOffset = setup.indexOf(tag);
+    String taggedString = setup.substring(tagOffset, tagOffset + 30);
+    tagOffset = taggedString.indexOf(",");
+    String tagType = taggedString.substring(tagOffset + 1, tagOffset + 2);
+    LOGGER.debug("type = " + tagType);
+    String valueTxt = taggedString.substring(tagOffset + 3, taggedString.indexOf("]"));
+    double value = 0.0;
+    if (tagType.matches("I")) {
+      value = Integer.valueOf(valueTxt);
+    }
+    if (tagType.matches("F")) {
+      value = Double.valueOf(valueTxt);
+    }
+    
+    return value;
+  }
+  
+  
 
 }
