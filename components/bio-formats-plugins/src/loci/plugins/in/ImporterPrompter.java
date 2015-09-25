@@ -82,7 +82,7 @@ public class ImporterPrompter implements StatusListener {
         ImporterOptions options = process.getOptions();
         if (options != null && options.doMustGroup() && options.isGroupFiles()) {
           IJ.showMessage("Bio-Formats",
-    				 "File Stitiching Options are not available for files of this format. "
+    				 "File Stitching Options are not available for files of this format.\n"
     				 + "Files will be grouped according to image format specifications\n");
         }
         else if (!promptFilePattern()) process.cancel();
