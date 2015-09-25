@@ -408,7 +408,9 @@ public class DicomReader extends FormatReader {
       }
       else if (bpp == 2) {
         int maxPixelValue = maxPixelRange + (centerPixelValue/2);
-        if (maxPixelRange == -1 || centerPixelValue == -1 || centerPixelValue < (maxPixelRange/2)) maxPixelValue = 65535;
+        if (maxPixelRange == -1 || centerPixelValue < (maxPixelRange/2)) {
+          maxPixelValue = 65535;
+        }
         boolean little = isLittleEndian();
         for (int i=0; i<buf.length; i+=2) {
           short s = DataTools.bytesToShort(buf, i, 2, little);
@@ -570,7 +572,7 @@ public class DicomReader extends FormatReader {
             if (winCenter.trim().length() == 0) centerPixelValue = -1;
             else {
               try {
-                centerPixelValue = new Double(winCenter.trim()).intValue();
+                centerPixelValue = new Double(winCenter).intValue();
               }
               catch (NumberFormatException e) {
                 centerPixelValue = -1;
