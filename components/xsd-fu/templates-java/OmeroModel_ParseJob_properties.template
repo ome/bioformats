@@ -1,4 +1,0 @@
-            <!--
-            // Property Params
-            -->
-            <optional name="params" type="byte[]"/>
