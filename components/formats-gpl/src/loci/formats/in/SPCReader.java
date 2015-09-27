@@ -54,7 +54,7 @@ import loci.formats.meta.MetadataStore;
  * available from http://www.becker-hickl.com/handbookphp.htm
  * See Page 675 FIFO Data Files (SPC-134, SPC-144, SPC-154, SPC-830).
  * Note that this code assumes the presence of pixel clock events and 
- * therefor the MacroTime information is not used.
+ * therefore the MacroTime information is not used.
  */
 public class SPCReader extends FormatReader {
   
