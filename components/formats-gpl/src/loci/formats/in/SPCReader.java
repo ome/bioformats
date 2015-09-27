@@ -29,6 +29,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import loci.common.Location;
@@ -48,6 +49,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Ian i.munro at imperial.ac.uk
  * 
+ * Ported from Matlab code kindly provided by ulorenzo at ikasle.ehu.eus.
  * This format is documented in the TCSPC Handbook
  * available from http://www.becker-hickl.com/handbookphp.htm
  * See Page 675 FIFO Data Files (SPC-134, SPC-144, SPC-154, SPC-830).
@@ -147,6 +149,13 @@ public class SPCReader extends FormatReader {
   
   List<Integer> frameClockList;
   
+  /*
+   * Flag to indicate single-line mode.
+   */
+  private boolean lineMode;
+  
+  
+  
   
  
   // -- Constructor --
@@ -238,6 +247,7 @@ public class SPCReader extends FormatReader {
     if (Tstore == null) {
       Tstore = new byte[nPixels * nLines * bpp * nTimebins];
       tstoreb = ByteBuffer.wrap(Tstore); // Wrapper around underlying byte[].
+      tstoreb.order(ByteOrder.LITTLE_ENDIAN);
     }
     int noOfBytes;
     
@@ -270,13 +280,35 @@ public class SPCReader extends FormatReader {
     Integer oLineSize = w * bpp;
     
     // offset to correct timebin yth line and xth pixel
-    int input = (binSize * timebin) + (y * iLineSize) + (x * bpp);
+    
     int output = 0;
-    for (int row = 0; row < h; row++) {
+    if (!lineMode) {   //image Mode
+      int input = (binSize * timebin) + (y * iLineSize) + (x * bpp);
+      for (int line = 0; line < h; line++) {
+        System.arraycopy(Tstore, input, buf, output, oLineSize);
+        input += iLineSize;
+        output += oLineSize;
+      }
+    }
+    else  {  //line Mode
+      ByteBuffer bufb = ByteBuffer.wrap(buf); // Wrapper around underlying byte[].
+      bufb.order(ByteOrder.LITTLE_ENDIAN);
+      // copy first line into buf
+      int input = (binSize * timebin) + (x * bpp);
       System.arraycopy(Tstore, input, buf, output, oLineSize);
       input += iLineSize;
-      output += oLineSize;
-    } 
+      // now sum all other lines
+      Short s;
+      for (int line = 1; line < nLines; line++) {
+        for (int p = 0;p < oLineSize; p+=2)  {
+          s = bufb.getShort(output + p);
+          s = (short)(s + tstoreb.getShort(input + p));
+          bufb.putShort(output + p, s);
+        }
+        input+=iLineSize;
+      }
+    }
+    
     return buf;
   }
 
@@ -472,9 +504,20 @@ public class SPCReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     CoreMetadata m = core.get(0);
+    
+    // This behaviour seems to be undocumented and possibly system specific
+    // Duplicates the behaviour of U.Lorenzo's Matlab code.
+    if (nLines < 530)  {    // return an image
+      lineMode = false;
+       m.sizeY = nLines;
+    }
+    else  {
+      LOGGER.info("Single line mode");
+      lineMode = true;    // return a single line
+       m.sizeY = 1;
+    }
 
     m.sizeX = nPixels;
-    m.sizeY = nLines;
     m.sizeZ = 1;
     m.sizeT =  nTimebins * nFrames;
     m.sizeC = nChannels;
@@ -492,7 +535,6 @@ public class SPCReader extends FormatReader {
     m.moduloT.typeDescription = "TCSPC";
     m.moduloT.start = 0;
 
-  
     m.moduloT.step = timeBase / nTimebins;
     m.moduloT.end = m.moduloT.step * (nTimebins - 1);
     m.moduloT.unit = "ps";
