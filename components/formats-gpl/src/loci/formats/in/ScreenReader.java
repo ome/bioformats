@@ -72,8 +72,9 @@ public class ScreenReader extends FormatReader {
   // -- Fields --
 
   private String[] plateMetadataFiles;
+  private String[] files;
 
-  private IFormatReader[] readers;
+  private IFormatReader reader;
   private ClassList<IFormatReader> validReaders;
   private int fields, wells;
   private HashMap<Integer, Integer> seriesMap = new HashMap<Integer, Integer>();
@@ -103,10 +104,8 @@ public class ScreenReader extends FormatReader {
   @Override
   public void reopenFile() throws IOException {
     super.reopenFile();
-    for (IFormatReader reader : readers) {
-      if (reader != null) {
-        reader.reopenFile();
-      }
+    if (reader != null) {
+      reader.reopenFile();
     }
   }
 
@@ -132,20 +131,20 @@ public class ScreenReader extends FormatReader {
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || readers[0].getCurrentFile() == null) {
+    if (reader == null || reader.getCurrentFile() == null) {
       return null;
     }
-    return readers[0].get8BitLookupTable();
+    return reader.get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || readers[0].getCurrentFile() == null) {
+    if (reader == null || reader.getCurrentFile() == null) {
       return null;
     }
-    return readers[0].get16BitLookupTable();
+    return reader.get16BitLookupTable();
   }
 
   /**
@@ -158,7 +157,8 @@ public class ScreenReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int spotIndex = seriesMap.get(getCoreIndex());
-    return readers[spotIndex].openBytes(no, buf, x, y, w, h);
+    reader.setId(files[spotIndex]);
+    return reader.openBytes(no, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -167,40 +167,44 @@ public class ScreenReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     int spotIndex = seriesMap.get(getCoreIndex());
+    final List<String> allFiles = new ArrayList<String>();
+    try {
+      reader.setId(files[spotIndex]);
 
-    final List<String> files = new ArrayList<String>();
-    if (plateMetadataFiles != null) {
-      for (String f : plateMetadataFiles) {
-        files.add(f);
+      if (plateMetadataFiles != null) {
+        for (String f : plateMetadataFiles) {
+          allFiles.add(f);
+        }
+      }
+      String[] readerFiles = reader.getSeriesUsedFiles(noPixels);
+      if (readerFiles != null) {
+        for (String f : readerFiles) {
+          allFiles.add(f);
+        }
       }
     }
-    String[] readerFiles = readers[spotIndex].getSeriesUsedFiles(noPixels);
-    if (readerFiles != null) {
-      for (String f : readerFiles) {
-        files.add(f);
-      }
+    catch (Exception e) {
+      LOGGER.info("Could not initialize {}", files[spotIndex], e);
     }
-    return files.toArray(new String[files.size()]);
+
+    return allFiles.toArray(new String[allFiles.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (readers != null) {
-      for (IFormatReader well : readers) {
-        if (well != null) {
-          well.close(fileOnly);
-        }
-      }
+    if (reader != null) {
+      reader.close(fileOnly);
     }
     if (!fileOnly) {
-      readers = null;
+      reader = null;
       plateMetadataFiles = null;
       fields = 0;
       wells = 0;
       seriesMap.clear();
       spotMap.clear();
+      files = null;
     }
   }
 
@@ -252,7 +256,7 @@ public class ScreenReader extends FormatReader {
     fields = Integer.parseInt(plateTable.get("Fields"));
 
     wells = maxRow * maxCol;
-    String[] files = new String[wells * fields];
+    files = new String[wells * fields];
 
     for (int well=0; well<wells; well++) {
       IniTable wellTable = tables.getTable("Well " + well);
@@ -271,7 +275,6 @@ public class ScreenReader extends FormatReader {
       }
     }
 
-    readers = new IFormatReader[files.length];
     int coreLength = files.length;
 
     plateMetadataFiles =
@@ -297,16 +300,17 @@ public class ScreenReader extends FormatReader {
 
     core.clear();
 
+    FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders));
+    stitcher.setCanChangePattern(false);
+    reader = stitcher;
+    reader.setMetadataStore(omexmlMeta);
+
     for (int well=0; well<files.length; well++) {
       if (files[well] == null) {
         continue;
       }
-      FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders));
-      stitcher.setCanChangePattern(false);
-      readers[well] = stitcher;
-      readers[well].setMetadataStore(omexmlMeta);
-      readers[well].setId(files[well]);
-      List<CoreMetadata> wcore = readers[well].getCoreMetadataList();
+      reader.setId(files[well]);
+      List<CoreMetadata> wcore = reader.getCoreMetadataList();
       core.add(wcore.get(0));
       if (wcore.size() > 1) {
         LOGGER.warn("Ignoring extra series for well #{}", well);
