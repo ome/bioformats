@@ -543,10 +543,10 @@ public class CellH5Reader extends FormatReader {
           classColorHexString = (String) classDef[cls].get("color");
           classColors.add(hex2Rgb(classColorHexString));
         }
-        if (classDef.length > 0) {
-          hasClassification = true;
-          classes = jhdf.readCompoundArrayDataMap(coord.pathToPosition +
-            featureName + CellH5Constants.PREDICTED_CLASS_LABELS);
+        if (classDef.length > 0 && jhdf.exists(coord.pathToPosition + featureName + CellH5Constants.PREDICTED_CLASS_LABELS)) {
+            hasClassification = true;
+            classes = jhdf.readCompoundArrayDataMap(coord.pathToPosition +
+              featureName + CellH5Constants.PREDICTED_CLASS_LABELS);
         }
       }
 
