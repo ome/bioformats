@@ -303,6 +303,7 @@ public class ScreenReader extends FormatReader {
     FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
     stitcher.setCanChangePattern(false);
     reader = stitcher;
+    reader.setGroupFiles(false);
     reader.setMetadataStore(omexmlMeta);
 
     for (int well=0; well<files.length; well++) {
