@@ -300,7 +300,7 @@ public class ScreenReader extends FormatReader {
 
     core.clear();
 
-    FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders));
+    FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
     stitcher.setCanChangePattern(false);
     reader = stitcher;
     reader.setMetadataStore(omexmlMeta);
