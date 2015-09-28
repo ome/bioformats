@@ -1,4 +1,0 @@
-            <!--
-            // Property Data
-            -->
-            <required name="data" type="byte[]"/>

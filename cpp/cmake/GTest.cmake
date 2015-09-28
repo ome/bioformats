@@ -37,13 +37,11 @@
 enable_testing()
 option(test "Enable unit tests (requires gtest)" ON)
 set(BUILD_TESTS ${test})
-option(extended-tests "Enable extended tests (more comprehensive, longer run time)" ON)
 set(EXTENDED_TESTS ${extended-tests})
 
 # Unit tests
 find_package(Threads REQUIRED)
 
-option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
 if(NOT embedded-gtest)
   find_package(GTest)
 endif()
@@ -52,7 +50,6 @@ if(NOT GTEST_FOUND)
   message(STATUS "Using embedded GTest")
   # If not using a shared runtime, gtest hardcodes its own (which breaks linking)
   set(gtest_force_shared_crt ON CACHE BOOL "Force gtest to use shared runtime")
-  set(BUILD_SHARED_LIBS ON CACHE BOOL "Force gtest to use shared libraries")
   # VS2012 Faux variadic templates workaround.
   if(NOT MSVC_VERSION VERSION_LESS 1700 AND MSVC_VERSION VERSION_LESS 1800)
     add_definitions(-D_VARIADIC_MAX=10)

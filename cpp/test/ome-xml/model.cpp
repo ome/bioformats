@@ -49,6 +49,8 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/xml/Document.h>
+
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
 using namespace boost::filesystem;
@@ -122,7 +124,7 @@ public:
     xmltext.assign(std::istreambuf_iterator<char>(in),
                    std::istreambuf_iterator<char>());
 
-    doc = ome::common::xml::dom::createDocument(xmltext);
+    doc = ome::xml::createDocument(xmltext);
   }
 };
 
@@ -159,7 +161,7 @@ TEST_P(ModelTest, CreateXML)
   std::string omexml(meta.dumpXML());
 
   // Validate XML.
-  ASSERT_NO_THROW(ome::common::xml::dom::createDocument(omexml));
+  ASSERT_NO_THROW(ome::xml::createDocument(omexml));
 }
 
 TEST_P(ModelTest, CreateXMLRoundTrip)
@@ -177,12 +179,12 @@ TEST_P(ModelTest, CreateXMLRoundTrip)
   std::string omexml(meta.dumpXML());
 
   // Validate XML.
-  ASSERT_NO_THROW(ome::common::xml::dom::createDocument(omexml));
+  ASSERT_NO_THROW(ome::xml::createDocument(omexml));
 
   // Repeat read and write.
 
   // Read into OME model objects.
-  ome::common::xml::dom::Document doc2(ome::common::xml::dom::createDocument(omexml));
+  ome::common::xml::dom::Document doc2(ome::xml::createDocument(omexml));
   ome::xml::meta::OMEXMLMetadata meta2;
   ome::xml::model::detail::OMEModel model2;
   ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root2(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(meta2.getRoot()));
@@ -193,7 +195,7 @@ TEST_P(ModelTest, CreateXMLRoundTrip)
   std::string omexml2(meta2.dumpXML());
 
   // Validate XML.
-  ASSERT_NO_THROW(ome::common::xml::dom::createDocument(omexml2));
+  ASSERT_NO_THROW(ome::xml::createDocument(omexml2));
 
   ASSERT_EQ(omexml, omexml2);
 }

@@ -61,6 +61,7 @@ using jace::proxy::loci::formats::ImageReader;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::MetadataRetrieve;
 using jace::proxy::loci::formats::meta::MetadataStore;
+using jace::proxy::loci::formats::services::OMEXMLService;
 using jace::proxy::loci::formats::services::OMEXMLServiceImpl;
 
 #include <iostream>
@@ -113,7 +114,7 @@ ChannelSeparator* channelSeparator = NULL;
 ChannelMerger* channelMerger = NULL;
 DimensionSwapper* dimSwapper = NULL;
 
-OMEXMLServiceImpl service;
+OMEXMLService *service = NULL;
 
 // -- Methods --
 
@@ -204,7 +205,7 @@ void configureReaderPreInit() {
     String xml(null);
     if (omexmlVersion == NULL) omexmlVersion = new String(null);
 
-    MetadataStore store = service.createOMEXMLMetadata(xml, *omexmlVersion);
+    MetadataStore store = service->createOMEXMLMetadata(xml, *omexmlVersion);
 
     reader->setOriginalMetadataPopulated(true);
     if (!store.isNull()) reader->setMetadataStore(store);
@@ -295,7 +296,7 @@ void readCoreMetadata() {
   int seriesCount = reader->getSeriesCount();
   cout << "Series count = " << seriesCount << endl;
   MetadataStore ms = reader->getMetadataStore();
-  MetadataRetrieve mr = service.asRetrieve(ms);
+  MetadataRetrieve mr = service->asRetrieve(ms);
   for (int j=0; j<seriesCount; j++) {
     reader->setSeries(j);
 
@@ -448,14 +449,14 @@ void printOriginalMetadata() {
 void printOMEXML() {
   cout << endl;
   MetadataStore ms = reader->getMetadataStore();
-  String version = service.getOMEXMLVersion(ms);
+  String version = service->getOMEXMLVersion(ms);
   if (!version.isNull()) cout << "Generating OME-XML" << endl;
   else cout << "Generating OME-XML (schema version " << version << ")" << endl;
-  MetadataRetrieve mr = service.asRetrieve(ms);
+  MetadataRetrieve mr = service->asRetrieve(ms);
   if (!mr.isNull()) {
-    String xml = service.getOMEXML(mr);
+    String xml = service->getOMEXML(mr);
     cout << XMLTools::indentXML(xml) << endl;
-    service.validateOMEXML(xml);
+    service->validateOMEXML(xml);
   }
   else {
     cout << "The metadata could not be converted to OME-XML." << endl;
@@ -491,6 +492,8 @@ void destroyObjects() {
   channelMerger = NULL;
   delete dimSwapper;
   dimSwapper = NULL;
+  delete service;
+  service = NULL;
 }
 
 /* Displays information on the given file. */
@@ -508,6 +511,7 @@ bool testRead(int argc, const char *argv[]) {
     return false;
   }
 
+  service = new OMEXMLServiceImpl;
   reader = imageReader = new ImageReader;
 
   configureReaderPreInit();

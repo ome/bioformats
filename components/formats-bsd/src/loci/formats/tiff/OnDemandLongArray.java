@@ -33,6 +33,7 @@
 package loci.formats.tiff;
 
 import java.io.IOException;
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 
 /**
@@ -75,11 +76,12 @@ public class OnDemandLongArray {
   }
 
   public long[] toArray() throws IOException {
-    long[] arr = new long[size];
-    for (int i=0; i<arr.length; i++) {
-      arr[i] = get(i);
-    }
-    return arr;
+    long fp = stream.getFilePointer();
+    stream.seek(start);
+    byte[] rawBytes = new byte[size * 8];
+    stream.readFully(rawBytes);
+    stream.seek(fp);
+    return (long[]) DataTools.makeDataArray(rawBytes, 8, false, stream.isLittleEndian());
   }
 
   public void close() throws IOException {

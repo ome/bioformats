@@ -118,10 +118,10 @@ if [ -d "$INSTALL_PREFIX" ]; then
   LIBEXECDIR="$BF_INSTALL_FULL_LIBEXECDIR"
   MANDIR="$INSTALL_FULL_MANDIR"
   if [ "$(uname -s)" = "Darwin" ]; then
-    if [ -z "$DYLD_LIBRARY_PATH" ]; then
-      export DYLD_LIBRARY_PATH="$INSTALL_FULL_LIBDIR"
+    if [ -z "$DYLD_FALLBACK_LIBRARY_PATH" ]; then
+      export DYLD_FALLBACK_LIBRARY_PATH="$INSTALL_FULL_LIBDIR"
     else
-      export DYLD_LIBRARY_PATH="$INSTALL_FULL_LIBDIR:$DYLD_LIBRARY_PATH"
+      export DYLD_FALLBACK_LIBRARY_PATH="$INSTALL_FULL_LIBDIR:$DYLD_FALLBACK_LIBRARY_PATH"
     fi
   else
     if [ -z "$LD_LIBRARY_PATH" ]; then
@@ -142,10 +142,10 @@ else
   LIBEXECDIR="${rootdir}${BF_INSTALL_FULL_LIBEXECDIR}"
   MANDIR="${rootdir}${INSTALL_FULL_MANDIR}"
   if [ "$(uname -s)" = "Darwin" ]; then
-    if [ -z "$DYLD_LIBRARY_PATH" ]; then
-      export DYLD_LIBRARY_PATH="$rootdir$INSTALL_FULL_LIBDIR"
+    if [ -z "$DYLD_FALLBACK_LIBRARY_PATH" ]; then
+      export DYLD_FALLBACK_LIBRARY_PATH="$rootdir$INSTALL_FULL_LIBDIR"
     else
-      export DYLD_LIBRARY_PATH="$rootdir$INSTALL_FULL_LIBDIR:$DYLD_LIBRARY_PATH"
+      export DYLD_FALLBACK_LIBRARY_PATH="$rootdir$INSTALL_FULL_LIBDIR:$DYLD_FALLBACK_LIBRARY_PATH"
     fi
   else
     if [ -z "$LD_LIBRARY_PATH" ]; then

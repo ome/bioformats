@@ -42,6 +42,10 @@ if (POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif(POLICY CMP0054)
 
+include(CheckIncludeFileCXX)
+include(CheckCXXCompilerFlag)
+include(CheckCXXSourceCompiles)
+
 function(cxx_std_check flag var)
   check_cxx_compiler_flag("${flag}" ${var})
   if (${var})
@@ -110,11 +114,6 @@ int main()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
 
-
-# Try to put the compiler into the most recent standard mode.  This
-# will generally have the most features, and will remove the need for
-# Boost fallbacks if native implementations are available.
-option(cxxstd-autodetect "Enable C++14 features if possible, otherwise fall back to C++11, C++03 or C++98" OFF)
 if (cxxstd-autodetect)
   if (NOT MSVC)
     cxx_std_check(-std=c++14 CXX_FLAG_CXX14)
@@ -166,14 +165,6 @@ if (NOT MSVC)
     endif (${CXX_PEDANTIC_LONG_LONG})
   endif (${test_cxx_flag})
 endif (NOT MSVC)
-
-# These are annoyingly verbose, produce false positives or don't work
-# nicely with all supported compiler versions, so are disabled unless
-# explicitly enabled.
-option(extra-warnings "Enable extra compiler warnings" OFF)
-
-# This will cause the compiler to fail when an error occurs.
-option(fatal-warnings "Compiler warnings are errors" OFF)
 
 # Check if the compiler supports each of the following additional
 # warning flags, and enable them if supported.  This greatly improves
@@ -284,3 +275,13 @@ void print(const char *fmt, ...)
 
 int main() { print(\"%d %s\", 43, \"test\"); }
 " OME_HAVE_CSTDARG)
+
+# May be inlined, so check it compiles:
+check_cxx_source_compiles("
+#include <stdio.h>
+int main(void) {
+  char buf[10];
+  snprintf(buf, 10, \"Test %d\", 1);
+  return 0;
+}"
+  OME_HAVE_SNPRINTF)

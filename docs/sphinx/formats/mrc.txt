@@ -27,8 +27,7 @@ Sample Datasets:
 
 We currently have:
 
-* an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) 
-* `another MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) 
+* an `MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) 
 * a few MRC datasets
 
 We would like to have:

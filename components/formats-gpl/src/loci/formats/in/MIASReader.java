@@ -27,12 +27,11 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -79,8 +78,8 @@ public class MIASReader extends FormatReader {
   /** Path to file containing analysis results for all plates. */
   private String resultFile = null;
 
-  private Vector<AnalysisFile> analysisFiles;
-  private Vector<AnalysisFile> roiFiles;
+  private List<AnalysisFile> analysisFiles;
+  private List<AnalysisFile> roiFiles;
 
   private int[] wellNumber;
 
@@ -92,10 +91,10 @@ public class MIASReader extends FormatReader {
 
   private String templateFile;
 
-  private Hashtable<String, String> overlayFiles =
-    new Hashtable<String, String>();
-  private Hashtable<String, Integer> overlayPlanes =
-    new Hashtable<String, Integer>();
+  private final Map<String, String> overlayFiles =
+    new HashMap<String, String>();
+  private final Map<String, Integer> overlayPlanes =
+    new HashMap<String, Integer>();
 
   /** Whether or not mask pixel data should be parsed in setId. */
   private boolean parseMasks = false;
@@ -292,7 +291,7 @@ public class MIASReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
 
     if (!noPixels && tiffs != null) {
       String[] f = new String[tiffs[getSeries()].length];
@@ -432,9 +431,9 @@ public class MIASReader extends FormatReader {
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
-      Hashtable globalMetadata = r.getGlobalMetadata();
-      for (Object key : globalMetadata.keySet()) {
-        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = r.getGlobalMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
 
       r.close();
@@ -445,7 +444,7 @@ public class MIASReader extends FormatReader {
       return;
     }
 
-    analysisFiles = new Vector<AnalysisFile>();
+    analysisFiles = new ArrayList<AnalysisFile>();
 
     // MIAS is a high content screening format which supports multiple plates,
     // wells and fields.
@@ -523,7 +522,7 @@ public class MIASReader extends FormatReader {
 
     String[] list = plate.list(true);
     Arrays.sort(list);
-    Vector<String> wellDirectories = new Vector<String>();
+    final List<String> wellDirectories = new ArrayList<String>();
     for (String dir : list) {
       Location f = new Location(plate, dir);
       if (f.getName().startsWith("Well") || f.getName().length() == 4) {
@@ -586,7 +585,7 @@ public class MIASReader extends FormatReader {
       wellNumber[j] = Integer.parseInt(wellName) - 1;
 
       String[] tiffFiles = well.list(true);
-      Vector<String> tmpFiles = new Vector<String>();
+      final List<String> tmpFiles = new ArrayList<String>();
       for (String tiff : tiffFiles) {
         String name = tiff.toLowerCase();
         if (name.endsWith(".tif") || name.endsWith(".tiff")) {
@@ -740,7 +739,7 @@ public class MIASReader extends FormatReader {
       getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
     {
       String[] cols = null;
-      Vector<String> rows = new Vector<String>();
+      final List<String> rows = new ArrayList<String>();
 
       boolean doKeyValue = true;
       int nStarLines = 0;
@@ -859,7 +858,7 @@ public class MIASReader extends FormatReader {
         store.setImageInstrumentRef(instrumentID, well);
       }
 
-      roiFiles = new Vector<AnalysisFile>();
+      roiFiles = new ArrayList<AnalysisFile>();
       for (AnalysisFile af : analysisFiles) {
         String file = af.filename;
         String name = new Location(file).getName();
@@ -1001,16 +1000,13 @@ public class MIASReader extends FormatReader {
   private void populateROI(List<String> columns, String[] data, int series,
     int roi, int time, int z, MetadataStore store)
   {
-    Integer tv = new Integer(time);
-    Integer zv = new Integer(z);
-
     String roiID = MetadataTools.createLSID("ROI", roi, 0);
     store.setROIID(roiID, roi);
     store.setImageROIRef(roiID, series, roi);
 
     store.setEllipseID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
-    store.setEllipseTheT(new NonNegativeInteger(tv), roi, 0);
-    store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 0);
+    store.setEllipseTheT(new NonNegativeInteger(time), roi, 0);
+    store.setEllipseTheZ(new NonNegativeInteger(z), roi, 0);
     store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
     store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 0);
     store.setEllipseText(data[columns.indexOf("Label")], roi, 0);
@@ -1051,7 +1047,7 @@ public class MIASReader extends FormatReader {
     if (templateFile == null) return;
 
     Double physicalSizeX = null, physicalSizeY = null, exposure = null;
-    Vector<String> channelNames = new Vector<String>();
+    final List<String> channelNames = new ArrayList<String>();
     String date = null;
 
     String data = DataTools.readFile(templateFile);
@@ -1157,7 +1153,7 @@ public class MIASReader extends FormatReader {
       String maskId =
         MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
       overlayFiles.put(maskId, overlayTiff);
-      overlayPlanes.put(maskId, new Integer(i));
+      overlayPlanes.put(maskId, i);
 
       boolean validMask = populateMaskPixels(series, roi + nOverlays, 0, store);
       if (validMask) {
@@ -1165,10 +1161,10 @@ public class MIASReader extends FormatReader {
 
         String maskID = MetadataTools.createLSID("Shape", roi + nOverlays, 0);
         store.setMaskID(maskID, roi + nOverlays, 0);
-        store.setMaskX(Double.valueOf(0), roi + nOverlays, 0);
-        store.setMaskY(Double.valueOf(0), roi + nOverlays, 0);
-        store.setMaskWidth(new Double(getSizeX()), roi + nOverlays, 0);
-        store.setMaskHeight(new Double(getSizeY()), roi + nOverlays, 0);
+        store.setMaskX(0d, roi + nOverlays, 0);
+        store.setMaskY(0d, roi + nOverlays, 0);
+        store.setMaskWidth((double) getSizeX(), roi + nOverlays, 0);
+        store.setMaskHeight((double) getSizeY(), roi + nOverlays, 0);
 
         int color = 0xff000000 | (0xff << (8 * (2 - i)));
         store.setMaskStrokeColor(new Color(color), roi + nOverlays, 0);

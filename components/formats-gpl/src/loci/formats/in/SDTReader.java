@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.zip.ZipInputStream;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
@@ -148,30 +149,44 @@ public class SDTReader extends FormatReader {
     int sizeY = getSizeY();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
-    
-   
-   
+
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
-    int planeSize = paddedWidth * sizeY * timeBins * bpp;
-    
-    if (preLoad  && !intensity)  {
-      int channel =  no / timeBins;
-      int timeBin = no % timeBins;
-      
-      byte[] rowBuf = new byte[bpp * timeBins * paddedWidth];
+    int times = timeBins;
+    if (info.mcstaPoints == getSizeT()) {
+      times = getSizeT();
+    }
+    int planeSize = paddedWidth * sizeY * times * bpp;
+
+    if (preLoad  && !intensity) {
+      int channel = no / times;
+      int timeBin = no % times;
+
+      byte[] rowBuf = new byte[bpp * times * paddedWidth];
 
       int binSize = paddedWidth * sizeY  * bpp;
-      
+
       if (chanStore == null || storedChannel != channel ||
         storedSeries != getSeries() )
       {
         // The whole plane (all timebins) is  copied into storage
         // to allow different sub-plane sizes to be used for different timebins
         chanStore = new byte[planeSize];
-        in.seek(info.allBlockOffsets[getSeries()] + (channel * planeSize));
-        
+        in.seek(info.allBlockOffsets[getSeries()]);
+
+        ZipInputStream codec = null;
+        String check = in.readString(2);
+        in.seek(in.getFilePointer() - 2);
+        if (check.equals("PK")) {
+          codec = new ZipInputStream(in);
+          codec.getNextEntry();
+          codec.skip(channel * planeSize);
+        }
+        else {
+          in.skipBytes(channel * planeSize);
+        }
+
         for (int row = 0; row < sizeY; row++) {
-          in.read(rowBuf);
+          readPixels(rowBuf, in, codec, 0);
 
           int input = 0;
           for (int col = 0; col < paddedWidth; col++) {
@@ -179,7 +194,7 @@ public class SDTReader extends FormatReader {
             // corresponding to zeroth timeBin
             int output = (row * paddedWidth + col) * bpp;
 
-            for (int t = 0; t < timeBins; t++)  {
+            for (int t = 0; t < times; t++)  {
               for (int bb = 0; bb < bpp; bb++) {
                 chanStore[output + bb] = rowBuf[input + bb];
               }
@@ -206,73 +221,88 @@ public class SDTReader extends FormatReader {
         input += iLineSize;
         output += oLineSize;
       }
-      
+
       // allow for >1 count increments
       // the count increment is the amount by which the data is incremented for each event detected
       // normally this is 1 so each bit represents a photon
       // where it is >1 then divide the 16 bit data to get an answer in photon units
       if (info.incr > 1) {
         int incr = info.incr;
-       
+
         ByteBuffer bb = ByteBuffer.wrap(buf); // Wrapper around underlying byte[].
         bb.order(ByteOrder.LITTLE_ENDIAN);
         short s;
-        
+
         for (int i = 0; i < buf.length ; i+=2) {
           s = (short)bb.getShort(i);
-          if (s > 0) {  //sign bit is not set 
+          if (s > 0) {  //sign bit is not set
             bb.putShort(i,(short) (s/incr) );
           }
           else  {   // sign bit is set so extend to int to do the division
             int ii = s & 0xffff;
             bb.putShort(i,(short) (ii/incr) );
           }
-        }  
+        }
       }
 
       return buf;
     }
     else {
-      int channel = intensity ? no : no / timeBins;
-      int timeBin = intensity ? 0 : no % timeBins;
+      int channel = intensity ? no : no / times;
+      int timeBin = intensity ? 0 : no % times;
 
-      byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
+      byte[] b = !intensity ? buf : new byte[sizeY * sizeX * times * bpp];
 
-      byte[] rowBuf = new byte[bpp * timeBins * w];
+      byte[] rowBuf = new byte[bpp * times * w];
 
-      in.seek(info.allBlockOffsets[getSeries()] +
-        channel * planeSize + y * paddedWidth * bpp * timeBins);
+      in.seek(info.allBlockOffsets[getSeries()]);
+
+      ZipInputStream codec = null;
+      String check = in.readString(2);
+      in.seek(in.getFilePointer() - 2);
+      if (check.equals("PK")) {
+        codec = new ZipInputStream(in);
+        codec.getNextEntry();
+        codec.skip(channel * planeSize + y * paddedWidth * bpp * times);
+      }
+      else {
+        in.skipBytes(channel * planeSize + y * paddedWidth * bpp * times);
+      }
 
       for (int row = 0; row < h; row++) {
-        in.skipBytes(x * bpp * timeBins);
-        in.read(rowBuf);
+        readPixels(rowBuf, in, codec, x * bpp * times);
         if (intensity) {
-          System.arraycopy(rowBuf, 0, b, row * bpp * timeBins * w, b.length);
+          System.arraycopy(rowBuf, 0, b, row * bpp * times * w, b.length);
         }
         else {
           for (int col = 0; col < w; col++) {
             int output = (row * w + col) * bpp;
-            int input = (col * timeBins + timeBin) * bpp;
+            int input = (col * times + timeBin) * bpp;
             for (int bb = 0; bb < bpp; bb++) {
               b[output + bb] = rowBuf[input + bb];
             }
           }
         }
-        in.skipBytes(bpp * timeBins * (paddedWidth - x - w));
+        if (codec == null) {
+          in.skipBytes(bpp * times * (paddedWidth - x - w));
+        }
+        else {
+          codec.skip(bpp * times * (paddedWidth - x - w));
+        }
       }
 
       if (!intensity) {
         return buf; // no cropping required
       }
       for (int row = 0; row < h; row++) {
-        int yi = (y + row) * sizeX * timeBins * bpp;
+        int yi = (y + row) * sizeX * times * bpp;
         int ri = row * w * bpp;
         for (int col = 0; col < w; col++) {
-          int xi = yi + (x + col) * timeBins * bpp;
+          int xi = yi + (x + col) * times * bpp;
           int ci = ri + col * bpp;
           // combine all lifetime bins into single intensity value
           short sum = 0;
-          for (int t = 0; t < timeBins; t++) {
+          for (int t = 0; t < times; t++) {
             sum += DataTools.bytesToShort(b, xi + t * bpp, little);
           }
           DataTools.unpackBytes(sum, buf, ci, 2, little);
@@ -340,7 +370,7 @@ public class SDTReader extends FormatReader {
     m.indexed = false;
     m.falseColor = false;
     m.metadataComplete = true;
-    
+
     // disable pre-load mode for very large files
     // threshold is set to the size of the largest test file currently available
     if ( m.sizeX * m.sizeY * m.sizeT  >  (512 * 512 * 512))  {
@@ -367,11 +397,41 @@ public class SDTReader extends FormatReader {
     }
 
     for (int i=1; i<info.allBlockOffsets.length; i++) {
-      core.add(m);
+      CoreMetadata p = new CoreMetadata(m);
+      core.add(p);
+
+      int planeSize = m.sizeX * m.sizeY * FormatTools.getBytesPerPixel(m.pixelType);
+      if (info.allBlockLengths[i] != planeSize * m.imageCount) {
+        if (info.mcstaPoints * planeSize == info.allBlockLengths[i]) {
+          p.sizeT = info.mcstaPoints;
+          p.moduloT.end = p.moduloT.step * (p.sizeT - 1);
+          p.imageCount = p.sizeZ * p.sizeC * p.sizeT;
+        }
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+  }
+
+  private void readPixels(byte[] rowBuf, RandomAccessInputStream in, ZipInputStream codec, int skip)
+    throws IOException
+  {
+    if (codec == null) {
+      in.skipBytes(skip);
+      in.read(rowBuf);
+    }
+    else {
+      codec.skip(skip);
+      int nread = 0;
+      while (nread < rowBuf.length) {
+        int n = codec.read(rowBuf, nread, rowBuf.length - nread);
+        nread += n;
+        if (n <= 0) {
+          break;
+        }
+      }
+    }
   }
 
 }

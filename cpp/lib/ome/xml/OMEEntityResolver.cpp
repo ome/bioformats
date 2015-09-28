@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2014 - 2015 Open Microscopy Environment:
+ * Copyright © 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -38,22 +38,22 @@
 
 #include <ome/common/module.h>
 
-#include <ome/common/xml/EntityResolver.h>
-#include <ome/common/xml/Platform.h>
+#include <ome/xml/OMEEntityResolver.h>
 
-namespace
+namespace ome
 {
-
-  // Register all OME-XML schemas.
-  ome::common::xml::EntityResolver::RegisterCatalog
-  register_catalog()
+  namespace xml
   {
-    ome::common::xml::Platform platform;
-    return ome::common::xml::EntityResolver::RegisterCatalog(ome::common::module_runtime_path("bf-schema") / "catalog.xml");
+
+    OMEEntityResolver::OMEEntityResolver():
+      ome::common::xml::EntityResolver()
+    {
+      registerCatalog(ome::common::module_runtime_path("bf-schema") / "catalog.xml");
+    }
+
+    OMEEntityResolver::~OMEEntityResolver()
+    {
+    }
+
   }
-
-  // Register of all OME-XML schemas.
-  ome::common::xml::EntityResolver::RegisterCatalog
-  modelcatalog(register_catalog());
-
 }

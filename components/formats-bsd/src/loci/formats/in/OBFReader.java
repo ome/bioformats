@@ -76,7 +76,7 @@ public class OBFReader extends FormatReader
   private static final String STACK_MAGIC_STRING = "OMAS_BF_STACK\n";
   private static final short MAGIC_NUMBER = (short) 0xFFFF;
 
-  private static final int FILE_VERSION = 1;
+  private static final int FILE_VERSION = 2;
   private static final int STACK_VERSION = 5;
 
   private static final int MAXIMAL_NUMBER_OF_DIMENSIONS = 15;
@@ -148,12 +148,14 @@ public class OBFReader extends FormatReader
     in = new RandomAccessInputStream(id);
 
     final int fileVersion = getFileVersion(in);
-
     long stackPosition = in.readLong();
-
     final int lengthOfDescription = in.readInt();
     final String description = in.readString(lengthOfDescription);
     metadata.put("Description", description);
+    if (fileVersion > 1)
+    {
+      in.readLong();
+    }
 
     if (stackPosition != 0)
     {
@@ -180,15 +182,17 @@ public class OBFReader extends FormatReader
 
       if (lengths.size() > 0)
       {
-        double lengthX = Math.abs(lengths.get(0)) ;
+        double lengthX = Math.abs(lengths.get(0));
         if (lengthX < 0.01)
         {
           lengthX *= 1000000;
         }
         if (lengthX > 0)
         {
-          final Length physicalSizeX = FormatTools.createLength( lengthX / obf.sizeX , UNITS.MICROM);
-          ome.setPixelsPhysicalSizeX(physicalSizeX, series);
+          Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, UNITS.MICROM);
+          if (physicalSizeX != null) {
+            ome.setPixelsPhysicalSizeX(physicalSizeX, series);
+          }
         }
       }
       if (lengths.size() > 1)
@@ -200,8 +204,10 @@ public class OBFReader extends FormatReader
         }
         if (lengthY > 0)
         {
-          final Length physicalSizeY = FormatTools.createLength( lengthY / obf.sizeY , UNITS.MICROM);
-          ome.setPixelsPhysicalSizeY(physicalSizeY, series);
+          Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, UNITS.MICROM);
+          if (physicalSizeY != null) {
+            ome.setPixelsPhysicalSizeY(physicalSizeY, series);
+          }
         }
       }
       if (lengths.size() > 2)
@@ -209,12 +215,14 @@ public class OBFReader extends FormatReader
         double lengthZ = Math.abs(lengths.get(2));
         if (lengthZ < 0.01)
         {
-          lengthZ *= 1000000 ;
+          lengthZ *= 1000000;
         }
         if (lengthZ > 0)
         {
-          final Length physicalSizeZ = FormatTools.createLength( lengthZ / obf.sizeZ  , UNITS.MICROM);
-          ome.setPixelsPhysicalSizeZ(physicalSizeZ, series);
+          Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, UNITS.MICROM);
+          if (physicalSizeZ != null) {
+            ome.setPixelsPhysicalSizeZ(physicalSizeZ, series);
+          }
         }
       }
     }

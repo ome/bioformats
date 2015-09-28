@@ -36,6 +36,7 @@
  */
 
 #include <algorithm>
+#include <functional>
 #include <cmath>
 
 #include <ome/bioformats/Modulo.h>

@@ -95,8 +95,6 @@ Options:
 Available subcommands:
   doc_gen
   metadata
-  omero_metadata
-  omero_model
   omexml_metadata
   omexml_model
   omexml_model_enums
@@ -536,24 +534,6 @@ def omeXmlMetadataMain(model, opts):
                             os.path.join(relpath, os.path.basename(os.path.splitext(opts.lang.getTemplate('OMEXML_METADATA'))[0])),
                             model, opts)
 
-def omeroMetadataMain(model, opts):
-    """
-    Default main() that parses command line options and generates a
-    MetadataRetrieve implementation.
-    """
-
-    processMetadataTemplate('OMERO_METADATA', "OmeroMetadata",
-                            model, opts)
-
-def omeroModelMain(model, opts):
-    """
-    Default main() that parses command line options and generates a
-    MetadataRetrieve implementation.
-    """
-
-    processMetadataTemplate('OMERO_MODEL', "OmeroModel.xml",
-                            model, opts)
-
 def metadataMain(model, opts):
     """
     Default main() that parses command line options and generates a
@@ -785,10 +765,6 @@ if __name__ == '__main__':
         main(model, opts)
     elif opts.command == "omexml_metadata":
         omeXmlMetadataMain(model, opts)
-    elif opts.command == "omero_metadata":
-        omeroMetadataMain(model, opts)
-    elif opts.command == "omero_model":
-        omeroModelMain(model, opts)
     elif opts.command == "metadata":
         metadataMain(model, opts)
     elif opts.command == "omexml_model_enums":

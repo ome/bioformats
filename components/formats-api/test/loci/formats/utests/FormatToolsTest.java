@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,18 +32,20 @@
 
 package loci.formats.utests;
 
-import static org.testng.AssertJUnit.*;
-
-import java.io.IOException;
-
+import loci.common.Constants;
 import loci.formats.FormatTools;
 
-import org.testng.annotations.BeforeMethod;
+import ome.units.quantity.Length;
+import ome.units.unit.Unit;
+import ome.units.UNITS;
+
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+
 /**
- *
- * @author Roger Leigh <r.leigh at dundee dot ac dot uk>
+ * Unit tests for {@link loci.formats.FormatTools}.
  */
 public class FormatToolsTest {
 
@@ -106,4 +108,80 @@ public class FormatToolsTest {
     long[] lim = FormatTools.defaultMinMax(9999); // Invalid pixel type number
   }
 
+  @DataProvider(name = "physicalSizeNoUnit")
+  public Object[][] createValueLengths() {
+    return new Object[][] {
+      {null, null},
+      {Constants.EPSILON, null},
+      {0.0, null},
+      {Double.POSITIVE_INFINITY, null},
+      {1.0, new Length(1.0, UNITS.MICROM)},
+      {.1, new Length(.1, UNITS.MICROM)},
+    };
+  }
+
+  @DataProvider(name = "physicalSizeStringUnit")
+  public Object[][] createValueStringLengths() {
+    return new Object[][] {
+      {null, "mm", null},
+      {Constants.EPSILON, "mm", null},
+      {0.0, "mm", null},
+      {Double.POSITIVE_INFINITY, "mm", null},
+      {1.0, "microns", new Length(1.0, UNITS.MICROM)},
+      {1.0, "mm", new Length(1.0, UNITS.MM)},
+      {.1, "microns", new Length(.1, UNITS.MICROM)},
+      {.1, "mm", new Length(.1, UNITS.MM)},
+    };
+  }
+
+  @DataProvider(name = "physicalSizeInvalidStringUnit")
+  public Object[][] createValueInvalidStringLengths() {
+    return new Object[][] {
+      {1.0, null, new Length(1.0, UNITS.MICROM)},
+      {1.0, "foo", new Length(1.0, UNITS.MICROM)},
+      {1.0, "s", new Length(1.0, UNITS.MICROM)},
+    };
+  }
+
+  @DataProvider(name = "physicalSizeUnit")
+  public Object[][] createValueUnitLengths() {
+    return new Object[][] {
+      {null, UNITS.MICROM, null},
+      {Constants.EPSILON, UNITS.MICROM, null},
+      {0.0, UNITS.MICROM, null},
+      {Double.POSITIVE_INFINITY, UNITS.MICROM, null},
+      {1.0, UNITS.MICROM, new Length(1.0, UNITS.MICROM)},
+      {1.0, UNITS.MM, new Length(1.0, UNITS.MM)},
+      {.1, UNITS.MICROM, new Length(.1, UNITS.MICROM)},
+      {.1, UNITS.MM, new Length(.1, UNITS.MM)},
+    };
+  }
+
+  @Test(dataProvider = "physicalSizeNoUnit")
+  public void testGetPhysicalSizeNoUnit(Double value, Length length) {
+    assertEquals(length, FormatTools.getPhysicalSizeX(value));
+    assertEquals(length, FormatTools.getPhysicalSizeY(value));
+    assertEquals(length, FormatTools.getPhysicalSizeZ(value));
+  }
+
+  @Test(dataProvider = "physicalSizeStringUnit")
+  public void testGetPhysicalSizeStringUnit(Double value, String unit, Length length) {
+    assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
+  }
+
+  @Test(dataProvider = "physicalSizeInvalidStringUnit")
+  public void testGetPhysicalSizeInvalidStringUnit(Double value, String unit, Length length) {
+    assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
+  }
+
+  @Test(dataProvider = "physicalSizeUnit")
+  public void testGetPhysicalSizeUnit(Double value, Unit<Length> unit, Length length) {
+    assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
+    assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
+  }
 }

@@ -417,7 +417,7 @@ public class SVSReader extends BaseTiffReader {
       for (int c = 0; c < resolutions; c++) {
         savedCore.add(core.get(i + c));
         savedIFDs[c] = getIFDIndex(i+c);
-        levels.put(new Integer(savedCore.get(c).sizeX), new Integer(c));
+        levels.put(savedCore.get(c).sizeX, c);
       }
 
       Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);

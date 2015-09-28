@@ -114,7 +114,7 @@ namespace ome
                       ret.push_back(child);
                     }
                 }
-              catch (std::logic_error& /* e */)
+              catch (std::logic_error&)
                 {
                   // Not an Element.
                 }

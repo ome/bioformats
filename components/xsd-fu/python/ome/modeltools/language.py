@@ -45,9 +45,7 @@ class Language(object):
             'METADATA_AGGREGATE': 'AggregateMetadata.template',
             'OMEXML_METADATA': 'OMEXMLMetadataImpl.template',
             'DUMMY_METADATA': 'DummyMetadata.template',
-            'FILTER_METADATA': 'FilterMetadata.template',
-            'OMERO_METADATA': 'OmeroMetadata.template',
-            'OMERO_MODEL': 'OmeroModel.template'
+            'FILTER_METADATA': 'FilterMetadata.template'
             }
 
         # A global type mapping from XSD Schema types to language

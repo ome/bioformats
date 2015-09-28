@@ -147,7 +147,11 @@ public class APNGReader extends FormatReader {
       lastImage = null;
 
       PNGInputStream stream = new PNGInputStream("IDAT");
-      lastImage = decode(stream, getSizeX(), y + h);
+      int decodeHeight = y + h;
+      if (decodeHeight < getSizeY() && decodeHeight % 8 != 0) {
+        decodeHeight += 8 - (decodeHeight % 8);
+      }
+      lastImage = decode(stream, getSizeX(), decodeHeight);
       stream.close();
       lastImageIndex = 0;
       lastImageRow = y + h;
@@ -215,6 +219,9 @@ public class APNGReader extends FormatReader {
       lastImage = null;
       lastImageIndex = -1;
       lastImageRow = -1;
+      compression = 0;
+      interlace = 0;
+      idatCount = 0;
     }
   }
 
@@ -402,8 +409,18 @@ public class APNGReader extends FormatReader {
 
       byte[][] passImages = new byte[7][];
 
-      int nRowBlocks = height / 8;
-      int nColBlocks = width / 8;
+      int nRowBlocks = getSizeY() / 8;
+      int nColBlocks = getSizeX() / 8;
+
+      // row and column counts have to be adjusted when the image
+      // dimensions are not multiples of 8
+
+      if (8 * nRowBlocks != getSizeY()) {
+        nRowBlocks++;
+      }
+      if (8 * nColBlocks != getSizeX()) {
+        nColBlocks++;
+      }
 
       if (nRowBlocks <= 0) {
         nRowBlocks = 1;
@@ -420,12 +437,168 @@ public class APNGReader extends FormatReader {
           int passWidth = PASS_WIDTHS[i] * nColBlocks;
           int passHeight = PASS_HEIGHTS[i] * nRowBlocks;
 
+          // see http://www.libpng.org/pub/png/spec/1.2/PNG-DataRep.html#DR.Interlaced-data-order
+          // for clarification of the pass width / pass row adjustments
+
+          if (nColBlocks * 8 != width) {
+            int extraCols = getSizeX() - (nColBlocks - 1) * 8;
+            switch (extraCols) {
+              case 1:
+                if (i == 1 || i == 3 || i == 5) {
+                  passWidth -= PASS_WIDTHS[i];
+                }
+                if (i == 2 || i == 4 || i == 6) {
+                  passWidth -= (PASS_WIDTHS[i] - 1);
+                }
+                break;
+              case 2:
+                if (i == 1 || i == 3) {
+                  passWidth -= PASS_WIDTHS[i];
+                }
+                if (i == 2 || i == 4 || i == 5) {
+                  passWidth -= (PASS_WIDTHS[i] - 1);
+                }
+                if (i == 6) {
+                  passWidth -= (PASS_WIDTHS[i] - 2);
+                }
+                break;
+              case 3:
+                if (i == 1) {
+                  passWidth -= PASS_WIDTHS[i];
+                }
+                if (i == 2 || i == 3 || i == 5) {
+                  passWidth -= (PASS_WIDTHS[i] - 1);
+                }
+                if (i == 4) {
+                  passWidth -= (PASS_WIDTHS[i] - 2);
+                }
+                if (i == 6) {
+                  passWidth -= (PASS_WIDTHS[i] - 3);
+                }
+                break;
+              case 4:
+                if (i == 1) {
+                  passWidth -= PASS_WIDTHS[i];
+                }
+                if (i == 2 || i == 3) {
+                  passWidth -= (PASS_WIDTHS[i] - 1);
+                }
+                if (i == 4 || i == 5) {
+                  passWidth -= (PASS_WIDTHS[i] - 2);
+                }
+                if (i == 6) {
+                  passWidth -= (PASS_WIDTHS[i] - 4);
+                }
+                break;
+              case 5:
+                if (i == 3) {
+                  passWidth -= (PASS_WIDTHS[i] - 1);
+                }
+                if (i == 5) {
+                  passWidth -= (PASS_WIDTHS[i] - 2);
+                }
+                if (i == 4) {
+                  passWidth -= (PASS_WIDTHS[i] - 3);
+                }
+                if (i == 6) {
+                  passWidth -= (PASS_WIDTHS[i] - 5);
+                }
+                break;
+              case 6:
+                if (i == 3) {
+                  passWidth -= (PASS_WIDTHS[i] - 1);
+                }
+                if (i == 4 || i == 5) {
+                  passWidth -= (PASS_WIDTHS[i] - 3);
+                }
+                if (i == 6) {
+                  passWidth -= (PASS_WIDTHS[i] - 6);
+                }
+                break;
+              case 7:
+                if (i == 5 || i == 6) {
+                  passWidth--;
+                }
+                break;
+            }
+          }
+
           int rowSize = passWidth * bpp * getRGBChannelCount();
 
           byte[] filters = new byte[passHeight];
           passImages[i] = new byte[rowSize * passHeight];
 
           for (int row=0; row<passHeight; row++) {
+            if (passWidth == 0) {
+              continue;
+            }
+            if (nRowBlocks * 8 != getSizeY() && row >= PASS_HEIGHTS[i] * (nRowBlocks - 1)) {
+              int extraRows = getSizeY() - (nRowBlocks - 1) * 8;
+              switch (extraRows) {
+                case 1:
+                  if (i == 2 || i == 4 || i == 6) {
+                    continue;
+                  }
+                  if ((i == 3 || i == 5) && (row % PASS_HEIGHTS[i]) > 0) {
+                    continue;
+                  }
+                  break;
+                case 2:
+                  if (i == 4 || i == 2) {
+                    continue;
+                  }
+                  if ((i == 3 || i == 5 || i == 6) && (row % PASS_HEIGHTS[i]) > 0) {
+                    continue;
+                  }
+                  break;
+                case 3:
+                  if (i == 2) {
+                    continue;
+                  }
+                  if ((i == 3 || i == 4 || i == 6) && (row % PASS_HEIGHTS[i]) > 0) {
+                    continue;
+                  }
+                  if (i == 5 && (row % PASS_HEIGHTS[i] > 1)) {
+                    continue;
+                  }
+                  break;
+                case 4:
+                  if (i == 2) {
+                    continue;
+                  }
+                  if ((i == 3 || i == 4) && (row % PASS_HEIGHTS[i]) > 0) {
+                    continue;
+                  }
+                  if ((i == 5 || i == 6) && (row % PASS_HEIGHTS[i]) > 1) {
+                    continue;
+                  }
+                  break;
+                case 5:
+                  if ((i == 4) && (row % PASS_HEIGHTS[i]) > 0) {
+                    continue;
+                  }
+                  if ((i == 6) && (row % PASS_HEIGHTS[i]) > 1) {
+                    continue;
+                  }
+                  if ((i == 5) && (row % PASS_HEIGHTS[i]) > 2) {
+                    continue;
+                  }
+                  break;
+                case 6:
+                  if ((i == 4) && (row % PASS_HEIGHTS[i]) > 0) {
+                    continue;
+                  }
+                  if ((i == 5 || i == 6) && (row % PASS_HEIGHTS[i]) > 2) {
+                    continue;
+                  }
+                  break;
+                case 7:
+                  if (i == 6 && (row % PASS_HEIGHTS[i]) > 2) {
+                    continue;
+                  }
+                  break;
+              }
+            }
             int n = 0;
             while (n < 1) {
               n = decompressor.read(filters, row, 1);
@@ -448,7 +621,7 @@ public class APNGReader extends FormatReader {
       int chunk = bpp * getRGBChannelCount();
       int[] passOffset = new int[7];
 
-      for (int row=0; row<height; row++) {
+      for (int row=0; row<8 * (height / 8); row++) {
         int rowOffset = row * width * chunk;
         for (int col=0; col<width; col++) {
           int blockRow = row % 8;
@@ -479,8 +652,10 @@ public class APNGReader extends FormatReader {
 
           int colOffset = col * chunk;
           for (int c=0; c<chunk; c++) {
-            image[rowOffset + colOffset + c] =
-              passImages[pass][passOffset[pass]++];
+            if (passOffset[pass] < passImages[pass].length) {
+              image[rowOffset + colOffset + c] =
+                passImages[pass][passOffset[pass]++];
+            }
           }
         }
       }
@@ -515,7 +690,9 @@ public class APNGReader extends FormatReader {
   }
 
   /** See http://www.w3.org/TR/PNG/#9Filters. */
-  private void unfilter(byte[] filters, byte[] image, int width, int height) {
+  private void unfilter(byte[] filters, byte[] image, int width, int height)
+    throws FormatException
+  {
     int bpp =
       getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
     int rowLen = width * bpp;
@@ -561,6 +738,8 @@ public class APNGReader extends FormatReader {
               image[q] = (byte) ((xx + c) & 0xff);
             }
             break;
+          default:
+            throw new FormatException("Unknown filter: " + filter);
         }
       }
     }

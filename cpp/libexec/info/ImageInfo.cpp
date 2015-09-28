@@ -41,6 +41,8 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/xml/Document.h>
+
 #include <ome/xml/meta/MetadataStore.h>
 #include <ome/xml/meta/MetadataRetrieve.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
@@ -331,7 +333,7 @@ namespace info
           {
             try
               {
-                ome::common::xml::dom::Document doc(ome::common::xml::dom::createDocument(omexml));
+                ome::common::xml::dom::Document doc(ome::xml::createDocument(omexml));
                 stream << "OME-XML validation successful\n";
               }
             catch (const std::exception& e)

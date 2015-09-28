@@ -15,7 +15,11 @@ clean()
 maven()
 {
     mvn
-    clean
+}
+
+maven_findbugs()
+{
+    mvn findbugs:findbugs -Dfindbugs.threshold=medium
 }
 
 cpp()
@@ -50,6 +54,8 @@ cppwrap()
         cd build
         cmake ..
         make
+        ./showinf ../../../../specification/samples/2009-09/18x24y5z1t1c8b-text.ome.tiff
+        ./minimum_writer test.ome.tiff
     )
 }
 
@@ -68,6 +74,14 @@ sphinx()
         ant -Dsphinx.warnopts=$SPHINXOPTS docs-sphinx
     )
 }
+
+sphinx_html()
+{
+    (
+        cd docs/sphinx
+        ant -Dsphinx.warnopts=$SPHINXOPTS html
+     )
+ }
 
 # Test Ant build targets
 antbuild()
@@ -101,6 +115,8 @@ do
             clean ;;
         maven)
             maven ;;
+        maven_findbugs)
+            maven_findbugs ;;
         cpp)
             cpp ;;
         cppwrap)
@@ -109,10 +125,12 @@ do
             flake ;;
         sphinx)
             sphinx ;;
+        sphinx_html)
+            sphinx_html ;;
         ant)
             antbuild ;;
         all)
-            clean && maven && cppwrap && sphinx && antbuild;;
+            clean && maven_findbugs && cppwrap && sphinx && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1

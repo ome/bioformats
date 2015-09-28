@@ -327,6 +327,10 @@ public class ZeissCZIReader extends FormatReader {
               tile.y += (no / getSizeC());
               image.height = scanDim;
             }
+            if (prestitched != null && prestitched && realX == getSizeX() && realY == getSizeY()) {
+              tile.x = 0;
+              tile.y = 0;
+            }
 
             if (tile.intersects(image)) {
               byte[] rawData = new SubBlock(plane).readPixelData();
@@ -507,8 +511,12 @@ public class ZeissCZIReader extends FormatReader {
     for (String f : list) {
       if (f.startsWith(base + "(") || f.startsWith(base + " (")) {
         String part = f.substring(f.lastIndexOf("(") + 1, f.lastIndexOf(")"));
-        pixels.put(Integer.parseInt(part),
-          new Location(parent, f).getAbsolutePath());
+        try {
+          pixels.put(Integer.parseInt(part),
+            new Location(parent, f).getAbsolutePath());
+        } catch (NumberFormatException e) {
+          LOGGER.debug("{} not included in multi-file dataset", f);
+        }
       }
     }
 
@@ -913,8 +921,11 @@ public class ZeissCZIReader extends FormatReader {
           String color = channels.get(c).color;
           if (color != null) {
             color = color.replaceAll("#", "");
-            color = color.substring(2, color.length());
+            if (color.length() > 6) {
+              color = color.substring(2, color.length());
+            }
             try {
+              // shift by 8 to allow alpha in the final byte
               store.setChannelColor(
                 new Color((Integer.parseInt(color, 16) << 8) | 0xff), i, c);
             }

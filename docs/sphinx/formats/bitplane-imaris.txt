@@ -25,7 +25,7 @@ Supported Metadata Fields: :doc:`Bitplane Imaris <bitplane-imaris-metadata>`
 We currently have:
 
 * an `Imaris (RAW) specification document <http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) 
-* an Imaris 5.5 (HDF) specification document 
+* an `Imaris 5.5 (HDF) specification document <http://open.bitplane.com/Default.aspx?tabid=268>`_ 
 * Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++) 
 * several older Imaris (RAW) datasets 
 * one Imaris 3 (TIFF) dataset 
@@ -43,7 +43,7 @@ Pixels: |Very good|
 
 Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Very good|
 
 Presence: |Fair|
 

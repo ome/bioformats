@@ -336,7 +336,7 @@ public class MicromanagerReader extends FormatReader {
             nextStamp < p.timestamps.length &&
             p.timestamps[nextStamp] != null)
           {
-            store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.S), i, q);
+            store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.MS), i, q);
           }
         }
 
@@ -625,12 +625,10 @@ public class MicromanagerReader extends FormatReader {
           addSeriesMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
-            double t = Double.parseDouble(value);
-            p.exposureTime = new Time(new Double(t / 1000), UNITS.S);
+            p.exposureTime = new Time(Double.valueOf(value), UNITS.MS);
           }
           else if (key.equals("ElapsedTime-ms")) {
-            double t = Double.parseDouble(value);
-            stamps.add(new Double(t / 1000));
+            stamps.add(Double.valueOf(value));
           }
           else if (key.equals("Core-Camera")) p.cameraRef = value;
           else if (key.equals(p.cameraRef + "-Binning")) {

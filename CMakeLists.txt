@@ -53,7 +53,19 @@ if (POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif(POLICY CMP0054)
 
+# For MSVC
+enable_language(CXX)
+# For feature tests with CMake 2.8.x
+enable_language(C)
+
+list(APPEND CMAKE_MODULE_PATH
+     "${CMAKE_CURRENT_LIST_DIR}/cpp/cmake")
+
+include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
+
 project(bioformats)
+message(STATUS "Configuring Bio-Formats main build")
+
 include(cpp/cmake/Version.cmake)
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
@@ -61,17 +73,38 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 enable_language(CXX)
-
-list(APPEND CMAKE_MODULE_PATH
-     "${PROJECT_SOURCE_DIR}/cpp/cmake")
-
-include(CheckIncludeFileCXX)
-include(CheckCXXCompilerFlag)
-include(CheckCXXSourceCompiles)
+  set(BUILD_SHARED_LIBS_DEFAULT ON)
+if(MSVC)
+  set(BUILD_SHARED_LIBS_DEFAULT OFF)
+endif()
+set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_DEFAULT} CACHE BOOL "Use shared libraries")
 
 include(GNUInstallDirs)
+include(CompilerChecks)
+include(PlatformChecks)
+include(BoostChecks)
+include(RegexChecks)
+include(ThreadChecks)
+include(XercesChecks)
+include(ImageLibraries)
+include(QtGLChecks)
+include(XsdFu)
+include(GTest)
+include(Doxygen)
+include(HeaderTest)
 
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
+if(MSVC)
+  # Debug library suffix.
+  set(CMAKE_DEBUG_POSTFIX "d")
+  # Require dynamic linking and disable autolinking.
+  add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
+  # To prevent a lot of spam warnings about standard POSIX functions
+  # and unsafe use of the standard library.
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+endif()
+
+
+if(NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
   set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
       CACHE PATH "Bio-Formats-specific datadir")
 endif()
@@ -121,19 +154,6 @@ foreach(dir
   endif()
 endforeach()
 
-include(CompilerChecks)
-include(PlatformChecks)
-include(BoostChecks)
-include(RegexChecks)
-include(ThreadChecks)
-include(XercesChecks)
-include(ImageLibraries)
-include(QtGLChecks)
-include(XsdFu)
-include(GTest)
-include(Doxygen)
-include(HeaderTest)
-
 add_subdirectory(docs/doxygen)
 add_subdirectory(docs/sphinx)
 add_subdirectory(cpp)
@@ -153,15 +173,16 @@ file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
 install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
         DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 if(WIN32)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config.bat @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
-install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
-        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
-endif()
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
+                 ${PROJECT_BINARY_DIR}/config.bat @ONLY)
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
+                 ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
+                 ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
+  install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
+          DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  endif()
+return()
 
 message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")
 message("NOTE: API stability will not be guaranteed until version 5.2")

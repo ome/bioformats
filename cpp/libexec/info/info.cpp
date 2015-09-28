@@ -47,7 +47,11 @@
 #include <info/options.h>
 #include <info/ImageInfo.h>
 
-#include <unistd.h>
+#ifdef _MSC_VER
+#  include <windows.h>
+#else
+#  include <unistd.h>
+#endif
 
 using boost::format;
 using namespace info;
@@ -86,10 +90,23 @@ namespace
   display_manpage(const std::string& name,
                   const std::string& section)
   {
+#ifdef _MSC_VER
+    boost::filesystem::path docpath(ome::common::module_runtime_path("doc"));
+    docpath = docpath / "manual" / "html" / "developers" / "cpp" / "commands";
+    std::string htmlpage = "bf-test-";
+    htmlpage += name;
+    htmlpage += ".html";
+    docpath /= htmlpage;
+    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    ShellExecute(NULL, "open", htmlpage.c_str(),
+		 NULL, NULL, SW_SHOWNORMAL);
+    std::exit(EXIT_FAILURE);
+#else
     boost::filesystem::path mandir(ome::common::module_runtime_path("man"));
     execlp("man", "man", "-M", mandir.generic_string().c_str(), section.c_str(), name.c_str(), static_cast<char *>(0));
     std::cerr << "E: Failed to run man to view " << name << '.' << section << std::endl;
     std::exit(EXIT_FAILURE);
+#endif
   }
 
   void

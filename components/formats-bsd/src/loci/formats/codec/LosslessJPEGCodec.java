@@ -164,8 +164,14 @@ public class LosslessJPEGCodec extends BaseCodec {
 
         ByteVector b = new ByteVector();
         for (int i=0; i<toDecode.length; i++) {
-          b.add(toDecode[i]);
-          if (toDecode[i] == (byte) 0xff && toDecode[i + 1] == 0) i++;
+          byte val = toDecode[i];
+          if (val == (byte) 0xff) {
+        	if (toDecode[i + 1] == 0)
+        		b.add(val);
+    		i++;
+          } else {
+            b.add(val);
+          }
         }
         toDecode = b.toByteArray();
 
@@ -286,24 +292,28 @@ public class LosslessJPEGCodec extends BaseCodec {
           if (huffmanTables == null) {
             huffmanTables = new short[4][];
           }
-          int s = in.read();
-          byte tableClass = (byte) ((s & 0xf0) >> 4);
-          byte destination = (byte) (s & 0xf);
-          int[] nCodes = new int[16];
-          Vector table = new Vector();
-          for (int i=0; i<nCodes.length; i++) {
-            nCodes[i] = in.read();
-            table.add(new Short((short) nCodes[i]));
-          }
-
-          for (int i=0; i<nCodes.length; i++) {
-            for (int j=0; j<nCodes[i]; j++) {
-              table.add(new Short((short) (in.read() & 0xff)));
-            }
-          }
-          huffmanTables[destination] = new short[table.size()];
-          for (int i=0; i<huffmanTables[destination].length; i++) {
-            huffmanTables[destination][i] = ((Short) table.get(i)).shortValue();
+          int bytesRead = 0;
+          while (bytesRead < length) {
+	          int s = in.read();
+	          byte tableClass = (byte) ((s & 0xf0) >> 4);
+	          byte destination = (byte) (s & 0xf);
+	          int[] nCodes = new int[16];
+	          Vector table = new Vector();
+	          for (int i=0; i<nCodes.length; i++) {
+	            nCodes[i] = in.read();
+	            table.add(new Short((short) nCodes[i]));
+	          }
+	
+	          for (int i=0; i<nCodes.length; i++) {
+	            for (int j=0; j<nCodes[i]; j++) {
+	              table.add(new Short((short) (in.read() & 0xff)));
+	            }
+	          }
+	          huffmanTables[destination] = new short[table.size()];
+	          for (int i=0; i<huffmanTables[destination].length; i++) {
+	            huffmanTables[destination][i] = ((Short) table.get(i)).shortValue();
+	          }
+	          bytesRead += table.size() + 1;
           }
         }
         in.seek(fp + length);

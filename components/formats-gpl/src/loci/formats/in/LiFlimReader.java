@@ -33,7 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import ome.xml.model.primitives.Timestamp;
@@ -130,9 +131,9 @@ public class LiFlimReader extends FormatReader {
   private String backgroundP;
   private String backgroundF;
 
-  private int numRegions = 0;
-  private Hashtable<Integer, ROI> rois;
-  private Hashtable<Integer, String> stampValues;
+  private int numRegions = 0;  /* note: set but not used */
+  private Map<Integer, ROI> rois;
+  private Map<Integer, String> stampValues;
   private Double exposureTime;
 
   /** True if gzip compression was used to deflate the pixels. */
@@ -263,8 +264,8 @@ public class LiFlimReader extends FormatReader {
   }
 
   private void initOriginalMetadata() {
-    rois = new Hashtable<Integer, ROI>();
-    stampValues = new Hashtable<Integer, String>();
+    rois = new HashMap<Integer, ROI>();
+    stampValues = new HashMap<Integer, String>();
 
     IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
     datatype = layoutTable.get(DATATYPE_KEY);
@@ -550,7 +551,7 @@ public class LiFlimReader extends FormatReader {
 
   private class ROI {
     public String name;
-    public Hashtable<Integer, String> points = new Hashtable<Integer, String>();
+    public final Map<Integer, String> points = new HashMap<Integer, String>();
 
     public String pointsToString() {
       StringBuilder s = new StringBuilder();

@@ -26,7 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -66,9 +67,9 @@ public class ImarisHDFReader extends FormatReader {
   private NetCDFService netcdf;
 
   // channel parameters
-  private Vector<String> emWave, exWave, channelMin, channelMax;
-  private Vector<String> gain, pinhole, channelName, microscopyMode;
-  private Vector<double[]> colors;
+  private List<String> emWave, exWave, channelMin, channelMax;
+  private List<String> gain, pinhole, channelName, microscopyMode;
+  private List<double[]> colors;
   private int lastChannel = 0;
 
   // -- Constructor --
@@ -251,15 +252,15 @@ public class ImarisHDFReader extends FormatReader {
 
     pixelSizeX = pixelSizeY = pixelSizeZ = 1;
 
-    emWave = new Vector<String>();
-    exWave = new Vector<String>();
-    channelMin = new Vector<String>();
-    channelMax = new Vector<String>();
-    gain = new Vector<String>();
-    pinhole = new Vector<String>();
-    channelName = new Vector<String>();
-    microscopyMode = new Vector<String>();
-    colors = new Vector<double[]>();
+    emWave = new ArrayList<String>();
+    exWave = new ArrayList<String>();
+    channelMin = new ArrayList<String>();
+    channelMax = new ArrayList<String>();
+    gain = new ArrayList<String>();
+    pinhole = new ArrayList<String>();
+    channelName = new ArrayList<String>();
+    microscopyMode = new ArrayList<String>();
+    colors = new ArrayList<double[]>();
 
     seriesCount = 0;
 
@@ -477,7 +478,7 @@ public class ImarisHDFReader extends FormatReader {
   }
 
   private void parseAttributes() {
-    Vector<String> attributes = netcdf.getAttributeList();
+    final List<String> attributes = netcdf.getAttributeList();
     CoreMetadata ms0 = core.get(0);
 
     for (String attr : attributes) {
