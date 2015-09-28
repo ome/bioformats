@@ -423,7 +423,8 @@ public class SPCReader extends FormatReader {
       throw new FormatException("Failed to parse setup file!");
     }
     
-    LOGGER.debug("timeBase = " + ((Double)timeBase).toString());
+    
+    LOGGER.debug("timeBase = " + Double.toString(timeBase));
     
     // Now read .spc file
     in = new RandomAccessInputStream(id);
@@ -487,14 +488,8 @@ public class SPCReader extends FormatReader {
         nBuffers++;
       }
     
-    
     nTimebins = (0xFFF >> adcResShift) + 1;
-    LOGGER.debug("nTimebins = " + ((Integer)nTimebins).toString());
-
-    LOGGER.debug("nPixels = " + ((Integer)nPixels).toString());
-    LOGGER.debug("nLines = " + ((Integer)nLines).toString());
     nFrames = currentFrame - 1;
-    LOGGER.debug("nFrames = " + ((Integer)nFrames).toString());
     
     addGlobalMeta("time bins", nTimebins);
     addGlobalMeta("nChannels", nChannels);
@@ -686,10 +681,10 @@ public class SPCReader extends FormatReader {
     String valueTxt = taggedString.substring(tagOffset + 3, taggedString.indexOf("]"));
     double value = 0.0;
     if (tagType.matches("I")) {
-      value = Integer.valueOf(valueTxt);
+      value = Integer.parseInt(valueTxt);
     }
     if (tagType.matches("F")) {
-      value = Double.valueOf(valueTxt);
+      value = Double.parseDouble(valueTxt);
     }
     
     return value;
