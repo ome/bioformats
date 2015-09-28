@@ -286,6 +286,15 @@ public class CellH5Reader extends FormatReader {
       }
       jhdf = null;
       lastChannel = 0;
+
+      minX = minY = minZ = maxX = maxY = maxZ = 0d;
+      store = null;
+      CellH5PositionList.clear();
+      CellH5PathsToImageData.clear();
+      cellObjectNames.clear();
+      times = null;
+      classes = null;
+      bbox = null;
     }
   }
 
