@@ -33,10 +33,13 @@
 package loci.formats.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -147,6 +150,31 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
+
+  /**
+   * The pattern of system ID URLs for OME-XML schema definitions.
+   */
+  private static final Pattern SCHEMA_URL_PATTERN = Pattern.compile(
+      "http://www.openmicroscopy.org/Schemas/" +
+      "\\p{Alpha}+/(\\w+-\\w+)/(\\p{Alpha}+)\\.xsd");
+
+  /**
+   * Finds OME-XML schema definitions in specifications.jar.
+   */
+  private static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
+      new XMLTools.SchemaReader() {
+        @Override
+        public InputStream getSchemaAsStream(String url) {
+          final Matcher matcher = SCHEMA_URL_PATTERN.matcher(url);
+          if (matcher.matches()) {
+            /* from specification.jar */
+            return getClass().getResourceAsStream("/released-schema/" +
+                 matcher.group(1) + "/" + matcher.group(2) + ".xsd");
+          } else {
+            return null;
+          }
+        }
+      };
 
   /**
    * Default constructor.
@@ -522,7 +550,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         return false;
       }
     }
-    return XMLTools.validateXML(xml, "OME-XML");
+    return XMLTools.validateXML(xml, "OME-XML", SCHEMA_CLASSPATH_READER);
   }
 
   /**
