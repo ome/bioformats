@@ -693,7 +693,12 @@ public final class XMLTools {
           input.setPublicId(publicId);
           input.setSystemId(systemId);
           input.setBaseURI(baseURI);
-          input.setCharacterStream(new InputStreamReader(stream));
+          try {
+            input.setCharacterStream(new InputStreamReader(stream, "UTF-8"));
+          } catch (UnsupportedEncodingException e) {
+            LOGGER.warn("no UTF-8 character encoding available");
+            return null;
+          }
           return input;
         }
       };
