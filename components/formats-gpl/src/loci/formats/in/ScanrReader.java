@@ -518,7 +518,7 @@ public class ScanrReader extends FormatReader {
       if (next == originalIndex &&
         missingWellFiles == nSlices * nTimepoints * nChannels * nPos)
       {
-        wellNumbers.remove(well);
+        next += nSlices * nTimepoints * nChannels * nPos;
       }
     }
     nWells = wellNumbers.size();
