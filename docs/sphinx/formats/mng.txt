@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`MNG (Multiple-image Network Graphics) <mng-metadata>`
+Reader: MNGReader (:bsd-reader:`Source Code <MNGReader.java>`, :doc:`Supported Metadata Fields </metadata/MNGReader>`)
+
 
 Freely Available Software:
 
@@ -53,7 +54,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`MNGReader.java`
 
 Notes:
 

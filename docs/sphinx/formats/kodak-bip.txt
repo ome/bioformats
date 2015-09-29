@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Kodak BIP <kodak-bip-metadata>`
+Reader: KodakReader (:bfreader:`Source Code <KodakReader.java>`, :doc:`Supported Metadata Fields </metadata/KodakReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`KodakReader.java`
 
 Notes:
 

@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`TillPhotonics TillVision <tillphotonics-tillvision-metadata>`
+Reader: TillVisionReader (:bfreader:`Source Code <TillVisionReader.java>`, :doc:`Supported Metadata Fields </metadata/TillVisionReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`TillVisionReader.java`
 
 Notes:
 

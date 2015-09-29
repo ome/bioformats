@@ -18,7 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields: :doc:`ICS (Image Cytometry Standard) <ics-metadata>`
+Reader: ICSReader (:bsd-reader:`Source Code <ICSReader.java>`, :doc:`Supported Metadata Fields </metadata/ICSReader>`)
+
 
 Freely Available Software:
 
@@ -51,8 +52,7 @@ Utility: |Very good|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`ICSReader.java`
-Source Code: :bsd-writer:`ICSWriter.java`
+Writer: ICSWriter (:bsd-writer:`Source Code <ICSWriter.java>`)
 
 Notes:
 

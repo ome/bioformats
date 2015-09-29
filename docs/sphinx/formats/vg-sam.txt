@@ -17,7 +17,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`VG SAM <vg-sam-metadata>`
+Reader: VGSAMReader (:bfreader:`Source Code <VGSAMReader.java>`, :doc:`Supported Metadata Fields </metadata/VGSAMReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`VGSAMReader.java`
 
 Notes:
 

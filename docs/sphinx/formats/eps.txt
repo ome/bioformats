@@ -18,7 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`EPS (Encapsulated PostScript) <eps-metadata>`
+Reader: EPSReader (:bsd-reader:`Source Code <EPSReader.java>`, :doc:`Supported Metadata Fields </metadata/EPSReader>`)
+
 
 Freely Available Software:
 
@@ -50,8 +51,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`EPSReader.java`
-Source Code: :bsd-writer:`EPSWriter.java`
+Writer: EPSWriter (:bsd-writer:`Source Code <EPSWriter.java>`)
 
 Notes:
 

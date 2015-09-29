@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Khoros VIFF (Visualization Image File Format) Bitmap <khoros-viff-bitmap-metadata>`
+Reader: KhorosReader (:bfreader:`Source Code <KhorosReader.java>`, :doc:`Supported Metadata Fields </metadata/KhorosReader>`)
+
 
 
 Sample Datasets:
@@ -50,7 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`KhorosReader.java`
 
 Notes:
 

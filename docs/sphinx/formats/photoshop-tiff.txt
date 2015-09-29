@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Photoshop TIFF <photoshop-tiff-metadata>`
+Reader: PhotoshopTiffReader (:bfreader:`Source Code <PhotoshopTiffReader.java>`, :doc:`Supported Metadata Fields </metadata/PhotoshopTiffReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`PhotoshopTiffReader.java`
 
 Notes:
 

@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`DICOM <dicom-metadata>`
+Reader: DicomReader (:bsd-reader:`Source Code <DicomReader.java>`, :doc:`Supported Metadata Fields </metadata/DicomReader>`)
+
 
 Freely Available Software:
 
@@ -57,7 +58,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`DicomReader.java`
 
 Notes:
 

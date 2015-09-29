@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`CellVoyager <cellvoyager-metadata>`
+Reader: CellVoyagerReader (:bfreader:`Source Code <CellVoyagerReader.java>`, :doc:`Supported Metadata Fields </metadata/CellVoyagerReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`CellVoyagerReader.java`
 
 Notes:
 

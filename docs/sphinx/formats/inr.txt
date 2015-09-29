@@ -17,7 +17,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`INR <inr-metadata>`
+Reader: INRReader (:bfreader:`Source Code <INRReader.java>`, :doc:`Supported Metadata Fields </metadata/INRReader>`)
+
 
 
 
@@ -45,7 +46,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`INRReader.java`
 
 Notes:
 

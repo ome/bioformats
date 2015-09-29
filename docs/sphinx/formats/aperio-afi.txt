@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Aperio AFI <aperio-afi-metadata>`
+Reader: AFIReader (:bfreader:`Source Code <AFIReader.java>`, :doc:`Supported Metadata Fields </metadata/AFIReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`AFIReader.java`
 
 Notes:
 

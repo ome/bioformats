@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Veeco AFM <veeco-afm-metadata>`
+Reader: VeecoReader (:bfreader:`Source Code <VeecoReader.java>`, :doc:`Supported Metadata Fields </metadata/VeecoReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`VeecoReader.java`
 
 Notes:
 

@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Evotec/PerkinElmer Opera Flex <evotecperkinelmer-opera-flex-metadata>`
+Reader: FlexReader (:bfreader:`Source Code <FlexReader.java>`, :doc:`Supported Metadata Fields </metadata/FlexReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`FlexReader.java`
 
 Notes:
 

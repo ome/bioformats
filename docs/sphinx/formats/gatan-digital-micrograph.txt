@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 3
 
-Supported Metadata Fields: :doc:`Gatan Digital Micrograph <gatan-digital-micrograph-metadata>`
+Reader: GatanReader (:bfreader:`Source Code <GatanReader.java>`, :doc:`Supported Metadata Fields </metadata/GatanReader>`)
+
 
 Freely Available Software:
 
@@ -52,7 +53,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`GatanReader.java`
 
 Notes:
 
