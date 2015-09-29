@@ -550,12 +550,16 @@ public class DicomReader extends FormatReader {
           break;
         case ROWS:
           int y = in.readShort();
-          m.sizeY = y;
+          if (y > getSizeY()) {
+            m.sizeY = y;
+          }
           addInfo(tag, getSizeY());
           break;
         case COLUMNS:
           int x = in.readShort();
-          m.sizeX = x;
+          if (x > getSizeX()) {
+            m.sizeX = x;
+          }
           addInfo(tag, getSizeX());
           break;
         case PHOTOMETRIC_INTERPRETATION:
