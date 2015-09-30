@@ -31,66 +31,68 @@ The :file:`format-pages.txt` is an INI file where each section corresponds to
 a particular format given by the section header. Multiple key/values should be 
 defined for each section:
 
-pagename
-  The name of the output reStructuredText file. If unspecified, the section 
-  header will be used to generate the filename.
+.. glossary::
 
-extensions
-  The list of extensions supported for the format
+  pagename
+    The name of the output reStructuredText file. If unspecified, the section 
+    header will be used to generate the filename.
 
-owner
-  The owner of the file format
+  extensions
+    The list of extensions supported for the format
 
-developer
-  The developer of the file format
+  owner
+    The owner of the file format
 
-bsd
-  A `yes/no` flag specifying whether the format readers/writers are under the
-  BSD license
+  developer
+    The developer of the file format
 
-export
-  A `yes/no` flag specifying whether the format can be exported
+  bsd
+    A `yes/no` flag specifying whether the format readers/writers are under the
+    BSD license
 
-versions
-  A comma-separated list of all versions supported for this format
+  export
+    A `yes/no` flag specifying whether the format can be exported
 
-weHave
-  A bullet-point list describing the supporting material we have for this
-  format including specification and sample datasets
+  versions
+    A comma-separated list of all versions supported for this format
 
-weWant
-  A bullet-point list describing the supporting material we would like to have
-  for this format
+  weHave
+    A bullet-point list describing the supporting material we have for this
+    format including specification and sample datasets
 
-pixelRating
-  See :term:`Ratings legend and definitions`. Available choices are: 
-  `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
+  weWant
+    A bullet-point list describing the supporting material we would like to 
+    have for this format
 
-metadataRating
-  See :term:`Ratings legend and definitions`. Available choices are: 
-  `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
+  pixelRating
+    See :term:`Ratings legend and definitions`. Available choices are: 
+    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
 
-opennessRating
-  See :term:`Ratings legend and definitions`. Available choices are: 
-  `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
+  metadataRating
+    See :term:`Ratings legend and definitions`. Available choices are: 
+    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
 
-presenceRating
-  See :term:`Ratings legend and definitions`. Available choices are: 
-  `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
+  opennessRating
+    See :term:`Ratings legend and definitions`. Available choices are: 
+    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
 
-utilityRating
-  See :term:`Ratings legend and definitions`. Available choices are: 
-  `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
+  presenceRating
+    See :term:`Ratings legend and definitions`. Available choices are: 
+    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
 
-reader
-  A string or a comma-separated list of all readers for this format
+  utilityRating
+    See :term:`Ratings legend and definitions`. Available choices are: 
+    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
 
-notes
-  A set of notes to be added
+  reader
+    A string or a comma-separated list of all readers for this format
+
+  notes
+    Additional relevant information e.g. that we cannot distribute 
+    specification documents to third parties
 
 Readers
 -------
-
 
 After checking out source code and building all the JAR files (see
 :doc:`building-bioformats`), the metadata pages for each reader can be 
@@ -103,5 +105,6 @@ This target will loop through all Bio-Formats readers (BSD and GPL), parse
 their metadata support and create an intermediate :file:`meta-support.txt`
 file.
 In a second step, this :file:`meta-support.txt` file is converted into one
-reStructuredText page for each reader stored under :file:`metadata/<reader>.txt` as well as a metadata summary reStructuredText
+reStructuredText page for each reader stored under 
+:file:`metadata/<reader>.txt` as well as a metadata summary reStructuredText
 file using Velocity_.

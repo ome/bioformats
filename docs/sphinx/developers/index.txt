@@ -65,10 +65,10 @@ Contributing to Bio-Formats
     :maxdepth: 1
 
     commit-testing
-    format-documentation
     testing-notes
     generating-test-images
     reader-guide
+    format-documentation
     service
     xsd-fu
     useful-scripts
