@@ -55,16 +55,16 @@ rather than the development packages should be preferred; in some
 cases such as for Boost and Qt5, these are split up into a separate
 package for each library.
 
-Bio-Formats may be built in two ways.  The first (*BF build*) requires
-the prerequisites to be installed in advance, for example using your
-operating system's package manager.  The second (*BF superbuild*),
-builds the prerequisites in addition to Bio-Formats, and is useful on
-systems where the prerequisites are unavailable, for example on
-Windows which lacks a package manager or on older systems where the
+Bio-Formats may be built in two ways.  The first is “standalone” (*BF
+build*) and requires the prerequisites to be installed in advance, for
+example using your operating system's package manager.  The second is
+using a “super-build” (*BF superbuild*) which builds the prerequisites
+in addition to Bio-Formats, and is useful on systems where the
+prerequisites are unavailable, for example on Windows which lacks a
+package manager or on older systems such as CentOS 6 where the
 versions available through a package manager are too old.  Note that
 the superbuild cannot provide *all* prerequisites; some will still
-need installing before building, shown in the table below.  On
-Windows, the superbuild is enabled by default.
+need installing before building, shown in the table below.
 
 .. tabularcolumns:: |l|l|l|c|c|c|c|
 
@@ -583,6 +583,18 @@ TeX Gyre fonts available:
 - Windows: May need adding to the system fonts if not found
   automatically
 
+Sources
+-------
+
+Download the Bio-Formats source code or the CMake superbuild source
+code, depending upon which type of build is required, as described
+above.  The :downloads_cpp:`downloads page <>` provides links to the
+source releases for both, as well as links to their git repositories.
+If you wish to build a specific release of Bio-Formats, the source
+release is appropriate, but if you wish to build the latest
+development work, or make changes to the sources, the git repository
+will be more useful.
+
 Build environment
 -----------------
 
@@ -710,17 +722,6 @@ Run ``cmake -LH`` to see the configurable project options; use
 ``-LAH`` to see advanced options.  The following basic options are
 supported:
 
-bioformats-superbuild=(ON|OFF)
-  Build Bio-Formats as part of a “super-build” project.  This will
-  download and build all needed library dependencies (Boost, libtiff
-  etc.) prior to building Bio-Formats.  This option is disabled by
-  default since most platforms provide all the libraries by default.
-  However, it is enabled by default when using Microsoft Visual C++,
-  since this platform does not provide libraries unless you have built
-  your own.  The cache variable ``source-cache`` may be
-  set to specify a directory in which to store downloaded source
-  files; this is useful if you need to repeat the build since the
-  source files will not need downloading again.
 cxxstd-autodetect=(ON|OFF)
   Enable or disable (default) C++ compiler standard autodetection.  If
   enabled, the compiler will be put into C++11 mode if available,
@@ -767,6 +768,18 @@ The installation prefix may be set at this point using
 may also be specified.  Please see the :program:`cmake` documentation
 for further details of all configurable options, and run ``cmake
 --help`` to list the available generators for your platform.
+
+If using the superbuild:
+
+source-cache=directory
+  Specify a directory in which to store downloaded source files; this
+  is useful if you need to repeat the build since the source files
+  will not need downloading again.
+bioformats-superbuild_USE_SYSTEM_${package}=(ON|OFF)
+  Disable the building of particular components, in order to use the
+  system version of these components.  By default, all components are
+  enabled. `${package}` is the component name.  Look in the
+  :file:`packages` directory for a full list of components.
 
 C++11
 ^^^^^
