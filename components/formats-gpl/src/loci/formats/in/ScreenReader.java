@@ -326,6 +326,7 @@ public class ScreenReader extends FormatReader {
     core.clear();
 
     FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
+    stitcher.setReaderClassList(validReaders);
     stitcher.setCanChangePattern(false);
     reader = new DimensionSwapper(stitcher);
     reader.setMetadataStore(omexmlMeta);
