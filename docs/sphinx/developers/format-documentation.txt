@@ -86,7 +86,7 @@ reader
   A string or a comma-separated list of all readers for this format
 
 notes
-  A set of notes to be aded
+  A set of notes to be added
 
 Readers
 -------
