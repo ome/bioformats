@@ -853,9 +853,11 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public void reopenFile() throws IOException {
     reader.reopenFile();
-    for (ExternalSeries s : externals) {
-      for (DimensionSwapper r : s.getReaders()) {
-        r.reopenFile();
+    if (externals != null) {
+      for (ExternalSeries s : externals) {
+        for (DimensionSwapper r : s.getReaders()) {
+          r.reopenFile();
+        }
       }
     }
   }
