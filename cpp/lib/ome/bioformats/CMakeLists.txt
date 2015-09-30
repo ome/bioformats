@@ -190,7 +190,7 @@ set(LIBRARY_HEADER ome/bioformats/CoreMetadata.h)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-bioformats)
 
 # Dump header list for testing
 header_include_list_write(BIOFORMATS_STATIC_HEADERS BIOFORMATS_GENERATED_HEADERS ome/bioformats ${PROJECT_BINARY_DIR}/cpp/test/ome-bioformats)
