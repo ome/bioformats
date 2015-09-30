@@ -93,7 +93,7 @@ import ome.units.UNITS;
  *  <li>showinf '32bit-floating&amp;pixelType=float&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf '64bit-floating&amp;pixelType=double&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
- *  <li>showinf 'Plate&amp;screen=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
+ *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  * </ul></p>
  */
 public class FakeReader extends FormatReader {
@@ -430,7 +430,7 @@ public class FakeReader extends FormatReader {
 
     String acquisitionDate = null;
 
-    int screen = 1;
+    int screens = 1;
     int plates = 0;
     int plateRows = 0;
     int plateCols = 0;
@@ -534,7 +534,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
       else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.S);
       else if (key.equals("acquisitionDate")) acquisitionDate = value;
-      else if (key.equals("screen")) screen = intValue;
+      else if (key.equals("screens")) screens = intValue;
       else if (key.equals("plates")) plates = intValue;
       else if (key.equals("plateRows")) plateRows = intValue;
       else if (key.equals("plateCols")) plateCols = intValue;
@@ -602,7 +602,7 @@ public class FakeReader extends FormatReader {
     if (hasSPW) {
       // generate SPW metadata and override series count to match
       int imageCount =
-        populateSPW(store, screen, plates, plateRows, plateCols, fields, plateAcqs);
+        populateSPW(store, screens, plates, plateRows, plateCols, fields, plateAcqs);
       if (imageCount > 0) seriesCount = imageCount;
       else hasSPW = false; // failed to generate SPW metadata
     }
@@ -893,12 +893,12 @@ public class FakeReader extends FormatReader {
     return !listFakeSeries(path).get(0).equals(path);
   }
 
-  private int populateSPW(MetadataStore store, int screen, int plates, int rows, int cols,
+  private int populateSPW(MetadataStore store, int screens, int plates, int rows, int cols,
     int fields, int acqs)
   {
     final XMLMockObjects xml = new XMLMockObjects();
     OME ome = null;
-    if (screen==0) {
+    if (screens==0) {
       ome = xml.createPopulatedPlate(plates, rows, cols, fields, acqs);
     } else {
       ome = xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
