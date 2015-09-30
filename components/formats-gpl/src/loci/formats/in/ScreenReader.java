@@ -25,12 +25,15 @@
 
 package loci.formats.in;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import loci.common.DataTools;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -215,13 +218,16 @@ public class ScreenReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
+
     // ScreenReader only accepts an INI file which defines the plate -> file mappings
     //  * a "Plate" table is required, and defines the dimensions of the plate
     //  * a "MetadataFiles" table is optional, and specifies any extra files to attach
     //  * one uniquely named "Well" table is required for each well defined by the "Plate" table
 
     IniParser parser = new IniParser();
-    IniList tables = parser.parseINI(new File(id));
+    String data = DataTools.readFile(id);
+    IniList tables = parser.parseINI(new BufferedReader(new StringReader(data)));
 
     final List<String> metadataFiles = new ArrayList<String>();
     metadataFiles.add(id);
@@ -236,7 +242,13 @@ public class ScreenReader extends FormatReader {
         catch (NumberFormatException e) { }
         for (int i=0; i<count; i++) {
           if (metadataTable.containsKey(String.valueOf(i))) {
-            metadataFiles.add(metadataTable.get(String.valueOf(i)));
+            String file = metadataTable.get(String.valueOf(i));
+            if (file.startsWith(File.separator)) {
+              metadataFiles.add(file);
+            }
+            else {
+              metadataFiles.add(new Location(parent, file).getAbsolutePath());
+            }
           }
         }
       }
@@ -270,7 +282,12 @@ public class ScreenReader extends FormatReader {
       for (int field=0; field<fields; field++, index++) {
         String file = wellTable.get("Field_" + field);
         if (file != null) {
-          files[index] = file;
+          if (file.startsWith(File.separator)) {
+            files[index] = file;
+          }
+          else {
+            files[index] = new Location(parent, file).getAbsolutePath();
+          }
         }
       }
     }
@@ -303,7 +320,6 @@ public class ScreenReader extends FormatReader {
     FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
     stitcher.setCanChangePattern(false);
     reader = stitcher;
-    reader.setGroupFiles(false);
     reader.setMetadataStore(omexmlMeta);
 
     for (int well=0; well<files.length; well++) {
