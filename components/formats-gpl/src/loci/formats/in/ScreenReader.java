@@ -373,6 +373,7 @@ public class ScreenReader extends FormatReader {
         store.setWellColumn(new NonNegativeInteger(col), 0, well);
         store.setWellRow(new NonNegativeInteger(row), 0, well);
 
+        int nextWellSample = 0;
         for (int field=0; field<fields; field++) {
           int spotIndex = well * fields + field;
           int seriesIndex = -1;
@@ -380,17 +381,18 @@ public class ScreenReader extends FormatReader {
             seriesIndex = spotMap.get(spotIndex);
           }
 
-          String wellSampleID =
-            MetadataTools.createLSID("WellSample", 0, well, field);
-          store.setWellSampleID(wellSampleID, 0, well, field);
           if (seriesIndex >= 0) {
+            String wellSampleID =
+              MetadataTools.createLSID("WellSample", 0, well, nextWellSample);
+            store.setWellSampleID(wellSampleID, 0, well, nextWellSample);
             String imageID = MetadataTools.createLSID("Image", seriesIndex);
             store.setImageID(imageID, seriesIndex);
             store.setImageName("Well " + ((char) (row + 'A')) + (col + 1) +
               ", Field " + (field + 1), seriesIndex);
-            store.setWellSampleImageRef(imageID, 0, well, field);
+            store.setWellSampleImageRef(imageID, 0, well, nextWellSample);
             store.setWellSampleIndex(
-              new NonNegativeInteger(seriesIndex), 0, well, field);
+              new NonNegativeInteger(seriesIndex), 0, well, nextWellSample);
+            nextWellSample++;
           }
         }
       }
