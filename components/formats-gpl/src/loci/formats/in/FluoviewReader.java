@@ -26,6 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -304,12 +307,42 @@ public class FluoviewReader extends BaseTiffReader {
       else if (name.equals("y")) {
         voxelY = voxel;
       }
-      else if (name.equals("z") || name.equals("event")) {
+      else if (name.equals("event")) {
         m.sizeZ *= size;
         if (dimensionOrder.indexOf("Z") == -1) {
           dimensionOrder += "Z";
         }
-        voxelZ = voxel;
+        if (voxelZ == 1) {
+          voxelZ = voxel;
+        }
+      }
+      else if (name.equals("z")) {
+        m.sizeZ *= size;
+        if (dimensionOrder.indexOf("Z") == -1) {
+          dimensionOrder += "Z";
+        }
+        
+        ArrayList<Double> uniqueZ = new ArrayList<Double>();
+        if (i > 1) {
+          double[] zPositions = stamps[i - 2];
+          for (Double z : zPositions) {
+            BigDecimal bd = new BigDecimal(z);
+            bd = bd.setScale(10, RoundingMode.HALF_UP);
+            if (!uniqueZ.contains(bd.doubleValue())) uniqueZ.add(bd.doubleValue());
+          }
+          }
+        if (uniqueZ.size() > 1 && uniqueZ.size() == size) {
+          BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
+          BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
+          BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
+          BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
+          voxelZ = zRange.divide(zSize).doubleValue();
+          // Need to convert from millimetre to micrometre
+          voxelZ *= Math.pow(10, 3);
+        }
+        else {
+          voxelZ = voxel;
+        }
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         m.sizeC *= size;
