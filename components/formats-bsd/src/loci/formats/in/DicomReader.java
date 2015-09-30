@@ -407,9 +407,9 @@ public class DicomReader extends FormatReader {
         }
       }
       else if (bpp == 2) {
-        int maxPixelValue = maxPixelRange + (centerPixelValue/2);
+        long maxPixelValue = maxPixelRange + (centerPixelValue/2);
         if (maxPixelRange == -1 || centerPixelValue < (maxPixelRange/2)) {
-          maxPixelValue = 65535;
+          maxPixelValue = FormatTools.defaultMinMax(getPixelType())[1];
         }
         boolean little = isLittleEndian();
         for (int i=0; i<buf.length; i+=2) {
