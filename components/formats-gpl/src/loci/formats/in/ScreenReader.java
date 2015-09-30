@@ -44,6 +44,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
+import loci.formats.DimensionSwapper;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -76,8 +77,9 @@ public class ScreenReader extends FormatReader {
 
   private String[] plateMetadataFiles;
   private String[] files;
+  private String[] ordering;
 
-  private IFormatReader reader;
+  private DimensionSwapper reader;
   private ClassList<IFormatReader> validReaders;
   private int fields, wells;
   private HashMap<Integer, Integer> seriesMap = new HashMap<Integer, Integer>();
@@ -208,6 +210,7 @@ public class ScreenReader extends FormatReader {
       seriesMap.clear();
       spotMap.clear();
       files = null;
+      ordering = null;
     }
   }
 
@@ -269,6 +272,7 @@ public class ScreenReader extends FormatReader {
 
     wells = maxRow * maxCol;
     files = new String[wells * fields];
+    ordering = new String[wells * fields];
 
     for (int well=0; well<wells; well++) {
       IniTable wellTable = tables.getTable("Well " + well);
@@ -288,6 +292,10 @@ public class ScreenReader extends FormatReader {
           else {
             files[index] = new Location(parent, file).getAbsolutePath();
           }
+        }
+        ordering[index] = wellTable.get("Dimensions");
+        if (ordering[index] != null) {
+          ordering[index] = "XY" + ordering[index];
         }
       }
     }
@@ -319,7 +327,7 @@ public class ScreenReader extends FormatReader {
 
     FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
     stitcher.setCanChangePattern(false);
-    reader = stitcher;
+    reader = new DimensionSwapper(stitcher);
     reader.setMetadataStore(omexmlMeta);
 
     for (int well=0; well<files.length; well++) {
@@ -327,6 +335,9 @@ public class ScreenReader extends FormatReader {
         continue;
       }
       reader.setId(files[well]);
+      if (ordering[well] != null) {
+        reader.swapDimensions(ordering[well]);
+      }
       List<CoreMetadata> wcore = reader.getCoreMetadataList();
       core.add(wcore.get(0));
       if (wcore.size() > 1) {
