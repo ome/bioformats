@@ -51,7 +51,7 @@ defined for each section:
     BSD license
 
   export
-    A `yes/no` flag specifying whether the format can be exported
+    A `yes/no` flag specifying whether Bio-Formats can write this format
 
   versions
     A comma-separated list of all versions supported for this format
@@ -65,21 +65,9 @@ defined for each section:
     have for this format
 
   pixelRating
-    See :term:`Ratings legend and definitions`. Available choices are: 
-    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
-
   metadataRating
-    See :term:`Ratings legend and definitions`. Available choices are: 
-    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
-
   opennessRating
-    See :term:`Ratings legend and definitions`. Available choices are: 
-    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
-
   presenceRating
-    See :term:`Ratings legend and definitions`. Available choices are: 
-    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
-
   utilityRating
     See :term:`Ratings legend and definitions`. Available choices are: 
     `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
