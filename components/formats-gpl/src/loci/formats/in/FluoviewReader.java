@@ -312,7 +312,7 @@ public class FluoviewReader extends BaseTiffReader {
         if (dimensionOrder.indexOf("Z") == -1) {
           dimensionOrder += "Z";
         }
-        if (voxelZ == 1) {
+        if (Double.compare(voxelZ, 1) == 0) {
           voxelZ = voxel;
         }
       }
