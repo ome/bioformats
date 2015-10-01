@@ -14,7 +14,7 @@ Developer: `CellH5 <http://cellh5.org/>`_
 
 BSD-licensed: |no|
 
-Export: |no|
+Export: |yes|
 
 Officially Supported Versions: 
 
@@ -50,6 +50,7 @@ Utility: |Very good|
 **Additional Information**
 
 
+Writer: CellH5Writer (:bfwriter:`Source Code <CellH5Writer.java>`)
 
 Notes:
 

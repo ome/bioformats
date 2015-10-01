@@ -435,6 +435,7 @@ opennessRating = Outstanding
 presenceRating = Fair
 utilityRating = Very good
 reader = CellH5Reader
+writer = CellH5Writer
 
 [Cellomics]
 extensions = .c01
