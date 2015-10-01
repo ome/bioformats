@@ -50,9 +50,6 @@ defined for each section:
     A `yes/no` flag specifying whether the format readers/writers are under the
     BSD license
 
-  export
-    A `yes/no` flag specifying whether Bio-Formats can write this format
-
   versions
     A comma-separated list of all versions supported for this format
 
