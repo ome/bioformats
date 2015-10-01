@@ -53,6 +53,7 @@ Utility: |Poor|
 **Additional Information**
 
 
+Writer: APNGWriter (:bsd-writer:`Source Code <APNGWriter.java>`)
 
 Notes:
 
