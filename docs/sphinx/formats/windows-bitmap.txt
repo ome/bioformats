@@ -46,12 +46,7 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 Compressed BMP files are currently not supported. 
