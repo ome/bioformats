@@ -23,7 +23,11 @@ Owner: $owner
 
 BSD-licensed: |$bsd|
 
-Export: |$export|
+#if ($writer)
+Export: |yes|
+#else
+Export: |no|
+#end
 
 Officially Supported Versions: $versions
 
