@@ -777,9 +777,9 @@ source-cache=directory
   will not need downloading again.
 bioformats-superbuild_USE_SYSTEM_${package}=(ON|OFF)
   Disable the building of particular components, in order to use the
-  system version of these components.  By default, all components are
-  enabled. `${package}` is the component name.  Look in the
-  :file:`packages` directory for a full list of components.
+  system version of these components.  By default, building of all
+  components is enabled. `${package}` is the component name.  Look in
+  the :file:`packages` directory for a full list of components.
 
 C++11
 ^^^^^
