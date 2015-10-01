@@ -335,6 +335,7 @@ public class ScreenReader extends FormatReader {
       if (files[well] == null) {
         continue;
       }
+      LOGGER.debug("Initializing pattern {} for spot {}", files[well], well);
       reader.setId(files[well]);
       if (ordering[well] != null) {
         reader.swapDimensions(ordering[well]);
