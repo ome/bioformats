@@ -60,7 +60,7 @@ TEST(TileCoverage, InsertGrid)
         ASSERT_TRUE(c.insert(r));
       }
   // One region after automatic coalescing
-  ASSERT_EQ(1, c.size());
+  ASSERT_EQ(1U, c.size());
 }
 
 TEST(TileCoverage, InsertGridSeparate)
@@ -73,7 +73,7 @@ TEST(TileCoverage, InsertGridSeparate)
         ASSERT_TRUE(c.insert(r, false));
       }
   // Full set of regions
-  ASSERT_EQ((4096 / 32) * (4096 / 16), c.size());
+  ASSERT_EQ((4096U / 32U) * (4096U / 16U), c.size());
 }
 
 TEST(TileCoverage, InsertFail)
@@ -99,13 +99,13 @@ TEST(TileCoverage, Remove)
         ASSERT_TRUE(c.insert(r, false));
       }
   // Full set of regions
-  ASSERT_EQ((4096 / 32) * (4096 / 16), c.size());
+  ASSERT_EQ((4096U / 32U) * (4096U / 16U), c.size());
 
   PlaneRegion remove(64, 64, 32, 16);
   ASSERT_TRUE(c.remove(remove));
 
   // Full set of regions - 1
-  ASSERT_EQ(((4096 / 32) * (4096 / 16)) - 1, c.size());
+  ASSERT_EQ(((4096U / 32U) * (4096U / 16U)) - 1U, c.size());
 }
 
 TEST(TileCoverage, RemoveFail)
@@ -117,12 +117,12 @@ TEST(TileCoverage, RemoveFail)
         PlaneRegion r(x, y, 32, 16);
         ASSERT_TRUE(c.insert(r));
       }
-  ASSERT_EQ(1, c.size());
+  ASSERT_EQ(1U, c.size());
 
   PlaneRegion remove(64, 64, 32, 16);
   ASSERT_FALSE(c.remove(remove));
 
-  ASSERT_EQ(1, c.size());
+  ASSERT_EQ(1U, c.size());
 }
 
 TEST(TileCoverage, Clear)
@@ -134,11 +134,11 @@ TEST(TileCoverage, Clear)
         PlaneRegion r(x, y, 32, 16);
         ASSERT_TRUE(c.insert(r, false));
       }
-  ASSERT_EQ((4096 / 32) * (4096 / 16), c.size());
+  ASSERT_EQ((4096U / 32U) * (4096U / 16U), c.size());
 
   c.clear();
 
-  ASSERT_EQ(0, c.size());
+  ASSERT_EQ(0U, c.size());
 }
 
 // Non-coalesced contiguous tiles
@@ -153,11 +153,11 @@ TEST(TileCoverage, CoverageComplete1)
       }
 
   PlaneRegion area1(32,32,32,32);
-  ASSERT_EQ(32 * 32, c.coverage(area1));
+  ASSERT_EQ(32U * 32U, c.coverage(area1));
   ASSERT_TRUE(c.covered(area1));
 
   PlaneRegion area2(54,23,21,53);
-  ASSERT_EQ(21 * 53, c.coverage(area2));
+  ASSERT_EQ(21U * 53U, c.coverage(area2));
   ASSERT_TRUE(c.covered(area2));
 }
 
@@ -173,11 +173,11 @@ TEST(TileCoverage, CoverageComplete2)
       }
 
   PlaneRegion area1(32,32,32,32);
-  ASSERT_EQ(32 * 32, c.coverage(area1));
+  ASSERT_EQ(32U * 32U, c.coverage(area1));
   ASSERT_TRUE(c.covered(area1));
 
   PlaneRegion area2(54,23,21,53);
-  ASSERT_EQ(21 * 53, c.coverage(area2));
+  ASSERT_EQ(21U * 53U, c.coverage(area2));
   ASSERT_TRUE(c.covered(area2));
 }
 
@@ -190,20 +190,20 @@ TEST(TileCoverage, CoverageIncomplete1)
 
   // No overlap
   PlaneRegion area1(32,32,32,32);
-  ASSERT_EQ(0, c.coverage(area1));
+  ASSERT_EQ(0U, c.coverage(area1));
   ASSERT_FALSE(c.covered(area1));
 
   // No overlap
   PlaneRegion area2(64,64,32,32);
-  ASSERT_EQ(0, c.coverage(area2));
+  ASSERT_EQ(0U, c.coverage(area2));
   ASSERT_FALSE(c.covered(area2));
 
   // Partial overlap
   PlaneRegion area3(20,20,43,43);
-  ASSERT_EQ((32 - 20) * (32 - 20), c.coverage(area3));
+  ASSERT_EQ((32U - 20U) * (32U - 20U), c.coverage(area3));
   ASSERT_FALSE(c.covered(area3));
 
   // Complete overlap
-  ASSERT_EQ(16 * 16, c.coverage(r));
+  ASSERT_EQ(16U * 16U, c.coverage(r));
   ASSERT_TRUE(c.covered(r));
 }

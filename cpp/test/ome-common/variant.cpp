@@ -103,7 +103,7 @@ TEST(Variant, MPLVectorNonNumeric)
   non_numeric_variant v1(std::string("String value"));
   ASSERT_EQ(std::string("String value"), boost::get<std::string>(v1));
   non_numeric_variant v2(false);
-  ASSERT_EQ(false, boost::get<bool>(v2));
+  ASSERT_FALSE(boost::get<bool>(v2));
 }
 
 #include <ome/compat/cstdint.h>
@@ -159,7 +159,7 @@ TEST(Variant, MPLVectorTransformList)
   strings.push_back("s3");
 
   list_variant v1(strings);
-  ASSERT_EQ(3, boost::get<std::vector< std::string> >(v1).size());
+  ASSERT_EQ(3U, boost::get<std::vector< std::string> >(v1).size());
 
   std::vector<uint8_t> ints;
   ints.push_back(3);
@@ -168,5 +168,5 @@ TEST(Variant, MPLVectorTransformList)
   ints.push_back(43);
 
   list_variant v2(ints);
-  ASSERT_EQ(4, boost::get<std::vector<uint8_t> >(v2).size());
+  ASSERT_EQ(4U, boost::get<std::vector<uint8_t> >(v2).size());
 }

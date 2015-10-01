@@ -62,6 +62,7 @@ if (OME_QTOPENGL)
       GLContainer.h
       GLWindow.h
       GLView2D.h
+      glm.h
       NavigationDock2D.h
       TexelProperties.h)
 

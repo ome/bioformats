@@ -42,20 +42,23 @@
 
 using ome::common::boolean;
 
-// Verify underlying bit pattern is 0xFF
-void
-verify_true(const boolean& value)
+namespace
 {
-  const uint8_t& raw(*reinterpret_cast<const uint8_t *>(&value));
-  ASSERT_EQ(std::numeric_limits<uint8_t>::max(), raw);
-}
+  // Verify underlying bit pattern is 0xFF
+  void
+  verify_true(const boolean& value)
+  {
+    const uint8_t& raw(*reinterpret_cast<const uint8_t *>(&value));
+    ASSERT_EQ(std::numeric_limits<uint8_t>::max(), raw);
+  }
 
-// Verify underlying bit pattern is 0x00
-void
-verify_false(const boolean& value)
-{
-  const uint8_t& raw(*reinterpret_cast<const uint8_t *>(&value));
-  ASSERT_EQ(std::numeric_limits<uint8_t>::min(), raw);
+  // Verify underlying bit pattern is 0x00
+  void
+  verify_false(const boolean& value)
+  {
+    const uint8_t& raw(*reinterpret_cast<const uint8_t *>(&value));
+    ASSERT_EQ(std::numeric_limits<uint8_t>::min(), raw);
+  }
 }
 
 TEST(Boolean, NumericLimits)

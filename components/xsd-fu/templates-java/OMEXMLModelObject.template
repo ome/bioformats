@@ -129,6 +129,7 @@ public class ${klass.name} extends ${klass.parentName}
 	public ${klass.name}(Element element, OMEModel model)
 	    throws EnumerationException
 	{
+                // comment
 		update(element, model);
 	}
 
