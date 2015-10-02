@@ -3,11 +3,10 @@ C++ overview
 
 A completely native Bio-Formats C++ interface is now available.
 Unlike the JACE bindings, this does not wrap the Java implementation.
-With this release, TIFF reading and writing, and OME-TIFF reading are
-available.  OME-TIFF writing will be available soon.  All other
-readers and writers from the Java implementation are currently
-unavailable; the intention is that support for these will be added
-over time.
+Currently readers and writers are provided for TIFF and OME-TIFF.
+All other readers and writers from the Java implementation are
+currently unavailable; the intention is that support for these will
+be added over time.
 
 .. note::
 
