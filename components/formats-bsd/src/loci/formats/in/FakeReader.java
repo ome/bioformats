@@ -901,7 +901,7 @@ public class FakeReader extends FormatReader {
     if (screens==0) {
       ome = xml.createPopulatedPlate(plates, rows, cols, fields, acqs);
     } else {
-      ome = xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
+      ome = xml.createPopulatedScreen(screens, plates, rows, cols, fields, acqs);
     }
     getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
     // copy populated SPW metadata into destination MetadataStore
