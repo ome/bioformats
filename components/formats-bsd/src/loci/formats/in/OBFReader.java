@@ -192,7 +192,7 @@ public class OBFReader extends FormatReader
     }
 
     MetadataStore ome = makeFilterMetadata();
-    if (fileVersion <= 1 || ome_xml.isEmpty())
+    if (fileVersion <= 1)
     {
       MetadataTools.populatePixels(ome, this);
 
