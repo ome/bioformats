@@ -351,6 +351,8 @@ public class ScreenReader extends FormatReader {
           new ClassList<IFormatReader>(IFormatReader.class);
         chosenReaders.addClass(chosenReader);
         stitcher.setReaderClassList(chosenReaders);
+        // Re-initialize
+        reader.setId(files[well]);
       }
 
       if (ordering[well] != null) {
