@@ -131,13 +131,10 @@ public:
 
 TEST_P(ModelTest, Parse)
 {
-  const ModelTestParameters& params = GetParam();
 }
 
 TEST_P(ModelTest, Update)
 {
-  const ModelTestParameters& params = GetParam();
-
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
@@ -148,8 +145,6 @@ TEST_P(ModelTest, Update)
 
 TEST_P(ModelTest, CreateXML)
 {
-  const ModelTestParameters& params = GetParam();
-
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
@@ -166,8 +161,6 @@ TEST_P(ModelTest, CreateXML)
 
 TEST_P(ModelTest, CreateXMLRoundTrip)
 {
-  const ModelTestParameters& params = GetParam();
-
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;

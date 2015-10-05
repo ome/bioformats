@@ -131,8 +131,6 @@ public:
 
 TEST_P(TIFFWriterTest, setId)
 {
-  const TileTestParameters& params = GetParam();
-
   std::vector<ome::compat::shared_ptr<CoreMetadata> > seriesList;
   for (TIFF::const_iterator i = tiff->begin();
        i != tiff->end();

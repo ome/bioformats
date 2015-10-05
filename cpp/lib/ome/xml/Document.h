@@ -39,7 +39,6 @@
 #ifndef OME_XML_MODEL_DOCUMENT_H
 #define OME_XML_MODEL_DOCUMENT_H
 
-#include <ome/common/xml/EntityResolver.h>
 #include <ome/common/xml/dom/Document.h>
 
 namespace ome

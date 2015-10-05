@@ -63,7 +63,7 @@ TEST(TileCache, Insert)
       ASSERT_TRUE(static_cast<bool>(cc.find(i)));
     }
 
-  ASSERT_EQ(16, c.size());
+  ASSERT_EQ(16U, c.size());
 }
 
 TEST(TileCache, InsertFail)
@@ -83,13 +83,12 @@ TEST(TileCache, InsertFail)
 TEST(TileCache, IndexOperator)
 {
   TileCache c;
-  const TileCache& cc(c);
 
   for (dimension_size_type i = 0; i < 16; ++i)
     {
       ASSERT_FALSE(static_cast<bool>(c[i]));
     }
-  ASSERT_EQ(16, c.size());
+  ASSERT_EQ(16U, c.size());
 
   c.clear();
   for (dimension_size_type i = 0; i < 16; ++i)
@@ -98,7 +97,7 @@ TEST(TileCache, IndexOperator)
       ASSERT_TRUE(static_cast<bool>(c[i]));
     }
 
-  ASSERT_EQ(16, c.size());
+  ASSERT_EQ(16U, c.size());
 }
 
 TEST(TileCache, Remove)
@@ -129,8 +128,8 @@ TEST(TileCache, Clear)
       ASSERT_TRUE(c.insert(i, ome::compat::shared_ptr<TileBuffer>(new TileBuffer((8192)))));
     }
 
-  ASSERT_EQ(16, c.size());
+  ASSERT_EQ(16U, c.size());
 
   c.clear();
-  ASSERT_EQ(0, c.size());
+  ASSERT_EQ(0U, c.size());
 }
