@@ -600,6 +600,7 @@ public class FakeReader extends FormatReader {
     boolean hasSPW = plates > 0 && plateRows > 0 &&
       plateCols > 0 && fields > 0 && plateAcqs > 0;
     if (hasSPW) {
+      if (screens<0) screens = 0;
       // generate SPW metadata and override series count to match
       int imageCount =
         populateSPW(store, screens, plates, plateRows, plateCols, fields, plateAcqs);
