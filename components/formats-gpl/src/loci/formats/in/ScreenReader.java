@@ -51,6 +51,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
@@ -58,7 +59,6 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
-
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.enums.NamingConvention;
@@ -111,6 +111,7 @@ public class ScreenReader extends FormatReader {
     super.reopenFile();
     if (reader != null) {
       reader.reopenFile();
+      reader.setMetadataOptions(getMetadataOptions());
     }
   }
 
@@ -325,9 +326,10 @@ public class ScreenReader extends FormatReader {
 
     core.clear();
 
-    FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
-    stitcher.setReaderClassList(validReaders);
+    ImageReader iReader = new ImageReader(validReaders);
+    FileStitcher stitcher = new FileStitcher(iReader, true);
     stitcher.setCanChangePattern(false);
+    // After setReaderClassList
     reader = new DimensionSwapper(stitcher);
     reader.setMetadataStore(omexmlMeta);
 
@@ -412,4 +414,23 @@ public class ScreenReader extends FormatReader {
     }
   }
 
+  public static void main(String[] args) throws Exception {
+      /*
+    System.out.println("With");
+    CellH5Reader h5 = new CellH5Reader();
+    h5.setId("/opt/data/idr/mitocheck/00001_01.ch5");
+    System.out.println("Without XXXX");
+    h5 = new CellH5Reader();
+    h5.getMetadataOptions().setMetadataLevel(MetadataLevel.NO_OVERLAYS);
+    h5.setId("/opt/data/idr/mitocheck/00001_01.ch5");
+    */
+    new File("/tmp/opt/data/idr/mitocheck/.test.screen.bfmemo").delete();
+    Memoizer m = new Memoizer(0l, new File("/tmp"));
+    m.setId("/opt/data/idr/mitocheck/test.screen");
+
+    System.out.println("RE-OPEN====================");
+    m = new Memoizer(0l, new File("/tmp"));
+    m.setId("/opt/data/idr/mitocheck/test.screen");
+    String files[] = m.getUsedFiles();
+  }
 }
