@@ -47,12 +47,7 @@ Presence: |Good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 Commercial applications that support MRC include: 

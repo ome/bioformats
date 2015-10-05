@@ -47,12 +47,7 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 There are two distinct versions of ND2: an old version, which uses 

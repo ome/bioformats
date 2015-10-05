@@ -54,12 +54,7 @@ Presence: |Good|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 * DICOM stands for "Digital Imaging and Communication in Medicine". 

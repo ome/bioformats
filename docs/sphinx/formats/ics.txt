@@ -20,6 +20,7 @@ Officially Supported Versions: 1.0, 2.0
 
 Reader: ICSReader (:bsd-reader:`Source Code <ICSReader.java>`, :doc:`Supported Metadata Fields </metadata/ICSReader>`)
 
+Writer: ICSWriter (:bsd-writer:`Source Code <ICSWriter.java>`)
 
 Freely Available Software:
 
@@ -48,13 +49,7 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-
 **Additional Information**
-
-
-Writer: ICSWriter (:bsd-writer:`Source Code <ICSWriter.java>`)
-
-Notes:
 
 
 * ICS version 1.0 datasets have two files - an .ics file that contains 

@@ -239,7 +239,7 @@ Supported Formats
      - |Outstanding|
      - |Fair|
      - |Very good|
-     - |no|
+     - |yes|
      - |no|
    * - :doc:`formats/cellomics`
      - .c01
