@@ -1,10 +1,10 @@
 .. index:: Gatan Digital Micrograph
-.. index:: .dm3
+.. index:: .dm3, .dm4
 
 Gatan Digital Micrograph
 ===============================================================================
 
-Extensions: .dm3
+Extensions: .dm3, .dm4
 
 
 Owner: `Gatan <http://www.gatan.com/>`_

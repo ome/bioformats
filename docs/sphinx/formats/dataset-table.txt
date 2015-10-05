@@ -147,7 +147,7 @@ to open/import a dataset in a particular format.
      - .dm2
      - Single file
    * - Gatan Digital Micrograph
-     - .dm3, .dm4
+     - .dm3
      - Single file
    * - Graphics Interchange Format
      - .gif

@@ -341,7 +341,7 @@ Supported Formats
      - |no|
      - |yes|
    * - :doc:`formats/gatan-digital-micrograph`
-     - .dm3
+     - .dm3, .dm4
      - |Very good|
      - |Good|
      - |Fair|
