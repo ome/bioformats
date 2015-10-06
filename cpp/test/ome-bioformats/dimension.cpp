@@ -543,7 +543,7 @@ namespace
                       << " → " << std::setw(2) << std::right << pos2 << " → "
                       << dump_vector<DimensionSet::coord_type>(pos3) << '\n';
             // Check round trip results in same indices.
-            ASSERT_EQ(pos1, pos3);
+            ASSERT_TRUE(pos1 == pos3);
 
             // Check the subrange (which may be the full range)
             {
@@ -552,7 +552,7 @@ namespace
                 {
                   full_index[d] += logical[d].begin;
                 }
-              ASSERT_EQ(full_set.storage_index(full_index), pos2);
+              ASSERT_TRUE(full_set.storage_index(full_index) == pos2);
             }
           }
         std::cout << '\n';
