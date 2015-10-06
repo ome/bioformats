@@ -128,8 +128,9 @@ public class DicomReader extends FormatReader {
   private byte[][] lut;
   private short[][] shortLut;
   private long[] offsets;
-  private int maxPixelValue;
-
+  private int maxPixelRange;
+  private int centerPixelValue;
+  
   private double rescaleSlope = 1.0, rescaleIntercept = 0.0;
 
   private boolean isJP2K = false;
@@ -406,7 +407,10 @@ public class DicomReader extends FormatReader {
         }
       }
       else if (bpp == 2) {
-        if (maxPixelValue == -1) maxPixelValue = 65535;
+        long maxPixelValue = maxPixelRange + (centerPixelValue/2);
+        if (maxPixelRange == -1 || centerPixelValue < (maxPixelRange/2)) {
+          maxPixelValue = FormatTools.defaultMinMax(getPixelType())[1];
+        }
         boolean little = isLittleEndian();
         for (int i=0; i<buf.length; i+=2) {
           short s = DataTools.bytesToShort(buf, i, 2, little);
@@ -432,7 +436,8 @@ public class DicomReader extends FormatReader {
       lut = null;
       offsets = null;
       shortLut = null;
-      maxPixelValue = 0;
+      maxPixelRange = 0;
+      centerPixelValue = 0;
       rescaleSlope = 1.0;
       rescaleIntercept = 0.0;
       pixelSizeX = pixelSizeY = null;
@@ -563,6 +568,18 @@ public class DicomReader extends FormatReader {
         case SLICE_SPACING:
         case RESCALE_INTERCEPT:
         case WINDOW_CENTER:
+            String winCenter = in.readString(elementLength);
+            if (winCenter.trim().length() == 0) centerPixelValue = -1;
+            else {
+              try {
+                centerPixelValue = new Double(winCenter).intValue();
+              }
+              catch (NumberFormatException e) {
+                centerPixelValue = -1;
+              }
+            }
+            addInfo(tag, winCenter);
+            break;
         case RESCALE_SLOPE:
           addInfo(tag, in.readString(elementLength));
           break;
@@ -580,13 +597,13 @@ public class DicomReader extends FormatReader {
         case 537262910:
         case WINDOW_WIDTH:
           String t = in.readString(elementLength);
-          if (t.trim().length() == 0) maxPixelValue = -1;
+          if (t.trim().length() == 0) maxPixelRange = -1;
           else {
             try {
-              maxPixelValue = new Double(t.trim()).intValue();
+              maxPixelRange = new Double(t.trim()).intValue();
             }
             catch (NumberFormatException e) {
-              maxPixelValue = -1;
+              maxPixelRange = -1;
             }
           }
           addInfo(tag, t);
