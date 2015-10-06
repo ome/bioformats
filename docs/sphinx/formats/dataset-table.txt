@@ -100,7 +100,7 @@ to open/import a dataset in a particular format.
      - One .vsi file and an optional directory with a similar name that contains at least one subdirectory with .ets files
    * - CellVoyager
      - .tif, .xml
-     - Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stich together several TIF files.
+     - Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stitch together several TIF files.
    * - CellWorx
      - .pnl, .htd, .log
      - One .htd file plus one or more .pnl or .tif files and optionally one or more .log files
@@ -147,7 +147,7 @@ to open/import a dataset in a particular format.
      - .dm2
      - Single file
    * - Gatan Digital Micrograph
-     - .dm3
+     - .dm3, .dm4
      - Single file
    * - Graphics Interchange Format
      - .gif

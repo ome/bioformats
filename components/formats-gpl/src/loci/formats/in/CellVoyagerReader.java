@@ -130,7 +130,7 @@ public class CellVoyagerReader extends FormatReader
 		this.suffixNecessary = false;
 		this.suffixSufficient = false;
 		this.hasCompanionFiles = true;
-		this.datasetDescription = "Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stich together several TIF files.";
+		this.datasetDescription = "Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stitch together several TIF files.";
 		this.domains = new String[] { FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN };
 	}
 
