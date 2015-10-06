@@ -932,7 +932,7 @@ public class XMLMockObjects
       screenIndex = 0;
     }
     // ticket:3102
-    plateIndex = numberOfScreens*screenIndex+plateIndex;
+    int totalPlateIndex = numberOfScreens*screenIndex+plateIndex;
     Experiment exp = createExperimentWithMicrobeam(plateIndex);
     ome.addExperiment(exp);
 
@@ -940,9 +940,10 @@ public class XMLMockObjects
       numberOfPlateAcquisition = 0;
     }
     Plate plate = new Plate();
-    plate.setID("Plate:"+plateIndex);
-    plate.setName("Plate Name "+plateIndex);
-    plate.setDescription("Plate Description "+plateIndex);
+    plate.setID("Plate:"+totalPlateIndex);
+    plate.setName("Plate Name "+totalPlateIndex);
+    plate.setDescription(String.format("Plate %d of %d",
+        plateIndex, numberOfPlates));
     plate.setExternalIdentifier("External Identifier");
     plate.setRows(new PositiveInteger(rows));
     plate.setColumns(new PositiveInteger(columns));
@@ -957,10 +958,11 @@ public class XMLMockObjects
     if (numberOfPlateAcquisition > 0) {
       for (int i = 0; i < numberOfPlateAcquisition; i++) {
         pa = new PlateAcquisition();
-        v = i+plateIndex*numberOfPlates*numberOfScreens;
+        v = i+totalPlateIndex*numberOfPlateAcquisition;
         pa.setID("PlateAcquisition:"+v);
         pa.setName("PlateAcquisition Name "+v);
-        pa.setDescription("PlateAcquisition Description "+v);
+        pa.setDescription(String.format("PlateAcquisition %d of %d",
+            i, numberOfPlateAcquisition));
         pa.setEndTime(new Timestamp(TIME));
         pa.setStartTime(new Timestamp(TIME));
         plate.addPlateAcquisition(pa);
@@ -971,13 +973,14 @@ public class XMLMockObjects
     Well well;
     WellSample sample;
     Image image;
-    int i = plateIndex*rows*columns*fields*numberOfPlateAcquisition;
+    int i = totalPlateIndex*rows*columns*fields*numberOfPlateAcquisition;
     Iterator<PlateAcquisition> k;
     int kk = 0;
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
         well = new Well();
-        well.setID(String.format("Well:%d_%d_%d", row, column, plateIndex));
+        well.setID(String.format("Well:%d_%d_%d_%d",
+            screenIndex, plateIndex, row, column));
         well.setRow(new NonNegativeInteger(row));
         well.setColumn(new NonNegativeInteger(column));
         well.setType("Transfection: done");
@@ -990,8 +993,8 @@ public class XMLMockObjects
             sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
             sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
             sample.setTimepoint(new Timestamp(TIME));
-            sample.setID(String.format("WellSample:%d_%d_%d_%d",
-                plateIndex, row, column, field));
+            sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
+                screenIndex, plateIndex, row, column, field));
             sample.setIndex(new NonNegativeInteger(i));
             //create an image. and register it
             image = createImageWithExperiment(i, true, exp);
@@ -1007,13 +1010,13 @@ public class XMLMockObjects
           while (k.hasNext()) {
             pa = k.next();
             for (int field = 0; field < fields; field++) {
-              v = kk+plateIndex*numberOfPlates*numberOfScreens;
+              v = kk+totalPlateIndex*numberOfPlates*numberOfScreens;
               sample = new WellSample();
               sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
               sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
               sample.setTimepoint(new Timestamp(TIME));
-              sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
-                  plateIndex, row, column, field, v));
+              sample.setID(String.format("WellSample:%d_%d_%d_%d_%d_%d",
+                  screenIndex, plateIndex, row, column, field, v));
               sample.setIndex(new NonNegativeInteger(i));
               //create an image. and register it
               //image = createImage(i, true);
