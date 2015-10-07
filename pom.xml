@@ -362,6 +362,13 @@
               <exclude>**/*.h</exclude>
             </excludes>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -780,33 +787,6 @@
           <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
         </snapshotRepository>
       </distributionManagement>
-    </profile>
-
-    <!-- Build test artifact when tests are present. -->
-    <profile>
-      <id>test-jar</id>
-      <activation>
-        <file>
-          <!-- NB: Cannot use ${project.build.testSourceDirectory} because
-               Maven only limitedly interpolates this section of the POM.
-               See: http://maven.apache.org/pom.html#Activation -->
-          <exists>${basedir}/test</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>test-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
 
     <!-- Run integration tests when "-P run-its" is passed.
