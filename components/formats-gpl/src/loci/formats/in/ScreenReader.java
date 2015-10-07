@@ -182,8 +182,8 @@ public class ScreenReader extends FormatReader {
     final List<String> allFiles = new ArrayList<String>();
     try {
       for (String file : files[spotIndex]) {
+        reader.close();
         reader.setId(file);
-
         if (plateMetadataFiles != null) {
           for (String f : plateMetadataFiles) {
             allFiles.add(f);
@@ -346,6 +346,7 @@ public class ScreenReader extends FormatReader {
         continue;
       }
       LOGGER.debug("Initializing pattern {} for spot {}", files[well], well);
+      reader.close();
       reader.setId(files[well][0]);
 
       // At this point, we have a concrete reader. Use it
