@@ -670,7 +670,7 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   @Override
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 2);
+    //FormatTools.assertId(currentId, false, 2);
     for (int i=0; i<readers.length; i++) readers[i].setMetadataStore(store);
   }
 
