@@ -111,6 +111,7 @@ public class ScreenReader extends FormatReader {
     super.reopenFile();
     if (reader != null) {
       reader.reopenFile();
+      reader.setMetadataOptions(getMetadataOptions());
     }
   }
 
@@ -325,9 +326,10 @@ public class ScreenReader extends FormatReader {
 
     core.clear();
 
-    FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
-    stitcher.setReaderClassList(validReaders);
+    ImageReader iReader = new ImageReader(validReaders);
+    FileStitcher stitcher = new FileStitcher(iReader, true);
     stitcher.setCanChangePattern(false);
+    // After setReaderClassList
     reader = new DimensionSwapper(stitcher);
     reader.setMetadataStore(omexmlMeta);
 
