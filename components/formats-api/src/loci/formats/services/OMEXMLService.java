@@ -38,6 +38,7 @@ import loci.common.services.Service;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.Modulo;
+import loci.formats.in.MetadataLevel;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
@@ -256,6 +257,14 @@ public interface OMEXMLService extends Service {
    * (source) into a metadata store (destination).
    */
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest);
+
+  /**
+   * Copies information from a metadata retrieval object
+   * (source) into a metadata store (destination) applying
+   * the {@link MetadataLevel}.
+   */
+  public void convertMetadata(MetadataRetrieve src, MetadataStore dest,
+    MetadataLevel level);
 
   /**
    * Remove all of the BinData elements from the given OME-XML metadata object.
