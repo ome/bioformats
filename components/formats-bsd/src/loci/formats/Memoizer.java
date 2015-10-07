@@ -37,7 +37,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.ArrayIndexOutOfBoundsException;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -46,11 +45,13 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
@@ -60,8 +61,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
@@ -430,6 +429,7 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer() {
     this(DEFAULT_MINIMUM_ELAPSED);
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -444,6 +444,7 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(long minimumElapsed) {
     this(minimumElapsed, null);
     this.doInPlaceCaching = true;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -462,6 +463,7 @@ public class Memoizer extends ReaderWrapper {
     super();
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -474,6 +476,7 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(IFormatReader r) {
     this(r, DEFAULT_MINIMUM_ELAPSED);
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -490,6 +493,7 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(IFormatReader r, long minimumElapsed) {
     this(r, minimumElapsed, null);
     this.doInPlaceCaching = true;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -509,8 +513,52 @@ public class Memoizer extends ReaderWrapper {
     super(r);
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+    configure(reader.getMetadataOptions());
   }
 
+  /**
+   * Used to inject all the properties necessary for {@link Memoizer}
+   * creation into {@link MetadataOptions}. This is called by every
+   * constructor so that {@link IFormatReader} instances created
+   * internally can also make use of memoization.
+   *
+   * @param options
+   */
+  public void configure(MetadataOptions options) {
+    String k = Memoizer.class.getName();
+    options.setMetadataOption(k + ".cacheDirectory", this.directory == null
+            ? null : this.directory.toString());
+    options.setMetadataOption(k + ".inPlace", "" + this.doInPlaceCaching);
+    options.setMetadataOption(k + ".minimumElapsed", "" + this.minimumElapsed);
+  }
+
+  /**
+   * If {@link MetadataOptions} have been configured per
+   * {@link #configure(MetadataOptions)}, then wrap the given
+   * {@link IFormatReader} with a {@link Memoizer} instance and return.
+   * Otherwise, return the {@link IFormatReader} unchanged.
+   *
+   * @param options If null, return the reader
+   * @param r
+   * @return Either a {@link Memoizer} or the {@link IFormatReader} argument.
+   */
+  public static IFormatReader wrap(MetadataOptions options, IFormatReader r) {
+    if (options == null) {
+      return null;
+    }
+    String k = Memoizer.class.getName();
+    String elapsed = options.getMetadataOption(k + ".minimumElapsed");
+    String inplace = options.getMetadataOption(k + ".inPlace");
+    String cachedir = options.getMetadataOption(k + ".cacheDirectory");
+
+    if (elapsed == null) {
+      return r;
+    } else if (Boolean.valueOf(inplace)) {
+      return new Memoizer(r, Long.valueOf(elapsed));
+    } else{
+      return new Memoizer(r, Long.valueOf(elapsed), new File(cachedir));
+    }
+  }
 
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded

@@ -114,8 +114,8 @@ public class ScreenReader extends FormatReader {
     classes.addClass(chosenReader);
     reader = new ImageReader(classes);
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.MINIMUM));
-    // Inplace memoize whatever files are opened internally if possible.
-    reader = new Memoizer(reader, 0);
+    // memoize whatever files are opened internally if possible.
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
