@@ -222,7 +222,11 @@ public class ImageReader implements IFormatReader {
     return getReaders()[0].getSupportedMetadataLevels();
   }
 
-  /* @see loci.formats.IMetadataConfigurable#getMetadataOptions() */
+  /**
+   * Assumes that all the readers have the same {@link MetadataOption}
+   * instance set. This <em>may</em> not hold if a caller has actively
+   * retrieved one of the readers and called {@link #setMetadataOptions(MetadataOptions)}.
+   */
   @Override
   public MetadataOptions getMetadataOptions() {
     return getReaders()[0].getMetadataOptions();

@@ -46,4 +46,24 @@ public interface MetadataOptions {
    */
   MetadataLevel getMetadataLevel();
 
+  /**
+   * Retrieve a value which may have been set via
+   * {@link #setMetadataOption(String, String)}. Consumers must be ready for
+   * nulls but an exception will not be thrown.
+   *
+   * @return String value or null if the key is not present.
+   */
+  String getMetadataOption(String key);
+
+  /**
+   * Place an arbitrary key/value pair in this instance for influencing
+   * the behavior of readers. See the individual reader documentation
+   * for details.
+   *
+   * @param key May not be null.
+   * @param value null value unsets the key.
+   * @return previous value if any.
+   */
+  String setMetadataOption(String key, String value);
+
 }

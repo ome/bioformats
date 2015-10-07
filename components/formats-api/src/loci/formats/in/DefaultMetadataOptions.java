@@ -32,6 +32,9 @@
 
 package loci.formats.in;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author callan
@@ -39,6 +42,8 @@ package loci.formats.in;
 public class DefaultMetadataOptions implements MetadataOptions {
 
   private MetadataLevel level;
+
+  private final Map<String, String> extensibleOptions = new HashMap<String, String>();
 
   /**
    * Construct a new DefaultMetadataOptions.
@@ -70,6 +75,16 @@ public class DefaultMetadataOptions implements MetadataOptions {
   @Override
   public void setMetadataLevel(MetadataLevel level) {
     this.level = level;
+  }
+
+  @Override
+  public String getMetadataOption(String key) {
+    return extensibleOptions.get(key);
+  }
+
+  @Override
+  public String setMetadataOption(String key, String value) {
+    return extensibleOptions.put(key, value);
   }
 
 }
