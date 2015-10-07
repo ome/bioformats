@@ -111,8 +111,8 @@ public class ScreenReader extends FormatReader {
   public void reopenFile() throws IOException {
     ClassList<IFormatReader> classes = new ClassList<IFormatReader>(IFormatReader.class);
     classes.addClass(chosenReader);
-    reader = new ImageReader(classes);
-    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+    // Inplace memoize whatever files are opened internally if possible.
+    reader = new Memoizer(new ImageReader(classes), 0);
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
