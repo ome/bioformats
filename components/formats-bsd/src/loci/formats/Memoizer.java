@@ -526,10 +526,9 @@ public class Memoizer extends ReaderWrapper {
    */
   public void configure(MetadataOptions options) {
     String k = Memoizer.class.getName();
-    options.setMetadataOption(k + ".cacheDirectory", this.directory == null
-            ? null : this.directory.toString());
-    options.setMetadataOption(k + ".inPlace", "" + this.doInPlaceCaching);
-    options.setMetadataOption(k + ".minimumElapsed", "" + this.minimumElapsed);
+    options.setMetadataOption(k + ".cacheDirectory", this.directory);
+    options.setMetadataOption(k + ".inPlace", this.doInPlaceCaching);
+    options.setMetadataOption(k + ".minimumElapsed", this.minimumElapsed);
   }
 
   /**
@@ -547,16 +546,24 @@ public class Memoizer extends ReaderWrapper {
       return null;
     }
     String k = Memoizer.class.getName();
-    String elapsed = options.getMetadataOption(k + ".minimumElapsed");
-    String inplace = options.getMetadataOption(k + ".inPlace");
-    String cachedir = options.getMetadataOption(k + ".cacheDirectory");
+    Object elapsed = options.getMetadataOption(k + ".minimumElapsed");
+    Object inplace = options.getMetadataOption(k + ".inPlace");
+    Object cachedir = options.getMetadataOption(k + ".cacheDirectory");
+    if (!(elapsed instanceof Long)) {
+        LOGGER.warn("config: minimumElapsed wrong type: {}", elapsed);
+        return r;
+    } else if (!(inplace instanceof Boolean)) {
+        LOGGER.warn("config: inplace wrong type: {}", inplace);
+        return r;
+    } else if (cachedir != null && !(cachedir instanceof File)) {
+        LOGGER.warn("config: cachedir wrong type: {}", cachedir);
+        return r;
+    }
 
-    if (elapsed == null) {
-      return r;
-    } else if (Boolean.valueOf(inplace)) {
-      return new Memoizer(r, Long.valueOf(elapsed));
+    if (((Boolean) inplace).booleanValue()) {
+      return new Memoizer(r, (Long) inplace);
     } else{
-      return new Memoizer(r, Long.valueOf(elapsed), new File(cachedir));
+      return new Memoizer(r, (Long) elapsed, (File) cachedir);
     }
   }
 

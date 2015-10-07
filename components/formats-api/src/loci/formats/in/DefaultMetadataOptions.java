@@ -36,14 +36,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author callan
+ * {@link MetadataOptions} instance which is created by most reader classes
+ * on construction. Optimally, this initial instance will be passed down through
+ * any reader stack and further instances will not need to be created.
  */
 public class DefaultMetadataOptions implements MetadataOptions {
 
   private MetadataLevel level;
 
-  private final Map<String, String> extensibleOptions = new HashMap<String, String>();
+  private final Map<String, Object > extensibleOptions = new HashMap<String, Object>();
 
   /**
    * Construct a new DefaultMetadataOptions.
@@ -78,12 +79,12 @@ public class DefaultMetadataOptions implements MetadataOptions {
   }
 
   @Override
-  public String getMetadataOption(String key) {
+  public Object getMetadataOption(String key) {
     return extensibleOptions.get(key);
   }
 
   @Override
-  public String setMetadataOption(String key, String value) {
+  public Object setMetadataOption(String key, Object value) {
     return extensibleOptions.put(key, value);
   }
 

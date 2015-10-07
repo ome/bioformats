@@ -33,8 +33,7 @@
 package loci.formats.in;
 
 /**
- * 
- * @author callan
+ *
  */
 public interface MetadataOptions {
 
@@ -48,12 +47,12 @@ public interface MetadataOptions {
 
   /**
    * Retrieve a value which may have been set via
-   * {@link #setMetadataOption(String, String)}. Consumers must be ready for
+   * {@link #setMetadataOption(String, Object)}. Consumers must be ready for
    * nulls but an exception will not be thrown.
    *
-   * @return String value or null if the key is not present.
+   * @return value or null if the key is not present.
    */
-  String getMetadataOption(String key);
+  Object getMetadataOption(String key);
 
   /**
    * Place an arbitrary key/value pair in this instance for influencing
@@ -61,9 +60,9 @@ public interface MetadataOptions {
    * for details.
    *
    * @param key May not be null.
-   * @param value null value unsets the key.
+   * @param value A null value unsets the key.
    * @return previous value if any.
    */
-  String setMetadataOption(String key, String value);
+  Object setMetadataOption(String key, Object value);
 
 }
