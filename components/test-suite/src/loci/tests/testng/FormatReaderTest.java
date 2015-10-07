@@ -1604,6 +1604,13 @@ public class FormatReaderTest {
         }
 
         for (int i=0; i<maxFiles && success; i++) {
+          if (reader.getFormat().equals("Screen") &&
+            file.toLowerCase().endsWith(".screen") &&
+            !base[i].toLowerCase().endsWith(".screen"))
+          {
+            continue;
+          }
+
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
           if (reader.getFormat().equals("InCell 1000/2000")) {
@@ -2291,6 +2298,10 @@ public class FormatReaderTest {
             if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
               r instanceof FilePatternReader)
             {
+              continue;
+            }
+
+            if (!used[i].toLowerCase().endsWith(".screen") && r instanceof ScreenReader) {
               continue;
             }
 

@@ -100,6 +100,7 @@ public class FileStitcher extends ReaderWrapper {
 
   private ExternalSeries[] externals;
   private ClassList<IFormatReader> classList;
+  private String currentPattern;
 
   // -- Constructors --
 
@@ -552,6 +553,7 @@ public class FileStitcher extends ReaderWrapper {
       coreIndex = 0;
       series = 0;
       store = null;
+      currentPattern = null;
     }
   }
 
@@ -851,9 +853,11 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public void reopenFile() throws IOException {
     reader.reopenFile();
-    for (ExternalSeries s : externals) {
-      for (DimensionSwapper r : s.getReaders()) {
-        r.reopenFile();
+    if (externals != null) {
+      for (ExternalSeries s : externals) {
+        for (DimensionSwapper r : s.getReaders()) {
+          r.reopenFile();
+        }
       }
     }
   }
@@ -862,13 +866,15 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public void setId(String id) throws FormatException, IOException {
     if (getCurrentFile() != null &&
-      new Location(id).getAbsolutePath().equals(getCurrentFile()))
+      (new Location(id).getAbsolutePath().equals(getCurrentFile()) ||
+      id.equals(currentPattern)))
     {
       // already initialized this file
       return;
     }
 
     close();
+    currentPattern = id;
     initFile(id);
   }
 
@@ -882,7 +888,7 @@ public class FileStitcher extends ReaderWrapper {
     if (!patternIds) {
       patternIds = fp.isValid() && fp.getFiles().length > 1;
     }
-    else {
+    else if (canChangePattern()) {
       patternIds =
         !new Location(id).exists() && Location.getMappedId(id).equals(id);
     }
