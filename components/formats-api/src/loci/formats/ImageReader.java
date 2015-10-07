@@ -43,6 +43,7 @@ import java.util.Set;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
@@ -118,12 +119,14 @@ public class ImageReader implements IFormatReader {
   /** Constructs a new ImageReader from the given list of reader classes. */
   public ImageReader(ClassList<IFormatReader> classList) {
     // add readers to the list
+    MetadataOptions options = new DefaultMetadataOptions();
     List<IFormatReader> list = new ArrayList<IFormatReader>();
     Class<? extends IFormatReader>[] c = classList.getClasses();
     for (int i=0; i<c.length; i++) {
       IFormatReader reader = null;
       try {
         reader = c[i].newInstance();
+        reader.setMetadataOptions(options);
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
