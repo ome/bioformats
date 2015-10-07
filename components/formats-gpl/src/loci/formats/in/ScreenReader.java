@@ -340,6 +340,9 @@ public class ScreenReader extends FormatReader {
     // After setReaderClassList
     reader = new DimensionSwapper(stitcher);
     reader.setMetadataStore(omexmlMeta);
+    // Note: by passing this in we allow lower-level readers
+    // to change our settings here.
+    reader.setMetadataOptions(getMetadataOptions());
 
     for (int well=0; well<files.length; well++) {
       if (files[well] == null || files[well][0] == null) {
