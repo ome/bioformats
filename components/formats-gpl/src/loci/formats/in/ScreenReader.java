@@ -51,6 +51,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
@@ -113,6 +114,8 @@ public class ScreenReader extends FormatReader {
     classes.addClass(chosenReader);
     reader = new ImageReader(classes);
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+    // Inplace memoize whatever files are opened internally if possible.
+    reader = new Memoizer(reader, 0);
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
