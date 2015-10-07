@@ -126,6 +126,8 @@ public class ImageReader implements IFormatReader {
       IFormatReader reader = null;
       try {
         reader = c[i].newInstance();
+        // TODO: this allows each instance to unnecessarily
+        // create its own MetadataOptions instance first.
         reader.setMetadataOptions(options);
       }
       catch (IllegalAccessException exc) { }
