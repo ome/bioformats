@@ -281,6 +281,15 @@ public class CellH5Reader extends FormatReader {
       }
       jhdf = null;
       lastChannel = 0;
+
+      minX = minY = minZ = maxX = maxY = maxZ = 0d;
+      store = null;
+      CellH5PositionList.clear();
+      CellH5PathsToImageData.clear();
+      cellObjectNames.clear();
+      times = null;
+      classes = null;
+      bbox = null;
     }
   }
 
@@ -614,10 +623,10 @@ public class CellH5Reader extends FormatReader {
           classColorHexString = (String) classDef[cls].get("color");
           classColors.add(hex2Rgb(classColorHexString));
         }
-        if (classDef.length > 0) {
-          hasClassification = true;
-          classes = jhdf.readCompoundArrayDataMap(coord.pathToPosition +
-            featureName + CellH5Constants.PREDICTED_CLASS_LABELS);
+        if (classDef.length > 0 && jhdf.exists(coord.pathToPosition + featureName + CellH5Constants.PREDICTED_CLASS_LABELS)) {
+            hasClassification = true;
+            classes = jhdf.readCompoundArrayDataMap(coord.pathToPosition +
+              featureName + CellH5Constants.PREDICTED_CLASS_LABELS);
         }
       }
 
