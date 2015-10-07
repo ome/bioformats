@@ -97,7 +97,9 @@ public class ScreenReader extends FormatReader {
     Class<? extends IFormatReader>[] classArray = classes.getClasses();
     validReaders = new ClassList<IFormatReader>(IFormatReader.class);
     for (Class<? extends IFormatReader> c : classArray) {
-      if (!c.equals(ScreenReader.class) && !c.equals(OMETiffReader.class)) {
+      if (!c.equals(ScreenReader.class) &&
+          !c.equals(DeltavisionReader.class) &&
+          !c.equals(OMETiffReader.class)) {
         validReaders.addClass(c);
       }
     }
@@ -331,12 +333,28 @@ public class ScreenReader extends FormatReader {
     reader = new DimensionSwapper(stitcher);
     reader.setMetadataStore(omexmlMeta);
 
+    Class<? extends IFormatReader> chosenReader = null;
     for (int well=0; well<files.length; well++) {
       if (files[well] == null) {
         continue;
       }
       LOGGER.debug("Initializing pattern {} for spot {}", files[well], well);
       reader.setId(files[well]);
+
+      // At this point, we have a concrete reader. Use it
+      // for all subsequent setId calls.
+      if (chosenReader == null) {
+        chosenReader = stitcher.unwrap().getClass();
+        LOGGER.info("Using {} for all further calls.",
+          chosenReader.getSimpleName());
+        ClassList<IFormatReader> chosenReaders =
+          new ClassList<IFormatReader>(IFormatReader.class);
+        chosenReaders.addClass(chosenReader);
+        stitcher.setReaderClassList(chosenReaders);
+        // Re-initialize
+        reader.setId(files[well]);
+      }
+
       if (ordering[well] != null) {
         reader.swapDimensions(ordering[well]);
       }
