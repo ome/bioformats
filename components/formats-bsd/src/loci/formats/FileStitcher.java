@@ -1260,8 +1260,8 @@ public class FileStitcher extends ReaderWrapper {
         }
         else readers[i] = new DimensionSwapper();
         readers[i].setGroupFiles(false);
+        readers[i].setId(files[i]);
       }
-      readers[0].setId(files[0]);
 
       ag = new AxisGuesser(this.pattern, readers[0].getDimensionOrder(),
         readers[0].getSizeZ(), readers[0].getSizeT(),
