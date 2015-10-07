@@ -75,6 +75,7 @@ public class FilePatternReader extends FormatReader {
       }
     }
     helper = new FileStitcher(new ImageReader(newClasses));
+    helper.setMetadataOptions(getMetadataOptions());
 
     suffixSufficient = true;
   }
