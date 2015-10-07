@@ -790,7 +790,7 @@
           <!-- NB: Cannot use ${project.build.testSourceDirectory} because
                Maven only limitedly interpolates this section of the POM.
                See: http://maven.apache.org/pom.html#Activation -->
-          <exists>${basedir}/src/test/java</exists>
+          <exists>${basedir}/test</exists>
         </file>
       </activation>
       <build>
