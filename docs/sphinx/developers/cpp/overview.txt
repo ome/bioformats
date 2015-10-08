@@ -62,8 +62,14 @@ in addition to Bio-Formats, and is useful on systems where the
 prerequisites are unavailable, for example on Windows which lacks a
 package manager or on older systems such as CentOS 6 where the
 versions available through a package manager are too old.  Note that
-the superbuild cannot provide *all* prerequisites; some will still
-need installing before building, shown in the table below.
+the super-build cannot provide *all* prerequisites; some will still
+need installing before building, shown in the table below.  Also note
+that the super-build may link against some system libraries when
+building packages such as libtiff, where the build system for the
+package will optionally use certain system libraries if available;
+this may result in a build which will not work on other systems unless
+these libraries are also installed.  In the future, these dependencies
+will also be provided by the super-build.
 
 .. tabularcolumns:: |l|l|l|c|c|c|c|
 
