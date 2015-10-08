@@ -638,7 +638,7 @@ reader = GatanDM2Reader
 extensions = .dm3, .dm4
 owner = `Gatan <http://www.gatan.com/>`_
 bsd = no
-versions = 3
+versions = 3, 4
 software = `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ \n
 `EMAN <http://blake.bcm.edu/EMAN/>`_
 weHave = * Gatan's ImageReader2003 code (from 2003, in C++) \n
