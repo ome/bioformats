@@ -1179,7 +1179,7 @@ public class FileStitcher extends ReaderWrapper {
    *
    * @return An array of size 2, dimensioned {file index, image index}.
    */
-  protected int[] computeIndices(int no) throws FormatException, IOException {
+  public int[] computeIndices(int no) throws FormatException, IOException {
     if (noStitch) return new int[] {0, no};
     int sno = getCoreIndex();
     ExternalSeries s = externals[getExternalSeries()];
