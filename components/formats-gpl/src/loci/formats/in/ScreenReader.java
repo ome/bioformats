@@ -79,6 +79,7 @@ public class ScreenReader extends FormatReader {
   private String[] plateMetadataFiles;
   private String[][] files;
   private String[] ordering;
+  private int[][][] fileIndexes;
 
   private Class<? extends IFormatReader> chosenReader = null;
   private transient IFormatReader reader;
@@ -166,9 +167,8 @@ public class ScreenReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int spotIndex = seriesMap.get(getCoreIndex());
-    int planesPerFile = getImageCount() / files[spotIndex].length;
-    int fileIndex = no / planesPerFile;
-    int planeIndex = no % planesPerFile;
+    int fileIndex = fileIndexes[spotIndex][no][0];
+    int planeIndex = fileIndexes[spotIndex][no][1];
     reader.setId(files[spotIndex][fileIndex]);
     return reader.openBytes(planeIndex, buf, x, y, w, h);
   }
@@ -220,6 +220,7 @@ public class ScreenReader extends FormatReader {
       spotMap.clear();
       files = null;
       ordering = null;
+      fileIndexes = null;
     }
   }
 
@@ -282,6 +283,7 @@ public class ScreenReader extends FormatReader {
     wells = maxRow * maxCol;
     files = new String[wells * fields][1];
     ordering = new String[wells * fields];
+    fileIndexes = new int[wells * fields][][];
 
     for (int well=0; well<wells; well++) {
       IniTable wellTable = tables.getTable("Well " + well);
@@ -378,6 +380,11 @@ public class ScreenReader extends FormatReader {
       spotMap.put(well, core.size() - 1);
 
       files[well] = reader.getUsedFiles();
+
+      fileIndexes[well] = new int[wcore.get(0).imageCount][];
+      for (int plane=0; plane<fileIndexes[well].length; plane++) {
+        fileIndexes[well][plane] = stitcher.computeIndices(plane);
+      }
     }
 
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
