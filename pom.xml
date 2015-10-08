@@ -344,6 +344,7 @@
           <version>2.4</version>
           <!-- Always add classpath to JAR manifests. -->
           <configuration>
+            <skipIfEmpty>true</skipIfEmpty>
             <archive>
               <manifest>
                 <addClasspath>true</addClasspath>
