@@ -982,13 +982,14 @@ presenceRating = Poor
 utilityRating = Fair
 reader = InveonReader
 
-[IPLab-Mac]
+[IVision]
+pagename = iplab-mac
 extensions = .ipm
 owner = `BioVision Technologies <http://biovis.com/>`_
 bsd = no
-weHave = * a few IPLab-Mac datasets \n
+weHave = * a few iVision-Mac datasets \n
 * a specification document
-weWant = * more IPLab-Mac datasets
+weWant = * more iVision-Mac datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -996,6 +997,7 @@ presenceRating = Poor
 utilityRating = Fair
 privateSpecification = true
 reader = IvisionReader
+notes = iVision-Mac was formerly called IPLab for Macintosh.
 
 [IPLab]
 extensions = .ipl
