@@ -16,7 +16,7 @@ BSD-licensed: |no|
 
 Export: |no|
 
-Officially Supported Versions: 3
+Officially Supported Versions: 3, 4
 
 Reader: GatanReader (:bfreader:`Source Code <GatanReader.java>`, :doc:`Supported Metadata Fields </metadata/GatanReader>`)
 

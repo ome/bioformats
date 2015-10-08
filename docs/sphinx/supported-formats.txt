@@ -962,7 +962,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/pgm`
-     - .pgm
+     - .pbm, .pgm, .ppm
      - |Very good|
      - |Good|
      - |Outstanding|

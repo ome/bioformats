@@ -987,7 +987,7 @@ pagename = iplab-mac
 extensions = .ipm
 owner = `BioVision Technologies <http://biovis.com/>`_
 bsd = no
-weHave = * a few iVision-Mac datasets \n
+weHave = * a few iVision-Mac datasets\n
 * a specification document
 weWant = * more iVision-Mac datasets
 pixelsRating = Very good
