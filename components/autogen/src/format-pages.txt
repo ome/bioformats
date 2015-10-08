@@ -635,7 +635,7 @@ utilityRating = Good
 reader = GatanDM2Reader
 
 [Gatan Digital Micrograph]
-extensions = .dm3
+extensions = .dm3, .dm4
 owner = `Gatan <http://www.gatan.com/>`_
 bsd = no
 versions = 3
