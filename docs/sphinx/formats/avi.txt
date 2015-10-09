@@ -18,7 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`AVI (Audio Video Interleave) <avi-metadata>`
+Reader: AVIReader (:bsd-reader:`Source Code <AVIReader.java>`, :doc:`Supported Metadata Fields </metadata/AVIReader>`)
+
 
 Freely Available Software:
 
@@ -55,7 +56,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`AVIReader.java`
 
 Notes:
 

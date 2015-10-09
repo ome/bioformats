@@ -17,7 +17,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Inveon <inveon-metadata>`
+Reader: InveonReader (:bfreader:`Source Code <InveonReader.java>`, :doc:`Supported Metadata Fields </metadata/InveonReader>`)
+
 
 
 
@@ -45,7 +46,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`InveonReader.java`
 
 Notes:
 

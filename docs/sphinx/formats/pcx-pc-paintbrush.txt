@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PCX (PC Paintbrush) <pcx-pc-paintbrush-metadata>`
+Reader: PCXReader (:bsd-reader:`Source Code <PCXReader.java>`, :doc:`Supported Metadata Fields </metadata/PCXReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`PCXReader.java`
 
 Notes:
 

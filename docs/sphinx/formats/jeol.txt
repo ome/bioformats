@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`JEOL <jeol-metadata>`
+Reader: JEOLReader (:bfreader:`Source Code <JEOLReader.java>`, :doc:`Supported Metadata Fields </metadata/JEOLReader>`)
+
 
 
 
@@ -49,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`JEOLReader.java`
 
 Notes:
 

@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Olympus ScanR <olympus-scanr-metadata>`
+Reader: ScanrReader (:bfreader:`Source Code <ScanrReader.java>`, :doc:`Supported Metadata Fields </metadata/ScanrReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`ScanrReader.java`
 
 Notes:
 

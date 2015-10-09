@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Hamamatsu HIS <hamamatsu-his-metadata>`
+Reader: HISReader (:bfreader:`Source Code <HISReader.java>`, :doc:`Supported Metadata Fields </metadata/HISReader>`)
+
 
 
 
@@ -49,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`HISReader.java`
 
 Notes:
 

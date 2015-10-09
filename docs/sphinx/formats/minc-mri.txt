@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`MINC MRI <minc-mri-metadata>`
+Reader: MINCReader (:bfreader:`Source Code <MINCReader.java>`, :doc:`Supported Metadata Fields </metadata/MINCReader>`)
+
 
 Freely Available Software:
 
@@ -49,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`MINCReader.java`
 
 Notes:
 

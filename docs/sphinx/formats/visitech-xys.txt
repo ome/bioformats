@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`VisiTech XYS <visitech-xys-metadata>`
+Reader: VisitechReader (:bfreader:`Source Code <VisitechReader.java>`, :doc:`Supported Metadata Fields </metadata/VisitechReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`VisitechReader.java`
 
 Notes:
 

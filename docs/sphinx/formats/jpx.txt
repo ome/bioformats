@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`JPX <jpx-metadata>`
+Reader: JPXReader (:bfreader:`Source Code <JPXReader.java>`, :doc:`Supported Metadata Fields </metadata/JPXReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`JPXReader.java`
 
 Notes:
 

@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Bio-Rad SCN <bio-rad-scn-metadata>`
+Reader: BioRadSCNReader (:bfreader:`Source Code <BioRadSCNReader.java>`, :doc:`Supported Metadata Fields </metadata/BioRadSCNReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`BioRadSCNReader.java`
 
 Notes:
 

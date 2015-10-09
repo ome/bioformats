@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PGM (Portable Gray Map) <pgm-metadata>`
+Reader: PGMReader (:bsd-reader:`Source Code <PGMReader.java>`, :doc:`Supported Metadata Fields </metadata/PGMReader>`)
+
 
 Freely Available Software:
 
@@ -50,7 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`PGMReader.java`
 
 Notes:
 

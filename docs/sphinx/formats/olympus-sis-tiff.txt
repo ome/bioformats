@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Olympus SIS TIFF <olympus-sis-tiff-metadata>`
+Reader: SISReader (:bfreader:`Source Code <SISReader.java>`, :doc:`Supported Metadata Fields </metadata/SISReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :bfreader:`SISReader.java`
 
 Notes:
 

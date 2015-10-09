@@ -16,7 +16,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`SBIG <sbig-metadata>`
+Reader: SBIGReader (:bfreader:`Source Code <SBIGReader.java>`, :doc:`Supported Metadata Fields </metadata/SBIGReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`SBIGReader.java`
 
 Notes:
 

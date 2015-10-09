@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Nikon EZ-C1 TIFF <nikon-ez-c1-tiff-metadata>`
+Reader: NikonTiffReader (:bfreader:`Source Code <NikonTiffReader.java>`, :doc:`Supported Metadata Fields </metadata/NikonTiffReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`NikonTiffReader.java`
 
 Notes:
 

@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Analyze 7.5 <analyze-75-metadata>`
+Reader: AnalyzeReader (:bfreader:`Source Code <AnalyzeReader.java>`, :doc:`Supported Metadata Fields </metadata/AnalyzeReader>`)
+
 
 
 
@@ -47,7 +48,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`AnalyzeReader.java`
 
 Notes:
 

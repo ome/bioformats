@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`FEI <fei-metadata>`
+Reader: FEIReader (:bfreader:`Source Code <FEIReader.java>`, :doc:`Supported Metadata Fields </metadata/FEIReader>`)
+
 
 
 
@@ -48,7 +49,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`FEIReader.java`
 
 Notes:
 

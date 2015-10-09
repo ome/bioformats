@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Quesant <quesant-metadata>`
+Reader: QuesantReader (:bfreader:`Source Code <QuesantReader.java>`, :doc:`Supported Metadata Fields </metadata/QuesantReader>`)
+
 
 
 
@@ -50,7 +51,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`QuesantReader.java`
 
 Notes:
 

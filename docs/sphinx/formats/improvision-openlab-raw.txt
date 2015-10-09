@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Improvision Openlab Raw <improvision-openlab-raw-metadata>`
+Reader: OpenlabRawReader (:bfreader:`Source Code <OpenlabRawReader.java>`, :doc:`Supported Metadata Fields </metadata/OpenlabRawReader>`)
+
 
 
 
@@ -48,7 +49,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`OpenlabRawReader.java`
 
 Notes:
 

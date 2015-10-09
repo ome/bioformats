@@ -1,7 +1,11 @@
 *******************************************************************************
 $q.handler()
 *******************************************************************************
+#if ($q.format())
 #set ($handler = "Bio-Formats " + $q.format() + " format " + $q.handlerType())
+#else
+#set ($handler = "Bio-Formats " + $q.handler())
+#end
 #set ($entities = $q.entityList())
 
 This page lists supported metadata fields for the $handler.

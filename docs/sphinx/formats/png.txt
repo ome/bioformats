@@ -18,7 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PNG (Portable Network Graphics) <png-metadata>`
+Reader: APNGReader (:bsd-reader:`Source Code <APNGReader.java>`, :doc:`Supported Metadata Fields </metadata/APNGReader>`)
+
 
 Freely Available Software:
 
@@ -50,7 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`APNGReader.java`
 
 Notes:
 

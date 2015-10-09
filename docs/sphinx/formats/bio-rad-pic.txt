@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Bio-Rad PIC <bio-rad-pic-metadata>`
+Reader: BioRadReader (:bfreader:`Source Code <BioRadReader.java>`, :doc:`Supported Metadata Fields </metadata/BioRadReader>`)
+
 
 Freely Available Software:
 
@@ -53,7 +54,6 @@ Utility: |Very good|
 **Additional Information**
 
 
-Source Code: :bfreader:`BioRadReader.java`
 
 Notes:
 

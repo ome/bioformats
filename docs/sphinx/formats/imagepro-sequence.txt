@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`ImagePro Sequence <imagepro-sequence-metadata>`
+Reader: SEQReader (:bfreader:`Source Code <SEQReader.java>`, :doc:`Supported Metadata Fields </metadata/SEQReader>`)
+
 
 
 
@@ -49,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`SEQReader.java`
 
 Notes:
 

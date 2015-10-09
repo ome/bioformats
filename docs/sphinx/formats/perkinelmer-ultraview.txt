@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PerkinElmer UltraView <perkinelmer-ultraview-metadata>`
+Reader: PerkinElmerReader (:bfreader:`Source Code <PerkinElmerReader.java>`, :doc:`Supported Metadata Fields </metadata/PerkinElmerReader>`)
+
 
 
 
@@ -46,7 +47,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`PerkinElmerReader.java`
 
 Notes:
 

@@ -17,7 +17,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Text <text-metadata>`
+Reader: TextReader (:bsd-reader:`Source Code <TextReader.java>`, :doc:`Supported Metadata Fields </metadata/TextReader>`)
+
 
 
 
@@ -44,7 +45,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`TextReader.java`
 
 Notes:
 

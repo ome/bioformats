@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Unisoku <unisoku-metadata>`
+Reader: UnisokuReader (:bfreader:`Source Code <UnisokuReader.java>`, :doc:`Supported Metadata Fields </metadata/UnisokuReader>`)
+
 
 
 
@@ -49,7 +50,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :bfreader:`UnisokuReader.java`
 
 Notes:
 

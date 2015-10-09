@@ -18,7 +18,8 @@ Export: |yes|
 
 Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
 
-Supported Metadata Fields: :doc:`OME-XML <ome-xml-metadata>`
+Reader: OMEXMLReader (:bsd-reader:`Source Code <OMEXMLReader.java>`, :doc:`Supported Metadata Fields </metadata/OMEXMLReader>`)
+
 
 
 
@@ -48,8 +49,7 @@ Utility: |Outstanding|
 **Additional Information**
 
 
-Source Code: :bsd-reader:`OMEXMLReader.java`
-Source Code: :bsd-writer:`OMEXMLWriter.java`
+Writer: OMEXMLWriter (:bsd-writer:`Source Code <OMEXMLWriter.java>`)
 
 Notes:
 

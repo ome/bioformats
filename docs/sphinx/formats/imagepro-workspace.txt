@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`ImagePro Workspace <imagepro-workspace-metadata>`
+Reader: IPWReader (:bfreader:`Source Code <IPWReader.java>`, :doc:`Supported Metadata Fields </metadata/IPWReader>`)
+
 
 
 
@@ -53,7 +54,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :bfreader:`IPWReader.java`
 
 Notes:
 

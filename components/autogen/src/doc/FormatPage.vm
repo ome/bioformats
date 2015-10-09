@@ -27,9 +27,17 @@ Export: |$export|
 
 Officially Supported Versions: $versions
 
-#if ($metadataPage)
-Supported Metadata Fields: :doc:`$format <$metadataPage>`
+#if ($reader.size() > 1)
+Readers:
+
+#foreach ($item in $reader)
+- ${item} (:$readerextlink:`Source Code <${item}.java>`, :doc:`Supported Metadata Fields </metadata/${item}>`)
 #end
+#else
+#set ($item = $reader.get(0))
+Reader: ${item} (:$readerextlink:`Source Code <${item}.java>`, :doc:`Supported Metadata Fields </metadata/${item}>`)
+#end
+
 
 #if ($software)
 Freely Available Software:
@@ -76,12 +84,8 @@ Utility: |$utilityRating|
 **Additional Information**
 
 
-Source Code: #foreach ($item in $reader)
-#if ($velocityHasNext):$readerextlink:`$item`, #else:$readerextlink:`$item`#end
-#end
-
 #if ($writer)
-Source Code: :$writerextlink:`$writer`
+Writer: ${writer} (:$writerextlink:`Source Code <${writer}.java>`)
 #end
 
 Notes:
