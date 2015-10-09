@@ -48,7 +48,7 @@ for i = 1:numel(readers)
     else
         fileExt{i, 1} = arrayfun(@char, suffixes, 'Unif', false);
     end
-    fileExt{i, 2} = char(readers(i).getFormat().toString);
+    fileExt{i, 2} = char(readers(i).getFormat());
 end
 
 % Concatenate all unique formats
