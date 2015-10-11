@@ -23,6 +23,8 @@ Version history
          are present
    - Fluoview and Andor TIFF
        - fixed physical Z size calculation
+   - Imspector OBF
+       - updated to parse OME-XML metadata (thanks to Bjoern Thiel)
 * Documentation updates, including:
    - substantial updates to the format pages
        - improved linking of reader/writer classes to each format page
