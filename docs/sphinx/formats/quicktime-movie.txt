@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Reader: NativeQTReader (:bsd-reader:`Source Code <NativeQTReader.java>`, :doc:`Supported Metadata Fields </metadata/NativeQTReader>`)
 
+Writer: QTWriter (:bsd-writer:`Source Code <QTWriter.java>`)
 
 Freely Available Software:
 
@@ -52,13 +53,7 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-Writer: QTWriter (:bsd-writer:`Source Code <QTWriter.java>`)
-
-Notes:
 
 
 Bio-Formats has two modes of operation for QuickTime: 

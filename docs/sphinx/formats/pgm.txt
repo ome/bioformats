@@ -48,10 +48,4 @@ Presence: |Good|
 Utility: |Poor|
 
 
-**Additional Information**
-
-
-
-Notes:
-
 

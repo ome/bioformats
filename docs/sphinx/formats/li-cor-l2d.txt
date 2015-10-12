@@ -45,12 +45,7 @@ Presence: |Good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 L2D datasets cannot be imported into OME using server-side import. 

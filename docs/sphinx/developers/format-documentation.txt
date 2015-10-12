@@ -50,9 +50,6 @@ defined for each section:
     A `yes/no` flag specifying whether the format readers/writers are under the
     BSD license
 
-  export
-    A `yes/no` flag specifying whether Bio-Formats can write this format
-
   versions
     A comma-separated list of all versions supported for this format
 
@@ -78,6 +75,20 @@ defined for each section:
   notes
     Additional relevant information e.g. that we cannot distribute 
     specification documents to third parties
+
+Dataset structure table
+-----------------------
+
+After checking out source code and building all the JAR files (see
+:doc:`building-bioformats`), the summary table listing the extensions for each
+reader can be  generated using the :program:`ant` ``gen-structure-table``
+target under the :file:`autogen` component::
+
+  $ ant -f components/autogen/build.xml gen-structure-table
+
+This target will loop through all Bio-Formats readers (BSD and GPL), read
+their extensions and descriptions and create a reStructuredText file with a
+table summary of all file extensions.
 
 Readers
 -------

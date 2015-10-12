@@ -48,12 +48,7 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 .mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.

@@ -49,12 +49,7 @@ Presence: |Very good|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 We strongly encourage users to export their .sld files to OME-TIFF 

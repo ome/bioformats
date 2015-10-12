@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Reader: EPSReader (:bsd-reader:`Source Code <EPSReader.java>`, :doc:`Supported Metadata Fields </metadata/EPSReader>`)
 
+Writer: EPSWriter (:bsd-writer:`Source Code <EPSWriter.java>`)
 
 Freely Available Software:
 
@@ -47,13 +48,7 @@ Presence: |Very good|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-Writer: EPSWriter (:bsd-writer:`Source Code <EPSWriter.java>`)
-
-Notes:
 
 
 * Bio-Formats can save individual planes as EPS. 

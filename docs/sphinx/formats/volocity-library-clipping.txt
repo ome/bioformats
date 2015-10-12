@@ -45,12 +45,7 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 RGB .acff files are not yet supported.  See :ticket:`6413`.

@@ -43,12 +43,7 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 Bio-Formats uses a modified version of the `Apache Jakarta 

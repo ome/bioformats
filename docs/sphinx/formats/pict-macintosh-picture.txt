@@ -43,12 +43,7 @@ Presence: |Very good|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 `QuickTime for Java 

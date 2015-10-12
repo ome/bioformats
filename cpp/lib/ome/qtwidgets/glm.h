@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-XML C++ library for working with OME-XML metadata structures.
+ * OME-QTWIDGETS C++ library for display of Bio-Formats pixel data and metadata.
  * %%
- * Copyright © 2015 Open Microscopy Environment:
+ * Copyright © 2014 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,51 +36,20 @@
  * #L%
  */
 
-#include <ome/xml/Document.h>
-#include <ome/xml/OMEEntityResolver.h>
+#ifndef OME_QTWIDGETS_GLM_H
+#define OME_QTWIDGETS_GLM_H
 
-namespace
-{
+#define GLM_FORCE_RADIANS
 
-  ome::xml::OMEEntityResolver&
-  get_resolver()
-  {
-    static ome::xml::OMEEntityResolver resolver;
-    return resolver;
-  }
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
-}
+#endif // OME_QTWIDGETS_GLM_H
 
-namespace ome
-{
-  namespace xml
-  {
-
-    ome::common::xml::dom::Document
-    createDocument(const boost::filesystem::path&                file,
-                   const ome::common::xml::dom::ParseParameters& params)
-    {
-      ome::xml::OMEEntityResolver& resolver = get_resolver();
-      return ome::common::xml::dom::createDocument(file, resolver, params);
-    }
-
-    ome::common::xml::dom::Document
-    createDocument(const std::string&                            text,
-                   const ome::common::xml::dom::ParseParameters& params,
-                   const std::string&                            id)
-    {
-      ome::xml::OMEEntityResolver& resolver = get_resolver();
-      return ome::common::xml::dom::createDocument(text, resolver, params, id);
-    }
-
-    ome::common::xml::dom::Document
-    createDocument(std::istream&                                 stream,
-                   const ome::common::xml::dom::ParseParameters& params,
-                   const std::string&                            id)
-    {
-      ome::xml::OMEEntityResolver& resolver = get_resolver();
-      return ome::common::xml::dom::createDocument(stream, resolver, params, id);
-    }
-
-  }
-}
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
