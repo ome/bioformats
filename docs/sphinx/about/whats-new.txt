@@ -4,8 +4,7 @@ Version history
 5.1.5 (2015 October 12)
 -----------------------
 
-* Java changes:
-   - Bug fixes, including:
+* Java bug fixes, including:
    - ImageJ plugins
        - fixed use of "Group files..." and "Open files individually" options
        - fixed placement of ROIs
