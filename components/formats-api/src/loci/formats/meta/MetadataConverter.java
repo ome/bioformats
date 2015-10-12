@@ -2370,12 +2370,6 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
-      try {
-        String namespace = src.getROINamespace(i);
-        dest.setROINamespace(namespace, i);
-      }
-      catch (NullPointerException e) { }
-
       int shapeCount = 0;
       try {
         shapeCount = src.getShapeCount(i);
@@ -2480,12 +2474,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getEllipseTransform(i, q);
             dest.setEllipseTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getEllipseVisible(i, q);
-            dest.setEllipseVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2626,12 +2614,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Boolean visible = src.getLabelVisible(i, q);
-            dest.setLabelVisible(visible, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Double x = src.getLabelX(i, q);
             dest.setLabelX(x, i, q);
           }
@@ -2752,12 +2734,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getLineTransform(i, q);
             dest.setLineTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getLineVisible(i, q);
-            dest.setLineVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2910,12 +2886,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Boolean visible = src.getMaskVisible(i, q);
-            dest.setMaskVisible(visible, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Double height = src.getMaskHeight(i, q);
             dest.setMaskHeight(height, i, q);
           }
@@ -3052,12 +3022,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Boolean visible = src.getPointVisible(i, q);
-            dest.setPointVisible(visible, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Double x = src.getPointX(i, q);
             dest.setPointX(x, i, q);
           }
@@ -3182,12 +3146,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Boolean visible = src.getPolygonVisible(i, q);
-            dest.setPolygonVisible(visible, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             String points = src.getPolygonPoints(i, q);
             dest.setPolygonPoints(points, i, q);
           }
@@ -3302,12 +3260,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getPolylineTransform(i, q);
             dest.setPolylineTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getPolylineVisible(i, q);
-            dest.setPolylineVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -3438,12 +3390,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getRectangleTransform(i, q);
             dest.setRectangleTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getRectangleVisible(i, q);
-            dest.setRectangleVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
