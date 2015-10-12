@@ -284,7 +284,7 @@ to open/import a dataset in a particular format.
    * - Molecular Imaging
      - .stp
      - Single file
-   * - Multiple Network Graphics
+   * - Multiple-image Network Graphics
      - .mng
      - Single file
    * - NIfTI
