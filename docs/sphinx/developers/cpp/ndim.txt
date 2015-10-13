@@ -1,0 +1,315 @@
+.. _bf-cpp-ndim:
+
+n-dimensional array support
+===========================
+
+Rationale
+---------
+
+The existing Bio-Formats API uses n-dimensional array calculations for
+several purposes, but is currently restricted to a fixed dimension
+count in all cases.  In order to extend the data model and API to
+support higher numbers of dimensions, a means of generalising the
+existing calculations to support an arbitrary dimension count is
+required.
+
+Current uses include:
+
+- data model pixels ``DimensionOrder`` and dimension extents, and
+  channel ``SamplesPerPixel``; also the ``Modulo`` annotations
+- plane index to and from ``CZT`` and ``CZTmCmZmT`` coordinates
+  (:cpp:class:`FormatReader` methods and ``FormatTools`` helper
+  functions)
+- calculations internal to readers including plane indexes and
+  subchannel plane indexing for e.g. planar RGB/BGR images
+
+For the C++ implementation, the :cpp:class:`PixelBuffer` class
+implements a 9D array which supports the existing ``DimensionOrder``
+and ``Modulo`` requirements, plus subchannels.  However, it is fixed
+to 9 dimensions at compile time, and due to being a template-heavy
+implementation is also not implementable in Java.  Having
+n-dimensional support common to both languages would be advantageous.
+Being able to support an arbitrary number of dimensions does imply a
+tradeoff when compared with the templated implementation; it will be
+more flexible but slower, except perhaps at low dimension counts
+compared with fixed 9D calculations.  This is the common case for the
+existing data model, however, where typically three dimensions are
+used in practice (four with modulo up to a maximum of six).
+
+Classes
+-------
+
+:cpp:class:`Dimension`
+  A description of a single dimensional "axis"; this may be spatial,
+  temporal or an abstract dimension.  The following properties are
+  required:
+
+  name
+    The name of the dimension; must be unique within a space
+  extent
+    The size of the dimension; must be greater than zero
+
+  The following properties are optional:
+
+  subrange-begin
+    The starting index of the addressable range; defaults to zero
+  subrange-end
+    The ending index of the addressable range; defaults to the extent
+
+  This class currently contains only the detail required for
+  performing calculations.  It could be extended with additional
+  metadata, such as that contained within the existing
+  :cpp:class:`Modulo` class, in order to provide the Modulo metadata
+  for all dimensions (logical start/stop/step values or labels, unit
+  and scale, description).
+
+:cpp:class:`DimensionSpace`
+  An abstract space containing one or more :cpp:class:`Dimension`
+  objects.  This class provides the methods to perform n-dimension
+  calculations within the specified abstract space.  The following
+  properties are required:
+
+  dimensions
+    An ordered list of :cpp:class:`Dimension` objects; the order
+    defines the *logical* dimension order
+  storage-order
+    The order of the dimensions in storage (e.g. memory or disc), and
+    the direction of progression; this defines the *storage* order
+
+  From the defined logical dimension order and storage order within a
+  space, the following properties are computed for each dimension:
+
+  logical-stride
+    The number of elements to increment the element index by to move
+    forward in this dimension by one element (in logical order)
+  storage-stride
+    The number of elements to increment the element index by to move
+    forward in this dimension by one element (in storage order)
+  descending-offset
+    The offset to add to the stride; this is used for descending
+    progression (when the dimension runs backwards, the starting offset
+    is not zero)
+
+  The following properties are computed for the space
+
+  base
+    The sum of the descending-offset values for all dimensions
+
+  This class can directly represent the existing ``DimensionOrder``,
+  and ``SizeX``, ``SizeY``, ``SizeZ``, ``SizeT``, and ``SizeC``
+  values.  These are a subset of the functionality; this class can
+  represent arbitrary dimensions as well as lifting the restriction
+  that the ``XY`` dimensions must be the first dimensions and that
+  they must also have ascending progression; this means that e.g. the
+  TIFF ``Orientation`` tag and EXIF metadata can be represented
+  directly in the ordering and can transparently reflect and rotate
+  the pixel data if desired.  It will also allow for the removal of
+  the Modulo extension since these subdidiary dimensions can now be
+  represented directly as first-class addressable dimensions.
+
+Calculations
+------------
+
+The following terms are used:
+
+:math:`n`
+  Number of dimensions
+:math:`E`
+  Dimension extent
+:math:`C`
+  Logical coordinate
+:math:`I_l`
+  Logical index
+:math:`I_s`
+  Storage index
+:math:`S_l`
+  Logical stride
+:math:`S_s`
+  Storage stride
+:math:`O`
+  Base offset
+:math:`B`
+  Subrange start offset
+
+Logical coordinate
+^^^^^^^^^^^^^^^^^^
+
+The logical coordinate describes a position in a space.  It contains
+the same number of values as the number of dimensions in the space,
+and the order of these values is the logical dimension order.  For
+example, if the logical dimension order is ``X,Y,Z,C``, a coordinate
+would contain (*x*, *y*, *z*, *c*) values.
+
+The coordinate may be implemented as e.g. a :cpp:class:`vector` (C++)
+or an array or :cpp:class:`List` (Java).  Any of these representations
+will permit the storage of an arbitary number of integers.
+
+Logical index
+^^^^^^^^^^^^^
+
+The logical index is the index into the multi-dimensional array
+(offset from the starting position), where the storage order is the
+same as the logical order, and all dimensions have ascending
+progression.  This is the default if no storage order is specified.
+The logical index is computed from a logical coordinate, and is the
+sum of (logical-stride × dimension-index) for each dimension:
+
+.. math::
+
+  I_l = \sum\limits_{i=0}^{n-1} (S_{l_i} \cdot C_i)
+
+The inverse is also provided, calculating the logical coordinate from
+a logical index.  This is calculated for each dimension in *reverse*
+logical order (from largest stride to smallest stride) as follows:
+
+.. math::
+
+  C_i = \frac{I_l}{S_{l_i}}
+
+  I_l = I_l \operatorname{mod} S_{l_i}
+
+This is primarily useful for testing the implementation; it's unlikely
+this will be useful for most situations, where the storage index
+should be preferred.
+
+Storage index
+^^^^^^^^^^^^^
+
+The storage index is the index into the multi-dimensional array
+(offset from the starting position), where the storage order is the
+storage order as specified.  Here, the storage order may differ from
+the logical order, and the dimensions may also have descending
+progression instead of ascending progression.  The storage index is
+computed from a logical coordinate, and is the precalculated base
+offset plus the sum of (storage-stride × dimension-index) for each
+dimension:
+
+.. math::
+
+  I_s = O + \sum\limits_{i=0}^{n-1} (S_{s_i} \cdot C_i)
+
+The inverse is also provided, calculating the logical coordinate from
+a storage index.  This is calculated for each dimension in *reverse*
+storage order (from largest stride to smallest stride).  If the
+dimension progression is descending, the index in each dimension is
+calulated as follows:
+
+.. math::
+
+  C_i = \frac{(E_i \cdot \lvert S_{s_i} \rvert) - S_{s_i} - 1}{\lvert S_{s_i} \rvert}
+
+  I_s = I_s \operatorname{mod} \lvert S_{s_i} \rvert
+
+If the dimension progression is ascending, the index in each
+dimension is calculated as follows:
+
+.. math::
+
+  C_i = \frac{I_s}{S_{s_i}}
+
+  I_s = I_s \operatorname{mod} S_{s_i}
+
+Subranges and subvolumes
+------------------------
+
+It is possible to restrict the total hypervolume within a space to a
+subvolume, by specifying subrange-begin and subrange-end values to set
+a subrange in each single dimension.  This effectively creates a
+window into the full range, logically indexed from zero at the
+subrange-begin start position in each dimension.
+
+The calculations described above work the same with subvolumes.  The
+only difference is that the subrange-begin values for each dimension
+much be added to the logical coordinate when computing a storage
+index, and be subtracted from the logical coordinate when computed
+from a storage index.  Since the base for logical indexes is always
+zero, and the coordinates in the subrange are relative to the subrange
+start, no adjustment is necessary for logical index calculations.  The
+storage index calculations are adjusted as shown below:
+
+The storage index is computed from a logical coordinate, and is the
+precalculated base offset plus the sum of (storage-stride ×
+(dimension-index + dimension-start)) for each dimension:
+
+.. math::
+
+  I_s = O + \sum\limits_{i=0}^{n-1} (S_{s_i} \cdot (C_i + B_i))
+
+The inverse is also provided, calculating the logical coordinate from
+a storage index.  This is calculated for each dimension in *reverse*
+storage order (from largest stride to smallest stride), substracting
+the subrange-begin value from the computed index in each dimension.
+If the dimension progression is descending, the index in each
+dimension is calulated as follows:
+
+.. math::
+
+  C_i = \frac{(E_i \cdot \lvert S_{s_i} \rvert) - S_{s_i} - 1}{\lvert S_{s_i} \rvert} - B_i
+
+  I_s = I_s \operatorname{mod} \lvert S_{s_i} \rvert
+
+If the dimension progression is ascending, the index in each
+dimension is calculated as follows:
+
+.. math::
+
+  C_i = \frac{I_s}{S_{s_i}} - B_i
+
+  I_s = I_s \operatorname{mod} S_{s_i}
+
+Applications
+------------
+
+- Replace :cpp:class:`FormatReader` :cpp:func:`getIndex` and
+  :cpp:func:`getCZTCoords` methods
+
+  These can be replaced by a generic n-dimensional implementation
+  using :cpp:class:`DimensionSpace` to perform the calculations; this
+  could be contained within :cpp:class:`CoreMetadata` for each series.
+
+  The existing ``FormatTools`` helpers can also be implemented in
+  terms of :cpp:class:`DimensionSpace`.
+
+- Replace :cpp:class:`FormatReader` and :cpp:class:`FormatWriter`
+  :cpp:func:`openBytes` and :cpp:func:`saveBytes` methods
+
+  These methods work in terms of plane indexes, but unfortunately move
+  the burden of correctly computing the plane indexes onto the end
+  user.  These could be replaced by methods which use logical
+  coordinates, so that the user specifies exactly which plane they
+  need using the dimension indexes appropriate for the series.  This
+  will also allow the API to work with future n-dimensional image data
+  while remaining compatible with the three dimensional logic used
+  currently.  Two logical coordinates to specify the begin and end of
+  a subrange to fetch (or logical coordinate and extent)will extend
+  these methods from transferring 2D regions to transferring
+  n-dimensional regions in a single call.  There is room for
+  signifiant optimisation here: by looking at the strides and begin
+  offsets in each dimension (in storage order), the data can be
+  transferred in the largest possible contiguous blocks.
+
+- Add n-dimensional pixel buffer class
+
+  This will replace the C++ :cpp:class:`PixelBuffer` class;
+  conceptually similar to the existing class but implemented in terms
+  of :cpp:class:`DimensionSpace` calculations rather than
+  Boost.MultiArray.  It will also be implementable in Java to provide
+  a shared pixel buffer API between both languages.  On the Java side,
+  internally this will contain a raw byte array as used by the
+  existing APIs, but will additionally have the higher n-dimensional
+  metadata describing its layout.  This permits the passing of pixel
+  data without having to pass the descriptive metadata separately or
+  out-of-band.
+
+  :cpp:class:`FormatReader` and :cpp:class:`FormatWriter`
+  :cpp:func:`openBytes` and :cpp:func:`saveBytes` methods can then be
+  implemented in terms of :cpp:class:`PixelBuffer` for passing data.
+
+- Internal use by readers and writers
+
+  Individual readers and writers may need to perform format-specific
+  calculations; they are free to use :cpp:class:`DimensionSpace` for
+  any purpose.  This type of logic is often implemented repeatedly for
+  similar operations in many different readers; this will allow for
+  consolidation of these into a single implementation, which should
+  reduce the potential for bugs.
