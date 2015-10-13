@@ -359,8 +359,8 @@ namespace ome
      * each dimension, and between logical coordinates and linear
      * storage array index.
      *
-     * The concept implemented is that a set of dimensions are
-     * referred to in a defined logical order.  This logical order is
+     * The concept implemented is that an abstrace space is set of
+     * dimensions in a defined logical order.  This logical order is
      * the order in which the end user or programmer will index
      * dimensions, for example the coordinates to refer to a specific
      * location in (x,y,z) might be (0,4,2).  The logical order
@@ -387,7 +387,7 @@ namespace ome
      * time.  This class trades off performance for run-time
      * flexibility.
      */
-    class DimensionSet
+    class DimensionSpace
     {
     public:
       /// @copydoc Dimension::size_type
@@ -434,12 +434,13 @@ namespace ome
        * memory layout) defaults to the logical dimension order, with
        * each dimension having ascending progression.
        *
-       * @param dimensions the dimensions contained in this set, in
-       * logical order.  Dimension names must be unique within the set,
-       * and not repeated.
-       * @throws std::logic_error if the unique constraint is violated.
+       * @param dimensions the dimensions contained in this space, in
+       * logical order.  Dimension names must be unique within the
+       * space, and not repeated.
+       * @throws std::logic_error if the unique constraint is
+       * violated.
        */
-      DimensionSet(const logical_order_type& dimensions);
+      DimensionSpace(const logical_order_type& dimensions);
 
       /**
        * Construct with indexed storage order.
@@ -449,15 +450,16 @@ namespace ome
        * in terms of the index each dimension in the @c dimensions
        * parameter.
        *
-       * @param dimensions the dimensions contained in this set, in
-       * logical order.  Dimension names must be unique within the set,
-       * and not repeated.
+       * @param dimensions the dimensions contained in this space, in
+       * logical order.  Dimension names must be unique within the
+       * space, and not repeated.
        * @param order the storage order (by dimension index in @c
        * dimensions).  Dimension indices must not be repeated.
-       * @throws std::logic_error if the unique constraint is violated.
+       * @throws std::logic_error if the unique constraint is
+       * violated.
        */
-      DimensionSet(const logical_order_type&         dimensions,
-                   const indexed_storage_order_type& order);
+      DimensionSpace(const logical_order_type&         dimensions,
+                     const indexed_storage_order_type& order);
 
       /**
        * Construct with named storage order.
@@ -467,15 +469,16 @@ namespace ome
        * in terms of the name of each dimension in the @c dimensions
        * parameter.
        *
-       * @param dimensions the dimensions contained in this set, in
-       * logical order.  Dimension names must be unique within the set,
-       * and not repeated.
+       * @param dimensions the dimensions contained in this space, in
+       * logical order.  Dimension names must be unique within the
+       * space, and not repeated.
        * @param order the storage order (by dimension name in @c
        * dimensions).  Dimension indices must not be repeated.
-       * @throws std::logic_error if the unique constraint is violated.
+       * @throws std::logic_error if the unique constraint is
+       * violated.
        */
-      DimensionSet(const logical_order_type&       dimensions,
-                   const named_storage_order_type& order);
+      DimensionSpace(const logical_order_type&       dimensions,
+                     const named_storage_order_type& order);
 
     private:
       /**
@@ -487,7 +490,7 @@ namespace ome
       init();
 
       /**
-       * Set storage order (by index).
+       * Space storage order (by index).
        *
        * The dimension list must not contain duplicate dimension indices.
        *
@@ -497,7 +500,7 @@ namespace ome
       storage_order(const indexed_storage_order_type& order);
 
       /**
-       * Set storage order (by name).
+       * Space storage order (by name).
        *
        * The dimension list must not contain duplicate dimension names.
        *
@@ -584,7 +587,7 @@ namespace ome
 
     public:
       /**
-       * The number of dimensions in the set.
+       * The number of dimensions in the space.
        *
        * @returns the number of dimensions.
        */
@@ -678,7 +681,7 @@ namespace ome
       index_type
       logical_index(const coord_type& coord) const
       {
-        DimensionSet::difference_type ret = 0;
+        DimensionSpace::difference_type ret = 0;
 
         // For each dimension in logical order, multiply the
         // coordinate value by the stride for the dimension and return
@@ -739,7 +742,7 @@ namespace ome
       {
         if (_logical_order.size() != coord.size())
           {
-            boost::format fmt("Coordinate dimension count %1% does not match set dimension count %2%");
+            boost::format fmt("Coordinate dimension count %1% does not match space dimension count %2%");
             fmt % coord.size() % size();
             throw std::logic_error(fmt.str());
           }
@@ -814,131 +817,131 @@ namespace ome
       }
 
       /**
-       * Create a subrange from this dimension set (by index).
+       * Create a subrange from this space (by index).
        *
        * The subrange must be equal to or less than any subrange
        * already set; it is not possible to expand the range.
        *
        * @param subrange the dimensions to reduce in permitted range.
-       * @returns a new dimension set using the specified subrange.
+       * @returns a new space using the specified subrange.
        */
-      DimensionSet
+      DimensionSpace
       subrange(const indexed_subrange_type& subrange) const;
 
       /**
-       * Create a subrange from this dimension set (by name).
+       * Create a subrange from this space (by name).
        *
        * The subrange must be equal to or less than any subrange
        * already set; it is not possible to expand the range.
        *
        * @param subrange the dimensions to reduce in permitted range.
-       * @returns a new dimension set using the specified subrange.
+       * @returns a new space using the specified subrange.
        */
-      DimensionSet
+      DimensionSpace
       subrange(const named_subrange_type& subrange) const;
 
       template<class charT, class traits>
       friend std::basic_ostream<charT,traits>&
       operator<< (std::basic_ostream<charT,traits>& os,
-                  const DimensionSet& set);
+                  const DimensionSpace&             space);
     };
 
     /**
-     * Output DimensionSet to output stream.
+     * Output DimensionSpace to output stream.
      *
      * @param os the output stream.
-     * @param set the DimensionSet to output.
+     * @param space the DimensionSpace to output.
      * @returns the output stream.
      */
     template<class charT, class traits>
     inline std::basic_ostream<charT,traits>&
     operator<< (std::basic_ostream<charT,traits>& os,
-                const DimensionSet& set)
+                const DimensionSpace&             space)
     {
       os << "Logical dimensions:      (";
-      for (std::vector<Dimension>::const_iterator dim = set._logical_order.begin();
-           dim != set._logical_order.end();
+      for (std::vector<Dimension>::const_iterator dim = space._logical_order.begin();
+           dim != space._logical_order.end();
            ++dim)
         {
           os << dim->name;
-          if (dim + 1 < set._logical_order.end())
+          if (dim + 1 < space._logical_order.end())
             os << ',';
         }
       os << ")\nLogical extents:         (";
-      for (std::vector<Dimension>::const_iterator dim = set._logical_order.begin();
-           dim != set._logical_order.end();
+      for (std::vector<Dimension>::const_iterator dim = space._logical_order.begin();
+           dim != space._logical_order.end();
            ++dim)
         {
           os << dim->extent;
-          if (dim + 1 < set._logical_order.end())
+          if (dim + 1 < space._logical_order.end())
             os << ',';
         }
       os << ")\nLogical ranges:          (";
-      for (std::vector<Dimension>::const_iterator dim = set._logical_order.begin();
-           dim != set._logical_order.end();
+      for (std::vector<Dimension>::const_iterator dim = space._logical_order.begin();
+           dim != space._logical_order.end();
            ++dim)
         {
           os << '[' << dim->begin << ',' << dim->end << ')';
-          if (dim + 1 < set._logical_order.end())
+          if (dim + 1 < space._logical_order.end())
             os << ',';
         }
       os << ")\nLogical sizes:           (";
-      for (std::vector<Dimension>::const_iterator dim = set._logical_order.begin();
-           dim != set._logical_order.end();
+      for (std::vector<Dimension>::const_iterator dim = space._logical_order.begin();
+           dim != space._logical_order.end();
            ++dim)
         {
           os << dim->size();
-          if (dim + 1 < set._logical_order.end())
+          if (dim + 1 < space._logical_order.end())
             os << ',';
         }
       os << ")\nLogical strides:         (";
-      for (std::vector<Dimension>::const_iterator dim = set._logical_order.begin();
-           dim != set._logical_order.end();
+      for (std::vector<Dimension>::const_iterator dim = space._logical_order.begin();
+           dim != space._logical_order.end();
            ++dim)
         {
           os << dim->stride;
-          if (dim + 1 < set._logical_order.end())
+          if (dim + 1 < space._logical_order.end())
             os << ',';
         }
-      os << ")\nSize:                    " << set.size()
-         << "\nElements:                " << set.num_elements()
+      os << ")\nSize:                    " << space.size()
+         << "\nElements:                " << space.num_elements()
          << "\nStorage dimensions:      (";
-      for (DimensionSet::indexed_storage_order_type::const_iterator dim = set._storage_order.begin();
-           dim != set._storage_order.end();
+      for (DimensionSpace::indexed_storage_order_type::const_iterator dim = space._storage_order.begin();
+           dim != space._storage_order.end();
            ++dim)
         {
-          const Dimension& ldim(set.dimension(dim->dimension));
+          const Dimension& ldim(space.dimension(dim->dimension));
           os << ldim.name;
-          if (dim + 1 < set._storage_order.end())
+          if (dim + 1 < space._storage_order.end())
             os << ',';
         }
       os << ")\nStorage extents:         (";
-      for (DimensionSet::indexed_storage_order_type::const_iterator dim = set._storage_order.begin();
-           dim != set._storage_order.end();
+      for (DimensionSpace::indexed_storage_order_type::const_iterator dim = space._storage_order.begin();
+           dim != space._storage_order.end();
            ++dim)
         {
-          const Dimension& ldim(set.dimension(dim->dimension));
+          const Dimension& ldim(space.dimension(dim->dimension));
           os << (dim->direction == Dimension::ASCENDING ? '+' : '-') << ldim.extent;
-          if (dim + 1 < set._storage_order.end())
+          if (dim + 1 < space._storage_order.end())
             os << ',';
         }
-      os << ")\nBase:                    " << set._base
+      os << ")\nBase:                    " << space._base
          << "\nStrides:                 (";
-      for (std::vector<DimensionStorageDetail>::const_iterator detail = set._detail.begin();
-           detail != set._detail.end();
+      for (std::vector<DimensionStorageDetail>::const_iterator detail = space._detail.begin();
+           detail != space._detail.end();
            ++detail)
         {
           os << detail->stride;
-          if (detail + 1 < set._detail.end())
+          if (detail + 1 < space._detail.end())
             os << ',';
         }
       os << ")\nDescending offsets:      (";
-      for (std::vector<DimensionStorageDetail>::const_iterator detail = set._detail.begin();
-           detail != set._detail.end();
+      for (std::vector<DimensionStorageDetail>::const_iterator detail = space._detail.begin();
+           detail != space._detail.end();
            ++detail)
         {
           os << detail->descending_offset;
-          if (detail + 1 < set._detail.end())
+          if (detail + 1 < space._detail.end())
             os << ',';
         }
       os << ")\n";

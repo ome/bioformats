@@ -46,7 +46,7 @@
 #include <ome/test/test.h>
 
 using ome::bioformats::Dimension;
-using ome::bioformats::DimensionSet;
+using ome::bioformats::DimensionSpace;
 using ome::bioformats::IndexedDimensionStorage;
 using ome::bioformats::NamedDimensionStorage;
 using ome::bioformats::IndexedDimensionSubrange;
@@ -58,12 +58,12 @@ namespace
   // Print a 2D array.
   // planecoord is the index into the higher dimension (>=2) indices;
   // the lowest two dimensions will be rendered in a 2D grid.
-  void dump_array(const DimensionSet& set,
-                  DimensionSet::coord_type planecoord,
+  void dump_array(const DimensionSpace& space,
+                  DimensionSpace::coord_type planecoord,
                   uint32_t index_size,
-                  DimensionSet::index_type (DimensionSet::*get_index)(const DimensionSet::coord_type& coord) const)
+                  DimensionSpace::index_type (DimensionSpace::*get_index)(const DimensionSpace::coord_type& coord) const)
   {
-    if (set.size() == 0)
+    if (space.size() == 0)
       return;
 
     uint32_t ylabsize = 1;
@@ -71,9 +71,9 @@ namespace
     uint32_t nx = 1;
     uint32_t ny = 1;
 
-    const DimensionSet::logical_order_type& logical(set.logical_order());
+    const DimensionSpace::logical_order_type& logical(space.logical_order());
     nx = logical.at(0).size();
-    if (set.size() > 1)
+    if (space.size() > 1)
       {
         ylabsize = logical.at(1).name.size();
         ny = logical.at(1).size();
@@ -84,7 +84,7 @@ namespace
     // Header
     std::string sepy;
     std::string sepy2;
-    if (set.size() > 1)
+    if (space.size() > 1)
       {
         sepy = std::string(ylabsize + yvalsize + 2, ' ');
         sepy2 = std::string(ylabsize + 1, ' ');
@@ -128,7 +128,7 @@ namespace
     std::cout << "┃\n";
 
     // Mid line
-    if (set.size() > 1)
+    if (space.size() > 1)
       {
         std::cout << logical.at(1).name << ' ' << "┏";
         for (uint32_t i = 0; i < 1; ++i)
@@ -158,23 +158,23 @@ namespace
         std::cout << "┫\n";
       }
 
-    DimensionSet::coord_type index;
+    DimensionSpace::coord_type index;
     index.push_back(0);
-    if (set.size() > 1)
+    if (space.size() > 1)
       index.push_back(0);
     std::copy(planecoord.begin(), planecoord.end(),
               std::back_inserter(index));
 
     // Loop over rows.
-    if (set.size() > 1)
+    if (space.size() > 1)
       {
         for (uint32_t y = 0; y < ny; ++y)
           {
-            if (set.size() > 1)
+            if (space.size() > 1)
               index.at(1) = y;
 
             // Row values
-            if (set.size() > 1)
+            if (space.size() > 1)
               {
                 std::cout << sepy2 << "┃";
                 for (uint32_t i = 0; i < 1; ++i)
@@ -187,7 +187,7 @@ namespace
                 for (uint32_t x = 0; x < nx; ++x)
                   {
                     index.at(0) = x;
-                    std::cout << std::setw(index_size) << (set.*get_index)(index);
+                    std::cout << std::setw(index_size) << (space.*get_index)(index);
                     if (x + 1 < nx)
                       std::cout << "│";
                   }
@@ -195,7 +195,7 @@ namespace
               }
 
             // Row line
-            if (y + 1 < ny && set.size() > 1)
+            if (y + 1 < ny && space.size() > 1)
               {
                 std::cout << sepy2 << "┠";
                 for (uint32_t i = 0; i < 1; ++i)
@@ -221,7 +221,7 @@ namespace
         for (uint32_t x = 0; x < nx; ++x)
           {
             index.at(0) = x;
-            std::cout << std::setw(index_size) << (set.*get_index)(index);
+            std::cout << std::setw(index_size) << (space.*get_index)(index);
             if (x + 1 < nx)
               std::cout << "│";
           }
@@ -229,7 +229,7 @@ namespace
       }
 
     // Bottom line
-    if (set.size() > 1)
+    if (space.size() > 1)
       {
         std::cout << sepy2 << "┗";
         for (uint32_t i = 0; i < 1; ++i)
@@ -262,43 +262,43 @@ namespace
 
   // Print an nD array.
   void
-  dump_array(const DimensionSet& set,
-             bool                storage = true)
+  dump_array(const DimensionSpace& space,
+             bool                  storage = true)
   {
-    DimensionSet::index_type (DimensionSet::*get_index)(const DimensionSet::coord_type& coord) const = &DimensionSet::storage_index;
+    DimensionSpace::index_type (DimensionSpace::*get_index)(const DimensionSpace::coord_type& coord) const = &DimensionSpace::storage_index;
     if (!storage)
-      get_index = &DimensionSet::logical_index;
+      get_index = &DimensionSpace::logical_index;
 
     // Maximum length of index for display.
     uint32_t index_size = 1;
     {
-      DimensionSet::coord_type idx;
-      for(Dimension::index_type i = 0; i < set.num_elements(); ++i)
+      DimensionSpace::coord_type idx;
+      for(Dimension::index_type i = 0; i < space.num_elements(); ++i)
         {
-          set.logical_coord(i, idx);
+          space.logical_coord(i, idx);
           index_size = std::max(index_size,
-                                static_cast<uint32_t>(std::floor(std::log10(static_cast<float>((set.*get_index)(idx))))) + 1);
+                                static_cast<uint32_t>(std::floor(std::log10(static_cast<float>((space.*get_index)(idx))))) + 1);
         }
     }
 
-    if (set.size() < 3) // Render as 1D or 2D plane
+    if (space.size() < 3) // Render as 1D or 2D plane
       {
-        DimensionSet::coord_type planecoord; // Intentionally empty.
-        dump_array(set, planecoord, index_size, get_index);
+        DimensionSpace::coord_type planecoord; // Intentionally empty.
+        dump_array(space, planecoord, index_size, get_index);
       }
     else // Render as multiple 2D planes
       {
-        const DimensionSet::logical_order_type& logical(set.logical_order());
+        const DimensionSpace::logical_order_type& logical(space.logical_order());
 
         std::vector<Dimension> dims;
         for (uint32_t i = 2; i < logical.size(); ++i)
           dims.push_back(logical.at(i));
-        DimensionSet set2(dims);
+        DimensionSpace space2(dims);
 
-        DimensionSet::coord_type coord;
-        for(Dimension::index_type i = 0; i < set2.num_elements(); ++i)
+        DimensionSpace::coord_type coord;
+        for(Dimension::index_type i = 0; i < space2.num_elements(); ++i)
           {
-            set2.logical_coord(i, coord);
+            space2.logical_coord(i, coord);
             for (uint32_t j = 0; j < coord.size(); ++j)
               {
                 const Dimension& dim(logical.at(j + 2));
@@ -307,7 +307,7 @@ namespace
                   std::cout << ", ";
               }
             std::cout << '\n';
-            dump_array(set, coord, index_size, get_index);
+            dump_array(space, coord, index_size, get_index);
             std::cout << '\n';
           }
       }
@@ -455,59 +455,59 @@ namespace
 
   // Get all storage order permutations from a dimension list and list
   // of indexed or named storage orders, realised in the form of
-  // constructed DimensionSet objects.
+  // constructed DimensionSpace objects.
   template<typename Storage>
-  std::vector<DimensionSet>
+  std::vector<DimensionSpace>
   order_permutations(std::vector<Dimension>             dims,
                      std::vector<std::vector<Storage> > orders)
   {
     {
-      DimensionSet setdef(dims);
+      DimensionSpace spacedef(dims);
 
-      std::cout << "DimensionSet default parameters:\n"
-                << setdef
-                << "\nDimensionSet logical layout:\n\n";
-      dump_array(setdef, false);
-      std::cout << "\nDimensionSet default storage layout:\n\n";
-      dump_array(setdef, true);
+      std::cout << "DimensionSpace default parameters:\n"
+                << spacedef
+                << "\nDimensionSpace logical layout:\n\n";
+      dump_array(spacedef, false);
+      std::cout << "\nDimensionSpace default storage layout:\n\n";
+      dump_array(spacedef, true);
       std::cout << '\n';
     }
 
-    std::vector<DimensionSet> ret;
+    std::vector<DimensionSpace> ret;
 
     typedef typename std::vector<std::vector<Storage> > storage_type;
     for(typename storage_type::const_iterator order = orders.begin();
         order != orders.end();
         ++order)
       {
-        ret.push_back(DimensionSet(dims, *order));
+        ret.push_back(DimensionSpace(dims, *order));
       }
 
     return ret;
   }
 
-  // Test all DimensionSet permutations provided.  This will ensure
+  // Test all DimensionSpace permutations provided.  This will ensure
   // round-trip from logical coordinate to storage index and back is
   // working, but does not validate the correctness of the
   // algorithm--it only checks it's behaviour is consistent.  It will
   // also print the array structure and (for subrange sets) the
   // subrange structure in addition to the full range.
   void
-  test_orders(std::vector<DimensionSet> dims)
+  test_orders(std::vector<DimensionSpace> dims)
   {
-    for(std::vector<DimensionSet>::const_iterator dim = dims.begin();
+    for(std::vector<DimensionSpace>::const_iterator dim = dims.begin();
         dim != dims.end();
         ++dim)
       {
         // Check if subranges are in use, and if so, print the original
-        // set as well as the reduced set for visual comparison.
-        const DimensionSet& set(*dim);
+        // space as well as the reduced space for visual comparison.
+        const DimensionSpace& space(*dim);
 
-        DimensionSet::logical_order_type logical(set.logical_order());
-        DimensionSet::logical_order_type logical_full;
-        const DimensionSet::indexed_storage_order_type& storage(set.storage_order());
+        DimensionSpace::logical_order_type logical(space.logical_order());
+        DimensionSpace::logical_order_type logical_full;
+        const DimensionSpace::indexed_storage_order_type& storage(space.storage_order());
         bool subrange = false;
-        for (DimensionSet::logical_order_type::const_iterator i = logical.begin();
+        for (DimensionSpace::logical_order_type::const_iterator i = logical.begin();
              i != logical.end();
              ++i)
           {
@@ -515,44 +515,44 @@ namespace
               subrange = true;
             logical_full.push_back(Dimension(i->name, i->extent));
           }
-        DimensionSet full_set(logical_full, storage);
+        DimensionSpace full_space(logical_full, storage);
 
-        std::cout << "DimensionSet with storage order:\n"
-                  << set;
+        std::cout << "DimensionSpace with storage order:\n"
+                  << space;
         if (subrange)
           {
-            std::cout << "\nDimensionSet storage layout (original):\n\n";
-            dump_array(full_set);
-            std::cout << "\nDimensionSet storage layout (subrange):\n\n";
+            std::cout << "\nDimensionSpace storage layout (original):\n\n";
+            dump_array(full_space);
+            std::cout << "\nDimensionSpace storage layout (subrange):\n\n";
           }
         else
           {
-            std::cout << "\nDimensionSet storage layout:\n\n";
+            std::cout << "\nDimensionSpace storage layout:\n\n";
           }
-        dump_array(set);
+        dump_array(space);
         std::cout << '\n';
 
-        DimensionSet::coord_type pos1, pos3;
-        for(Dimension::index_type i = 0; i < set.num_elements(); ++i)
+        DimensionSpace::coord_type pos1, pos3;
+        for(Dimension::index_type i = 0; i < space.num_elements(); ++i)
           {
-            set.logical_coord(i, pos1);
+            space.logical_coord(i, pos1);
 
-            uint32_t pos2 =  set.storage_index(pos1);
-            set.storage_coord(pos2, pos3);
-            std::cout << dump_vector<DimensionSet::coord_type>(pos1)
+            uint32_t pos2 =  space.storage_index(pos1);
+            space.storage_coord(pos2, pos3);
+            std::cout << dump_vector<DimensionSpace::coord_type>(pos1)
                       << " → " << std::setw(2) << std::right << pos2 << " → "
-                      << dump_vector<DimensionSet::coord_type>(pos3) << '\n';
+                      << dump_vector<DimensionSpace::coord_type>(pos3) << '\n';
             // Check round trip results in same indices.
             ASSERT_TRUE(pos1 == pos3);
 
             // Check the subrange (which may be the full range)
             {
-              DimensionSet::coord_type full_index = pos1;
-              for (std::vector<Dimension>::size_type d = 0; d < set.size(); ++d)
+              DimensionSpace::coord_type full_index = pos1;
+              for (std::vector<Dimension>::size_type d = 0; d < space.size(); ++d)
                 {
                   full_index[d] += logical[d].begin;
                 }
-              ASSERT_TRUE(full_set.storage_index(full_index) == pos2);
+              ASSERT_TRUE(full_space.storage_index(full_index) == pos2);
             }
           }
         std::cout << '\n';
@@ -614,8 +614,8 @@ TEST(Dimension, Compare)
   ASSERT_FALSE(y < c);
 }
 
-// DimensionSet construction and failure cases.
-TEST(DimensionSet, Construct)
+// DimensionSpace construction and failure cases.
+TEST(DimensionSpace, Construct)
 {
   const Dimension static_dims[] =
     {
@@ -626,17 +626,17 @@ TEST(DimensionSet, Construct)
 
   std::vector<Dimension> dims(static_dims, static_dims+boost::size(static_dims));
 
-  DimensionSet set(dims);
+  DimensionSpace space(dims);
 
-  ASSERT_EQ(3U, set.size());
+  ASSERT_EQ(3U, space.size());
 
   // Duplicate dimension names are invalid.
   dims.push_back(Dimension("Y", 54));
-  ASSERT_THROW(DimensionSet set2(dims), std::logic_error);
+  ASSERT_THROW(DimensionSpace space2(dims), std::logic_error);
 }
 
 // Round-trip of logical index to logical coordinate.
-TEST(DimensionSet, LogicalIndex)
+TEST(DimensionSpace, LogicalIndex)
 {
   const Dimension static_dims[] =
     {
@@ -647,16 +647,16 @@ TEST(DimensionSet, LogicalIndex)
 
   std::vector<Dimension> dims(static_dims, static_dims+boost::size(static_dims));
 
-  DimensionSet set(dims);
+  DimensionSpace space(dims);
 
-  for (DimensionSet::size_type i = 0; i < set.num_elements(); ++i)
+  for (DimensionSpace::size_type i = 0; i < space.num_elements(); ++i)
     {
-      DimensionSet::coord_type coord;
-      set.logical_coord(i, coord);
-      DimensionSet::size_type i2 = set.logical_index(coord);
+      DimensionSpace::coord_type coord;
+      space.logical_coord(i, coord);
+      DimensionSpace::size_type i2 = space.logical_index(coord);
 
       std::cout << std::setw(2) << std::right << i << " → "
-                << dump_vector<DimensionSet::coord_type>(coord)
+                << dump_vector<DimensionSpace::coord_type>(coord)
                 << " → " << std::setw(2) << std::right << i2 << '\n';
 
       ASSERT_EQ(i, i2);
@@ -664,7 +664,7 @@ TEST(DimensionSet, LogicalIndex)
 }
 
 // Round-trip of logical coordinate to storage index.
-TEST(DimensionSet, StorageIndex)
+TEST(DimensionSpace, StorageIndex)
 {
   const Dimension static_dims[] =
     {
@@ -675,17 +675,17 @@ TEST(DimensionSet, StorageIndex)
 
   std::vector<Dimension> dims(static_dims, static_dims+boost::size(static_dims));
 
-  DimensionSet set(dims);
+  DimensionSpace space(dims);
 
-  for (DimensionSet::index_type i = 0; i < set.num_elements(); ++i)
+  for (DimensionSpace::index_type i = 0; i < space.num_elements(); ++i)
     {
-      DimensionSet::coord_type coord;
-      set.logical_coord(i, coord);
-      DimensionSet::index_type i2 = set.logical_index(coord);
-      DimensionSet::index_type i3 = set.storage_index(coord);
+      DimensionSpace::coord_type coord;
+      space.logical_coord(i, coord);
+      DimensionSpace::index_type i2 = space.logical_index(coord);
+      DimensionSpace::index_type i3 = space.storage_index(coord);
 
       std::cout << std::setw(2) << std::right << i << " → "
-                << dump_vector<DimensionSet::coord_type>(coord)
+                << dump_vector<DimensionSpace::coord_type>(coord)
                 << " → " << std::setw(2) << std::right << i3 << '\n';
 
       ASSERT_EQ(i, i2);
@@ -693,14 +693,14 @@ TEST(DimensionSet, StorageIndex)
     }
 
   // Failure if incorrect length.
-  DimensionSet::coord_type coord;
+  DimensionSpace::coord_type coord;
   coord.push_back(2U);
   coord.push_back(1U);
-  ASSERT_THROW(set.storage_index(coord), std::logic_error);
+  ASSERT_THROW(space.storage_index(coord), std::logic_error);
 }
 
 // Storage order failure cases (by index).
-TEST(DimensionSet, IndexedStorageOrderFail)
+TEST(DimensionSpace, IndexedStorageOrderFail)
 {
   const Dimension static_dims[] =
     {
@@ -714,28 +714,28 @@ TEST(DimensionSet, IndexedStorageOrderFail)
   order1.push_back(IndexedDimensionStorage(0, Dimension::DESCENDING));
 
   // Missing dimension.
-  ASSERT_THROW(DimensionSet(dims, order1), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims, order1), std::logic_error);
 
   order1.push_back(IndexedDimensionStorage(1, Dimension::ASCENDING));
 
   // All dimensions correct.
-  ASSERT_NO_THROW(DimensionSet(dims, order1));
+  ASSERT_NO_THROW(DimensionSpace(dims, order1));
 
   order1.push_back(IndexedDimensionStorage(1, Dimension::ASCENDING));
 
   // Extra duplicated dimension.
-  ASSERT_THROW(DimensionSet(dims, order1), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims, order1), std::logic_error);
 
   std::vector<IndexedDimensionStorage> order2;
   order2.push_back(IndexedDimensionStorage(0, Dimension::DESCENDING));
   order2.push_back(IndexedDimensionStorage(2, Dimension::DESCENDING));
 
   // Invalid dimension.
-  ASSERT_THROW(DimensionSet(dims, order2), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims, order2), std::logic_error);
 }
 
 // Storage order failure cases (by name).
-TEST(DimensionSet, NamedStorageOrderFail)
+TEST(DimensionSpace, NamedStorageOrderFail)
 {
   const Dimension static_dims[] =
     {
@@ -749,28 +749,28 @@ TEST(DimensionSet, NamedStorageOrderFail)
   order1.push_back(NamedDimensionStorage("X", Dimension::DESCENDING));
 
   // Missing dimension.
-  ASSERT_THROW(DimensionSet(dims, order1), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims, order1), std::logic_error);
 
   order1.push_back(NamedDimensionStorage("Y", Dimension::ASCENDING));
 
   // All dimensions correct.
-  ASSERT_NO_THROW(DimensionSet(dims, order1));
+  ASSERT_NO_THROW(DimensionSpace(dims, order1));
 
   order1.push_back(NamedDimensionStorage("Y", Dimension::ASCENDING));
 
   // Extra duplicated dimension.
-  ASSERT_THROW(DimensionSet(dims, order1), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims, order1), std::logic_error);
 
   std::vector<NamedDimensionStorage> order2;
   order2.push_back(NamedDimensionStorage("X", Dimension::DESCENDING));
   order2.push_back(NamedDimensionStorage("Invalid", Dimension::DESCENDING));
 
   // Invalid dimension.
-  ASSERT_THROW(DimensionSet(dims, order2), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims, order2), std::logic_error);
 }
 
 // Storage ordering (single dimension by index).
-TEST(DimensionSet, StorageOrderIndexedD1)
+TEST(DimensionSpace, StorageOrderIndexedD1)
 {
   std::vector<Dimension> dims;
   dims.push_back(Dimension("Single", 12));
@@ -780,7 +780,7 @@ TEST(DimensionSet, StorageOrderIndexedD1)
 }
 
 // Storage ordering (two dimensions by index).
-TEST(DimensionSet, StorageOrderIndexedD2)
+TEST(DimensionSpace, StorageOrderIndexedD2)
 {
   std::vector<Dimension> dims;
   dims.push_back(Dimension("X", 3));
@@ -791,7 +791,7 @@ TEST(DimensionSet, StorageOrderIndexedD2)
 }
 
 // Storage ordering (two dimensions by name).
-TEST(DimensionSet, StorageOrderNamedD2)
+TEST(DimensionSpace, StorageOrderNamedD2)
 {
   std::vector<Dimension> dims;
   dims.push_back(Dimension("X", 3));
@@ -802,7 +802,7 @@ TEST(DimensionSet, StorageOrderNamedD2)
 }
 
 // Storage ordering (three dimensions by index).
-TEST(DimensionSet, StorageOrderD3)
+TEST(DimensionSpace, StorageOrderD3)
 {
   static Dimension static_dims[] =
     {
@@ -818,7 +818,7 @@ TEST(DimensionSet, StorageOrderD3)
 }
 
 // Storage ordering (nine dimensions by index).
-TEST(DimensionSet, StorageOrderD9)
+TEST(DimensionSpace, StorageOrderD9)
 {
   static Dimension static_dims[] =
     {
@@ -835,11 +835,11 @@ TEST(DimensionSet, StorageOrderD9)
 
   std::vector<Dimension> dims(static_dims, static_dims+boost::size(static_dims));
 
-  DimensionSet s1(dims);
+  DimensionSpace s1(dims);
 
-  std::cout << "DimensionSet s1 default parameters:\n"
+  std::cout << "DimensionSpace s1 default parameters:\n"
             << s1
-            << "\nDimensionSet s1 default storage layout:\n\n";
+            << "\nDimensionSpace s1 default storage layout:\n\n";
   dump_array(s1);
   std::cout << '\n';
 
@@ -855,17 +855,17 @@ TEST(DimensionSet, StorageOrderD9)
   order.push_back(IndexedDimensionStorage(7, Dimension::DESCENDING));
   order.push_back(IndexedDimensionStorage(4, Dimension::ASCENDING));
 
-  DimensionSet s2(dims, order);
+  DimensionSpace s2(dims, order);
 
-  std::cout << "DimensionSet s2 modified parameters:\n"
+  std::cout << "DimensionSpace s2 modified parameters:\n"
             << s2
-            << "\nDimensionSet s2 modified storage layout:\n\n";
+            << "\nDimensionSpace s2 modified storage layout:\n\n";
   dump_array(s2);
   std::cout << '\n';
 }
 
 // Subrange failure cases (by index).
-TEST(DimensionSet, IndexedSubrangeFail)
+TEST(DimensionSpace, IndexedSubrangeFail)
 {
   const Dimension static_dims[] =
     {
@@ -875,32 +875,32 @@ TEST(DimensionSet, IndexedSubrangeFail)
 
   std::vector<Dimension> dims(static_dims, static_dims+boost::size(static_dims));
 
-  DimensionSet::indexed_subrange_type subrange1;
+  DimensionSpace::indexed_subrange_type subrange1;
   subrange1.push_back(IndexedDimensionSubrange(0, 4, 12));
 
   // Missing dimension is OK.
-  ASSERT_NO_THROW(DimensionSet(dims).subrange(subrange1));
+  ASSERT_NO_THROW(DimensionSpace(dims).subrange(subrange1));
 
   subrange1.push_back(IndexedDimensionSubrange(1, 24, 32));
 
   // All dimensions present.
-  ASSERT_NO_THROW(DimensionSet(dims).subrange(subrange1));
+  ASSERT_NO_THROW(DimensionSpace(dims).subrange(subrange1));
 
   subrange1.push_back(IndexedDimensionSubrange(1, 28, 32));
 
   // Extra duplicated dimension.
-  ASSERT_THROW(DimensionSet(dims).subrange(subrange1), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims).subrange(subrange1), std::logic_error);
 
-  DimensionSet::indexed_subrange_type subrange2;
+  DimensionSpace::indexed_subrange_type subrange2;
   subrange2.push_back(IndexedDimensionSubrange(0, 4, 12));
   subrange2.push_back(IndexedDimensionSubrange(2, 90, 12));
 
   // Invalid dimension.
-  ASSERT_THROW(DimensionSet(dims).subrange(subrange2), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims).subrange(subrange2), std::logic_error);
 }
 
 // Subrange failure cases (by name).
-TEST(DimensionSet, NamedSubrangeFail)
+TEST(DimensionSpace, NamedSubrangeFail)
 {
   const Dimension static_dims[] =
     {
@@ -910,112 +910,112 @@ TEST(DimensionSet, NamedSubrangeFail)
 
   std::vector<Dimension> dims(static_dims, static_dims+boost::size(static_dims));
 
-  DimensionSet::named_subrange_type subrange1;
+  DimensionSpace::named_subrange_type subrange1;
   subrange1.push_back(NamedDimensionSubrange("X", 4, 12));
 
   // Missing dimension is OK.
-  ASSERT_NO_THROW(DimensionSet(dims).subrange(subrange1));
+  ASSERT_NO_THROW(DimensionSpace(dims).subrange(subrange1));
 
   subrange1.push_back(NamedDimensionSubrange("Y", 24, 32));
 
   // All dimensions present.
-  ASSERT_NO_THROW(DimensionSet(dims).subrange(subrange1));
+  ASSERT_NO_THROW(DimensionSpace(dims).subrange(subrange1));
 
   subrange1.push_back(NamedDimensionSubrange("Y", 28, 32));
 
   // Extra duplicated dimension.
-  ASSERT_THROW(DimensionSet(dims).subrange(subrange1), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims).subrange(subrange1), std::logic_error);
 
-  DimensionSet::named_subrange_type subrange2;
+  DimensionSpace::named_subrange_type subrange2;
   subrange2.push_back(NamedDimensionSubrange("X", 4, 12));
   subrange2.push_back(NamedDimensionSubrange("Invalid", 90, 12));
 
   // Invalid dimension.
-  ASSERT_THROW(DimensionSet(dims).subrange(subrange2), std::logic_error);
+  ASSERT_THROW(DimensionSpace(dims).subrange(subrange2), std::logic_error);
 }
 
 // Subrange storage ordering (one dimension by index).
-TEST(DimensionSet, SubrangeIndexedD1)
+TEST(DimensionSpace, SubrangeIndexedD1)
 {
   std::vector<Dimension> dims;
   dims.push_back(Dimension("Single", 12));
 
-  std::vector<DimensionSet> sets(order_permutations(dims, named_order_permutations(dims)));
-  DimensionSet::indexed_subrange_type subrange;
+  std::vector<DimensionSpace> spaces(order_permutations(dims, named_order_permutations(dims)));
+  DimensionSpace::indexed_subrange_type subrange;
   subrange.push_back(IndexedDimensionSubrange(0, 5, 9));
 
-  std::vector<DimensionSet> subrange_sets;
-  for(std::vector<DimensionSet>::const_iterator i = sets.begin();
-      i != sets.end();
+  std::vector<DimensionSpace> subrange_spaces;
+  for(std::vector<DimensionSpace>::const_iterator i = spaces.begin();
+      i != spaces.end();
       ++i)
     {
-      subrange_sets.push_back(i->subrange(subrange));
+      subrange_spaces.push_back(i->subrange(subrange));
     }
 
-  test_orders(subrange_sets);
+  test_orders(subrange_spaces);
 
-  DimensionSet::indexed_subrange_type subrange2;
+  DimensionSpace::indexed_subrange_type subrange2;
   subrange2.push_back(IndexedDimensionSubrange(0, 1, 3));
 
-  std::vector<DimensionSet> subrange_sets2;
-  for(std::vector<DimensionSet>::const_iterator i = subrange_sets.begin();
-      i != subrange_sets.end();
+  std::vector<DimensionSpace> subrange_spaces2;
+  for(std::vector<DimensionSpace>::const_iterator i = subrange_spaces.begin();
+      i != subrange_spaces.end();
       ++i)
     {
-      subrange_sets2.push_back(i->subrange(subrange2));
+      subrange_spaces2.push_back(i->subrange(subrange2));
     }
 
-  test_orders(subrange_sets2);
+  test_orders(subrange_spaces2);
 }
 
 // Subrange storage ordering (two dimensions by index).
-TEST(DimensionSet, SubrangeIndexedD2)
+TEST(DimensionSpace, SubrangeIndexedD2)
 {
   std::vector<Dimension> dims;
   dims.push_back(Dimension("X", 3));
   dims.push_back(Dimension("Y", 4));
 
-  std::vector<DimensionSet> sets(order_permutations(dims, named_order_permutations(dims)));
-  DimensionSet::indexed_subrange_type subrange;
+  std::vector<DimensionSpace> spaces(order_permutations(dims, named_order_permutations(dims)));
+  DimensionSpace::indexed_subrange_type subrange;
   subrange.push_back(IndexedDimensionSubrange(0, 0, 2));
   subrange.push_back(IndexedDimensionSubrange(1, 1, 3));
 
-  std::vector<DimensionSet> subrange_sets;
-  for(std::vector<DimensionSet>::const_iterator i = sets.begin();
-      i != sets.end();
+  std::vector<DimensionSpace> subrange_spaces;
+  for(std::vector<DimensionSpace>::const_iterator i = spaces.begin();
+      i != spaces.end();
       ++i)
     {
-      subrange_sets.push_back(i->subrange(subrange));
+      subrange_spaces.push_back(i->subrange(subrange));
     }
 
-  test_orders(subrange_sets);
+  test_orders(subrange_spaces);
 }
 
 // Subrange storage ordering (two dimensions by name).
-TEST(DimensionSet, SubrangeNamedD2)
+TEST(DimensionSpace, SubrangeNamedD2)
 {
   std::vector<Dimension> dims;
   dims.push_back(Dimension("X", 3));
   dims.push_back(Dimension("Y", 4));
 
-  std::vector<DimensionSet> sets(order_permutations(dims, named_order_permutations(dims)));
-  DimensionSet::named_subrange_type subrange;
+  std::vector<DimensionSpace> spaces(order_permutations(dims, named_order_permutations(dims)));
+  DimensionSpace::named_subrange_type subrange;
   // Single dimension only; X is unchanged.
   subrange.push_back(NamedDimensionSubrange("Y", 1, 3));
 
-  std::vector<DimensionSet> subrange_sets;
-  for(std::vector<DimensionSet>::const_iterator i = sets.begin();
-      i != sets.end();
+  std::vector<DimensionSpace> subrange_spaces;
+  for(std::vector<DimensionSpace>::const_iterator i = spaces.begin();
+      i != spaces.end();
       ++i)
     {
-      subrange_sets.push_back(i->subrange(subrange));
+      subrange_spaces.push_back(i->subrange(subrange));
     }
 
-  test_orders(subrange_sets);
+  test_orders(subrange_spaces);
 }
 
 // Subrange storage ordering (four dimensions by index).
-TEST(DimensionSet, SubrangeIndexedD4)
+TEST(DimensionSpace, SubrangeIndexedD4)
 {
   std::vector<Dimension> dims;
   dims.push_back(Dimension("X", 8));
@@ -1023,34 +1023,34 @@ TEST(DimensionSet, SubrangeIndexedD4)
   dims.push_back(Dimension("Z", 3));
   dims.push_back(Dimension("C", 2));
 
-  std::vector<DimensionSet> sets(order_permutations(dims, named_order_permutations(dims)));
-  DimensionSet::indexed_subrange_type subrange;
+  std::vector<DimensionSpace> spaces(order_permutations(dims, named_order_permutations(dims)));
+  DimensionSpace::indexed_subrange_type subrange;
   subrange.push_back(IndexedDimensionSubrange(0, 0, 8));
   subrange.push_back(IndexedDimensionSubrange(1, 3, 6));
   subrange.push_back(IndexedDimensionSubrange(2, 0, 2));
   subrange.push_back(IndexedDimensionSubrange(3, 1, 2));
 
-  std::vector<DimensionSet> subrange_sets;
-  for(std::vector<DimensionSet>::const_iterator i = sets.begin();
-      i != sets.end();
+  std::vector<DimensionSpace> subrange_spaces;
+  for(std::vector<DimensionSpace>::const_iterator i = spaces.begin();
+      i != spaces.end();
       ++i)
     {
-      subrange_sets.push_back(i->subrange(subrange));
+      subrange_spaces.push_back(i->subrange(subrange));
     }
 
-  test_orders(subrange_sets);
+  test_orders(subrange_spaces);
 
-  DimensionSet::indexed_subrange_type subrange2;
+  DimensionSpace::indexed_subrange_type subrange2;
   subrange2.push_back(IndexedDimensionSubrange(0, 4, 7));
   subrange2.push_back(IndexedDimensionSubrange(1, 1, 3));
 
-  std::vector<DimensionSet> subrange_sets2;
-  for(std::vector<DimensionSet>::const_iterator i = sets.begin();
-      i != sets.end();
+  std::vector<DimensionSpace> subrange_spaces2;
+  for(std::vector<DimensionSpace>::const_iterator i = spaces.begin();
+      i != spaces.end();
       ++i)
     {
-      subrange_sets2.push_back(i->subrange(subrange).subrange(subrange2));
+      subrange_spaces2.push_back(i->subrange(subrange).subrange(subrange2));
     }
 
-  test_orders(subrange_sets2);
+  test_orders(subrange_spaces2);
 }

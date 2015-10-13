@@ -73,7 +73,7 @@ namespace ome
         }
     }
 
-    DimensionSet::DimensionSet(const logical_order_type& dimensions):
+    DimensionSpace::DimensionSpace(const logical_order_type& dimensions):
       _logical_order(dimensions),
       _storage_order(),
       _detail(dimensions.size()),
@@ -82,8 +82,8 @@ namespace ome
       init();
     }
 
-    DimensionSet::DimensionSet(const logical_order_type&         dimensions,
-                               const indexed_storage_order_type& order):
+    DimensionSpace::DimensionSpace(const logical_order_type&         dimensions,
+                                   const indexed_storage_order_type& order):
       _logical_order(dimensions),
       _storage_order(),
       _detail(dimensions.size()),
@@ -93,8 +93,8 @@ namespace ome
       storage_order(order);
     }
 
-    DimensionSet::DimensionSet(const logical_order_type&       dimensions,
-                               const named_storage_order_type& order):
+    DimensionSpace::DimensionSpace(const logical_order_type&       dimensions,
+                                   const named_storage_order_type& order):
       _logical_order(dimensions),
       _storage_order(),
       _detail(dimensions.size()),
@@ -105,7 +105,7 @@ namespace ome
     }
 
     void
-    DimensionSet::init()
+    DimensionSpace::init()
     {
       _storage_order.reserve(_logical_order.size());
       _detail.resize(_logical_order.size());
@@ -134,11 +134,11 @@ namespace ome
     }
 
     void
-    DimensionSet::storage_order(const indexed_storage_order_type& order)
+    DimensionSpace::storage_order(const indexed_storage_order_type& order)
     {
       if (order.size() != size())
         {
-          boost::format fmt("Storage order dimension count %1% for order does not match set dimension count %2%");
+          boost::format fmt("Storage order dimension count %1% for order does not match space dimension count %2%");
           fmt % order.size() % size();
           throw std::logic_error(fmt.str());
         }
@@ -172,7 +172,7 @@ namespace ome
     }
 
     void
-    DimensionSet::storage_order(const named_storage_order_type& order)
+    DimensionSpace::storage_order(const named_storage_order_type& order)
     {
       std::map<std::string, index_type> nmap(name_map(_logical_order));
       indexed_storage_order_type iorder;
@@ -196,7 +196,7 @@ namespace ome
     }
 
     void
-    DimensionSet::compute_logical_strides()
+    DimensionSpace::compute_logical_strides()
     {
       difference_type stride = 1;
 
@@ -215,7 +215,7 @@ namespace ome
     }
 
     void
-    DimensionSet::compute_storage_strides()
+    DimensionSpace::compute_storage_strides()
     {
       difference_type stride = 1;
 
@@ -238,7 +238,7 @@ namespace ome
     }
 
     void
-    DimensionSet::compute_storage_offset()
+    DimensionSpace::compute_storage_offset()
     {
       // Descending dimension offset.
       difference_type descending_offset = 0U;
@@ -276,13 +276,13 @@ namespace ome
       _base = descending_offset;
     }
 
-    DimensionSet
-    DimensionSet::subrange(const indexed_subrange_type& subrange) const
+    DimensionSpace
+    DimensionSpace::subrange(const indexed_subrange_type& subrange) const
     {
       // Check for duplicates using set of indices.
       std::set<index_type> used;
 
-      DimensionSet ret(*this);
+      DimensionSpace ret(*this);
 
       for(indexed_subrange_type::const_iterator sub = subrange.begin();
           sub != subrange.end();
@@ -317,8 +317,8 @@ namespace ome
       return ret;
     }
 
-    DimensionSet
-    DimensionSet::subrange(const named_subrange_type& subrange) const
+    DimensionSpace
+    DimensionSpace::subrange(const named_subrange_type& subrange) const
     {
       std::map<std::string, index_type> nmap(name_map(_logical_order));
       indexed_subrange_type isubrange;
