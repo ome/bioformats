@@ -284,9 +284,17 @@ Applications
   and end of a subrange to fetch (or logical coordinate and extent)
   will extend these methods from transferring 2D regions to
   transferring n-dimensional regions in a single call.  There is room
-  for significant optimization here: by looking at the strides and
-  begin offsets in each dimension (in storage order), the data can be
-  transferred in the largest possible contiguous blocks.
+  for significant optimization here: by looking at the extents,
+  strides and begin offsets in each dimension (in storage order), the
+  data can be transferred in the largest possible contiguous blocks.
+
+  Note that the Java :cpp:class:`FormatReader` :cpp:func:`readPlane`
+  method has a ``scanlinePad`` argument to cope with scanlines which
+  have slack space at the end.  This only works in the ``X`` dimension
+  though.  The :cpp:class:`DimensionSpace` subvolume logic will allow
+  this to work, transparently, in n-dimensions.  For example, in ``Y``
+  for tiles.  The subrange may be assigned to another buffer to obtain
+  a packed copy of only the subrange.
 
 - Add n-dimensional pixel buffer class
 
@@ -304,6 +312,18 @@ Applications
   :cpp:class:`FormatReader` and :cpp:class:`FormatWriter`
   :cpp:func:`openBytes` and :cpp:func:`saveBytes` methods can then be
   implemented in terms of :cpp:class:`PixelBuffer` for passing data.
+
+- Internal use by the C++ TIFF code
+
+  The C++ implementation currently implements strip and tile copying
+  from libtiff buffers to and from :cpp:class:`PixelBuffer`.  This
+  will allow this logic to be removed entirely and replaced with a
+  simple assignment to copy the data between the libtiff buffer and
+  the pixel buffer.  The subrange logic will permit unaddressable
+  regions where the image bounds do not lie on strip or tile
+  boundaries, and as noted above, the extent, stride and offset data
+  may be used for efficient copying of contiguous blocks where
+  possible.
 
 - Internal use by readers and writers
 
