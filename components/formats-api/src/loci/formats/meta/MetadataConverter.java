@@ -705,40 +705,40 @@ public final class MetadataConverter {
     }
     catch (NullPointerException e) { }
     for (int i = 0; i < instrumentCount; i++) {
-        int lightSourceCount = 0;
-        try {
-          lightSourceCount = src.getLightSourceCount(i);
+      int lightSourceCount = 0;
+      try {
+        lightSourceCount = src.getLightSourceCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int j = 0; j < lightSourceCount; j++) {
+        String type = src.getLightSourceType(i, j);
+        if (type.equals("Arc")) {
+          String id = src.getArcID(i, j);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+          }
+        } else if (type.equals("Filament")) {
+          String id = src.getFilamentID(i, j);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+          }
+        } else if (type.equals("GenericExcitationSource")) {
+          String id = src.getGenericExcitationSourceID(i, j);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+          }
+        } else if (type.equals("Laser")) {
+          String id = src.getLaserID(i, j);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+          }
+        } else if (type.equals("LightEmittingDiode")) {
+          String id = src.getLightEmittingDiodeID(i, j);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+          }
         }
-        catch (NullPointerException e) { }
-        for (int j = 0; j < lightSourceCount; j++) {
-            String type = src.getLightSourceType(i, j);
-            if (type.equals("Arc")) {
-                String id = src.getArcID(i, j);
-                if (id != null && id.trim().length() > 0) {
-                    lightSourceIds.add(id);
-                }
-            } else if (type.equals("Filament")) {
-                String id = src.getFilamentID(i, j);
-                if (id != null && id.trim().length() > 0) {
-                    lightSourceIds.add(id);
-                }
-            } else if (type.equals("GenericExcitationSource")) {
-                String id = src.getGenericExcitationSourceID(i, j);
-                if (id != null && id.trim().length() > 0) {
-                    lightSourceIds.add(id);
-                }
-            } else if (type.equals("Laser")) {
-                String id = src.getLaserID(i, j);
-                if (id != null && id.trim().length() > 0) {
-                    lightSourceIds.add(id);
-                }
-            } else if (type.equals("LightEmittingDiode")) {
-                String id = src.getLightEmittingDiodeID(i, j);
-                if (id != null && id.trim().length() > 0) {
-                    lightSourceIds.add(id);
-                }
-            }
-        }
+      }
     }
     int imageCount = 0;
     try {
