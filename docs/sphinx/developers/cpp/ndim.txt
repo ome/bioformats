@@ -9,7 +9,7 @@ Rationale
 The existing Bio-Formats API uses n-dimensional array calculations for
 several purposes, but is currently restricted to a fixed dimension
 count in all cases.  In order to extend the data model and API to
-support higher numbers of dimensions, a means of generalising the
+support higher numbers of dimensions, a means of generalizing the
 existing calculations to support an arbitrary dimension count is
 required.
 
@@ -30,7 +30,7 @@ to 9 dimensions at compile time, and due to being a template-heavy
 implementation is also not implementable in Java.  Having
 n-dimensional support common to both languages would be advantageous.
 Being able to support an arbitrary number of dimensions does imply a
-tradeoff when compared with the templated implementation; it will be
+trade-off when compared with the templated implementation; it will be
 more flexible but slower, except perhaps at low dimension counts
 compared with fixed 9D calculations.  This is the common case for the
 existing data model, however, where typically three dimensions are
@@ -104,7 +104,7 @@ Classes
   TIFF ``Orientation`` tag and EXIF metadata can be represented
   directly in the ordering and can transparently reflect and rotate
   the pixel data if desired.  It will also allow for the removal of
-  the Modulo extension since these subdidiary dimensions can now be
+  the Modulo extension since these subsidiary dimensions can now be
   represented directly as first-class addressable dimensions.
 
 Calculations
@@ -142,7 +142,7 @@ would contain (*x*, *y*, *z*, *c*) values.
 
 The coordinate may be implemented as e.g. a :cpp:class:`vector` (C++)
 or an array or :cpp:class:`List` (Java).  Any of these representations
-will permit the storage of an arbitary number of integers.
+will permit the storage of an arbitrary number of integers.
 
 Logical index
 ^^^^^^^^^^^^^
@@ -168,9 +168,9 @@ logical order (from largest stride to smallest stride) as follows:
 
   I_l = I_l \operatorname{mod} S_{l_i}
 
-This is primarily useful for testing the implementation; it's unlikely
-this will be useful for most situations, where the storage index
-should be preferred.
+This is primarily useful for testing the implementation; it is
+unlikely this will be useful for most situations, where the storage
+index should be preferred.
 
 Storage index
 ^^^^^^^^^^^^^
@@ -180,7 +180,7 @@ The storage index is the index into the multi-dimensional array
 storage order as specified.  Here, the storage order may differ from
 the logical order, and the dimensions may also have descending
 progression instead of ascending progression.  The storage index is
-computed from a logical coordinate, and is the precalculated base
+computed from a logical coordinate, and is the pre-calculated base
 offset plus the sum of (storage-stride × dimension-index) for each
 dimension:
 
@@ -192,7 +192,7 @@ The inverse is also provided, calculating the logical coordinate from
 a storage index.  This is calculated for each dimension in *reverse*
 storage order (from largest stride to smallest stride).  If the
 dimension progression is descending, the index in each dimension is
-calulated as follows:
+calculated as follows:
 
 .. math::
 
@@ -220,7 +220,7 @@ subrange-begin start position in each dimension.
 
 The calculations described above work the same with subvolumes.  The
 only difference is that the subrange-begin values for each dimension
-much be added to the logical coordinate when computing a storage
+must be added to the logical coordinate when computing a storage
 index, and be subtracted from the logical coordinate when computed
 from a storage index.  Since the base for logical indexes is always
 zero, and the coordinates in the subrange are relative to the subrange
@@ -228,7 +228,7 @@ start, no adjustment is necessary for logical index calculations.  The
 storage index calculations are adjusted as shown below:
 
 The storage index is computed from a logical coordinate, and is the
-precalculated base offset plus the sum of (storage-stride ×
+pre-calculated base offset plus the sum of (storage-stride ×
 (dimension-index + dimension-start)) for each dimension:
 
 .. math::
@@ -237,10 +237,10 @@ precalculated base offset plus the sum of (storage-stride ×
 
 The inverse is also provided, calculating the logical coordinate from
 a storage index.  This is calculated for each dimension in *reverse*
-storage order (from largest stride to smallest stride), substracting
+storage order (from largest stride to smallest stride), subtracting
 the subrange-begin value from the computed index in each dimension.
 If the dimension progression is descending, the index in each
-dimension is calulated as follows:
+dimension is calculated as follows:
 
 .. math::
 
@@ -279,13 +279,13 @@ Applications
   coordinates, so that the user specifies exactly which plane they
   need using the dimension indexes appropriate for the series.  This
   will also allow the API to work with future n-dimensional image data
-  while remaining compatible with the three dimensional logic used
-  currently.  Two logical coordinates to specify the begin and end of
-  a subrange to fetch (or logical coordinate and extent)will extend
-  these methods from transferring 2D regions to transferring
-  n-dimensional regions in a single call.  There is room for
-  signifiant optimisation here: by looking at the strides and begin
-  offsets in each dimension (in storage order), the data can be
+  while remaining compatible with the three-dimensional (``CZT``)
+  logic used currently.  Two logical coordinates to specify the begin
+  and end of a subrange to fetch (or logical coordinate and extent)
+  will extend these methods from transferring 2D regions to
+  transferring n-dimensional regions in a single call.  There is room
+  for significant optimization here: by looking at the strides and
+  begin offsets in each dimension (in storage order), the data can be
   transferred in the largest possible contiguous blocks.
 
 - Add n-dimensional pixel buffer class
