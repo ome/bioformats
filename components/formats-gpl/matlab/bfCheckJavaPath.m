@@ -21,11 +21,6 @@ function [status, version] = bfCheckJavaPath(varargin)
 %
 %    version - String specifying the current version of Bio-Formats if
 %    Bio-Formats is in the Java class path. Empty string otherwise.
-%
-% Exceptions
-%
-%   Will throw if unable to find a bioformats jar file when
-%   autoloadBioFormats is true.
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -56,16 +51,16 @@ ip.parse(varargin{:});
 [status, version] = has_working_bioformats();
 
 if ~status && ip.Results.autoloadBioFormats,
-    jarPath = getJarPath({'bioformats_package.jar', 'loci_tools.jar'});
-    assert(~isempty(jarPath), 'bf:jarNotFound',...
-        'Cannot automatically locate a Bio-Formats JAR file');
-
-    % Add the Bio-Formats JAR file to dynamic Java class path
-    javaaddpath(jarPath);
-    % confirm that adding stuff the the javaclasspath, fixed the issue
-    [status, version] = has_working_bioformats();
-    if (~ status)
-        javarmpath(jarPath);
+    jarPaths = getJarPaths();
+    % Try each of the found jar files until we find something that works
+    for i = 1:numel(jarPaths)
+      javaaddpath(jarPaths{i});
+      [status, version] = has_working_bioformats();
+      if (status)
+          break
+      else
+          javarmpath(jarPaths{i});
+      end
     end
 end
 
@@ -89,16 +84,58 @@ catch
     status = false;
 end
 
-function path = getJarPath(files)
+% Return cell array of possible jar files with bioformats, ordered
+% by preference.
+function paths = getJarPaths()
 
-% Assume the jar is either in the Matlab path or under the same folder as
-% this file
-for i = 1 : numel(files)
-    path = which(files{i});
-    if isempty(path)
-        path = fullfile(fileparts(mfilename('fullpath')), files{i});
+unversion_jar_regexp = '^(?:bioformats(_package)?|loci_tools).jar$';
+version_jar_regexp = '^(?:bioformats(_package)?|loci_tools)(-[\d\.]+(-(SNAPSHOT|DEV))?).jar$';
+
+% If there is a bioformats jar packaged with the toolbox
+dirs = {fileparts(mfilename('fullpath'))};
+
+if isunix()
+    % XDG Base Directory Specification
+
+    xdg_data_home = getenv('XDG_DATA_HOME');
+    if isempty(xdg_data_home)
+        xdg_data_home = fullfile(getenv('HOME'), '.local', 'share', 'java');
+    else
+        xdg_data_home = fullfile(xdg_data_home, 'java');
     end
-    if ~isempty(path) && exist(path, 'file') == 2
-        return
+
+    xdg_data_dirs = getenv('XDG_DATA_DIRS');
+    if isempty(xdg_data_dirs)
+        xdg_data_dirs = {'/usr/local/share/', '/usr/share/'};
+    else
+        xdg_data_dirs = strsplit(xdg_data_dirs, ':');
     end
+    xdg_data_dirs(cellfun(@isempty, xdg_data_dirs)) = [];
+    xdg_data_dirs = cellfun(@fullfile, xdg_data_dirs, ...
+                            repmat({'java'}, size(xdg_data_dirs)), ...
+                            'UniformOutput', false);
+
+    dirs = {dirs{:}, xdg_data_home, xdg_data_dirs{:}};
+
+elseif ismac()
+    % Who knows where is OSX keeps jar files by default.
+
+elseif ispc()
+    % Who knows where Windows keeps jar files by default.
+
+end
+
+paths = {};
+for i = 1 : numel(dirs)
+    files = dir(dirs{i});
+    fnames = {files.name};
+    fpaths = cellfun(@fullfile, repmat(dirs(i), size(fnames)), fnames, ...
+                     'UniformOutput', false);
+    % Favour unversioned jar files (it is common to have multiple versions
+    % installed and have a default by creating a symlink to it without the
+    % version number) so add then first.
+    matches = ~ cellfun(@isempty, regexp ({files.name}, unversion_jar_regexp));
+    paths(end+1:end+nnz(matches)) = fpaths(matches);
+    matches = ~ cellfun(@isempty, regexp ({files.name}, version_jar_regexp));
+    paths(end+1:end+nnz(matches)) = fpaths(matches);
 end
