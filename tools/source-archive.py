@@ -218,3 +218,5 @@ if __name__ == "__main__":
     cmakeversion = tarfile.TarInfo("%s/cpp/cmake/GitVersion.cmake" % (prefix))
     cmakeversion.size = cmakeversionbuf.len
     basetar.addfile(cmakeversion, cmakeversionbuf)
+    basetar.close()
+    call(['xz', "%s/%s.tar" % (options.target, prefix)])
