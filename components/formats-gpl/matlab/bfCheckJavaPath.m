@@ -50,11 +50,12 @@ ip.parse(varargin{:});
 % Check if a Bio-Formats JAR file is in the Java class path
 % Can be in either static or dynamic Java class path
 jPath = javaclasspath('-all');
-bfJarFiles = {'bioformats_package.jar', 'loci_tools.jar'};
+jars = cell2mat (cell2mat (regexp (jPath, '[\\/]{1}([^/\\]+)\.jar$', 'tokens')));
+bfJarFiles = {'bioformats_package', 'loci_tools'};
 hasBFJar =  false(numel(bfJarFiles), 1);
 for i = 1: numel(bfJarFiles);
-    isBFJar =  @(x) ~isempty(regexp(x, ['.*' bfJarFiles{i} '$'], 'once'));
-    hasBFJar(i) = any(cellfun(isBFJar, jPath));
+    isBFJar =  @(x) ~isempty(regexp(x, bfJarFiles{i}, 'once'));
+    hasBFJar(i) = any(cellfun(isBFJar, jars));
 end
 
 % Check conflicting JARs are not loaded
