@@ -64,6 +64,9 @@ if ~status && ip.Results.autoloadBioFormats,
     javaaddpath(jarPath);
     % confirm that adding stuff the the javaclasspath, fixed the issue
     [status, version] = has_working_bioformats();
+    if (~ status)
+        javarmpath(jarPath);
+    end
 end
 
 % Return true if bioformats java interface is working, false otherwise.
