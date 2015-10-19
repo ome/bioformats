@@ -225,6 +225,7 @@ namespace ome
             }
         }
 
+#ifndef OME_RELOCATABLE_INSTALL
       // Full prefix is available only when configured explicitly.
       if (strlen(INSTALL_PREFIX) > 0)
         {
@@ -242,6 +243,7 @@ namespace ome
             }
         }
       else
+#endif // ! OME_RELOCATABLE_INSTALL
         {
 #ifdef OME_HAVE_DLADDR
           // Introspect root with dladdr(3) + relative component

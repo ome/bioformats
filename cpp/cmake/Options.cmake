@@ -16,6 +16,14 @@ option(test "Enable unit tests (requires gtest)" ON)
 option(extended-tests "Enable extended tests (more comprehensive, longer run time)" ON)
 option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
 
+# The installation is relocatable; this affects path lookups (if OFF,
+# paths are assumed to be their configured absolute install location;
+# paths will still be introspected as a fallback); if ON paths will be
+# introspected if possible.  In all cases the paths may be overridden
+# by the environment.
+option(relocatable-install OFF)
+set(OME_RELOCATABLE_INSTALL "Install tree will be relocatable" ${relocatable-install})
+
 # Doxygen documentation
 find_package(Doxygen)
 set(DOXYGEN_DEFAULT OFF)
