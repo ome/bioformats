@@ -280,6 +280,19 @@ public class OMETiffReader extends FormatReader {
     return info[series][lastPlane].reader.get16BitLookupTable();
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    for (int s=0; s<info.length; s++) {
+      for (int q=0; q<info[s].length; q++) {
+        if (info[s][q] != null && info[s][q].reader != null) {
+          info[s][q].reader.reopenFile();
+        }
+      }
+    }
+  }
+
   /*
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
