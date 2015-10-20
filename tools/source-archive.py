@@ -9,6 +9,7 @@ import sys
 import zipfile
 import tarfile
 import StringIO
+import platform
 
 # This script archives the base tree and repacks it into a single zip which is
 # the source release, taking care to preserve timestamps and exectute
@@ -218,3 +219,11 @@ if __name__ == "__main__":
     cmakeversion = tarfile.TarInfo("%s/cpp/cmake/GitVersion.cmake" % (prefix))
     cmakeversion.size = cmakeversionbuf.len
     basetar.addfile(cmakeversion, cmakeversionbuf)
+    basetar.close()
+    try:
+        call(['xz', "%s/%s.tar" % (options.target, prefix)])
+    except:
+        # This is expected to fail on Windows when xz is unavailable,
+        # but is always an error on all other platforms.
+        if platform.system() != 'Windows':
+            sys.exit(1)
