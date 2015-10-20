@@ -21,12 +21,12 @@ Other projects using the JACE C++ bindings include:
 -  :doc:`/users/xuvtools/index` which uses an adapted version of the JACE C++
    bindings called
    `BlitzBioFormats <http://www.xuvtools.org/devel:libblitzbioformats>`_.
--  `Video Spot Tracker`_ which uses the Jace C++ bindings to add Bio-Formats
+-  `Video Spot Tracker`_ which uses the JACE C++ bindings to add Bio-Formats
    support since version 8.10.
 
 See the :doc:`build instructions <build>` (:doc:`Windows
 <build-windows>`, :doc:`Mac OS X <build-macosx>`, :doc:`Linux
-<build-linux>`) for details on compiling the Java C++ bindings from source.
+<build-linux>`) for details on compiling the JACE C++ bindings from source.
 Once this is done, simply include it in your project as you would any other
 external library.
 
