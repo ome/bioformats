@@ -286,7 +286,10 @@ public class OMETiffReader extends FormatReader {
     super.reopenFile();
     for (int s=0; s<info.length; s++) {
       for (int q=0; q<info[s].length; q++) {
-        if (info[s][q] != null && info[s][q].reader != null) {
+        // only reopen readers that had previously been initialized
+        if (info[s][q] != null && info[s][q].reader != null &&
+          info[s][q].reader.getCurrentFile() != null)
+        {
           info[s][q].reader.reopenFile();
         }
       }
