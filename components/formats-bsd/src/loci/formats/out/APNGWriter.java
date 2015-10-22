@@ -40,6 +40,7 @@ import java.util.zip.DeflaterOutputStream;
 
 import loci.common.Constants;
 import loci.common.DataTools;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -48,6 +49,7 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * APNGWriter is the file format writer for PNG and APNG files.
  */
+@BioFormatsWriter
 public class APNGWriter extends FormatWriter {
 
   // -- Constants --

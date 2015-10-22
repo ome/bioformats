@@ -41,6 +41,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -63,6 +64,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * OMEXMLWriter is the file format writer for OME-XML files.
  */
+@BioFormatsWriter
 public class OMEXMLWriter extends FormatWriter {
 
   // -- Fields --

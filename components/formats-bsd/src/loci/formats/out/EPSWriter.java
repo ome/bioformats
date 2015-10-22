@@ -34,6 +34,7 @@ package loci.formats.out;
 
 import java.io.IOException;
 
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -44,6 +45,7 @@ import loci.formats.meta.MetadataRetrieve;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsWriter
 public class EPSWriter extends FormatWriter {
 
   // -- Constants --

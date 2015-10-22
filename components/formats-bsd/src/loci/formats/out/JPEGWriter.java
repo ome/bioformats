@@ -32,11 +32,13 @@
 
 package loci.formats.out;
 
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatTools;
 
 /**
  * JPEGWriter is the file format writer for JPEG files.
  */
+@BioFormatsWriter
 public class JPEGWriter extends ImageIOWriter {
 
   // -- Constructor --

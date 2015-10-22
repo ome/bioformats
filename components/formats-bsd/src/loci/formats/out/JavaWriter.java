@@ -37,6 +37,7 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -46,6 +47,7 @@ import loci.formats.meta.MetadataRetrieve;
  * JavaWriter is the file format writer for Java source code.
  * At the moment, this code is just a very simple container for pixel data.
  */
+@BioFormatsWriter
 public class JavaWriter extends FormatWriter {
 
   // -- Constructor --

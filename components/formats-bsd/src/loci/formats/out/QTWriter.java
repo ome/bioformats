@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -49,7 +50,7 @@ import loci.formats.meta.MetadataRetrieve;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-
+@BioFormatsWriter
 public class QTWriter extends FormatWriter {
 
   // -- Constants --

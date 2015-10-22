@@ -48,6 +48,7 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
@@ -60,6 +61,7 @@ import loci.formats.tiff.TiffSaver;
 /**
  * OMETiffWriter is the file format writer for OME-TIFF files.
  */
+@BioFormatsWriter
 public class OMETiffWriter extends TiffWriter {
 
   // -- Constants --

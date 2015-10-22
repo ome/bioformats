@@ -37,6 +37,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -50,6 +51,7 @@ import ome.units.UNITS;
  * ICSWriter is the file format writer for ICS files.  It writes ICS version 1
  * and 2 files.
  */
+@BioFormatsWriter
 public class ICSWriter extends FormatWriter {
 
   // -- Fields --
